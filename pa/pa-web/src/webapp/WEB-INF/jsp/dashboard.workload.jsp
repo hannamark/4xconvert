@@ -36,14 +36,14 @@
 			<c:otherwise>Complete</c:otherwise>
 		</c:choose>
 	</display:column>
-	<display:column title="Submitted On" sortable="true"
+	<display:column title="Submitted On" sortable="true" headerClass="filter lastCreated.dateLastCreated"
 		property="lastCreated.dateLastCreated" format="{0,date,MM/dd/yyyy}" />
 	<c:if test="${sessionScope.isSuAbstractor}">
-		<display:column title="Submission Plus 10 Business Days"
+		<display:column title="Submission Plus 10 Business Days" headerClass="filter lastCreated.dateLastCreatedPlusTenBiz"
 			sortable="true" property="lastCreated.dateLastCreatedPlusTenBiz"
 			format="{0,date,MM/dd/yyyy}" />
 	</c:if>
-	<display:column title="Expected Abstraction Completion Date"
+	<display:column title="Expected Abstraction Completion Date" headerClass="filter expectedAbstractionCompletionDate"
 		sortable="true" property="expectedAbstractionCompletionDate"
 		format="{0,date,MM/dd/yyyy}" />
 	<c:if test="${sessionScope.isSuAbstractor}">
@@ -54,20 +54,20 @@
 		<display:column title="Business Days on Hold (Submitter)"
 			sortable="true" property="bizDaysOnHoldSubmitter" />
 	</c:if>
-	<display:column title="Current On-Hold Date" sortable="true"
-		property="onHoldDate" format="{0,date,MM/dd/yyyy}" />
-	<display:column title="Accepted" sortable="true"
+	<display:column title="Current On-Hold Date" sortable="true" headerClass="filter activeHoldDate"
+		property="activeHoldDate" format="{0,date,MM/dd/yyyy}" />
+	<display:column title="Accepted" sortable="true" headerClass="filter acceptedDate"
 		property="acceptedDate" format="{0,date,MM/dd/yyyy}" />
-	<display:column title="Admin Abstraction Completed" sortable="true"
+	<display:column title="Admin Abstraction Completed" sortable="true" headerClass="filter adminAbstractionCompletedDate"
 		property="adminAbstractionCompletedDate" format="{0,date,MM/dd/yyyy}" />
-	<display:column title="Admin QC Completed" sortable="true"
+	<display:column title="Admin QC Completed" sortable="true" headerClass="filter adminQCCompletedDate"
 		property="adminQCCompletedDate" format="{0,date,MM/dd/yyyy}" />
-	<display:column title="Scientific Abstraction Completed"
+	<display:column title="Scientific Abstraction Completed" headerClass="filter scientificAbstractionCompletedDate"
 		sortable="true" property="scientificAbstractionCompletedDate"
 		format="{0,date,MM/dd/yyyy}" />
-	<display:column title="Scientific QC Completed" sortable="true"
+	<display:column title="Scientific QC Completed" sortable="true" headerClass="filter scientificQCCompletedDate"
 		property="scientificQCCompletedDate" format="{0,date,MM/dd/yyyy}" />
-	<display:column title="Ready for TSR" sortable="true"
+	<display:column title="Ready for TSR" sortable="true" headerClass="filter readyForTSRDate"
 		property="readyForTSRDate" format="{0,date,MM/dd/yyyy}" />
 	<display:column escapeXml="false" sortable="true" class="checkedOut"
 		media="html" title="Checked Out By" headerClass="sortable">
@@ -219,3 +219,28 @@
 		</display:column>
 	</c:forEach>
 </display:table>
+
+<div id="date-range-filter" title="Date Filter" style="display: none;">
+  <p>   
+    Limit the results to the following date range (inclusive):
+  </p>  
+  <table>
+    <tr>
+        <td><label for="dateFrom">From:</label></td>
+        <td><s:textfield name="dateFrom" id="dateFrom"/></td>       
+    </tr>
+    <tr>
+        <td><label for="dateTo">To:</label></td>
+        <td><s:textfield name="dateTo" id="dateTo"/></td>       
+    </tr> 
+  </table>
+  <s:hidden name="dateFilterField" id="dateFilterField"/>
+</div>
+
+<div id="validationError"
+        title="Error" style="display: none;">
+        <p>
+            <span class="ui-icon ui-icon-alert"
+                style="float: left; margin: 0 7px 15px 0;"></span><span id="validationErrorText"></span>
+        </p>
+</div>

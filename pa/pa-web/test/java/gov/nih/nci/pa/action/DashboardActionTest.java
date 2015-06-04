@@ -21,7 +21,9 @@ import gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PAUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -70,6 +72,93 @@ public class DashboardActionTest extends AbstractPaActionTest {
         assertNotNull(trials);
         assertEquals(2, trials.size());
         assertNull(getRequest().getAttribute("toggleResultsTab"));
+    }
+
+    @Test
+    public void testDateRangeFilter() throws PAException {
+        getRequest().setUserInRole(Constants.ADMIN_ABSTRACTOR, true);
+        getRequest().setUserInRole(Constants.SCIENTIFIC_ABSTRACTOR, true);
+        UsernameHolder.setUser("suAbstractor");
+
+        DashboardAction action = getAction();
+        action.setDateFilterField("activeHoldDate");
+        action.setDateFrom("06/03/2015");
+        action.setDateTo("06/05/2015");
+        assertEquals("abstractorLanding", action.dateRangeFilter());
+        List<StudyProtocolQueryDTO> trials = (List) getRequest().getSession()
+                .getAttribute("workload");
+        assertEquals(1, trials.size());
+        assertEquals(PAUtil.dateStringToTimestamp("06/04/2015"), trials.get(0)
+                .getActiveHoldDate());
+
+        action = getAction();
+        action.setDateFilterField("activeHoldDate");
+        action.setDateFrom("06/01/2015");
+        action.setDateTo("06/01/2015");
+        assertEquals("abstractorLanding", action.dateRangeFilter());
+        trials = (List) getRequest().getSession().getAttribute("workload");
+        assertEquals(1, trials.size());
+        assertEquals(PAUtil.dateStringToTimestamp("06/01/2015"), trials.get(0)
+                .getActiveHoldDate());
+
+        action = getAction();
+        action.setDateFilterField("activeHoldDate");
+        action.setDateFrom("06/01/2015");
+        action.setDateTo("06/04/2015");
+        assertEquals("abstractorLanding", action.dateRangeFilter());
+        trials = (List) getRequest().getSession().getAttribute("workload");
+        assertEquals(2, trials.size());
+
+        action = getAction();
+        action.setDateFilterField("activeHoldDate");
+        action.setDateFrom("05/30/2015");
+        action.setDateTo("05/30/2015");
+        assertEquals("abstractorLanding", action.dateRangeFilter());
+        trials = (List) getRequest().getSession().getAttribute("workload");
+        assertEquals(0, trials.size());
+
+        action = getAction();
+        action.setDateFilterField("activeHoldDate");
+        assertEquals("abstractorLanding", action.dateRangeFilter());
+        trials = (List) getRequest().getSession().getAttribute("workload");
+        assertEquals(2, trials.size());
+
+        action = getAction();
+        action.setDateFrom("05/30/2015");
+        action.setDateFilterField("activeHoldDate");
+        assertEquals("abstractorLanding", action.dateRangeFilter());
+        trials = (List) getRequest().getSession().getAttribute("workload");
+        assertEquals(2, trials.size());
+
+        action = getAction();
+        action.setDateTo("06/04/2015");
+        action.setDateFilterField("activeHoldDate");
+        assertEquals("abstractorLanding", action.dateRangeFilter());
+        trials = (List) getRequest().getSession().getAttribute("workload");
+        assertEquals(2, trials.size());
+
+        // ensure execute resets any active filter.
+        action = getAction();
+        action.setDateFrom("05/30/2015");
+        action.setDateTo("06/04/2015");
+        action.setDateFilterField("activeHoldDate");
+        assertEquals("abstractorLanding", action.execute());
+        trials = (List) getRequest().getSession().getAttribute("workload");
+        assertEquals(2, trials.size());
+        assertNull(action.getDateFilterField());
+        assertNull(action.getDateTo());
+        assertNull(action.getDateFrom());
+
+        // ensure invalid date format does not error out, assumes null date
+        // instead
+        action = getAction();
+        action.setDateFilterField("activeHoldDate");
+        action.setDateFrom("06/01/2015");
+        action.setDateTo("56/01/2010");
+        assertEquals("abstractorLanding", action.dateRangeFilter());
+        trials = (List) getRequest().getSession().getAttribute("workload");
+        assertEquals(2, trials.size());
+
     }
 
     @Test
@@ -176,17 +265,19 @@ public class DashboardActionTest extends AbstractPaActionTest {
         StudyProtocolQueryDTO dto1 = new StudyProtocolQueryDTO();
         dto1.setStudyProtocolId(1L);
         dto1.getAdminCheckout().setCheckoutBy("suAbstractor");
-        
+        dto1.setActiveHoldDate(PAUtil.dateStringToTimestamp("06/04/2015"));
+
         StudyProtocolQueryDTO dto2 = new StudyProtocolQueryDTO();
         dto2.setStudyProtocolId(2L);
+        dto2.setActiveHoldDate(PAUtil.dateStringToTimestamp("06/01/2015"));
         when(
                 mock.getStudyProtocolByCriteria(any(StudyProtocolQueryCriteria.class)))
-                .thenReturn(Arrays.asList(dto1, dto2));
+                .thenReturn(new ArrayList(Arrays.asList(dto1, dto2)));
         when(
                 mock.getStudyProtocolByCriteria(
                         any(StudyProtocolQueryCriteria.class),
                         (ProtocolQueryPerformanceHints[]) anyVararg()))
-                .thenReturn(Arrays.asList(dto1, dto2));
+                .thenReturn(new ArrayList(Arrays.asList(dto1, dto2)));
         when(mock.getTrialSummaryByStudyProtocolId(any(Long.class)))
                 .thenReturn(dto1);
         return mock;

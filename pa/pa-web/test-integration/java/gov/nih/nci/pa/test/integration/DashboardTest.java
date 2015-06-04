@@ -23,17 +23,296 @@ import org.openqa.selenium.interactions.Actions;
  * 
  * @author dkrylov
  */
-@SuppressWarnings("deprecation")
+@SuppressWarnings({ "deprecation", "unused", "unchecked" })
 public class DashboardTest extends AbstractTrialStatusTest {
 
     private static final int OP_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 10000
             : 2000;
 
-    @SuppressWarnings({ "deprecation", "unused", "unchecked" })
+    /**
+     * @throws java.lang.Exception
+     */
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        restoreDefaultWorkloadMilestones();
+    }
+
+    @Test
+    public void testWorkloadDateRangeFilter() throws Exception {
+        deactivateAllTrials();
+        TrialInfo second = createSubmittedTrial();
+        TrialInfo first = createAcceptedTrial();
+        loginAsSuperAbstractor();
+
+        // Submitted On.
+        new QueryRunner()
+                .update(connection,
+                        "update study_protocol set date_last_created='2015-06-01 09:15.000' where identifier="
+                                + first.id);
+        new QueryRunner()
+                .update(connection,
+                        "update study_protocol set date_last_created='2015-06-02 09:15.000' where identifier="
+                                + second.id);
+        verifyDateRangeFilter(first, "06/01/2015", second, "06/02/2015",
+                "Submitted On");
+
+        // Submission Plus 10 Business Days
+        clickAndWait("link=Dashboard");
+        verifyDateRangeFilter(first,
+                getColumnValue(2, "Submission Plus 10 Business Days"), second,
+                getColumnValue(1, "Submission Plus 10 Business Days"),
+                "Submission Plus 10 Business Days");
+
+        // Expected Abstraction Completion Date
+        clickAndWait("link=Dashboard");
+        verifyDateRangeFilter(first,
+                getColumnValue(2, "Expected Abstraction Completion Date"),
+                second,
+                getColumnValue(1, "Expected Abstraction Completion Date"),
+                "Expected Abstraction Completion Date");
+
+        // Current On-Hold Date
+        addOnHold(first, "SUBMISSION_INCOM", date("06/01/2015"), null,
+                "Submitter");
+        addOnHold(second, "SUBMISSION_INCOM", date("06/02/2015"), null,
+                "Submitter");
+        verifyDateRangeFilter(first, "06/01/2015", second, "06/02/2015",
+                "Current On-Hold Date");
+
+        // Accepted
+        addDWS(second, "ACCEPTED");
+        addMilestone(second, "SUBMISSION_ACCEPTED",
+                jdbcTs(DateUtils.addDays(new Date(), 1)));
+        verifyDateRangeFilter(first, today, second, tomorrow, "Accepted");
+
+        // ADMINISTRATIVE_PROCESSING_COMPLETED_DATE
+        addMilestone(first, "ADMINISTRATIVE_PROCESSING_COMPLETED_DATE",
+                jdbcTs(new Date()));
+        addMilestone(second, "ADMINISTRATIVE_PROCESSING_COMPLETED_DATE",
+                jdbcTs(DateUtils.addDays(new Date(), 1)));
+        verifyDateRangeFilter(first, today, second, tomorrow,
+                "Admin Abstraction Completed");
+
+        // ADMINISTRATIVE_QC_COMPLETE
+        addMilestone(first, "ADMINISTRATIVE_QC_COMPLETE", jdbcTs(new Date()));
+        addMilestone(second, "ADMINISTRATIVE_QC_COMPLETE",
+                jdbcTs(DateUtils.addDays(new Date(), 1)));
+        verifyDateRangeFilter(first, today, second, tomorrow,
+                "Admin QC Completed");
+
+        // SCIENTIFIC_PROCESSING_COMPLETED_DATE
+        addMilestone(first, "SCIENTIFIC_PROCESSING_COMPLETED_DATE",
+                jdbcTs(new Date()));
+        addMilestone(second, "SCIENTIFIC_PROCESSING_COMPLETED_DATE",
+                jdbcTs(DateUtils.addDays(new Date(), 1)));
+        verifyDateRangeFilter(first, today, second, tomorrow,
+                "Scientific Abstraction Completed");
+
+        // SCIENTIFIC_QC_COMPLETE
+        addMilestone(first, "SCIENTIFIC_QC_COMPLETE", jdbcTs(new Date()));
+        addMilestone(second, "SCIENTIFIC_QC_COMPLETE",
+                jdbcTs(DateUtils.addDays(new Date(), 1)));
+        verifyDateRangeFilter(first, today, second, tomorrow,
+                "Scientific QC Completed");
+
+        // READY_FOR_TSR
+        addMilestone(first, "READY_FOR_TSR", jdbcTs(new Date()));
+        addMilestone(second, "READY_FOR_TSR",
+                jdbcTs(DateUtils.addDays(new Date(), 1)));
+        verifyDateRangeFilter(first, today, second, tomorrow, "Ready for TSR");
+
+    }
+
+    private void verifyDateRangeFilter(TrialInfo first, String date1,
+            TrialInfo second, String date2, String columnHeader) {
+        clickAndWait("link=Dashboard");
+        verifyWorkfloadTabActive();
+
+        // Find Funnel for this column; it will be unselected.
+        String emptyFunnelPath = "//table[@id='wl']//th//a[normalize-space(text())='"
+                + columnHeader
+                + "']/../..//i[@class='fa fa-filter fa-2x fa-inverse']";
+        String filledFunnelPath = "//table[@id='wl']//th//a[normalize-space(text())='"
+                + columnHeader + "']/../..//i[@class='fa fa-filter fa-2x']";
+        assertTrue(s.isElementPresent(emptyFunnelPath));
+
+        // Click on Funnel
+        verifyDateRangePopup(driver.findElement(By.xpath(emptyFunnelPath)));
+
+        // Clear range
+        s.type("dateFrom", "");
+        s.type("dateTo", "");
+
+        // Date of first trial should return only first trial.
+        s.type("dateFrom", date1);
+        s.type("dateTo", date1);
+        clickAndWait("//div[@aria-describedby='date-range-filter']//button//span[text()='OK']");
+        assertTrue(isTrialInWorkloadTab(first));
+        assertFalse(isTrialInWorkloadTab(second));
+
+        // Date of second trial should return only 2nd trial. Funnel must change
+        // to filled. Pop up dates should remain after submission.
+        assertFalse(s.isElementPresent(emptyFunnelPath));
+        s.click(filledFunnelPath);
+        assertEquals(date1, s.getValue("dateFrom"));
+        assertEquals(date1, s.getValue("dateTo"));
+        s.type("dateFrom", date2);
+        s.type("dateTo", date2);
+        clickAndWait("//div[@aria-describedby='date-range-filter']//button//span[text()='OK']");
+        assertFalse(isTrialInWorkloadTab(first));
+        assertTrue(isTrialInWorkloadTab(second));
+
+        // Clearing both dates must reset filter.
+        s.click(filledFunnelPath);
+        s.type("dateFrom", "");
+        s.type("dateTo", "");
+        clickAndWait("//div[@aria-describedby='date-range-filter']//button//span[text()='OK']");
+        assertTrue(isTrialInWorkloadTab(first));
+        assertTrue(isTrialInWorkloadTab(second));
+        assertTrue(s.isElementPresent(emptyFunnelPath));
+
+        // Type dates so that both trials included.
+        s.click(emptyFunnelPath);
+        s.type("dateFrom", date1);
+        s.type("dateTo", date2);
+        clickAndWait("//div[@aria-describedby='date-range-filter']//button//span[text()='OK']");
+        assertTrue(isTrialInWorkloadTab(first));
+        assertTrue(isTrialInWorkloadTab(second));
+
+        // Ensure Refresh resets filters.
+        s.click(filledFunnelPath);
+        s.type("dateFrom", date1);
+        s.type("dateTo", date1);
+        clickAndWait("//div[@aria-describedby='date-range-filter']//button//span[text()='OK']");
+        assertTrue(isTrialInWorkloadTab(first));
+        assertFalse(isTrialInWorkloadTab(second));
+        clickAndWait("//input[@value='Refresh']");
+        assertTrue(isTrialInWorkloadTab(first));
+        assertTrue(isTrialInWorkloadTab(second));
+        assertTrue(s.isElementPresent(emptyFunnelPath));
+
+        // Providing only one of the two dates must produce both trials.
+        s.click(emptyFunnelPath);
+        s.type("dateFrom", date1);
+        s.type("dateTo", "");
+        clickAndWait("//div[@aria-describedby='date-range-filter']//button//span[text()='OK']");
+        assertTrue(isTrialInWorkloadTab(first));
+        assertTrue(isTrialInWorkloadTab(second));
+        s.click(filledFunnelPath);
+        s.type("dateFrom", "");
+        s.type("dateTo", date2);
+        clickAndWait("//div[@aria-describedby='date-range-filter']//button//span[text()='OK']");
+        assertTrue(isTrialInWorkloadTab(first));
+        assertTrue(isTrialInWorkloadTab(second));
+        clickAndWait("//input[@value='Refresh']");
+
+        // Negative date range should not error out, but must produce no
+        // results.
+        s.click(emptyFunnelPath);
+        s.type("dateFrom", date2);
+        s.type("dateTo", date1);
+        clickAndWait("//div[@aria-describedby='date-range-filter']//button//span[text()='OK']");
+        assertTrue(s.isTextPresent("Nothing found to display."));
+        clickAndWait("//input[@value='Refresh']");
+
+        // Ensure column sorting does not reset filters.
+        s.click(emptyFunnelPath);
+        s.type("dateFrom", date1);
+        s.type("dateTo", date1);
+        clickAndWait("//div[@aria-describedby='date-range-filter']//button//span[text()='OK']");
+        assertTrue(isTrialInWorkloadTab(first));
+        assertFalse(isTrialInWorkloadTab(second));
+        sort(columnHeader);
+        sort(columnHeader);
+        assertTrue(isTrialInWorkloadTab(first));
+        assertFalse(isTrialInWorkloadTab(second));
+        assertTrue(s.isElementPresent(filledFunnelPath));
+
+        // Selecting the trial in Details tab and performing actions on it must
+        // not reset filters either.
+        clickAndWait(getXPathForNciIdInWorkloadTab(first));
+        verifyDetailsTabActive();
+        clickAndWait("link=Admin/Scientific Check Out");
+        assertTrue(s
+                .isTextPresent("Trial Check-Out (Admin and Scientific) Successful"));
+        s.click("link=Admin/Scientific Check In");
+        s.type("comments", "No comments.");
+        clickAndWait("//button[text()='Ok']");
+        assertTrue(s
+                .isTextPresent("Trial Check-In (Admin and Scientific) Successful"));
+        s.click("workloadid");
+        assertTrue(isTrialInWorkloadTab(first));
+        assertFalse(isTrialInWorkloadTab(second));
+        assertTrue(s.isElementPresent(filledFunnelPath));
+
+        // Performing searches in Search tab must not reset filters.
+        s.click("searchid");
+        searchAndFindTrial(second);
+        s.click("workloadid");
+        assertTrue(isTrialInWorkloadTab(first));
+        assertFalse(isTrialInWorkloadTab(second));
+        assertTrue(s.isElementPresent(filledFunnelPath));
+
+    }
+
+    private void verifyDateRangePopup(final WebElement elementThatInvokesPopup) {
+        elementThatInvokesPopup.click();
+        assertTrue(s.isVisible("date-range-filter"));
+        assertEquals(
+                "Date Filter",
+                s.getText("//div[@aria-describedby='date-range-filter']//span[@class='ui-dialog-title']"));
+        assertEquals(
+                "Limit the results to the following date range (inclusive):",
+                s.getText("//div[@id='date-range-filter']/p"));
+
+        // Check 'x' icon (close)
+        clickAndWait("//div[@aria-describedby='date-range-filter']//button[@title='Close']");
+        assertFalse(s.isVisible("date-range-filter"));
+
+        // Check Cancel button
+        elementThatInvokesPopup.click();
+        assertTrue(s.isVisible("date-range-filter"));
+        clickAndWait("//div[@aria-describedby='date-range-filter']//button//span[text()='Cancel']");
+        assertFalse(s.isVisible("date-range-filter"));
+
+        // verify textboxes are there
+        elementThatInvokesPopup.click();
+        assertTrue(s.isVisible("dateFrom"));
+        assertTrue(s.isVisible("dateTo"));
+
+        // Verify Calendars come up.
+        clickAndWait("//input[@id='dateFrom']/following-sibling::img");
+        assertTrue(s.isVisible("ui-datepicker-div"));
+        clickAndWait("//input[@id='dateFrom']/following-sibling::img");
+        assertFalse(s.isVisible("ui-datepicker-div"));
+        clickAndWait("//input[@id='dateTo']/following-sibling::img");
+        assertTrue(s.isVisible("ui-datepicker-div"));
+        clickAndWait("//input[@id='dateTo']/following-sibling::img");
+        assertFalse(s.isVisible("ui-datepicker-div"));
+
+        // Check basic date validation.
+        assertFalse(s.isVisible("validationError"));
+        s.type("dateFrom", "05/32/2015");
+        s.click("//div[@aria-describedby='date-range-filter']//button//span[text()='OK']");
+        assertTrue(s.isVisible("validationError"));
+        assertTrue(s.isTextPresent("Invalid From Date: 05/32/2015"));
+        s.click("//div[@aria-describedby='validationError']//button[@title='Close']");
+        assertFalse(s.isVisible("validationError"));
+
+        s.type("dateFrom", "");
+        s.type("dateTo", "05/33/2015");
+        s.click("//div[@aria-describedby='date-range-filter']//button//span[text()='OK']");
+        assertTrue(s.isVisible("validationError"));
+        assertTrue(s.isTextPresent("Invalid To Date: 05/33/2015"));
+        s.click("//div[@aria-describedby='validationError']//button[@title='Close']");
+        assertFalse(s.isVisible("validationError"));
+
+    }
+
     @Test
     public void testWorkloadTab() throws Exception {
         deactivateAllTrials();
-        restoreDefaultWorkloadMilestones();
 
         TrialInfo acceptedTrial = createAcceptedTrial();
         TrialInfo submittedTrial = createSubmittedTrial();
@@ -527,7 +806,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
     }
 
     private void sort(String columnHeader) {
-        final String xpath = "//table[@id='wl']//th/a[normalize-space(text())='"
+        final String xpath = "//table[@id='wl']//th//a[normalize-space(text())='"
                 + columnHeader + "']";
         moveElementIntoView(By.xpath(xpath));
         clickAndWait(xpath);
@@ -548,7 +827,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
     private String getColumnValue(int row, String header) {
         // determine column index.
         int index = 1;
-        while (!s.getText("//table[@id='wl']/thead/tr/th[" + index + "]/a")
+        while (!s.getText("//table[@id='wl']/thead/tr/th[" + index + "]//a")
                 .equalsIgnoreCase(header)) {
             index++;
         }
@@ -577,9 +856,18 @@ public class DashboardTest extends AbstractTrialStatusTest {
     }
 
     private boolean isTrialInWorkloadTab(TrialInfo trial) {
+        final String xpath = getXPathForNciIdInWorkloadTab(trial);
+        return s.isElementPresent(xpath) && s.isVisible(xpath);
+    }
+
+    /**
+     * @param trial
+     * @return
+     */
+    private String getXPathForNciIdInWorkloadTab(TrialInfo trial) {
         final String xpath = "xpath=//table[@id='wl']//td[1]/a[normalize-space(text())='"
                 + trial.nciID.replaceFirst("NCI-", "") + "']";
-        return s.isElementPresent(xpath) && s.isVisible(xpath);
+        return xpath;
     }
 
     /**
@@ -632,6 +920,13 @@ public class DashboardTest extends AbstractTrialStatusTest {
         assertTrue(s.isVisible("workloadid"));
         assertTrue(s.isVisible("workload"));
         assertTrue(s.isVisible("wl"));
+    }
+
+    @SuppressWarnings("deprecation")
+    private void verifyDetailsTabActive() {
+        assertTrue(s.isVisible("detailsid"));
+        assertTrue(s.isVisible("details"));
+
     }
 
     @SuppressWarnings({ "deprecation", "unused", "unchecked" })
@@ -1196,6 +1491,13 @@ public class DashboardTest extends AbstractTrialStatusTest {
     @SuppressWarnings("deprecation")
     private void findAndSelectTrialInDashboard(TrialInfo trial) {
         goToDashboardSearch();
+        searchAndFindTrial(trial);
+    }
+
+    /**
+     * @param trial
+     */
+    private void searchAndFindTrial(TrialInfo trial) {
         s.type("submittedOnOrAfter", "01/01/1990");
         clickAndWait("xpath=//a//span[text()='Search']");
         clickAndWait("xpath=//table[@id='results']//td/a[normalize-space(text())='"

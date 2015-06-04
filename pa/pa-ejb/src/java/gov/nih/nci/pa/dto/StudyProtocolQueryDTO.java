@@ -139,6 +139,7 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
     private String recentHoldCategory;
     private Date recentOnHoldDate;
     private Date recentOffHoldDate;
+    private Date activeHoldDate;
     private boolean verifyData = false;
     private boolean showAccrualOption = false;
     private Date verificationDueDate;
@@ -985,6 +986,20 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
     private Date getDateOfMilestone(MilestoneCode mc) {
         MilestoneDTO milestone = findMilestoneInHistory(mc);
         return milestone != null ? milestone.getMilestoneDate() : null;
+    }
+
+    /**
+     * @return the activeHoldDate
+     */
+    public Date getActiveHoldDate() {
+        return activeHoldDate;
+    }
+
+    /**
+     * @param activeHoldDate the activeHoldDate to set
+     */
+    public void setActiveHoldDate(Date activeHoldDate) {
+        this.activeHoldDate = activeHoldDate;
     }
     
 }

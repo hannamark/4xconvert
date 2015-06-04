@@ -398,7 +398,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         query.addParameter("spIds", getProtocolIds(spDtos));
         List<Object[]> studyOnHoldList = dataAccessService.findByQuery(query);
         Map<Long, List<StudyOnhold>> studyOnHolds = generateActiveHoldMap(studyOnHoldList);
-        populateOnHoldData(spDtos, studyOnHolds);        
+        populateActiveHoldData(spDtos, studyOnHolds);        
         populateAllHolds(spDtos, studyOnHoldList);
         return spDtos;
     }    
@@ -440,7 +440,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         return studyOnHolds;
     }
 
-    private void populateOnHoldData(List<StudyProtocolQueryDTO> spDtos, Map<Long, List<StudyOnhold>> onHold) {
+    private void populateActiveHoldData(List<StudyProtocolQueryDTO> spDtos, Map<Long, List<StudyOnhold>> onHold) {
         List<StudyOnhold> sohLists = null;
         StringBuffer sb = new StringBuffer();
         StringBuffer sbDate = new StringBuffer();        
@@ -460,10 +460,11 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                                 studyOnhold.getOnholdDate()).toString())).append(PAConstants.WHITESPACE);
                     offHoldDate = studyOnhold.getOffholdDate() != null ? PAUtil
                             .normalizeDateString((studyOnhold.getOffholdDate())
-                                    .toString()) : "";                  
+                                    .toString()) : "";  
+                    spqDto.setActiveHoldDate(studyOnhold.getOnholdDate());
                 }
                 spqDto.setOnHoldReasons(sb.toString());
-                spqDto.setOnHoldDate(sbDate.toString());
+                spqDto.setOnHoldDate(sbDate.toString());                
                 spqDto.setOffHoldDate(offHoldDate);
             }
         }

@@ -1,13 +1,14 @@
 <!DOCTYPE html PUBLIC
     "-//W3C//DTD XHTML 1.1 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
+<c:set scope="request" var="disableDefaultJQuery" value="${true}" />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><c:out value="${dashboardTitle}" escapeXml="false"/></title>
 <s:head />
-
+<link href="${scriptPath}/js/jquery-ui-1.11.2.custom/jquery-ui.css"
+    rel="stylesheet" media="all" type="text/css" />
 <style type="text/css">
 div.exportlinks {
     text-align: right;
@@ -36,9 +37,32 @@ a.nciid, td.checkedOut span {
     white-space: nowrap;
 }
 
+th.filter td {
+    border: 0;
+    padding: 2px;    
+    vertical-align: middle;
+}
+
+i.fa-filter {
+    cursor: pointer;
+}
+
+#date-range-filter table td {
+    padding: 5px;
+}
+
+#date-range-filter input {
+   min-width: 150px;
+   margin-right: 5px;
+}
 
 </style>
 
+<script type="text/javascript"
+    src="${scriptPath}/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript"
+    src="${scriptPath}/js/jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
+<script type="text/javascript" src="${scriptPath}/js/select2.min.js"></script>    
 <script type="text/javascript" language="javascript"
 	src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
 <script type="text/javascript" language="javascript"
@@ -61,7 +85,8 @@ a.nciid, td.checkedOut span {
 <c:set scope="request" var="sciAbs" value="${sessionScope.isScientificAbstractor==true || suAbs}"></c:set>
 
 <script type="text/javascript" language="javascript">
-
+    jQuery.noConflict();
+    
     var interventionLookupURL = '<c:url value='/protected/popupIntsearch.action'/>';
     var diseaseLookupURL = '<c:url value='/protected/ajaxDiseaseTreesearch.action'/>';
     var diseaseNameLookupURL = '<c:url value='/protected/ajaxDiseaseTreegetName.action'/>';
@@ -388,6 +413,72 @@ a.nciid, td.checkedOut span {
                 	e.preventDefault();
                 }
             });
+            
+            // Validation Error Dialog.
+            $( "#validationError" ).dialog({
+                  autoOpen : false,
+                  modal: true,
+                  buttons: {                                        
+                  "Close": function() {
+                        $( this ).dialog( "close" );
+                      }
+                  }
+            });  
+            
+            // Variable holding filtering field name
+            var filterField;
+            
+            // Date range filter dialog.
+            $( "#date-range-filter").dialog({
+	             modal: true,
+	             autoOpen : false,
+	             appendTo: "#workload",
+	             buttons: {
+	               "OK": function() {
+	            	   var dateFrom = $("#dateFrom").val().trim();
+	            	   var dateTo = $("#dateTo").val().trim();
+	            	   if (dateFrom != '' && !isValidDate(dateFrom)) {
+	            		   $("#validationErrorText").html('Invalid From Date: '+dateFrom);
+	            		   $("#validationError").dialog('open');
+	            	   } else if (dateTo != '' && !isValidDate(dateTo)) {
+                           $("#validationErrorText").html('Invalid To Date: '+dateTo);
+                           $("#validationError").dialog('open');
+                       } else {
+                    	   // Dates are valid. Proceed with filtering.
+                    	   // However, empty dates mean cancel any existing filtering.
+                    	   $("#dateFilterField").val((dateFrom != '' || dateTo != ''?filterField:''));
+                    	   $(this).dialog("close");
+                    	   handleAction('dateRangeFilter');
+	            	   }
+	               },
+	               "Cancel": function() {
+	            	    $(this).dialog("close");
+	               }
+	             }
+            });
+            
+            // Date pickers
+            $( "#dateFrom, #dateTo" ).datepicker({
+                  showOn: "button",
+                  buttonImage: "<c:url value='/images/ico_calendar.gif'/>",
+                  buttonImageOnly: true,
+                  buttonText: "Select a date",
+                  maxDate: '+1Y'
+            });            
+        
+            // Set up filtering columns.
+            $("th.filter a" ).wrap( "<table><tr><td></td></tr></table>" );
+            $("th.filter table tbody tr" ).prepend('<td><i title="Click here to filter by a date range" class="fa fa-filter fa-2x fa-inverse"></i></td>');
+            $("i.fa-filter").click(function() {
+            	 // based on column header clicked, determine on which field to filter.
+            	 filterField = $(this).parents("th.filter").attr("class").split(" ")[1];            	 
+            	 $( "#date-range-filter").dialog('open');
+            });
+            
+            // if a filter is active, invert the color of the corresponding funnel icon.
+            if ($("#dateFilterField").val().trim().length > 0) {
+            	$("th."+$("#dateFilterField").val().replace('.','\\.')+" i.fa-filter").removeClass("fa-inverse");
+            }
 
 
         });

@@ -61,8 +61,12 @@ import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.ServletRequestAware;
 
@@ -144,16 +148,28 @@ public class DashboardAction extends AbstractCheckInOutAction implements
     private String newProcessingPriority;
     private String processingComments;
 
+    // Range Filter
+    private String dateFrom;
+    private String dateTo;
+    private String dateFilterField;
+
     private List<String> checkoutCommands = new ArrayList<String>();
     private Map<String, String> onHoldValuesMap = new HashMap<String, String>();
 
     @Override
     public String execute() {
         clearSearchSessionAttributes();
+        clearFilters();
         if (!canAccessDashboard()) {
             return NON_ABSTRACTOR_LANDING;
         }
+        return dateRangeFilter();
+    }
 
+    /**
+     * @return String
+     */
+    public String dateRangeFilter() {
         try {
             prepareWorkload();
         } catch (PAException e) {
@@ -164,14 +180,51 @@ public class DashboardAction extends AbstractCheckInOutAction implements
         return landingPage();
     }
 
+    private void clearFilters() {
+        dateFrom = null;
+        dateTo = null;
+        dateFilterField = null;
+    }
+
     private void prepareWorkload() throws PAException {
         StudyProtocolQueryCriteria criteria = buildWorkloadCriteria();
         List<StudyProtocolQueryDTO> results = protocolQueryService
                 .getStudyProtocolByCriteria(criteria, SKIP_ALTERNATE_TITLES,
                         SKIP_LAST_UPDATER_INFO, SKIP_OTHER_IDENTIFIERS);
         protocolQueryService.populateMilestoneHistory(results);
+        applyDateRangeFilter(results);
         request.getSession().setAttribute(WORKLOAD, results);
 
+    }
+
+    private void applyDateRangeFilter(final List<StudyProtocolQueryDTO> results) {
+        if (StringUtils.isBlank(dateFilterField)
+                || (StringUtils.isBlank(dateFrom) && StringUtils
+                        .isBlank(dateTo))) {
+            clearFilters();
+            return;
+        }
+        final Date rangeStart = PAUtil.dateStringToDateTime(dateFrom);
+        final Date rangeEnd = PAUtil.dateStringToDateTime(dateTo);
+        CollectionUtils.filter(results, new Predicate() {
+            @Override
+            public boolean evaluate(Object o) {
+                try {
+                    Date date = (Date) PropertyUtils.getProperty(o,
+                            dateFilterField);
+                    return date != null
+                            && (rangeStart == null
+                                    || DateUtils.isSameDay(date, rangeStart) || date
+                                        .after(rangeStart))
+                            && (rangeEnd == null
+                                    || DateUtils.isSameDay(date, rangeEnd) || date
+                                        .before(rangeEnd));
+                } catch (Exception e) {
+                    LOG.error(e, e);
+                }
+                return false;
+            }
+        });
     }
 
     private StudyProtocolQueryCriteria buildWorkloadCriteria()
@@ -1164,6 +1217,51 @@ public class DashboardAction extends AbstractCheckInOutAction implements
      */
     public void setOnHoldValuesMap(Map<String, String> onHoldValuesMap) {
         this.onHoldValuesMap = onHoldValuesMap;
+    }
+
+    /**
+     * @return the dateFrom
+     */
+    public String getDateFrom() {
+        return dateFrom;
+    }
+
+    /**
+     * @param dateFrom
+     *            the dateFrom to set
+     */
+    public void setDateFrom(String dateFrom) {
+        this.dateFrom = dateFrom;
+    }
+
+    /**
+     * @return the dateTo
+     */
+    public String getDateTo() {
+        return dateTo;
+    }
+
+    /**
+     * @param dateTo
+     *            the dateTo to set
+     */
+    public void setDateTo(String dateTo) {
+        this.dateTo = dateTo;
+    }
+
+    /**
+     * @return the dateFilterField
+     */
+    public String getDateFilterField() {
+        return dateFilterField;
+    }
+
+    /**
+     * @param dateFilterField
+     *            the dateFilterField to set
+     */
+    public void setDateFilterField(String dateFilterField) {
+        this.dateFilterField = dateFilterField;
     }
 
 }
