@@ -44,13 +44,17 @@ public abstract class AbstractTrialStatusTest extends AbstractPaSeleniumTest {
     /**
      * @param trial
      */
+    @SuppressWarnings("deprecation")
     private void selectTrialInDashboard(TrialInfo trial) {
         clickAndWait("id=dashboardMenuOption");
         if (selenium.isElementPresent("id=searchid")) {
+            clickAndWait("searchid");
             selenium.type("submittedOnOrAfter", "01/01/2000");
             clickAndWait("xpath=//div[@class='actionsrow']//a//span[text()='Search']");
-        }
-        clickAndWait("link=" + trial.nciID.replaceFirst("NCI-", ""));
+            clickAndWait("//table[@id='results']//a[normalize-space(text())='"
+                    + trial.nciID.replaceFirst("NCI-", "") + "']");
+        } else
+            clickAndWait("link=" + trial.nciID.replaceFirst("NCI-", ""));
     }
 
     @SuppressWarnings("deprecation")
