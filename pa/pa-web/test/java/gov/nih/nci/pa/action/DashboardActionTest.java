@@ -4,6 +4,7 @@
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -74,6 +75,58 @@ public class DashboardActionTest extends AbstractPaActionTest {
         assertNull(getRequest().getAttribute("toggleResultsTab"));
     }
 
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testSubmissionTypeFilter() throws PAException {
+        getRequest().setUserInRole(Constants.ADMIN_ABSTRACTOR, true);
+        getRequest().setUserInRole(Constants.SCIENTIFIC_ABSTRACTOR, true);
+        UsernameHolder.setUser("suAbstractor");
+
+        DashboardAction action = getAction();
+        action.setSubmissionTypeFilter(Arrays.asList("Abbreviated", "Complete",
+                "Amendment"));
+        assertEquals("abstractorLanding", action.filter());
+        List<StudyProtocolQueryDTO> trials = (List) getRequest().getSession()
+                .getAttribute("workload");
+        assertEquals(2, trials.size());
+
+        action = getAction();
+        action.setSubmissionTypeFilter(Arrays.asList("Abbreviated"));
+        assertEquals("abstractorLanding", action.filter());
+        trials = (List) getRequest().getSession().getAttribute("workload");
+        assertEquals(1, trials.size());
+        assertTrue(trials.get(0).isProprietaryTrial());
+
+        action = getAction();
+        action.setSubmissionTypeFilter(Arrays.asList("Amendment"));
+        assertEquals("abstractorLanding", action.filter());
+        trials = (List) getRequest().getSession().getAttribute("workload");
+        assertEquals(1, trials.size());
+        assertFalse(trials.get(0).isProprietaryTrial());
+        assertTrue(trials.get(0).getAmendmentDate() != null);
+
+        action = getAction();
+        action.setSubmissionTypeFilter(Arrays.asList("Complete"));
+        assertEquals("abstractorLanding", action.filter());
+        trials = (List) getRequest().getSession().getAttribute("workload");
+        assertEquals(0, trials.size());
+
+        action = getAction();
+        action.setSubmissionTypeFilter(new ArrayList<String>());
+        assertEquals("abstractorLanding", action.filter());
+        trials = (List) getRequest().getSession().getAttribute("workload");
+        assertEquals(2, trials.size());
+
+        action = getAction();
+        action.setSubmissionTypeFilter(Arrays.asList("Abbreviated"));
+        assertEquals("abstractorLanding", action.execute());
+        trials = (List) getRequest().getSession().getAttribute("workload");
+        assertEquals(2, trials.size());
+        assertTrue(action.getSubmissionTypeFilter().isEmpty());
+
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test
     public void testDateRangeFilter() throws PAException {
         getRequest().setUserInRole(Constants.ADMIN_ABSTRACTOR, true);
@@ -84,7 +137,7 @@ public class DashboardActionTest extends AbstractPaActionTest {
         action.setDateFilterField("activeHoldDate");
         action.setDateFrom("06/03/2015");
         action.setDateTo("06/05/2015");
-        assertEquals("abstractorLanding", action.dateRangeFilter());
+        assertEquals("abstractorLanding", action.filter());
         List<StudyProtocolQueryDTO> trials = (List) getRequest().getSession()
                 .getAttribute("workload");
         assertEquals(1, trials.size());
@@ -95,7 +148,7 @@ public class DashboardActionTest extends AbstractPaActionTest {
         action.setDateFilterField("activeHoldDate");
         action.setDateFrom("06/01/2015");
         action.setDateTo("06/01/2015");
-        assertEquals("abstractorLanding", action.dateRangeFilter());
+        assertEquals("abstractorLanding", action.filter());
         trials = (List) getRequest().getSession().getAttribute("workload");
         assertEquals(1, trials.size());
         assertEquals(PAUtil.dateStringToTimestamp("06/01/2015"), trials.get(0)
@@ -105,7 +158,7 @@ public class DashboardActionTest extends AbstractPaActionTest {
         action.setDateFilterField("activeHoldDate");
         action.setDateFrom("06/01/2015");
         action.setDateTo("06/04/2015");
-        assertEquals("abstractorLanding", action.dateRangeFilter());
+        assertEquals("abstractorLanding", action.filter());
         trials = (List) getRequest().getSession().getAttribute("workload");
         assertEquals(2, trials.size());
 
@@ -113,27 +166,27 @@ public class DashboardActionTest extends AbstractPaActionTest {
         action.setDateFilterField("activeHoldDate");
         action.setDateFrom("05/30/2015");
         action.setDateTo("05/30/2015");
-        assertEquals("abstractorLanding", action.dateRangeFilter());
+        assertEquals("abstractorLanding", action.filter());
         trials = (List) getRequest().getSession().getAttribute("workload");
         assertEquals(0, trials.size());
 
         action = getAction();
         action.setDateFilterField("activeHoldDate");
-        assertEquals("abstractorLanding", action.dateRangeFilter());
+        assertEquals("abstractorLanding", action.filter());
         trials = (List) getRequest().getSession().getAttribute("workload");
         assertEquals(2, trials.size());
 
         action = getAction();
         action.setDateFrom("05/30/2015");
         action.setDateFilterField("activeHoldDate");
-        assertEquals("abstractorLanding", action.dateRangeFilter());
+        assertEquals("abstractorLanding", action.filter());
         trials = (List) getRequest().getSession().getAttribute("workload");
         assertEquals(2, trials.size());
 
         action = getAction();
         action.setDateTo("06/04/2015");
         action.setDateFilterField("activeHoldDate");
-        assertEquals("abstractorLanding", action.dateRangeFilter());
+        assertEquals("abstractorLanding", action.filter());
         trials = (List) getRequest().getSession().getAttribute("workload");
         assertEquals(2, trials.size());
 
@@ -155,7 +208,7 @@ public class DashboardActionTest extends AbstractPaActionTest {
         action.setDateFilterField("activeHoldDate");
         action.setDateFrom("06/01/2015");
         action.setDateTo("56/01/2010");
-        assertEquals("abstractorLanding", action.dateRangeFilter());
+        assertEquals("abstractorLanding", action.filter());
         trials = (List) getRequest().getSession().getAttribute("workload");
         assertEquals(2, trials.size());
 
@@ -266,10 +319,12 @@ public class DashboardActionTest extends AbstractPaActionTest {
         dto1.setStudyProtocolId(1L);
         dto1.getAdminCheckout().setCheckoutBy("suAbstractor");
         dto1.setActiveHoldDate(PAUtil.dateStringToTimestamp("06/04/2015"));
+        dto1.setProprietaryTrial(true);
 
         StudyProtocolQueryDTO dto2 = new StudyProtocolQueryDTO();
         dto2.setStudyProtocolId(2L);
         dto2.setActiveHoldDate(PAUtil.dateStringToTimestamp("06/01/2015"));
+        dto2.setAmendmentDate(PAUtil.dateStringToTimestamp("06/01/2015"));
         when(
                 mock.getStudyProtocolByCriteria(any(StudyProtocolQueryCriteria.class)))
                 .thenReturn(new ArrayList(Arrays.asList(dto1, dto2)));

@@ -37,7 +37,7 @@ a.nciid, td.checkedOut span {
     white-space: nowrap;
 }
 
-th.filter td {
+th.filter td, th.submissionType td{
     border: 0;
     padding: 2px;    
     vertical-align: middle;
@@ -55,6 +55,22 @@ i.fa-filter {
    min-width: 150px;
    margin-right: 5px;
 }
+
+#submission-type-filter input {
+    margin-left: 20px;
+}
+
+#submission-type-filter label {
+    font-weight: normal;
+}
+
+
+#submission-type-filter label:after {
+     content: "\A"; 
+     white-space: pre;
+}
+
+
 
 </style>
 
@@ -448,7 +464,7 @@ i.fa-filter {
                     	   // However, empty dates mean cancel any existing filtering.
                     	   $("#dateFilterField").val((dateFrom != '' || dateTo != ''?filterField:''));
                     	   $(this).dialog("close");
-                    	   handleAction('dateRangeFilter');
+                    	   handleAction('filter');
 	            	   }
 	               },
 	               "Cancel": function() {
@@ -456,6 +472,23 @@ i.fa-filter {
 	               }
 	             }
             });
+            
+            // Submission type filter dialog.
+            $( "#submission-type-filter").dialog({
+                 modal: true,
+                 autoOpen : false,
+                 appendTo: "#workload",
+                 buttons: {
+                   "OK": function() {                      
+                        $(this).dialog("close");
+                        handleAction('filter');
+                   },
+                   "Cancel": function() {
+                        $(this).dialog("close");
+                   } 
+                 }
+            });
+
             
             // Date pickers
             $( "#dateFrom, #dateTo" ).datepicker({
@@ -466,7 +499,7 @@ i.fa-filter {
                   maxDate: '+1Y'
             });            
         
-            // Set up filtering columns.
+            // Set up date range filtering columns.
             $("th.filter a" ).wrap( "<table><tr><td></td></tr></table>" );
             $("th.filter table tbody tr" ).prepend('<td><i title="Click here to filter by a date range" class="fa fa-filter fa-2x fa-inverse"></i></td>');
             $("i.fa-filter").click(function() {
@@ -475,11 +508,22 @@ i.fa-filter {
             	 $( "#date-range-filter").dialog('open');
             });
             
-            // if a filter is active, invert the color of the corresponding funnel icon.
+            // if a date range filter is active, invert the color of the corresponding funnel icon.
             if ($("#dateFilterField").val().trim().length > 0) {
             	$("th."+$("#dateFilterField").val().replace('.','\\.')+" i.fa-filter").removeClass("fa-inverse");
             }
-
+            
+            // Set up submission type filter.
+            $("th.submissionType a" ).wrap( "<table><tr><td></td></tr></table>" );
+            $("th.submissionType table tbody tr" ).prepend('<td><i title="Click here to filter by submission type" class="fa fa-filter fa-2x fa-inverse submissionType"></i></td>');
+            $("i.submissionType").click(function() {                               
+                 $( "#submission-type-filter").dialog('open');
+            });
+            
+            // if a submission type filter is active, invert the color of the corresponding funnel icon.
+            if ($("input[name='submissionTypeFilter']:checked").length > 0) {
+                $("i.submissionType").removeClass("fa-inverse");
+            }
 
         });
 	}(jQuery));

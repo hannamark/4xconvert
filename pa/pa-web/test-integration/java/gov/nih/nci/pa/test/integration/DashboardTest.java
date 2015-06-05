@@ -4,12 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -36,6 +38,173 @@ public class DashboardTest extends AbstractTrialStatusTest {
     public void setUp() throws Exception {
         super.setUp();
         restoreDefaultWorkloadMilestones();
+    }
+
+    @Test
+    public void testWorkloadSubmissionTypeFilter() throws Exception {
+        deactivateAllTrials();
+
+        TrialInfo abbreviated = createAcceptedTrial();
+        TrialInfo complete = createAcceptedTrial();
+        TrialInfo amendment = createAcceptedTrial();
+        new QueryRunner().update(connection,
+                "update study_protocol set proprietary_trial_indicator=true where identifier="
+                        + abbreviated.id);
+        new QueryRunner()
+                .update(connection,
+                        "update study_protocol set proprietary_trial_indicator=false, amendment_date=now() where identifier="
+                                + amendment.id);
+
+        loginAsSuperAbstractor();
+        clickAndWait("link=Dashboard");
+        assertTrue(isTrialInWorkloadTab(abbreviated));
+        assertTrue(isTrialInWorkloadTab(complete));
+        assertTrue(isTrialInWorkloadTab(amendment));
+
+        applySubmissionTypeFilter(new String[] { "Abbreviated" });
+        assertTrue(isTrialInWorkloadTab(abbreviated));
+        assertFalse(isTrialInWorkloadTab(complete));
+        assertFalse(isTrialInWorkloadTab(amendment));
+
+        applySubmissionTypeFilter(new String[] { "Complete" });
+        assertFalse(isTrialInWorkloadTab(abbreviated));
+        assertTrue(isTrialInWorkloadTab(complete));
+        assertFalse(isTrialInWorkloadTab(amendment));
+
+        applySubmissionTypeFilter(new String[] { "Amendment" });
+        assertFalse(isTrialInWorkloadTab(abbreviated));
+        assertFalse(isTrialInWorkloadTab(complete));
+        assertTrue(isTrialInWorkloadTab(amendment));
+
+        applySubmissionTypeFilter(new String[] { "Complete", "Amendment" });
+        assertFalse(isTrialInWorkloadTab(abbreviated));
+        assertTrue(isTrialInWorkloadTab(complete));
+        assertTrue(isTrialInWorkloadTab(amendment));
+
+        applySubmissionTypeFilter(new String[] { "Abbreviated", "Complete",
+                "Amendment" });
+        assertTrue(isTrialInWorkloadTab(abbreviated));
+        assertTrue(isTrialInWorkloadTab(complete));
+        assertTrue(isTrialInWorkloadTab(amendment));
+
+        applySubmissionTypeFilter(new String[] {});
+        assertTrue(isTrialInWorkloadTab(abbreviated));
+        assertTrue(isTrialInWorkloadTab(complete));
+        assertTrue(isTrialInWorkloadTab(amendment));
+
+        // Check Refresh button
+        applySubmissionTypeFilter(new String[] { "Abbreviated" });
+        assertTrue(isTrialInWorkloadTab(abbreviated));
+        assertFalse(isTrialInWorkloadTab(complete));
+        assertFalse(isTrialInWorkloadTab(amendment));
+        clickAndWait("//input[@value='Refresh']");
+        assertTrue(isTrialInWorkloadTab(abbreviated));
+        assertTrue(isTrialInWorkloadTab(complete));
+        assertTrue(isTrialInWorkloadTab(amendment));
+
+        // Make sure sorts do not reset the filter.
+        String filledFunnelPath = "//i[@class='fa fa-filter fa-2x submissionType']";
+        applySubmissionTypeFilter(new String[] { "Abbreviated" });
+        assertTrue(isTrialInWorkloadTab(abbreviated));
+        assertFalse(isTrialInWorkloadTab(complete));
+        assertFalse(isTrialInWorkloadTab(amendment));
+        sort("Submission Type");
+        sort("Submission Type");
+        assertTrue(isTrialInWorkloadTab(abbreviated));
+        assertFalse(isTrialInWorkloadTab(complete));
+        assertFalse(isTrialInWorkloadTab(amendment));
+        assertTrue(s.isElementPresent(filledFunnelPath));
+
+        // Selecting the trial in Details tab and performing actions on it must
+        // not reset filters either.
+        clickAndWait(getXPathForNciIdInWorkloadTab(abbreviated));
+        verifyDetailsTabActive();
+        clickAndWait("link=Admin/Scientific Check Out");
+        assertTrue(s
+                .isTextPresent("Trial Check-Out (Admin and Scientific) Successful"));
+        s.click("link=Admin/Scientific Check In");
+        s.type("comments", "No comments.");
+        clickAndWait("//button[text()='Ok']");
+        assertTrue(s
+                .isTextPresent("Trial Check-In (Admin and Scientific) Successful"));
+        s.click("workloadid");
+        assertTrue(isTrialInWorkloadTab(abbreviated));
+        assertFalse(isTrialInWorkloadTab(complete));
+        assertFalse(isTrialInWorkloadTab(amendment));
+        assertTrue(s.isElementPresent(filledFunnelPath));
+
+        // Performing searches in Search tab must not reset filters.
+        s.click("searchid");
+        searchAndFindTrial(abbreviated);
+        s.click("workloadid");
+        assertTrue(isTrialInWorkloadTab(abbreviated));
+        assertFalse(isTrialInWorkloadTab(complete));
+        assertFalse(isTrialInWorkloadTab(amendment));
+        assertTrue(s.isElementPresent(filledFunnelPath));
+
+    }
+
+    private void applySubmissionTypeFilter(String[] types) {
+        clickAndWait("//input[@value='Refresh']");
+        verifyWorkfloadTabActive();
+
+        // Find Funnel for this column; it will be unselected.
+        String emptyFunnelPath = "//i[@class='fa fa-filter fa-2x fa-inverse submissionType']";
+        String filledFunnelPath = "//i[@class='fa fa-filter fa-2x submissionType']";
+        assertTrue(s.isElementPresent(emptyFunnelPath));
+
+        // Click on Funnel
+        verifySubmissionTypePopup(driver.findElement(By.xpath(emptyFunnelPath)));
+
+        // Check boxes.
+        for (WebElement el : driver.findElements(By
+                .name("submissionTypeFilter"))) {
+            if (ArrayUtils.contains(types, el.getAttribute("value"))) {
+                el.click();
+            }
+        }
+
+        // Submit.
+        clickAndWait("//div[@aria-describedby='submission-type-filter']//button//span[text()='OK']");
+
+        // If at least one option selected, funnel must turn black.
+        if (types.length > 0) {
+            assertTrue(s.isElementPresent(filledFunnelPath));
+        } else {
+            assertTrue(s.isElementPresent(emptyFunnelPath));
+        }
+    }
+
+    private void verifySubmissionTypePopup(WebElement elementThatInvokesPopup) {
+        elementThatInvokesPopup.click();
+        assertTrue(s.isVisible("submission-type-filter"));
+        assertEquals(
+                "Submission Type",
+                s.getText("//div[@aria-describedby='submission-type-filter']//span[@class='ui-dialog-title']"));
+        assertEquals("Limit the results to the following submission types:",
+                s.getText("//div[@id='submission-type-filter']/p"));
+
+        // Check 'x' icon (close)
+        clickAndWait("//div[@aria-describedby='submission-type-filter']//button[@title='Close']");
+        assertFalse(s.isVisible("submission-type-filter"));
+
+        // Check Cancel button
+        elementThatInvokesPopup.click();
+        assertTrue(s.isVisible("submission-type-filter"));
+        clickAndWait("//div[@aria-describedby='submission-type-filter']//button//span[text()='Cancel']");
+        assertFalse(s.isVisible("submission-type-filter"));
+
+        // Verify 3 options are there.
+        elementThatInvokesPopup.click();
+        assertEquals(3, driver.findElements(By.name("submissionTypeFilter"))
+                .size());
+        assertTrue(s
+                .isVisible("//label[@class='checkboxLabel' and text()='Abbreviated']"));
+        assertTrue(s
+                .isVisible("//label[@class='checkboxLabel' and text()='Amendment']"));
+        assertTrue(s
+                .isVisible("//label[@class='checkboxLabel' and text()='Complete']"));
+
     }
 
     @Test

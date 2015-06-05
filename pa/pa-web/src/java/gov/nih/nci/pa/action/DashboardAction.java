@@ -153,6 +153,9 @@ public class DashboardAction extends AbstractCheckInOutAction implements
     private String dateTo;
     private String dateFilterField;
 
+    // Submission type filter
+    private List<String> submissionTypeFilter = new ArrayList<String>();
+
     private List<String> checkoutCommands = new ArrayList<String>();
     private Map<String, String> onHoldValuesMap = new HashMap<String, String>();
 
@@ -163,13 +166,13 @@ public class DashboardAction extends AbstractCheckInOutAction implements
         if (!canAccessDashboard()) {
             return NON_ABSTRACTOR_LANDING;
         }
-        return dateRangeFilter();
+        return filter();
     }
 
     /**
      * @return String
      */
-    public String dateRangeFilter() {
+    public String filter() {
         try {
             prepareWorkload();
         } catch (PAException e) {
@@ -181,6 +184,21 @@ public class DashboardAction extends AbstractCheckInOutAction implements
     }
 
     private void clearFilters() {
+        clearDateRangeFilter();
+        clearSubmissionTypeFilter();
+    }
+
+    /**
+     * 
+     */
+    private void clearSubmissionTypeFilter() {
+        submissionTypeFilter = new ArrayList<>();
+    }
+
+    /**
+     * 
+     */
+    private void clearDateRangeFilter() {
         dateFrom = null;
         dateTo = null;
         dateFilterField = null;
@@ -193,15 +211,29 @@ public class DashboardAction extends AbstractCheckInOutAction implements
                         SKIP_LAST_UPDATER_INFO, SKIP_OTHER_IDENTIFIERS);
         protocolQueryService.populateMilestoneHistory(results);
         applyDateRangeFilter(results);
+        applySubmissionTypeFilter(results);
         request.getSession().setAttribute(WORKLOAD, results);
 
+    }
+
+    private void applySubmissionTypeFilter(List<StudyProtocolQueryDTO> results) {
+        if (!CollectionUtils.isEmpty(getSubmissionTypeFilter())) {
+            CollectionUtils.filter(results, new Predicate() {
+                @Override
+                public boolean evaluate(Object o) {
+                    StudyProtocolQueryDTO dto = (StudyProtocolQueryDTO) o;
+                    return getSubmissionTypeFilter().contains(
+                            dto.getSubmissionType());
+                }
+            });
+        }
     }
 
     private void applyDateRangeFilter(final List<StudyProtocolQueryDTO> results) {
         if (StringUtils.isBlank(dateFilterField)
                 || (StringUtils.isBlank(dateFrom) && StringUtils
                         .isBlank(dateTo))) {
-            clearFilters();
+            clearDateRangeFilter();
             return;
         }
         final Date rangeStart = PAUtil.dateStringToDateTime(dateFrom);
@@ -1262,6 +1294,21 @@ public class DashboardAction extends AbstractCheckInOutAction implements
      */
     public void setDateFilterField(String dateFilterField) {
         this.dateFilterField = dateFilterField;
+    }
+
+    /**
+     * @return the submissionTypeFilter
+     */
+    public List<String> getSubmissionTypeFilter() {
+        return submissionTypeFilter;
+    }
+
+    /**
+     * @param submissionTypeFilter
+     *            the submissionTypeFilter to set
+     */
+    public void setSubmissionTypeFilter(List<String> submissionTypeFilter) {
+        this.submissionTypeFilter = submissionTypeFilter;
     }
 
 }

@@ -27,15 +27,8 @@
 		sortable="true" media="excel csv xml"
 		property="nciIdentifierTruncated" headerClass="sortable">
 	</display:column>
-	<display:column escapeXml="false" sortable="true"
-		titleKey="studyProtocol.submissionType" headerClass="sortable">
-		<c:choose>
-			<c:when
-				test="${not empty wl.amendmentNumber || not empty wl.amendmentDate}">Amendment</c:when>
-			<c:when test="${wl.proprietaryTrial}">Abbreviated</c:when>
-			<c:otherwise>Complete</c:otherwise>
-		</c:choose>
-	</display:column>
+	<display:column sortable="true" headerClass="submissionType sortable" property="submissionType"
+		titleKey="studyProtocol.submissionType"/>	
 	<display:column title="Submitted On" sortable="true" headerClass="filter lastCreated.dateLastCreated"
 		property="lastCreated.dateLastCreated" format="{0,date,MM/dd/yyyy}" />
 	<c:if test="${sessionScope.isSuAbstractor}">
@@ -235,6 +228,15 @@
     </tr> 
   </table>
   <s:hidden name="dateFilterField" id="dateFilterField"/>
+</div>
+
+<div id="submission-type-filter" title="Submission Type" style="display: none;">
+  <p>   
+    Limit the results to the following submission types:
+  </p>  
+  <div>
+    <s:checkboxlist name="submissionTypeFilter" list="#{'Abbreviated':'Abbreviated','Amendment':'Amendment','Complete':'Complete'}"/>
+  </div>  
 </div>
 
 <div id="validationError"

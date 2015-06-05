@@ -14,11 +14,11 @@
 			<button type="button" class="btn btn-icon btn-primary"
 				data-dismiss="modal" value="Save"
 				onclick="$('comment-dialog').hide();saveCheckin('${commentCommand}');">
-				<i class="fa-save"></i>Ok</button>
+				<i class="fa fa-save"></i>Ok</button>
 			<button type="button" class="btn btn-icon btn-default"
 				data-dismiss="modal" value="Cancel"
 				onclick="$('comment-dialog').hide();">
-				<i class="fa-times-circle"></i>Cancel</button>
+				<i class="fa fa-times-circle"></i>Cancel</button>
 		</div>
 	</div>
 </div>
