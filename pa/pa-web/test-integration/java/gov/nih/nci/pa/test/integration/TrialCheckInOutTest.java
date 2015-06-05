@@ -6,7 +6,6 @@ import java.util.Iterator;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 
-
 import com.dumbster.smtp.SmtpMessage;
 
 /**
@@ -70,17 +69,25 @@ public class TrialCheckInOutTest extends AbstractTrialStatusTest {
                 .contains(
                         "Status Transition Errors were found. Please select a Super Abstractor from the list below, then click Proceed with Check-in. The system will: Check the trial in for Scientific Abstraction, Check-out the trial to the selected Super Abstractor for Admin Abstraction, Send an email to the Super Abstractor to correct the errors found. Super Abstractor:"));
 
-        assertEquals("Trial Status Validation",
-                selenium.getText("ui-dialog-title-pickSuperAbstractor").trim());
+        final String titlePath = !useDashboard ? "ui-dialog-title-pickSuperAbstractor"
+                : "//div[@aria-describedby='pickSuperAbstractor']//span[@class='ui-dialog-title']";
+        final String cancelPath = !useDashboard ? "//div[@aria-labelledby='ui-dialog-title-pickSuperAbstractor']//button//span[text()='Cancel']"
+                : "//div[@aria-describedby='pickSuperAbstractor']//button//span[text()='Cancel']";
+        final String proceedPath = !useDashboard ? "//div[@aria-labelledby='ui-dialog-title-pickSuperAbstractor']//button//span[text()='Proceed with Check-in']"
+                : "//div[@aria-describedby='pickSuperAbstractor']//button//span[text()='Proceed with Check-in']";
+
+        assertEquals("Trial Status Validation", selenium.getText(titlePath)
+                .trim());
 
         // Close the dialog and make sure it's gone.
-        selenium.click("xpath=//div[@aria-labelledby='ui-dialog-title-pickSuperAbstractor']//button//span[text()='Cancel']");
+        selenium.click(cancelPath);
         assertFalse(selenium.isVisible("pickSuperAbstractor"));
 
         // Bring the dialog back again
         selenium.click("link=Scientific Check In");
         selenium.select("supAbsId", "label=ctrpsubstractor");
-        clickAndWait("xpath=//div[@aria-labelledby='ui-dialog-title-pickSuperAbstractor']//button//span[text()='Proceed with Check-in']");
+
+        clickAndWait(proceedPath);
         assertFalse(selenium.isVisible("id=pickSuperAbstractor"));
         assertTrue(selenium.isElementPresent("comment-dialog"));
         selenium.type("comments", "Test sci check in comments");
@@ -152,13 +159,15 @@ public class TrialCheckInOutTest extends AbstractTrialStatusTest {
 
         // Bring the dialog back again
         selenium.click("link=Admin Check In");
-        clickAndWait("xpath=//div[@aria-labelledby='ui-dialog-title-transitionErrors']//button//span[text()='Trial Status History']");
+        clickAndWait(!useDashboard ? "//div[@aria-labelledby='ui-dialog-title-transitionErrors']//button//span[text()='Trial Status History']"
+                : "//div[@aria-describedby='transitionErrors']//button//span[text()='Trial Status History']");
         assertEquals("Trial Status", driver.getTitle());
     }
 
     /**
      * 
      */
+    @SuppressWarnings("deprecation")
     private void verifyTransitionErrorsPopUp() {
         // Verify pop-up (Slide 27).
         waitForElementById("transitionErrors", 5);
@@ -166,11 +175,20 @@ public class TrialCheckInOutTest extends AbstractTrialStatusTest {
         assertEquals(
                 "Status Transition Errors were found. Trial record cannot be checked-in until all Status Transition Errors have been resolved. Please use the Trial Status History button to review and make corrections.",
                 selenium.getText("transitionErrors").trim());
-        assertEquals("Trial Status Validation",
-                selenium.getText("ui-dialog-title-transitionErrors").trim());
 
+        if (s.isElementPresent("ui-dialog-title-transitionErrors"))
+            assertEquals("Trial Status Validation",
+                    selenium.getText("ui-dialog-title-transitionErrors").trim());
+        else
+            assertEquals(
+                    "Trial Status Validation",
+                    selenium.getText(
+                            "//div[@aria-describedby='transitionErrors']//span[@class='ui-dialog-title']")
+                            .trim());
         // Close the dialog and make sure it's gone.
-        selenium.click("xpath=//div[@aria-labelledby='ui-dialog-title-transitionErrors']//button//span[text()='Cancel']");
+        selenium.click(s
+                .isElementPresent("//div[@aria-labelledby='ui-dialog-title-transitionErrors']//button//span[text()='Cancel']") ? "//div[@aria-labelledby='ui-dialog-title-transitionErrors']//button//span[text()='Cancel']"
+                : "//div[@aria-describedby='transitionErrors']//button//span[text()='Cancel']");
         assertFalse(selenium.isVisible("id=transitionErrors"));
     }
 
@@ -220,8 +238,8 @@ public class TrialCheckInOutTest extends AbstractTrialStatusTest {
         selectTrial(useDashboard, trial);
 
         // proceed with check in
-        selenium.click("link=Admin Check In");
-        selenium.click("xpath=//div[@aria-labelledby='ui-dialog-title-transitionWarnings']//button//span[text()='Proceed with Check-in']");
+        s.click("link=Admin Check In");
+        s.click("//button//span[text()='Proceed with Check-in']");
         assertFalse(selenium.isVisible("id=transitionWarnings"));
         assertTrue(selenium.isElementPresent("comment-dialog"));
         selenium.type("comments", "Test admin check in comments");
@@ -250,16 +268,29 @@ public class TrialCheckInOutTest extends AbstractTrialStatusTest {
         assertEquals(
                 "Status Transition Warnings were found. Use the Trial Status History button to review and make corrections, or select Proceed with Check-in.",
                 selenium.getText("transitionWarnings").trim());
-        assertEquals("Trial Status Validation",
-                selenium.getText("ui-dialog-title-transitionWarnings").trim());
+
+        if (s.isElementPresent("ui-dialog-title-transitionWarnings"))
+            assertEquals("Trial Status Validation",
+                    selenium.getText("ui-dialog-title-transitionWarnings")
+                            .trim());
+        else
+            assertEquals(
+                    "Trial Status Validation",
+                    selenium.getText(
+                            "//div[@aria-describedby='transitionWarnings']//span[@class='ui-dialog-title']")
+                            .trim());
 
         // Close the dialog and make sure it's gone.
-        selenium.click("xpath=//div[@aria-labelledby='ui-dialog-title-transitionWarnings']//button//span[text()='Cancel']");
+        selenium.click(s
+                .isElementPresent("//div[@aria-labelledby='ui-dialog-title-transitionWarnings']") ? "//div[@aria-labelledby='ui-dialog-title-transitionWarnings']//button//span[text()='Cancel']"
+                : "//div[@aria-describedby='transitionWarnings']//button//span[text()='Cancel']");
         assertFalse(selenium.isVisible("id=transitionWarnings"));
 
         // Bring the dialog back again
         selenium.click("link=" + checkInOption);
-        clickAndWait("xpath=//div[@aria-labelledby='ui-dialog-title-transitionWarnings']//button//span[text()='Trial Status History']");
+        clickAndWait(s
+                .isElementPresent("//div[@aria-labelledby='ui-dialog-title-transitionWarnings']") ? "//div[@aria-labelledby='ui-dialog-title-transitionWarnings']//button//span[text()='Trial Status History']"
+                : "//div[@aria-describedby='transitionWarnings']//button//span[text()='Trial Status History']");
         assertEquals("Trial Status", driver.getTitle());
 
     }
