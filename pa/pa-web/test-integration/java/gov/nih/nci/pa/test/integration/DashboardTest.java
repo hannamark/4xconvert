@@ -744,14 +744,14 @@ public class DashboardTest extends AbstractTrialStatusTest {
                         + first.id);
         clickAndWait("//input[@value='Refresh']");
         sort("Submission Type");
-        verifyColumnValue(2, "NCI Trial Identifier",
-                first.nciID.replaceFirst("NCI-", ""));
         verifyColumnValue(1, "NCI Trial Identifier",
+                first.nciID.replaceFirst("NCI-", ""));
+        verifyColumnValue(2, "NCI Trial Identifier",
                 second.nciID.replaceFirst("NCI-", ""));
         sort("Submission Type");
-        verifyColumnValue(1, "NCI Trial Identifier",
-                first.nciID.replaceFirst("NCI-", ""));
         verifyColumnValue(2, "NCI Trial Identifier",
+                first.nciID.replaceFirst("NCI-", ""));
+        verifyColumnValue(1, "NCI Trial Identifier",
                 second.nciID.replaceFirst("NCI-", ""));
 
         // Sort Submitted On.
