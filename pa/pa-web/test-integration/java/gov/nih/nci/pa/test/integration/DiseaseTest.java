@@ -322,7 +322,50 @@ public class DiseaseTest extends AbstractPaSeleniumTest {
    
     } 
     
-   
+    /**
+     * Test exact search
+     */
+    @Test
+    public void testExactSearchDisease(){
+      
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("return document.getElementById('exactSearch').click()");
+        searchDisease("lung cancer");
+        
+        assertTrue(selenium.isTextPresent("1 result for \"lung cancer\""));
+        assertTrue(selenium.isTextPresent("Preferred Term"));
+        
+    }  
+    
+    /**
+     * Test exact search case insensitive
+     */
+    @Test
+    public void testExactSearchDiseaseCaseInSensitive(){
+      
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("return document.getElementById('exactSearch').click()");
+        searchDisease("LUNG CANCER");
+        
+        assertTrue(selenium.isTextPresent("1 result for \"lung cancer\""));
+        assertTrue(selenium.isTextPresent("Preferred Term"));
+        
+    } 
+    
+    /**
+     * Test exact search no result for partial search
+     */
+    @Test
+    public void testExactSearchNoResultForPartialMatch(){
+      
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("return document.getElementById('exactSearch').click()");
+        searchDisease("ung cancer");
+        
+        assertTrue(selenium.isTextPresent("0 results for \"ung cancer\""));
+       
+        
+    }  
     
     private void searchDisease(String searchName) {
         selenium.type("id=disease", searchName);

@@ -112,6 +112,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     
     private MailManagerService mailManagerService;
     
+    private boolean exactSearch;
    
 
     /**
@@ -1135,7 +1136,8 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
             PDQDiseaseDTO criteria = new PDQDiseaseDTO();
             criteria.setPreferredName(StConverter.convertToSt(diseaseSearchTerm));
             criteria.setIncludeSynonym(StConverter.convertToSt(String.valueOf(searchSynonyms)));
-            result = diseaseService.weightedSearchDisease(criteria);
+            criteria.setExactMatch(StConverter.convertToSt(String.valueOf(exactSearch)));
+             result = diseaseService.weightedSearchDisease(criteria);
         }
         ajaxResponseStream = new ByteArrayInputStream(JSONUtil.serialize(result).toString().getBytes());
         return AJAX_RESPONSE;
@@ -1238,6 +1240,20 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
      */
     public void setCurrentAltnames(List<String> currentAltnames) {
         this.currentAltnames = currentAltnames;
+    }
+
+    /**
+     * @return exactSearch
+     */
+    public boolean isExactSearch() {
+        return exactSearch;
+    }
+
+    /**
+     * @param exactSearch exactSearch
+     */
+    public void setExactSearch(boolean exactSearch) {
+        this.exactSearch = exactSearch;
     }
     
     

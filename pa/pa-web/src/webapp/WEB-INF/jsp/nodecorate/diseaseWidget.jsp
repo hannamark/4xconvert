@@ -136,6 +136,7 @@ function addDisease(diseaseid) {
                                      <div class="whiteline"></div>
                                      <div>
                                         <input type="checkbox" name="searchSynonym" id="searchSynonym"><label for="searchSynonym">Search Synonyms</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="checkbox" name="exactSearch" id="exactSearch"><label for="exactSearch">Exact match only</label>&nbsp;&nbsp;&nbsp;&nbsp;
                                         <span class="quickresults_count"><fmt:message key="diseases.widget.quickResultCount" /></span>
                                      </div>
                                  </div>

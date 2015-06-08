@@ -298,7 +298,7 @@ public class PDQDiseaseServiceTest extends AbstractHibernateTestCase {
         searchCriteria.setExactMatch(StConverter.convertToSt("false"));
         List<PDQDiseaseNode> r =  bean.weightedSearchDisease(searchCriteria);
         assertEquals(3, r.size());
-        
+            
         assertEquals("Disease",r.get(0).getName()); 
         assertEquals("A Disease",r.get(1).getName());
         assertEquals("Z Disease",r.get(2).getName());
@@ -310,6 +310,24 @@ public class PDQDiseaseServiceTest extends AbstractHibernateTestCase {
         searchCriteria.setExactMatch(StConverter.convertToSt("false"));
         r =  bean.weightedSearchDisease(searchCriteria);
         assertEquals(0, r.size());
+
+    }
+    
+    @Test
+    public void testweightedSearchExact(){
+        TestSchema.addUpdObject(TestSchema.createPdqDisease("Disease"));        
+        TestSchema.addUpdObject(TestSchema.createPdqDisease("A Disease"));
+        TestSchema.addUpdObject(TestSchema.createPdqDisease("Z Disease"));
+        TestSchema.addUpdObject(TestSchema.createPdqDisease("Test"));
+        PDQDiseaseDTO searchCriteria = new PDQDiseaseDTO();
+        searchCriteria.setPreferredName(StConverter.convertToSt("disease"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("false"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("true"));
+        List<PDQDiseaseNode> r =  bean.weightedSearchDisease(searchCriteria);
+        assertEquals(1, r.size());
+        
+        assertEquals("Disease",r.get(0).getName()); 
+      
 
     }
 }

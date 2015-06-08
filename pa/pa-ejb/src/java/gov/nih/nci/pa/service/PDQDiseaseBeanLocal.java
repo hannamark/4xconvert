@@ -307,18 +307,36 @@ public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, P
         Query query;
 
         boolean searchSyn = Boolean.valueOf(searchCriteria.getIncludeSynonym().getValue());
+        boolean exactSearch = Boolean.valueOf(searchCriteria.getExactMatch().getValue());
         String searchString = searchCriteria.getPreferredName().getValue();
         if (!searchSyn) {
-            query = session.createQuery(
-                    "select distinct pd from PDQDisease pd where lower(pd.preferredName) like "
-                    + ":name order by pd.preferredName")
-                    .setString("name", "%" + searchString.toLowerCase() + "%");
+            if (!exactSearch) {
+                query = session.createQuery(
+                        "select distinct pd from PDQDisease pd where lower(pd.preferredName) like "
+                        + ":name order by pd.preferredName")
+                        .setString("name", "%" + searchString.toLowerCase() + "%");    
+            } else {
+                
+                query = session.createQuery(
+                        "select distinct pd from PDQDisease pd where lower(pd.preferredName) = "
+                        + ":name order by pd.preferredName")
+                        .setString("name", searchString.toLowerCase());    
+            }
+            
         } else {
+            if (!exactSearch) {
             query = session
                     .createQuery(
                             "select distinct pd from PDQDisease pd  where lower(pd.preferredName) like :name "
                             + "or lower(pd.diseaseAlternames.alternateName) like :name order by pd.preferredName")
                     .setString("name", "%" + searchString.toLowerCase() + "%");
+            } else {
+                query = session
+                        .createQuery(
+                                "select distinct pd from PDQDisease pd  where lower(pd.preferredName) = :name "
+                                + "or lower(pd.diseaseAlternames.alternateName) = :name order by pd.preferredName")
+                        .setString("name", searchString.toLowerCase());
+            }
         }
 
         for (Iterator iterator = query.list().iterator(); iterator.hasNext();) {

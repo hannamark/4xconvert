@@ -92,8 +92,9 @@ var diseases = [];
             var self = this;
             var searchTerm = $('#diseasesSection .diseaserescol input[type="text"]').val().toLowerCase();
             var searchSynonym = $('#searchSynonym').is(':checked');
+            var exactSearch = $('#exactSearch').is(':checked');
             $('.ui-autocomplete').hide();
-            jQuery.get('manageTermsajaxDiseaseSearch.action?diseaseSearchTerm='+searchTerm+'&searchSynonyms='+searchSynonym, function(value) {
+            jQuery.get('manageTermsajaxDiseaseSearch.action?diseaseSearchTerm='+searchTerm+'&searchSynonyms='+searchSynonym+'&exactSearch='+exactSearch, function(value) {
             	self.displaySearchResults(value);
             });
         },
@@ -406,13 +407,13 @@ var diseases = [];
             var pdqTree = $('<div id="pdq_tree"></div>');
             $(function () {
                 $('#pdq_tree').jstree({ 
-                    'plugins' : [ 'json_data', 'themes', 'ui', 'hotkeys', 'sort' ],
+                    'plugins' : [ 'json_data', 'themes', 'ui', 'hotkeys'],
                     'core' : { 'initially_open' : $.map( FiveAmUtil.PDQPkg.tree_initially_open, function(val,i) { return 'ptid'+val }) },
                     'json_data' : {
                         'ajax': {
             		                "url"  : treeAjaxURL,            		              
                 	                "data" : function (n) {
-                        	                    return {nodeID : n.attr ? n.attr("id") : 0};
+                	                		  return {nodeID : n.attr ? n.attr("id") : 0};
                         	             	}
             		            },
                         'progressive_render' : true 
