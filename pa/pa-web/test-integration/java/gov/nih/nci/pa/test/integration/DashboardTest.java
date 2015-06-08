@@ -41,6 +41,52 @@ public class DashboardTest extends AbstractTrialStatusTest {
     }
 
     @Test
+    public void testRefreshButton() throws Exception {
+        TrialInfo complete = createAcceptedTrial();
+        loginAsSuperAbstractor();
+        clickAndWait("link=Dashboard");
+
+        // Refresh Workload tab.
+        refresh();
+        verifyWorkfloadTabActive();
+        isTrialInWorkloadTab(complete);
+        assertFalse(s.isTextPresent("Results as of " + today));
+
+        // When on Search Criteria screen, but no search results yet, Refresh
+        // still should reload Workload.
+        s.click("searchid");
+        refresh();
+        verifyWorkfloadTabActive();
+        isTrialInWorkloadTab(complete);
+        assertFalse(s.isTextPresent("Results as of " + today));
+
+        // Results tab.
+        findAndSelectTrialInDashboard(complete); // Details is active.
+        s.click("resultsid");
+        verifyResultsTabActive();
+        refresh();
+        assertTrue(s.isTextPresent("Results as of " + today));
+        verifyResultsTabActive();
+
+        // When both Workload and Results tab are there, but not selected,
+        // Results is refreshed.
+        findAndSelectTrialInDashboard(complete); // Details is active.
+        refresh();
+        assertTrue(s.isTextPresent("Results as of " + today));
+        verifyResultsTabActive();
+
+        // Even when search results are there, if Workload tab is active, it
+        // should be refreshed.
+        findAndSelectTrialInDashboard(complete); // Details is active.
+        s.click("workloadid");
+        verifyWorkfloadTabActive();
+        refresh();
+        verifyWorkfloadTabActive();
+        isTrialInWorkloadTab(complete);
+        assertFalse(s.isTextPresent("Results as of " + today));
+    }
+
+    @Test
     public void testWorkloadSubmissionTypeFilter() throws Exception {
         deactivateAllTrials();
 
@@ -97,7 +143,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         assertTrue(isTrialInWorkloadTab(abbreviated));
         assertFalse(isTrialInWorkloadTab(complete));
         assertFalse(isTrialInWorkloadTab(amendment));
-        clickAndWait("//input[@value='Refresh']");
+        refresh();
         assertTrue(isTrialInWorkloadTab(abbreviated));
         assertTrue(isTrialInWorkloadTab(complete));
         assertTrue(isTrialInWorkloadTab(amendment));
@@ -145,7 +191,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
     }
 
     private void applySubmissionTypeFilter(String[] types) {
-        clickAndWait("//input[@value='Refresh']");
+        refresh();
         verifyWorkfloadTabActive();
 
         // Find Funnel for this column; it will be unselected.
@@ -173,6 +219,13 @@ public class DashboardTest extends AbstractTrialStatusTest {
         } else {
             assertTrue(s.isElementPresent(emptyFunnelPath));
         }
+    }
+
+    /**
+     * 
+     */
+    private void refresh() {
+        clickAndWait("//input[@value='Refresh']");
     }
 
     private void verifySubmissionTypePopup(WebElement elementThatInvokesPopup) {
@@ -356,7 +409,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         clickAndWait("//div[@aria-describedby='date-range-filter']//button//span[text()='OK']");
         assertTrue(isTrialInWorkloadTab(first));
         assertFalse(isTrialInWorkloadTab(second));
-        clickAndWait("//input[@value='Refresh']");
+        refresh();
         assertTrue(isTrialInWorkloadTab(first));
         assertTrue(isTrialInWorkloadTab(second));
         assertTrue(s.isElementPresent(emptyFunnelPath));
@@ -374,7 +427,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         clickAndWait("//div[@aria-describedby='date-range-filter']//button//span[text()='OK']");
         assertTrue(isTrialInWorkloadTab(first));
         assertTrue(isTrialInWorkloadTab(second));
-        clickAndWait("//input[@value='Refresh']");
+        refresh();
 
         // Negative date range should not error out, but must produce no
         // results.
@@ -383,7 +436,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         s.type("dateTo", date1);
         clickAndWait("//div[@aria-describedby='date-range-filter']//button//span[text()='OK']");
         assertTrue(s.isTextPresent("Nothing found to display."));
-        clickAndWait("//input[@value='Refresh']");
+        refresh();
 
         // Ensure column sorting does not reset filters.
         s.click(emptyFunnelPath);
@@ -675,14 +728,14 @@ public class DashboardTest extends AbstractTrialStatusTest {
         clickAndWait("link=Dashboard");
         clickAndWait("link=" + acceptedTrial.nciID.replaceFirst("NCI-", ""));
         clickAndWait("link=Admin Check Out");
-        clickAndWait("//input[@value='Refresh']");
+        refresh();
         verifyColumnValue(1, "Checked Out By", "admin-ci (AD)");
         logoutPA();
         loginAsScientificAbstractor();
         clickAndWait("link=Dashboard");
         clickAndWait("link=" + acceptedTrial.nciID.replaceFirst("NCI-", ""));
         clickAndWait("link=Scientific Check Out");
-        clickAndWait("//input[@value='Refresh']");
+        refresh();
         verifyColumnValue(1, "Checked Out By",
                 "admin-ci (AD) scientific-ci (SC)");
 
@@ -742,7 +795,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         new QueryRunner().update(connection,
                 "update study_protocol set proprietary_trial_indicator=true where identifier="
                         + first.id);
-        clickAndWait("//input[@value='Refresh']");
+        refresh();
         sort("Submission Type");
         verifyColumnValue(1, "NCI Trial Identifier",
                 first.nciID.replaceFirst("NCI-", ""));
@@ -793,7 +846,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         // Sort by Business Days on Hold.
         addOnHold(first, "SUBMISSION_INCOM", date("05/26/2015"),
                 date("05/27/2015"), "CTRP");
-        clickAndWait("//input[@value='Refresh']");
+        refresh();
         sort("Business Days on Hold (CTRP)");
         verifyColumnValue(2, "NCI Trial Identifier",
                 first.nciID.replaceFirst("NCI-", ""));
@@ -806,7 +859,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
                 second.nciID.replaceFirst("NCI-", ""));
         addOnHold(first, "SUBMISSION_INCOM", date("05/26/2015"),
                 date("05/27/2015"), "Submitter");
-        clickAndWait("//input[@value='Refresh']");
+        refresh();
         sort("Business Days on Hold (Submitter)");
         verifyColumnValue(2, "NCI Trial Identifier",
                 first.nciID.replaceFirst("NCI-", ""));
@@ -820,7 +873,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         // Sort by On Hold Date.
         addOnHold(first, "SUBMISSION_INCOM", date("05/27/2015"), null, "CTRP");
-        clickAndWait("//input[@value='Refresh']");
+        refresh();
         sort("Current On-Hold Date");
         verifyColumnValue(2, "NCI Trial Identifier",
                 first.nciID.replaceFirst("NCI-", ""));
@@ -835,7 +888,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         // Sort by Submission Accepted
         addMilestone(first, "SUBMISSION_ACCEPTED",
                 jdbcTs(DateUtils.addDays(date, 2)));
-        clickAndWait("//input[@value='Refresh']");
+        refresh();
         sort("Accepted");
         verifyColumnValue(2, "NCI Trial Identifier",
                 first.nciID.replaceFirst("NCI-", ""));
@@ -948,9 +1001,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
     private void checkSortByMilestone(TrialInfo first, TrialInfo second,
             String column, String code) throws SQLException {
-        // Initially both trials have empty dates, verify sort does not change
-        // anything.
-        clickAndWait("//input[@value='Refresh']");
+        refresh();
         sort(column);
         String before = getColumnValue(1, "NCI Trial Identifier");
         sort(column);
@@ -959,7 +1010,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         addMilestone(first, code, jdbcTs(DateUtils.addDays(new Date(), 1)));
         addMilestone(second, code, jdbcTs(DateUtils.addDays(new Date(), 2)));
-        clickAndWait("//input[@value='Refresh']");
+        refresh();
 
         sort(column);
         verifyColumnValue(1, "NCI Trial Identifier",
@@ -1089,6 +1140,12 @@ public class DashboardTest extends AbstractTrialStatusTest {
         assertTrue(s.isVisible("workloadid"));
         assertTrue(s.isVisible("workload"));
         assertTrue(s.isVisible("wl"));
+    }
+
+    @SuppressWarnings("deprecation")
+    private void verifyResultsTabActive() {
+        assertTrue(s.isVisible("resultsid"));
+        assertTrue(s.isVisible("results"));
     }
 
     @SuppressWarnings("deprecation")

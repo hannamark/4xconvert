@@ -524,6 +524,17 @@ i.fa-filter {
             if ($("input[name='submissionTypeFilter']:checked").length > 0) {
                 $("i.submissionType").removeClass("fa-inverse");
             }
+            
+            // Set up Refresh button.
+            $("#refreshBtn").button().click(function(event) {
+                if ($("#resultsid.active").length > 0 || ($("#resultsid").length > 0 && $("#workloadid.active").length == 0)) {
+                	handleAction("search");
+                } else {
+                	$("#dateFilterField, #dateFrom, #dateTo").val(null);
+                	$("input[name='submissionTypeFilter']:checked").prop('checked', false);
+                	handleAction("execute");
+                }              
+            });
 
         });
 	}(jQuery));
@@ -686,25 +697,16 @@ i.fa-filter {
 			<s:hidden id="studyProtocolId" name="studyProtocolId" />
 			<s:hidden name="checkInReason" id="checkInReason"/>
 			<s:hidden name="superAbstractorId"/>
-			<table class="form">
-			    <c:choose>
-			     <c:when test="${dashboardSearchResults!=null}">
-                    <tr>
-                        <td align="right" nowrap="nowrap" style="padding: 0; margin: 0;">Results
-                            as of <fmt:formatDate value="${currentDate}"
-                                pattern="MM/dd/yyyy -- hh:mm:ss aaa" /> &nbsp;&nbsp; <input
-                            type="button" value="Refresh" onclick="handleAction('${suAbs?'search':'execute'}');" />
-                        </td>
-                    </tr>			     
-			     </c:when>
-			     <c:otherwise>
-                    <tr>
-                        <td align="right" nowrap="nowrap" style="padding: 0; margin: 0;"><input
-                            type="button" value="Refresh" onclick="handleAction('execute');" />
-                        </td>
-                    </tr>
-			     </c:otherwise>
-			    </c:choose>
+			<table class="form">			    
+                <tr>
+                    <td align="right" nowrap="nowrap" style="padding: 0; margin: 0;">
+                        <c:if test="${dashboardSearchResults!=null}">Results
+                        as of <fmt:formatDate value="${currentDate}"
+                            pattern="MM/dd/yyyy -- hh:mm:ss aaa" />&nbsp;&nbsp;</c:if>
+                    <input
+                        type="button" id="refreshBtn" value="Refresh"/>
+                    </td>
+                </tr>			     
 				<tr>
 					<td>
 						<ul id="maintabs" class="tabs">
