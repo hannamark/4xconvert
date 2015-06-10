@@ -33,7 +33,7 @@ def sql = """select ru.affiliated_org_id,
                     ru.user_last_updated_id
 		from csm_user cu
 		left outer join registry_user as ru on ru.csm_user_id = cu.user_id 
-		left outer join organization as org on org.assigned_identifier=ru.affiliated_org_id
+		left outer join organization as org on org.assigned_identifier::INTEGER=ru.affiliated_org_id
                 """
 
 def sourceConnectionPa = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'],
