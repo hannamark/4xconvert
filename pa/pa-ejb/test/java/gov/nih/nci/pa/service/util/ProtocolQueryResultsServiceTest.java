@@ -126,7 +126,9 @@ public class ProtocolQueryResultsServiceTest {
     private String accrual_disease_code_system;
     private String prev_dws = "SUBMITTED";
     private String submitter_org = "1";
-    private String onholdReasonCategory = "CTRP";
+    private String onholdReasonCategory = "CTRP";   
+    private Date overriddenExpectedAbstractionCompletionDate = new Date();
+    private String overriddenExpectedAbstractionCompletionComments = "";
 
     Object[] qryResult = { studyProtocolIdentifier, officialTitle,
             proprietaryTrialIndicator, recordVerificationDate,
@@ -155,7 +157,9 @@ public class ProtocolQueryResultsServiceTest {
             offhold_date, cdr_id, amendment_number, admin_checkout_date,
             scientific_checkout_date, comments, onholdDescription,
             study_source, ccr_id, accrual_disease_code_system, prev_dws,
-            submitter_org, onholdReasonCategory };
+            submitter_org, onholdReasonCategory,
+            overriddenExpectedAbstractionCompletionDate,
+            overriddenExpectedAbstractionCompletionComments };
     Object[] siteQryResult = { studyProtocolIdentifier,
             BigInteger.valueOf(MEMB_USERID) };
 

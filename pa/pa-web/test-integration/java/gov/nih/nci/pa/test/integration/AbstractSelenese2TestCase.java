@@ -185,6 +185,7 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
     }
     
     protected void waitForElementToBecomeVisible(By by, int timeoutSeconds) {
+        waitForElementToBecomeAvailable(by, timeoutSeconds);
         WebDriverWait wait = new WebDriverWait(driver, timeoutSeconds);
         wait.until(ExpectedConditions.visibilityOf(driver.findElement(by)));
     }

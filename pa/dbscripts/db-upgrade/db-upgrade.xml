@@ -1794,8 +1794,12 @@
        <comment>Update a property in pa_properties</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8455.sql"/>       
     </changeSet> 
-    <changeSet id="PO-8967" author="krylovd" runOnChange="true">
+    <changeSet id="PO-8967" author="krylovd">
        <comment>Adding PA properties to support the dashboard.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8967.sql"/>       
     </changeSet>
+    <changeSet id="PO-8995" author="krylovd">
+       <comment>Adding columns to study_protocol to hold Expected Abstraction Completion Date and Comments.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8995.sql"/>       
+    </changeSet>    
 </databaseChangeLog>

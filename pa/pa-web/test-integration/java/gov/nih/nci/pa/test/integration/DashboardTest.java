@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -17,6 +16,8 @@ import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -38,6 +39,268 @@ public class DashboardTest extends AbstractTrialStatusTest {
     public void setUp() throws Exception {
         super.setUp();
         restoreDefaultWorkloadMilestones();
+    }
+
+    @Test
+    public void testExpectedAbstractionCompletionDate() throws Exception {
+        loginAsSuperAbstractor();
+        TrialInfo trial = createAcceptedTrial();
+        clickAndWait("link=Dashboard");
+        verifyWorkfloadTabActive();
+        assertTrue(isTrialInWorkloadTab(trial));
+
+        // Initial value is 04/30/2014, which is 10 biz days after submission.
+        assertEquals("04/30/2014", getOverrideSpan(trial).getText());
+        assertEquals("none",
+                getOverrideSpan(trial).getCssValue("text-decoration"));
+
+        // Override date & comment.
+        populateOverrideInfoAndBringUpConfirmation(trial);
+
+        // 'No' should abort.
+        s.click("//div[@aria-describedby='date-override-warning']//button//span[text()='No']");
+        assertFalse(s.isVisible("date-override-warning"));
+        assertFalse(s.isVisible("abstraction-date-override"));
+
+        // Bring it up again and finally submit the override.
+        populateOverrideInfoAndBringUpConfirmation(trial);
+        s.click("//div[@aria-describedby='date-override-warning']//button//span[text()='Yes']");
+
+        // AJAX fires in background; upon completion the date should refresh and
+        // be underlined with a tooltip.
+        verifyOverrideSpanAfterSubmit(
+                trial,
+                "Moved forward to 05/01/2014 <script>window.location.href='google.com'</script><br/>");
+
+        // Refresh Dashboard and make sure the date is still underlined, etc.
+        // However, now tooltip text should have been filtered by CSS filter.
+        refresh();
+        verifyOverrideSpanAfterSubmit(
+                trial,
+                "Moved forward to 05/01/2014 script>window.location.href='google.com'script><br/>");
+
+        // Verify backend.
+        assertTrue(DateUtils.isSameDay(
+                date("05/01/2014"),
+                (Date) getTrialField(trial,
+                        "expected_abstraction_completion_date")));
+        assertEquals(
+                "Moved forward to 05/01/2014 script>window.location.href='google.com'script><br/>",
+                getTrialField(trial, "expected_abstraction_completion_comments"));
+
+        // Verify this requirement: if the new date value is the same as the
+        // calculated value, do not mark the field as being overridden.
+        getOverrideIcon(trial).click();
+        assertTrue(s.isVisible("abstraction-date-override"));
+        WebElement ok = driver
+                .findElement(By
+                        .xpath("//div[@aria-describedby='abstraction-date-override']//button//span[text()='OK']"));
+        assertEquals("05/01/2014", s.getValue("newCompletionDate"));
+        assertEquals(
+                "Moved forward to 05/01/2014 script>window.location.href='google.com'script><br/>",
+                s.getValue("newCompletionDateComments"));
+        ((JavascriptExecutor) driver)
+                .executeScript("jQuery('#newCompletionDate').val('04/30/2014')");
+        s.type("newCompletionDateComments", "Moved back.");
+        waitForElementToBecomeAvailable(
+                By.xpath("//div[@id='abstraction-date-override']//span[@class='info charcounter' and text()='989 characters left']"),
+                3); // ensure char counter working.
+        ok.click();
+        assertTrue(s.isVisible("date-override-warning"));
+        s.click("//div[@aria-describedby='date-override-warning']//button//span[text()='Yes']");
+        verifySpanNotOverriddenIfMatchesCalculatedDate(trial);
+        refresh();
+        verifySpanNotOverriddenIfMatchesCalculatedDate(trial);
+
+        // However, the date/comment are still in backend.
+        assertTrue(DateUtils.isSameDay(
+                date("04/30/2014"),
+                (Date) getTrialField(trial,
+                        "expected_abstraction_completion_date")));
+        assertEquals(
+                "Moved back.",
+                getTrialField(trial, "expected_abstraction_completion_comments"));
+
+        // Finally, make sure Admin/Scientific abstractors can't see the edit
+        // icon.
+        trial = createAcceptedTrial();
+        refresh();
+        assertTrue(isTrialInWorkloadTab(trial));
+        populateOverrideInfoAndBringUpConfirmation(trial);
+        s.click("//div[@aria-describedby='date-override-warning']//button//span[text()='Yes']");
+        verifyOverrideSpanAfterSubmit(
+                trial,
+                "Moved forward to 05/01/2014 <script>window.location.href='google.com'</script><br/>");
+
+        logoutPA();
+        loginAsAdminAbstractor();
+        clickAndWait("link=Dashboard");
+        verifyWorkfloadTabActive();
+        assertTrue(isTrialInWorkloadTab(trial));
+        verifyOverrideSpanAfterSubmit(
+                trial,
+                "Moved forward to 05/01/2014 script>window.location.href='google.com'script><br/>");
+        // However, no "edit" icon!
+        assertNull(getOverrideIcon(trial));
+
+        logoutPA();
+        loginAsScientificAbstractor();
+        clickAndWait("link=Dashboard");
+        verifyWorkfloadTabActive();
+        assertTrue(isTrialInWorkloadTab(trial));
+        verifyOverrideSpanAfterSubmit(
+                trial,
+                "Moved forward to 05/01/2014 script>window.location.href='google.com'script><br/>");
+        // However, no "edit" icon!
+        assertNull(getOverrideIcon(trial));
+
+    }
+
+    /**
+     * @param trial
+     */
+    private void verifySpanNotOverriddenIfMatchesCalculatedDate(TrialInfo trial) {
+        waitForElementToBecomeAvailable(
+                By.xpath("//span[@data-overridden='false' and @data-study-protocol-id='"
+                        + trial.id + "']"), 15);
+        assertEquals("04/30/2014", getOverrideSpan(trial).getText());
+        assertEquals("none",
+                getOverrideSpan(trial).getCssValue("text-decoration"));
+        hover(getOverrideSpan(trial));
+        pause(1000);
+        waitForElementToGoAway(
+                By.xpath("//div[@class='ui-tooltip-content' and text()='Moved back.']"),
+                5);
+    }
+
+    /**
+     * @param trial
+     * @param textExpectedInToolTip
+     */
+    private void verifyOverrideSpanAfterSubmit(TrialInfo trial,
+            final String textExpectedInToolTip) {
+        waitForElementToBecomeAvailable(
+                By.xpath("//span[@data-overridden='true' and @data-study-protocol-id='"
+                        + trial.id + "']"), 15);
+        assertEquals("05/01/2014", getOverrideSpan(trial).getText());
+        assertEquals("underline",
+                getOverrideSpan(trial).getCssValue("text-decoration"));
+        hover(getOverrideSpan(trial));
+        waitForElementToBecomeVisible(
+                By.xpath("//div[@class='ui-tooltip-content']"), 5);
+        assertEquals(textExpectedInToolTip,
+                s.getText("//div[@class='ui-tooltip-content']"));
+    }
+
+    /**
+     * @param trial
+     * @return
+     */
+    private WebElement populateOverrideInfoAndBringUpConfirmation(
+            TrialInfo trial) {
+        // Bring up edit dialog and verify
+        getOverrideIcon(trial).click();
+        assertTrue(s.isVisible("abstraction-date-override"));
+        assertEquals("Expected Abstraction Completion Date",
+                getDialogTitle("abstraction-date-override"));
+        assertEquals("Trial Submission Date: 04/16/2014",
+                s.getText("//div[@id='abstraction-date-override']/p[1]"));
+        assertEquals("Expected Abstraction Completion Date *",
+                s.getText("//div[@id='abstraction-date-override']/div[1]"));
+        assertEquals("Comments *",
+                s.getText("//div[@id='abstraction-date-override']/div[3]"));
+
+        // Make sure Close icon and Cancel button are working.
+        s.click("//div[@aria-describedby='abstraction-date-override']//button[@title='Close']");
+        assertFalse(s.isVisible("abstraction-date-override"));
+        getOverrideIcon(trial).click();
+        assertTrue(s.isVisible("abstraction-date-override"));
+        s.click("//div[@aria-describedby='abstraction-date-override']//button//span[text()='Cancel']");
+        assertFalse(s.isVisible("abstraction-date-override"));
+        getOverrideIcon(trial).click();
+        assertTrue(s.isVisible("abstraction-date-override"));
+
+        // Date field should be pre-populated with current date; Comments are
+        // empty.
+        assertEquals("04/30/2014", s.getValue("newCompletionDate"));
+        assertEquals("", s.getValue("newCompletionDateComments"));
+
+        // Check field validation.
+        WebElement ok = driver
+                .findElement(By
+                        .xpath("//div[@aria-describedby='abstraction-date-override']//button//span[text()='OK']"));
+        ok.click();
+        verifyValidationError("Please provide a comment.");
+        ((JavascriptExecutor) driver)
+                .executeScript("jQuery('#newCompletionDate').val(null)");
+        ok.click();
+        verifyValidationError("Please specify a date.");
+
+        // Verify Calendar shows up and defaults to the date selected in box.
+        ((JavascriptExecutor) driver)
+                .executeScript("jQuery('#newCompletionDate').val('04/30/2014')");
+        s.click("//input[@id='newCompletionDate']/following-sibling::img[1]");
+        waitForElementToBecomeVisible(By.id("ui-datepicker-div"), 3);
+        assertTrue(s
+                .isVisible("//div[@id='ui-datepicker-div']//td[@data-year='2014' and @data-month='3']//a[@class='ui-state-default ui-state-active' and text()='30']"));
+        s.click("//input[@id='newCompletionDate']/following-sibling::img[1]");
+        waitForElementToBecomeInvisible(By.id("ui-datepicker-div"), 3);
+
+        // Now override the date as 05/01/2014 using the calendar.
+        s.click("//input[@id='newCompletionDate']/following-sibling::img[1]");
+        waitForElementToBecomeVisible(By.id("ui-datepicker-div"), 3);
+        s.click("//div[@id='ui-datepicker-div']//a[@title='Next']"); // go
+                                                                     // forward
+                                                                     // to May
+                                                                     // 2014.
+        s.click("//div[@id='ui-datepicker-div']//td[@data-year='2014' and @data-month='4']//a[@class='ui-state-default' and text()='1']");
+        assertEquals("05/01/2014", s.getValue("newCompletionDate"));
+        s.type("newCompletionDateComments",
+                "Moved forward to 05/01/2014 <script>window.location.href='google.com'</script><br/>");
+        ok.click();
+
+        // Confirmation window should have shown up.
+        assertFalse(s.isVisible("abstraction-date-override"));
+        assertTrue(s.isVisible("date-override-warning"));
+        assertEquals("Confirm Date", getDialogTitle("date-override-warning"));
+        waitForElementToBecomeAvailable(
+                By.xpath("//span[@id='days1' and text()='10']"), 10);
+        waitForElementToBecomeAvailable(
+                By.xpath("//span[@id='days2' and text()='11']"), 10);
+        assertEquals(
+                "Warning: You are about to modify the Abstraction Completion Date as follows: From: 04/30/2014 - 10 business day(s) from trial submission To: 05/01/2014 - 11 business day(s) from trial submission Are you sure?",
+                s.getText("//div[@id='date-override-warning']")
+                        .replaceAll("\\s+", " ")
+                        .replaceAll("[^\\p{ASCII}]", "-"));
+        return ok;
+    }
+
+    private void verifyValidationError(String msg) {
+        assertTrue(s.isVisible("validationError"));
+        assertEquals("Error", getDialogTitle("validationError"));
+        assertEquals(msg, s.getText("validationErrorText"));
+        s.click("//div[@aria-describedby='validationError']//button//span[text()='Close']");
+        assertFalse(s.isVisible("validationError"));
+    }
+
+    private String getDialogTitle(String id) {
+        return s.getText("//div[@aria-describedby='" + id
+                + "']//span[@class='ui-dialog-title']");
+    }
+
+    private WebElement getOverrideIcon(TrialInfo trial) {
+        try {
+            return driver.findElement(By
+                    .xpath("//span[@data-study-protocol-id='" + trial.id
+                            + "']/following-sibling::i[1]"));
+        } catch (NoSuchElementException e) {
+            return null;
+        }
+    }
+
+    private WebElement getOverrideSpan(TrialInfo trial) {
+        return driver.findElement(By.xpath("//span[@data-study-protocol-id='"
+                + trial.id + "']"));
     }
 
     @Test

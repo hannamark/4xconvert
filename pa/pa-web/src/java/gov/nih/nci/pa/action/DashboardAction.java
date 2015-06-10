@@ -31,6 +31,7 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
@@ -48,6 +49,8 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
+import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -68,6 +71,7 @@ import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.dispatcher.StreamResult;
 import org.apache.struts2.interceptor.ServletRequestAware;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
@@ -155,6 +159,10 @@ public class DashboardAction extends AbstractCheckInOutAction implements
 
     // Submission type filter
     private List<String> submissionTypeFilter = new ArrayList<String>();
+
+    // Expected abstraction completion date.
+    private String newCompletionDate;
+    private String newCompletionDateComments;
 
     private List<String> checkoutCommands = new ArrayList<String>();
     private Map<String, String> onHoldValuesMap = new HashMap<String, String>();
@@ -784,6 +792,52 @@ public class DashboardAction extends AbstractCheckInOutAction implements
     }
 
     /**
+     * Calculates the number of business days between {@link #dateFrom} and
+     * {@link #dateTo}. Returns plain text number.
+     * 
+     * @return StreamResult
+     * @throws UnsupportedEncodingException
+     *             UnsupportedEncodingException
+     */
+    public StreamResult bizDays() throws UnsupportedEncodingException {
+        Integer days = PAUtil.getBusinessDaysBetween(
+                PAUtil.dateStringToDateTime(getDateFrom()),
+                PAUtil.dateStringToDateTime(getDateTo())) - 1;
+        return new StreamResult(new ByteArrayInputStream(days.toString()
+                .getBytes("UTF-8")));
+    }
+
+    /**
+     * updateExpectedAbstractionCompletionDate.
+     * 
+     * @return StreamResult
+     * @throws UnsupportedEncodingException
+     *             UnsupportedEncodingException
+     * @throws PAException
+     *             PAException
+     */
+    @SuppressWarnings("deprecation")
+    public StreamResult updateExpectedAbstractionCompletionDate()
+            throws UnsupportedEncodingException, PAException {
+        if (isInRole(IS_SU_ABSTRACTOR)) {
+            StudyProtocolDTO spDTO = studyProtocolService
+                    .getStudyProtocol(IiConverter
+                            .convertToIi(getStudyProtocolId()));
+            spDTO.setExpectedAbstractionCompletionDate(TsConverter
+                    .convertToTs(PAUtil
+                            .dateStringToDateTime(getNewCompletionDate())));
+            spDTO.setExpectedAbstractionCompletionComments(StConverter
+                    .convertToSt(getNewCompletionDateComments()));
+            studyProtocolService.updateStudyProtocol(spDTO);
+            return new StreamResult(new ByteArrayInputStream(
+                    StringUtils.EMPTY.getBytes("UTF-8")));
+        } else {
+            throw new PAException("Not allowed");
+        }
+
+    }
+
+    /**
      * @return the checkedOutBy
      */
     public Long getCheckedOutBy() {
@@ -1309,6 +1363,43 @@ public class DashboardAction extends AbstractCheckInOutAction implements
      */
     public void setSubmissionTypeFilter(List<String> submissionTypeFilter) {
         this.submissionTypeFilter = submissionTypeFilter;
+    }
+
+    /**
+     * @return the newCompletionDate
+     */
+    public String getNewCompletionDate() {
+        return newCompletionDate;
+    }
+
+    /**
+     * @param newCompletionDate
+     *            the newCompletionDate to set
+     */
+    public void setNewCompletionDate(String newCompletionDate) {
+        this.newCompletionDate = newCompletionDate;
+    }
+
+    /**
+     * @return the newCompletionDateComments
+     */
+    public String getNewCompletionDateComments() {
+        return newCompletionDateComments;
+    }
+
+    /**
+     * @param newCompletionDateComments
+     *            the newCompletionDateComments to set
+     */
+    public void setNewCompletionDateComments(String newCompletionDateComments) {
+        this.newCompletionDateComments = newCompletionDateComments;
+    }
+
+    /**
+     * @return the studyProtocolService
+     */
+    public StudyProtocolService getStudyProtocolService() {
+        return studyProtocolService;
     }
 
 }

@@ -189,6 +189,8 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     private Boolean nciGrant;
     private StudySourceCode studySource;
     private Organization submitingOrganization;
+    private Timestamp expectedAbstractionCompletionDate;
+    private String expectedAbstractionCompletionComments;
 
     private Set<StudyOverallStatus> studyOverallStatuses = new TreeSet<StudyOverallStatus>(
             new StudyOverallStatusComparator());
@@ -1112,7 +1114,39 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
             return -date1.compareTo(date2);
         }
     }
-    
-   
+
+    /**
+     * @return the expectedAbstractionCompletionDate
+     */
+    @Column(name = "expected_abstraction_completion_date")
+    public Timestamp getExpectedAbstractionCompletionDate() {
+        return expectedAbstractionCompletionDate;
+    }
+
+    /**
+     * @param expectedAbstractionCompletionDate
+     *            the expectedAbstractionCompletionDate to set
+     */
+    public void setExpectedAbstractionCompletionDate(
+            Timestamp expectedAbstractionCompletionDate) {
+        this.expectedAbstractionCompletionDate = expectedAbstractionCompletionDate;
+    }
+
+    /**
+     * @return the expectedAbstractionCompletionComments
+     */
+    @Column(name = "expected_abstraction_completion_comments")
+    public String getExpectedAbstractionCompletionComments() {
+        return expectedAbstractionCompletionComments;
+    }
+
+    /**
+     * @param expectedAbstractionCompletionComments
+     *            the expectedAbstractionCompletionComments to set
+     */
+    public void setExpectedAbstractionCompletionComments(
+            String expectedAbstractionCompletionComments) {
+        this.expectedAbstractionCompletionComments = expectedAbstractionCompletionComments;
+    }
     
 }

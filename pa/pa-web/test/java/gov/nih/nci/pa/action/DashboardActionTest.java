@@ -10,12 +10,18 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyVararg;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints;
@@ -24,12 +30,19 @@ import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.time.DateUtils;
+import org.apache.struts2.dispatcher.StreamResult;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.util.ReflectionUtils;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
@@ -73,6 +86,59 @@ public class DashboardActionTest extends AbstractPaActionTest {
         assertNotNull(trials);
         assertEquals(2, trials.size());
         assertNull(getRequest().getAttribute("toggleResultsTab"));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testBizDays() throws PAException, NoSuchFieldException,
+            SecurityException, IllegalArgumentException,
+            IllegalAccessException, IOException {
+        DashboardAction action = getAction();
+        action.setDateFrom("06/08/2015");
+        action.setDateTo("06/09/2015");
+        final StreamResult result = (StreamResult) action.bizDays();
+        final Field field = StreamResult.class.getDeclaredField("inputStream");
+        ReflectionUtils.makeAccessible(field);
+        assertEquals("1", IOUtils.toString((InputStream) field.get(result)));
+    }
+
+    @SuppressWarnings({ "unchecked", "unused" })
+    @Test
+    public void testUpdateExpectedAbstractionCompletionDate()
+            throws PAException, NoSuchFieldException, SecurityException,
+            IllegalArgumentException, IllegalAccessException, IOException {
+
+        getRequest().setUserInRole(Constants.SUABSTRACTOR, true);
+        UsernameHolder.setUser("suAbstractor");
+
+        DashboardAction action = getAction();
+        StudyProtocolDTO dto = action.getStudyProtocolService()
+                .getStudyProtocol(IiConverter.convertToIi(1L));
+        action.setNewCompletionDate("01/01/2015");
+        action.setNewCompletionDateComments("Comments");
+
+        final StreamResult result = (StreamResult) action
+                .updateExpectedAbstractionCompletionDate();
+    }
+
+    @SuppressWarnings({ "unchecked", "unused" })
+    @Test(expected = PAException.class)
+    public void testUpdateExpectedAbstractionCompletionDateOnlyForSuperAbstractors()
+            throws PAException, NoSuchFieldException, SecurityException,
+            IllegalArgumentException, IllegalAccessException, IOException {
+
+        getRequest().setUserInRole(Constants.ADMIN_ABSTRACTOR, true);
+        getRequest().setUserInRole(Constants.SCIENTIFIC_ABSTRACTOR, true);
+        UsernameHolder.setUser("suAbstractor");
+
+        DashboardAction action = getAction();
+        StudyProtocolDTO dto = action.getStudyProtocolService()
+                .getStudyProtocol(IiConverter.convertToIi(1L));
+        action.setNewCompletionDate("01/01/2015");
+        action.setNewCompletionDateComments("Comments");
+
+        action.updateExpectedAbstractionCompletionDate();
+
     }
 
     @SuppressWarnings("unchecked")
@@ -306,7 +372,15 @@ public class DashboardActionTest extends AbstractPaActionTest {
         action.setServletRequest(getRequest());
         action.prepare();
         action.setProtocolQueryService(getProtocolQueryMock());
+        action.setStudyProtocolService(getStudyProtocolService());
         return action;
+    }
+
+    private StudyProtocolService getStudyProtocolService() throws PAException {
+        final StudyProtocolService mock = mock(StudyProtocolService.class);
+        InterventionalStudyProtocolDTO dto = new InterventionalStudyProtocolDTO();
+        when(mock.getStudyProtocol(any(Ii.class))).thenReturn(dto);
+        return mock;
     }
 
     /**

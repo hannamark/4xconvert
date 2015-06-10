@@ -173,7 +173,8 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
             + "scientific_checkout_csm_fname, scientific_checkout_csm_lname, scientific_checkout_reg_fname, "
             + "scientific_checkout_reg_lname, onhold_reason_code, onhold_date, offhold_date, cdr_id, amendment_number,"
             + "admin_checkout_date, scientific_checkout_date, comments, onhold_reason_text, study_source, ccr_id,"
-            + "accrual_disease_code_system, previous_dwf_status_code, submiting_org_id, onhold_reason_category "
+            + "accrual_disease_code_system, previous_dwf_status_code, submiting_org_id, onhold_reason_category, "
+            + "expected_abstraction_completion_date, expected_abstraction_completion_comments "
             + "FROM rv_search_results "
             + "WHERE study_protocol_identifier IN (:ids)";
 
@@ -286,7 +287,9 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
     private static final int ACCRUAL_DISEASE_CODESYSTEM_IDX = 74;
     private static final int PREVIOUS_DWF_STATUS_CODE_IDX = 75;
     private static final int SUBMITTER_ORG_ID_IDX = 76;
-    private static final int ONHOLD_CATEGORY = 77;
+    private static final int ONHOLD_CATEGORY = 77;    
+    private static final int EXPECTED_ABSTRACTION_COMPLETION_DATE = 78;
+    private static final int EXPECTED_ABSTRACTION_COMPLETION_COMMENTS = 79;
     
     private static final int UPDATER_FIRST_NAME_IDX = 1;
     private static final int UPDATER_LAST_NAME_IDX = 2;
@@ -644,7 +647,8 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         if (row[SUBMITTER_ORG_ID_IDX] != null) {
             dto.setSubmitterOrgId(Long.valueOf((String) row[SUBMITTER_ORG_ID_IDX]));
         }
-        
+        dto.setOverriddenExpectedAbstractionCompletionDate((Date) row[EXPECTED_ABSTRACTION_COMPLETION_DATE]);
+        dto.setOverriddenExpectedAbstractionCompletionComments((String) row[EXPECTED_ABSTRACTION_COMPLETION_COMMENTS]);
         loadRecentHoldData(dto, row);
     }
 

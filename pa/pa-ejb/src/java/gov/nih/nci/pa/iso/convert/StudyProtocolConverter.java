@@ -217,6 +217,12 @@ public class StudyProtocolConverter {
         }
         studyProtocolDTO.setNciGrant(BlConverter.convertToBl(studyProtocol.getNciGrant()));
         studyProtocolDTO.setCtroOverideFlagComments(studyProtocol.getCtroOverRideFlagComments());
+        studyProtocolDTO.setExpectedAbstractionCompletionDate(TsConverter
+                .convertToTs(studyProtocol
+                        .getExpectedAbstractionCompletionDate()));
+        studyProtocolDTO.setExpectedAbstractionCompletionComments(StConverter
+                .convertToSt(studyProtocol
+                        .getExpectedAbstractionCompletionComments()));
         convertStudyAlternateTitlesToDTO(studyProtocol, studyProtocolDTO);
         return studyProtocolDTO;
     }
@@ -312,6 +318,14 @@ public class StudyProtocolConverter {
            studyProtocol.setSubmitingOrganization(org);
        }
        studyProtocol.setCtroOverRideFlagComments(studyProtocolDTO.getCtroOverideFlagComments());
+       
+        studyProtocol.setExpectedAbstractionCompletionDate(TsConverter
+                .convertToTimestamp(studyProtocolDTO
+                        .getExpectedAbstractionCompletionDate()));
+        studyProtocol.setExpectedAbstractionCompletionComments(StConverter
+                .convertToString(studyProtocolDTO
+                        .getExpectedAbstractionCompletionComments()));
+       
        return studyProtocol;
    }
 

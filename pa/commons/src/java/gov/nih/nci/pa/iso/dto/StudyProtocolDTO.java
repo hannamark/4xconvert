@@ -136,6 +136,8 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     private Cd studySource;
     private Ii submitingOgranization;
     private String ctroOverideFlagComments;
+    private Ts expectedAbstractionCompletionDate;
+    private St expectedAbstractionCompletionComments;
 
     /**
      *
@@ -617,5 +619,35 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
      */
     public void setCtroOverideFlagComments(String ctroOverideFlagComments) {
         this.ctroOverideFlagComments = ctroOverideFlagComments;
+    }
+
+    /**
+     * @return the expectedAbstractionCompletionDate
+     */
+    public Ts getExpectedAbstractionCompletionDate() {
+        return expectedAbstractionCompletionDate;
+    }
+
+    /**
+     * @param expectedAbstractionCompletionDate the expectedAbstractionCompletionDate to set
+     */
+    public void setExpectedAbstractionCompletionDate(
+            Ts expectedAbstractionCompletionDate) {
+        this.expectedAbstractionCompletionDate = expectedAbstractionCompletionDate;
+    }
+
+    /**
+     * @return the expectedAbstractionCompletionComments
+     */
+    public St getExpectedAbstractionCompletionComments() {
+        return expectedAbstractionCompletionComments;
+    }
+
+    /**
+     * @param expectedAbstractionCompletionComments the expectedAbstractionCompletionComments to set
+     */
+    public void setExpectedAbstractionCompletionComments(
+            St expectedAbstractionCompletionComments) {
+        this.expectedAbstractionCompletionComments = expectedAbstractionCompletionComments;
     }
 }

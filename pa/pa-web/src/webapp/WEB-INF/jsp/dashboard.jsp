@@ -70,7 +70,24 @@ i.fa-filter {
      white-space: pre;
 }
 
+i.fa-pencil-square-o {
+    margin-left: 5px;
+    cursor: pointer;
+}
 
+#abstraction-date-override input {
+    min-width: 200px;
+    margin-right: 5px;
+} 
+
+#abstraction-date-override textarea {
+    width: 100%;
+    min-height: 50px;
+}
+
+span[data-overridden='true'] {
+    text-decoration: underline;
+}
 
 </style>
 
@@ -106,6 +123,8 @@ i.fa-filter {
     var interventionLookupURL = '<c:url value='/protected/popupIntsearch.action'/>';
     var diseaseLookupURL = '<c:url value='/protected/ajaxDiseaseTreesearch.action'/>';
     var diseaseNameLookupURL = '<c:url value='/protected/ajaxDiseaseTreegetName.action'/>';
+    var bizDaysCalcURL = '<c:url value='/protected/dashboardbizDays.action'/>';
+    var updateCompletionDateURL = '<c:url value='/protected/dashboardupdateExpectedAbstractionCompletionDate.action'/>';
     
 	function handleAction(action) {
 		document.forms[0].action = "dashboard" + action + ".action";
@@ -491,7 +510,7 @@ i.fa-filter {
 
             
             // Date pickers
-            $( "#dateFrom, #dateTo" ).datepicker({
+            $( "#dateFrom, #dateTo, #newCompletionDate" ).datepicker({
                   showOn: "button",
                   buttonImage: "<c:url value='/images/ico_calendar.gif'/>",
                   buttonImageOnly: true,
@@ -534,6 +553,112 @@ i.fa-filter {
                 	$("input[name='submissionTypeFilter']:checked").prop('checked', false);
                 	handleAction("execute");
                 }              
+            });
+            
+            // For super abstractors, set up expected abs. date override.
+            if (suAbs) {
+            	$("span[data-expected-abstraction-completion-date]").after("<i data-expected-abstraction-completion-date=\"true\" class=\"fa fa-pencil-square-o\"></i>");
+            }            
+            $("i[data-expected-abstraction-completion-date]").click(function() {
+            	
+                var span = $(this).prev("span");
+                var submissionDate = $(span).attr('data-submission-date');
+                var currentExpectedDate = $(span).text().trim();
+                var protocolID = $(span).attr('data-study-protocol-id');
+                
+                if ($("#abstraction-date-override").dialog("instance")) {
+                    $("#abstraction-date-override").dialog("destroy");
+                }
+                $("#abstraction-date-override").dialog({
+                    modal: true,
+                    autoOpen : false,      
+                    width: 370,
+                    appendTo: "#workload",
+                    buttons: {
+                      "OK": function() {
+                    	  var newExpectedDate = $("#newCompletionDate").val().trim();
+                    	  if (newExpectedDate=='') {
+                    		  $("#validationErrorText").html('Please specify a date.');
+                              $("#validationError").dialog('open');
+                    	  } else if ($("#newCompletionDateComments").val().trim()=='') {
+                              $("#validationErrorText").html('Please provide a comment.');
+                              $("#validationError").dialog('open');
+                          } else {
+                    		  $(this).dialog("close");                   		  
+                    		  if ($("#date-override-warning").dialog("instance")) {
+                                  $("#date-override-warning").dialog("destroy");
+                              }
+                    	      $("#date-override-warning").dialog({
+                    	          modal: true,
+                    	          autoOpen: false,
+                    	          width: 510,
+                    	          buttons: {
+                    	              "Yes": function() {
+                    	                  // Finally, make an AJAX call to update the expected completion date.
+                    	                  $(this).dialog("close");
+                    	                  $.post(updateCompletionDateURL, {
+                    	                          studyProtocolId: protocolID,
+                    	                          newCompletionDate: newExpectedDate,
+                    	                          newCompletionDateComments: $("#newCompletionDateComments").val()
+                    	                      },
+                    	                      function() {
+                    	                    	  $(span).text(newExpectedDate);
+                    	                    	  if (newExpectedDate!= $(span).attr('data-calculated-abstraction-completion-date')) {	                    	                    	 
+	                    	                    	  $(span).attr('data-overridden', 'true');
+	                    	                    	  $(span).attr('title', $("#newCompletionDateComments").val());	                    	                    	 
+	                    	                    	  $(span).attr('data-comment', $("#newCompletionDateComments").val());
+                    	                    	  } else {
+                    	                    		  $(span).attr('data-overridden', 'false');
+                                                      $(span).attr('title', '');
+                    	                    	  }
+                    	                    	  $(span).tooltip();
+                    	                      }).fail(function() {
+                    	                    	  alert("Unable to save the new completion date due to a server error.");
+                    	                  });
+                    	              },
+                    	              "No": function() {
+                    	                  $(this).dialog("close");
+                    	              }
+                    	          }
+                    	      });   
+                    	      $("#date-override-warning").dialog('open');
+                    	      $("#date1").html(currentExpectedDate);
+                    	      $("#date2").html(newExpectedDate);
+                    	      $("#days1, #days2").html("<i class='fa fa-spinner fa-spin'></i>");
+                    	      // Calculate business days on the server and populate spans...
+                    	      $.get(bizDaysCalcURL, {dateFrom: submissionDate, dateTo: currentExpectedDate}, function(data) {
+                    	    	  $("#days1").text(data);
+                    	      });
+                    	      $.get(bizDaysCalcURL, {dateFrom: submissionDate, dateTo: newExpectedDate}, function(data) {
+                                  $("#days2").text(data);
+                              });
+                    	      
+                          }                                                     
+                      },
+                      "Cancel": function() {
+                           $(this).dialog("close");
+                      } 
+                    }
+               });
+               $("#abstraction-date-override").dialog('open');
+               $("#newCompletionDate" ).datepicker("option", "minDate", $.datepicker.parseDate( "mm/dd/yy", submissionDate));
+               // Pre-populate the date & comment fields with current values.
+               $("#newCompletionDate").val(currentExpectedDate);
+               $("#newCompletionDateComments").val($(span).attr('data-comment'));
+               $("#trialSubmissionDate").text(submissionDate);
+               
+            });
+            
+            // Initialize tooltips for overridden completion dates.
+            $("span[data-overridden='true']").tooltip();
+
+            
+            // Prevent form submission upon clicking enter within newCompletionDateComments.
+            $('#newCompletionDateComments').keydown(function (e) {
+                 if (e.keyCode == 13) {
+                     e.preventDefault();
+                     return false;
+                 }
             });
 
         });

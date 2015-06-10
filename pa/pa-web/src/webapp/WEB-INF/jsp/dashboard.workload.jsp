@@ -36,9 +36,20 @@
 			sortable="true" property="lastCreated.dateLastCreatedPlusTenBiz"
 			format="{0,date,MM/dd/yyyy}" />
 	</c:if>
-	<display:column title="Expected Abstraction Completion Date" headerClass="filter expectedAbstractionCompletionDate"
-		sortable="true" property="expectedAbstractionCompletionDate"
-		format="{0,date,MM/dd/yyyy}" />
+    <display:column title="Expected Abstraction Completion Date" headerClass="filter expectedAbstractionCompletionDate" escapeXml="false"    
+        sortable="true" media="html"><!--<fmt:formatDate value="${wl.expectedAbstractionCompletionDate}" pattern="yyyy-MM-dd" />-->
+        <span data-expected-abstraction-completion-date="true"
+            data-overridden="${wl.abstractionCompletionDateOverridden}"
+            data-comment="<c:out value="${wl.overriddenExpectedAbstractionCompletionComments}"/>"
+            title="<c:out value="${wl.overriddenExpectedAbstractionCompletionComments}"/>"
+            data-study-protocol-id="${wl.studyProtocolId}"
+            data-calculated-abstraction-completion-date="<fmt:formatDate value="${wl.calculatedAbstractionCompletionDate}" 
+                pattern="MM/dd/yyyy" />"            
+            data-submission-date="<fmt:formatDate value="${wl.lastCreated.dateLastCreated}" 
+                pattern="MM/dd/yyyy" />" ><fmt:formatDate value="${wl.expectedAbstractionCompletionDate}" pattern="MM/dd/yyyy" /></span>
+    </display:column>	
+	<display:column title="Expected Abstraction Completion Date" 
+	    media="excel csv xml" property="expectedAbstractionCompletionDate" format="{0,date,MM/dd/yyyy}" />
 	<c:if test="${sessionScope.isSuAbstractor}">
 		<display:column title="Business Days Since Submitted" sortable="true"
 			property="bizDaysSinceSubmitted" />
@@ -239,6 +250,37 @@
   </div>  
 </div>
 
+<div id="abstraction-date-override" title="Expected Abstraction Completion Date" style="display: none;">
+  <p>   
+    Trial Submission Date: <span id="trialSubmissionDate"></span>
+  </p>
+  <div>
+    <label for="newCompletionDate">Expected Abstraction Completion Date <span class="required">*</span></label>
+  </div>  
+  <div>
+    <s:textfield name="newCompletionDate" id="newCompletionDate" readonly="true"/>
+  </div>
+   <div>
+    <label for="newCompletionDateComments">Comments <span class="required">*</span></label>
+  </div>  
+  <div>
+    <s:textarea name="newCompletionDateComments" id="newCompletionDateComments" maxlength="1000" cssClass="charcounter"/>
+  </div>  
+</div>
+
+<div id="date-override-warning"
+        title="Confirm Date" style="display: none;">
+        <p>
+            <span class="ui-icon ui-icon-alert"
+                style="float: left; margin: 0 7px 15px 0;"></span>
+                Warning: You are about to modify the Abstraction Completion Date as follows: <br/><br/>
+                <b>From:</b> <span id="date1"></span> &mdash; <span id="days1"></span> business day(s) from trial submission</br>
+                <b>To:&nbsp;&nbsp;&nbsp;&nbsp;</b>   <span id="date2"></span> &mdash; <span id="days2"></span> business day(s) from trial submission</br></br>
+                Are you sure?
+        </p>
+</div>
+
+
 <div id="validationError"
         title="Error" style="display: none;">
         <p>
@@ -246,3 +288,5 @@
                 style="float: left; margin: 0 7px 15px 0;"></span><span id="validationErrorText"></span>
         </p>
 </div>
+
+

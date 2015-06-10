@@ -107,7 +107,24 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO
 
     private Integer bizDaysSinceSubmitted;
 
+    /**
+     * Expected date.
+     */
     private Date expectedAbstractionCompletionDate;
+    
+    /**
+     * Calculated.
+     */
+    private Date calculatedAbstractionCompletionDate;
+    
+    /**
+     * Comes from DB
+     */
+    private Date overriddenExpectedAbstractionCompletionDate;
+    /**
+     * Comes from DB
+     */
+    private String overriddenExpectedAbstractionCompletionComments;
 
     /**
      * @return link
@@ -835,7 +852,17 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO
      */
     public final Date getExpectedAbstractionCompletionDate() {
         return expectedAbstractionCompletionDate != null ? expectedAbstractionCompletionDate
-                : (expectedAbstractionCompletionDate = DateUtils.addDays(
+                : (expectedAbstractionCompletionDate = (overriddenExpectedAbstractionCompletionDate == null ? 
+                        getCalculatedAbstractionCompletionDate()
+                        : overriddenExpectedAbstractionCompletionDate));
+    }
+
+    /**
+     * @return Date
+     */
+    public final Date getCalculatedAbstractionCompletionDate() {
+        return calculatedAbstractionCompletionDate != null ? calculatedAbstractionCompletionDate
+                : (calculatedAbstractionCompletionDate = DateUtils.addDays(
                         getLastCreated().getDateLastCreatedPlusTenBiz(),
                         getBizDaysOnHoldSubmitter()));
     }
@@ -990,4 +1017,45 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO
             return COMPLETE;
         }
     }
+
+    /**
+     * @return the overriddenExpectedAbstractionCompletionDate
+     */
+    public Date getOverriddenExpectedAbstractionCompletionDate() {
+        return overriddenExpectedAbstractionCompletionDate;
+    }
+
+    /**
+     * @param overriddenExpectedAbstractionCompletionDate the overriddenExpectedAbstractionCompletionDate to set
+     */
+    public void setOverriddenExpectedAbstractionCompletionDate(
+            Date overriddenExpectedAbstractionCompletionDate) {
+        this.overriddenExpectedAbstractionCompletionDate = overriddenExpectedAbstractionCompletionDate;
+    }
+
+    /**
+     * @return the overriddenExpectedAbstractionCompletionComments
+     */
+    public String getOverriddenExpectedAbstractionCompletionComments() {
+        return overriddenExpectedAbstractionCompletionComments;
+    }
+
+    /**
+     * @param overriddenExpectedAbstractionCompletionComments
+     *            the overriddenExpectedAbstractionCompletionComments to set
+     */
+    public void setOverriddenExpectedAbstractionCompletionComments(
+            String overriddenExpectedAbstractionCompletionComments) {
+        this.overriddenExpectedAbstractionCompletionComments = overriddenExpectedAbstractionCompletionComments;
+    }
+    
+    /**
+     * @return boolean isAbstractionCompletionDateOverridden
+     */
+    public boolean isAbstractionCompletionDateOverridden() {
+        return getOverriddenExpectedAbstractionCompletionDate() != null
+                && !DateUtils.isSameDay(getCalculatedAbstractionCompletionDate(),
+                        getOverriddenExpectedAbstractionCompletionDate());
+    }
+    
 }

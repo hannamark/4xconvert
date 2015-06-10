@@ -224,7 +224,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         super.setServerHostname(TestProperties.getServerHostname());
         super.setServerPort(TestProperties.getServerPort());
         super.setDriverClass(TestProperties.getDriverClass());
-        // super.setDriverClass(PHANTOM_JS_DRIVER);
+        //super.setDriverClass(PHANTOM_JS_DRIVER);
         System.setProperty("phantomjs.binary.path",
                 TestProperties.getPhantomJsPath());
         super.setUp();
@@ -1414,6 +1414,14 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                                 + loID + "'", new ArrayHandler())[0];
     }
 
+    protected Object getTrialField(final TrialInfo trial,
+            final String dbColumnName) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        return runner.query(connection, "select " + dbColumnName
+                + " from study_protocol where identifier=" + trial.id,
+                new ArrayHandler())[0];
+    }
+
     protected Number waitForTrialToRegister(String loID, int seconds)
             throws SQLException {
         long stamp = System.currentTimeMillis();
@@ -1626,8 +1634,15 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     }
 
     protected void hover(By by) {
-        Actions action = new Actions(driver);
         WebElement elem = driver.findElement(by);
+        hover(elem);
+    }
+
+    /**
+     * @param elem
+     */
+    protected void hover(WebElement elem) {
+        Actions action = new Actions(driver);
         action.moveToElement(elem);
         action.perform();
     }
