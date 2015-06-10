@@ -35,7 +35,7 @@ public class TrialMilestonePerformanceTest extends AbstractPaSeleniumTest {
     @Test
     public void testAddTSRSentMileston() {
         loginAsSuperAbstractor();
-        checkAddMilestonePerformance("Trial Summary Report Date", 85);
+        checkAddMilestonePerformance("Trial Summary Report Date", 100);
     }
 
     private void checkAddMilestonePerformance(String milestone,
