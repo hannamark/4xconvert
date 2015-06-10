@@ -6,6 +6,7 @@ CREATE TABLE STG_DW_STUDY_OVERALL_STATUS (
     DATE_LAST_UPDATED timestamp,
     SYSTEM_CREATED boolean,
     WHY_STUDY_STOPPED character varying(2000),
+    ADDL_COMMENTS character varying(2000),
     INTERNAL_SYSTEM_ID INTEGER,
     NCI_ID character varying(255),
     USER_CREATED character varying(500),

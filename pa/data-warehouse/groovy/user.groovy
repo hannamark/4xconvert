@@ -1,12 +1,14 @@
 import groovy.sql.Sql
 
 def sql = """select ru.affiliated_org_id,
+                    org.name as affiliated_org,
                     cu.user_id, 
                     cu.login_name,
                     CASE WHEN NULLIF(ru.first_name, '') is not null THEN ru.first_name || ' ' || ru.last_name
                       WHEN NULLIF(split_part(cu.login_name, 'CN=', 2), '') is null THEN cu.login_name
                       ELSE split_part(cu.login_name, 'CN=', 2) 
                     END as name,
+                    ru.identifier,
                     ru.city,
                     ru.country,
                     ru.date_last_created,
@@ -31,6 +33,7 @@ def sql = """select ru.affiliated_org_id,
                     ru.user_last_updated_id
 		from csm_user cu
 		left outer join registry_user as ru on ru.csm_user_id = cu.user_id 
+		left outer join organization as org on org.assigned_identifier=ru.affiliated_org_id
                 """
 
 def sourceConnectionPa = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'],
@@ -43,6 +46,8 @@ def users = destinationConnection.dataSet("STG_DW_USER")
 sourceConnectionPa.eachRow(sql) { row ->
     users.add(
         AFFILIATED_ORGANIZATION_ID: row.affiliated_org_id,
+        AFFILIATED_ORGANIZATION: row.affiliated_org,
+        INTERNAL_SYSTEM_ID : row.identifier,
 		CSM_USER_ID: row.user_id,
 		LOGIN_NAME: row.login_name,
 		NAME: row.name,

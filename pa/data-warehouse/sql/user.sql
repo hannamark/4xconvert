@@ -21,6 +21,7 @@ CREATE TABLE STG_DW_USER (
     USER_NAME character varying(500),
     USER_NAME_LAST_CREATED character varying(500),
     USER_NAME_LAST_UPDATED character varying(500),
+    INTERNAL_SYSTEM_ID integer,
 	CSM_USER_ID integer NOT NULL,
 	LOGIN_NAME character varying(500) NOT NULL,
 	NAME character varying (500),

@@ -1,6 +1,8 @@
 DROP TABLE IF EXISTS STG_DW_STUDY_RECORD_OWNER;
 
 CREATE TABLE STG_DW_STUDY_RECORD_OWNER (
+    USER_ID bigint,
+    CSM_USER_ID bigint,
     ADDRESS_CITY character varying(200),
     ADDRESS_LINE character varying(2000),
     ADDRESS_STATE character varying(100),

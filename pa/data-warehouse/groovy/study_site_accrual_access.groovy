@@ -1,6 +1,7 @@
 import groovy.sql.Sql
 def sql = """
     SELECT ssaa.status_code AS access_status, 
+       ru.identifier as accrual_admin_id,
        CASE WHEN ru.first_name IS NOT NULL THEN ru.first_name || ' ' ELSE '' END 
            || CASE WHEN ru.middle_name IS NOT NULL THEN ru.middle_name || ' ' ELSE '' END 
            || CASE WHEN ru.last_name IS NOT NULL THEN ru.last_name ELSE '' END 
@@ -29,6 +30,7 @@ def ssaa = destinationConnection.dataSet("stg_dw_study_site_accrual_access");
 sourceConnection.eachRow(sql) { row ->
     ssaa.add(
         access_status: row.access_status, 
+        accrual_admin_id: row.accrual_admin_id,
         accrual_admin: row.accrual_admin, 
         date_last_created: row.date_last_created, 
         date_last_updated: row.date_last_updated, 

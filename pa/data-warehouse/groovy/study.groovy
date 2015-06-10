@@ -51,7 +51,7 @@ def sql =
             sp.official_title, oversight_country.name as oversight_country, oversight.authority_name as oversight_org_name, sp.phase_code,
             sp.phase_additional_qualifier_code, sp.phase_other_text, sp.pri_compl_date, sp.pri_compl_date_type_code,
             sp.primary_purpose_additional_qualifier_code, sp.primary_purpose_code, sp.primary_purpose_other_text, pi.first_name || ' ' || pi.last_name as principal_investigator,
-            processing_status.status_code as processing_status,
+            processing_status.status_code as processing_status, processing_status.status_date_range_low as processing_status_date,
             sp.public_description, sp.public_tittle, sp.record_verification_date, rejection.comment_text as rejection_reason,
             sp.accr_rept_meth_code,
             CASE WHEN sp.review_brd_approval_req_indicator THEN 'YES'
@@ -145,7 +145,7 @@ sourceConnection.eachRow(sql) { row ->
                     primary_completion_date: row.pri_compl_date, primary_completion_date_type_code: row.pri_compl_date_type_code,
                     primary_purpose_additional_qualifier_code: row.primary_purpose_additional_qualifier_code, primary_purpose_code: row.primary_purpose_code,
                     primary_purpose_other_text: row.primary_purpose_other_text, principal_investigator: row.principal_investigator,
-                    processing_status: row.processing_status, brief_summary: row.public_description, brief_title: row.public_tittle,
+                    processing_status: row.processing_status, processing_status_date: row.processing_status_date, brief_summary: row.public_description, brief_title: row.public_tittle,
                     record_verification_date: row.record_verification_date, rejection_reason: row.rejection_reason,
                     reporting_method_data_code: row.accr_rept_meth_code, review_board_approval_required_indicator: row.review_board_indicator,
                     section_801_indicator: row.section801_indicator, sponsor: row.sponsor, start_date: row.start_date, start_date_type_code: row.start_date_type_code,

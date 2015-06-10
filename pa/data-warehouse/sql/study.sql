@@ -81,6 +81,7 @@ CREATE TABLE STG_DW_STUDY (
     PRINCIPAL_INVESTIGATOR character varying(1000),
     PROGRAM_CODE character varying(100),
     PROCESSING_STATUS character varying(200),
+    PROCESSING_STATUS_DATE timestamp,
     BRIEF_SUMMARY character varying(5000),
     BRIEF_TITLE character varying(300),
     RECORD_VERIFICATION_DATE date,

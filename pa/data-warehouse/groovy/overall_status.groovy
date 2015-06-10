@@ -7,6 +7,7 @@ def sql = """SELECT
                 sos.status_code,
                 sos.status_date,
                 sos.comment_text,
+                sos.addl_comments,
                 sos.system_created,
                 CASE WHEN NULLIF(ru_creator.first_name, '') is not null THEN ru_creator.first_name || ' ' || ru_creator.last_name
                     WHEN NULLIF(split_part(creator.login_name, 'CN=', 2), '') is null THEN creator.login_name
@@ -44,7 +45,8 @@ sourceConnection.eachRow(sql) { row ->
             status: row.status_code,
             status_date: row.status_date,
             system_Created: row.system_created,
-            why_study_stopped: row.comment_text
+            why_study_stopped: row.comment_text,
+            addl_comments: row.addl_comments
             )
 }
 

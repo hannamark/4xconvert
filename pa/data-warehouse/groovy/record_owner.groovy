@@ -1,5 +1,7 @@
 import groovy.sql.Sql
 def sql = """SELECT
+                ru.identifier as user_id,
+                ru.csm_user_id,
 				ru.city,
 				ru.state,
 				ru.phone,
@@ -26,6 +28,8 @@ def owners = destinationConnection.dataSet("STG_DW_STUDY_RECORD_OWNER");
 
 sourceConnection.eachRow(sql) { row ->
     owners.add(
+            user_id: row.user_id,
+            csm_user_id: row.csm_user_id,
     		address_city: row.city,
     		address_line: row.address_line,
     		address_state: row.state,
