@@ -400,9 +400,9 @@ TABLE.data TH A
 { display:block; color:#000; text-decoration:none !important; }
 TABLE.data TH A:hover
 { color:#000; text-decoration:underline !important; }
-TABLE.data TH.order1 A
-{ background: url(../images/arrow_descending.gif) no-repeat right; padding-right:16px; }
 TABLE.data TH.order2 A
+{ background: url(../images/arrow_descending.gif) no-repeat right; padding-right:16px; }
+TABLE.data TH.order1 A
 { background: url(../images/arrow_ascending.gif) no-repeat right; padding-right:16px; }
 TABLE.data TD.thumbcol
 { width:90px; }
