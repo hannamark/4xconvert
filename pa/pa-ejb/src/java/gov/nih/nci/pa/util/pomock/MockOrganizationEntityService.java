@@ -137,6 +137,16 @@ public class MockOrganizationEntityService implements
                     "CTGOVDUPE");
             org.setStatusCode(CdConverter
                     .convertToCd(EntityStatusCode.NULLIFIED));
+            
+            //create org with double quote 
+            org = new OrganizationDTO();
+            org.setName(EnOnConverter.convertToEnOn("Double \" quotes\""));
+            createOrg(org);
+            
+            //create org with single quote 
+            org = new OrganizationDTO();
+            org.setName(EnOnConverter.convertToEnOn("single \' quotes\'"));
+            createOrg(org);
 
         } catch (Exception e) {
             e.printStackTrace(); // NOPMD

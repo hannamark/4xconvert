@@ -990,6 +990,33 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         driver.switchTo().defaultContent();
         assertTrue(selenium.isTextPresent("One item found"));
     }
+    
+    /**
+     * @param info
+     * @param siteCtepId
+     */
+    protected final void addSiteToTrialWithName(TrialInfo info, String name,
+            String status) {
+        clickAndWait("link=Participating Sites");
+        clickAndWait("link=Add");
+        clickAndWaitAjax("link=Look Up");
+        waitForElementById("popupFrame", 15);
+        selenium.selectFrame("popupFrame");
+        waitForElementById("orgNameSearch", 15);
+        selenium.type("orgNameSearch", name);
+        clickAndWaitAjax("link=Search");
+        waitForElementById("row", 15);
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[9]/a");
+        waitForPageToLoad();
+        driver.switchTo().defaultContent();
+        if (s.isElementPresent("siteLocalTrialIdentifier"))
+            selenium.type("siteLocalTrialIdentifier", info.uuid);
+        selenium.select("recStatus", status);
+        selenium.type("id=recStatusDate", today);
+        clickAndWait("link=Save");
+        assertTrue(selenium.isTextPresent("Record Created"));
+
+    }
 
     protected void addSOS(TrialInfo info, String code) throws SQLException {
         final String statusDate = today_midnight();

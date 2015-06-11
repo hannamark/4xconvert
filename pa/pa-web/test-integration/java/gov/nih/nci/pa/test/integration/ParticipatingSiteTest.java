@@ -136,4 +136,36 @@ public class ParticipatingSiteTest extends AbstractPaSeleniumTest {
                 s.getValue("participatingOrganizationsedit_dateClosedForAccrual"));
 
     }
+    
+    /**
+     * Creates participating sites with double quotes
+     * 
+     * @throws SQLException
+     */
+    @Test
+    public void testAddParticiptingSiteWithDoubleQuotes() throws SQLException {
+        TrialInfo info = createAndSelectTrial();
+        addSiteToTrialWithName(info, "double", "In Review");
+        
+        clickAndWait("link=Participating Sites");
+        
+        assertTrue(selenium.isTextPresent("Double \" quotes\""));
+      
+    }
+    
+    /**
+     * Creates participating sites with double quotes
+     * 
+     * @throws SQLException
+     */
+    @Test
+    public void testAddParticiptingSiteWithSingleQuotes() throws SQLException {
+        TrialInfo info = createAndSelectTrial();
+        addSiteToTrialWithName(info, "single", "In Review");
+        
+        clickAndWait("link=Participating Sites");
+        
+        assertTrue(selenium.isTextPresent("single \' quotes\'"));
+      
+    }
 }

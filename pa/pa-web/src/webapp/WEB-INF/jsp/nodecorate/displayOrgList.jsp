@@ -22,10 +22,24 @@
         <display:column escapeXml="true" title="State" property="state" headerClass="sortable" />
         <display:column escapeXml="true" title="Country" property="country" headerClass="sortable" />
         <display:column escapeXml="true" title="Zip" property="zip" headerClass="sortable" />
+        
+         <c:set var="orgName" value="${row.name}"/>
+        
         <display:column title="Action" class="action" sortable="false">
-            <a href="javascript:void(0)" class="btn" onclick="submitform('${row.id}','${func:escapeJavaScript(row.name)}')"> <span class="btn_img"><span
+        
+        <c:choose>
+          <c:when test="${fn:contains(orgName, '\\'')}">
+              <a href="javascript:void(0)" class="btn" onclick="submitform('${row.id}','${func:escapeJavaScript(row.name)}')"> <span class="btn_img"><span
                 class="add">Select</span></span></a>
+           </c:when>
+            <c:otherwise>
+           <a href="javascript:void(0)" class="btn" onclick='submitform("${row.id}","${func:escapeJavaScript(row.name)}")'> <span class="btn_img"><span
+                class="add">Select</span></span></a>
+            </c:otherwise>
+        </c:choose>
+           
         </display:column>
+        
     </display:table>
 
 </s:if>
