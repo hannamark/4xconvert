@@ -1801,5 +1801,11 @@
     <changeSet id="PO-8995" author="krylovd">
        <comment>Adding columns to study_protocol to hold Expected Abstraction Completion Date and Comments.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8995.sql"/>       
-    </changeSet>    
+    </changeSet> 
+	 <changeSet id="PO-8829" author="khandalkara">
+       <comment>Update definitions in Registry to match new OCC Data Guide definitions.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8829.sql"/>       
+    </changeSet> 
+
+
 </databaseChangeLog>
