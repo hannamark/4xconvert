@@ -104,6 +104,9 @@ INSERT INTO CSM_GROUP (GROUP_NAME, GROUP_DESC, APPLICATION_ID, UPDATE_DATE) VALU
 ;
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'ejbclient'), (select group_id from csm_group where group_name = 'client'))
 ;
+-- PO-9006
+INSERT INTO CSM_GROUP (GROUP_NAME, GROUP_DESC, APPLICATION_ID, UPDATE_DATE) VALUES ('ResultsAbstractor', 'Results reporting and tracking abstractor role', (select application_id from csm_application where application_name = 'pa'),current_date);
+
 -- password is pass
 INSERT INTO CSM_USER(LOGIN_NAME, FIRST_NAME, LAST_NAME, PASSWORD, UPDATE_DATE) VALUES ('firebird-nci', 'Firebird', 'Nci','BtM2GNbiAxg=',current_date)
 ;
@@ -136,6 +139,7 @@ INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_
 insert into CSM_REMOTE_GROUP (GROUP_ID, APPLICATION_ID, GRID_GROUPER_URL, GRID_GROUPER_GROUP_NAME) values ((select group_id from csm_group where group_name = 'Abstractor'), (select application_id from csm_application where application_name = 'pa'), 'https://grouper.training.cagrid.org:8443/wsrf/services/cagrid/GridGrouper', 'COPPA:PA:Abstractor');
 insert into CSM_REMOTE_GROUP (GROUP_ID, APPLICATION_ID, GRID_GROUPER_URL, GRID_GROUPER_GROUP_NAME) values ((select group_id from csm_group where group_name = 'Submitter'), (select application_id from csm_application where application_name = 'pa'), 'https://grouper.training.cagrid.org:8443/wsrf/services/cagrid/GridGrouper', 'COPPA:PA:Submitter');
 insert into CSM_REMOTE_GROUP (GROUP_ID, APPLICATION_ID, GRID_GROUPER_URL, GRID_GROUPER_GROUP_NAME) values ((select group_id from csm_group where group_name = 'RegAdmin'), (select application_id from csm_application where application_name = 'pa'), 'https://grouper.training.cagrid.org:8443/wsrf/services/cagrid/GridGrouper', 'COPPA:PA:RegAdmin');
+insert into CSM_REMOTE_GROUP (GROUP_ID, APPLICATION_ID, GRID_GROUPER_URL, GRID_GROUPER_GROUP_NAME) values ((select group_id from csm_group where group_name = 'ResultsAbstractor'), (select application_id from csm_application where application_name = 'pa'), 'https://grouper.training.cagrid.org:8443/wsrf/services/cagrid/GridGrouper', 'COPPA:PA:ResultsAbstractor');
 --The below commands are commented out due to the fact that they are added later in the upgrade process. If you need to add these remote group mappings, do so manually.
 --insert into CSM_REMOTE_GROUP (GROUP_ID, APPLICATION_ID, GRID_GROUPER_URL, GRID_GROUPER_GROUP_NAME) values ((select group_id from csm_group where group_name = 'gridClient'), (select application_id from csm_application where application_name = 'pa'), 'https://grouper.training.cagrid.org:8443/wsrf/services/cagrid/GridGrouper', 'COPPA:PA:GridClient');
 --insert into CSM_REMOTE_GROUP (GROUP_ID, APPLICATION_ID, GRID_GROUPER_URL, GRID_GROUPER_GROUP_NAME) values ((select group_id from csm_group where group_name = 'Outcomes'), (select application_id from csm_application where application_name = 'pa'), 'https://grouper.training.cagrid.org:8443/wsrf/services/cagrid/GridGrouper', 'COPPA:PA:Outcomes');

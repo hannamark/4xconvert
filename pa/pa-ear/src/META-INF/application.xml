@@ -34,4 +34,5 @@
   <security-role><role-name>SiteAdmin</role-name></security-role>
   <security-role><role-name>SuAbstractor</role-name></security-role>
   <security-role><role-name>Submitter</role-name></security-role>
+  <security-role><role-name>ResultsAbstractor</role-name></security-role>
 </application>

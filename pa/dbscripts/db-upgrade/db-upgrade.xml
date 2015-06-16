@@ -1809,5 +1809,9 @@
     <changeSet id="PO-9005" author="krylovd" runOnChange="true">
        <comment>Adding more PA properties to support the dashboard.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9005.sql"/>       
+    </changeSet>
+    <changeSet id="PO-9006" author="gunnikrishnan">
+       <comment>Adding the scientific and administrative roles to the db.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9006.sql"/>
     </changeSet>        
 </databaseChangeLog>

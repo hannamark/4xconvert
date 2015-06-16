@@ -228,6 +228,7 @@
             <role-name>ScientificAbstractor</role-name>
             <role-name>SuAbstractor</role-name>
             <role-name>ReportViewer</role-name>
+            <role-name>ResultsAbstractor</role-name>            
         </auth-constraint>
     </security-constraint>
     <security-constraint>
@@ -288,7 +289,10 @@
         <description>Administrative Abstractor for trials registered in CTRP.</description>
         <role-name>AdminAbstractor</role-name>
     </security-role>
-
+    <security-role>
+        <description>Results reporting and tracking abstractor.</description>
+        <role-name>ResultsAbstractor</role-name>
+    </security-role>
     <login-config>
         <auth-method>CAGRIDFORM</auth-method>
         <form-login-config>
