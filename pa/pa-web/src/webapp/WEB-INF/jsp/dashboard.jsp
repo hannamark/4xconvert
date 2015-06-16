@@ -742,6 +742,9 @@ a.count {
                         $("#milestoneTypelast").prop("checked", true);
                         $("#milestone").val($(this).attr('data-milestone'));
                         $("#onHoldStatus").val('notonhold');
+                        $("#processingStatus").val(["Submitted","Amendment Submitted","Accepted",
+                                                    "Abstracted","Verification Pending","Abstraction Verified Response",
+                                                    "Abstraction Verified No Response"]);
                         handleAction('search');
             });
 

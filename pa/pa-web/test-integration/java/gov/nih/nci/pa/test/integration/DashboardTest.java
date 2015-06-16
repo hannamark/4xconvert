@@ -90,11 +90,20 @@ public class DashboardTest extends AbstractTrialStatusTest {
         // Verify Total.
         verifyMilestoneCountTotal(total);
 
-        // The panel must only display off-hold trials. Add hold to each trials
+        // The panel must only display off-hold non-rejected non-terminated
+        // trials. Add these conditions to trials
         // and verify zero counts.
         for (TrialInfo trial : allTrialsCreated) {
-            addOnHold(trial, "SUBMISSION_INCOM", date("06/01/2015"), null,
-                    "Submitter");
+            int index = allTrialsCreated.indexOf(trial);
+            if (index % 3 == 0) {
+                addOnHold(trial, "SUBMISSION_INCOM", date("06/01/2015"), null,
+                        "Submitter");
+            } else if (index % 3 == 1) {
+                addDWS(trial, "REJECTED");
+            } else {
+                addDWS(trial, "SUBMISSION_TERMINATED");
+            }
+
         }
         refresh();
         waitForElementToBecomeVisible(
