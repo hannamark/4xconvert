@@ -1,13 +1,19 @@
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.pa.enums.MilestoneCode;
+
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Random;
 
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -29,6 +35,7 @@ import org.openqa.selenium.interactions.Actions;
 @SuppressWarnings({ "deprecation", "unused", "unchecked" })
 public class DashboardTest extends AbstractTrialStatusTest {
 
+    private static final String MILESTONES_TO_COUNT = "Submission Received Date,Submission Acceptance Date,Administrative Processing Start Date,Ready for Administrative QC Date,Administrative QC Start Date,Scientific Processing Start Date,Ready for Scientific QC Date,Scientific QC Start Date,Ready for Trial Summary Report Date";
     private static final int OP_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 10000
             : 2000;
 
@@ -39,6 +46,149 @@ public class DashboardTest extends AbstractTrialStatusTest {
     public void setUp() throws Exception {
         super.setUp();
         restoreDefaultWorkloadMilestones();
+    }
+
+    @Test
+    public void testMilestonesInProgressPanel() throws Exception {
+        deactivateAllTrials();
+
+        int total = 0;
+        final LinkedHashMap<String, List<TrialInfo>> map = new LinkedHashMap<>();
+        final List<TrialInfo> allTrialsCreated = new ArrayList<>();
+        for (String code : MILESTONES_TO_COUNT.split(",")) {
+            List<TrialInfo> trials = registerBunchOfTrials(code);
+            map.put(code, trials);
+            allTrialsCreated.addAll(trials);
+            total += trials.size();
+        }
+
+        // Now test the panel.
+        loginAsSuperAbstractor();
+        clickAndWait("link=Dashboard");
+        assertTrue(s.isElementPresent("count_panels_container"));
+        waitForElementToBecomeVisible(
+                By.xpath("//table[@id='milestones_in_progress_table']//tr[@id='Total']"),
+                20);
+
+        // Panel must be collapsible, but initially open.
+        verifyPanelWidget("milestones_in_progress", "Milestones in Progress");
+
+        // Verify table headers.
+        assertEquals("Milestone (Excluding on-hold)",
+                s.getText("//table[@id='milestones_in_progress_table']//th[1]"));
+        assertEquals("Trial Count",
+                s.getText("//table[@id='milestones_in_progress_table']//th[2]"));
+
+        // Verify counts and their order.
+        int row = 1;
+        for (String code : MILESTONES_TO_COUNT.split(",")) {
+            List<TrialInfo> trials = map.get(code);
+            verifyMilestoneCountRow(row, code, trials);
+            row++;
+        }
+
+        // Verify Total.
+        verifyMilestoneCountTotal(total);
+
+        // The panel must only display off-hold trials. Add hold to each trials
+        // and verify zero counts.
+        for (TrialInfo trial : allTrialsCreated) {
+            addOnHold(trial, "SUBMISSION_INCOM", date("06/01/2015"), null,
+                    "Submitter");
+        }
+        refresh();
+        waitForElementToBecomeVisible(
+                By.xpath("//table[@id='milestones_in_progress_table']//tr[@id='Total']"),
+                20);
+        row = 1;
+        for (String code : MILESTONES_TO_COUNT.split(",")) {
+            verifyMilestoneCountRow(row, code, ListUtils.EMPTY_LIST);
+            row++;
+        }
+        verifyMilestoneCountTotal(0);
+
+        // Non-super abstractors should not see the panel.
+        logoutPA();
+        loginAsAdminAbstractor();
+        clickAndWait("link=Dashboard");
+        assertFalse(s.isElementPresent("count_panels_container"));
+        logoutPA();
+        loginAsScientificAbstractor();
+        clickAndWait("link=Dashboard");
+        assertFalse(s.isElementPresent("count_panels_container"));
+        logoutPA();
+
+    }
+
+    private void verifyMilestoneCountTotal(int total) {
+        assertEquals(
+                "Total",
+                s.getText("//table[@id='milestones_in_progress_table']//tr[@id='Total']/td[1]"));
+        assertEquals(
+                total + "",
+                s.getText("//table[@id='milestones_in_progress_table']//tr[@id='Total']/td[2]"));
+
+    }
+
+    private void verifyMilestoneCountRow(int row, String code,
+            List<TrialInfo> trials) {
+        // Code and count are correct.
+        assertEquals(
+                code,
+                s.getText("//table[@id='milestones_in_progress_table']/tbody/tr["
+                        + row + "]/td[1]"));
+        final String countLinkPath = "//table[@id='milestones_in_progress_table']/tbody/tr["
+                + row + "]/td[2]/a";
+        assertEquals(trials.size() + "", s.getText(countLinkPath));
+
+        // Count link is highlighted
+        assertEquals("underline", driver.findElement(By.xpath(countLinkPath))
+                .getCssValue("text-decoration"));
+
+        // Clicking on link should bring up Results.
+        clickAndWait(countLinkPath);
+        verifyResultsTabActive();
+        if (trials.isEmpty()) {
+            assertTrue(s.isTextPresent("Nothing found to display."));
+        } else if (trials.size() == 1) {
+            assertTrue(s.isTextPresent("One trial found."));
+        } else {
+            assertTrue(s.isTextPresent(trials.size()
+                    + " trials found, displaying all trials."));
+        }
+        for (TrialInfo trialInfo : trials) {
+            assertTrue(isTrialInResultsTab(trialInfo));
+        }
+        s.click("workloadid");
+
+    }
+
+    private void verifyPanelWidget(String id, String title) {
+        assertTrue(s.isElementPresent(id));
+        assertEquals(title, s.getText("//div[@id='" + id + "']/h3").trim());
+        assertTrue(s.isVisible("//div[@id='" + id + "']/div[@role='tabpanel']"));
+
+        // Collapse.
+        s.click("//div[@id='" + id + "']/h3");
+        waitForElementToBecomeInvisible(
+                By.xpath("//div[@id='" + id + "']/div[@role='tabpanel']"), 5);
+
+        // Expand
+        s.click("//div[@id='" + id + "']/h3");
+        waitForElementToBecomeVisible(
+                By.xpath("//div[@id='" + id + "']/div[@role='tabpanel']"), 5);
+
+    }
+
+    private List<TrialInfo> registerBunchOfTrials(String code)
+            throws SQLException {
+        List<TrialInfo> list = new ArrayList<>();
+        for (int i = 1; i < new Random().nextFloat() * 6; i++) {
+            TrialInfo trial = createAcceptedTrial();
+            addMilestone(trial, MilestoneCode.getByCode(code).name());
+            list.add(trial);
+        }
+        return list;
     }
 
     @Test
@@ -1220,9 +1370,9 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         // Export banner must be at top and at bottom.
         assertTrue(s
-                .isElementPresent("xpath=//div[@id='workload']/div[@class='exportlinks'][1]"));
+                .isElementPresent("xpath=//div[@id='wl_table_container']/div[@class='exportlinks'][1]"));
         assertTrue(s
-                .isElementPresent("xpath=//div[@id='workload']/div[@class='exportlinks'][2]/preceding-sibling::table[@id='wl']"));
+                .isElementPresent("xpath=//div[@id='wl_table_container']/div[@class='exportlinks'][2]/preceding-sibling::table[@id='wl']"));
 
         // Finally, download CSV.
         if (!isPhantomJS()) {
@@ -1323,6 +1473,8 @@ public class DashboardTest extends AbstractTrialStatusTest {
      * @throws SQLException
      */
     private void restoreDefaultWorkloadMilestones() throws SQLException {
+        changePaProperty("dashboard.counts.milestones", MILESTONES_TO_COUNT);
+
         changePaProperty(
                 "dashboard.workload.milestones",
                 "Submission Received Date,Submission Acceptance Date,Submission Reactivated Date,Administrative Processing Start Date,Administrative Processing Completed Date,Ready for Administrative QC Date,Administrative QC Start Date,Administrative QC Completed Date,Scientific Processing Start Date,Scientific Processing Completed Date,Ready for Scientific QC Date,Scientific QC Start Date,Scientific QC Completed Date,Ready for Trial Summary Report Date");
@@ -1341,6 +1493,17 @@ public class DashboardTest extends AbstractTrialStatusTest {
     private boolean isTrialInWorkloadTab(TrialInfo trial) {
         final String xpath = getXPathForNciIdInWorkloadTab(trial);
         return s.isElementPresent(xpath) && s.isVisible(xpath);
+    }
+
+    private boolean isTrialInResultsTab(TrialInfo trial) {
+        final String xpath = getXPathForNciIdInResultsTab(trial);
+        return s.isElementPresent(xpath) && s.isVisible(xpath);
+    }
+
+    private String getXPathForNciIdInResultsTab(TrialInfo trial) {
+        final String xpath = "xpath=//table[@id='results']//td[1]/a[normalize-space(text())='"
+                + trial.nciID.replaceFirst("NCI-", "") + "']";
+        return xpath;
     }
 
     /**

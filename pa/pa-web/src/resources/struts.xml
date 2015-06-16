@@ -241,7 +241,12 @@
                 <param name="namespace">../report</param>
                 <param name="actionName">studyProtocolshowCriteria</param>                
             </result> 
-        </action>    
+        </action>
+        
+        <action name="trialCounts*" class="gov.nih.nci.pa.action.TrialCountsAction" method="{1}">
+            <interceptor-ref name="paDefaultInterceptor" />
+            <result type="stream"/>
+        </action>
     
         <action name="organizationsSearch*" class="gov.nih.nci.pa.action.OrganizationSearchAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />            

@@ -5,97 +5,137 @@
 <c:set scope="request" var="disableDefaultJQuery" value="${true}" />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><c:out value="${dashboardTitle}" escapeXml="false"/></title>
+<title><c:out value="${dashboardTitle}" escapeXml="false" /></title>
 <s:head />
 <link href="${scriptPath}/js/jquery-ui-1.11.2.custom/jquery-ui.css"
-    rel="stylesheet" media="all" type="text/css" />
+	rel="stylesheet" media="all" type="text/css" />
+<link rel="stylesheet" type="text/css"
+	href="${scriptPath}/js/DataTables-1.10.4/media/css/jquery.dataTables.min.css">
 <style type="text/css">
 div.exportlinks {
-    text-align: right;
+	text-align: right;
 }
 
 li[role="treeitem"] table td:first-child {
-   width: 100%;
+	width: 100%;
 }
 
 li[role="treeitem"] table td:nth-child(2) {
-   min-width: 10px;
-   padding-left: 5px;
-   vertical-align: middle;
+	min-width: 10px;
+	padding-left: 5px;
+	vertical-align: middle;
 }
 
 i.fa-sitemap {
-    cursor: default;
+	cursor: default;
 }
 
-div#workload {
-    max-width: 930px;
-    overflow-x: scroll;
+#wl_table_container {
+	max-width: 930px;
+	overflow-x: scroll;
 }
 
-a.nciid, td.checkedOut span {
-    white-space: nowrap;
+a.nciid,td.checkedOut span {
+	white-space: nowrap;
 }
 
-th.filter td, th.submissionType td{
-    border: 0;
-    padding: 2px;    
-    vertical-align: middle;
+th.filter td,th.submissionType td {
+	border: 0;
+	padding: 2px;
+	vertical-align: middle;
 }
 
 i.fa-filter {
-    cursor: pointer;
+	cursor: pointer;
 }
 
 #date-range-filter table td {
-    padding: 5px;
+	padding: 5px;
 }
 
 #date-range-filter input {
-   min-width: 150px;
-   margin-right: 5px;
+	min-width: 150px;
+	margin-right: 5px;
 }
 
 #submission-type-filter input {
-    margin-left: 20px;
+	margin-left: 20px;
 }
 
 #submission-type-filter label {
-    font-weight: normal;
+	font-weight: normal;
 }
 
-
 #submission-type-filter label:after {
-     content: "\A"; 
-     white-space: pre;
+	content: "\A";
+	white-space: pre;
 }
 
 i.fa-pencil-square-o {
-    margin-left: 5px;
-    cursor: pointer;
+	margin-left: 5px;
+	cursor: pointer;
 }
 
 #abstraction-date-override input {
-    min-width: 200px;
-    margin-right: 5px;
-} 
+	min-width: 200px;
+	margin-right: 5px;
+}
 
 #abstraction-date-override textarea {
-    width: 100%;
-    min-height: 50px;
+	width: 100%;
+	min-height: 50px;
 }
 
 span[data-overridden='true'] {
-    text-decoration: underline;
+	text-decoration: underline;
+}
+
+#count_panels_container {
+	margin-top: 20px;
+	padding-bottom: 20px;
+}
+
+div.trial_count_panel {
+	width: 45%;
+}
+
+h3.ui-accordion-header {
+    font-weight: bold;
+}
+
+table.dataTable thead th {
+    padding: 0px 0px 0px 0px;
+    font-size: 90%;
+}
+
+table.dataTable tbody td {
+    padding: 3px 3px;
+}
+
+#Total td {
+    font-weight: bold;
+}
+
+#Total td a {
+    text-decoration: none;
+    color: black;
+    cursor: auto;
+}
+
+a.count {
+    color: #386EBF;
+    cursor: pointer;
 }
 
 </style>
 
 <script type="text/javascript"
-    src="${scriptPath}/js/jquery-1.11.1.min.js"></script>
+	src="${scriptPath}/js/jquery-1.11.1.min.js"></script>
 <script type="text/javascript"
-    src="${scriptPath}/js/jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
-<script type="text/javascript" src="${scriptPath}/js/select2.min.js"></script>    
+	src="${scriptPath}/js/jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
+<script type="text/javascript" src="${scriptPath}/js/select2.min.js"></script>
+<script type="text/javascript" charset="utf8"
+	src="${scriptPath}/js/DataTables-1.10.4/media/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" language="javascript"
 	src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
 <script type="text/javascript" language="javascript"
@@ -112,10 +152,14 @@ span[data-overridden='true'] {
 	src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
 
 <c:url value="/protected/popupOrglookuporgs.action" var="lookupOrgUrl" />
-<c:url value="/protected/popupDisdisplayDiseaseWidget.action" var="diseaseWidgetURL" />
-<c:set scope="request" var="suAbs" value="${sessionScope.isSuAbstractor==true}"></c:set>
-<c:set scope="request" var="admAbs" value="${sessionScope.isAdminAbstractor==true || suAbs}"></c:set>
-<c:set scope="request" var="sciAbs" value="${sessionScope.isScientificAbstractor==true || suAbs}"></c:set>
+<c:url value="/protected/popupDisdisplayDiseaseWidget.action"
+	var="diseaseWidgetURL" />
+<c:set scope="request" var="suAbs"
+	value="${sessionScope.isSuAbstractor==true}"></c:set>
+<c:set scope="request" var="admAbs"
+	value="${sessionScope.isAdminAbstractor==true || suAbs}"></c:set>
+<c:set scope="request" var="sciAbs"
+	value="${sessionScope.isScientificAbstractor==true || suAbs}"></c:set>
 
 <script type="text/javascript" language="javascript">
     jQuery.noConflict();
@@ -125,6 +169,7 @@ span[data-overridden='true'] {
     var diseaseNameLookupURL = '<c:url value='/protected/ajaxDiseaseTreegetName.action'/>';
     var bizDaysCalcURL = '<c:url value='/protected/dashboardbizDays.action'/>';
     var updateCompletionDateURL = '<c:url value='/protected/dashboardupdateExpectedAbstractionCompletionDate.action'/>';
+    var milestonesInProgressURL = '<c:url value='/protected/trialCountsmilestonesInProgress.action'/>';
     
 	function handleAction(action) {
 		document.forms[0].action = "dashboard" + action + ".action";
@@ -330,7 +375,7 @@ span[data-overridden='true'] {
         	
             // Add the Export option: CSV | Excel to the top of the search results in all Dashboards.
             // This is not supported by Display Tag, so doing this manually.
-            $( "#workload > div.exportlinks" ).clone().insertBefore( "#workload > span.pagebanner" );
+            $( "#wl_table_container > div.exportlinks" ).clone().insertBefore( "#wl_table_container > span.pagebanner" );
             $( "#results > div.exportlinks" ).clone().insertBefore( "#results > span.pagebanner" );
         	
         	// Init Select2 boxes.
@@ -660,6 +705,45 @@ span[data-overridden='true'] {
                      return false;
                  }
             });
+            
+            // Set up Milestones in Progress panel.   
+            $("#milestones_in_progress" ).accordion({
+                collapsible: true,
+                heightStyle: "content"
+            });
+            $('#milestones_in_progress_table').DataTable({
+            	"bFilter" : false,
+                "paging":   false,                
+                "searching":   false,
+                "info":     false,
+                "order": [],
+                "columns": [
+                            { "data": "milestone" },
+                            { "data": "count" }                            
+                        ],
+                "ajax" : {
+                    "url" : milestonesInProgressURL,
+                    "type" : "POST"
+                },
+                "columnDefs" : [ {
+                    "targets" : 1,
+                    "render" : function(data, type, r, meta) {
+                        var content = '<a class="count" data-milestone="'+r.milestone+'">'+r.count+'</a>';
+                        return content;
+                    }
+                }]
+            }); 
+            $('#milestones_in_progress_table tbody')
+                .on(
+                    'click',
+                    "a[data-milestone][data-milestone!='Total']",
+                    function() {
+                    	resetValues();                        
+                        $("#milestoneTypelast").prop("checked", true);
+                        $("#milestone").val($(this).attr('data-milestone'));
+                        $("#onHoldStatus").val('notonhold');
+                        handleAction('search');
+            });
 
         });
 	}(jQuery));
@@ -799,20 +883,20 @@ span[data-overridden='true'] {
 <body>
 	<!-- main content begins-->
 	<h1>
-	    <c:out value="${dashboardTitle}" escapeXml="false"/>		
+		<c:out value="${dashboardTitle}" escapeXml="false" />
 	</h1>
-    <c:if test="${sessionScope.isAdminAbstractor==true}">
-    <c:set var="topic" scope="request" value="dashboardadmin" />
-    </c:if>
-    <c:if test="${sessionScope.isScientificAbstractor==true}">
-    <c:set var="topic" scope="request" value="dashboardsci" />
-    </c:if>
+	<c:if test="${sessionScope.isAdminAbstractor==true}">
+		<c:set var="topic" scope="request" value="dashboardadmin" />
+	</c:if>
+	<c:if test="${sessionScope.isScientificAbstractor==true}">
+		<c:set var="topic" scope="request" value="dashboardsci" />
+	</c:if>
     <c:if test="${sessionScope.isAdminAbstractor==true && sessionScope.isScientificAbstractor==true}">
-    <c:set var="topic" scope="request" value="dashboardadmin-sci" />
-    </c:if>
-    <c:if test="${sessionScope.isSuAbstractor==true}">
-    <c:set var="topic" scope="request" value="dashboardsuper" />
-    </c:if>
+		<c:set var="topic" scope="request" value="dashboardadmin-sci" />
+	</c:if>
+	<c:if test="${sessionScope.isSuAbstractor==true}">
+		<c:set var="topic" scope="request" value="dashboardsuper" />
+	</c:if>
 	<jsp:useBean id="currentDate" class="java.util.Date" scope="request"></jsp:useBean>
 	<div class="box" id="filters">
 		<s:form id="dashboardForm">
@@ -820,241 +904,249 @@ span[data-overridden='true'] {
 			<pa:sucessMessage />
 			<pa:failureMessage />
 			<s:hidden id="studyProtocolId" name="studyProtocolId" />
-			<s:hidden name="checkInReason" id="checkInReason"/>
-			<s:hidden name="superAbstractorId"/>
-			<table class="form">			    
-                <tr>
-                    <td align="right" nowrap="nowrap" style="padding: 0; margin: 0;">
-                        <c:if test="${dashboardSearchResults!=null}">Results
+			<s:hidden name="checkInReason" id="checkInReason" />
+			<s:hidden name="superAbstractorId" />
+			<table class="form">
+				<tr>
+					<td align="right" nowrap="nowrap" style="padding: 0; margin: 0;">
+						<c:if test="${dashboardSearchResults!=null}">Results
                         as of <fmt:formatDate value="${currentDate}"
                             pattern="MM/dd/yyyy -- hh:mm:ss aaa" />&nbsp;&nbsp;</c:if>
                     <input
-                        type="button" id="refreshBtn" value="Refresh"/>
-                    </td>
-                </tr>			     
+						type="button" id="refreshBtn" value="Refresh" />
+					</td>
+				</tr>
 				<tr>
 					<td>
 						<ul id="maintabs" class="tabs">
-						    <li><a id="workloadid" href="#workload">Workload</a></li>
-						    <c:if test="${suAbs}">
-							     <li><a id="searchid" href="#search">Search Criteria</a></li>
+							<li><a id="workloadid" href="#workload">Workload</a></li>
+							<c:if test="${suAbs}">
+								<li><a id="searchid" href="#search">Search Criteria</a></li>
 							</c:if>
 							<c:if test="${dashboardSearchResults!=null}">
-								<li><a id="resultsid" href="#results" >${suAbs?'Results':'Trial List'}</a></li>
+								<li><a id="resultsid" href="#results">${suAbs?'Results':'Trial List'}</a></li>
 							</c:if>
 							<c:if test="${queryDTO!=null}">
 								<li><a id="detailsid" href="#details">Details</a></li>
 							</c:if>
 						</ul>
 						<div id="tabboxwrapper">
-						   <div id="workload" class="box" style="${toggleResultsTab || toggleDetailsTab?'display:none;':''}">
-						      <jsp:include page="dashboard.workload.jsp"/>
-                           </div>
-						    <c:if test="${suAbs}">						    
+							<div id="workload" class="box"
+								style="${toggleResultsTab || toggleDetailsTab?'display:none;':''}">
+								<div id="wl_table_container">
+									<jsp:include page="dashboard.workload.jsp" />
+								</div>
+								<c:if test="${suAbs}">
+									<div id="count_panels_container">
+										<jsp:include page="dashboard.trialcounts.jsp" />
+									</div>
+								</c:if>
+							</div>
+							<c:if test="${suAbs}">
 							<div id="search" class="box"
 								style="display:none;">
-								<table class="form">
-                                    <tr>
-                                        <td scope="row" class="label"><label for="assignee"><fmt:message
-                                                    key="dashboard.assignedTo" /></label></td>
-                                        <td><s:select id="assignee" name="assignee"
-                                                list="assigneeList" headerKey="" headerValue=""
-                                                value="assignee" cssStyle="width:206px" /></td>
-                                    </tr>								
-									<tr>
-										<td scope="row" class="label"><label for="checkedOutBy"><fmt:message
-													key="dashboard.checkedOutBy" /></label></td>
-										<td><s:select id="checkedOutBy" name="checkedOutBy"
-												list="checkedOutByList" headerKey="" headerValue=""
-												value="checkedOutBy" cssStyle="width:206px" /></td>
-										<td scope="row" class="label"><label
-											for="processingPriority"><fmt:message
-													key="dashboard.processingPriority" /></label></td>
-										<td rowspan="2"><s:select id="processingPriority"
-												name="processingPriority"
-												list="#{'1':'1 - High','2':'2 - Normal','3':'3 - Low'}"
-												headerKey="" headerValue="All" multiple="true"
-												value="processingPriority" cssStyle="width:206px" /></td>
+									<table class="form">
+										<tr>
+											<td scope="row" class="label"><label for="assignee"><fmt:message
+														key="dashboard.assignedTo" /></label></td>
+											<td><s:select id="assignee" name="assignee"
+													list="assigneeList" headerKey="" headerValue=""
+													value="assignee" cssStyle="width:206px" /></td>
+										</tr>
+										<tr>
+											<td scope="row" class="label"><label for="checkedOutBy"><fmt:message
+														key="dashboard.checkedOutBy" /></label></td>
+											<td><s:select id="checkedOutBy" name="checkedOutBy"
+													list="checkedOutByList" headerKey="" headerValue=""
+													value="checkedOutBy" cssStyle="width:206px" /></td>
+											<td scope="row" class="label"><label
+												for="processingPriority"><fmt:message
+														key="dashboard.processingPriority" /></label></td>
+											<td rowspan="2"><s:select id="processingPriority"
+													name="processingPriority"
+													list="#{'1':'1 - High','2':'2 - Normal','3':'3 - Low'}"
+													headerKey="" headerValue="All" multiple="true"
+													value="processingPriority" cssStyle="width:206px" /></td>
 
-									</tr>
-									<tr>
-										<td scope="row" class="label"><label
-											for="submittedOnOrBefore"><fmt:message
-													key="dashboard.submittedBetween" /></label></td>
+										</tr>
+										<tr>
+											<td scope="row" class="label"><label
+												for="submittedOnOrBefore"><fmt:message
+														key="dashboard.submittedBetween" /></label></td>
 										<label for="submittedOnOrAfter" style="display:none">Do not show </label>
-										<td nowrap="nowrap"><s:textfield id="submittedOnOrAfter"
-												name="submittedOnOrAfter" maxlength="10" size="10" /> <a
-											href="javascript:showCal('Cal1')"> <img
-												src="${pageContext.request.contextPath}/images/ico_calendar.gif"
-												alt="Select Date" class="calendaricon"/></a> &nbsp;and&nbsp; <s:textfield
-												id="submittedOnOrBefore" name="submittedOnOrBefore"
-												maxlength="10" size="10" /> <a
-											href="javascript:showCal('Cal2')"> <img
-												src="${pageContext.request.contextPath}/images/ico_calendar.gif"
-												alt="Select Date" class="calendaricon" />
-										</a></td>
-									</tr>
-									<tr>
-									<tr>
-										<td scope="row" class="label"><label for="submittedBy"><fmt:message
-													key="dashboard.submittedBy" /></label></td>
-										<td nowrap="nowrap"><s:textfield id="submittedBy"
-												name="submittedBy" cssStyle="width:100%;" readonly="true" /></td>
-										<td align="left" colspan="2">
-											<ul style="margin-top: -1px;">
-												<li style="padding-left: 0"><a
-													href="javascript:void(0)" class="btn"
-													onclick="lookupSubmittingOrg();"><span class="btn_img"><span
-															class="organization">Look Up</span></span></a></li>
-											</ul> <s:hidden name="submittingOrgId" id="submittingOrgId" />
-										</td>
-									</tr>
-									<tr>
-										<td colspan="4"><div class="line"></div></td>
-									</tr>
-									<tr>
-										<s:set name="submissionTypeValues"
-											value="@gov.nih.nci.pa.enums.SubmissionTypeCode@getDisplayNames()" />
+											<td nowrap="nowrap"><s:textfield id="submittedOnOrAfter"
+													name="submittedOnOrAfter" maxlength="10" size="10" /> <a
+												href="javascript:showCal('Cal1')"> <img
+													src="${pageContext.request.contextPath}/images/ico_calendar.gif"
+													alt="Select Date" class="calendaricon" /></a> &nbsp;and&nbsp; <s:textfield
+													id="submittedOnOrBefore" name="submittedOnOrBefore"
+													maxlength="10" size="10" /> <a
+												href="javascript:showCal('Cal2')"> <img
+													src="${pageContext.request.contextPath}/images/ico_calendar.gif"
+													alt="Select Date" class="calendaricon" />
+											</a></td>
+										</tr>
+										<tr>
+										<tr>
+											<td scope="row" class="label"><label for="submittedBy"><fmt:message
+														key="dashboard.submittedBy" /></label></td>
+											<td nowrap="nowrap"><s:textfield id="submittedBy"
+													name="submittedBy" cssStyle="width:100%;" readonly="true" /></td>
+											<td align="left" colspan="2">
+												<ul style="margin-top: -1px;">
+													<li style="padding-left: 0"><a
+														href="javascript:void(0)" class="btn"
+														onclick="lookupSubmittingOrg();"><span class="btn_img"><span
+																class="organization">Look Up</span></span></a></li>
+												</ul> <s:hidden name="submittingOrgId" id="submittingOrgId" />
+											</td>
+										</tr>
+										<tr>
+											<td colspan="4"><div class="line"></div></td>
+										</tr>
+										<tr>
+											<s:set name="submissionTypeValues"
+												value="@gov.nih.nci.pa.enums.SubmissionTypeCode@getDisplayNames()" />
 										<td scope="row" class="label"><label for="submissionType"><fmt:message
-													key="dashboard.submissionType" /></label></td>
-										<td><s:select headerKey="" headerValue="All"
-												multiple="true" id="submissionType" name="submissionType"
-												list="#submissionTypeValues" value="submissionType"
-												cssStyle="width:206px" /></td>
-										<td scope="row" class="label"><label for="nciSponsored"><fmt:message
-													key="dashboard.nciSponsored" /></label></td>
-										<td><s:select id="nciSponsored" name="nciSponsored"
-												list="#{'true':'NCI Sponsored','false':'Not NCI Sponsored'}"
+														key="dashboard.submissionType" /></label></td>
+											<td><s:select headerKey="" headerValue="All"
+													multiple="true" id="submissionType" name="submissionType"
+													list="#submissionTypeValues" value="submissionType"
+													cssStyle="width:206px" /></td>
+											<td scope="row" class="label"><label for="nciSponsored"><fmt:message
+														key="dashboard.nciSponsored" /></label></td>
+											<td><s:select id="nciSponsored" name="nciSponsored"
+													list="#{'true':'NCI Sponsored','false':'Not NCI Sponsored'}"
 												headerKey="" headerValue="All" size="4" value="nciSponsored"
 												cssStyle="width:206px" /></td>
 
-									</tr>
+										</tr>
 
-									<tr>
-										<td scope="row" class="label"><label for="onHoldStatus"><fmt:message
-													key="dashboard.onHoldStatus" /></label></td>
-										<td><s:select headerKey="" headerValue="All"
-												multiple="true" id="onHoldStatus" name="onHoldStatus"
-												list="#{'onhold':'On-Hold (now)','notonhold':'Not On-Hold (now)','onholdanytime':'On-Hold (at anytime)'}"
-												value="onHoldStatus" cssStyle="width:206px" /></td>
-										<td scope="row" class="label"><label
-											for="ctepDcpCategory"><fmt:message
-													key="dashboard.ctepDcpCategory" /></label></td>
+										<tr>
+											<td scope="row" class="label"><label for="onHoldStatus"><fmt:message
+														key="dashboard.onHoldStatus" /></label></td>
+											<td><s:select headerKey="" headerValue="All"
+													multiple="true" id="onHoldStatus" name="onHoldStatus"
+													list="#{'onhold':'On-Hold (now)','notonhold':'Not On-Hold (now)','onholdanytime':'On-Hold (at anytime)'}"
+													value="onHoldStatus" cssStyle="width:206px" /></td>
+											<td scope="row" class="label"><label
+												for="ctepDcpCategory"><fmt:message
+														key="dashboard.ctepDcpCategory" /></label></td>
 										<td><s:select id="ctepDcpCategory" name="ctepDcpCategory"
-												list="#{'ctepdcp':'CTEP and DCP PIO Trials Only','ctep':'CTEP PIO Trials Only','dcp':'DCP PIO Trials Only','exclude':'Exclude CTEP and DCP Trials'}"
-												headerKey="" headerValue="All" size="5"
-												value="ctepDcpCategory" cssStyle="width:206px" /></td>
-									</tr>
+													list="#{'ctepdcp':'CTEP and DCP PIO Trials Only','ctep':'CTEP PIO Trials Only','dcp':'DCP PIO Trials Only','exclude':'Exclude CTEP and DCP Trials'}"
+													headerKey="" headerValue="All" size="5"
+													value="ctepDcpCategory" cssStyle="width:206px" /></td>
+										</tr>
 
-									<tr>
-										<s:set name="OnholdReasonCodes"
-											value="@gov.nih.nci.pa.enums.OnholdReasonCode@getDisplayNames()" />
-										<td scope="row" class="label"><label for="onHoldReason"><fmt:message
-													key="dashboard.onHoldReason" /></label></td>
-										<td><s:select headerKey="" headerValue="All" size="5"
-												multiple="true" id="onHoldReason" name="onHoldReason"
+										<tr>
+											<s:set name="OnholdReasonCodes"
+												value="@gov.nih.nci.pa.enums.OnholdReasonCode@getDisplayNames()" />
+											<td scope="row" class="label"><label for="onHoldReason"><fmt:message
+														key="dashboard.onHoldReason" /></label></td>
+											<td><s:select headerKey="" headerValue="All" size="5"
+													multiple="true" id="onHoldReason" name="onHoldReason"
 												list="onHoldValuesMap" 
 												cssStyle="width:206px" /></td>
-										<td></td>
-										<s:set name="milestoneCodes"
-											value="@gov.nih.nci.pa.enums.MilestoneCode@getDisplayNames()" />
-										<td nowrap="nowrap">
-											<fieldset style="margin-left: 0px;">
-												<legend>
-													<fmt:message key="dashboard.milestones" />
-												</legend>
-												<s:radio name="milestoneType" id="milestoneType"
-													value="milestoneType" list="#{'any':'Has milestone'}"></s:radio>
-												<br />
-												<s:radio name="milestoneType" id="milestoneType"
-													value="milestoneType"
-													list="#{'last':'Has a last milestone'}"></s:radio>
+											<td></td>
+											<s:set name="milestoneCodes"
+												value="@gov.nih.nci.pa.enums.MilestoneCode@getDisplayNames()" />
+											<td nowrap="nowrap">
+												<fieldset style="margin-left: 0px;">
+													<legend>
+														<fmt:message key="dashboard.milestones" />
+													</legend>
+													<s:radio name="milestoneType" id="milestoneType"
+														value="milestoneType" list="#{'any':'Has milestone'}"></s:radio>
+													<br />
+													<s:radio name="milestoneType" id="milestoneType"
+														value="milestoneType"
+														list="#{'last':'Has a last milestone'}"></s:radio>
 												<br />
 												<label for="milestone" style="display:none">milestone </label>
-												<s:select headerKey="" headerValue="" id="milestone"
-													name="milestone" list="#milestoneCodes" value="milestone"
-													cssStyle="width:206px" />
-											</fieldset>
-										</td>
-									</tr>
-									<tr>
-										<s:set name="documentWorkflowStatusCodeValues"
-											value="@gov.nih.nci.pa.enums.DocumentWorkflowStatusCode@getDisplayNames()" />
-										<td scope="row" class="label"><label
-											for="processingStatus"><fmt:message
-													key="dashboard.processingStatus" /></label></td>
-										<td><s:select headerKey="" headerValue="All" size="5"
-												multiple="true" id="processingStatus"
-												name="processingStatus"
-												list="#documentWorkflowStatusCodeValues"
-												value="processingStatus" cssStyle="width:206px" /></td>
-										<td scope="row" class="label" style="vertical-align: middle;"><label
-											for="showTrialsReadyFor"><fmt:message
-													key="dashboard.showTrialsReadyFor" /></label></td>
-										<td>
-											<table class="milestone_matrix" border="1">
-												<tr>
-													<td class="noborder">&nbsp;</td>
-													<td class="label"><fmt:message
-															key="dashboard.abstraction" /></td>
-													<td class="label"><fmt:message key="dashboard.qc" /></td>
-												</tr>
-												<tr>
-													<td class="label"><fmt:message
-															key="dashboard.administrative" /></td>
+													<s:select headerKey="" headerValue="" id="milestone"
+														name="milestone" list="#milestoneCodes" value="milestone"
+														cssStyle="width:206px" />
+												</fieldset>
+											</td>
+										</tr>
+										<tr>
+											<s:set name="documentWorkflowStatusCodeValues"
+												value="@gov.nih.nci.pa.enums.DocumentWorkflowStatusCode@getDisplayNames()" />
+											<td scope="row" class="label"><label
+												for="processingStatus"><fmt:message
+														key="dashboard.processingStatus" /></label></td>
+											<td><s:select headerKey="" headerValue="All" size="5"
+													multiple="true" id="processingStatus"
+													name="processingStatus"
+													list="#documentWorkflowStatusCodeValues"
+													value="processingStatus" cssStyle="width:206px" /></td>
+											<td scope="row" class="label" style="vertical-align: middle;"><label
+												for="showTrialsReadyFor"><fmt:message
+														key="dashboard.showTrialsReadyFor" /></label></td>
+											<td>
+												<table class="milestone_matrix" border="1">
+													<tr>
+														<td class="noborder">&nbsp;</td>
+														<td class="label"><fmt:message
+																key="dashboard.abstraction" /></td>
+														<td class="label"><fmt:message key="dashboard.qc" /></td>
+													</tr>
+													<tr>
+														<td class="label"><fmt:message
+																key="dashboard.administrative" /></td>
 													<td><s:checkbox name="adminAbstraction" id="showTrialsReadyFor"/></td>
 													<td><s:checkbox name="adminQC" id="showTrialsReadyFor"/></td>
-												</tr>
-												<tr>
-													<td class="label"><fmt:message
-															key="dashboard.scientific" /></td>
+													</tr>
+													<tr>
+														<td class="label"><fmt:message
+																key="dashboard.scientific" /></td>
 													<td><s:checkbox name="scientificAbstraction" id="showTrialsReadyFor"/></td>
 													<td><s:checkbox name="scientificQC" id="showTrialsReadyFor"/></td>
-												</tr>
-											</table>
-										</td>
-									</tr>
-                                    <tr> 
+													</tr>
+												</table>
+											</td>
+										</tr>
+										<tr>
                                         <td scope="row" class="label"><label
                                             for="diseases">Disease/Condition</label></td>
-                                        <td><s:select size="2" multiple="true"
-                                                listKey="diseaseIdentifier" listValue="preferredName"
-                                                id="diseases" name="diseases" list="diseasesList"
-                                                value="diseases" cssStyle="width:206px" /></td>
-                                        <s:set name="anatomicSites"
-                                            value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getAnatomicSites()" />
+											<td><s:select size="2" multiple="true"
+													listKey="diseaseIdentifier" listValue="preferredName"
+													id="diseases" name="diseases" list="diseasesList"
+													value="diseases" cssStyle="width:206px" /></td>
+											<s:set name="anatomicSites"
+												value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getAnatomicSites()" />
                                         <td scope="row" class="label"><label
                                             for="anatomicSites">Summary 4 Anatomic Site</label></td>
                                         <td><s:select size="2" multiple="true"
                                                 listKey="id" listValue="displayName"
                                                 id="anatomicSites" name="anatomicSites" list="#anatomicSites"
-                                                value="anatomicSites" cssStyle="width:206px" /></td>
-                                    </tr>
-                                    <tr> 
+													value="anatomicSites" cssStyle="width:206px" /></td>
+										</tr>
+										<tr>
                                         <td scope="row" class="label"><label
                                             for="interventions">Interventions</label></td>
-                                        <td><s:select size="2" multiple="true"
-                                                listKey="identifier.extension" listValue="name.value"
+											<td><s:select size="2" multiple="true"
+													listKey="identifier.extension" listValue="name.value"
                                                 id="interventions" name="interventions" list="interventionsList"
                                                 value="interventions" cssStyle="width:206px" /></td>                                        
-                                    </tr>                                    
-								</table>
-								<div class="actionsrow">
-									<del class="btnwrapper">
-										<ul class="btnrow">
-											<li><s:a href="javascript:void(0)" cssClass="btn"
-													onclick="handleAction('search');">
-													<span class="btn_img"><span class="search">Search</span></span>
-												</s:a> <s:a href="javascript:void(0)" cssClass="btn"
-													onclick="resetValues();return false">
-													<span class="btn_img"><span class="cancel">Reset</span></span>
-												</s:a></li>
-										</ul>
-									</del>
+										</tr>
+									</table>
+									<div class="actionsrow">
+										<del class="btnwrapper">
+											<ul class="btnrow">
+												<li><s:a href="javascript:void(0)" cssClass="btn"
+														onclick="handleAction('search');">
+														<span class="btn_img"><span class="search">Search</span></span>
+													</s:a> <s:a href="javascript:void(0)" cssClass="btn"
+														onclick="resetValues();return false">
+														<span class="btn_img"><span class="cancel">Reset</span></span>
+													</s:a></li>
+											</ul>
+										</del>
+									</div>
 								</div>
-							</div>
-                            </c:if>
-                            
+							</c:if>
+
 							<div id="results" class="box"
 								style="${toggleResultsTab?'':'display:none;'}">
 								<c:set var="requestURI" value="dashboardloopback.action"
@@ -1063,10 +1155,10 @@ span[data-overridden='true'] {
 									defaultsort="9"
 									decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator"
 									name="${dashboardSearchResults}" requestURI="${requestURI}"
-									export="true">									
+									export="true">
                                     <display:setProperty name="paging.banner.item_name" value="trial"/>
                                     <display:setProperty name="paging.banner.items_name" value="trials"/> 
-                                    <display:setProperty name="paging.banner.group_size" value="0"/>  									
+									<display:setProperty name="paging.banner.group_size" value="0" />
 									<display:setProperty name="export.xml" value="false" />
 									<display:setProperty name="export.excel.filename"
 										value="dashboardSearchResults.xls" />
@@ -1077,7 +1169,7 @@ span[data-overridden='true'] {
 									<display:setProperty name="export.csv.include_header"
 										value="true" />
 
-									<display:column  class="title"
+									<display:column class="title"
 										titleKey="studyProtocol.nciIdentifier" sortable="true"
 										media="html"
 										headerClass="sortable">
@@ -1087,11 +1179,11 @@ span[data-overridden='true'] {
 												value="${results.nciIdentifierTruncated}"></c:out>
 										</a>
 									</display:column>
-                                    <display:column  class="title"
-                                        titleKey="studyProtocol.nciIdentifier" sortable="true"
-                                        media="excel csv xml" property="nciIdentifierTruncated"
-                                        headerClass="sortable">                                        
-                                    </display:column>									
+									<display:column class="title"
+										titleKey="studyProtocol.nciIdentifier" sortable="true"
+										media="excel csv xml" property="nciIdentifierTruncated"
+										headerClass="sortable">
+									</display:column>
                                     <display:column  title="Lead Organization" property="leadOrganizationName"
                                         media="excel csv xml"/>
                                     <display:column  title="Lead Org PO ID" property="leadOrganizationPOId"
@@ -1102,35 +1194,35 @@ span[data-overridden='true'] {
 						                media="excel csv xml"/>
 						            <display:column  titleKey="studyProtocol.dcpIdentifier" property="dcpId"
 						                media="excel csv xml"/>									
-                                    <display:column  title="CDR ID" property="cdrId"
-                                        media="excel csv xml"/>
-                                    <display:column  title="Amendment #" property="amendmentNumber"
-                                        media="excel csv xml"/>
+									<display:column title="CDR ID" property="cdrId"
+										media="excel csv xml" />
+									<display:column title="Amendment #" property="amendmentNumber"
+										media="excel csv xml" />
                                     <display:column  title="Summary 4 Funding" property="summary4FundingSponsorType"
                                         media="excel csv xml"/>                                        
                                     <display:column  title="On Hold Date" property="recentOnHoldDate" format="{0,date,MM/dd/yyyy}"
-                                        media="excel csv xml"/>
+										media="excel csv xml" />
                                     <display:column  title="Off Hold Date" property="recentOffHoldDate" format="{0,date,MM/dd/yyyy}"
                                         media="excel csv xml"/>
                                     <display:column  title="On Hold Reason" property="recentHoldReason"
                                         media="excel csv xml"/>
                                     <display:column  title="On Hold Description" property="recentHoldDescription"
-                                        media="excel csv xml"/>
+										media="excel csv xml" />
 
-                                        
+
 						            <display:column titleKey="studyProtocol.trialtype" media="excel csv xml">
 						                <c:out value="${results.studyProtocolType=='NonInterventionalStudyProtocol'?'Non-interventional':'Interventional'}"/>
-						            </display:column>
-                                    <display:column  title="NCI Sponsored" media="excel csv xml">
+									</display:column>
+									<display:column title="NCI Sponsored" media="excel csv xml">
                                         <c:out value="${results.sponsorName=='National Cancer Institute'?'Yes':'No'}"/>
-                                    </display:column>
+									</display:column>
                                     <display:column  title="Processing Status" property="documentWorkflowStatusCode.code" media="excel csv xml"/>                                    
                                     <display:column  title="Processing Status Date" property="documentWorkflowStatusDate" format="{0,date,MM/dd/yyyy}" media="excel csv xml"/>
                                     <display:column  title="Admin Check out Name" property="adminCheckout.checkoutByUsername" media="excel csv xml"/>
                                     <display:column  title="Admin Check out Date" property="adminCheckout.checkoutDate" format="{0,date,MM/dd/yyyy}" media="excel csv xml"/>
                                     <display:column  title="Scientific Check out Name" property="scientificCheckout.checkoutByUsername" media="excel csv xml"/>
                                     <display:column  title="Scientific Check out Date" property="scientificCheckout.checkoutDate" format="{0,date,MM/dd/yyyy}" media="excel csv xml"/>
-                                    						            															
+
 									<display:column escapeXml="true" sortable="true"
 										titleKey="studyProtocol.submissionType"
 										property="submissionTypeCode.code" headerClass="sortable" />
@@ -1139,14 +1231,14 @@ span[data-overridden='true'] {
 									<display:column title="Submitting Organization"
 										property="submitterOrgName" sortable="true"
 										headerClass="sortable" />
-									<display:column  title="Submission Date"
+									<display:column title="Submission Date"
 										property="lastCreated.dateLastCreated"
 										format="{0,date,MM/dd/yyyy}" sortable="true"
 										headerClass="sortable" />
-									<display:column  title="Last Milestone"
+									<display:column title="Last Milestone"
 										property="milestones.lastMilestone.milestone.code"
 										sortable="true" headerClass="sortable" />
-									<display:column  title="Last Milestone Date"
+									<display:column title="Last Milestone Date"
 										property="milestones.lastMilestone.milestoneDate"
 										format="{0,date,MM/dd/yyyy}" sortable="true"
 										headerClass="sortable" />
@@ -1157,83 +1249,83 @@ span[data-overridden='true'] {
 										property="processingPriority" sortable="true"
 										headerClass="sortable" />
                                     <display:column  title="Comments" property="processingComments" media="excel csv xml"/>
-                                    										
+
                                     <display:column title="This Trial is" 
                                         class="this_trial_is" sortable="true" headerClass="sortable"><c:out escapeXml="false"
-                                            value="${results.checkedOutByMe?'Checked out by me
+											value="${results.checkedOutByMe?'Checked out by me
 ':''}" /><c:out escapeXml="false"
-                                            value="${results.readyForAdminProcessing && admAbs?'Ready for Admin Processing
+											value="${results.readyForAdminProcessing && admAbs?'Ready for Admin Processing
 ':''}" /><c:out escapeXml="false"
-                                            value="${results.readyForAdminQC && admAbs?'Ready for Admin QC
+											value="${results.readyForAdminQC && admAbs?'Ready for Admin QC
 ':''}" /><c:out escapeXml="false"
-                                            value="${results.readyForTSRSubmission?'Ready for TSR Submission
+											value="${results.readyForTSRSubmission?'Ready for TSR Submission
 ':''}" /><c:out escapeXml="false"
-                                            value="${results.submittedNotAccepted?'Submitted -- not accepted
+											value="${results.submittedNotAccepted?'Submitted -- not accepted
 ':''}" /><c:out escapeXml="false"
-                                            value="${results.readyForScientificProcessing && sciAbs?'Ready for Scientific Processing
+											value="${results.readyForScientificProcessing && sciAbs?'Ready for Scientific Processing
 ':''}" /><c:out escapeXml="false"
-                                            value="${results.readyForScientificQC && sciAbs?'Ready for Scientific QC
+											value="${results.readyForScientificQC && sciAbs?'Ready for Scientific QC
 ':''}" /><c:if
-                                            test="${results.documentWorkflowStatusCode.code=='On-Hold'}">On hold since ${results.onHoldDate!=null?results.onHoldDate:'N/A'},
+											test="${results.documentWorkflowStatusCode.code=='On-Hold'}">On hold since ${results.onHoldDate!=null?results.onHoldDate:'N/A'},
 reason: ${not empty results.onHoldReasons?results.onHoldReasons:'N/A'}
                                         </c:if></display:column>
-                                    
-                                    
-                                    <s:set var="milestoneCodesForReporting" scope="request"
-                                           value="@gov.nih.nci.pa.enums.MilestoneCode@getMilestoneCodesForReporting()" />
+
+
+									<s:set var="milestoneCodesForReporting" scope="request"
+										value="@gov.nih.nci.pa.enums.MilestoneCode@getMilestoneCodesForReporting()" />
                                     <c:forEach items="${milestoneCodesForReporting}" var="milestone">
                                         <display:column title="${milestone.code}" media="excel csv xml">
                                             <s:set scope="request" var="milestoneDate" value="%{#attr.results.getMilestoneForReporting(#attr.milestone).milestoneDate}"/>                                            
                                             <fmt:formatDate value="${requestScope.milestoneDate}" pattern="MM/dd/yyyy" />
-                                        </display:column>
-                                        <display:column title="Added By" media="excel csv xml">
+										</display:column>
+										<display:column title="Added By" media="excel csv xml">
                                             <s:set scope="request" var="milestoneCreator" value="%{#attr.results.getMilestoneForReporting(#attr.milestone).creator}"/>
                                             <c:out value="${requestScope.milestoneCreator}" escapeXml="false"/>
-                                        </display:column>
-                                        <display:column title="Added On" media="excel csv xml">
+										</display:column>
+										<display:column title="Added On" media="excel csv xml">
                                             <s:set scope="request" var="milestoneCreateDate" value="%{#attr.results.getMilestoneForReporting(#attr.milestone).createDate}"/>
                                             <fmt:formatDate value="${requestScope.milestoneCreateDate}" pattern="MM/dd/yyyy" />
-                                        </display:column>                                        
-                                    </c:forEach>                                    
+										</display:column>
+									</c:forEach>
 								</display:table>
 							</div>
-							
+
 							<div id="details" class="box"
 								style="${toggleDetailsTab?'':'display:none;'}">
 								<table class="form">
-								    <tr>
+									<tr>
 								        <td colspan="4" nowrap="nowrap" class="label">
 								            <s:if test="%{!checkoutCommands.isEmpty()}">
 				                                <s:set name="checkoutCommands" scope="page" value="%{checkoutCommands}" /> 
 				                                <c:forEach items="${checkoutCommands}" var="command" varStatus="vstat">			                                    
 			                                        <a href="javascript:void(0)" onclick="handleCheckoutAction('${command}')">
 			                                            <fmt:message key="studyProtocolView.button.${command}" />
-			                                        </a>&nbsp;&nbsp; 		                                    
+													</a>&nbsp;&nbsp; 		                                    
 				                                </c:forEach>
 			                                </s:if>	
                                             <a href="checkOutHistory.action">
                                                 Check out History
                                             </a>&nbsp;&nbsp; 	
-                                            
-                                            <c:choose>
+
+											<c:choose>
                                                 <c:when test="${queryDTO.documentWorkflowStatusCode.code=='Submitted' || queryDTO.documentWorkflowStatusCode.code=='Amendment Submitted'}">
                                                     <a href="studyProtocolview.action?studyProtocolId=${summaryDTO.studyProtocolId}">
                                                         Validate
                                                     </a>&nbsp;&nbsp;                                                 
                                                 </c:when>
                                                 <c:when test="${queryDTO.documentWorkflowStatusCode.code=='Rejected'}">
-                                                </c:when>
-                                                <c:otherwise>
+												</c:when>
+												<c:otherwise>
 	                                                <a href="studyProtocolview.action?studyProtocolId=${summaryDTO.studyProtocolId}">
 	                                                    Abstract
 	                                                </a>&nbsp;&nbsp;                                                 
-                                                </c:otherwise>                                                
+                                                </c:otherwise>
                                             </c:choose>   
                                             <a href="ajaxAbstractionCompletionviewTSR.action">
                                                        View TSR
                                             </a>&nbsp;                                          
 								        </td>
-								    </tr>
+									</tr>
 									<tr>
 										<td scope="row" class="label">Submission Type</td>
 										<td>${queryDTO.submissionTypeCode.code}</td>
@@ -1266,10 +1358,10 @@ reason: ${not empty results.onHoldReasons?results.onHoldReasons:'N/A'}
 									</tr>
 									<tr>
 										<td scope="row" class="label">DCP ID</td>
-										<td><c:out value="${queryDTO.dcpId}"></c:out></td>										
+										<td><c:out value="${queryDTO.dcpId}"></c:out></td>
 									</tr>
-                                    <tr>
-                                        <td scope="row" class="label">CDR ID</td>
+									<tr>
+										<td scope="row" class="label">CDR ID</td>
                                         <td><c:out value="${not empty summaryDTO.cdrId?summaryDTO.cdrId:'N/A'}"/></td>
                                         <td colspan="2" rowspan="16">
                                             <display:table class="data" sort="list" uid="milestones"                                                                                             
@@ -1280,18 +1372,18 @@ reason: ${not empty results.onHoldReasons?results.onHoldReasons:'N/A'}
                                                     headerClass="sortable" />
                                                 <display:column title="Date"
                                                     property="milestoneDate"
-                                                    format="{0,date,MM/dd/yyyy}" sortable="false"
-                                                    headerClass="sortable" />                                               
+													format="{0,date,MM/dd/yyyy}" sortable="false"
+													headerClass="sortable" />
                                                 <display:column title="Creator"
                                                     property="creator" sortable="false"
                                                     headerClass="sortable" />                                               
                                             </display:table>                                        
                                         </td>
-                                    </tr>									
+									</tr>
 									<tr>
 										<td scope="row" class="label">Submitting Organization</td>
 										<td><c:out value="${queryDTO.submitterOrgName}"></c:out>
-										</td>										
+										</td>
 									</tr>
 									<tr>
 										<td scope="row" class="label">Submission Date</td>
@@ -1305,68 +1397,68 @@ reason: ${not empty results.onHoldReasons?results.onHoldReasons:'N/A'}
 										<td><c:out value="${not empty summaryDTO.amendmentNumber?summaryDTO.amendmentNumber:'N/A'}"></c:out>
 										</td>
 									</tr>
-                                    <tr>
-                                        <td scope="row" class="label">Trial Category</td>
+									<tr>
+										<td scope="row" class="label">Trial Category</td>
                                         <td><c:out value="${queryDTO.trialCategory}"></c:out>
                                         </td>
-                                    </tr>	
-                                    <tr>
-                                        <td scope="row" class="label">Trial Type</td>
+									</tr>
+									<tr>
+										<td scope="row" class="label">Trial Type</td>
                                         <td>
                                             <c:out value="${queryDTO.studyProtocolType=='NonInterventionalStudyProtocol'?'Non-interventional':'Interventional'}"/>
-                                        </td>
-                                    </tr>   
-                                    <tr>
-                                        <td scope="row" class="label">Summary 4 Funding</td>
+										</td>
+									</tr>
+									<tr>
+										<td scope="row" class="label">Summary 4 Funding</td>
                                         <td><c:out value="${func:capitalizeFully(fn:replace(queryDTO.summary4FundingSponsorType, '_',' '))}"></c:out>
-                                        </td>
-                                    </tr>  
-                                    <tr>
-                                        <td scope="row" class="label">On Hold Date</td>
+										</td>
+									</tr>
+									<tr>
+										<td scope="row" class="label">On Hold Date</td>
                                         <td><c:out value="${not empty queryDTO.recentOnHoldDate?func:format(queryDTO.recentOnHoldDate,'MM/dd/yyyy'):'N/A'}"></c:out>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td scope="row" class="label">Off Hold Date</td>
+										</td>
+									</tr>
+									<tr>
+										<td scope="row" class="label">Off Hold Date</td>
                                         <td><c:out value="${not empty queryDTO.recentOffHoldDate?func:format(queryDTO.recentOffHoldDate,'MM/dd/yyyy'):'N/A'}"></c:out>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td scope="row" class="label">On Hold Reason</td>
+										</td>
+									</tr>
+									<tr>
+										<td scope="row" class="label">On Hold Reason</td>
                                         <td><c:out value="${not empty queryDTO.recentHoldReason?queryDTO.recentHoldReason:'N/A'}"></c:out>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td scope="row" class="label">NCI Sponsored?</td>
+										</td>
+									</tr>
+									<tr>
+										<td scope="row" class="label">NCI Sponsored?</td>
                                         <td><c:out value="${queryDTO.sponsorName=='National Cancer Institute'?'Yes':'No'}"></c:out>
-                                        </td>
-                                    </tr>
+										</td>
+									</tr>
                                     <tr><td>&nbsp;</td></tr>
-                                    <tr>
+									<tr>
                                         <td scope="row" class="label"><label for="assignedTo">Assigned To</label></td>
                                         <td> 
                                             <s:set name="abstractorsList"
-                                                value="@gov.nih.nci.pa.service.util.CSMUserService@getInstance().abstractors" />
-                                            <s:select id="assignedTo" name="assignedTo"
+												value="@gov.nih.nci.pa.service.util.CSMUserService@getInstance().abstractors" />
+											<s:select id="assignedTo" name="assignedTo"
                                                 list="#abstractorsList" headerKey="" headerValue="Unassigned"
                                                 value="#session.summaryDTO.assignedUserId" cssStyle="width:206px" />
                                         </td>
-                                    </tr>
-                                    <tr>
-                                        <td scope="row" class="label">Submission Source</td>
+									</tr>
+									<tr>
+										<td scope="row" class="label">Submission Source</td>
                                         <td><c:out value="${queryDTO.studySource}"></c:out>
                                         </td>
-                                    </tr>
-                                    <tr>
+									</tr>
+									<tr>
                                         <td scope="row" class="label"><label for="newProcessingPriority">Processing Priority</label></td>
                                         <td> 
                                             <s:select id="newProcessingPriority"
-                                                name="newProcessingPriority"
-                                                list="#{'1':'1 - High','2':'2 - Normal','3':'3 - Low'}"                                               
+												name="newProcessingPriority"
+												list="#{'1':'1 - High','2':'2 - Normal','3':'3 - Low'}"
                                                 value="#session.summaryDTO.processingPriority" cssStyle="width:206px" />
                                             
                                             <c:if test="${!suAbs}">
-                                                <script type="text/javascript">
+												<script type="text/javascript">
                                                       Event.observe(window, "load", function () {
                                                           $('assignedTo').disabled = true;
                                                           $('newProcessingPriority').disabled = true;
@@ -1375,45 +1467,45 @@ reason: ${not empty results.onHoldReasons?results.onHoldReasons:'N/A'}
                                             </c:if>                                        
                                                                                         
                                         </td>
-                                    </tr>  
-                                    <tr>
+									</tr>
+									<tr>
                                         <td scope="row" class="label" colspan="2"><label for="processingComments">Trial Processing Comments</label></td>
-                                    </tr>
-                                    <tr>
+									</tr>
+									<tr>
                                         <td colspan="2">
 	                                        <s:textarea id="processingComments" name="processingComments"    
 	                                            maxlength="4000" cssClass="charcounter"                                        
 	                                            cssStyle="width: 100%;" rows="5">
-										        <s:param name="value">
-										            <s:property value="#session.summaryDTO.processingComments"/>
-										        </s:param>                                            
+												<s:param name="value">
+													<s:property value="#session.summaryDTO.processingComments" />
+												</s:param>
 	                                        </s:textarea> 
                                         </td>                                        
-                                    </tr>
-                                    <tr>
-                                        <td colspan="4" align="center">
-			                                <div class="actionsrow">
-			                                    <del class="btnwrapper">
-			                                        <ul class="btnrow">
-			                                            <li><s:a href="javascript:void(0)" cssClass="btn"
-			                                                    onclick="handleAction('save');">
-			                                                    <span class="btn_img"><span class="search">Save</span></span>
-			                                                </s:a></li>
-			                                        </ul>
-			                                    </del>
-			                                </div>                                        
-                                        </td>
-                                    </tr>                                                                                   								
+									</tr>
+									<tr>
+										<td colspan="4" align="center">
+											<div class="actionsrow">
+												<del class="btnwrapper">
+													<ul class="btnrow">
+														<li><s:a href="javascript:void(0)" cssClass="btn"
+																onclick="handleAction('save');">
+																<span class="btn_img"><span class="search">Save</span></span>
+															</s:a></li>
+													</ul>
+												</del>
+											</div>
+										</td>
+									</tr>
 								</table>
 							</div>
 						</div>
 					</td>
 				</tr>
 			</table>
-			<pa:trialCheckInWarnings/>
+			<pa:trialCheckInWarnings />
 		</s:form>
 		<s:form action="studyProtocol" id="checkoutForm">
-		      <s:token></s:token>		      
+			<s:token></s:token>
 		</s:form>
 	</div>
 </body>
