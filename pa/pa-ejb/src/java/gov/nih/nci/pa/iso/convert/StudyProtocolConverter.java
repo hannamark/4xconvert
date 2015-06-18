@@ -224,6 +224,22 @@ public class StudyProtocolConverter {
                 .convertToSt(studyProtocol
                         .getExpectedAbstractionCompletionComments()));
         convertStudyAlternateTitlesToDTO(studyProtocol, studyProtocolDTO);
+        
+        studyProtocolDTO.setPcdSentToPIODate(TsConverter.convertToTs(studyProtocol.getPcdSentToPIODate()));
+        studyProtocolDTO.setPcdConfirmedDate(TsConverter.convertToTs(studyProtocol.getPcdConfirmedDate()));
+        studyProtocolDTO.setDesgneeNotifiedDate(TsConverter.convertToTs(studyProtocol.getDesgneeNotifiedDate()));
+        studyProtocolDTO.setReportingInProcessDate(TsConverter.convertToTs(studyProtocol.getReportingInProcessDate()));
+        studyProtocolDTO.setThreeMonthReminderDate(TsConverter.convertToTs(studyProtocol.getThreeMonthReminderDate()));
+        studyProtocolDTO.setFiveMonthReminderDate(TsConverter.convertToTs(studyProtocol.getFiveMonthReminderDate()));
+        studyProtocolDTO.setSevenMonthEscalationtoPIODate(TsConverter
+                .convertToTs(studyProtocol.getSevenMonthEscalationtoPIODate()));
+        studyProtocolDTO.setResultsSentToPIODate(TsConverter.convertToTs(studyProtocol.getResultsSentToPIODate()));
+        studyProtocolDTO.setResultsApprovedByPIODate(TsConverter
+                .convertToTs(studyProtocol.getResultsApprovedByPIODate()));
+        studyProtocolDTO.setPrsReleaseDate(TsConverter.convertToTs(studyProtocol.getPrsReleaseDate()));
+        studyProtocolDTO.setQaCommentsReturnedDate(TsConverter.convertToTs(studyProtocol.getQaCommentsReturnedDate()));
+        studyProtocolDTO.setTrialPublishedDate(TsConverter.convertToTs(studyProtocol.getTrialPublishedDate()));
+        
         return studyProtocolDTO;
     }
 
@@ -325,6 +341,26 @@ public class StudyProtocolConverter {
         studyProtocol.setExpectedAbstractionCompletionComments(StConverter
                 .convertToString(studyProtocolDTO
                         .getExpectedAbstractionCompletionComments()));
+        
+        studyProtocol.setPcdSentToPIODate(TsConverter.convertToTimestamp(studyProtocolDTO.getPcdSentToPIODate()));
+        studyProtocol.setPcdConfirmedDate(TsConverter.convertToTimestamp(studyProtocolDTO.getPCDConfirmedDate()));
+        studyProtocol.setDesgneeNotifiedDate(TsConverter.convertToTimestamp(studyProtocolDTO.getDesgneeNotifiedDate()));
+        studyProtocol.setReportingInProcessDate(TsConverter
+                .convertToTimestamp(studyProtocolDTO.getReportingInProcessDate()));
+        studyProtocol.setThreeMonthReminderDate(TsConverter
+                .convertToTimestamp(studyProtocolDTO.getThreeMonthReminderDate()));
+        studyProtocol.setFiveMonthReminderDate(TsConverter
+                .convertToTimestamp(studyProtocolDTO.getFiveMonthReminderDate()));
+        studyProtocol.setSevenMonthEscalationtoPIODate(TsConverter
+                .convertToTimestamp(studyProtocolDTO.getSevenMonthEscalationtoPIODate()));
+        studyProtocol.setResultsSentToPIODate(TsConverter
+                .convertToTimestamp(studyProtocolDTO.getResultsSentToPIODate()));
+        studyProtocol.setResultsApprovedByPIODate(TsConverter
+                .convertToTimestamp(studyProtocolDTO.getResultsApprovedByPIODate()));
+        studyProtocol.setPrsReleaseDate(TsConverter.convertToTimestamp(studyProtocolDTO.getPrsReleaseDate()));
+        studyProtocol.setQaCommentsReturnedDate(TsConverter
+                .convertToTimestamp(studyProtocolDTO.getQaCommentsReturnedDate()));
+        studyProtocol.setTrialPublishedDate(TsConverter.convertToTimestamp(studyProtocolDTO.getTrialPublishedDate()));
        
        return studyProtocol;
    }

@@ -174,7 +174,11 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
             + "scientific_checkout_reg_lname, onhold_reason_code, onhold_date, offhold_date, cdr_id, amendment_number,"
             + "admin_checkout_date, scientific_checkout_date, comments, onhold_reason_text, study_source, ccr_id,"
             + "accrual_disease_code_system, previous_dwf_status_code, submiting_org_id, onhold_reason_category, "
-            + "expected_abstraction_completion_date, expected_abstraction_completion_comments "
+            + "expected_abstraction_completion_date, expected_abstraction_completion_comments, "
+            + "pcd_sent_to_pio_date, pcd_confirm_date, designee_notified_date, reporting_in_process_date, "
+            + "three_month_reminder_date, five_month_reminder_date, seven_month_escalation_to_pio_date, "
+            + "results_sent_to_pio_date, "
+            + "results_approved_by_pio_date, prs_release_date, qa_comments_return_date, trial_published_date "
             + "FROM rv_search_results "
             + "WHERE study_protocol_identifier IN (:ids)";
 
@@ -290,6 +294,19 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
     private static final int ONHOLD_CATEGORY = 77;    
     private static final int EXPECTED_ABSTRACTION_COMPLETION_DATE = 78;
     private static final int EXPECTED_ABSTRACTION_COMPLETION_COMMENTS = 79;
+    private static final int PCD_SENT_TO_PIO_DATE = 80;
+    private static final int PCD_CONFIRM_DATE = 81;
+    private static final int DESIGNEE_NOTIFIED_DATE = 82;
+    private static final int REPORTING_IN_PROCESS_DATE = 83;
+    private static final int THREE_MONTH_REMINDER_DATE = 84;
+    private static final int FIVE_MONTH_REMINDER_DATE = 85;
+    private static final int SEVEN_MONTH_ESCALATION_TO_PIO_DATE = 86;
+    private static final int RESULTS_SENT_TO_PIO_DATE = 87;
+    private static final int RESULTS_APPROVED_BY_PIO_DATE = 88;
+    private static final int PRS_RELEASE_DATE = 89;
+    private static final int QA_COMMENTS_RETURN_DATE = 90;
+    private static final int TRIAL_PUBLISHED_DATE = 91;
+
     
     private static final int UPDATER_FIRST_NAME_IDX = 1;
     private static final int UPDATER_LAST_NAME_IDX = 2;

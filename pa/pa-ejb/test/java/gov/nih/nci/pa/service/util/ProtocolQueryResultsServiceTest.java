@@ -159,7 +159,9 @@ public class ProtocolQueryResultsServiceTest {
             study_source, ccr_id, accrual_disease_code_system, prev_dws,
             submitter_org, onholdReasonCategory,
             overriddenExpectedAbstractionCompletionDate,
-            overriddenExpectedAbstractionCompletionComments };
+            overriddenExpectedAbstractionCompletionComments, new Date(),new Date(),
+            new Date(),new Date(),new Date(),new Date(),new Date(),new Date(),new Date(),
+            new Date(),new Date(),new Date()};
     Object[] siteQryResult = { studyProtocolIdentifier,
             BigInteger.valueOf(MEMB_USERID) };
 

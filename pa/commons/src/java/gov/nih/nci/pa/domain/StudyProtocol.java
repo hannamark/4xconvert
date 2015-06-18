@@ -158,6 +158,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "Study_Protocol_type", discriminatorType = DiscriminatorType.STRING)
 @Table(name = "STUDY_PROTOCOL")
+@SuppressWarnings({ "PMD.TooManyFields", "PMD.ExcessiveClassLength" })
 public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     private static final String STUDY_PROTOCOL_MAPPING = "studyProtocol";
 
@@ -191,7 +192,21 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     private Organization submitingOrganization;
     private Timestamp expectedAbstractionCompletionDate;
     private String expectedAbstractionCompletionComments;
-
+    // Results reporting dates
+    private Timestamp pcdSentToPIODate;
+    private Timestamp pcdConfirmedDate;
+    private Timestamp desgneeNotifiedDate;
+    private Timestamp reportingInProcessDate;
+    private Timestamp threeMonthReminderDate;
+    private Timestamp fiveMonthReminderDate;
+    private Timestamp sevenMonthEscalationtoPIODate;
+    private Timestamp resultsSentToPIODate;
+    private Timestamp resultsApprovedByPIODate;
+    private Timestamp prsReleaseDate;
+    private Timestamp qaCommentsReturnedDate;
+    private Timestamp trialPublishedDate;
+    
+    
     private Set<StudyOverallStatus> studyOverallStatuses = new TreeSet<StudyOverallStatus>(
             new StudyOverallStatusComparator());
     private Set<DocumentWorkflowStatus> documentWorkflowStatuses =
@@ -1148,5 +1163,187 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
             String expectedAbstractionCompletionComments) {
         this.expectedAbstractionCompletionComments = expectedAbstractionCompletionComments;
     }
-    
+
+    /**
+     * @return the pcdSentToPIODate
+     */
+    @Column(name = "pcd_sent_to_pio_date")
+    public Timestamp getPcdSentToPIODate() {
+        return pcdSentToPIODate;
+    }
+
+    /**
+     * @param pcdSentToPIODate the pCDSentToPIODate to set
+     */
+    public void setPcdSentToPIODate(Timestamp pcdSentToPIODate) {
+        this.pcdSentToPIODate = pcdSentToPIODate;
+    }
+
+    /**
+     * @return the pcdConfirmedDate
+     */
+    @Column(name = "pcd_confirmed_date")
+    public Timestamp getPcdConfirmedDate() {
+        return pcdConfirmedDate;
+    }
+
+    /**
+     * @param pcdConfirmedDate the pcdConfirmedDate to set
+     */
+    public void setPcdConfirmedDate(Timestamp pcdConfirmedDate) {
+        this.pcdConfirmedDate = pcdConfirmedDate;
+    }
+
+    /**
+     * @return the desgneeNotifiedDate
+     */
+    @Column(name = "designee_notified_date")
+    public Timestamp getDesgneeNotifiedDate() {
+        return desgneeNotifiedDate;
+    }
+
+    /**
+     * @param desgneeNotifiedDate the desgneeNotifiedDate to set
+     */
+    public void setDesgneeNotifiedDate(Timestamp desgneeNotifiedDate) {
+        this.desgneeNotifiedDate = desgneeNotifiedDate;
+    }
+
+    /**
+     * @return the reportingInProcessDate
+     */
+    @Column(name = "reporting_in_process_date")
+    public Timestamp getReportingInProcessDate() {
+        return reportingInProcessDate;
+    }
+
+    /**
+     * @param reportingInProcessDate the reportingInProcessDate to set
+     */
+    public void setReportingInProcessDate(Timestamp reportingInProcessDate) {
+        this.reportingInProcessDate = reportingInProcessDate;
+    }
+
+    /**
+     * @return the threeMonthReminderDate
+     */
+    @Column(name = "three_month_reminder_date")
+    public Timestamp getThreeMonthReminderDate() {
+        return threeMonthReminderDate;
+    }
+
+    /**
+     * @param threeMonthReminderDate the threeMonthReminderDate to set
+     */
+    public void setThreeMonthReminderDate(Timestamp threeMonthReminderDate) {
+        this.threeMonthReminderDate = threeMonthReminderDate;
+    }
+
+    /**
+     * @return the fiveMonthReminderDate
+     */
+    @Column(name = "five_month_reminder_date")
+    public Timestamp getFiveMonthReminderDate() {
+        return fiveMonthReminderDate;
+    }
+
+    /**
+     * @param fiveMonthReminderDate the fiveMonthReminderDate to set
+     */
+    public void setFiveMonthReminderDate(Timestamp fiveMonthReminderDate) {
+        this.fiveMonthReminderDate = fiveMonthReminderDate;
+    }
+
+    /**
+     * @return the sevenMonthEscalationtoPIODate
+     */
+    @Column(name = "seven_month_escalation_to_pio_date")
+    public Timestamp getSevenMonthEscalationtoPIODate() {
+        return sevenMonthEscalationtoPIODate;
+    }
+
+    /**
+     * @param sevenMonthEscalationtoPIODate the sevenMonthEscalationtoPIODate to set
+     */
+    public void setSevenMonthEscalationtoPIODate(
+            Timestamp sevenMonthEscalationtoPIODate) {
+        this.sevenMonthEscalationtoPIODate = sevenMonthEscalationtoPIODate;
+    }
+
+    /**
+     * @return the resultsSentToPIODate
+     */
+    @Column(name = "results_sent_to_pio_date")
+    public Timestamp getResultsSentToPIODate() {
+        return resultsSentToPIODate;
+    }
+
+    /**
+     * @param resultsSentToPIODate the resultsSentToPIODate to set
+     */
+    public void setResultsSentToPIODate(Timestamp resultsSentToPIODate) {
+        this.resultsSentToPIODate = resultsSentToPIODate;
+    }
+
+    /**
+     * @return the resultsApprovedByPIODate
+     */
+    @Column(name = "results_approved_by_pio_date")
+    public Timestamp getResultsApprovedByPIODate() {
+        return resultsApprovedByPIODate;
+    }
+
+    /**
+     * @param resultsApprovedByPIODate the resultsApprovedByPIODate to set
+     */
+    public void setResultsApprovedByPIODate(Timestamp resultsApprovedByPIODate) {
+        this.resultsApprovedByPIODate = resultsApprovedByPIODate;
+    }
+
+    /**
+     * @return the prsReleaseDate
+     */
+    @Column(name = "prs_release_date")
+    public Timestamp getPrsReleaseDate() {
+        return prsReleaseDate;
+    }
+
+    /**
+     * @param prsReleaseDate the prsReleaseDate to set
+     */
+    public void setPrsReleaseDate(Timestamp prsReleaseDate) {
+        this.prsReleaseDate = prsReleaseDate;
+    }
+
+    /**
+     * @return the qaCommentsReturnedDate
+     */
+    @Column(name = "qa_comments_return_date")
+    public Timestamp getQaCommentsReturnedDate() {
+        return qaCommentsReturnedDate;
+    }
+
+    /**
+     * @param qaCommentsReturnedDate the qaCommentsReturnedDate to set
+     */
+    public void setQaCommentsReturnedDate(Timestamp qaCommentsReturnedDate) {
+        this.qaCommentsReturnedDate = qaCommentsReturnedDate;
+    }
+
+    /**
+     * @return the trialPublishedDate
+     */
+    @Column(name = "trial_published_date")
+    public Timestamp getTrialPublishedDate() {
+        return trialPublishedDate;
+    }
+
+    /**
+     * @param trialPublishedDate the trialPublishedDate to set
+     */
+    public void setTrialPublishedDate(Timestamp trialPublishedDate) {
+        this.trialPublishedDate = trialPublishedDate;
+    }
+
+
 }

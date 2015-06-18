@@ -126,6 +126,20 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO
      */
     private String overriddenExpectedAbstractionCompletionComments;
 
+    //Results reporting dates
+    private Date pcdSentToPIODate;
+    private Date pcdConfirmedDate;
+    private Date desgneeNotifiedDate;
+    private Date reportingInProcessDate;
+    private Date threeMonthReminderDate;
+    private Date fiveMonthReminderDate;
+    private Date sevenMonthEscalationtoPIODate;
+    private Date resultsSentToPIODate;
+    private Date resultsApprovedByPIODate;
+    private Date prsReleaseDate;
+    private Date qaCommentsReturnedDate;
+    private Date trialPublishedDate;
+    
     /**
      * @return link
      */
@@ -1057,5 +1071,175 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO
                 && !DateUtils.isSameDay(getCalculatedAbstractionCompletionDate(),
                         getOverriddenExpectedAbstractionCompletionDate());
     }
+
+    /**
+     * @return the pcdSentToPIODate
+     */
+    public Date getPcdSentToPIODate() {
+        return pcdSentToPIODate;
+    }
+
+    /**
+     * @param pcdSentToPIODate the pcdSentToPIODate to set
+     */
+    public void setPcdSentToPIODate(Date pcdSentToPIODate) {
+        this.pcdSentToPIODate = pcdSentToPIODate;
+    }
+
+    /**
+     * @return the pcdConfirmedDate
+     */
+    public Date getPcdConfirmedDate() {
+        return pcdConfirmedDate;
+    }
+
+    /**
+     * @param pcdConfirmedDate the pcdConfirmedDate to set
+     */
+    public void setPcdConfirmedDate(Date pcdConfirmedDate) {
+        this.pcdConfirmedDate = pcdConfirmedDate;
+    }
+
+    /**
+     * @return the desgneeNotifiedDate
+     */
+    public Date getDesgneeNotifiedDate() {
+        return desgneeNotifiedDate;
+    }
+
+    /**
+     * @param desgneeNotifiedDate the desgneeNotifiedDate to set
+     */
+    public void setDesgneeNotifiedDate(Date desgneeNotifiedDate) {
+        this.desgneeNotifiedDate = desgneeNotifiedDate;
+    }
+
+    /**
+     * @return the reportingInProcessDate
+     */
+    public Date getReportingInProcessDate() {
+        return reportingInProcessDate;
+    }
+
+    /**
+     * @param reportingInProcessDate the reportingInProcessDate to set
+     */
+    public void setReportingInProcessDate(Date reportingInProcessDate) {
+        this.reportingInProcessDate = reportingInProcessDate;
+    }
+
+    /**
+     * @return the threeMonthReminderDate
+     */
+    public Date getThreeMonthReminderDate() {
+        return threeMonthReminderDate;
+    }
+
+    /**
+     * @param threeMonthReminderDate the threeMonthReminderDate to set
+     */
+    public void setThreeMonthReminderDate(Date threeMonthReminderDate) {
+        this.threeMonthReminderDate = threeMonthReminderDate;
+    }
+
+    /**
+     * @return the fiveMonthReminderDate
+     */
+    public Date getFiveMonthReminderDate() {
+        return fiveMonthReminderDate;
+    }
+
+    /**
+     * @param fiveMonthReminderDate the fiveMonthReminderDate to set
+     */
+    public void setFiveMonthReminderDate(Date fiveMonthReminderDate) {
+        this.fiveMonthReminderDate = fiveMonthReminderDate;
+    }
+
+    /**
+     * @return the sevenMonthEscalationtoPIODate
+     */
+    public Date getSevenMonthEscalationtoPIODate() {
+        return sevenMonthEscalationtoPIODate;
+    }
+
+    /**
+     * @param sevenMonthEscalationtoPIODate the sevenMonthEscalationtoPIODate to set
+     */
+    public void setSevenMonthEscalationtoPIODate(Date sevenMonthEscalationtoPIODate) {
+        this.sevenMonthEscalationtoPIODate = sevenMonthEscalationtoPIODate;
+    }
+
+    /**
+     * @return the resultsSentToPIODate
+     */
+    public Date getResultsSentToPIODate() {
+        return resultsSentToPIODate;
+    }
+
+    /**
+     * @param resultsSentToPIODate the resultsSentToPIODate to set
+     */
+    public void setResultsSentToPIODate(Date resultsSentToPIODate) {
+        this.resultsSentToPIODate = resultsSentToPIODate;
+    }
+
+    /**
+     * @return the resultsApprovedByPIODate
+     */
+    public Date getResultsApprovedByPIODate() {
+        return resultsApprovedByPIODate;
+    }
+
+    /**
+     * @param resultsApprovedByPIODate the resultsApprovedByPIODate to set
+     */
+    public void setResultsApprovedByPIODate(Date resultsApprovedByPIODate) {
+        this.resultsApprovedByPIODate = resultsApprovedByPIODate;
+    }
+
+    /**
+     * @return the prsReleaseDate
+     */
+    public Date getPrsReleaseDate() {
+        return prsReleaseDate;
+    }
+
+    /**
+     * @param prsReleaseDate the prsReleaseDate to set
+     */
+    public void setPrsReleaseDate(Date prsReleaseDate) {
+        this.prsReleaseDate = prsReleaseDate;
+    }
+
+    /**
+     * @return the qaCommentsReturnedDate
+     */
+    public Date getQaCommentsReturnedDate() {
+        return qaCommentsReturnedDate;
+    }
+
+    /**
+     * @param qaCommentsReturnedDate the qaCommentsReturnedDate to set
+     */
+    public void setQaCommentsReturnedDate(Date qaCommentsReturnedDate) {
+        this.qaCommentsReturnedDate = qaCommentsReturnedDate;
+    }
+
+    /**
+     * @return the trialPublishedDate
+     */
+    public Date getTrialPublishedDate() {
+        return trialPublishedDate;
+    }
+
+    /**
+     * @param trialPublishedDate the trialPublishedDate to set
+     */
+    public void setTrialPublishedDate(Date trialPublishedDate) {
+        this.trialPublishedDate = trialPublishedDate;
+    }
+    
+    
     
 }

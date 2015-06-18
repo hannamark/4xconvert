@@ -1818,4 +1818,8 @@
        <comment>Fixing the issue introduced by previous script: @gridgrouper.url@ did not get replaced.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9006-1.sql"/>
     </changeSet>
+     <changeSet id="PO-9013" author="gunnikrishnan">
+       <comment>Add additional columns to study for results reporting dashboard</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9013.sql"/>
+    </changeSet>  
 </databaseChangeLog>
