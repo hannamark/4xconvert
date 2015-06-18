@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints;
@@ -26,6 +27,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -63,12 +65,88 @@ public class TrialCountsActionTest extends AbstractPaActionTest {
     }
 
     @Test
+    public void testOnHoldTrials() throws PAException, JSONException,
+            JsonSyntaxException, NoSuchFieldException, SecurityException,
+            IllegalArgumentException, IllegalAccessException, IOException {
+        getRequest().setUserInRole(Constants.SUABSTRACTOR, true);
+        UsernameHolder.setUser("suAbstractor");
+        TrialCountsAction action = getAction();
+        action.setProtocolQueryService(getProtocolQueryMockForHolds());
+        StreamResult result = action.onHoldTrials();
+        Map json = getJsonMap(result);
+        System.out.println(json);
+
+        List list = (List) json.get("data");
+        // 10 codes plus total is 10.
+        assertEquals(11, list.size());
+
+        Map map = (Map) list.get(0);
+        assertEquals("Submission Incomplete", map.get("reason"));
+        assertEquals("Submission Incomplete", map.get("reasonKey"));
+        assertEquals(1.0, map.get("count"));
+
+        map = (Map) list.get(1);
+        assertEquals("Submission Incomplete -- Missing Documents",
+                map.get("reason"));
+        assertEquals("Submission Incomplete -- Missing Documents",
+                map.get("reasonKey"));
+        assertEquals(2.0, map.get("count"));
+
+        map = (Map) list.get(2);
+        assertEquals("Invalid Grant", map.get("reason"));
+        assertEquals("Invalid Grant", map.get("reasonKey"));
+        assertEquals(3.0, map.get("count"));
+
+        map = (Map) list.get(3);
+        assertEquals("Pending CTRP Review", map.get("reason"));
+        assertEquals("Pending CTRP Review", map.get("reasonKey"));
+        assertEquals(4.0, map.get("count"));
+
+        map = (Map) list.get(4);
+        assertEquals("Pending Disease Curation", map.get("reason"));
+        assertEquals("Pending Disease Curation", map.get("reasonKey"));
+        assertEquals(5.0, map.get("count"));
+
+        map = (Map) list.get(5);
+        assertEquals("Pending Person Curation", map.get("reason"));
+        assertEquals("Pending Person Curation", map.get("reasonKey"));
+        assertEquals(6.0, map.get("count"));
+
+        map = (Map) list.get(6);
+        assertEquals("Pending Organization Curation", map.get("reason"));
+        assertEquals("Pending Organization Curation", map.get("reasonKey"));
+        assertEquals(7.0, map.get("count"));
+
+        map = (Map) list.get(7);
+        assertEquals("Pending Intervention Curation", map.get("reason"));
+        assertEquals("Pending Intervention Curation", map.get("reasonKey"));
+        assertEquals(8.0, map.get("count"));
+
+        map = (Map) list.get(8);
+        assertEquals("Other (CTRP)", map.get("reason"));
+        assertEquals("Other_CTRP", map.get("reasonKey"));
+        assertEquals(9.0, map.get("count"));
+
+        map = (Map) list.get(9);
+        assertEquals("Other (Submitter)", map.get("reason"));
+        assertEquals("Other_Submitter", map.get("reasonKey"));
+        assertEquals(10.0, map.get("count"));
+
+        map = (Map) list.get(10);
+        assertEquals("Total", map.get("reason"));
+        assertEquals("Total", map.get("reasonKey"));
+        assertEquals(55.0, map.get("count"));
+
+    }
+
+    @Test
     public void testMilestonesInProgress() throws PAException, JSONException,
             JsonSyntaxException, NoSuchFieldException, SecurityException,
             IllegalArgumentException, IllegalAccessException, IOException {
         getRequest().setUserInRole(Constants.SUABSTRACTOR, true);
         UsernameHolder.setUser("suAbstractor");
         TrialCountsAction action = getAction();
+        action.setProtocolQueryService(getProtocolQueryMockForMilestones());
         StreamResult result = action.milestonesInProgress();
 
         Map json = getJsonMap(result);
@@ -152,7 +230,6 @@ public class TrialCountsActionTest extends AbstractPaActionTest {
     private TrialCountsAction getAction() throws PAException {
         TrialCountsAction action = new TrialCountsAction();
         action.setServletRequest(getRequest());
-        action.setProtocolQueryService(getProtocolQueryMock());
         action.setLookUpService(new MockLookUpTableServiceBean());
         ActionUtils.setUserRolesInSession(getRequest());
         return action;
@@ -162,8 +239,50 @@ public class TrialCountsActionTest extends AbstractPaActionTest {
      * @return
      * @throws PAException
      */
+    private ProtocolQueryServiceLocal getProtocolQueryMockForHolds()
+            throws PAException {
 
-    private ProtocolQueryServiceLocal getProtocolQueryMock() throws PAException {
+        final List<String> holdCodes = Arrays
+                .asList(new MockLookUpTableServiceBean().getPropertyValue(
+                        "dashboard.counts.onholds").split(","));
+        final ProtocolQueryServiceLocal mock = mock(ProtocolQueryServiceLocal.class);
+        final List<StudyProtocolQueryDTO> dtos = new ArrayList<>();
+
+        for (String code : holdCodes) {
+            for (int i = 0; i <= holdCodes.indexOf(code); i++) {
+                StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
+                dto.setStudyProtocolId(new Random().nextLong());
+                dto.setActiveHoldDate(new Date());
+                final OnholdReasonCode enumCode = OnholdReasonCode
+                        .getByCode(code.replaceAll("\\s+\\(.*", ""));
+                dto.setActiveHoldReason(enumCode);
+                if (enumCode == OnholdReasonCode.OTHER) {
+                    String cat = code.replaceFirst("^.*?\\(", "").replaceFirst(
+                            "\\)", "");
+                    dto.setActiveHoldReasonCategory(cat);
+                }
+                dtos.add(dto);
+            }
+        }
+
+        when(
+                mock.getStudyProtocolByCriteria(any(StudyProtocolQueryCriteria.class)))
+                .thenReturn(dtos);
+        when(
+                mock.getStudyProtocolByCriteria(
+                        any(StudyProtocolQueryCriteria.class),
+                        (ProtocolQueryPerformanceHints[]) anyVararg()))
+                .thenReturn(dtos);
+
+        return mock;
+    }
+
+    /**
+     * @return
+     * @throws PAException
+     */
+    private ProtocolQueryServiceLocal getProtocolQueryMockForMilestones()
+            throws PAException {
 
         final List<String> milestoneCodes = Arrays
                 .asList(new MockLookUpTableServiceBean().getPropertyValue(

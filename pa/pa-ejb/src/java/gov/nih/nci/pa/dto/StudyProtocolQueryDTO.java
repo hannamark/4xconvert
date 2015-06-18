@@ -2,6 +2,7 @@ package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
@@ -69,6 +70,8 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO
     private Date recentOnHoldDate;
     private Date recentOffHoldDate;
     private Date activeHoldDate;
+    private OnholdReasonCode activeHoldReason;
+    private String activeHoldReasonCategory;
     private boolean verifyData = false;
     private boolean showAccrualOption = false;
     private Date verificationDueDate;
@@ -1071,7 +1074,6 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO
                 && !DateUtils.isSameDay(getCalculatedAbstractionCompletionDate(),
                         getOverriddenExpectedAbstractionCompletionDate());
     }
-
     /**
      * @return the pcdSentToPIODate
      */
@@ -1240,6 +1242,34 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO
         this.trialPublishedDate = trialPublishedDate;
     }
     
-    
+
+
+    /**
+     * @return the activeHoldReason
+     */
+    public OnholdReasonCode getActiveHoldReason() {
+        return activeHoldReason;
+    }
+
+    /**
+     * @param activeHoldReason the activeHoldReason to set
+     */
+    public void setActiveHoldReason(OnholdReasonCode activeHoldReason) {
+        this.activeHoldReason = activeHoldReason;
+    }
+
+    /**
+     * @return the activeHoldReasonCategory
+     */
+    public String getActiveHoldReasonCategory() {
+        return activeHoldReasonCategory;
+    }
+
+    /**
+     * @param activeHoldReasonCategory the activeHoldReasonCategory to set
+     */
+    public void setActiveHoldReasonCategory(String activeHoldReasonCategory) {
+        this.activeHoldReasonCategory = activeHoldReasonCategory;
+    }
     
 }

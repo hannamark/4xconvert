@@ -224,7 +224,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         super.setServerHostname(TestProperties.getServerHostname());
         super.setServerPort(TestProperties.getServerPort());
         super.setDriverClass(TestProperties.getDriverClass());
-        // super.setDriverClass(PHANTOM_JS_DRIVER);
+        super.setDriverClass(PHANTOM_JS_DRIVER);
         System.setProperty("phantomjs.binary.path",
                 TestProperties.getPhantomJsPath());
         super.setUp();
@@ -990,7 +990,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         driver.switchTo().defaultContent();
         assertTrue(selenium.isTextPresent("One item found"));
     }
-    
+
     /**
      * @param info
      * @param siteCtepId

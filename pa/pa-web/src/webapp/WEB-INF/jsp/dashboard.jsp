@@ -97,6 +97,9 @@ span[data-overridden='true'] {
 
 div.trial_count_panel {
 	width: 45%;
+	display: inline-table;
+	padding: 5px;
+	margin-right: 15px;
 }
 
 h3.ui-accordion-header {
@@ -112,11 +115,11 @@ table.dataTable tbody td {
     padding: 3px 3px;
 }
 
-#Total td {
+#TotalMilestone td, #TotalHold td{
     font-weight: bold;
 }
 
-#Total td a {
+#TotalMilestone td a, #TotalHold td a{
     text-decoration: none;
     color: black;
     cursor: auto;
@@ -170,6 +173,7 @@ a.count {
     var bizDaysCalcURL = '<c:url value='/protected/dashboardbizDays.action'/>';
     var updateCompletionDateURL = '<c:url value='/protected/dashboardupdateExpectedAbstractionCompletionDate.action'/>';
     var milestonesInProgressURL = '<c:url value='/protected/trialCountsmilestonesInProgress.action'/>';
+    var onHoldTrialsURL = '<c:url value='/protected/trialCountsonHoldTrials.action'/>';
     
 	function handleAction(action) {
 		document.forms[0].action = "dashboard" + action + ".action";
@@ -747,6 +751,48 @@ a.count {
                                                     "Abstraction Verified No Response"]);
                         handleAction('search');
             });
+            
+            // Set up On-Hold Trials panel.   
+            $("#on_hold_trials" ).accordion({
+                collapsible: true,
+                heightStyle: "content"
+            });
+            $('#on_hold_trials_table').DataTable({
+                "bFilter" : false,
+                "paging":   false,                
+                "searching":   false,
+                "info":     false,
+                "order": [],
+                "columns": [
+                            { "data": "reason" },
+                            { "data": "count" }                            
+                        ],
+                "ajax" : {
+                    "url" : onHoldTrialsURL,
+                    "type" : "POST"
+                },
+                "columnDefs" : [ {
+                    "targets" : 1,
+                    "render" : function(data, type, r, meta) {
+                        var content = '<a class="count" data-onhold-reason="'+r.reasonKey+'">'+r.count+'</a>';
+                        return content;
+                    }
+                }]
+            }); 
+            $('#on_hold_trials_table tbody')
+                .on(
+                    'click',
+                    "a[data-onhold-reason][data-onhold-reason!='Total']",
+                    function() {
+                        resetValues();                        
+                        $("#onHoldStatus").val('onhold');                        
+                        $("#onHoldReason").val($(this).attr('data-onhold-reason'));
+                        $("#processingStatus").val(["Submitted","Amendment Submitted","Accepted",
+                                                    "Abstracted","Verification Pending","Abstraction Verified Response",
+                                                    "Abstraction Verified No Response", "On-Hold"]);
+                        handleAction('search');
+            });
+
 
         });
 	}(jQuery));
@@ -1041,9 +1087,7 @@ a.count {
 													value="ctepDcpCategory" cssStyle="width:206px" /></td>
 										</tr>
 
-										<tr>
-											<s:set name="OnholdReasonCodes"
-												value="@gov.nih.nci.pa.enums.OnholdReasonCode@getDisplayNames()" />
+										<tr>											
 											<td scope="row" class="label"><label for="onHoldReason"><fmt:message
 														key="dashboard.onHoldReason" /></label></td>
 											<td><s:select headerKey="" headerValue="All" size="5"
@@ -1137,10 +1181,10 @@ a.count {
 									<div class="actionsrow">
 										<del class="btnwrapper">
 											<ul class="btnrow">
-												<li><s:a href="javascript:void(0)" cssClass="btn"
+												<li><s:a href="javascript:void(0)" cssClass="btn" id="searchBtn"
 														onclick="handleAction('search');">
 														<span class="btn_img"><span class="search">Search</span></span>
-													</s:a> <s:a href="javascript:void(0)" cssClass="btn"
+													</s:a> <s:a href="javascript:void(0)" cssClass="btn" id="resetBtn"
 														onclick="resetValues();return false">
 														<span class="btn_img"><span class="cancel">Reset</span></span>
 													</s:a></li>

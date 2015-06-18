@@ -1,12 +1,15 @@
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.OnholdReasonCode;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -27,6 +30,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.Select;
 
 /**
  * 
@@ -36,6 +40,7 @@ import org.openqa.selenium.interactions.Actions;
 public class DashboardTest extends AbstractTrialStatusTest {
 
     private static final String MILESTONES_TO_COUNT = "Submission Received Date,Submission Acceptance Date,Administrative Processing Start Date,Ready for Administrative QC Date,Administrative QC Start Date,Scientific Processing Start Date,Ready for Scientific QC Date,Scientific QC Start Date,Ready for Trial Summary Report Date";
+    private static final String HOLDS_TO_COUNT = "Submission Incomplete,Submission Incomplete -- Missing Documents,Invalid Grant,Pending CTRP Review,Pending Disease Curation,Pending Person Curation,Pending Organization Curation,Pending Intervention Curation,Other (CTRP),Other (Submitter)";
     private static final int OP_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 10000
             : 2000;
 
@@ -45,18 +50,170 @@ public class DashboardTest extends AbstractTrialStatusTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        restoreDefaultWorkloadMilestones();
+        restorePaPropertiesToOriginal();
     }
 
     @Test
-    public void testMilestonesInProgressPanel() throws Exception {
+    public void testScenarioOfAddingNewOtherHoldCategory() throws Exception {
+        deactivateAllTrials();
+        changePaProperty("dashboard.counts.onholds", HOLDS_TO_COUNT
+                + ",Other (Bad Weather)");
+        changePaProperty("studyonhold.reason_category",
+                "Submitter,CTRP,Bad Weather");
+
+        TrialInfo trial = createAcceptedTrial();
+        loginAsSuperAbstractor();
+        findAndSelectTrialInDashboard(trial);
+
+        // Add hold with the new category.
+        clickAndWait("link=On-hold Information");
+        clickAndWait("addButton");
+        s.select("reasonCode", "Other");
+        s.select("reasonCategoryList", "Bad Weather");
+        clickAndWait("addButton");
+        assertTrue(s.isTextPresent("Message. Record Created"));
+
+        // Verify Dashboard is picking up the new category.
+        goToDashboardSearch();
+        s.click("resetBtn");
+        s.select("onHoldReason", "value=Other_Bad Weather");
+        clickAndWait("searchBtn");
+        verifyResultsTabActive();
+        assertTrue(isTrialInResultsTab(trial));
+
+        s.click("searchid");
+        s.click("resetBtn");
+        new Select(driver.findElement(By.id("onHoldReason")))
+                .selectByValue("Other_CTRP");
+        new Select(driver.findElement(By.id("onHoldReason")))
+                .selectByValue("Other_Submitter");
+        clickAndWait("searchBtn");
+        verifyResultsTabActive();
+        assertFalse(isTrialInResultsTab(trial));
+
+        s.click("searchid");
+        s.click("resetBtn");
+        new Select(driver.findElement(By.id("onHoldReason")))
+                .selectByValue("Other_CTRP");
+        new Select(driver.findElement(By.id("onHoldReason")))
+                .selectByValue("Other_Submitter");
+        new Select(driver.findElement(By.id("onHoldReason")))
+                .selectByValue("Other_Bad Weather");
+        clickAndWait("searchBtn");
+        verifyResultsTabActive();
+        assertTrue(isTrialInResultsTab(trial));
+
+        // Now verify On-Hold panel picked it up as well.
+        clickAndWait("link=Dashboard");
+        waitForElementToBecomeVisible(
+                By.xpath("//table[@id='on_hold_trials_table']//tr[@id='TotalHold']"),
+                20);
+        verifyPanelWidget("on_hold_trials", "On-Hold Trials");
+        verifyHoldCountRow(11, "Other (Bad Weather)", Arrays.asList(trial));
+        verifyHoldCountTotal(1);
+    }
+
+    /**
+     * Testing backend changes made in PO-9027 to handle Other on-hold criteria
+     * searches.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testSearchByOnHoldReasonOther() throws Exception {
         deactivateAllTrials();
 
+        TrialInfo grant = createAcceptedTrial();
+        addOnHold(grant, OnholdReasonCode.INVALID_GRANT.name(), new Date(),
+                null, "Submitter");
+        TrialInfo otherSubmitter = createAcceptedTrial();
+        addOnHold(otherSubmitter, OnholdReasonCode.OTHER.name(), new Date(),
+                null, "Submitter");
+
+        TrialInfo otherCTRP = createAcceptedTrial();
+        addOnHold(otherCTRP, OnholdReasonCode.OTHER.name(), new Date(), null,
+                "CTRP");
+
+        loginAsSuperAbstractor();
+        clickAndWait("link=Dashboard");
+
+        s.click("searchid");
+        s.click("resetBtn");
+        s.select("onHoldReason", "value=Invalid Grant");
+        clickAndWait("searchBtn");
+        verifyResultsTabActive();
+        assertTrue(isTrialInResultsTab(grant));
+        assertFalse(isTrialInResultsTab(otherCTRP));
+        assertFalse(isTrialInResultsTab(otherSubmitter));
+
+        s.click("searchid");
+        s.click("resetBtn");
+        s.select("onHoldReason", "value=Other_Submitter");
+        clickAndWait("searchBtn");
+        verifyResultsTabActive();
+        assertFalse(isTrialInResultsTab(grant));
+        assertFalse(isTrialInResultsTab(otherCTRP));
+        assertTrue(isTrialInResultsTab(otherSubmitter));
+
+        s.click("searchid");
+        s.click("resetBtn");
+        s.select("onHoldReason", "value=Other_CTRP");
+        clickAndWait("searchBtn");
+        verifyResultsTabActive();
+        assertFalse(isTrialInResultsTab(grant));
+        assertTrue(isTrialInResultsTab(otherCTRP));
+        assertFalse(isTrialInResultsTab(otherSubmitter));
+
+        s.click("searchid");
+        s.click("resetBtn");
+        new Select(driver.findElement(By.id("onHoldReason")))
+                .selectByValue("Other_CTRP");
+        new Select(driver.findElement(By.id("onHoldReason")))
+                .selectByValue("Other_Submitter");
+        clickAndWait("searchBtn");
+        verifyResultsTabActive();
+        assertFalse(isTrialInResultsTab(grant));
+        assertTrue(isTrialInResultsTab(otherCTRP));
+        assertTrue(isTrialInResultsTab(otherSubmitter));
+
+        s.click("searchid");
+        s.click("resetBtn");
+        new Select(driver.findElement(By.id("onHoldReason")))
+                .selectByValue("Invalid Grant");
+        new Select(driver.findElement(By.id("onHoldReason")))
+                .selectByValue("Other_Submitter");
+        clickAndWait("searchBtn");
+        verifyResultsTabActive();
+        assertTrue(isTrialInResultsTab(grant));
+        assertFalse(isTrialInResultsTab(otherCTRP));
+        assertTrue(isTrialInResultsTab(otherSubmitter));
+
+        s.click("searchid");
+        s.click("resetBtn");
+        new Select(driver.findElement(By.id("onHoldReason")))
+                .selectByValue("Invalid Grant");
+        new Select(driver.findElement(By.id("onHoldReason")))
+                .selectByValue("Other_CTRP");
+        new Select(driver.findElement(By.id("onHoldReason")))
+                .selectByValue("Other_Submitter");
+        clickAndWait("searchBtn");
+        verifyResultsTabActive();
+        assertTrue(isTrialInResultsTab(grant));
+        assertTrue(isTrialInResultsTab(otherCTRP));
+        assertTrue(isTrialInResultsTab(otherSubmitter));
+
+    }
+
+    @Test
+    public void testOnHoldPanel() throws Exception {
+        deactivateAllTrials();
+
+        // Prepare trials with holds.
         int total = 0;
         final LinkedHashMap<String, List<TrialInfo>> map = new LinkedHashMap<>();
         final List<TrialInfo> allTrialsCreated = new ArrayList<>();
-        for (String code : MILESTONES_TO_COUNT.split(",")) {
-            List<TrialInfo> trials = registerBunchOfTrials(code);
+        for (String code : HOLDS_TO_COUNT.split(",")) {
+            List<TrialInfo> trials = registerBunchOfTrialsWithHold(code);
             map.put(code, trials);
             allTrialsCreated.addAll(trials);
             total += trials.size();
@@ -67,7 +224,106 @@ public class DashboardTest extends AbstractTrialStatusTest {
         clickAndWait("link=Dashboard");
         assertTrue(s.isElementPresent("count_panels_container"));
         waitForElementToBecomeVisible(
-                By.xpath("//table[@id='milestones_in_progress_table']//tr[@id='Total']"),
+                By.xpath("//table[@id='on_hold_trials_table']//tr[@id='TotalHold']"),
+                20);
+
+        // Panel must be collapsible, but initially open.
+        verifyPanelWidget("on_hold_trials", "On-Hold Trials");
+
+        // Verify table headers.
+        assertEquals("On-Hold Reason",
+                s.getText("//table[@id='on_hold_trials_table']//th[1]"));
+        assertEquals("Trial Count",
+                s.getText("//table[@id='on_hold_trials_table']//th[2]"));
+
+        // Verify counts and their order.
+        int row = 1;
+        for (String code : HOLDS_TO_COUNT.split(",")) {
+            List<TrialInfo> trials = map.get(code);
+            verifyHoldCountRow(row, code, trials);
+            row++;
+        }
+
+        // Verify Total.
+        verifyHoldCountTotal(total);
+
+        // The panel must only display non-rejected non-terminated
+        // trials. Add these conditions to trials
+        // and verify zero counts.
+        for (TrialInfo trial : allTrialsCreated) {
+            int index = allTrialsCreated.indexOf(trial);
+            if (index % 2 == 0) {
+                addDWS(trial, "SUBMISSION_TERMINATED");
+            } else {
+                addDWS(trial, "REJECTED");
+            }
+
+        }
+        refresh();
+        waitForElementToBecomeVisible(
+                By.xpath("//table[@id='on_hold_trials_table']//tr[@id='TotalHold']"),
+                20);
+        row = 1;
+        for (String code : HOLDS_TO_COUNT.split(",")) {
+            verifyHoldCountRow(row, code, ListUtils.EMPTY_LIST);
+            row++;
+        }
+        verifyHoldCountTotal(0);
+
+    }
+
+    private void verifyHoldCountRow(int row, String code, List<TrialInfo> trials) {
+        // Code and count are correct.
+        assertEquals(
+                code,
+                s.getText("//table[@id='on_hold_trials_table']/tbody/tr[" + row
+                        + "]/td[1]"));
+        final String countLinkPath = "//table[@id='on_hold_trials_table']/tbody/tr["
+                + row + "]/td[2]/a";
+        assertEquals(trials.size() + "", s.getText(countLinkPath));
+
+        // Count link is highlighted
+        assertEquals("underline", driver.findElement(By.xpath(countLinkPath))
+                .getCssValue("text-decoration"));
+
+        // Clicking on link should bring up Results.
+        clickAndWait(countLinkPath);
+        verifyResultsTabActive();
+        if (trials.isEmpty()) {
+            assertTrue(s.isTextPresent("Nothing found to display."));
+        } else if (trials.size() == 1) {
+            assertTrue(s.isTextPresent("One trial found."));
+        } else {
+            assertTrue(s.isTextPresent(trials.size()
+                    + " trials found, displaying all trials."));
+        }
+        for (TrialInfo trialInfo : trials) {
+            assertTrue(isTrialInResultsTab(trialInfo));
+        }
+        s.click("workloadid");
+
+    }
+
+    @Test
+    public void testMilestonesInProgressPanel() throws Exception {
+        deactivateAllTrials();
+
+        int total = 0;
+        final LinkedHashMap<String, List<TrialInfo>> map = new LinkedHashMap<>();
+        final List<TrialInfo> allTrialsCreated = new ArrayList<>();
+        for (String code : MILESTONES_TO_COUNT.split(",")) {
+            List<TrialInfo> trials = registerBunchOfTrialsWithMilestone(code);
+            map.put(code, trials);
+            allTrialsCreated.addAll(trials);
+            total += trials.size();
+        }
+
+        // Now test the panel.
+        loginAsSuperAbstractor();
+        clickAndWait("link=Dashboard");
+        assertTrue(s.isElementPresent("count_panels_container"));
+        waitForElementToBecomeVisible(
+                By.xpath("//table[@id='milestones_in_progress_table']//tr[@id='TotalMilestone']"),
                 20);
 
         // Panel must be collapsible, but initially open.
@@ -107,7 +363,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         }
         refresh();
         waitForElementToBecomeVisible(
-                By.xpath("//table[@id='milestones_in_progress_table']//tr[@id='Total']"),
+                By.xpath("//table[@id='milestones_in_progress_table']//tr[@id='TotalMilestone']"),
                 20);
         row = 1;
         for (String code : MILESTONES_TO_COUNT.split(",")) {
@@ -132,10 +388,20 @@ public class DashboardTest extends AbstractTrialStatusTest {
     private void verifyMilestoneCountTotal(int total) {
         assertEquals(
                 "Total",
-                s.getText("//table[@id='milestones_in_progress_table']//tr[@id='Total']/td[1]"));
+                s.getText("//table[@id='milestones_in_progress_table']//tr[@id='TotalMilestone']/td[1]"));
         assertEquals(
                 total + "",
-                s.getText("//table[@id='milestones_in_progress_table']//tr[@id='Total']/td[2]"));
+                s.getText("//table[@id='milestones_in_progress_table']//tr[@id='TotalMilestone']/td[2]"));
+
+    }
+
+    private void verifyHoldCountTotal(int total) {
+        assertEquals(
+                "Total",
+                s.getText("//table[@id='on_hold_trials_table']//tr[@id='TotalHold']/td[1]"));
+        assertEquals(
+                total + "",
+                s.getText("//table[@id='on_hold_trials_table']//tr[@id='TotalHold']/td[2]"));
 
     }
 
@@ -186,15 +452,32 @@ public class DashboardTest extends AbstractTrialStatusTest {
         s.click("//div[@id='" + id + "']/h3");
         waitForElementToBecomeVisible(
                 By.xpath("//div[@id='" + id + "']/div[@role='tabpanel']"), 5);
+        pause(2000);
 
     }
 
-    private List<TrialInfo> registerBunchOfTrials(String code)
+    private List<TrialInfo> registerBunchOfTrialsWithMilestone(String code)
             throws SQLException {
         List<TrialInfo> list = new ArrayList<>();
         for (int i = 1; i < new Random().nextFloat() * 6; i++) {
             TrialInfo trial = createAcceptedTrial();
             addMilestone(trial, MilestoneCode.getByCode(code).name());
+            list.add(trial);
+        }
+        return list;
+    }
+
+    private List<TrialInfo> registerBunchOfTrialsWithHold(String code)
+            throws SQLException {
+        List<TrialInfo> list = new ArrayList<>();
+        String enumCode = code.replaceAll("\\s+\\(.*?\\)$", "");
+        String cat = enumCode.equalsIgnoreCase("Other") ? code.replaceFirst(
+                "^.*?\\(", "").replaceFirst("\\)", "") : "CTRP";
+        for (int i = 1; i < new Random().nextFloat() * 6; i++) {
+            TrialInfo trial = createAcceptedTrial();
+            addDWS(trial, DocumentWorkflowStatusCode.ON_HOLD.name());
+            addOnHold(trial, OnholdReasonCode.getByCode(enumCode).name(),
+                    new Date(), null, cat);
             list.add(trial);
         }
         return list;
@@ -1008,7 +1291,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         clickAndWait("link=Dashboard");
         assertFalse(isTrialInWorkloadTab(submittedTrial));
         assertFalse(isTrialInWorkloadTab(acceptedTrial));
-        restoreDefaultWorkloadMilestones();
+        restorePaPropertiesToOriginal();
 
         // Verify submission type.
         deactivateAllTrials();
@@ -1481,9 +1764,10 @@ public class DashboardTest extends AbstractTrialStatusTest {
     /**
      * @throws SQLException
      */
-    private void restoreDefaultWorkloadMilestones() throws SQLException {
+    private void restorePaPropertiesToOriginal() throws SQLException {
+        changePaProperty("studyonhold.reason_category", "Submitter,CTRP");
+        changePaProperty("dashboard.counts.onholds", HOLDS_TO_COUNT);
         changePaProperty("dashboard.counts.milestones", MILESTONES_TO_COUNT);
-
         changePaProperty(
                 "dashboard.workload.milestones",
                 "Submission Received Date,Submission Acceptance Date,Submission Reactivated Date,Administrative Processing Start Date,Administrative Processing Completed Date,Ready for Administrative QC Date,Administrative QC Start Date,Administrative QC Completed Date,Scientific Processing Start Date,Scientific Processing Completed Date,Ready for Scientific QC Date,Scientific QC Start Date,Scientific QC Completed Date,Ready for Trial Summary Report Date");

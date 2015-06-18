@@ -141,6 +141,7 @@ public class StudyProtocolOptions {
     private boolean excludeCtepDcpTrials;
     private MilestoneCode currentOrPreviousMilestone;  
     private List<OnholdReasonCode> onholdReasons = new ArrayList<OnholdReasonCode>();    
+    private List<String> onholdOtherReasonCategories = new ArrayList<String>();
     private List<MilestoneFilter> milestoneFilters = new ArrayList<MilestoneFilter>();    
     private List<Integer> processingPriority = new ArrayList<Integer>();
     private List<String> studySource = new ArrayList<>();
@@ -818,6 +819,20 @@ public class StudyProtocolOptions {
      */
     public void setStudySource(List<String> studySource) {
         this.studySource = studySource;
+    }
+
+    /**
+     * @return the onholdReasonCategories
+     */
+    public List<String> getOnholdOtherReasonCategories() {
+        return onholdOtherReasonCategories;
+    }
+
+    /**
+     * @param onholdReasonCategories the onholdReasonCategories to set
+     */
+    public void setOnholdOtherReasonCategories(List<String> onholdReasonCategories) {
+        this.onholdOtherReasonCategories = onholdReasonCategories;
     }
 
 }

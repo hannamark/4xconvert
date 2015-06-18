@@ -90,6 +90,7 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -101,8 +102,10 @@ import gov.nih.nci.pa.service.search.StudyProtocolOptions.MilestoneFilter;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -256,6 +259,8 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         private static final String STUDY_SOURCE_PARAM = "studySourceParam";
         private static final String TREATING_SITE_CODE_PARAM = "treatingSiteCodeParam";
         private static final String NULLIFIED_STATUS_PARAM = "nulifiedStatusParam";
+        private static final String ONHOLD_OTHER_CODE_PARAM = "onHoldOtherParam";
+        private static final String ONHOLD_OTHER_CATEGORIES_PARAM = "onHoldOtherCategoriesParam";
         private final StudyProtocol sp;
         private final StudyProtocolOptions spo;        
 
@@ -749,25 +754,114 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
             
             if (CollectionUtils.isNotEmpty(spo.getOnholdReasons())) {
                 String operator = determineOperator(whereClause);
+                // On-hold reason OTHER needs special handling: we need to
+                // consider On-Hold Reason Category if provided
+                // See PO-8093 for more details.
+                final Collection<OnholdReasonCode> notFilteredByReasonCategory = new LinkedHashSet<>(
+                        spo.getOnholdReasons());
+                boolean otherHoldWithReasonCategoriesPresent = false;
+                boolean otherHoldOnly = false;
+                if (notFilteredByReasonCategory
+                        .contains(OnholdReasonCode.OTHER)
+                        && !spo.getOnholdOtherReasonCategories().isEmpty()) {
+                    // At this point we know we need to treat OTHER in a special
+                    // way: narrow it down by categories specified.
+                    otherHoldWithReasonCategoriesPresent = true;
+                    notFilteredByReasonCategory.remove(OnholdReasonCode.OTHER);
+                    otherHoldOnly = notFilteredByReasonCategory.isEmpty();
+                }
                 if (spo.isSearchOnHoldTrials()
                         && !Boolean.TRUE.equals(spo.getHoldRecordExists())) {
-                    whereClause
-                            .append(String
-                                    .format(" %s (select count(id) from %s.studyOnholds where onholdDate is "
-                                            + "not null and offholdDate is null and onholdReasonCode in (:%s)) > 0",
-                                            operator,
-                                            SearchableUtils.ROOT_OBJ_ALIAS,
-                                            ONHOLD_REASONS_PARAM));
+                    if (!otherHoldWithReasonCategoriesPresent) {
+                        whereClause
+                                .append(String
+                                        .format(" %s (select count(id) from %s.studyOnholds where onholdDate is "
+                                                + "not null and offholdDate is null and onholdReasonCode in (:%s)) > 0",
+                                                operator,
+                                                SearchableUtils.ROOT_OBJ_ALIAS,
+                                                ONHOLD_REASONS_PARAM));
+                        params.put(ONHOLD_REASONS_PARAM,
+                                notFilteredByReasonCategory);
+                    } else {
+                        if (otherHoldOnly) {
+                            whereClause
+                                    .append(String
+                                            .format(" %s ((select count(id) from %s.studyOnholds where onholdDate is "
+                                                    + "not null and offholdDate is null and onholdReasonCode=:%s "
+                                                    + "and onholdReasonCategory in (:%s)) > 0)",
+                                                    operator,
+                                                    SearchableUtils.ROOT_OBJ_ALIAS,
+                                                    ONHOLD_OTHER_CODE_PARAM,
+                                                    ONHOLD_OTHER_CATEGORIES_PARAM));
+                        } else {
+                            whereClause
+                                    .append(String
+                                            .format(" %s ((select count(id) from %s.studyOnholds where onholdDate is "
+                                                    + "not null and "
+                                                    + "offholdDate is null and onholdReasonCode in (:%s)) > 0 "
+                                                    + " OR "
+                                                    + "(select count(id) from %s.studyOnholds where onholdDate is "
+                                                    + "not null and offholdDate is null and onholdReasonCode=:%s "
+                                                    + "and onholdReasonCategory in (:%s)) > 0)",
+                                                    operator,
+                                                    SearchableUtils.ROOT_OBJ_ALIAS,
+                                                    ONHOLD_REASONS_PARAM,
+                                                    SearchableUtils.ROOT_OBJ_ALIAS,
+                                                    ONHOLD_OTHER_CODE_PARAM,
+                                                    ONHOLD_OTHER_CATEGORIES_PARAM));
+                            params.put(ONHOLD_REASONS_PARAM,
+                                    notFilteredByReasonCategory);
+                        }
+                        params.put(ONHOLD_OTHER_CODE_PARAM,
+                                OnholdReasonCode.OTHER);
+                        params.put(ONHOLD_OTHER_CATEGORIES_PARAM,
+                                spo.getOnholdOtherReasonCategories());
+                    }
                 } else {
-                    whereClause
-                            .append(String
-                                    .format(" %s (select count(id) from %s.studyOnholds where onholdDate is "
-                                            + "not null and onholdReasonCode in (:%s)) > 0",
-                                            operator,
-                                            SearchableUtils.ROOT_OBJ_ALIAS,
-                                            ONHOLD_REASONS_PARAM));
+                    if (!otherHoldWithReasonCategoriesPresent) {
+                        whereClause
+                                .append(String
+                                        .format(" %s (select count(id) from %s.studyOnholds where onholdDate is "
+                                                + "not null and onholdReasonCode in (:%s)) > 0",
+                                                operator,
+                                                SearchableUtils.ROOT_OBJ_ALIAS,
+                                                ONHOLD_REASONS_PARAM));
+                        params.put(ONHOLD_REASONS_PARAM,
+                                notFilteredByReasonCategory);
+                    } else {
+                        if (otherHoldOnly) {
+                            whereClause
+                                    .append(String
+                                            .format(" %s ((select count(id) from %s.studyOnholds where onholdDate is "
+                                                    + "not null and onholdReasonCode=:%s "
+                                                    + "and onholdReasonCategory in (:%s)) > 0)",
+                                                    operator,
+                                                    SearchableUtils.ROOT_OBJ_ALIAS,
+                                                    ONHOLD_OTHER_CODE_PARAM,
+                                                    ONHOLD_OTHER_CATEGORIES_PARAM));
+                        } else {
+                            whereClause
+                                    .append(String
+                                            .format(" %s ((select count(id) from %s.studyOnholds where onholdDate is "
+                                                    + "not null and onholdReasonCode in (:%s)) > 0 OR "
+                                                    + "(select count(id) from %s.studyOnholds where onholdDate is "
+                                                    + "not null and onholdReasonCode=:%s "
+                                                    + "and onholdReasonCategory in (:%s)) > 0)",
+                                                    operator,
+                                                    SearchableUtils.ROOT_OBJ_ALIAS,
+                                                    ONHOLD_REASONS_PARAM,
+                                                    SearchableUtils.ROOT_OBJ_ALIAS,
+                                                    ONHOLD_OTHER_CODE_PARAM,
+                                                    ONHOLD_OTHER_CATEGORIES_PARAM));
+                            params.put(ONHOLD_REASONS_PARAM,
+                                    notFilteredByReasonCategory);
+                        }
+                        params.put(ONHOLD_OTHER_CODE_PARAM,
+                                OnholdReasonCode.OTHER);
+                        params.put(ONHOLD_OTHER_CATEGORIES_PARAM,
+                                spo.getOnholdOtherReasonCategories());
+                    }
                 }
-                params.put(ONHOLD_REASONS_PARAM, spo.getOnholdReasons());
             }
         }
 

@@ -6,6 +6,7 @@ import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_OTH
 import static gov.nih.nci.pa.util.Constants.IS_SU_ABSTRACTOR;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -48,6 +49,97 @@ public class TrialCountsAction extends ActionSupport implements Preparable,
     private HttpServletRequest request;
 
     // CHECKSTYLE:OFF
+
+    /**
+     * @return StreamResult
+     * @throws UnsupportedEncodingException
+     *             UnsupportedEncodingException
+     * 
+     * @throws PAException
+     *             PAException
+     * @throws JSONException
+     *             JSONException
+     */
+    public StreamResult onHoldTrials() throws UnsupportedEncodingException,
+            PAException, JSONException {
+        JSONObject root = new JSONObject();
+        JSONArray arr = new JSONArray();
+        root.put("data", arr);
+        onHoldTrials(arr);
+        return new StreamResult(new ByteArrayInputStream(root.toString()
+                .getBytes(UTF_8)));
+    }
+
+    private void onHoldTrials(JSONArray arr) throws PAException, JSONException {
+        final List<String> holdCodes = Arrays.asList(lookUpService
+                .getPropertyValue("dashboard.counts.onholds").split(","));
+
+        // TreeMap ensures holds are displayed in the same order as in property.
+        final Map<String, Integer> countsMap = new TreeMap<>(
+                new Comparator<String>() {
+                    @Override
+                    public int compare(String s1, String s2) {
+                        return holdCodes.indexOf(s1) - holdCodes.indexOf(s2);
+                    }
+                });
+
+        // All on-hold reasons must be in the map, even those with zero counts.
+        for (String code : holdCodes) {
+            countsMap.put(code, 0);
+        }
+
+        final List<StudyProtocolQueryDTO> results = getTrialsForOnHoldCount();
+        for (StudyProtocolQueryDTO dto : results) {
+            String code = dto.getActiveHoldReason().getCode();
+            String cat = dto.getActiveHoldReasonCategory();
+            String key = OnholdReasonCode.OTHER.getCode()
+                    .equalsIgnoreCase(code) ? code + " (" + cat + ")" : code;
+            Integer count = countsMap.get(key);
+            if (count != null) {
+                count++;
+                countsMap.put(key, count);
+            }
+        }
+
+        int total = 0;
+        for (String code : countsMap.keySet()) {
+            JSONObject data = new JSONObject();
+            data.put("reason", code);
+            data.put("reasonKey", code.replaceFirst("\\s+\\(", "_")
+                    .replaceFirst("\\)", ""));
+            data.put("count", (int) countsMap.get(code));
+            data.put("DT_RowId", code);
+            arr.put(data);
+            total += countsMap.get(code);
+        }
+        JSONObject data = new JSONObject();
+        data.put("reason", "Total");
+        data.put("reasonKey", "Total");
+        data.put("count", total);
+        data.put("DT_RowId", "TotalHold");
+        arr.put(data);
+    }
+
+    private List<StudyProtocolQueryDTO> getTrialsForOnHoldCount()
+            throws PAException {
+        StudyProtocolQueryCriteria criteria = getCriteria();
+        criteria.setHoldStatus(PAConstants.ON_HOLD);
+        List<StudyProtocolQueryDTO> results = protocolQueryService
+                .getStudyProtocolByCriteria(criteria, SKIP_ALTERNATE_TITLES,
+                        SKIP_LAST_UPDATER_INFO, SKIP_OTHER_IDENTIFIERS);
+        return results;
+    }
+
+    /**
+     * @return
+     */
+    private StudyProtocolQueryCriteria getCriteria() {
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setExcludeRejectProtocol(true);
+        criteria.setExcludeTerminatedTrials(true);
+        return criteria;
+    }
+
     /**
      * @return StreamResult
      * @throws UnsupportedEncodingException
@@ -111,7 +203,7 @@ public class TrialCountsAction extends ActionSupport implements Preparable,
         JSONObject data = new JSONObject();
         data.put("milestone", "Total");
         data.put("count", total);
-        data.put("DT_RowId", "Total");
+        data.put("DT_RowId", "TotalMilestone");
         arr.put(data);
     }
 
@@ -122,9 +214,7 @@ public class TrialCountsAction extends ActionSupport implements Preparable,
      */
     private List<StudyProtocolQueryDTO> getTrialsForMilestoneCount()
             throws PAException {
-        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
-        criteria.setExcludeRejectProtocol(true);
-        criteria.setExcludeTerminatedTrials(true);
+        StudyProtocolQueryCriteria criteria = getCriteria();
         criteria.setStudyMilestone(Arrays.asList(lookUpService
                 .getPropertyValue("dashboard.counts.milestones").split(",")));
         criteria.setHoldStatus(PAConstants.NOT_ON_HOLD);

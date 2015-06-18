@@ -1806,7 +1806,7 @@
        <comment>Update definitions in Registry to match new OCC Data Guide definitions.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8829.sql"/>       
     </changeSet>
-    <changeSet id="PO-9005" author="krylovd" runOnChange="true">
+    <changeSet id="PO-9005" author="krylovd">
        <comment>Adding more PA properties to support the dashboard.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9005.sql"/>       
     </changeSet>
@@ -1815,11 +1815,16 @@
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9006.sql"/>
     </changeSet>
     <changeSet id="PO-9006-1" author="krylovd" runAlways="true">
+       <validCheckSum>ANY</validCheckSum>
        <comment>Fixing the issue introduced by previous script: @gridgrouper.url@ did not get replaced.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9006-1.sql"/>
     </changeSet>
      <changeSet id="PO-9013" author="gunnikrishnan">
        <comment>Add additional columns to study for results reporting dashboard</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9013.sql"/>
-    </changeSet>  
+    </changeSet> 
+    <changeSet id="PO-9027" author="krylovd">
+       <comment>Adding more PA properties to on-hold trials panel.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9027.sql"/>       
+    </changeSet>    
 </databaseChangeLog>

@@ -108,7 +108,7 @@ public class TrialSearchStudyProtocolQueryDTO extends UpdateableStudyProtocolQue
     private Long piId;
     private String primaryPurpose;
     private String primaryPurposeOtherText;
-    private String onHoldReasons;
+    private String onHoldReasons;    
     private String onHoldDate;
     private String offHoldDate;
     private Boolean ctgovXmlRequiredIndicator;
@@ -519,7 +519,7 @@ public class TrialSearchStudyProtocolQueryDTO extends UpdateableStudyProtocolQue
     public void setPreviousDocumentWorkflowStatusCode(
             DocumentWorkflowStatusCode previousDocumentWorkflowStatusCode) {
         this.previousDocumentWorkflowStatusCode = previousDocumentWorkflowStatusCode;
-    }
+    }  
     
     
 }

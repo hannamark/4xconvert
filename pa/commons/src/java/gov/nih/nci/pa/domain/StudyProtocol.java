@@ -1182,7 +1182,7 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     /**
      * @return the pcdConfirmedDate
      */
-    @Column(name = "pcd_confirmed_date")
+    @Column(name = "pcd_confirm_date")
     public Timestamp getPcdConfirmedDate() {
         return pcdConfirmedDate;
     }

@@ -14,3 +14,18 @@
 	</div>
 </div>
 
+<div id="on_hold_trials" class="trial_count_panel">
+	<h3>On-Hold Trials</h3>
+	<div>
+		<table id="on_hold_trials_table">
+			<thead>
+				<tr>
+					<th>On-Hold Reason</th>
+					<th>Trial Count</th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+</div>
+
+

@@ -462,6 +462,8 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                             .normalizeDateString((studyOnhold.getOffholdDate())
                                     .toString()) : "";  
                     spqDto.setActiveHoldDate(studyOnhold.getOnholdDate());
+                    spqDto.setActiveHoldReason(studyOnhold.getOnholdReasonCode());
+                    spqDto.setActiveHoldReasonCategory(studyOnhold.getOnholdReasonCategory());
                 }
                 spqDto.setOnHoldReasons(sb.toString());
                 spqDto.setOnHoldDate(sbDate.toString());                
@@ -513,6 +515,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         options.setCheckedOut(criteria.getCheckedOut());
         options.setHoldRecordExists(criteria.getHoldRecordExists());
         options.setOnholdReasons(criteria.getOnholdReasons());
+        options.setOnholdOtherReasonCategories(criteria.getOnholdOtherReasonCategories());
         options.setSubmittedOnOrAfter(criteria.getSubmittedOnOrAfter());
         options.setSubmittedOnOrBefore(criteria.getSubmittedOnOrBefore());
         options.setSubmitterAffiliateOrgId(criteria.getSubmitterAffiliateOrgId());       

@@ -55,7 +55,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -165,7 +164,6 @@ public class DashboardAction extends AbstractCheckInOutAction implements
     private String newCompletionDateComments;
 
     private List<String> checkoutCommands = new ArrayList<String>();
-    private Map<String, String> onHoldValuesMap = new HashMap<String, String>();
 
     @Override
     public String execute() {
@@ -275,24 +273,6 @@ public class DashboardAction extends AbstractCheckInOutAction implements
         criteria.setStudyMilestone(Arrays.asList(lookUpService
                 .getPropertyValue("dashboard.workload.milestones").split(",")));
         return criteria;
-    }
-
-    /**
-     * Set values for onHold Drop down
-     */
-    private void setOnHoldDisplayValues() {
-        try {
-            OnholdReasonCode[] keys = OnholdReasonCode.values();
-            for (OnholdReasonCode key : keys) {
-                String value = onholdService.getReasonCategoryValue(key
-                        .getName());
-                onHoldValuesMap.put(key.getCode(), key.getCode() + " (" + value
-                        + ")");
-            }
-        } catch (Exception e) {
-            LOG.error("Error in setting on hold values " + e.getMessage());
-        }
-
     }
 
     private boolean canAccessDashboard() {
@@ -511,9 +491,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements
             criteria.getTrialSubmissionTypes().add(
                     SubmissionTypeCode.getByCode(code));
         }
-        for (String code : onHoldReason) {
-            criteria.getOnholdReasons().add(OnholdReasonCode.getByCode(code));
-        }
+        buildOnHoldReasonCriteria(criteria);
         criteria.setSubmitterAffiliateOrgId(submittingOrgId);
         criteria.setNciSponsored(StringUtils.isBlank(nciSponsored) ? null
                 : "true".equals(nciSponsored));
@@ -523,6 +501,30 @@ public class DashboardAction extends AbstractCheckInOutAction implements
         buildOnHoldCriteria(criteria);
         buildMilestoneCriteria(criteria);
         return criteria;
+    }
+
+    /**
+     * @param criteria
+     */
+    private void buildOnHoldReasonCriteria(StudyProtocolQueryCriteria criteria) {
+        for (String code : onHoldReason) {
+            if (!StringUtils.defaultString(code).startsWith(
+                    OnholdReasonCode.OTHER.getCode())) {
+                final OnholdReasonCode byCode = OnholdReasonCode
+                        .getByCode(code);
+                if (byCode != null) {
+                    criteria.getOnholdReasons().add(
+                            OnholdReasonCode.getByCode(code));
+                }
+            } else {
+                criteria.getOnholdReasons().add(OnholdReasonCode.OTHER);
+                String cat = code.replaceAll(
+                        OnholdReasonCode.OTHER.getCode() + "_", "").trim();
+                if (StringUtils.isNotBlank(cat)) {
+                    criteria.getOnholdOtherReasonCategories().add(cat);
+                }
+            }
+        }
     }
 
     /**
@@ -671,7 +673,6 @@ public class DashboardAction extends AbstractCheckInOutAction implements
         onholdService = PaRegistry.getStudyOnholdService();
         lookUpService = PaRegistry.getLookUpTableService();
         setStudyCheckoutService(PaRegistry.getStudyCheckoutService());
-        setOnHoldDisplayValues();
     }
 
     private void determineProperPageTitle() {
@@ -1293,16 +1294,29 @@ public class DashboardAction extends AbstractCheckInOutAction implements
     /**
      * @return onHoldValuesMap
      */
-    public Map<String, String> getOnHoldValuesMap() {
+    public final Map<String, String> getOnHoldValuesMap() {
+        final Map<String, String> onHoldValuesMap = new LinkedHashMap<>();
+        try {
+            OnholdReasonCode[] keys = OnholdReasonCode.values();
+            for (OnholdReasonCode key : keys) {
+                if (key != OnholdReasonCode.OTHER) {
+                    String value = onholdService.getReasonCategoryValue(key
+                            .getName());
+                    onHoldValuesMap.put(key.getCode(), key.getCode() + " ("
+                            + value + ")");
+                } else {
+                    for (String cat : lookUpService.getPropertyValue(
+                            "studyonhold.reason_category").split(",")) {
+                        onHoldValuesMap.put(OnholdReasonCode.OTHER.getCode()
+                                + "_" + cat, OnholdReasonCode.OTHER.getCode()
+                                + " (" + cat + ")");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            LOG.error("Error in setting on hold values " + e.getMessage(), e);
+        }
         return onHoldValuesMap;
-    }
-
-    /**
-     * @param onHoldValuesMap
-     *            onHoldValuesMap
-     */
-    public void setOnHoldValuesMap(Map<String, String> onHoldValuesMap) {
-        this.onHoldValuesMap = onHoldValuesMap;
     }
 
     /**

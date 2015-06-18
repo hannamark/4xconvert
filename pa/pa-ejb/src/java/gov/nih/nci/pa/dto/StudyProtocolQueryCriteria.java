@@ -109,6 +109,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private List<String> states = new ArrayList<String>();
     private List<Long> summary4AnatomicSites = new ArrayList<Long>();
     private List<OnholdReasonCode> onholdReasons = new ArrayList<OnholdReasonCode>();
+    private List<String> onholdOtherReasonCategories = new ArrayList<String>();
     private List<String> studySource = new ArrayList<>();
 
     private String familyId = "0";
@@ -1081,7 +1082,8 @@ public class StudyProtocolQueryCriteria implements Serializable {
                 .append(", pdqDiseases=").append(pdqDiseases)
                 .append(", phaseCodes=").append(phaseCodes).append(", states=")
                 .append(states).append(", summary4AnatomicSites=")
-                .append(summary4AnatomicSites).append(", onholdReasons=")
+                .append(summary4AnatomicSites).append(", onholdOtherReasonCategories=")
+                .append(onholdOtherReasonCategories).append(", onholdReasons=")
                 .append(onholdReasons).append(", familyId=").append(familyId)
                 .append(", participatingSiteFamilyId=")
                 .append(participatingSiteFamilyId).append(", submitter=")
@@ -1641,6 +1643,8 @@ public class StudyProtocolQueryCriteria implements Serializable {
                     .append(summary4AnatomicSites).append(", ");
         if (isNotEmpty(onholdReasons))
             builder.append("onholdReasons=").append(onholdReasons).append(", ");
+        if (isNotEmpty(onholdOtherReasonCategories))
+            builder.append("onholdOtherReasonCategories=").append(onholdOtherReasonCategories).append(", ");
         if ((studySource) != null)
             builder.append("studySource=").append(studySource).append(", ");
         if (isNotBlank(familyId) && !"0".equals(familyId))
@@ -1683,6 +1687,21 @@ public class StudyProtocolQueryCriteria implements Serializable {
             builder.append("assignedUserId=").append(assignedUserId);
         builder.append("]");
         return builder.toString();
+    }
+
+    /**
+     * @return the onholdOtherReasonCategories
+     */
+    public List<String> getOnholdOtherReasonCategories() {
+        return onholdOtherReasonCategories;
+    }
+
+    /**
+     * @param onholdOtherReasonCategories the onholdOtherReasonCategories to set
+     */
+    public void setOnholdOtherReasonCategories(
+            List<String> onholdOtherReasonCategories) {
+        this.onholdOtherReasonCategories = onholdOtherReasonCategories;
     }
 
 }
