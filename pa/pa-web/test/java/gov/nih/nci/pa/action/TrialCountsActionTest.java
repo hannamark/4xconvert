@@ -65,6 +65,39 @@ public class TrialCountsActionTest extends AbstractPaActionTest {
     }
 
     @Test
+    public void testTrialDist() throws PAException, JSONException,
+            JsonSyntaxException, NoSuchFieldException, SecurityException,
+            IllegalArgumentException, IllegalAccessException, IOException {
+        getRequest().setUserInRole(Constants.SUABSTRACTOR, true);
+        UsernameHolder.setUser("suAbstractor");
+        TrialCountsAction action = getAction();
+        action.setProtocolQueryService(getProtocolQueryMockForDistr());
+        StreamResult result = action.trialDist();
+        Map json = getJsonMap(result);
+        System.out.println(json);
+
+        List list = (List) json.get("data");
+        // 10 codes plus total is 10.
+        assertEquals(4, list.size());
+
+        Map map = (Map) list.get(0);
+        assertEquals("1-3", map.get("range"));
+        assertEquals(2.0, map.get("count"));
+
+        map = (Map) list.get(1);
+        assertEquals("4-7", map.get("range"));
+        assertEquals(1.0, map.get("count"));
+
+        map = (Map) list.get(2);
+        assertEquals("8-10", map.get("range"));
+        assertEquals(1.0, map.get("count"));
+
+        map = (Map) list.get(3);
+        assertEquals(">10", map.get("range"));
+        assertEquals(2.0, map.get("count"));
+    }
+
+    @Test
     public void testOnHoldTrials() throws PAException, JSONException,
             JsonSyntaxException, NoSuchFieldException, SecurityException,
             IllegalArgumentException, IllegalAccessException, IOException {
@@ -233,6 +266,58 @@ public class TrialCountsActionTest extends AbstractPaActionTest {
         action.setLookUpService(new MockLookUpTableServiceBean());
         ActionUtils.setUserRolesInSession(getRequest());
         return action;
+    }
+
+    /**
+     * @return
+     * @throws PAException
+     */
+    private ProtocolQueryServiceLocal getProtocolQueryMockForDistr()
+            throws PAException {
+
+        final ProtocolQueryServiceLocal mock = mock(ProtocolQueryServiceLocal.class);
+        final List<StudyProtocolQueryDTO> dtos = new ArrayList<>();
+
+        StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
+        dto.setStudyProtocolId(new Random().nextLong());
+        setField(dto, "bizDaysSinceSubmitted", 1);
+        dtos.add(dto);
+
+        dto = new StudyProtocolQueryDTO();
+        dto.setStudyProtocolId(new Random().nextLong());
+        setField(dto, "bizDaysSinceSubmitted", 3);
+        dtos.add(dto);
+
+        dto = new StudyProtocolQueryDTO();
+        dto.setStudyProtocolId(new Random().nextLong());
+        setField(dto, "bizDaysSinceSubmitted", 5);
+        dtos.add(dto);
+
+        dto = new StudyProtocolQueryDTO();
+        dto.setStudyProtocolId(new Random().nextLong());
+        setField(dto, "bizDaysSinceSubmitted", 9);
+        dtos.add(dto);
+
+        dto = new StudyProtocolQueryDTO();
+        dto.setStudyProtocolId(new Random().nextLong());
+        setField(dto, "bizDaysSinceSubmitted", 11);
+        dtos.add(dto);
+
+        dto = new StudyProtocolQueryDTO();
+        dto.setStudyProtocolId(new Random().nextLong());
+        setField(dto, "bizDaysSinceSubmitted", 12);
+        dtos.add(dto);
+
+        when(mock.getWorkload()).thenReturn(dtos);
+
+        return mock;
+    }
+
+    private void setField(StudyProtocolQueryDTO dto, String field, Integer n) {
+        final Field f = ReflectionUtils.findField(StudyProtocolQueryDTO.class,
+                field);
+        ReflectionUtils.makeAccessible(f);
+        ReflectionUtils.setField(f, dto, n);
     }
 
     /**

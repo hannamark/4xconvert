@@ -159,6 +159,9 @@ public class DashboardAction extends AbstractCheckInOutAction implements
     // Submission type filter
     private List<String> submissionTypeFilter = new ArrayList<String>();
 
+    // Distribution filter.
+    private String distr;
+
     // Expected abstraction completion date.
     private String newCompletionDate;
     private String newCompletionDateComments;
@@ -211,11 +214,8 @@ public class DashboardAction extends AbstractCheckInOutAction implements
     }
 
     private void prepareWorkload() throws PAException {
-        StudyProtocolQueryCriteria criteria = buildWorkloadCriteria();
         List<StudyProtocolQueryDTO> results = protocolQueryService
-                .getStudyProtocolByCriteria(criteria, SKIP_ALTERNATE_TITLES,
-                        SKIP_LAST_UPDATER_INFO, SKIP_OTHER_IDENTIFIERS);
-        protocolQueryService.populateMilestoneHistory(results);
+                .getWorkload();
         applyDateRangeFilter(results);
         applySubmissionTypeFilter(results);
         request.getSession().setAttribute(WORKLOAD, results);
@@ -233,6 +233,18 @@ public class DashboardAction extends AbstractCheckInOutAction implements
                 }
             });
         }
+    }
+
+    private void applyDistributionFilter(
+            final List<StudyProtocolQueryDTO> results) {
+        CollectionUtils.filter(results, new Predicate() {
+            @Override
+            public boolean evaluate(Object o) {
+                StudyProtocolQueryDTO dto = (StudyProtocolQueryDTO) o;
+                return PAUtil.isInRange(dto.getBizDaysSinceSubmitted(),
+                        getDistr());
+            }
+        });
     }
 
     private void applyDateRangeFilter(final List<StudyProtocolQueryDTO> results) {
@@ -265,16 +277,6 @@ public class DashboardAction extends AbstractCheckInOutAction implements
         });
     }
 
-    private StudyProtocolQueryCriteria buildWorkloadCriteria()
-            throws PAException {
-        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
-        criteria.setExcludeRejectProtocol(true);
-        criteria.setExcludeTerminatedTrials(true);
-        criteria.setStudyMilestone(Arrays.asList(lookUpService
-                .getPropertyValue("dashboard.workload.milestones").split(",")));
-        return criteria;
-    }
-
     private boolean canAccessDashboard() {
         return isInRole(IS_SU_ABSTRACTOR) || isInRole(IS_ADMIN_ABSTRACTOR)
                 || isInRole(IS_SCIENTIFIC_ABSTRACTOR);
@@ -294,6 +296,26 @@ public class DashboardAction extends AbstractCheckInOutAction implements
         session.removeAttribute(SUMMARY_DTO);
         session.removeAttribute(Constants.TRIAL_SUMMARY);
         session.removeAttribute(Constants.STUDY_PROTOCOL_II);
+    }
+
+    /**
+     * @return String
+     * @throws PAException
+     *             PAException
+     */
+    public String searchByDistribution() throws PAException {
+        clearSearchSessionAttributes();
+        try {
+            List<StudyProtocolQueryDTO> results = protocolQueryService
+                    .getWorkload();
+            applyDistributionFilter(results);
+            storeResults(results);
+        } catch (PAException e) {
+            LOG.error(e, e);
+            request.setAttribute(Constants.FAILURE_MESSAGE,
+                    e.getLocalizedMessage());
+        }
+        return landingPage();
     }
 
     /**
@@ -333,16 +355,22 @@ public class DashboardAction extends AbstractCheckInOutAction implements
                 protocolQueryService.populateMilestoneHistory(currentResults);
                 results.addAll(currentResults);
             }
-            eliminateDupes(results);
-            request.getSession()
-                    .setAttribute(DASHBOARD_SEARCH_RESULTS, results);
-            toggleResultsTab();
+            storeResults(results);
         } catch (PAException e) {
             LOG.error(e, e);
             request.setAttribute(Constants.FAILURE_MESSAGE,
                     e.getLocalizedMessage());
         }
         return landingPage();
+    }
+
+    /**
+     * @param results
+     */
+    private void storeResults(List<StudyProtocolQueryDTO> results) {
+        eliminateDupes(results);
+        request.getSession().setAttribute(DASHBOARD_SEARCH_RESULTS, results);
+        toggleResultsTab();
     }
 
     private void eliminateDupes(List<StudyProtocolQueryDTO> trials) {
@@ -1414,6 +1442,21 @@ public class DashboardAction extends AbstractCheckInOutAction implements
      */
     public StudyProtocolService getStudyProtocolService() {
         return studyProtocolService;
+    }
+
+    /**
+     * @return the distr
+     */
+    public String getDistr() {
+        return distr;
+    }
+
+    /**
+     * @param distr
+     *            the distr to set
+     */
+    public void setDistr(String distr) {
+        this.distr = distr;
     }
 
 }

@@ -102,6 +102,8 @@ public class MockLookUpTableServiceBean implements LookUpTableServiceRemote {
             return "Submission Received Date,Submission Acceptance Date,Administrative Processing Start Date,Ready for Administrative QC Date,Administrative QC Start Date,Scientific Processing Start Date,Ready for Scientific QC Date,Scientific QC Start Date,Ready for Trial Summary Report Date";
         else if (name.equals("dashboard.counts.onholds"))
             return "Submission Incomplete,Submission Incomplete -- Missing Documents,Invalid Grant,Pending CTRP Review,Pending Disease Curation,Pending Person Curation,Pending Organization Curation,Pending Intervention Curation,Other (CTRP),Other (Submitter)";
+        else if (name.equals("dashboard.counts.trialdist"))
+            return "1-3,4-7,8-10,>10";
         else
             return value;
     }

@@ -115,6 +115,10 @@ table.dataTable tbody td {
     padding: 3px 3px;
 }
 
+th.sorting_disabled {
+    background-color: white !important;
+}
+
 #TotalMilestone td, #TotalHold td{
     font-weight: bold;
 }
@@ -174,6 +178,7 @@ a.count {
     var updateCompletionDateURL = '<c:url value='/protected/dashboardupdateExpectedAbstractionCompletionDate.action'/>';
     var milestonesInProgressURL = '<c:url value='/protected/trialCountsmilestonesInProgress.action'/>';
     var onHoldTrialsURL = '<c:url value='/protected/trialCountsonHoldTrials.action'/>';
+    var trialDistURL = '<c:url value='/protected/trialCountstrialDist.action'/>';
     
 	function handleAction(action) {
 		document.forms[0].action = "dashboard" + action + ".action";
@@ -595,7 +600,11 @@ a.count {
             
             // Set up Refresh button.
             $("#refreshBtn").button().click(function(event) {
-                if ($("#resultsid.active").length > 0 || ($("#resultsid").length > 0 && $("#workloadid.active").length == 0)) {
+            	// if we are on Results tab after clicking on a Trial Dist. in panel, refresh it.
+            	if ($("#resultsid.active").length > 0 && $("#distr").val().length>0 
+            			&& $("#dashboardForm").attr('action').contains('searchByDistribution')) {
+            		handleAction('searchByDistribution');
+                } else if ($("#resultsid.active").length > 0 || ($("#resultsid").length > 0 && $("#workloadid.active").length == 0)) {
                 	handleAction("search");
                 } else {
                 	$("#dateFilterField, #dateFrom, #dateTo").val(null);
@@ -792,6 +801,47 @@ a.count {
                                                     "Abstraction Verified No Response", "On-Hold"]);
                         handleAction('search');
             });
+            
+            // Set up Trial Dist. panel.   
+            $("#trial_dist" ).accordion({
+                collapsible: true,
+                heightStyle: "content"
+            });
+            $('#trial_dist_table').DataTable({
+                "bFilter" : false,
+                "paging":   false,                
+                "searching":   false,
+                "info":     false,
+                "order": [],
+                "columns": [
+                            { "data": "range" },
+                            { "data": "count" }                            
+                        ],
+                "ajax" : {
+                    "url" : trialDistURL,
+                    "type" : "POST"
+                },
+                "columnDefs" : [{
+                    "targets" : 0,
+                    "orderable" : false
+                    }, {
+                    "targets" : 1,
+                    "render" : function(data, type, r, meta) {
+                        var content = '<a class="count" data-range="'+r.range+'">'+r.count+'</a>';
+                        return content;
+                    }
+                }]
+            }); 
+            $('#trial_dist_table tbody')
+                .on(
+                    'click',
+                    "a[data-range]",
+                    function() {
+                        resetValues();             
+                        $("#distr").val($(this).attr('data-range'));
+                        handleAction('searchByDistribution');
+            });
+            
 
 
         });
@@ -955,6 +1005,7 @@ a.count {
 			<s:hidden id="studyProtocolId" name="studyProtocolId" />
 			<s:hidden name="checkInReason" id="checkInReason" />
 			<s:hidden name="superAbstractorId" />
+			<s:hidden name="distr" id="distr"/>
 			<table class="form">
 				<tr>
 					<td align="right" nowrap="nowrap" style="padding: 0; margin: 0;">

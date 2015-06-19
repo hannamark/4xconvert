@@ -12,6 +12,7 @@ import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.ActionUtils;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.ByteArrayInputStream;
@@ -49,6 +50,65 @@ public class TrialCountsAction extends ActionSupport implements Preparable,
     private HttpServletRequest request;
 
     // CHECKSTYLE:OFF
+
+    /**
+     * @return StreamResult
+     * @throws UnsupportedEncodingException
+     *             UnsupportedEncodingException
+     * 
+     * @throws PAException
+     *             PAException
+     * @throws JSONException
+     *             JSONException
+     */
+    public StreamResult trialDist() throws UnsupportedEncodingException,
+            PAException, JSONException {
+        JSONObject root = new JSONObject();
+        JSONArray arr = new JSONArray();
+        root.put("data", arr);
+        trialDist(arr);
+        return new StreamResult(new ByteArrayInputStream(root.toString()
+                .getBytes(UTF_8)));
+    }
+
+    private void trialDist(JSONArray arr) throws PAException, JSONException {
+        final List<String> ranges = Arrays.asList(lookUpService
+                .getPropertyValue("dashboard.counts.trialdist").split(","));
+
+        // TreeMap ensures holds are displayed in the same order as in property.
+        final Map<String, Integer> countsMap = new TreeMap<>(
+                new Comparator<String>() {
+                    @Override
+                    public int compare(String s1, String s2) {
+                        return ranges.indexOf(s1) - ranges.indexOf(s2);
+                    }
+                });
+
+        // All ranges must be in the map, even those with zero counts.
+        for (String range : ranges) {
+            countsMap.put(range, 0);
+        }
+
+        List<StudyProtocolQueryDTO> results = protocolQueryService
+                .getWorkload();
+        for (final StudyProtocolQueryDTO dto : results) {
+            int days = dto.getBizDaysSinceSubmitted();
+            for (String range : ranges) {
+                if (PAUtil.isInRange(days, range)) {
+                    countsMap.put(range, countsMap.get(range) + 1);
+                }
+            }
+        }
+
+        for (String range : countsMap.keySet()) {
+            JSONObject data = new JSONObject();
+            data.put("range", range);
+            data.put("count", (int) countsMap.get(range));
+            data.put("DT_RowId", range);
+            arr.put(data);
+        }
+
+    }
 
     /**
      * @return StreamResult

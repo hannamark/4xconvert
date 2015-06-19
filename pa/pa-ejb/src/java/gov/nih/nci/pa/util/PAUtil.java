@@ -1553,9 +1553,12 @@ public class PAUtil {
     }
     
     /**
-     * @param item Set<Ii>
-     * @param extension extension
-     * @param root root
+     * @param item
+     *            Set<Ii>
+     * @param extension
+     *            extension
+     * @param root
+     *            root
      * @return boolean
      */
     public static boolean containsIi(Set<Ii> item, String extension, String root) {
@@ -1568,8 +1571,33 @@ public class PAUtil {
         return false;
     }
 
-  
+    /**
+     * Checks if the given number is in the given range. Range format supported:
+     * &lt;N, N-M, &gt;N
+     * 
+     * @param n
+     *            number
+     * @param range
+     *            Range format supported: &lt;N, N-M, &gt;N
+     * @return true or false.
+     */
+    public static boolean isInRange(int n, final String range) {
+        int start = 1;
+        int end = -1;
+        if (StringUtils.isNotBlank(range)) {
+            if (range.matches("^<\\d+$")) {
+                end = Integer.parseInt(range.replaceFirst("^<", "")) - 1;
+                start = Integer.MIN_VALUE;
+            } else if (range.matches("^>\\d+$")) {
+                start = Integer.parseInt(range.replaceFirst("^>", "")) + 1;
+                end = Integer.MAX_VALUE;
+            } else if (range.matches("^\\d+\\-\\d+$")) {
+                start = Integer.parseInt(range.replaceFirst("\\-\\d+$", ""));
+                end = Integer.parseInt(range.replaceFirst("^\\d+\\-", ""));
+            }
 
-   
-    
+        }
+        return n >= start && n <= end;
+    }
+
 }

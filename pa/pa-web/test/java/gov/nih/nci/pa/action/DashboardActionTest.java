@@ -278,6 +278,57 @@ public class DashboardActionTest extends AbstractPaActionTest {
     }
 
     @Test
+    public void testSearchByDistribution() throws PAException {
+        getRequest().setUserInRole(Constants.SUABSTRACTOR, true);
+        UsernameHolder.setUser("suAbstractor");
+        DashboardAction action = getAction();
+
+        action.setDistr(">10");
+        assertEquals("suAbstractorLanding", action.searchByDistribution());
+        List trials = (List) getRequest().getSession().getAttribute(
+                "dashboardSearchResults");
+        assertNotNull(trials);
+        assertEquals(1, trials.size());
+        assertEquals(true, getRequest().getAttribute("toggleResultsTab"));
+
+        action = getAction();
+        action.setDistr("1-3");
+        assertEquals("suAbstractorLanding", action.searchByDistribution());
+        trials = (List) getRequest().getSession().getAttribute(
+                "dashboardSearchResults");
+        assertNotNull(trials);
+        assertEquals(1, trials.size());
+        assertEquals(true, getRequest().getAttribute("toggleResultsTab"));
+
+        action = getAction();
+        action.setDistr("1-20");
+        assertEquals("suAbstractorLanding", action.searchByDistribution());
+        trials = (List) getRequest().getSession().getAttribute(
+                "dashboardSearchResults");
+        assertNotNull(trials);
+        assertEquals(2, trials.size());
+        assertEquals(true, getRequest().getAttribute("toggleResultsTab"));
+
+        action = getAction();
+        action.setDistr("<16");
+        assertEquals("suAbstractorLanding", action.searchByDistribution());
+        trials = (List) getRequest().getSession().getAttribute(
+                "dashboardSearchResults");
+        assertNotNull(trials);
+        assertEquals(2, trials.size());
+        assertEquals(true, getRequest().getAttribute("toggleResultsTab"));
+
+        action = getAction();
+        action.setDistr("0-1");
+        assertEquals("suAbstractorLanding", action.searchByDistribution());
+        trials = (List) getRequest().getSession().getAttribute(
+                "dashboardSearchResults");
+        assertNotNull(trials);
+        assertEquals(0, trials.size());
+        assertEquals(true, getRequest().getAttribute("toggleResultsTab"));
+    }
+
+    @Test
     public void testSearch() throws PAException {
         getRequest().setUserInRole(Constants.SUABSTRACTOR, true);
         getRequest().setUserInRole(Constants.SCIENTIFIC_ABSTRACTOR, true);
@@ -384,6 +435,7 @@ public class DashboardActionTest extends AbstractPaActionTest {
      * @return
      * @throws PAException
      */
+    @SuppressWarnings("unchecked")
     private ProtocolQueryServiceLocal getProtocolQueryMock() throws PAException {
         final ProtocolQueryServiceLocal mock = mock(ProtocolQueryServiceLocal.class);
         StudyProtocolQueryDTO dto1 = new StudyProtocolQueryDTO();
@@ -391,11 +443,16 @@ public class DashboardActionTest extends AbstractPaActionTest {
         dto1.getAdminCheckout().setCheckoutBy("suAbstractor");
         dto1.setActiveHoldDate(PAUtil.dateStringToTimestamp("06/04/2015"));
         dto1.setProprietaryTrial(true);
+        setField(dto1, "bizDaysSinceSubmitted", 2);
 
         StudyProtocolQueryDTO dto2 = new StudyProtocolQueryDTO();
         dto2.setStudyProtocolId(2L);
         dto2.setActiveHoldDate(PAUtil.dateStringToTimestamp("06/01/2015"));
         dto2.setAmendmentDate(PAUtil.dateStringToTimestamp("06/01/2015"));
+        setField(dto2, "bizDaysSinceSubmitted", 15);
+
+        when(mock.getWorkload()).thenReturn(
+                new ArrayList(Arrays.asList(dto1, dto2)));
         when(
                 mock.getStudyProtocolByCriteria(any(StudyProtocolQueryCriteria.class)))
                 .thenReturn(new ArrayList(Arrays.asList(dto1, dto2)));
@@ -409,4 +466,10 @@ public class DashboardActionTest extends AbstractPaActionTest {
         return mock;
     }
 
+    private void setField(StudyProtocolQueryDTO dto, String field, Integer n) {
+        final Field f = ReflectionUtils.findField(StudyProtocolQueryDTO.class,
+                field);
+        ReflectionUtils.makeAccessible(f);
+        ReflectionUtils.setField(f, dto, n);
+    }
 }

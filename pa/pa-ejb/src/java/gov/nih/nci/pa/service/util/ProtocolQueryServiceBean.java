@@ -82,6 +82,9 @@
  */
 package gov.nih.nci.pa.service.util;
 
+import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_ALTERNATE_TITLES;
+import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_LAST_UPDATER_INFO;
+import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_OTHER_IDENTIFIERS;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
@@ -194,6 +197,9 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
 
     @EJB
     private ProtocolQueryResultsServiceLocal protocolQueryResultsService;
+    
+    @EJB
+    private LookUpTableServiceRemote lookUpService;
 
     private PAServiceUtils paServiceUtils;
 
@@ -1077,5 +1083,34 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 + " and soi.root = '2.16.840.1.113883.3.26.4.3')");
          query.setParameter("studyProtocolId", studyProtocolId);
          return protocolQueryResultsService.getResultsLean(query.list());
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<StudyProtocolQueryDTO> getWorkload() throws PAException {
+        StudyProtocolQueryCriteria criteria = buildWorkloadCriteria();
+        List<StudyProtocolQueryDTO> results = getStudyProtocolByCriteria(
+                criteria, SKIP_ALTERNATE_TITLES, SKIP_LAST_UPDATER_INFO,
+                SKIP_OTHER_IDENTIFIERS);
+        populateMilestoneHistory(results);
+        return results;
+    }
+
+    private StudyProtocolQueryCriteria buildWorkloadCriteria()
+            throws PAException {
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setExcludeRejectProtocol(true);
+        criteria.setExcludeTerminatedTrials(true);
+        criteria.setStudyMilestone(Arrays.asList(lookUpService
+                .getPropertyValue("dashboard.workload.milestones").split(",")));
+        return criteria;
+    }
+
+    /**
+     * @param lookUpService
+     *            the lookUpService to set
+     */
+    public void setLookUpService(LookUpTableServiceRemote lookUpService) {
+        this.lookUpService = lookUpService;
     }
 }

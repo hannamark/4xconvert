@@ -1814,8 +1814,7 @@
        <comment>Adding the scientific and administrative roles to the db.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9006.sql"/>
     </changeSet>
-    <changeSet id="PO-9006-1" author="krylovd" runAlways="true">
-       <validCheckSum>ANY</validCheckSum>
+    <changeSet id="PO-9006-1" author="krylovd" runAlways="true">       
        <comment>Fixing the issue introduced by previous script: @gridgrouper.url@ did not get replaced.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9006-1.sql"/>
     </changeSet>
@@ -1826,5 +1825,9 @@
     <changeSet id="PO-9027" author="krylovd">
        <comment>Adding more PA properties to on-hold trials panel.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9027.sql"/>       
-    </changeSet>    
+    </changeSet>
+    <changeSet id="PO-9033" author="krylovd">
+       <comment>Adding more PA properties to support trial dist. panel.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9033.sql"/>       
+    </changeSet>
 </databaseChangeLog>

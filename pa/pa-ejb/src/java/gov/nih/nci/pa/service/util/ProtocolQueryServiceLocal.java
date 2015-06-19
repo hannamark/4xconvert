@@ -186,4 +186,13 @@ public interface ProtocolQueryServiceLocal {
      * @throws PAException exception
      */
     List<StudyProtocolQueryDTO> getActiveInactiveStudyProtocolsById(Long studyProtocolId) throws PAException;
+    
+    /**
+     * Gets trials to display in Workload tab.
+     * 
+     * @return trials to display in Workload tab.
+     * @throws PAException
+     *             PAException
+     */
+    List<StudyProtocolQueryDTO> getWorkload() throws PAException;
 }

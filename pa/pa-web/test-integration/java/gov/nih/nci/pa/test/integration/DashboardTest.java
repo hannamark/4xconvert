@@ -3,6 +3,7 @@ package gov.nih.nci.pa.test.integration;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,6 +42,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
     private static final String MILESTONES_TO_COUNT = "Submission Received Date,Submission Acceptance Date,Administrative Processing Start Date,Ready for Administrative QC Date,Administrative QC Start Date,Scientific Processing Start Date,Ready for Scientific QC Date,Scientific QC Start Date,Ready for Trial Summary Report Date";
     private static final String HOLDS_TO_COUNT = "Submission Incomplete,Submission Incomplete -- Missing Documents,Invalid Grant,Pending CTRP Review,Pending Disease Curation,Pending Person Curation,Pending Organization Curation,Pending Intervention Curation,Other (CTRP),Other (Submitter)";
+    private static final String RANGES = "1-3,4-7,8-10,>10";
     private static final int OP_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 10000
             : 2000;
 
@@ -205,6 +207,68 @@ public class DashboardTest extends AbstractTrialStatusTest {
     }
 
     @Test
+    public void testTrialDistPanel() throws Exception {
+        deactivateAllTrials();
+
+        // Prepare trials with holds.
+        int total = 0;
+        final LinkedHashMap<String, List<TrialInfo>> map = new LinkedHashMap<>();
+        final List<TrialInfo> allTrialsCreated = new ArrayList<>();
+        for (String range : RANGES.split(",")) {
+            List<TrialInfo> trials = registerBunchOfTrialsWithinRange(range);
+            map.put(range, trials);
+            allTrialsCreated.addAll(trials);
+            total += trials.size();
+        }
+
+        // Now test the panel.
+        loginAsSuperAbstractor();
+        clickAndWait("link=Dashboard");
+        assertTrue(s.isElementPresent("count_panels_container"));
+        waitForElementToBecomeVisible(
+                By.xpath("//table[@id='trial_dist_table']//tr[4]"), 20);
+
+        // Panel must be collapsible, but initially open.
+        verifyPanelWidget("trial_dist", "Trial Submission Distribution");
+
+        // Verify table headers.
+        assertEquals("Business Days Since Trial Submission",
+                s.getText("//table[@id='trial_dist_table']//th[1]"));
+        assertEquals("Trial Count",
+                s.getText("//table[@id='trial_dist_table']//th[2]"));
+
+        // Verify counts and their order.
+        int row = 1;
+        for (String code : RANGES.split(",")) {
+            List<TrialInfo> trials = map.get(code);
+            verifyRangeCountRow(row, code, trials);
+            row++;
+        }
+
+        // The panel must only display non-rejected non-terminated
+        // trials. Add these conditions to trials
+        // and verify zero counts.
+        for (TrialInfo trial : allTrialsCreated) {
+            int index = allTrialsCreated.indexOf(trial);
+            if (index % 2 == 0) {
+                addDWS(trial, "SUBMISSION_TERMINATED");
+            } else {
+                addDWS(trial, "REJECTED");
+            }
+
+        }
+        refresh();
+        waitForElementToBecomeVisible(
+                By.xpath("//table[@id='trial_dist_table']//tr[4]"), 20);
+        row = 1;
+        for (String code : RANGES.split(",")) {
+            verifyRangeCountRow(row, code, ListUtils.EMPTY_LIST);
+            row++;
+        }
+
+    }
+
+    @Test
     public void testOnHoldPanel() throws Exception {
         deactivateAllTrials();
 
@@ -288,6 +352,39 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         // Clicking on link should bring up Results.
         clickAndWait(countLinkPath);
+        verifySearchByDistInResultsTab(trials);
+        s.click("workloadid");
+
+    }
+
+    private void verifyRangeCountRow(int row, String range,
+            List<TrialInfo> trials) {
+        // Code and count are correct.
+        assertEquals(
+                range,
+                s.getText("//table[@id='trial_dist_table']/tbody/tr[" + row
+                        + "]/td[1]"));
+        final String countLinkPath = "//table[@id='trial_dist_table']/tbody/tr["
+                + row + "]/td[2]/a";
+        assertEquals(trials.size() + "", s.getText(countLinkPath));
+
+        // Count link is highlighted
+        assertEquals("underline", driver.findElement(By.xpath(countLinkPath))
+                .getCssValue("text-decoration"));
+
+        // Clicking on link should bring up Results.
+        clickAndWait(countLinkPath);
+        verifySearchByDistInResultsTab(trials);
+        refresh();
+        verifySearchByDistInResultsTab(trials);
+        s.click("workloadid");
+
+    }
+
+    /**
+     * @param trials
+     */
+    private void verifySearchByDistInResultsTab(List<TrialInfo> trials) {
         verifyResultsTabActive();
         if (trials.isEmpty()) {
             assertTrue(s.isTextPresent("Nothing found to display."));
@@ -300,8 +397,6 @@ public class DashboardTest extends AbstractTrialStatusTest {
         for (TrialInfo trialInfo : trials) {
             assertTrue(isTrialInResultsTab(trialInfo));
         }
-        s.click("workloadid");
-
     }
 
     @Test
@@ -422,18 +517,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         // Clicking on link should bring up Results.
         clickAndWait(countLinkPath);
-        verifyResultsTabActive();
-        if (trials.isEmpty()) {
-            assertTrue(s.isTextPresent("Nothing found to display."));
-        } else if (trials.size() == 1) {
-            assertTrue(s.isTextPresent("One trial found."));
-        } else {
-            assertTrue(s.isTextPresent(trials.size()
-                    + " trials found, displaying all trials."));
-        }
-        for (TrialInfo trialInfo : trials) {
-            assertTrue(isTrialInResultsTab(trialInfo));
-        }
+        verifySearchByDistInResultsTab(trials);
         s.click("workloadid");
 
     }
@@ -465,6 +549,37 @@ public class DashboardTest extends AbstractTrialStatusTest {
             list.add(trial);
         }
         return list;
+    }
+
+    private List<TrialInfo> registerBunchOfTrialsWithinRange(String range)
+            throws SQLException {
+        List<TrialInfo> list = new ArrayList<>();
+        // find a number that falls into the given range.
+        for (int n = 0; n < 1000; n++) {
+            if (PAUtil.isInRange(n, range)) {
+                for (int i = 1; i < new Random().nextFloat() * 20; i++) {
+                    TrialInfo trial = createAcceptedTrial();
+                    moveSubmissionDateBackByBizDays(trial, n);
+                    list.add(trial);
+                }
+                break;
+            }
+        }
+        return list;
+    }
+
+    private void moveSubmissionDateBackByBizDays(TrialInfo trial, int days)
+            throws SQLException {
+        Date date = new Date();
+        while (days > 1) {
+            date = DateUtils.addDays(date, -1);
+            if (PAUtil.isBusinessDay(date)) {
+                days--;
+            }
+        }
+        new QueryRunner().update(connection,
+                "update study_protocol set date_last_created=" + jdbcTs(date)
+                        + " where identifier=" + trial.id);
     }
 
     private List<TrialInfo> registerBunchOfTrialsWithHold(String code)
@@ -1765,6 +1880,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
      * @throws SQLException
      */
     private void restorePaPropertiesToOriginal() throws SQLException {
+        changePaProperty("dashboard.counts.trialdist", RANGES);
         changePaProperty("studyonhold.reason_category", "Submitter,CTRP");
         changePaProperty("dashboard.counts.onholds", HOLDS_TO_COUNT);
         changePaProperty("dashboard.counts.milestones", MILESTONES_TO_COUNT);

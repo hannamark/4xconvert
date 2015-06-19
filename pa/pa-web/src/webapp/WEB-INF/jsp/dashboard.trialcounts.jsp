@@ -28,4 +28,19 @@
 	</div>
 </div>
 
+<div id="trial_dist" class="trial_count_panel">
+	<h3>Trial Submission Distribution</h3>
+	<div>
+		<table id="trial_dist_table">
+			<thead>
+				<tr>
+					<th>Business Days Since Trial Submission</th>
+					<th>Trial Count</th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+</div>
+
+
 

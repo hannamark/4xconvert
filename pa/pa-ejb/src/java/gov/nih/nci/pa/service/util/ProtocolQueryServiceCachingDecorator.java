@@ -133,4 +133,9 @@ public class ProtocolQueryServiceCachingDecorator implements ProtocolQueryServic
             ProtocolQueryPerformanceHints... hint) throws PAException {
         return serviceLocal.getStudyProtocolByCriteria(pSc, hint);
     }
+
+    @Override
+    public List<StudyProtocolQueryDTO> getWorkload() throws PAException {
+        return serviceLocal.getWorkload();
+    }
 }

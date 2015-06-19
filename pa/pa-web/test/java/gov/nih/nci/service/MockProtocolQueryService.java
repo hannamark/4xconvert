@@ -143,4 +143,9 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
             ProtocolQueryPerformanceHints... hint) throws PAException {        
         return getStudyProtocolByCriteria(pSc);
     }
+    
+    @Override
+    public List<StudyProtocolQueryDTO> getWorkload() throws PAException {       
+        return new ArrayList<>();
+    }
 }
