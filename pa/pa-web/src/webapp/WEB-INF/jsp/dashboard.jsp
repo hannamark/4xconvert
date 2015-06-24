@@ -107,8 +107,17 @@ h3.ui-accordion-header {
 }
 
 table.dataTable thead th {
-    padding: 0px 0px 0px 0px;
-    font-size: 90%;
+    padding: 0px 3px 0px 3px;
+    font-size: 85%;
+}
+
+table.dataTable tfoot th {
+    font-size: 70%;
+    font-weight: normal;
+    background: none;
+    border-bottom: 0px solid white;
+    padding: 5px 1px 1px 1px;
+    text-align: center;
 }
 
 table.dataTable tbody td {
@@ -179,6 +188,7 @@ a.count {
     var milestonesInProgressURL = '<c:url value='/protected/trialCountsmilestonesInProgress.action'/>';
     var onHoldTrialsURL = '<c:url value='/protected/trialCountsonHoldTrials.action'/>';
     var trialDistURL = '<c:url value='/protected/trialCountstrialDist.action'/>';
+    var abstractorsWorkURL = '<c:url value='/protected/trialCountsabstractorsWork.action'/>';
     
 	function handleAction(action) {
 		document.forms[0].action = "dashboard" + action + ".action";
@@ -738,7 +748,10 @@ a.count {
                     "url" : milestonesInProgressURL,
                     "type" : "POST"
                 },
-                "columnDefs" : [ {
+                "columnDefs" : [{
+                    "targets" : [0,1],
+                    "orderable" : false
+                    },{
                     "targets" : 1,
                     "render" : function(data, type, r, meta) {
                         var content = '<a class="count" data-milestone="'+r.milestone+'">'+r.count+'</a>';
@@ -780,7 +793,10 @@ a.count {
                     "url" : onHoldTrialsURL,
                     "type" : "POST"
                 },
-                "columnDefs" : [ {
+                "columnDefs" : [{
+                    "targets" : [0,1],
+                    "orderable" : false
+                    }, {
                     "targets" : 1,
                     "render" : function(data, type, r, meta) {
                         var content = '<a class="count" data-onhold-reason="'+r.reasonKey+'">'+r.count+'</a>';
@@ -822,9 +838,9 @@ a.count {
                     "type" : "POST"
                 },
                 "columnDefs" : [{
-                    "targets" : 0,
+                    "targets" : [0,1],
                     "orderable" : false
-                    }, {
+                    },{
                     "targets" : 1,
                     "render" : function(data, type, r, meta) {
                         var content = '<a class="count" data-range="'+r.range+'">'+r.count+'</a>';
@@ -841,6 +857,53 @@ a.count {
                         $("#distr").val($(this).attr('data-range'));
                         handleAction('searchByDistribution');
             });
+            
+            // Set up Abstractors Work in Progress Panel.
+            $("#abstractors_work" ).accordion({
+                collapsible: true,
+                heightStyle: "content"
+            });
+            $('#abstractors_work_table').DataTable({
+                "bFilter" : false,
+                "paging":   false,                
+                "searching":   false,
+                "info":     false,
+                "order": [],
+                "columns": [
+                            { "data": "name" },
+                            { "data": "admin" },                            
+                            { "data": "scientific" },
+                            { "data": "admin_scientific" }
+                        ],
+                "ajax" : {
+                    "url" : abstractorsWorkURL,
+                    "type" : "POST"
+                },
+                "columnDefs" : [{
+                    "targets" : [0,1,2,3],
+                    "orderable" : false
+                    },
+                    {
+                    "targets" : 0,
+                    "render" : function(data, type, r, meta) {
+                        var content = '<a class="count" data-user-id="'+r.user_id+'">'+r.name+'</a>';
+                        return content;
+                    }
+                }]
+            }); 
+            $('#abstractors_work_table tbody')
+                .on(
+                    'click',
+                    "a[data-user-id]",
+                    function() {
+                        resetValues();             
+                        $("#checkedOutBy").val($(this).attr('data-user-id'));
+                        $("#processingStatus").val(["Submitted","Amendment Submitted","Accepted",
+                                                    "Abstracted","Verification Pending","Abstraction Verified Response",
+                                                    "Abstraction Verified No Response", "On-Hold"]);
+                        handleAction('search');
+            });
+
             
 
 

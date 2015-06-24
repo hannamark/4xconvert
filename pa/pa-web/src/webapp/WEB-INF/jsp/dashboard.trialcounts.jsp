@@ -42,5 +42,27 @@
 	</div>
 </div>
 
+<div id="abstractors_work" class="trial_count_panel">
+	<h3>Abstractors Work in Progress</h3>
+	<div>
+		<table id="abstractors_work_table">
+			<thead>
+				<tr>
+					<th>Abstractor (Role)</th>
+					<th>Admin</th>
+					<th>Scientific</th>
+					<th>Admin &amp; Scientific</th>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+					<th colspan="4">AD=Admin/SC=Scientific/AS=Admin
+						&amp; Scientific/SU=Super Abstractor</th>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+</div>
+
 
 

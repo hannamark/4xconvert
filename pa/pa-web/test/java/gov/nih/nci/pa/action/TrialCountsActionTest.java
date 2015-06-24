@@ -4,7 +4,7 @@
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.*;
 import static org.mockito.Matchers.anyVararg;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -12,6 +12,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
+import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints;
@@ -20,6 +21,7 @@ import gov.nih.nci.pa.util.ActionUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.service.util.MockLookUpTableServiceBean;
 
 import java.io.IOException;
@@ -28,6 +30,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -61,6 +64,30 @@ public class TrialCountsActionTest extends AbstractPaActionTest {
         UsernameHolder.setUser("suAbstractor");
         TrialCountsAction action = getAction();
         action.prepare();
+
+    }
+
+    @Test
+    public void testAbstractorsWork() throws PAException, JSONException,
+            JsonSyntaxException, NoSuchFieldException, SecurityException,
+            IllegalArgumentException, IllegalAccessException, IOException {
+        getRequest().setUserInRole(Constants.SUABSTRACTOR, true);
+        UsernameHolder.setUser("suAbstractor");
+        TrialCountsAction action = getAction();
+        action.setProtocolQueryService(getProtocolQueryMockForAbstractorsWork());
+        StreamResult result = action.abstractorsWork();
+        Map json = getJsonMap(result);
+        System.out.println(json);
+
+        List list = (List) json.get("data");
+        assertEquals(1, list.size());
+
+        Map map = (Map) list.get(0);
+        assertEquals(2.0, map.get("admin_scientific"));
+        assertEquals(1.0, map.get("admin"));
+        assertEquals(1.0, map.get("scientific"));
+        assertEquals(1.0, map.get("user_id"));
+        assertEquals("suAbstractor (SU)", map.get("name"));
 
     }
 
@@ -264,8 +291,63 @@ public class TrialCountsActionTest extends AbstractPaActionTest {
         TrialCountsAction action = new TrialCountsAction();
         action.setServletRequest(getRequest());
         action.setLookUpService(new MockLookUpTableServiceBean());
+        action.setCsmUserUtil(mockCSM());
         ActionUtils.setUserRolesInSession(getRequest());
         return action;
+    }
+
+    private CSMUserUtil mockCSM() throws PAException {
+        CSMUserUtil mock = mock(CSMUserUtil.class);
+
+        User user = new User();
+        user.setUserId(1L);
+        user.setLoginName("suAbstractor");
+
+        Map<Long, String> userMap = new HashMap<>();
+        userMap.put(1L, user.getLoginName());
+        when(mock.getAbstractors()).thenReturn(userMap);
+        when(mock.getCSMUserById(eq(Long.valueOf(1)))).thenReturn(user);
+        when(mock.getUserGroups(eq(user.getLoginName()))).thenReturn(
+                Arrays.asList(Constants.SUABSTRACTOR));
+        return mock;
+    }
+
+    private ProtocolQueryServiceLocal getProtocolQueryMockForAbstractorsWork()
+            throws PAException {
+        final ProtocolQueryServiceLocal mock = mock(ProtocolQueryServiceLocal.class);
+        final List<StudyProtocolQueryDTO> dtos = new ArrayList<>();
+
+        StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
+        dto.setStudyProtocolId(1L);
+        dto.getAdminCheckout().setCheckoutBy("suAbstractor");
+        dtos.add(dto);
+
+        dto = new StudyProtocolQueryDTO();
+        dto.setStudyProtocolId(2L);
+        dto.getScientificCheckout().setCheckoutBy("suAbstractor");
+        dtos.add(dto);
+
+        dto = new StudyProtocolQueryDTO();
+        dto.setStudyProtocolId(3L);
+        dto.getAdminCheckout().setCheckoutBy("suAbstractor");
+        dto.getScientificCheckout().setCheckoutBy("suAbstractor");
+        dtos.add(dto);
+
+        dto = new StudyProtocolQueryDTO();
+        dto.setStudyProtocolId(4L);
+        dto.getAdminCheckout().setCheckoutBy("suAbstractor");
+        dto.getScientificCheckout().setCheckoutBy("suAbstractor");
+        dtos.add(dto);
+
+        when(
+                mock.getStudyProtocolByCriteria(any(StudyProtocolQueryCriteria.class)))
+                .thenReturn(dtos);
+        when(
+                mock.getStudyProtocolByCriteria(
+                        any(StudyProtocolQueryCriteria.class),
+                        (ProtocolQueryPerformanceHints[]) anyVararg()))
+                .thenReturn(dtos);
+        return mock;
     }
 
     /**

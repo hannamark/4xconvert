@@ -207,6 +207,105 @@ public class DashboardTest extends AbstractTrialStatusTest {
     }
 
     @Test
+    public void testAbstractorsWorkInProgressPanel() throws Exception {
+        deactivateAllTrials();
+
+        TrialInfo admin = createAcceptedTrial();
+        TrialInfo scientific = createAcceptedTrial();
+        TrialInfo admSci = createAcceptedTrial();
+
+        // Admin CheckOut
+        loginAsAdminAbstractor();
+        clickAndWait("link=Dashboard");
+        clickAndWait("xpath=//table[@id='wl']//td/a[normalize-space(text())='"
+                + admin.nciID.replaceFirst("NCI-", "") + "']");
+        clickAndWait("link=Admin Check Out");
+        logoutPA();
+
+        // Scientific check out.
+        loginAsScientificAbstractor();
+        clickAndWait("link=Dashboard");
+        clickAndWait("xpath=//table[@id='wl']//td/a[normalize-space(text())='"
+                + scientific.nciID.replaceFirst("NCI-", "") + "']");
+        clickAndWait("link=Scientific Check Out");
+        logoutPA();
+
+        // Admin & Scientific check out.
+        loginAsSuperAbstractor();
+        clickAndWait("link=Dashboard");
+        clickAndWait("xpath=//table[@id='wl']//td/a[normalize-space(text())='"
+                + admSci.nciID.replaceFirst("NCI-", "") + "']");
+        clickAndWait("link=Admin/Scientific Check Out");
+
+        // Now test the panel.
+        clickAndWait("link=Dashboard");
+        assertTrue(s.isElementPresent("count_panels_container"));
+        waitForElementToBecomeVisible(
+                By.xpath("//table[@id='abstractors_work_table']//tr[3]"), 20);
+
+        // Panel must be collapsible, but initially open.
+        verifyPanelWidget("abstractors_work", "Abstractors Work in Progress");
+
+        // Verify table headers.
+        assertEquals("Abstractor (Role)",
+                s.getText("//table[@id='abstractors_work_table']//th[1]"));
+        assertEquals("Admin",
+                s.getText("//table[@id='abstractors_work_table']//th[2]"));
+        assertEquals("Scientific",
+                s.getText("//table[@id='abstractors_work_table']//th[3]"));
+        assertEquals("Admin & Scientific",
+                s.getText("//table[@id='abstractors_work_table']//th[4]"));
+
+        // Verify counts.
+        assertEquals("ctrpsubstractor (SU)",
+                s.getText("//table[@id='abstractors_work_table']//tr[1]/td[1]"));
+        assertEquals("0",
+                s.getText("//table[@id='abstractors_work_table']//tr[1]/td[2]"));
+        assertEquals("0",
+                s.getText("//table[@id='abstractors_work_table']//tr[1]/td[3]"));
+        assertEquals("1",
+                s.getText("//table[@id='abstractors_work_table']//tr[1]/td[4]"));
+
+        assertEquals("scientific-ci (SC)",
+                s.getText("//table[@id='abstractors_work_table']//tr[2]/td[1]"));
+        assertEquals("0",
+                s.getText("//table[@id='abstractors_work_table']//tr[2]/td[2]"));
+        assertEquals("1",
+                s.getText("//table[@id='abstractors_work_table']//tr[2]/td[3]"));
+        assertEquals("0",
+                s.getText("//table[@id='abstractors_work_table']//tr[2]/td[4]"));
+
+        assertEquals("admin-ci (AS)",
+                s.getText("//table[@id='abstractors_work_table']//tr[3]/td[1]"));
+        assertEquals("1",
+                s.getText("//table[@id='abstractors_work_table']//tr[3]/td[2]"));
+        assertEquals("0",
+                s.getText("//table[@id='abstractors_work_table']//tr[3]/td[3]"));
+        assertEquals("0",
+                s.getText("//table[@id='abstractors_work_table']//tr[3]/td[4]"));
+
+        // Ensure clicking on user name brings up trial in results.
+        clickAndWait("//table[@id='abstractors_work_table']//tr[1]/td[1]/a");
+        verifyResultsTabActive();
+        assertTrue(isTrialInResultsTab(admSci));
+        clickAndWait("link=Dashboard");
+        waitForElementToBecomeVisible(
+                By.xpath("//table[@id='abstractors_work_table']//tr[3]"), 20);
+
+        clickAndWait("//table[@id='abstractors_work_table']//tr[2]/td[1]/a");
+        verifyResultsTabActive();
+        assertTrue(isTrialInResultsTab(scientific));
+        clickAndWait("link=Dashboard");
+        waitForElementToBecomeVisible(
+                By.xpath("//table[@id='abstractors_work_table']//tr[3]"), 20);
+
+        clickAndWait("//table[@id='abstractors_work_table']//tr[3]/td[1]/a");
+        verifyResultsTabActive();
+        assertTrue(isTrialInResultsTab(admin));
+
+    }
+
+    @Test
     public void testTrialDistPanel() throws Exception {
         deactivateAllTrials();
 

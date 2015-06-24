@@ -7,10 +7,13 @@ import static gov.nih.nci.pa.util.Constants.IS_SU_ABSTRACTOR;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
+import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.ActionUtils;
+import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -43,6 +46,7 @@ public class TrialCountsAction extends ActionSupport implements Preparable,
 
     private ProtocolQueryServiceLocal protocolQueryService;
     private LookUpTableServiceRemote lookUpService;
+    private CSMUserUtil csmUserUtil;
 
     private static final long serialVersionUID = -8919884566276557104L;
     private static final String UTF_8 = "UTF-8";
@@ -50,6 +54,80 @@ public class TrialCountsAction extends ActionSupport implements Preparable,
     private HttpServletRequest request;
 
     // CHECKSTYLE:OFF
+
+    /**
+     * @return StreamResult
+     * @throws UnsupportedEncodingException
+     *             UnsupportedEncodingException
+     * 
+     * @throws PAException
+     *             PAException
+     * @throws JSONException
+     *             JSONException
+     */
+    public StreamResult abstractorsWork() throws UnsupportedEncodingException,
+            PAException, JSONException {
+        JSONObject root = new JSONObject();
+        JSONArray arr = new JSONArray();
+        root.put("data", arr);
+        abstractorsWork(arr);
+        return new StreamResult(new ByteArrayInputStream(root.toString()
+                .getBytes(UTF_8)));
+    }
+
+    private void abstractorsWork(JSONArray arr) throws PAException,
+            JSONException {
+        final Map<Long, String> users = csmUserUtil.getAbstractors();
+        for (long userID : users.keySet()) {
+            String userName = users.get(userID);
+            final String loginName = csmUserUtil.getCSMUserById(userID)
+                    .getLoginName();
+            List<String> groups = csmUserUtil.getUserGroups(loginName);
+            userName += (" (" + determinePostFixBasedOnGroupMembership(groups) + ")");
+            // counts
+            int admin = 0;
+            int scientific = 0;
+            int adminScientific = 0;
+
+            StudyProtocolQueryCriteria criteria = getCriteria();
+            criteria.setStudyLockedBy(true);
+            criteria.setUserLastCreated(loginName);
+
+            for (StudyProtocolQueryDTO dto : protocolQueryService
+                    .getStudyProtocolByCriteria(criteria)) {
+                final String adminBy = dto.getAdminCheckout().getCheckoutBy();
+                final String sciBy = dto.getScientificCheckout()
+                        .getCheckoutBy();
+                if (loginName.equals(adminBy) && loginName.equals(sciBy)) {
+                    adminScientific++;
+                } else if (loginName.equals(adminBy)) {
+                    admin++;
+                } else if (loginName.equals(sciBy)) {
+                    scientific++;
+                }
+            }
+
+            // Put counts into JSON
+            if (admin + scientific + adminScientific > 0) {
+                JSONObject data = new JSONObject();
+                data.put("name", userName);
+                data.put("admin", admin);
+                data.put("scientific", scientific);
+                data.put("admin_scientific", adminScientific);
+                data.put("user_id", userID);
+                arr.put(data);
+            }
+        }
+    }
+
+    private String determinePostFixBasedOnGroupMembership(
+            final List<String> groups) {
+        boolean admin = groups.contains(Constants.ADMIN_ABSTRACTOR);
+        boolean scientific = groups.contains(Constants.SCIENTIFIC_ABSTRACTOR);
+        boolean sup = groups.contains(Constants.SUABSTRACTOR);
+        return sup ? "SU" : (admin && scientific ? "AS"
+                : (admin && !scientific ? "AS" : "SC"));
+    }
 
     /**
      * @return StreamResult
@@ -298,6 +376,7 @@ public class TrialCountsAction extends ActionSupport implements Preparable,
         }
         protocolQueryService = PaRegistry.getProtocolQueryService();
         lookUpService = PaRegistry.getLookUpTableService();
+        csmUserUtil = CSMUserService.getInstance();
     }
 
     private boolean canSeeTrialCounts() {
@@ -323,6 +402,14 @@ public class TrialCountsAction extends ActionSupport implements Preparable,
      */
     public void setLookUpService(LookUpTableServiceRemote lookUpService) {
         this.lookUpService = lookUpService;
+    }
+
+    /**
+     * @param csmUserUtil
+     *            the csmUserUtil to set
+     */
+    public void setCsmUserUtil(CSMUserUtil csmUserUtil) {
+        this.csmUserUtil = csmUserUtil;
     }
 
 }
