@@ -279,7 +279,7 @@ public class BatchUploadAction extends ActionSupport implements ServletResponseA
             ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
             addActionError(e.getMessage());
             RegistryUtil.generateMail(Constants.ERROR_PROCESSING, ServletActionContext.getRequest().getRemoteUser(),
-                    "", "", "", "", e.getMessage());
+                    "", "", "", "", e.getMessage(), null, null);
             return ERROR;
         }
         return "batch_confirm";

@@ -139,6 +139,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -176,6 +177,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -662,7 +664,77 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
         mailSubject = commonMailSubjectReplacements(spDTO, mailSubject);
         sendEmailToAllTrialOwners(spDTO, mailSubject, mailBody, false);
     }
+    /**
+     * 
+     * @param studyProtocolIi studyProtocolIi
+     * @throws PAException ex
+     */
+    @Override
+    public void sendAmendDSPWarningNotificationMail(Ii studyProtocolIi) throws PAException {
+        StudyProtocolQueryDTO spDTO = protocolQueryService
+            .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
+        String amendNumber = "";
+        if (spDTO.getAmendmentNumber() != null) {
+            amendNumber = spDTO.getAmendmentNumber();
+        }
+        String mailBody = lookUpTableService.getPropertyValue("trial.reg.service.amend.warning.body");
+        mailBody = commonMailBodyReplacements(spDTO, mailBody);
+        mailBody = mailBody.replace(AMENDMENT_NUMBER, amendNumber);
+        mailBody = mailBody.replace(AMENDMENT_DATE, getFormatedDate(spDTO.getAmendmentDate()));
+        mailBody = mailBody.replace("${changeDate}", getFormatedCurrentDate());
+        String mailSubject = lookUpTableService.getPropertyValue("trial.amend.subject");
+        mailSubject = commonMailSubjectReplacements(spDTO, mailSubject);
+        sendEmailToAllTrialOwners(spDTO, mailSubject, mailBody, false);
+        List<String> trialList = new ArrayList<String>();
+        trialList.add(spDTO.getNciIdentifier());
+        sendCTROWarningEmail(spDTO.getLastCreated().getUserLastCreated(), spDTO
+                .getSubmitterOrgName(), "AmendServiceWarning", trialList);
+    }
     
+    /**
+     * 
+     * @param studyProtocolIi studyProtocolIi
+     * @param unmatchedEmails unmatchedEmails
+     * @throws PAException ex
+     */
+    @Override
+    public void sendCreateDSPWarningNotificationMail(Ii studyProtocolIi, 
+         Collection<String> unmatchedEmails) throws PAException {
+        StudyProtocolQueryDTO spDTO = protocolQueryService
+                .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
+        RegistryUser user = registryUserService.getUser(spDTO.getLastCreated().getUserLastCreated());
+        if (user == null) {
+            LOG.error("Registry User does not exist: " + spDTO.getLastCreated().getUserLastCreated());
+            return;
+        }
+        String propertyPrefix = (spDTO.isProprietaryTrial()) ? "proprietarytrial" : "trial";
+        String mailBody = lookUpTableService.getPropertyValue(propertyPrefix + ".service.create.register.body");
+        String mailSubject = lookUpTableService.getPropertyValue(propertyPrefix + ".register.subject");
+        mailSubject = commonMailSubjectReplacements(spDTO, mailSubject);
+        mailBody = commonMailBodyReplacements(spDTO, mailBody);
+        mailBody = mailBody.replace("${changeDate}", getFormatedCurrentDate());
+        String regUserName = user.getFirstName() + " " + user.getLastName();
+        mailBody = mailBody.replace(OWNER_NAME, regUserName);
+        if (CollectionUtils.isNotEmpty(unmatchedEmails)) {
+            mailBody = mailBody
+                    .replace(
+                            ERRORS,
+                            lookUpTableService
+                                    .getPropertyValue(
+                                            "trial.register.unidentifiableOwner.sub.email.body")
+                                    .replace(
+                                            PLACEHOLDER_0,
+                                            StringUtils.join(unmatchedEmails,
+                                                    "\r\n")));
+        } else {
+            mailBody = mailBody.replace(ERRORS, "");
+        }
+        sendMailWithHtmlBody(user.getEmailAddress(), mailSubject, mailBody);
+        List<String> trialList = new ArrayList<String>();
+        trialList.add(spDTO.getNciIdentifier());
+        sendCTROWarningEmail(spDTO.getLastCreated().getUserLastCreated(), spDTO.getSubmitterOrgName(),
+             "CreateServiceWarning", trialList);
+    }
     /**
      * Common Mail Body replacements.
      * @param sp
@@ -2270,6 +2342,108 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
         } catch (Exception e) {
             LOG.error("Send confirmation mail error", e);
         }
+    }
+    
+    /**
+     * 
+     * @param userName userName
+     * @param leadOrgName leadOrgName
+     * @param warningMap warningMap
+     */
+    public void generateCTROWarningEmail(String userName, String leadOrgName, 
+            Map<String, String> warningMap) {
+            int createCount = 0;
+            int amendCount = 0;
+            List<String> createTrialIDS = new ArrayList<String>();
+            List<String> amendTrialIDS = new ArrayList<String>();
+            if (!MapUtils.isEmpty(warningMap)) {
+                Set<String> s = warningMap.keySet();
+                Iterator<String> iter = s.iterator();
+                while (iter.hasNext()) {
+                    String trialId = iter.next();
+                    String warning = warningMap.get(trialId); 
+                    if (StringUtils.equalsIgnoreCase("CreateWarning", warning)) {
+                        createCount++;
+                        createTrialIDS.add(trialId);
+                    } else {
+                         amendCount++;
+                         amendTrialIDS.add(trialId);
+                    }
+                }
+            }
+            
+            if (createCount > 0) {
+                sendCTROWarningEmail(userName, leadOrgName, "CreateWarning", createTrialIDS);
+            }
+            if (amendCount > 0) {
+                sendCTROWarningEmail(userName, leadOrgName, "AmendWarning", createTrialIDS);
+            }
+    }
+    
+    private void sendCTROWarningEmail(String userName, String leadOrgName, String warning, 
+         List<String> trialList) {
+      try {
+        Template subjectFtl = null;
+        Template bodyFtl = null;
+        
+        if (StringUtils.equalsIgnoreCase("CreateWarning", warning)) {
+            subjectFtl = cfg
+                    .getTemplate("trial.batchUpload.create.warning.subject");
+            bodyFtl = cfg
+                    .getTemplate("trial.batchUpload.create.warning.body");
+        } else if (StringUtils.equalsIgnoreCase("AmendWarning", warning)) {
+            subjectFtl = cfg
+                    .getTemplate("trial.batchUpload.amend.warning.subject");
+            bodyFtl = cfg
+                    .getTemplate("trial.batchUpload.amend.warning.body");
+        } else if (StringUtils.equalsIgnoreCase("AmendServiceWarning", warning)) {
+             subjectFtl = cfg
+                     .getTemplate("trial.service.amend.subject");
+             bodyFtl = cfg
+                     .getTemplate("trial.service.amend.body");
+        } else if (StringUtils.equalsIgnoreCase("CreateServiceWarning", warning)) {
+            subjectFtl = cfg
+                    .getTemplate("trial.service.create.subject");
+            bodyFtl = cfg
+                    .getTemplate("trial.service.create.body");
+       }
+        
+        RegistryUser registryUser = registryUserService.getUser(userName);
+        String toEmail = lookUpTableService.getPropertyValue("abstraction.script.mailTo");
+        String changeDate = lookUpTableService.getPropertyValue("delayed.posting.change.date");
+        Calendar calendar = new GregorianCalendar();
+        Date date = calendar.getTime();
+        DateFormat format = new SimpleDateFormat(PAUtil.DATE_FORMAT, Locale.getDefault());
+        Map<String, Object> root = new HashMap<String, Object>();
+        root.put("submitter_name", registryUser.getFullName());
+        root.put("submitting_organization_name", StringUtils.defaultString(leadOrgName));
+        root.put("submission_date", format.format(date));
+
+        StringBuffer innerTable = new StringBuffer();
+        for (String trialID : trialList) {
+            innerTable.append("<table><tr><td>" + trialID
+                    + "</td></tr></table>");
+        }
+        
+        if (innerTable.length() > 0) {
+            root.put("tableRows", innerTable.toString());
+        }
+        
+        if (trialList.size() > 1) {
+            root.put("trial_ids", trialList.get(0) + "...");
+        } else if (!trialList.isEmpty()) {
+            root.put("trial_ids", trialList.get(0));
+        }
+        root.put("changeDate", changeDate);
+        StringWriter subject = new StringWriter();
+        StringWriter body = new StringWriter();
+        subjectFtl.process(root, subject);
+        bodyFtl.process(root, body);
+        sendMailWithHtmlBody(toEmail, subject.toString(),
+                    body.toString());
+    } catch (PAException | IOException | TemplateException e) {
+        LOG.error(e, e);
+    }
     }
     
     

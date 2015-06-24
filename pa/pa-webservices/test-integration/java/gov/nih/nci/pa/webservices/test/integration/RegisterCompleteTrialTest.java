@@ -1,6 +1,9 @@
 package gov.nih.nci.pa.webservices.test.integration;
 
+import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.service.StudySourceInterceptor;
+import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 import gov.nih.nci.pa.webservices.types.AccrualDiseaseTerminology;
 import gov.nih.nci.pa.webservices.types.CompleteTrialRegistration;
 import gov.nih.nci.pa.webservices.types.ExpandedAccessType;
@@ -20,16 +23,22 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeFactory;
 
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.xml.sax.SAXException;
+
+import com.dumbster.smtp.SmtpMessage;
 
 /**
  * @author Denis G. Krylov
@@ -284,12 +293,47 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
     private void registerAndVerify(String file) throws SQLException,
             ClientProtocolException, ParseException, IOException,
             JAXBException, SAXException {
-
         CompleteTrialRegistration reg = readCompleteTrialRegistrationFromFile(file);
         deactivateTrialByLeadOrgId(reg.getLeadOrgTrialID());
+        restartEmailServer();
         TrialRegistrationConfirmation conf = registerTrialFromFile(file);
         verifyRegistration(conf, reg);
-
+        TrialInfo trial = new TrialInfo();
+        trial.id = conf.getPaTrialID();
+        if (reg.isClinicalTrialsDotGovXmlRequired()) {
+        assertEquals("false", getTrialField(trial, "DELAYED_POSTING_INDICATOR").toString());
+        assertEquals(3, server.getReceivedEmailSize());
+        Iterator<SmtpMessage> emailIter = server.getReceivedEmail();
+        for (int i=0 ; emailIter.hasNext(); i++) {
+            SmtpMessage email = (SmtpMessage) emailIter.next();
+            String body = email.getBody();
+            System.out.println(body);
+            switch (i) {
+            case 0 : verifyCreateBodyDSPWarning(body);
+                     break;
+            case 1 : verifyCreateBodyDSPCTRO(body);
+                     break;
+            default : break;
+            }
+        }
+        }
     }
+    
+    /**
+     * @param body
+     */
+    private void verifyCreateBodyDSPWarning(final String body) {
+        assertTrue(body.contains(
+                "WARNING:</b> The trial submitted has a Delayed Posting Indicator value of \"Yes\""));
+    }
+    
+    /**
+     * @param body
+     */
+    private void verifyCreateBodyDSPCTRO(final String body) {
+        assertTrue(body.contains(
+                "Dear CTRO Staff,</p><p>The trial below was submitted with the value for the Delayed Posting Indicator set to \"Yes\":"));
+    }
+    
 
 }

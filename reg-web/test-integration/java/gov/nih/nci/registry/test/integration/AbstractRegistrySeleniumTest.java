@@ -100,7 +100,9 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.junit.Ignore;
 import org.openqa.selenium.By;
+import org.openqa.selenium.By.ByXPath;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
 
 import com.thoughtworks.selenium.SeleniumException;
 
@@ -336,7 +338,6 @@ public abstract class AbstractRegistrySeleniumTest extends
         selenium.click("grantbtnid");
         waitForElementById("grantdiv", 5);
         driver.switchTo().defaultContent();
-
         populateStatusHistory();
 
         selenium.type("trialDTO_startDate", tommorrow);
@@ -376,7 +377,7 @@ public abstract class AbstractRegistrySeleniumTest extends
                 .id("trialDTO.fdaRegulatoryInformationIndicatorYes"));
         selenium.click("trialDTO.fdaRegulatoryInformationIndicatorYes");
         selenium.click("trialDTO.section801IndicatorYes");
-        selenium.click("trialDTO.delayedPostingIndicatorYes");
+        assertFalse(driver.findElement(By.id("trialDTO.delayedPostingIndicatorNo")).isEnabled());
         selenium.click("trialDTO.dataMonitoringCommitteeAppointedIndicatorYes");
 
         // Add Protocol and IRB Document

@@ -9,6 +9,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -64,6 +65,19 @@ public class BatchHelperTest {
         } catch (Exception e) {
 
         }
+    }
+    
+    
+    @Test 
+    public void getWarningTypeWithNCIValuesTest() {
+    	helper = new BatchHelper("uploadLoc","dataFileName","unzipLoc","userName","", null);
+    	String warning = "CreateWarning:NCI-2015-00385 CreateWarning:NCI-2015-00388";
+    	Map<String, String> map =helper.getWarningTypeWithNCIValues(warning);
+    	map.size();
+    	
+    	warning = "CreateWarning";
+    	 map =helper.getWarningTypeWithNCIValues(warning);
+    	map.size();
     }
 
 }

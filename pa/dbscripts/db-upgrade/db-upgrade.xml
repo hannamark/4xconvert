@@ -1830,4 +1830,8 @@
        <comment>Adding more PA properties to support trial dist. panel.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9033.sql"/>       
     </changeSet>
+     <changeSet id="PO-8815" author="Reshma">
+       <comment>adding email properties to pa_properties.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8815.sql"/>       
+    </changeSet>  
 </databaseChangeLog>

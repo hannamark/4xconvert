@@ -623,7 +623,7 @@ public class TrialRegistrationValidator {
                 partyDTO.getAffiliation(), errorMsg);
         validateAmendmentInfo(studyProtocolDTO, errorMsg);
         validateResponsibleParty(studyProtocolDTO, partyDTO, errorMsg);
-        validateRegulatoryInfo(studyProtocolDTO, studyRegAuthDTO, studyIndldeDTOs, errorMsg);
+        validateRegulatoryInfo(studyProtocolDTO, studyRegAuthDTO, studyIndldeDTOs, errorMsg, AMENDMENT);
         validateSummary4Resourcing(studyProtocolDTO, summary4StudyResourcingDTO, errorMsg);
         validateAccrualDiseaseCodeSystem(studyProtocolDTO, errorMsg);
         if (nctIdentifierDTO != null && !ISOUtil.isStNull(nctIdentifierDTO.getLocalStudyProtocolIdentifier())) {
@@ -799,7 +799,7 @@ public class TrialRegistrationValidator {
      * @throws PAException the PA exception
      */
     void validateRegulatoryInfo(StudyProtocolDTO studyProtocolDTO, StudyRegulatoryAuthorityDTO studyRegAuthDTO,
-            List<StudyIndldeDTO> studyIndldeDTOs, StringBuilder errorMsg) throws PAException {
+            List<StudyIndldeDTO> studyIndldeDTOs, StringBuilder errorMsg, String operation) throws PAException {
         if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
             check(studyRegAuthDTO == null, "Regulatory Information fields must be Entered.\n", errorMsg);
 
@@ -810,9 +810,7 @@ public class TrialRegistrationValidator {
             check(fdaRegulated && ISOUtil.isBlNull(studyProtocolDTO.getSection801Indicator()),
                   "Section 801 is required if FDA Regulated indicator is true.\n", errorMsg);
 
-            boolean section801 = BlConverter.convertToBool(studyProtocolDTO.getSection801Indicator());
-            check(section801 && ISOUtil.isBlNull(studyProtocolDTO.getDelayedpostingIndicator()),
-                  "Delayed posting Indicator is required if Section 801 is true.\n", errorMsg);
+            validateDelayedPostingInd(studyProtocolDTO, operation);
 
             validateRegAuthorityExistence(studyRegAuthDTO, errorMsg);
             
@@ -836,7 +834,30 @@ public class TrialRegistrationValidator {
             }
         }
     }
-
+    /**
+     * 
+     * @param studyProtocolDTO The study protocol dto
+     * @param operation The operation
+     * @throws PAException The exception
+     */
+    void validateDelayedPostingInd(StudyProtocolDTO studyProtocolDTO, String operation) throws PAException {
+         boolean section801 = BlConverter.convertToBool(studyProtocolDTO.getSection801Indicator());
+         if (operation.equalsIgnoreCase(AMENDMENT)) {
+             StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService()
+                     .getStudyProtocol(studyProtocolDTO.getIdentifier());
+             if (!spDTO.getDelayedpostingIndicator().equals(studyProtocolDTO.getDelayedpostingIndicator())) {
+                studyProtocolDTO.setDelayedpostingIndicator(spDTO.getDelayedpostingIndicator());
+                studyProtocolDTO.setDelayedPostingIndicatorChanged(BlConverter.convertToBl(true));
+             }
+         } else if (section801 && (ISOUtil.isBlNull(studyProtocolDTO.getDelayedpostingIndicator()) 
+             || (BlConverter.convertToBool(studyProtocolDTO.getDelayedpostingIndicator())))) {
+                 studyProtocolDTO.setDelayedpostingIndicator(BlConverter.convertToBl(false));
+                 studyProtocolDTO.setDelayedPostingIndicatorChanged(BlConverter.convertToBl(true));
+         }
+         
+//         check(section801 && ISOUtil.isBlNull(studyProtocolDTO.getDelayedpostingIndicator()),
+//               "Delayed posting Indicator is required if Section 801 is true.So setting it to no\n", errorMsg);
+    }
     /**
      * @param studyRegAuthDTO
      * @param errorMsg
@@ -917,7 +938,7 @@ public class TrialRegistrationValidator {
                 principalInvestigatorDTO, partyDTO.getInvestigator(),
                 partyDTO.getAffiliation(), errorMsg);        
         validateResponsibleParty(studyProtocolDTO, partyDTO, errorMsg);
-        validateRegulatoryInfo(studyProtocolDTO, studyRegAuthDTO, studyIndldeDTOs, errorMsg);
+        validateRegulatoryInfo(studyProtocolDTO, studyRegAuthDTO, studyIndldeDTOs, errorMsg, CREATION);
         validateSummary4Resourcing(studyProtocolDTO, summary4StudyResourcingDTO, errorMsg);
         validateAccrualDiseaseCodeSystem(studyProtocolDTO, errorMsg);
         if (nctIdentifierDTO != null && !ISOUtil.isStNull(nctIdentifierDTO.getLocalStudyProtocolIdentifier())) {

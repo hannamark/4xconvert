@@ -330,7 +330,11 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
             trialDTO.setDocDtos(getTrialDocuments());
             addIndIdesToTrialDto();
             addSecondaryIdsToTrialDto();
-
+            String section801 = trialDTO.getSection801Indicator();
+            if (section801 != null && section801.equalsIgnoreCase("YES") 
+                 && StringUtils.isEmpty(trialDTO.getDelayedPostingIndicator())) {
+                trialDTO.setDelayedPostingIndicator(CommonsConstant.NO);
+            }
             trialUtil.setOversgtInfo(trialDTO);
 
         } catch (IOException e) {

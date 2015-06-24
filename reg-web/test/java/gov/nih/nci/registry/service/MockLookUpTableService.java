@@ -38,6 +38,11 @@ public class MockLookUpTableService implements LookUpTableServiceRemote {
         map.put("trial.batchUpload.errorMsg", "Junit ${ReleaseNumber} error");
         map.put("current.release.no", "Junit test");
         map.put("log.email.address", LOG_ADDRESS);
+        map.put("delayed.posting.change.date", "September 2015");
+        map.put("trial.batchUpload.reporBothtMsg", "report both ${createtableRows} ${amendtableRows} ${changeDate}");
+        map.put("trial.batchUpload.reportCreateMsg", "create report ${tableRows} ${changeDate}");
+        map.put("trial.batchUpload.reporAmendtMsg", "amend report ${tableRows} ${changeDate}");
+        map.put("trial.batchUpload.reportMsg", "normal report");
     }
 
     /**

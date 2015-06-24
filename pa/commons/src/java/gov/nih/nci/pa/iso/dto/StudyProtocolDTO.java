@@ -152,6 +152,7 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     private Ts prsReleaseDate;
     private Ts qaCommentsReturnedDate;
     private Ts trialPublishedDate;
+    private Bl delayedPostingIndicatorChanged;
     
     /**
      *
@@ -831,6 +832,22 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
      */
     public void setTrialPublishedDate(Ts trialPublishedDate) {
         this.trialPublishedDate = trialPublishedDate;
+    }
+
+
+    /**
+     * 
+     * @return delayedPostingIndicatorChanged delayedPostingIndicatorChanged
+     */
+    public Bl getDelayedPostingIndicatorChanged() {
+         return delayedPostingIndicatorChanged;
+    }
+    /**
+     *  
+     * @param delayedPostingIndicatorChanged delayedPostingIndicatorChanged
+     */
+    public void setDelayedPostingIndicatorChanged(Bl delayedPostingIndicatorChanged) {
+        this.delayedPostingIndicatorChanged = delayedPostingIndicatorChanged;
     }
     
     

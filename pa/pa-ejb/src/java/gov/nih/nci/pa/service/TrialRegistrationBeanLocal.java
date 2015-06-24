@@ -112,6 +112,7 @@ import gov.nih.nci.pa.enums.StudyRelationshipTypeCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudySiteStatusCode;
+import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
@@ -577,7 +578,15 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             studyProtocolService
                     .updatePendingTrialAssociationsToActive(IiConverter
                             .convertToLong(spIi));
-            sendMail(AMENDMENT, isBatchMode, spIi, new ArrayList<String>(), EMPTY_STR);
+            if ((StudySourceInterceptor.STUDY_SOURCE_CONTEXT.get() == StudySourceCode.GRID_SERVICE 
+                    || StudySourceInterceptor.STUDY_SOURCE_CONTEXT
+                    .get() == StudySourceCode.REST_SERVICE) 
+                    && !ISOUtil.isBlNull(studyProtocolDTO.getDelayedPostingIndicatorChanged()) 
+                    && BlConverter.convertToBool(studyProtocolDTO.getDelayedPostingIndicatorChanged())) {
+                 mailManagerSerivceLocal.sendAmendDSPWarningNotificationMail(spIi);
+            } else {
+                sendMail(AMENDMENT, isBatchMode, spIi, new ArrayList<String>(), EMPTY_STR);
+            }
             return studyProtocolDTO.getIdentifier();
         } catch (PAException e) { 
             LOG.error(e, e);
@@ -990,9 +999,15 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             studyProtocolService
                 .updatePendingTrialAssociationsToActive(IiConverter
                     .convertToLong(spIi));
-            sendMail(CREATE, isBatchMode, spIi, unmatchedEmails, EMPTY_STR);     
-            
-            
+            if ((StudySourceInterceptor.STUDY_SOURCE_CONTEXT.get() == StudySourceCode.GRID_SERVICE 
+                    || StudySourceInterceptor.STUDY_SOURCE_CONTEXT
+                    .get() == StudySourceCode.REST_SERVICE) 
+                    && !ISOUtil.isBlNull(studyProtocolDTO.getDelayedPostingIndicatorChanged()) 
+                    && BlConverter.convertToBool(studyProtocolDTO.getDelayedPostingIndicatorChanged())) {
+                 mailManagerSerivceLocal.sendCreateDSPWarningNotificationMail(spIi, unmatchedEmails);
+            } else {
+                sendMail(CREATE, isBatchMode, spIi, unmatchedEmails, EMPTY_STR);  
+            }
             return spIi;
     }
     

@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.registry.util;
 
+
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.CSMUserService;
@@ -15,15 +16,23 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.activation.FileDataSource;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -32,13 +41,15 @@ import org.apache.struts2.ServletActionContext;
  * Utility Class for Registry.
  *
  */
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class RegistryUtil {
     private static final String VALIDATION_EXCEPTION_STRING = "Validation Exception";
     private static final String PA_EXCEPTION_STRING = "gov.nih.nci.pa.service.PAException:";
     private static final Logger LOG = Logger.getLogger(RegistryUtil.class);
     private static final String[] VALID_DATE_FORMATS = {"MM/dd/yyyy", "MM-dd-yyyy", "yyyy/MM/dd", "yyyy-MM-dd"};    
     private static final String FROMADDRESS = "fromaddress";
-
+    private static final String TABLESTART = "<table><tr><td>";
+    private static final String TABLEEND = "</td></tr></table>";
     /**
      * check if the email address is valid.
      * @param emailAddress emailAddress
@@ -105,16 +116,20 @@ public class RegistryUtil {
     * @param totalCount the total count
     * @param attachFileName the attach file name
     * @param errorMessage the error message
+    * @param createList createList
+    * @param amendList amendList
     */
+    // CHECKSTYLE:OFF More than 7 Parameters
+   @SuppressWarnings({ "PMD.ExcessiveParameterList", "PMD.ExcessiveMethodLength" })
     public static void generateMail(String action, String userName, String successCount, String failedCount,
-            String totalCount, String attachFileName, String errorMessage) {
+            String totalCount, String attachFileName, String errorMessage, 
+            List<String> createList, List<String> amendList) {
        
         try {
             StringBuffer submissionMailBody = new StringBuffer();
             Calendar calendar = new GregorianCalendar();
             Date date = calendar.getTime();
             DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
-
             // get the values of email's subject and email body from the database
             String emailSubject = PaRegistry.getLookUpTableService().getPropertyValue("trial.batchUpload.subject");
             LOG.debug("emailSubject is: " + emailSubject);
@@ -131,7 +146,8 @@ public class RegistryUtil {
             submissionMailBody.append(submissionMailBodyHeader);
             // append the body text for processed or error
             if (Constants.PROCESSED.equals(action)) {
-                prepareProcessedMessage(successCount, failedCount, totalCount, submissionMailBody);
+                prepareProcessedMessage(successCount, failedCount, totalCount, 
+                   submissionMailBody, createList, amendList);
             } else {
                 prepareErrorMessage(errorMessage, submissionMailBody);
             }
@@ -161,8 +177,10 @@ public class RegistryUtil {
         } catch (PAException e) {
             LOG.error("Error occured while generating the batch upload email", e);
         }
-    }
-
+    }  
+    
+    
+    
     private static void prepareErrorMessage(String errorMessage, StringBuffer submissionMailBody) throws PAException {
         submissionMailBody.append("Error: ").append(errorMessage).append('\n');
         String submissionMailErrorBody = PaRegistry.getLookUpTableService()
@@ -171,18 +189,111 @@ public class RegistryUtil {
         submissionMailErrorBody = submissionMailErrorBody.replace("${ReleaseNumber}", currentReleaseNumber);
         submissionMailBody.append(submissionMailErrorBody);
     }
-
-    private static void prepareProcessedMessage(String successCount, String failedCount, String totalCount,
-            StringBuffer submissionMailBody) throws PAException {
+    
+    /**
+     * 
+     * @param userName userName
+     * @param warningMap warningMap
+     * @param action action
+     * @param successCount successCount
+     * @param failedCount failedCount
+     * @param totalCount totalCount
+     * @param attachFileName attachFileName
+     * @param errorMessage errorMessage
+     */
+ // CHECKSTYLE:OFF More than 7 Parameters
+    @SuppressWarnings({ "PMD.ExcessiveParameterList", "PMD.ExcessiveMethodLength"})
+    public static void sendEmail(String action, String userName, String successCount, String failedCount, 
+            String totalCount, String attachFileName, String errorMessage, Map<String, String> warningMap) {
+        int createCount = 0;
+        int amendCount = 0;
+        List<String> createTrialIDS = new ArrayList<String>();
+        List<String> amendTrialIDS = new ArrayList<String>();
+        if (!MapUtils.isEmpty(warningMap)) {
+            Set<String> s = warningMap.keySet();
+            Iterator<String> iter = s.iterator();
+            while (iter.hasNext()) {
+                String trialId = iter.next();
+                String warning = warningMap.get(trialId); 
+                if (StringUtils.equalsIgnoreCase("CreateWarning", warning)) {
+                    createCount++;
+                    createTrialIDS.add(trialId);
+                } else if (StringUtils.equalsIgnoreCase("AmendWarning", warning)) {
+                     amendCount++;
+                     amendTrialIDS.add(trialId);
+                }
+            }
+        } else {
+            generateMail(action, userName, successCount, failedCount, 
+                 totalCount, attachFileName, errorMessage, null, null);
+        }
+        if (createCount > 0 || amendCount > 0) {
+            generateMail(action, userName, successCount, failedCount, totalCount, 
+                  attachFileName, errorMessage, createTrialIDS, amendTrialIDS);
+        }
+    }
+    
+    @SuppressWarnings({ "PMD.CyclomaticComplexity" })  
+    private static void prepareProcessedMessage(String successCount, String failedCount, String totalCount, 
+            StringBuffer submissionMailBody, List<String>  createList, List<String> amendList) throws PAException {
         String submissionMailBodyText = PaRegistry.getLookUpTableService().getPropertyValue("trial.batchUpload.body");
         submissionMailBodyText = submissionMailBodyText.replace("${totalCount}", totalCount);
         submissionMailBodyText = submissionMailBodyText.replace("${successCount}", successCount);
         submissionMailBodyText = submissionMailBodyText.replace("${failedCount}", failedCount);
-
+        String submissionMailReportBody = null;
         submissionMailBody.append(submissionMailBodyText);
-
-        String submissionMailReportBody = PaRegistry.getLookUpTableService()
+      if ((createList != null && !createList.isEmpty()) || (amendList != null && !amendList.isEmpty())) {
+          String changeDate = PaRegistry.getLookUpTableService().getPropertyValue("delayed.posting.change.date");
+          if (!createList.isEmpty() && !amendList.isEmpty()) {
+              submissionMailReportBody = PaRegistry.getLookUpTableService()
+                       .getPropertyValue("trial.batchUpload.reporBothtMsg");
+              StringBuffer innerCreateTable = new StringBuffer();
+              StringBuffer innerAmendTable = new StringBuffer();
+                for (String trialID : createList) {
+                    innerCreateTable.append(TABLESTART + trialID
+                          + TABLEEND);
+                }
+                if (innerCreateTable.length() > 0) {
+                  submissionMailReportBody = submissionMailReportBody.
+                         replace("${createtableRows}", innerCreateTable.toString());
+                }
+                
+                for (String trialID : amendList) {
+                   innerAmendTable.append("TABLESTART" + trialID
+                          + TABLEEND);
+                }
+                if (innerAmendTable.length() > 0) {
+                  submissionMailReportBody = submissionMailReportBody.
+                        replace("${amendtableRows}", innerAmendTable.toString());
+                }
+           } else if (!createList.isEmpty()) {
+             submissionMailReportBody = PaRegistry.getLookUpTableService()
+                   .getPropertyValue("trial.batchUpload.reportCreateMsg");
+             StringBuffer innerTable = new StringBuffer();
+             for (String trialID : createList) {
+                 innerTable.append(TABLESTART + trialID
+                         + TABLEEND);
+             }
+             if (innerTable.length() > 0) {
+                 submissionMailReportBody = submissionMailReportBody.replace("${tableRows}", innerTable.toString());
+             }
+          } else if (!amendList.isEmpty()) {
+           submissionMailReportBody = PaRegistry.getLookUpTableService()
+                  .getPropertyValue("trial.batchUpload.reporAmendtMsg");
+           StringBuffer innerTable = new StringBuffer();
+           for (String trialID : createList) {
+             innerTable.append(TABLESTART + trialID
+                     + TABLEEND);
+           }
+           if (innerTable.length() > 0) {
+             submissionMailReportBody = submissionMailReportBody.replace("${tableRows}", innerTable.toString());
+           }
+         }
+        submissionMailReportBody = submissionMailReportBody.replace("${changeDate}", changeDate);
+      } else {
+           submissionMailReportBody = PaRegistry.getLookUpTableService()
             .getPropertyValue("trial.batchUpload.reportMsg");
+        }
         submissionMailBody.append('\n').append(submissionMailReportBody);
     }
 
@@ -248,4 +359,5 @@ public class RegistryUtil {
       }
       return false;
   }
+
 }

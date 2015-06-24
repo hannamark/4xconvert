@@ -248,6 +248,14 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
             if (otherIdsList != null) {
                 trialDTO.setSecondaryIdentifierAddList(otherIdsList);
             }
+            StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService()
+                   .getStudyProtocol(IiConverter.convertToIi(trialDTO.getIdentifier()));
+            if (!spDTO.getDelayedpostingIndicator().equals(BlConverter
+                      .convertYesNoStringToBl(trialDTO.getDelayedPostingIndicator()))) {
+                trialDTO.setDelayedPostingIndicator(BlConverter.convertBlToYesNoString(spDTO
+                      .getDelayedpostingIndicator()));
+            }
+            
         } catch (IOException e) {
             LOG.error(e.getMessage());
             addActionError(e.getMessage());

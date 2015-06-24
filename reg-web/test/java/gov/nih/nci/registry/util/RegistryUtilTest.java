@@ -6,6 +6,12 @@ package gov.nih.nci.registry.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import gov.nih.nci.registry.action.AbstractRegWebTest;
 
 import org.junit.Test;
@@ -25,8 +31,12 @@ public class RegistryUtilTest extends AbstractRegWebTest {
 
     @Test
     public void testGenerateMail() {
-        RegistryUtil.generateMail(Constants.PROCESSED, "firstName", "1", "0", "1", "fileName.doc", "");
-        RegistryUtil.generateMail(Constants.ERROR_PROCESSING, "firstName", "0", "1", "1", "", "error");
+        RegistryUtil.generateMail(Constants.PROCESSED, "firstName", "1", "0", "1", "fileName.doc", "", null, null);
+        RegistryUtil.generateMail(Constants.ERROR_PROCESSING, "firstName", "0", "1", "1", "", "error", null, null);
+        List<String> createList = new ArrayList<String>();
+        createList.add("NCI-2015-0001");
+        List<String> amendList = new ArrayList<String>();
+        RegistryUtil.generateMail(Constants.PROCESSED, "firstName", "1", "0", "1", "fileName.doc", "", createList, amendList);
     }
     @Test
     public void testRemoveExceptionFromErrMsg() {
@@ -55,5 +65,13 @@ public class RegistryUtilTest extends AbstractRegWebTest {
         assertFalse(RegistryUtil.isDateValid("12312012"));
         assertTrue(RegistryUtil.isDateValid("12-31-2012"));
         assertTrue(RegistryUtil.isDateValid("12/31/2012"));
+    }
+    
+    @Test
+    public void testSendMail() {
+       Map<String, String> warningMap = new HashMap<String, String>();
+       warningMap.put("NCI-2015-0001", "CreateWarning");
+       warningMap.put("NCI-2015-0002", "AmendWarning");
+       RegistryUtil.sendEmail(Constants.PROCESSED, "firstName", "1", "0", "1", "fileName.doc", "", warningMap);
     }
 }

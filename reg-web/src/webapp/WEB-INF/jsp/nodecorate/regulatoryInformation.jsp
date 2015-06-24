@@ -56,10 +56,11 @@
      <!--   Delayed Posting Indicator-->
      <div class="form-group" id="delpostindrow">
           <label for="trialDTO.delayedPostingIndicator"  class="col-xs-4 control-label"> <fmt:message key="regulatory.delayed.posting.ind"/><span class="required">*</span></label>
-          <div class="col-xs-4">
-            <s:radio cssClass="radio-inline" id="trialDTO.delayedPostingIndicator" name="trialDTO.delayedPostingIndicator" list="#{'No':'No', 'Yes':'Yes'}" value="trialDTO.delayedPostingIndicator" />
+          <div class="col-xs-8">
+            <s:radio cssClass="radio-inline" id="trialDTO.delayedPostingIndicator" name="trialDTO.delayedPostingIndicator" list="#{'No':'No', 'Yes':'Yes'}" value="trialDTO.delayedPostingIndicator" disabled="true"/>
          	<i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="<fmt:message key="tooltip.delayed_posting_indicator"/>" data-placement="top" data-trigger="hover"></i>
      		<span class="alert-danger"><s:fielderror><s:param>trialDTO.delayedPostingIndicator</s:param></s:fielderror></span>
+     		<span style="color:gray">To modify this indicator's value please submit a request to the CTRO at <a href="mailto:ncictro@mail.nih.gov">ncictro@mail.nih.gov</a></span>
      	</div>
      </div>
      <!--   Data Monitoring Committee Appointed Indicator -->

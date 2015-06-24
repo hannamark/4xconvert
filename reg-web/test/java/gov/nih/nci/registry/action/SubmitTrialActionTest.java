@@ -14,6 +14,7 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.util.Constants;
+import gov.nih.nci.registry.util.TrialUtil;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -154,6 +155,31 @@ public class SubmitTrialActionTest extends AbstractHibernateTestCase{
         assertEquals("review", action.review());
     }
     
+    @Test
+    public void testReviewWithDSPChange() throws Exception {
+        TrialDTO dto = getMockTrialDTO();
+        dto.setFdaRegulatoryInformationIndicator("Yes");
+        dto.setSection801Indicator("Yes");
+        action.setTrialDTO(dto);
+        URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
+        File f = new File(fileUrl.toURI());
+        action.setProtocolDoc(f);
+        action.setIrbApproval(f);
+        action.setProtocolDocFileName(FILE_NAME);
+        action.setIrbApprovalFileName(FILE_NAME);
+        action.setPageFrom("submitTrial");
+        //set grant in session
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        session.setAttribute(Constants.GRANT_LIST, getfundingDtos());
+        assertEquals("review", action.review());
+        TrialDTO resultDto = (TrialDTO) session.getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
+        assertEquals("No", resultDto.getDelayedPostingIndicator());
+        
+        dto.setDelayedPostingIndicator("Yes");
+        assertEquals("review", action.review());
+        resultDto = (TrialDTO) session.getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
+        assertEquals("Yes", resultDto.getDelayedPostingIndicator());
+    }
     @Test
     public void testReviewWithIndIde() throws URISyntaxException{
         action.setTrialDTO(getMockTrialDTO());

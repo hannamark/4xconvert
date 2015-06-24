@@ -148,6 +148,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         populateAmendmentNumber();
         populateTrialDates();
         populateDocuments();
+        assertFalse(driver.findElement(By.id("trialDTO.delayedPostingIndicatorNo")).isEnabled());
 
         // Try to submit and verify the dialog (see JIRA).
         submitTrialAndVerifyOpenSitesDialog(new String[] { "In Review",

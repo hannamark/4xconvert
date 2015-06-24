@@ -135,6 +135,13 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                     selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier "
                             + nciID));
             verifyTrialConfirmaionPage(rand, nciID, cat);
+            if ("Interventional".equalsIgnoreCase(getTrialConfValue("Trial Type:"))) {
+                assertEquals("Yes", getTrialConfValue("Section 801 Indicator :"));
+                assertEquals("No",
+                        getTrialConfValue("Delayed Posting Indicator :"));
+            } else {
+                assertEquals("No", getTrialConfValue("Section 801 Indicator :"));
+            }
             logoutUser();
         }
 
@@ -614,7 +621,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assertEquals("Yes",
                 getTrialConfValue("FDA Regulated Intervention Indicator :"));
         assertEquals("Yes", getTrialConfValue("Section 801 Indicator :"));
-        assertEquals("Yes", getTrialConfValue("Delayed Posting Indicator :"));
+        assertEquals("No", getTrialConfValue("Delayed Posting Indicator :"));
         assertEquals(
                 "Yes",
                 getTrialConfValue("Data Monitoring Committee Appointed Indicator :"));
@@ -826,6 +833,13 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier "
                         + nciID));
         verifyTrialConfirmaionPage(rand, nciID, category);
+        if ("Interventional".equalsIgnoreCase(getTrialConfValue("Trial Type:"))) {
+            assertEquals("Yes", getTrialConfValue("Section 801 Indicator :"));
+            assertEquals("No",
+                    getTrialConfValue("Delayed Posting Indicator :"));
+        } else {
+            assertEquals("No", getTrialConfValue("Section 801 Indicator :"));
+        }
 
     }
 
@@ -853,7 +867,13 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 selenium.isTextPresent("The trial draft has been successfully saved and assigned the Identifier "
                         + draftID));
         verifyTrialConfirmaionPage(rand, "", category);
-
+        if ("Interventional".equalsIgnoreCase(getTrialConfValue("Trial Type:"))) {
+            assertEquals("Yes", getTrialConfValue("Section 801 Indicator :"));
+            assertEquals("",
+                    getTrialConfValue("Delayed Posting Indicator :"));
+        } else {
+            assertEquals("No", getTrialConfValue("Section 801 Indicator :"));
+        }
         hoverLink("Search");
         clickAndWait("link=Clinical Trials");
         waitForElementById("runSearchBtn", 30);
@@ -1051,6 +1071,13 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier "
                         + nciID));
         verifyTrialConfirmaionPage(rand, nciID, category);
+        if ("Interventional".equalsIgnoreCase(getTrialConfValue("Trial Type:"))) {
+            assertEquals("Yes", getTrialConfValue("Section 801 Indicator :"));
+            assertEquals("No",
+                    getTrialConfValue("Delayed Posting Indicator :"));
+        } else {
+            assertEquals("No", getTrialConfValue("Section 801 Indicator :"));
+        }
 
     }
 
@@ -1209,6 +1236,13 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                         + nciID));
         verifyBaseTrialInfo(rand, nciID, category);
         verifyRegulatoryInfo();
+        if ("Interventional".equalsIgnoreCase(getTrialConfValue("Trial Type:"))) {
+            assertEquals("Yes", getTrialConfValue("Section 801 Indicator :"));
+            assertEquals("No",
+                    getTrialConfValue("Delayed Posting Indicator :"));
+        } else {
+            assertEquals("No", getTrialConfValue("Section 801 Indicator :"));
+        }
         verifyInterventionalInfo();
 
         assertEquals("Cancer Therapy Evaluation Program",
@@ -1396,14 +1430,6 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 getTrialConfValue("Trial Oversight Authority Organization Name :"));
         assertEquals("Yes",
                 getTrialConfValue("FDA Regulated Intervention Indicator :"));
-
-        if ("Interventional".equalsIgnoreCase(getTrialConfValue("Trial Type:"))) {
-            assertEquals("Yes", getTrialConfValue("Section 801 Indicator :"));
-            assertEquals("Yes",
-                    getTrialConfValue("Delayed Posting Indicator :"));
-        } else {
-            assertEquals("No", getTrialConfValue("Section 801 Indicator :"));
-        }
 
         assertEquals(
                 "Yes",

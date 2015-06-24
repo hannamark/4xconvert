@@ -13,6 +13,7 @@ import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.registry.dto.SummaryFourSponsorsWebDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.util.Constants;
+import gov.nih.nci.registry.util.TrialUtil;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -657,6 +658,35 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         trialAction.setIrbApprovalFileName(FILE_NAME);
         trialAction.setChangeMemoDocFileName(FILE_NAME);
         assertEquals("error", trialAction.review());
+    }
+    
+    @Test
+    public void testReviewWithDSPChange() throws Exception {
+        TrialDTO dto = getMockTrialDTO();
+        dto.setFdaRegulatoryInformationIndicator("Yes");
+        dto.setSection801Indicator("Yes");
+        dto.setDelayedPostingIndicator("Yes");
+        trialAction.setTrialDTO(dto);
+        URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
+        File f = new File(fileUrl.toURI());
+        trialAction.setProtocolDoc(f);
+        trialAction.setIrbApproval(f);
+        trialAction.setChangeMemoDoc(f);
+        trialAction.setInformedConsentDocument(f);
+        trialAction.setParticipatingSites(f);
+        trialAction.setProtocolHighlightDocument(f);
+        trialAction.setProtocolDocFileName(FILE_NAME);
+        trialAction.setIrbApprovalFileName(FILE_NAME);
+        trialAction.setChangeMemoDocFileName(FILE_NAME);
+        trialAction.setInformedConsentDocumentFileName(FILE_NAME);
+        trialAction.setParticipatingSitesFileName(FILE_NAME);
+        trialAction.setProtocolHighlightDocumentFileName(FILE_NAME);
+        trialAction.setPageFrom("amendTrial");
+       
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        assertEquals("review", trialAction.review());
+        TrialDTO resultDto = (TrialDTO) session.getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
+        assertEquals(null, resultDto.getDelayedPostingIndicator());
     }
 
 }

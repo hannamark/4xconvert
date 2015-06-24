@@ -759,10 +759,7 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
                             : "No", selenium.getSelectedLabel("id=fdaindid"));
             assertEquals(reg.getRegulatoryInformation().isSection801() ? "Yes"
                     : "No", selenium.getSelectedLabel("id=sec801id"));
-            assertEquals(
-                    reg.getRegulatoryInformation().isDelayedPosting() ? "Yes"
-                            : "No",
-                    selenium.getSelectedLabel("id=delpostindid"));
+            
             assertEquals(reg.getRegulatoryInformation()
                     .isDataMonitoringCommitteeAppointed() ? "Yes" : "No",
                     selenium.getSelectedLabel("id=datamonid"));

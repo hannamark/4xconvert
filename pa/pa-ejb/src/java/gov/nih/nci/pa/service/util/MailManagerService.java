@@ -456,6 +456,26 @@ public interface MailManagerService {
      * @param params params
      */
     void sendPleaseWaitEmail(String mailTo, String [] params);
-    
-    
+    /**
+     * 
+     * @param userName userName
+     * @param leadOrgName leadOrgName
+     * @param warningMap warningMap
+     */
+    void generateCTROWarningEmail(String userName, String leadOrgName,
+            Map<String, String> warningMap); 
+    /**
+     * 
+     * @param studyProtocolIi studyProtocolIi
+     * @throws PAException ex
+     */
+    void sendAmendDSPWarningNotificationMail(Ii studyProtocolIi) throws PAException;
+    /**
+     * 
+     * @param studyProtocolIi studyProtocolIi
+     * @param unmatchedEmails unmatchedEmails
+     * @throws PAException ex
+     */
+    void sendCreateDSPWarningNotificationMail(Ii studyProtocolIi,
+         Collection<String> unmatchedEmails) throws PAException;
 }

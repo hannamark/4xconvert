@@ -80,6 +80,7 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.ExcelReader;
@@ -91,11 +92,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
@@ -104,6 +107,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+
 import org.jboss.security.SecurityContext;
 import org.jboss.security.SecurityContextAssociation;
 
@@ -186,21 +190,48 @@ public class BatchHelper implements Runnable {
             map.remove("Success Trial Count");
             String failedCount = map.get("Failed Trial Count");
             map.remove("Failed Trial Count");
+            String warning = map.get("Delayed Posting Indicator warning");
+            map.remove("Delayed Posting Indicator warning");
+            Map<String, String> warningMap = new HashMap<String, String>();
+            if (warning != null && !warning.isEmpty()) {
+                warningMap = getWarningTypeWithNCIValues(warning);
+            }
             String totalCount = Integer.toString(map.size());
             String attachFileName = generateExcelFileForAttachement(map);
-            // generate the email
-            RegistryUtil.generateMail(Constants.PROCESSED, userName, sucessCount, failedCount, totalCount,
-                    attachFileName, "");
+            if (!MapUtils.isEmpty(warningMap)) {
+                PaRegistry.getMailManagerService().generateCTROWarningEmail(userName, orgName, warningMap);
+            }
+           // generate the email
+           RegistryUtil.sendEmail(Constants.PROCESSED, userName, sucessCount, failedCount, totalCount,
+                    attachFileName, "", warningMap);
         } catch (Exception e) {
             LOG.error("Exception while processing batch" + e.getMessage());
             // generate the email
-            RegistryUtil.generateMail(Constants.ERROR_PROCESSING, userName, "", "", "", "", e.getMessage());
+            RegistryUtil.generateMail(Constants.ERROR_PROCESSING, userName, "", "", "", "", e.getMessage(), null, null);
         } finally {
             SecurityContextAssociation.setSecurityContext(null);
             // unbind the Hibernate session
             PaHibernateUtil.getHibernateHelper().unbindAndCleanupSession();
         }
 
+    }
+    /**
+     * 
+     * @param warning warning
+     * @return map map
+     */
+    public Map<String, String> getWarningTypeWithNCIValues(String warning) {
+        Map<String, String> uniqueWarningValues = new HashMap<String, String>();
+        String[] innerPart = warning.trim().split("\\s+");
+        if (innerPart.length > 0) {
+            for (String seperatedValue : innerPart) {
+               String[] secondinnerValue = seperatedValue.split(":+");
+               if (secondinnerValue.length > 1) {
+                   uniqueWarningValues.put(secondinnerValue[1], secondinnerValue[0]);
+               }
+            }
+        }
+        return uniqueWarningValues;
     }
 
     /**

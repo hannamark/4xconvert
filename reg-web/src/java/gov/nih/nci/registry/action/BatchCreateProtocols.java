@@ -162,6 +162,7 @@ public class BatchCreateProtocols {
     private static final Logger LOG = Logger.getLogger(BatchCreateProtocols.class);
     private int sucessCount = 0;
     private int failedCount = 0;
+    private String delayedPostingIndWarning = ""; 
     private static final String FAILED = "Failed:";
     
     private final String protocolDocumentCode = DocumentTypeCode.PROTOCOL_DOCUMENT.getCode();
@@ -213,6 +214,7 @@ public class BatchCreateProtocols {
         }
         map.put("Failed Trial Count", String.valueOf(failedCount));
         map.put("Success Trial Count", String.valueOf(sucessCount));
+        map.put("Delayed Posting Indicator warning", delayedPostingIndWarning);
         return map;
     }
 
@@ -245,6 +247,9 @@ public class BatchCreateProtocols {
                 String assignedIdExtension = PAUtil.getAssignedIdentifierExtension(PaRegistry.getStudyProtocolService()
                         .getStudyProtocol(studyProtocolIi));
                 protocolAssignedId = strMsg + assignedIdExtension;
+                if (!dto.getSubmissionType().equalsIgnoreCase("U") && !delayedPostingIndWarning.isEmpty()) {
+                      delayedPostingIndWarning = delayedPostingIndWarning + ":" + assignedIdExtension + " ";
+                }
             }
         } catch (PAException ex) {
             ++failedCount;
@@ -500,7 +505,7 @@ public class BatchCreateProtocols {
         } else if (dto.getSubmissionType().equalsIgnoreCase("A")) {
             trialDTO.setSecondaryIdentifierAddList(dto.getOtherTrialIdentifiers());
         }
-
+       
         if (trialDTO.getTrialType().equals("Interventional")) {
             studyProtocolDTO = util.convertToInterventionalStudyProtocolDTO(trialDTO);
         } else {
@@ -535,7 +540,7 @@ public class BatchCreateProtocols {
         studyIdentifierDTOs.add(util.convertToDCPStudySiteDTO(trialDTO, studyProtocolIi));
         
         ResponsiblePartyDTO partyDTO = convertToResponsiblePartyDTO(dto, principalInvestigatorDTO, sponsorOrgDTO);
-
+        
         if (dto.getSubmissionType().equalsIgnoreCase("O") && StringUtils.isEmpty(trialDTO.getAssignedIdentifier())) {
             studyProtocolIi =
                     PaRegistry.getTrialRegistrationService().createCompleteInterventionalStudyProtocol(studyProtocolDTO,
@@ -553,7 +558,6 @@ public class BatchCreateProtocols {
                 throw new PAException("mutliple trial or no trial found for given NCI Trial Identifier.\n");
             }
             trialDTO.setIdentifier(listofDto.get(0).getStudyProtocolId().toString());
-
             // ignore duplicate inds and grants
             if (studyIndldeDTOs != null && !studyIndldeDTOs.isEmpty()) {
                 for (Iterator<StudyIndldeDTO> it = studyIndldeDTOs.iterator(); it.hasNext();) {
@@ -745,10 +749,31 @@ public class BatchCreateProtocols {
             // oversight info
             trialDTO.setFdaRegulatoryInformationIndicator(batchDTO.getFdaRegulatoryInformationIndicator());
             trialDTO.setSection801Indicator(batchDTO.getSection801Indicator());
-            trialDTO.setDelayedPostingIndicator(batchDTO.getDelayedPostingIndicator());
             trialDTO.setDataMonitoringCommitteeAppointedIndicator(batchDTO
                     .getDataMonitoringCommitteeAppointedIndicator());
-            
+            if (batchDTO.getSubmissionType().equalsIgnoreCase("A")) {
+                StudyProtocolQueryCriteria viewCriteria = new StudyProtocolQueryCriteria();
+                viewCriteria.setNciIdentifier(trialDTO.getAssignedIdentifier());
+                List<StudyProtocolQueryDTO> listofDto =
+                        PaRegistry.getProtocolQueryService().getStudyProtocolByCriteria(viewCriteria);
+                if (listofDto.isEmpty() || listofDto.size() > 1) {
+                    throw new PAException("mutliple trial or no trial found for given NCI Trial Identifier.\n");
+                }
+                 StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService()
+                        .getStudyProtocol(IiConverter.convertToIi(listofDto.get(0).getStudyProtocolId()));
+                 if (!spDTO.getDelayedpostingIndicator().equals(BlConverter
+                           .convertYesNoStringToBl(batchDTO.getDelayedPostingIndicator()))) {
+                     trialDTO.setDelayedPostingIndicator(BlConverter.convertBlToYesNoString(spDTO
+                           .getDelayedpostingIndicator()));
+                     delayedPostingIndWarning = "AmendWarning";
+                 }
+            } else if (batchDTO.getSubmissionType().equalsIgnoreCase("O") && StringUtils
+                 .isNotEmpty(batchDTO.getDelayedPostingIndicator())) {
+                if (batchDTO.getDelayedPostingIndicator().equalsIgnoreCase("Yes")) {
+                     trialDTO.setDelayedPostingIndicator("No");
+                     delayedPostingIndWarning = "CreateWarning";
+              } 
+            }
             // Sponsor org
             OrganizationBatchDTO sponsorOrgDto = dataValidator.buildSponsorOrgDto(batchDTO); // look up sponsor
             Ii sponsorIdIi = lookUpOrgs(sponsorOrgDto);

@@ -55,6 +55,7 @@ import org.hibernate.validator.InvalidValue;
  * @author Vrushali
  * This class is used to validate the spread sheet data.
  */
+@SuppressWarnings({ "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
 public class TrialBatchDataValidator {
     private static final int IND_FIELD_COUNT = 5;
     private static final Logger LOG = Logger.getLogger(TrialBatchDataValidator.class);
@@ -310,6 +311,7 @@ public class TrialBatchDataValidator {
                 && !PAUtil.isYesNo(batchDto.getDelayedPostingIndicator())) {
             fieldErr.append("Delayed Posting Indicator can be Yes or No.\n");
         }
+        
         if (StringUtils.isNotEmpty(batchDto.getDataMonitoringCommitteeAppointedIndicator())
             && !PAUtil.isYesNo(batchDto.getDataMonitoringCommitteeAppointedIndicator())) {
             fieldErr.append("Data Monitoring Committee Appointed Indicator can be Yes or No.\n");
@@ -326,6 +328,7 @@ public class TrialBatchDataValidator {
                     && StringUtils.isEmpty(batchDto
                             .getDelayedPostingIndicator())) {
                 fieldErr.append("Delayed Posting Indicator must not be empty if Section 801 Indicator is 'Yes'.\n");
+                
             }
         }
         return fieldErr;

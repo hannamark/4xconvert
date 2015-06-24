@@ -736,7 +736,7 @@ public class TrialRegistrationValidatorTest {
                                             eq(piPersonDTO),eq(leadOrganizationDTO), (StringBuilder) any());
         verify(validator).validateAmendmentInfo(eq(studyProtocolDTO), (StringBuilder) any());        
         verify(validator).validateRegulatoryInfo(eq(studyProtocolDTO), eq(studyRegAuthDTO), eq(studyIndldeDTOs),
-                                                 (StringBuilder) any());
+                                                 (StringBuilder) any(),  (String) any());
         verify(validator).validateSummary4Resourcing(eq(studyProtocolDTO), eq(summary4StudyResourcingDTO),
                                                      (StringBuilder) any());
     }
@@ -1182,7 +1182,7 @@ public class TrialRegistrationValidatorTest {
                                             eq(summary4OrganizationDTO), eq(principalInvestigatorDTO),
                                             eq(principalInvestigatorDTO), eq(leadOrganizationDTO), (StringBuilder) any());       
         verify(validator).validateRegulatoryInfo(eq(studyProtocolDTO), eq(studyRegAuthDTO), eq(studyIndldeDTOs),
-                                                 (StringBuilder) any());
+                                                 (StringBuilder) any(), (String) any());
         verify(validator).validateSummary4Resourcing(eq(studyProtocolDTO), eq(summary4StudyResourcingDTO),
                                                      (StringBuilder) any());
     }

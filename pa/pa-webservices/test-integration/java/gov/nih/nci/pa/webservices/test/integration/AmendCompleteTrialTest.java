@@ -2,6 +2,8 @@ package gov.nih.nci.pa.webservices.test.integration;
 
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.StudySourceCode;
+import gov.nih.nci.pa.service.StudySourceInterceptor;
 import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 import gov.nih.nci.pa.webservices.types.BaseTrialInformation;
 import gov.nih.nci.pa.webservices.types.CompleteTrialAmendment;
@@ -13,6 +15,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
@@ -100,7 +103,7 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
                 .getTrialStatusDate().toGregorianCalendar().getTime()));
 
         // Verify email.
-        waitForEmailsToArrive(4);
+        waitForEmailsToArrive(5);
         verifySiteClosedEmail(findEmailByRecipient("submitter-ci@example.com"),
                 "submitter-ci@example.com", "Submitter CI", info);
         verifySiteClosedEmail(
@@ -520,4 +523,80 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
                 DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.name());
 
     }
+    
+    
+    @Test
+    public void testAmendDSPWarning() throws Exception {
+        CompleteTrialRegistration reg = readCompleteTrialRegistrationFromFile("/integration_register_complete_success.xml");
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_success.xml");
+
+        addDummyCtepDcpToTrial();
+
+        prepareTrialForAmendment(rConf);
+
+        CompleteTrialAmendment upd = readCompleteTrialAmendmentFromFile("/integration_amend_complete.xml");
+        HttpResponse response = amendTrialFromJAXBElement("pa",
+                rConf.getPaTrialID() + "", upd);
+        TrialRegistrationConfirmation uConf = processTrialRegistrationResponseAndDoBasicVerification(response);
+        assertEquals(rConf.getPaTrialID(), uConf.getPaTrialID());
+        assertEquals(rConf.getNciTrialID(), uConf.getNciTrialID());
+        TrialInfo trial = new TrialInfo();
+        trial.id = uConf.getPaTrialID();
+        assertEquals("false", getTrialField(trial, "DELAYED_POSTING_INDICATOR").toString());
+        assertEquals(5, server.getReceivedEmailSize());
+        Iterator<SmtpMessage> emailIter = server.getReceivedEmail();
+        for (int i=0 ; emailIter.hasNext(); i++) {
+            SmtpMessage email = (SmtpMessage) emailIter.next();
+            String body = email.getBody();
+            System.out.println(body);
+            switch (i) {
+            case 0 : verifyCreateBodyDSPWarning(body);
+                     break;
+            case 1 : verifyCreateBodyDSPCTRO(body);
+                     break;
+            case 3 : verifyAmendBodyDSPWarning(body);
+                     break;
+            case 4 : verifyAmendBodyDSPCTRO(body);
+                     break;
+            default : break;
+            }
+        }
+
+    }
+    
+    /**
+     * @param body
+     */
+    private void verifyAmendBodyDSPCTRO(final String body) {
+        assertTrue(body.contains(
+                "Dear CTRO Staff,</p><p>An amendment for the trial below was submitted where the value of the Delayed Posting Indicator was changed:"));
+        assertTrue(body.contains(
+                        "The following warning message was sent to the submitter:</p>Submitter:"));
+    }
+    
+    /**
+     * @param body
+     */
+    private void verifyAmendBodyDSPWarning(final String body) {
+        assertTrue(body.contains(
+                "WARNING:</b>The amendment submitted has a Delayed Posting Indicator value different than that stored in CTRP."));
+    }
+    
+    /**
+     * @param body
+     */
+    private void verifyCreateBodyDSPWarning(final String body) {
+        assertTrue(body.contains(
+                "WARNING:</b> The trial submitted has a Delayed Posting Indicator value of \"Yes\""));
+    }
+    
+    /**
+     * @param body
+     */
+    private void verifyCreateBodyDSPCTRO(final String body) {
+        assertTrue(body.contains(
+                "Dear CTRO Staff,</p><p>The trial below was submitted with the value for the Delayed Posting Indicator set to \"Yes\":"));
+    }
+    
+
 }
