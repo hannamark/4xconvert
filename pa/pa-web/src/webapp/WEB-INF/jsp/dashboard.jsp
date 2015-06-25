@@ -1207,7 +1207,7 @@ a.count {
 											<td><s:select headerKey="" headerValue="All" size="5"
 													multiple="true" id="onHoldReason" name="onHoldReason"
 												list="onHoldValuesMap" 
-												cssStyle="width:206px" /></td>
+												 /></td>
 											<td></td>
 											<s:set name="milestoneCodes"
 												value="@gov.nih.nci.pa.enums.MilestoneCode@getDisplayNames()" />
