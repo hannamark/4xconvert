@@ -242,6 +242,7 @@ def getTrialsSQL = """
         and processing_status.identifier = (select max(identifier) from document_workflow_status where study_protocol_identifier = sp.identifier)
 	 left outer join rv_organization_responsible_party rp_sponsor on rp_sponsor.study_protocol_identifier=sp.identifier
      where sp.status_code = 'ACTIVE' and (sp.delayed_posting_indicator is null or sp.delayed_posting_indicator!= true) and rv_trial_id_nct.local_sp_indentifier is not null
+		and char_length(trim(both ' ' from rv_trial_id_nct.local_sp_indentifier))>0 
      
 """
 
@@ -254,7 +255,7 @@ def getAmendedSQL = """
 	     inner join rv_trial_id_nci as nci_id on nci_id.study_protocol_id = sp.identifier    
 	     inner join rv_dwf_current dws on dws.study_protocol_identifier = sp.identifier
 	        and dws.status_code in ('AMENDMENT_SUBMITTED','ACCEPTED','ON_HOLD')        
-	     where sp.status_code = 'ACTIVE'  and rv_trial_id_nct.local_sp_indentifier is not null 
+	     where sp.status_code = 'ACTIVE'  and rv_trial_id_nct.local_sp_indentifier is not null and char_length(trim(both ' ' from rv_trial_id_nct.local_sp_indentifier))>0 
 	     and amendment_date is not null and submission_number>=2
 """
 
