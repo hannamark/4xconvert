@@ -84,8 +84,6 @@ package gov.nih.nci.registry.test.integration;
 
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
-import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
-import gov.nih.nci.pa.webservices.types.TrialRegistrationConfirmation;
 
 import java.io.File;
 import java.net.URISyntaxException;

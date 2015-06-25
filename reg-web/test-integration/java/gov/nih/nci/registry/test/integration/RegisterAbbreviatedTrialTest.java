@@ -86,9 +86,6 @@ import java.util.UUID;
 
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.WebElement;
 
 /**
  * Tests the trial registration process.

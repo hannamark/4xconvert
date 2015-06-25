@@ -82,9 +82,6 @@
  */
 package gov.nih.nci.registry.test.integration;
 
-import gov.nih.nci.registry.integration.TestProperties;
-
-import org.junit.Before;
 import org.junit.Test;
 
 /**
