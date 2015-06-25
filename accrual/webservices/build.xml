@@ -289,7 +289,10 @@
             	</fileset>
             </batchtest>
         </junit>
-    	<fail if="junit.failure" message="Integration test(s) failed.  See reports in ${web.test.reports}"/>
+    	<condition property="selenium.outcome" value="FAILED!!! See reports in ${web.test.reports}" else="passed.">
+    		<isset property="junit.failure"/>
+    	</condition>
+    	<echo>Selenium tests ${selenium.outcome}</echo>
     </target>
 
 

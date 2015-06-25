@@ -256,7 +256,11 @@
                 </fileset>
             </batchtest>
          </junit>
-    	 <fail if="junit.failure" message="Selenium test(s) failed.  See reports in ${reg-web.test.reports}."/>
+        <condition property="selenium.outcome" value="FAILED!!! See reports in ${reg-web.test.reports}" else="passed.">
+             <isset property="junit.failure"/>
+         </condition>
+         <echo>Selenium tests ${selenium.outcome}</echo>
+
     </target>	
 	<target name="run-performance-tests" depends="compile-selenium-tests" description="Run performance tests">
 		    <property name="submitter.login" value=""/>

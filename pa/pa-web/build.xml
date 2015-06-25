@@ -357,7 +357,10 @@
 	        </fileset>
 	        <report todir="${pa-web.test.reports}" />
 	    </junitreport>
-    	<fail if="junit.failure" message="Selenium test(s) failed.  See reports in ${pa-web.test.reports}/index.html."/>
+    	<condition property="selenium.outcome" value="FAILED!!! See reports in ${pa-web.test.reports}" else="passed.">
+    	             <isset property="junit.failure"/>
+    	         </condition>
+    	         <echo>Selenium tests ${selenium.outcome}</echo>
     </target>
 	
     <target name="run-performance-tests" depends="compile-tests" description="Run performance tests">
