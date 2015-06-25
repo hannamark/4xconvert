@@ -31,8 +31,7 @@ i.fa-sitemap {
 }
 
 #wl_table_container {
-	max-width: 930px;
-	overflow-x: scroll;
+	max-width: 930px;	
 }
 
 a.nciid,td.checkedOut span {
@@ -150,6 +149,7 @@ a.count {
 <script type="text/javascript"
 	src="${scriptPath}/js/jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
 <script type="text/javascript" src="${scriptPath}/js/select2.min.js"></script>
+<script type="text/javascript" src="${scriptPath}/js/jquery.doubleScroll.js"></script>
 <script type="text/javascript" charset="utf8"
 	src="${scriptPath}/js/DataTables-1.10.4/media/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" language="javascript"
@@ -729,6 +729,12 @@ a.count {
                  }
             });
             
+            // Add double scroll to workload div.
+            $('#wl_table_container').doubleScroll({
+                contentElement: $('#wl')
+            });
+
+            
             // Set up Milestones in Progress panel.   
             $("#milestones_in_progress" ).accordion({
                 collapsible: true,
@@ -758,6 +764,8 @@ a.count {
                         return content;
                     }
                 }]
+            }).on('xhr', function() {
+            	$('#wl_table_container').doubleScroll('refresh');
             }); 
             $('#milestones_in_progress_table tbody')
                 .on(
@@ -803,6 +811,8 @@ a.count {
                         return content;
                     }
                 }]
+            }).on('xhr', function() {
+                $('#wl_table_container').doubleScroll('refresh');
             }); 
             $('#on_hold_trials_table tbody')
                 .on(
@@ -847,6 +857,8 @@ a.count {
                         return content;
                     }
                 }]
+            }).on('xhr', function() {
+                $('#wl_table_container').doubleScroll('refresh');
             }); 
             $('#trial_dist_table tbody')
                 .on(
@@ -890,6 +902,8 @@ a.count {
                         return content;
                     }
                 }]
+            }).on('xhr', function() {
+                $('#wl_table_container').doubleScroll('refresh');
             }); 
             $('#abstractors_work_table tbody')
                 .on(
@@ -905,7 +919,6 @@ a.count {
             });
 
             
-
 
         });
 	}(jQuery));
