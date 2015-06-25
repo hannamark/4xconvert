@@ -93,6 +93,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -103,6 +104,7 @@ import gov.nih.nci.pa.util.TestSchema;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -288,4 +290,24 @@ public class DocumentServiceBeanTest extends AbstractHibernateTestCase {
              map.get(1L).getTypeCode().getCode());
         assertEquals("1", IiConverter.convertToLong(map.get(1L).getStudyProtocolIdentifier()).toString());
     }
+    
+    @Test
+    public void testUpdateForReview() throws Exception {
+        DocumentDTO docDTO = new DocumentDTO();
+        docDTO.setStudyProtocolIdentifier(pid);
+        docDTO.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.AFTER_RESULTS));
+        docDTO.setFileName(StConverter.convertToSt("Other Document.doc"));
+        docDTO.setText(EdConverter.convertToEd("Other Document".getBytes()));
+
+        docDTO = remoteEjb.create(docDTO);
+        docDTO.setCcctUserReviewDateTime(TsConverter.convertToTs(new Date()));
+        remoteEjb.updateForReview(docDTO);
+        
+        docDTO = remoteEjb.get(docDTO.getIdentifier());
+        assertNotNull(docDTO);
+        assertNotNull(docDTO.getCtroUserReviewDateTime());
+        
+        
+    }
+
 }

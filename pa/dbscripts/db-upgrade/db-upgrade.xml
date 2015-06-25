@@ -1835,4 +1835,8 @@
        <comment>adding email properties to pa_properties.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8815.sql"/>       
     </changeSet>  
+	<changeSet id="PO-9011" author="khandalkara">
+       <comment>Implement "View/Upload Trial Comparison Documents" screen.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9011.sql"/>       
+    </changeSet> 
 </databaseChangeLog>

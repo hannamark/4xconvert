@@ -250,4 +250,10 @@ public class MockCSMUserService implements CSMUserUtil {
     public User getCSMUserFromCache(String loginName) throws PAException {       
         return getCSMUser(loginName);
     }
+
+    @Override
+    public Map<Long, String> getCcctAndCtroUsers() throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

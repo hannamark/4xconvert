@@ -478,4 +478,21 @@ public interface MailManagerService {
      */
     void sendCreateDSPWarningNotificationMail(Ii studyProtocolIi,
          Collection<String> unmatchedEmails) throws PAException;
+    /**
+     * @param nciId nciId
+     * @param nctId nctId
+     * @param attachment attachment
+     * @throws PAException exception
+     */
+    void sendComparisonDocumentToCtro(String nciId , String nctId, File attachment) throws PAException;
+    
+    /**
+     * @param nciId nciId
+     * @param nctId nctId
+     * @param attachment attachment
+     * @throws PAException exception
+     */
+    void sendComparisonDocumentToCcct(String nciId , String nctId, File attachment) throws PAException;
+    
+    
 }

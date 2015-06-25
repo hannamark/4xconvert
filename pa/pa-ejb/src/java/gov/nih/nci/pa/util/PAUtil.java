@@ -1484,6 +1484,51 @@ public class PAUtil {
         }
         return "";
     }
+    
+    /**
+     * For the given {@link DocumentDTO} attempts to determine full name of the
+     * person who last updated the document.
+     * 
+     * @param documentDTO
+     *            DocumentDTO
+     * @param isCtro isCtro
+     * @return full name of the ctro user who reviewed the document
+     * @throws PAException 
+     */
+    public static String getDocumentUserCtroOrCcctReviewerName(DocumentDTO documentDTO , boolean isCtro) {
+        try {
+            boolean isNotNull = false;
+            if (isCtro) {
+                isNotNull = !ISOUtil.isStNull(documentDTO.getCtroUserName());
+            }
+            else {
+                isNotNull = !ISOUtil.isStNull(documentDTO.getCcctUserName());
+            }
+            if (isNotNull) {
+                User user = null;
+                if (isCtro) {
+                    user= CSMUserService.getInstance().getCSMUser(
+                            documentDTO.getCtroUserName().getValue());
+                }
+                else {
+                    user = CSMUserService.getInstance().getCSMUser(
+                            documentDTO.getCcctUserName().getValue());
+                }
+                       
+                if (user != null) {
+                    RegistryUser regUser = PaRegistry.getRegistryUserService()
+                            .getUser(user.getLoginName());
+                    String userName = regUser != null ? regUser.getFullName()
+                            : CsmUserUtil.getDisplayUsername(user);
+                    return userName;
+                }
+            }
+        } catch (PAException e) {
+           LOG.error(e, e);
+        }
+        return "";
+    }
+    
 
     /**
      * Sets this date to the very last instant of the day it represents.

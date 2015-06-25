@@ -87,6 +87,9 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.security.SecurityServiceProvider;
+import gov.nih.nci.security.UserProvisioningManager;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -97,6 +100,8 @@ import org.apache.log4j.Logger;
  * @author Kalpana Guthikonda
  * @since 09/30/2008
  */
+@SuppressWarnings({ "PMD.CyclomaticComplexity", 
+    "PMD.ExcessiveMethodLength", "PMD.NPathComplexity" })
 public class DocumentConverter extends AbstractDocumentConverter<DocumentDTO, Document> {
     
     private static final Logger LOG = Logger.getLogger(DocumentConverter.class);
@@ -144,7 +149,17 @@ public class DocumentConverter extends AbstractDocumentConverter<DocumentDTO, Do
         if (doc.getUserLastCreated() != null) {
             docDTO.setUserLastCreated(StConverter.convertToSt(doc
                     .getUserLastCreated().getLoginName()));
-        }        
+        }
+        docDTO.setCtroUserReviewDateTime((TsConverter.convertToTs(doc.getCtroUserCreatedDate())));
+        docDTO.setCcctUserReviewDateTime((TsConverter.convertToTs(doc.getCcctUserCreatedDate())));
+        if (doc.getCtroUser() != null) {
+            docDTO.setCtroUserName(StConverter.convertToSt(doc
+                    .getCtroUser().getLoginName()));
+        }
+        if (doc.getCcctUser() != null) {
+            docDTO.setCcctUserName(StConverter.convertToSt(doc
+                    .getCcctUser().getLoginName()));
+        }
     }
 
     /**
@@ -178,6 +193,29 @@ public class DocumentConverter extends AbstractDocumentConverter<DocumentDTO, Do
         }
         if (!ISOUtil.isTsNull(docDTO.getDateLastUpdated())) {
             doc.setDateLastUpdated(TsConverter.convertToTimestamp(docDTO.getDateLastUpdated()));
+        }
+        if (!ISOUtil.isTsNull(docDTO.getCtroUserReviewDateTime())) {
+            doc.setCtroUserCreatedDate(TsConverter.convertToTimestamp(docDTO.getCtroUserReviewDateTime()));
+        }
+        if (!ISOUtil.isTsNull(docDTO.getCcctUserReviewDateTime())) {
+            doc.setCcctUserCreatedDate(TsConverter.convertToTimestamp(docDTO.getCcctUserReviewDateTime()));
+        }
+        
+        try {
+            UserProvisioningManager upManager = SecurityServiceProvider.getUserProvisioningManager("pa");
+            
+            if (docDTO.getCtroUserId() != null && docDTO.getCtroUserId() > 0) {
+                 User ctroUser = upManager.getUserById(docDTO.getCtroUserId().toString());
+                doc.setCtroUser(ctroUser);
+            }    
+            
+            if (docDTO.getCcctUserId() != null && docDTO.getCcctUserId() > 0) {
+                User ccctUser = upManager.getUserById(docDTO.getCcctUserId().toString());
+                doc.setCcctUser(ccctUser);
+            }
+        } catch (Exception e) {
+            LOG.error("Exception in setting ctroUser for Document: "
+                    + docDTO.getIdentifier() , e);
         }
         
         setUserFields(docDTO, doc);

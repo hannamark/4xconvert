@@ -192,4 +192,17 @@ public interface DocumentService extends StudyPaService <DocumentDTO> {
      */
     Map<Long, DocumentDTO> getDocumentByIDListAndType(List<Long> listOfTrialIDs
          , DocumentTypeCode type) throws PAException;
+    
+    /**
+     * @param studyProtocolIi PAException
+     * @return DocumentDTO list
+     * @throws PAException PAException
+     */
+    List<DocumentDTO> getReportsDocumentsByStudyProtocol(Ii studyProtocolIi) throws PAException;
+    
+    /**
+     * @param docDTO docDTO
+     * @throws PAException PAException
+     */
+    void updateForReview(DocumentDTO docDTO) throws PAException;
 }

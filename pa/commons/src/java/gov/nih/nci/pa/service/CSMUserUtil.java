@@ -227,5 +227,10 @@ public interface CSMUserUtil {
      */
     boolean isCurrentUserAutoCuration() throws PAException;
 
-    
+    /**
+     * retrives list for ctro and ccct users
+     * @return  Map
+     * @throws PAException PAException
+     */
+    Map<Long, String> getCcctAndCtroUsers() throws PAException;
 }

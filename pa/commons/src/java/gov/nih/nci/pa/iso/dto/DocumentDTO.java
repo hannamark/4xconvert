@@ -92,6 +92,7 @@ import gov.nih.nci.iso21090.Ts;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
+@SuppressWarnings({ "PMD.TooManyFields" })
 public class DocumentDTO extends StudyDTO {
     private static final long serialVersionUID = 6363271404447384900L;
     private Cd typeCode;
@@ -106,6 +107,14 @@ public class DocumentDTO extends StudyDTO {
     private Ii studyInboxIdentifier;   
     private St userLastUpdated;
     private St userLastCreated;
+    private Long ctroUserId;
+    private Long ccctUserId;
+    private St ctroUserName;
+    private St ccctUserName;
+    private Ts ctroUserReviewDateTime;
+    private Ts ccctUserReviewDateTime;
+    
+    
     
     /**
      * @return typeCode
@@ -278,5 +287,91 @@ public class DocumentDTO extends StudyDTO {
     public void setDateLastCreated(Ts dateLastCreated) {
         this.dateLastCreated = dateLastCreated;
     }
+
+    /**
+     * @return ctroUserId
+     */
+    public Long getCtroUserId() {
+        return ctroUserId;
+    }
+
+    /**
+     * @param ctroUserId ctroUserId
+     */
+    public void setCtroUserId(Long ctroUserId) {
+        this.ctroUserId = ctroUserId;
+    }
+
+    /**
+     * @return getCcctUserId
+     */
+    public Long getCcctUserId() {
+        return ccctUserId;
+    }
+
+    /**
+     * @param ccctUserId ccctUserId
+     */
+    public void setCcctUserId(Long ccctUserId) {
+        this.ccctUserId = ccctUserId;
+    }
+
+    /**
+     * @return getCtroUserName
+     */
+    public St getCtroUserName() {
+        return ctroUserName;
+    }
+
+    /**
+     * @param ctroUserName ctroUserName
+     */
+    public void setCtroUserName(St ctroUserName) {
+        this.ctroUserName = ctroUserName;
+    }
+
+    /**
+     * @return ccctUserName
+     */
+    public St getCcctUserName() {
+        return ccctUserName;
+    }
+
+    /**
+     * @param ccctUserName ccctUserName
+     */
+    public void setCcctUserName(St ccctUserName) {
+        this.ccctUserName = ccctUserName;
+    }
+
+    /**
+     * @return ctroUserReviewDateTime
+     */
+    public Ts getCtroUserReviewDateTime() {
+        return ctroUserReviewDateTime;
+    }
+
+    /**
+     * @param ctroUserReviewDateTime ctroUserReviewDateTime
+     */
+    public void setCtroUserReviewDateTime(Ts ctroUserReviewDateTime) {
+        this.ctroUserReviewDateTime = ctroUserReviewDateTime;
+    }
+
+    /**
+     * @return ccctUserReviewDateTime
+     */
+    public Ts getCcctUserReviewDateTime() {
+        return ccctUserReviewDateTime;
+    }
+
+    /**
+     * @param ccctUserReviewDateTime ccctUserReviewDateTime
+     */
+    public void setCcctUserReviewDateTime(Ts ccctUserReviewDateTime) {
+        this.ccctUserReviewDateTime = ccctUserReviewDateTime;
+    }
+
+    
     
 }

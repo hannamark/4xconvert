@@ -84,6 +84,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.Serializable;
+import java.util.Date;
 /**
  * 
  * @author Kalpana Guthikonda
@@ -92,6 +93,8 @@ import java.io.Serializable;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
+
+
 public class TrialDocumentWebDTO implements Serializable {
    private static final long serialVersionUID = -5094483920461207094L;
     private String typeCode;
@@ -101,6 +104,13 @@ public class TrialDocumentWebDTO implements Serializable {
     private String inactiveCommentText;
     private String dateLastUpdated;
     private String userLastUpdated;
+    private Long ctroUserId;
+    private Long ccctUserId;
+    private String ctroUserName;
+    private String ccctUserName;
+    private Date ctroUserReviewDateTime;
+    private Date ccctUserReviewDateTime;
+     
     
     /**
      * @param iso StudyResourcingDTO object
@@ -112,7 +122,13 @@ public class TrialDocumentWebDTO implements Serializable {
         this.id = iso.getIdentifier().getExtension();
         this.dateLastUpdated = TsConverter.convertToString(iso.getDateLastUpdated());
         this.studyProtocolId = IiConverter.convertToString(iso.getStudyProtocolIdentifier());
+        
         this.userLastUpdated = PAUtil.getDocumentUserLastUpdatedName(iso);
+        this.ctroUserName = PAUtil.getDocumentUserCtroOrCcctReviewerName(iso, true);
+        this.ctroUserReviewDateTime = TsConverter.convertToTimestamp(iso.getCtroUserReviewDateTime());
+        this.ccctUserName = PAUtil.getDocumentUserCtroOrCcctReviewerName(iso, false);
+        this.ccctUserReviewDateTime = TsConverter.convertToTimestamp(iso.getCcctUserReviewDateTime());
+       
     }
     
     /** .
@@ -218,5 +234,89 @@ public class TrialDocumentWebDTO implements Serializable {
      */
     public void setStudyProtocolId(String studyProtocolId) {
         this.studyProtocolId = studyProtocolId;
+    }
+    
+    /**
+     * @return ctroUserId
+     */
+    public Long getCtroUserId() {
+        return ctroUserId;
+    }
+
+    /**
+     * @param ctroUserId ctroUserId
+     */
+    public void setCtroUserId(Long ctroUserId) {
+        this.ctroUserId = ctroUserId;
+    }
+
+    /**
+     * @return ccctUserId
+     */
+    public Long getCcctUserId() {
+        return ccctUserId;
+    }
+
+    /**
+     * @param ccctUserId ccctUserId
+     */
+    public void setCcctUserId(Long ccctUserId) {
+        this.ccctUserId = ccctUserId;
+    }
+
+    /**
+     * @return ccctUserId
+     */
+    public String getCtroUserName() {
+        return ctroUserName;
+    }
+
+    /**
+     * @param ctroUserName ctroUserName 
+     */
+    public void setCtroUserName(String ctroUserName) {
+        this.ctroUserName = ctroUserName;
+    }
+
+    /**
+     * @return ccctUserName
+     */
+    public String getCcctUserName() {
+        return ccctUserName;
+    }
+
+    /**
+     * @param ccctUserName ccctUserName
+     */
+    public void setCcctUserName(String ccctUserName) {
+        this.ccctUserName = ccctUserName;
+    }
+
+    /**
+     * @return ctroUserReviewDateTime
+     */
+    public Date getCtroUserReviewDateTime() {
+        return ctroUserReviewDateTime;
+    }
+
+    /**
+     * @param ctroUserReviewDateTime ctroUserReviewDateTime
+     */
+    public void setCtroUserReviewDateTime(Date ctroUserReviewDateTime) {
+        this.ctroUserReviewDateTime = ctroUserReviewDateTime;
+    }
+
+    /** 
+     * @return ccctUserReviewDateTime
+     */
+    public Date getCcctUserReviewDateTime() {
+        return ccctUserReviewDateTime;
+    }
+
+    /**
+     * @param ccctUserReviewDateTime ccctUserReviewDateTime
+     */
+    public void setCcctUserReviewDateTime(Date ccctUserReviewDateTime) {
+        this.ccctUserReviewDateTime = ccctUserReviewDateTime;
     }
 }

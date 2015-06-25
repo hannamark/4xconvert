@@ -110,7 +110,14 @@ public enum DocumentTypeCode implements CodedEnum<String> {
     /** Protocol Highlighted Document. */
     PROTOCOL_HIGHLIGHTED_DOCUMENT("Protocol Highlighted Document", "protocolHighlightDoc"),
     /** TSR. */
-    TSR("TSR", "tsr");
+    TSR("TSR", "tsr"),
+    /** before results Document. */
+    BEFORE_RESULTS("Before results", "beforeResultsDoc_reportdoc"),
+    /** before results Document. */
+    AFTER_RESULTS("After results", "afterResultsDoc_reportdoc"),
+    /** before results Document. */
+    COMPARISON("Comparison", "comparisionDoc_reportdoc");
+    
 
     private String code;
     private String shortName;
@@ -163,10 +170,16 @@ public enum DocumentTypeCode implements CodedEnum<String> {
      */
     public static String[] getDisplayNames() {
         DocumentTypeCode[] codes = DocumentTypeCode.values();
-        String[] codedNames = new String[codes.length];
+        
+        List<String> codedNamesList = new ArrayList<String>();
         for (int i = 0; i < codes.length; i++) {
-            codedNames[i] = codes[i].getCode();
+            if (!codes[i].getShortName().contains("_reportdoc")) {
+                codedNamesList.add(codes[i].getCode());
+            }
+           
         }
+        String[] codedNames = new String[codedNamesList.size()];
+        codedNamesList.toArray(codedNames);
         return codedNames;
     }
 
@@ -177,6 +190,26 @@ public enum DocumentTypeCode implements CodedEnum<String> {
         List<String> list = new ArrayList<String>(Arrays.asList(getDisplayNames()));
         list.remove("TSR");
         return list.toArray(new String[list.size()]);
+    }
+    
+    /**
+     * construct a array of display names for DocumentTypeCode Enum.
+     * This is only for trial reporting documents
+     * @return String[] display names for DocumentTypeCode
+     */
+    public static String[] getTrialReportingDisplayNames() {
+        DocumentTypeCode[] codes = DocumentTypeCode.values();
+        
+        List<String> codedNamesList = new ArrayList<String>();
+        for (int i = 0; i < codes.length; i++) {
+            if (codes[i].getShortName().contains("_")) {
+                codedNamesList.add(codes[i].getCode());
+            }
+           
+        }
+        String[] codedNames = new String[codedNamesList.size()];
+        codedNamesList.toArray(codedNames);
+        return codedNames;
     }
 
     /**

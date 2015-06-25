@@ -78,11 +78,17 @@
 */
 package gov.nih.nci.pa.domain;
 
+import gov.nih.nci.security.authorization.domainobjects.User;
+
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Index;
 import org.hibernate.validator.NotNull;
@@ -94,6 +100,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  * @author Kalpana Guthikonda
  * @since 09/30/2008
  */
+
 @Entity
 @Table(name =  "DOCUMENT")
 public class Document extends AbstractDocument implements Auditable {
@@ -105,6 +112,11 @@ public class Document extends AbstractDocument implements Auditable {
     private Boolean original;
     private Boolean deleted;
     private StudyInbox studyInbox;
+    private Date ctroUserCreatedDate;
+    private Date ccctUserCreatedDate;
+    private User ctroUser;
+    private User ccctUser;
+   
 
     /**
      * @return studyProtocol
@@ -207,4 +219,70 @@ public class Document extends AbstractDocument implements Auditable {
     public void setStudyInbox(StudyInbox studyInbox) {
         this.studyInbox = studyInbox;
     }
+
+    /**
+     * @return ctroUserCreatedDate
+     */
+    @Column(name = "ctro_user_date_created")
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date getCtroUserCreatedDate() {
+        return ctroUserCreatedDate;
+    }
+
+    /**
+     * @param ctroUserCreatedDate ctroUserCreatedDate
+     */
+    public void setCtroUserCreatedDate(Date ctroUserCreatedDate) {
+        this.ctroUserCreatedDate = ctroUserCreatedDate;
+    }
+    
+    /**
+     * @return ccctUserCreatedDate
+     */
+    @Column(name = "ccct_user_date_created")
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date getCcctUserCreatedDate() {
+        return ccctUserCreatedDate;
+    }
+
+    /**
+     * @param ccctUserCreatedDate ccctUserCreatedDate
+     */
+    public void setCcctUserCreatedDate(Date ccctUserCreatedDate) {
+        this.ccctUserCreatedDate = ccctUserCreatedDate;
+    }
+
+    /**
+     * @return ctroUser
+     */
+    @ManyToOne
+    @JoinColumn(name = "ctro_user_id")
+    public User getCtroUser() {
+        return ctroUser;
+    }
+
+    /**
+     * @param ctroUser ctroUser
+     */
+    public void setCtroUser(User ctroUser) {
+        this.ctroUser = ctroUser;
+    }
+
+    /**
+     * @return ccctUser
+     */
+    @ManyToOne
+    @JoinColumn(name = "ccct_user_id")
+    public User getCcctUser() {
+        return ccctUser;
+    }
+
+    /**
+     * @param ccctUser ccctUser
+     */
+    public void setCcctUser(User ccctUser) {
+        this.ccctUser = ccctUser;
+    }
+
+    
 }

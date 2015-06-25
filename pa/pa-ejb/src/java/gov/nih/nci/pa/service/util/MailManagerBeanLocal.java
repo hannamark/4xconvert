@@ -133,6 +133,7 @@ import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -1810,6 +1811,9 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
             LOG.error(SEND_MAIL_ERROR, e);
         }
     }
+    
+    
+
 
     @Override
     public void sendSubmissionTerminationEmail(Long studyProtocolId) throws PAException {
@@ -1857,6 +1861,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
         }
         return result;
     }
+    
+    
     
    
     @Override
@@ -2495,5 +2501,74 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
     public Reader getReader(Object templateSource,
             String encoding) throws IOException {        
         return new StringReader((String) templateSource);
+    }
+
+
+    @Override
+    public void sendComparisonDocumentToCtro(String nciID , String nctId, File attachment) throws PAException {
+        
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(PAUtil.DATE_FORMAT);
+        String submissionDate = simpleDateFormat.format(new Date());
+        
+        
+        String mailTo = lookUpTableService
+                .getPropertyValue("abstraction.script.mailTo");
+        
+        String mailSubject = lookUpTableService.getPropertyValue("ctro.comparision.email.subject");
+        mailSubject = mailSubject.replace("${nciId}", nciID);
+       
+        String body = lookUpTableService.getPropertyValue("ctro.comparision.email.body");
+        body = body.replace("${nctId}", nctId);
+        body = body.replace("${currentDate}", submissionDate);
+        body = body.replace("${nciId}", nciID);
+       
+        
+        File [] file = new File[1];
+        file[0] = attachment;
+        
+        String mailFrom = lookUpTableService.getPropertyValue(FROMADDRESS);
+        
+        sendMailWithHtmlBodyAndAttachment(mailTo, mailFrom, null, mailSubject, body, file, true);
+    }
+
+
+    @Override
+    public void sendComparisonDocumentToCcct(String nciId, String nctId,
+            File attachment) throws PAException {
+        
+        
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(PAUtil.DATE_FORMAT);
+        List<String> toEmailAddressList = new ArrayList<String>();
+        String submissionDate = simpleDateFormat.format(new Date());
+        
+        
+        
+        String mailTo = lookUpTableService
+                .getPropertyValue("ccct.comparision.email.tolist");
+        
+        if (mailTo != null) {
+            String [] lists = mailTo.split(",");
+            toEmailAddressList = Arrays.asList(lists);
+        }
+        
+        String mailSubject = lookUpTableService.getPropertyValue("ccct.comparision.email.subject");
+        mailSubject = mailSubject.replace("${nciId}", nciId);
+       
+        String body = lookUpTableService.getPropertyValue("ccct.comparision.email.body");
+        body = body.replace("${nctId}", nctId);
+        body = body.replace("${currentDate}", submissionDate);
+        body = body.replace("${nciId}", nciId);
+       
+        
+        File [] file = new File[1];
+        file[0] = attachment;
+        
+        String mailFrom = lookUpTableService.getPropertyValue(FROMADDRESS);
+        
+        //send separate to each receiver
+        for (String toEmail: toEmailAddressList) {
+            sendMailWithHtmlBodyAndAttachment(toEmail, mailFrom, null, mailSubject, body, file, true);
+        }
+        
     }
 }

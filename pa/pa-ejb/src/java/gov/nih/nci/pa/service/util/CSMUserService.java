@@ -86,6 +86,7 @@ import gov.nih.nci.pa.util.CacheUtils;
 import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.UserProvisioningManager;
 import gov.nih.nci.security.authorization.domainobjects.Group;
@@ -119,6 +120,9 @@ public class CSMUserService implements CSMUserUtil {
     private static final String CSM_LOOKUP_ERR_MSG = "CSM exception while retrieving CSM user: ";
     private static final Logger LOG  = Logger.getLogger(CSMUserService.class);
     private static CSMUserUtil instance = new CSMUserService();
+    
+
+   
     /**
      * Based on gridServicePrincipalSeparator used in security-config.xml.  Escaped for regular expression support.
      */
@@ -415,6 +419,8 @@ public class CSMUserService implements CSMUserUtil {
         return getUsersMap(GET_SUPER_ABSTRACTORS_QUERY);
     }
     
+    
+    
     @SuppressWarnings("unchecked")   
     private Map<Long, String> getUsersMap(String sql) throws PAException {
         Map<Long, String> map = new LinkedHashMap<Long, String>();
@@ -467,4 +473,15 @@ public class CSMUserService implements CSMUserUtil {
         }
         return false;
     }
+    
+ // CHECKSTYLE:OFF    
+    @Override
+    public Map<Long, String> getCcctAndCtroUsers() throws PAException {
+        String userRolesString = PaRegistry.getLookUpTableService()             
+                .getPropertyValue("pa.ccct.ctro.roles.list");
+        String ctroAndCcctString = String
+                .format(GET_USERS_BY_ROLES_TEMPLATE, userRolesString);
+        return getUsersMap(ctroAndCcctString);
+    }
+    
 }

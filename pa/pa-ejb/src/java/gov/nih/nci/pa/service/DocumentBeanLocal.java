@@ -117,6 +117,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -168,13 +169,56 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         PageSortParams<Document> params =
             new PageSortParams<Document>(PAConstants.MAX_SEARCH_RESULTS, 0, DocumentSortCriterion.DOCUMENT_ID, false);
 
-        List<Document> results = search(new AnnotatedBeanSearchCriteria<Document>(criteria), params);
+        List<Document> inputDocumentsList = search(new AnnotatedBeanSearchCriteria<Document>(criteria), params);
+        
+        List<Document> results =  filterDocuments(inputDocumentsList , false);
         return convertFromDomainToDTOs(results);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<DocumentDTO> getReportsDocumentsByStudyProtocol(Ii studyProtocolIi) throws PAException {
+        protocolIdCheck(studyProtocolIi);
+
+        Document criteria = new Document();
+        StudyProtocol sp = new StudyProtocol();
+        sp.setId(IiConverter.convertToLong(studyProtocolIi));
+        criteria.setStudyProtocol(sp);
+        criteria.setActiveIndicator(Boolean.TRUE);
+
+        PageSortParams<Document> params =
+            new PageSortParams<Document>(PAConstants.MAX_SEARCH_RESULTS, 0, DocumentSortCriterion.DOCUMENT_ID, false);
+
+        List<Document> inputDocumentsList = search(new AnnotatedBeanSearchCriteria<Document>(criteria), params);
+        
+        List<Document> results =  filterDocuments(inputDocumentsList , true);
+        return convertFromDomainToDTOs(results);
+    }
+    
+    private List<Document> filterDocuments(List<Document> inputDocumentsList , boolean isReportsOnly) {
+        List<Document> results = new ArrayList<Document>();
+        
+        for (Document document : inputDocumentsList) {
+            
+            if (!isReportsOnly) {
+                if (!document.getTypeCode().getShortName().contains("_reportdoc")) {
+                    results.add(document);
+                }
+            } else {
+                if (document.getTypeCode().getShortName().contains("_reportdoc")) {
+                    results.add(document);
+                }
+            }
+        }
+        
+        return results;
     }
 
     /**
      * @param studyProtocolIi
-     * @throws PAException
+     * @throws PAException PAException
      */
     private void protocolIdCheck(Ii studyProtocolIi) throws PAException {
         if (ISOUtil.isIiNull(studyProtocolIi)) {
@@ -269,6 +313,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         docDTO.setOriginal(BlConverter.convertToBl(Boolean.FALSE));
         return createDocument(docDTO); 
     }
+    
 
     /**
      * {@inheritDoc}
@@ -339,6 +384,8 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
 
     private void enforceDuplicateDocument(DocumentDTO docDTO) throws PAException {
         List<DocumentDTO> resultList = getDocumentsByStudyProtocol(docDTO.getStudyProtocolIdentifier());
+        resultList.addAll(getReportsDocumentsByStudyProtocol(docDTO.getStudyProtocolIdentifier()));
+        
         for (DocumentDTO check : resultList) {
             if (!StringUtils.equalsIgnoreCase(check.getTypeCode().getCode(), DocumentTypeCode.OTHER.getCode())
                     && !StringUtils.equalsIgnoreCase(check.getTypeCode().getCode(), DocumentTypeCode.TSR.getCode())
@@ -583,6 +630,12 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
               }
             }
         return resultSet;
+    }
+
+    @Override
+    public void updateForReview(DocumentDTO docDTO) throws PAException {
+        super.update(docDTO);    
+        
     }
 
     
