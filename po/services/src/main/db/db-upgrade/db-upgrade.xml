@@ -239,6 +239,7 @@
        <sqlFile path="${db-upgrade.run.dir}/postgresql/1.0.1/PO-8819.sql"/>       
     </changeSet>
     <changeSet id="PO-8813" author="krylovd">
+       <validCheckSum>ANY</validCheckSum>
        <comment>Change grid grouper URLs to use SHA2 endpoints.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/1.0.2/PO-8813.sql"/>       
     </changeSet>
