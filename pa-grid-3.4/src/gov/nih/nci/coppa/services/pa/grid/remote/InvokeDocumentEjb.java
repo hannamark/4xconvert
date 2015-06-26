@@ -120,4 +120,15 @@ public class InvokeDocumentEjb extends InvokeStudyPaServiceEjb<DocumentDTO> impl
         // TODO Auto-generated method stub
         throw new PAException("Unavailable from the grid services");
     }
+
+    @Override
+    public List<DocumentDTO> getReportsDocumentsByStudyProtocol(
+            Ii studyProtocolIi) throws PAException {
+        throw new PAException("Unavailable from the grid services");
+    }
+
+    @Override
+    public void updateForReview(DocumentDTO docDTO) throws PAException {
+        throw new PAException("Unavailable from the grid services");        
+    }
 }
