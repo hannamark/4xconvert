@@ -3,9 +3,9 @@
  */
 package gov.nih.nci.pa.domain;
 
-import static org.apache.commons.codec.digest.DigestUtils.md2Hex;
 import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
+import static org.apache.commons.codec.digest.DigestUtils.sha384Hex;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -85,9 +85,9 @@ public class KeystoreTest {
         final Keystore ks = new Keystore();
         assertTrue(keystoreFile.exists());
 
-        String passwordHash = md5Hex(sha256Hex(md5Hex(md2Hex("myKeystorePassword")
+        String passwordHash = md5Hex(sha256Hex(md5Hex(sha384Hex("myKeystorePassword")
                 + sha256Hex("myKeystorePassword"))
-                + md2Hex("myKeystorePassword")));
+                + sha384Hex("myKeystorePassword")));
 
         KeyStore keyStore = KeyStore.getInstance("PKCS12");
         keyStore.load(FileUtils.openInputStream(keystoreFile),

@@ -4,9 +4,9 @@
  */
 package gov.nih.nci.pa.domain;
 
-import static org.apache.commons.codec.digest.DigestUtils.md2Hex;
 import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
+import static org.apache.commons.codec.digest.DigestUtils.sha384Hex;
 
 import java.io.CharArrayWriter;
 import java.io.File;
@@ -209,8 +209,9 @@ public final class Keystore {
     }
 
     private String hashPassword(final String password) {
-        return md5Hex(sha256Hex(md5Hex(md2Hex(password) + sha256Hex(password))
-                + md2Hex(password)));
+        return md5Hex(sha256Hex(md5Hex(sha384Hex(password)
+                + sha256Hex(password))
+                + sha384Hex(password)));
     }
 
     /**
