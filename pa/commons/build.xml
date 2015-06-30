@@ -165,6 +165,10 @@
         <copy todir="${commons.build.outputDir}" filtering="true">
             <fileset dir="${commons.build.resourceDir.0}"/>
         </copy>
+    	
+    	<propertyfile file="${commons.build.outputDir}/pa-common.properties">
+    		<entry  key="keystore.password" value="${keystore.password}"/>    		  
+    	</propertyfile>
     </target>
 
     <!-- ====================================================================== -->

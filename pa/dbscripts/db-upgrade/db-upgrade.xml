@@ -1838,5 +1838,13 @@
 	<changeSet id="PO-9011" author="khandalkara">
        <comment>Implement "View/Upload Trial Comparison Documents" screen.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9011.sql"/>       
-    </changeSet> 
+    </changeSet>
+    <changeSet id="PO-9045" author="krylovd">
+       <comment>Adding 'accounts' table to hold Twitter, Mail, and other account access credentials.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9045.sql"/>       
+    </changeSet>
+    <changeSet id="PO-9045-2" author="krylovd" failOnError="false" runOnChange="true" runInTransaction="false">
+       <comment>Grant copparead/pamaint access to the newly created tables.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9045-2.sql"/>       
+    </changeSet>
 </databaseChangeLog>
