@@ -84,10 +84,6 @@ public class AccountTest {
     @Test
     public final void testWithOpenSSL() throws IOException {
 
-        if (!SystemUtils.IS_OS_LINUX && !isOpenSSLAvailable()) {
-            return;
-        }
-
         Keystore ks = new Keystore();
 
         // Save password.
@@ -109,34 +105,36 @@ public class AccountTest {
                 .randomUUID().toString());
         encryptedPasswordFile.deleteOnExit();
 
-        // Encrypt the password using OpenSSL and the pub key.
-        final String cmd = "openssl rsautl -in "
-                + passwordFile.getCanonicalPath() + " -out "
-                + encryptedPasswordFile.getCanonicalPath() + " -inkey "
-                + publicKeyPem.getCanonicalPath() + " -pubin -encrypt";
-        System.out.println("OpenSSL cmd: " + cmd);
-        String output = runOSCommand(cmd);
+        if (SystemUtils.IS_OS_LINUX || isOpenSSLAvailable()) {
+            // Encrypt the password using OpenSSL and the pub key.
+            final String cmd = "openssl rsautl -in "
+                    + passwordFile.getCanonicalPath() + " -out "
+                    + encryptedPasswordFile.getCanonicalPath() + " -inkey "
+                    + publicKeyPem.getCanonicalPath() + " -pubin -encrypt";
+            System.out.println("OpenSSL cmd: " + cmd);
+            String output = runOSCommand(cmd);
 
-        System.out.println("OpenSSL output: " + output);
-        System.out.println("Encrypted password is in: "
-                + encryptedPasswordFile.getCanonicalPath());
+            System.out.println("OpenSSL output: " + output);
+            System.out.println("Encrypted password is in: "
+                    + encryptedPasswordFile.getCanonicalPath());
 
-        // Read encrypted bytes and turn them into HEX.
-        byte[] encryptedBytes = FileUtils
-                .readFileToByteArray(encryptedPasswordFile);
-        String encryptedPasswordInHexUpper = Hex
-                .encodeHexString(encryptedBytes).toUpperCase();
-        String encryptedPasswordInHexLower = Hex
-                .encodeHexString(encryptedBytes).toUpperCase();
-        System.out.println("Encrypted bytes in HEX: "
-                + encryptedPasswordInHexUpper);
+            // Read encrypted bytes and turn them into HEX.
+            byte[] encryptedBytes = FileUtils
+                    .readFileToByteArray(encryptedPasswordFile);
+            String encryptedPasswordInHexUpper = Hex.encodeHexString(
+                    encryptedBytes).toUpperCase();
+            String encryptedPasswordInHexLower = Hex.encodeHexString(
+                    encryptedBytes).toUpperCase();
+            System.out.println("Encrypted bytes in HEX: "
+                    + encryptedPasswordInHexUpper);
 
-        // Account class must be able to decrypt properly.
-        Account account = new Account();
-        account.setEncryptedPassword(encryptedPasswordInHexLower);
-        assertEquals(password, account.getDecryptedPassword());
-        account.setEncryptedPassword(encryptedPasswordInHexUpper);
-        assertEquals(password, account.getDecryptedPassword());
+            // Account class must be able to decrypt properly.
+            Account account = new Account();
+            account.setEncryptedPassword(encryptedPasswordInHexLower);
+            assertEquals(password, account.getDecryptedPassword());
+            account.setEncryptedPassword(encryptedPasswordInHexUpper);
+            assertEquals(password, account.getDecryptedPassword());
+        }
 
     }
 
