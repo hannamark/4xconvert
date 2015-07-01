@@ -307,7 +307,7 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
             } catch (InterruptedException e) {
             }
         }
-        server.stop();
+        stopSMTP();
     }
 
     /**
