@@ -419,7 +419,7 @@ td.comments {
 					<s:set name="reasonCodes"
 						value="@gov.nih.nci.pa.enums.StudyFlagReasonCode@getDisplayNames()" />
 					<s:select name="reason" id="reason"
-						cssClass="ui-widget-content ui-corner-all" list="#{#reasonCodes[0]:#reasonCodes[0]}" />
+						cssClass="ui-widget-content ui-corner-all" list="#{#reasonCodes[0]:#reasonCodes[0],#reasonCodes[1]:#reasonCodes[1]}" />
 					<label for="comments"><b>Comments</b></label>
 					<textarea name="comments" rows="4" id="comments"
 						class="ui-widget-content ui-corner-all charcounter" maxlength="4000"></textarea>

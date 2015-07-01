@@ -15,12 +15,16 @@ public enum StudyFlagReasonCode implements CodedEnum<String> {
      * DO_NOT_ENFORCE_UNIQUE_SUBJECTS_ACCROSS_SITES
      */
     DO_NOT_ENFORCE_UNIQUE_SUBJECTS_ACCROSS_SITES(
-            "Do not enforce unique Subject ID across sites"), 
-     /**
+            "Do not enforce unique Subject ID across sites"),
+    /**
+     * Do not submit tweets
+     */
+    DO_NOT_SUBMIT_TWEETS("Do not submit tweets"),
+    /**
      * 
      * DO_NOT_SEND_TO_CLINICALTRIALS_GOV
      */
-    DO_NOT_SEND_TO_CLINICALTRIALS_GOV("Do not send to ClinicalTrials.gov"), 
+    DO_NOT_SEND_TO_CLINICALTRIALS_GOV("Do not send to ClinicalTrials.gov"),
     /**
      * 
      * DO_NOT_PROCESS_CDUS_FILES
