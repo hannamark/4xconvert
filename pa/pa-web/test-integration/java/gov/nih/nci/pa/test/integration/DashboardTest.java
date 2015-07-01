@@ -750,7 +750,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         assertTrue(s.isVisible("abstraction-date-override"));
         WebElement ok = driver
                 .findElement(By
-                        .xpath("//div[@aria-describedby='abstraction-date-override']//button//span[text()='OK']"));
+                        .xpath("//div[@aria-describedby='abstraction-date-override']//button//span[text()='Save']"));
         assertEquals("05/01/2014", s.getValue("newCompletionDate"));
         assertEquals(
                 "Moved forward to 05/01/2014 script>window.location.href='google.com'script><br/>",
@@ -884,7 +884,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         // Check field validation.
         WebElement ok = driver
                 .findElement(By
-                        .xpath("//div[@aria-describedby='abstraction-date-override']//button//span[text()='OK']"));
+                        .xpath("//div[@aria-describedby='abstraction-date-override']//button//span[text()='Save']"));
         ok.click();
         verifyValidationError("Please provide a comment.");
         ((JavascriptExecutor) driver)

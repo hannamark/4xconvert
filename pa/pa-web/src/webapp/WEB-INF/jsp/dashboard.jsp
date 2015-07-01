@@ -643,7 +643,7 @@ a.count {
                     width: 370,
                     appendTo: "#workload",
                     buttons: {
-                      "OK": function() {
+                      "Save": function() {
                     	  var newExpectedDate = $("#newCompletionDate").val().trim();
                     	  if (newExpectedDate=='') {
                     		  $("#validationErrorText").html('Please specify a date.');
