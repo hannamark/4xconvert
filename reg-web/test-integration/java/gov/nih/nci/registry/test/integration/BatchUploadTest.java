@@ -131,7 +131,7 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
         submitBatchFile(trialDataFileName);
 
         Number trialID = waitForTrialToRegister(leadOrgTrialId, 60);
-        waitForEmailToArriveAndStopServer();
+        waitForEmailToArriveAndStopServer(1);
         verifyEmailSentByBatchProcessing();
 
         TrialInfo trial = new TrialInfo();
@@ -166,7 +166,7 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
         Number trialID = waitForTrialToRegister(leadOrgTrialId, 60);
         assertNotNull(trialID);
 
-        waitForEmailToArriveAndStopServer();
+        waitForEmailToArriveAndStopServer(1);
 
         TrialInfo trial = new TrialInfo();
         trial.id = trialID.longValue();
@@ -197,7 +197,7 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
         Number trialID = waitForTrialToRegister(leadOrgTrialId, 60);
         assertNotNull(trialID);
 
-        waitForEmailToArriveAndStopServer();
+        waitForEmailToArriveAndStopServer(2);
 
         TrialInfo trial = new TrialInfo();
         trial.id = trialID.longValue();
@@ -297,13 +297,13 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
     /**
      * @param server
      */
-    private void waitForEmailToArriveAndStopServer() {
+    private void waitForEmailToArriveAndStopServer(int numOfEmails) {
         // wait for email to arrive
         long stamp = System.currentTimeMillis();
-        while (server.getReceivedEmailSize() < 1
-                && System.currentTimeMillis() - stamp < 20 * 1000) {
+        while (server.getReceivedEmailSize() < numOfEmails
+                && System.currentTimeMillis() - stamp < 30 * 1000) {
             try {
-                Thread.sleep(500);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
             }
         }
@@ -369,7 +369,7 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
         submitBatchFile(trialDataFileName);
 
         Number trialID = waitForTrialToRegister(leadOrgTrialId, 60);
-        waitForEmailToArriveAndStopServer();
+        waitForEmailToArriveAndStopServer(1);
         verifyEmailSentByBatchProcessing();
 
         TrialInfo trial = new TrialInfo();
