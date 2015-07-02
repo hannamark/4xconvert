@@ -84,7 +84,6 @@ package gov.nih.nci.pa.enums;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;

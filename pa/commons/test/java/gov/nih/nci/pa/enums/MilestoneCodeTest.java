@@ -174,4 +174,24 @@ public class MilestoneCodeTest {
         assertTrue(CollectionUtils.isEqualCollection(list, expectedList));
     }
 
+    @Test
+    public void testValidDwfStatus() {
+        MilestoneCode  code = MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE;
+        assertTrue(code.isValidDwfStatus(DocumentWorkflowStatusCode.ABSTRACTED));
+    }
+    
+    @Test 
+    public void testAdminMilestone() {
+        assertTrue(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE.isAdminMilestone());
+    }
+    
+    @Test 
+    public void testScientificMilestone() {
+        assertTrue(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE.isScientificMilestone());
+    }
+    
+    @Test
+    public void testGetValidDwfStatuses() {
+        assertTrue(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE.getValidDwfStatuses().size( )> 0);
+    }
 }

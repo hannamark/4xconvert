@@ -4,7 +4,6 @@
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
@@ -12,30 +11,33 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
-import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
-import gov.nih.nci.pa.domain.StudyMilestone;
-import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.dto.MilestoneDTO;
 import gov.nih.nci.pa.dto.MilestoneWebDTO;
+import gov.nih.nci.pa.dto.MilestonesDTO;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.PhaseCode;
-import gov.nih.nci.pa.enums.RejectionReasonCode;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.CSMUserUtil;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusService;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
-import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
-import gov.nih.nci.pa.util.PAConstants;
-import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
+import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
+import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.service.MockStudyProtocolService;
 
 import java.sql.Timestamp;
@@ -44,7 +46,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.beanutils.converters.IntegerConverter;
+import org.apache.struts2.ServletActionContext;
 import org.joda.time.DateTimeUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -60,6 +62,10 @@ public class MilestoneActionTest extends AbstractPaActionTest {
     MilestoneAction action;
     SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
     StudyProtocolServiceLocal studyProtocolService;
+    DocumentWorkflowStatusService documentWorkflowStatusService;
+    RegistryUserServiceLocal registryUserService;
+    ProtocolQueryServiceLocal protocolQueryService;
+    
     @Before
     public void prepare() throws PAException {
         action = new MilestoneAction();
@@ -210,5 +216,60 @@ public class MilestoneActionTest extends AbstractPaActionTest {
                 return smDto;
             }
           });
+    }
+    
+    @Test
+    public void unrejectTrialTest() throws PAException {
+        studyProtocolService = mock(StudyProtocolServiceLocal.class);
+        action.setSpIi(IiConverter.convertToStudyProtocolIi(1L));
+        action.setStudyProtocolService(studyProtocolService);
+        
+        documentWorkflowStatusService = mock(DocumentWorkflowStatusService.class);
+        action.setDocumentWorkflowStatusService(documentWorkflowStatusService);
+        
+        registryUserService = mock(RegistryUserServiceLocal.class);
+        action.setRegistryUserService(registryUserService);
+        
+        protocolQueryService = mock(ProtocolQueryServiceLocal.class);
+        action.setProtocolQueryService(protocolQueryService);
+        ServletActionContext.getRequest().getSession().setAttribute("isSuAbstractor", true);
+        User csmUser = new User();
+        csmUser.setLoginName("loginName");
+        CSMUserUtil csmUserService = mock(CSMUserService.class);
+        CSMUserService.setInstance(csmUserService);
+        when(CSMUserService.getInstance().getCSMUser(any(String.class))).thenReturn(csmUser);
+        RegistryUser ru = new RegistryUser();
+        ru.setFirstName("firstName");
+        ru.setLastName("lastName");
+        when(registryUserService.getUser(any(String.class))).thenReturn(ru);
+        
+        action.setUnRejectReason("Test Code");
+        MilestoneDTO mdto = new MilestoneDTO();
+        mdto.setMilestone(MilestoneCode.SUBMISSION_REJECTED);
+        mdto.setMilestoneDate(new Date());
+        MilestonesDTO milestonesDto = new MilestonesDTO();
+        milestonesDto.setStudyMilestone(mdto);
+        
+        StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
+        dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.REJECTED);
+        dto.setMilestones(milestonesDto);
+        dto.setNciIdentifier("NCI-001-0001");
+        when(protocolQueryService.getTrialSummaryByStudyProtocolId(any(Long.class))).thenReturn(dto);
+        
+        
+        StudyProtocolDTO spDTO1 = new StudyProtocolDTO();
+        spDTO1.setIdentifier(IiConverter.convertToIi(2L));
+        spDTO1.setOfficialTitle(StConverter.convertToSt("NCI-001-0002"));
+        spDTO1.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
+        spDTO1.setSubmissionNumber(IntConverter.convertToInt(1));
+        List<StudyProtocolDTO> spList = new ArrayList<StudyProtocolDTO>();
+        StudyProtocolDTO spDTO = new StudyProtocolDTO();
+        spDTO.setIdentifier(IiConverter.convertToIi(1L));
+        spDTO.setOfficialTitle(StConverter.convertToSt("NCI-001-0001"));
+        spDTO.setSubmissionNumber(IntConverter.convertToInt(2));
+        spList.add(spDTO1);
+        when(studyProtocolService.getStudyProtocol(action.getSpIi())).thenReturn(spDTO1);
+        assertEquals("success", action.unrejectTrial()); 
+        assertEquals("NCI-001-0001 has been restored to previosly active version.", ServletActionContext.getRequest().getAttribute(Constants.SUCCESS_MESSAGE));
     }
 }

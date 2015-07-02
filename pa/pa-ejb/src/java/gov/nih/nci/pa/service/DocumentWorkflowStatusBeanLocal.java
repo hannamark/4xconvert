@@ -85,9 +85,11 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.convert.DocumentWorkflowStatusConverter;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.sql.Timestamp;
 import java.util.Collections;
@@ -97,6 +99,8 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.joda.time.DateTime;
 
 /**
@@ -223,6 +227,20 @@ implements DocumentWorkflowStatusServiceLocal {
             }
         }
         return result;
+    }
+    
+
+    @Override
+    public void deleteDWFStatus(DocumentWorkflowStatusCode status, Ii spIi)
+            throws PAException {
+        Long spID = IiConverter.convertToLong(spIi);
+        Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        Query query = session.createQuery("delete from  DocumentWorkflowStatus where "
+               + "studyProtocol.id =:spID and statusCode =:status");
+        query.setParameter("spID", spID);
+        query.setParameter("status", status);
+        query.executeUpdate();
     }
 
 }

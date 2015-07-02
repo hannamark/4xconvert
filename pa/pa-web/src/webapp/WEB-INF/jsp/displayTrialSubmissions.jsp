@@ -31,10 +31,15 @@
     
     <display:column escapeXml="false" sortable="false" title="Milestone">
         <c:out value="${row.lastMileStone}"></c:out>
+        <c:if test="${row.lastMileStone != 'Submission Rejection Date' && row.lastMileStone != 'Late Rejection Date'}">
+        <br/> <br/>
+         <c:out value="${row.comment}"></c:out>
+         </c:if>
         <br/> <br/>
         <c:if test="${not empty row.rejectComment && (row.lastMileStone == 'Submission Rejection Date' || row.lastMileStone == 'Late Rejection Date') }">
             <c:out value="${row.rejectComment}"></c:out>
         </c:if>
+        
     </display:column>  
     <pa:displayWhenCheckedOut>
         <display:column title="Action" headerClass="centered" class="action">

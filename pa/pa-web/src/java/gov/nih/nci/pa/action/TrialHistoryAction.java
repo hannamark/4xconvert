@@ -498,6 +498,7 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
         if (smDto != null) {
              dto.setLastMileStone(CdConverter.convertCdToString(smDto.getMilestoneCode()));
              dto.setRejectComment(StConverter.convertToString(smDto.getCommentText()));
+             dto.setComment(StConverter.convertToString(smDto.getCommentText()));
         }
     }
     

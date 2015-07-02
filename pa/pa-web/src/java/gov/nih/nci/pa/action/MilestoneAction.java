@@ -81,6 +81,7 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.MilestoneTrialHistoryWebDTO;
 import gov.nih.nci.pa.dto.MilestoneWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
@@ -94,16 +95,21 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusService;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
+import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -124,6 +130,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.struts2.ServletActionContext;
 import org.joda.time.DateTime;
 
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import com.opensymphony.xwork2.ActionSupport;
 /**
 * @author Monish Dombla
@@ -137,6 +144,8 @@ public final class MilestoneAction extends ActionSupport {
     private ProtocolQueryServiceLocal protocolQueryService;
     private StudyMilestoneServicelocal studyMilestoneService;
     private StudyProtocolServiceLocal studyProtocolService;
+    private DocumentWorkflowStatusService documentWorkflowStatusService;
+    private RegistryUserServiceLocal registryUserService;
 
     private MilestoneWebDTO milestone;
     private List<MilestoneWebDTO> milestoneList;
@@ -146,6 +155,7 @@ public final class MilestoneAction extends ActionSupport {
     private boolean addAllowed;
     private Ii spIi;
     private String lateRejectBehavior;
+    private String unRejectReason;
 
     /**
      * @return string
@@ -234,6 +244,54 @@ public final class MilestoneAction extends ActionSupport {
         view();
         return SUCCESS;
     }
+    
+    
+    /**
+     * @return action result
+     * @throws PAException exception
+     */
+    public String unrejectTrial() throws PAException {
+        Long spID = IiConverter.convertToLong(getSpIi());
+        StudyProtocolQueryDTO studyProtocolQueryDTO = getProtocolQueryService()
+                .getTrialSummaryByStudyProtocolId(spID);
+        DocumentWorkflowStatusCode statusDTO = studyProtocolQueryDTO.getDocumentWorkflowStatusCode();
+        boolean isSupAbs = BooleanUtils.toBoolean((Boolean) ServletActionContext.getRequest().getSession()
+                .getAttribute(Constants.IS_SU_ABSTRACTOR));
+        String submitterFullName = null;
+        User csmUser = CSMUserService.getInstance().getCSMUser(
+                UsernameHolder.getUser());
+        RegistryUser ru = getRegistryUserService().getUser(csmUser.getLoginName());
+        if (ru != null) {
+           submitterFullName =  ru.getFullName();
+        } else {
+           submitterFullName = CsmUserUtil.getDisplayUsername(csmUser);
+        }
+        String reason = getUnRejectReason();
+        if (isSupAbs
+                && statusDTO.getCode()
+                        .equals(DocumentWorkflowStatusCode.REJECTED.getCode())) {
+            getDocumentWorkflowStatusService().deleteDWFStatus(statusDTO, getSpIi());
+            MilestoneCode milestoneCode = studyProtocolQueryDTO.getMilestones().getStudyMilestone().getMilestone();
+            if (milestoneCode.equals(MilestoneCode.SUBMISSION_REJECTED) 
+                   || milestoneCode.equals(MilestoneCode.LATE_REJECTION_DATE)) {
+                 getStudyMilestoneService().deleteMilestoneByCodeAndStudy(studyProtocolQueryDTO.getMilestones()
+                    .getStudyMilestone().getMilestone(), getSpIi());
+            }
+            StudyMilestoneDTO dto = getStudyMilestoneService().getCurrentByStudyProtocol(getSpIi());
+            getStudyMilestoneService().updateMilestoneCodeCommentWithDateAndUser(dto, reason, submitterFullName);
+            studyProtocolQueryDTO = getProtocolQueryService().getTrialSummaryByStudyProtocolId(spID);
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, 
+               studyProtocolQueryDTO.getNciIdentifier() + " has been restored to previously active version.");
+            } else {
+              ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, 
+                     "Only Super Abstractors can unReject the rejected trials.");
+            }
+        view();
+        return SUCCESS;
+        }
+    
+    
     
     private List<String> computeAllowedMilestones() {
         HttpSession session = ServletActionContext.getRequest().getSession();
@@ -491,4 +549,55 @@ public final class MilestoneAction extends ActionSupport {
     public void setLateRejectBehavior(String lateRejectBehavior) {
         this.lateRejectBehavior = lateRejectBehavior;
     }
+    /**
+     * 
+     * @return unRejectReason unRejectReason
+     */
+    public String getUnRejectReason() {
+        return unRejectReason;
+    }
+    /**
+     * 
+     * @param unRejectReason unRejectReason
+     */
+    public void setUnRejectReason(String unRejectReason) {
+        this.unRejectReason = unRejectReason;
+    }
+    /**
+     * 
+     * @return documentWorkflowStatusService documentWorkflowStatusService
+     */
+    public DocumentWorkflowStatusService getDocumentWorkflowStatusService() {
+        if (documentWorkflowStatusService == null) {
+            documentWorkflowStatusService = PaRegistry.getDocumentWorkflowStatusService();
+        }
+        return documentWorkflowStatusService;
+    }
+    /**
+     * 
+     * @param documentWorkflowStatusService documentWorkflowStatusService
+     */
+    public void setDocumentWorkflowStatusService(
+         DocumentWorkflowStatusService documentWorkflowStatusService) {
+        this.documentWorkflowStatusService = documentWorkflowStatusService;
+    }
+    /**
+     * 
+     * @return registryUserService registryUserService
+     */
+    public RegistryUserServiceLocal getRegistryUserService() {
+        if (registryUserService == null) {
+            registryUserService = PaRegistry.getRegistryUserService();
+        }
+        return registryUserService;
+    }
+    /**
+     * 
+     * @param registryUserService registryUserService
+     */
+    public void setRegistryUserService(RegistryUserServiceLocal registryUserService) {
+        this.registryUserService = registryUserService;
+    }
+    
+    
 }

@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 
 /**
@@ -113,6 +114,13 @@ public interface DocumentWorkflowStatusService extends StudyCurrentPaService<Doc
      * @throws PAException exception
      */
     DocumentWorkflowStatusDTO getInitialStatus(Ii spIi) throws PAException;
+    /**
+     * 
+     * @param status status
+     * @param spIi spIi
+     * @throws PAException Exception
+     */
+    void deleteDWFStatus(DocumentWorkflowStatusCode status, Ii spIi) throws PAException;
     
     
 

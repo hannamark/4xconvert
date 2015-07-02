@@ -80,6 +80,8 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 
 import java.util.List;
@@ -110,4 +112,21 @@ public interface StudyMilestoneServicelocal extends StudyMilestoneService {
      */
     List<StudyMilestoneDTO> search(StudyMilestoneDTO dto, LimitOffset pagingParams) 
         throws PAException, TooManyResultsException;
+    /**
+     * 
+     * @param status status
+     * @param spIi id
+     * @throws PAException exception
+     */
+    void deleteMilestoneByCodeAndStudy(MilestoneCode status, Ii spIi) throws PAException;
+    /**
+     * 
+     * @param dto dto
+     * @param reason reason
+     * @throws PAException exception
+     * @param submitterFullName submitterFullName
+     */
+    void updateMilestoneCodeCommentWithDateAndUser(StudyMilestoneDTO dto, String reason,
+               String submitterFullName) throws PAException;
+
 }

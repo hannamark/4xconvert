@@ -62,6 +62,7 @@ import javax.interceptor.Interceptors;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
@@ -846,6 +847,27 @@ public class StudyMilestoneBeanLocal
             throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
         }
         return convertFromDomainToDTOs(studyMilestoneList);
+    }
+    
+    @Override
+    public void deleteMilestoneByCodeAndStudy(MilestoneCode status, Ii spIi)
+            throws PAException {
+        Long spID = IiConverter.convertToLong(spIi);
+        Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        Query query = session.createQuery("delete from StudyMilestone where "
+               + "studyProtocol.id =:spID and milestoneCode =:status");
+        query.setParameter("spID", spID);
+        query.setParameter("status", status);
+        query.executeUpdate();
+    }
+    @Override
+    public void updateMilestoneCodeCommentWithDateAndUser(StudyMilestoneDTO dto, 
+               String reason, String submitterFullName) throws PAException {
+       dto.setCommentText(StConverter.convertToSt(StringUtils.defaultString(StConverter
+            .convertToString(dto.getCommentText())) + " " + reason 
+              + " " + new Timestamp(System.currentTimeMillis()).toString() + " " + submitterFullName));
+       super.update(dto);
     }
 
     private void rejectAmendmentAndSendLateRejectionEmail(

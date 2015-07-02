@@ -91,14 +91,45 @@
                             });
                 })
             }(jQuery));
+            var eltDims = null;
+            function unreject() {
+                // retrieve required dimensions
+                if (eltDims == null) {
+                    eltDims = $('comment-dialog').getDimensions();
+                }
+                var browserDims = $(document).viewport.getDimensions(); 
+                
+                var tableDims = $('tablemilestonid').getDimensions();
+                // calculate the center of the page using the browser and element dimensions
+                var y  = (browserDims.height + tableDims.height - eltDims.height) / 2 + 200;
+                var x = (browserDims.width - eltDims.width) / 2;    
+                
+                $('comment-dialog').absolutize(); 
+                $('comment-dialog').style.left = x + 'px';
+                $('comment-dialog').style.top = y + 'px';
+                $('comment-dialog').show();
+            }
+            
+            function saveUnrejectReason() {
+                var studyProtocolId = '${sessionScope.trialSummary.studyProtocolId}';
+                var form = document.forms[0];
+                comment = document.getElementById('comments').value;
+                if (comment==null || comment == '' || comment.trim() == ''){
+                    return;
+                }
+                document.addmilestoneForm.elements["unRejectReason"].value =comment;
+                document.addmilestoneForm.action="milestoneunrejectTrial.action";
+                document.addmilestoneForm.submit();
+            }
             
         </script>
     </head>
     <body>
         <h1><fmt:message key="milestone.details.title"/></h1>
         <c:set var="topic" scope="request" value="trialmilestones"/>
+        <c:set var="isRejected" value="${trialSummary.documentWorkflowStatusCode.code  == 'Rejected'}"/>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
-        <div class="box">
+        <div class="box" id="tablemilestonid">
             <pa:sucessMessage />
             <s:if test="hasActionErrors()">
                 <div class="error_msg">
@@ -168,7 +199,7 @@
 						       </s:if>                            
                         </td>
                     </tr>
-                </table>
+                </table> 
             </s:form>
         </div>
         
@@ -192,6 +223,7 @@
 		                                        <s:token/>
 		                                        <pa:studyUniqueToken/>
 		                                        <s:hidden name="lateRejectBehavior" id="lateRejectBehavior"/>
+		                                        <s:hidden name="unRejectReason" id="unRejectReason"></s:hidden>
 		                                        <table class="form">
 		                                            <tr>
 		                                                <td class="label">
@@ -225,6 +257,8 @@
 		                                            </tr>
                                                     
 		                                        </table>
+		                                            <pa:unRejectTrialComment/> 
+		                                       
 		                                    </s:form>
 		                                    <!-- Comments label holding items -->
 		                                    <span id="milestoneCommentsSpan" style="display:none;"><fmt:message key="milestone.comment"/></span>
@@ -242,6 +276,13 @@
 		                                                        <span class="btn_img"><span class="cancel">Cancel</span></span>
 		                                                    </s:a>
 		                                                </li>
+		                                                <c:if test="${sessionScope.isSuAbstractor && isRejected}" >
+		                                                <li>
+		                                               <s:a onclick="unreject();" href="javascript:void(0)" cssClass="btn">
+                                                         <span class="btn_img">Un-Reject Trial</span>
+                                                       </s:a>
+		                                                </li>
+		                                                </c:if>
 		                                            </ul>
 		                                        </del>
 		                                    </div>
@@ -260,6 +301,7 @@
 		        <span class="ui-icon ui-icon-alert"
 		            style="float: left; margin: 0 7px 20px 0;"></span>Please indicate an action you want to take on this trial:
 		    </p>		   
-	   </div>               
+	   </div>       
+      
     </body>
 </html>

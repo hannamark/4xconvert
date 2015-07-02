@@ -141,6 +141,8 @@ public class TrialHistoryWebDTO implements Comparable<TrialHistoryWebDTO>, Seria
     
     private String rejectComment;
     
+    private String comment;
+    
     /**
      * Instantiates a new trial history web dto.
      */
@@ -447,5 +449,21 @@ public class TrialHistoryWebDTO implements Comparable<TrialHistoryWebDTO>, Seria
     public void setRejectComment(String rejectComment) {
         this.rejectComment = rejectComment;
     }
+    /**
+     * 
+     * @return comment comment
+     */
+    public String getComment() {
+        return comment;
+    }
+    /**
+     * 
+     * @param comment comment
+     */
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+    
+    
 
 }

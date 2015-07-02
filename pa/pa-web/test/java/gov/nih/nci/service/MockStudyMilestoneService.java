@@ -6,7 +6,6 @@ package gov.nih.nci.service;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -111,6 +110,17 @@ public class MockStudyMilestoneService extends MockAbstractBaseIsoService<StudyM
     public List<StudyMilestoneDTO> search(StudyMilestoneDTO dto, LimitOffset pagingParams) throws PAException,
             TooManyResultsException {
         return null;
+    }
+    
+    @Override
+    public void deleteMilestoneByCodeAndStudy(MilestoneCode status, Ii spIi)
+          throws PAException {
+   }
+    
+    @Override
+    public void updateMilestoneCodeCommentWithDateAndUser(
+         StudyMilestoneDTO dto, String reason, String submitterFullName)
+               throws PAException {
     }
 
 

@@ -86,6 +86,7 @@ import static gov.nih.nci.pa.test.integration.util.TestProperties.TEST_DB_DRIVER
 import static gov.nih.nci.pa.test.integration.util.TestProperties.TEST_DB_PASSWORD;
 import static gov.nih.nci.pa.test.integration.util.TestProperties.TEST_DB_URL;
 import static gov.nih.nci.pa.test.integration.util.TestProperties.TEST_DB_USER;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.test.integration.util.TestProperties;
 
@@ -1277,7 +1278,17 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + " ORDER BY status_date ASC, identifier ASC";
         return loadTrialStatuses(sql);
     }
-
+    protected String getCurrentDWS(TrialInfo trial)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        return (String) runner
+                .query(connection,
+                        "select status_code from document_workflow_status "
+                + "where study_protocol_identifier="
+                + (trial.id != null ? trial.id : getTrialIdByNciId(trial.nciID))
+                + " ORDER BY status_date_range_low desc, identifier desc LIMIT 1",
+                        new ArrayHandler())[0];
+    }
     protected List<TrialStatus> getDeletedTrialStatuses(TrialInfo trial)
             throws SQLException {
         final String sql = "select status_code, status_date, addl_comments, comment_text from study_overall_status "

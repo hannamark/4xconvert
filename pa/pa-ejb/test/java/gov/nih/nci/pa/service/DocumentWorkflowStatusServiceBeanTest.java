@@ -315,5 +315,22 @@ public class DocumentWorkflowStatusServiceBeanTest extends AbstractHibernateTest
         dtos.get(3).setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.SUBMITTED));
         return dtos;
     }
+    
+    @Test
+    public void deleteDWFStatustest() throws PAException {
+        DocumentWorkflowStatusBeanLocal sut = new DocumentWorkflowStatusBeanLocal();
+        Ii spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
+        List<DocumentWorkflowStatusDTO> statusList = sut.getByStudyProtocol(spIi);
+        DocumentWorkflowStatusDTO dto = new DocumentWorkflowStatusDTO();
+        dto.setStudyProtocolIdentifier(spIi);
+        dto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.REJECTED));
+        sut.create(dto);
+        statusList = sut.getByStudyProtocol(spIi);
+        assertEquals(2, statusList.size()); // after create
+        sut.deleteDWFStatus(DocumentWorkflowStatusCode.REJECTED, spIi);
+        statusList = sut.getByStudyProtocol(spIi);
+        assertEquals(1, statusList.size()); // after delete
+        
+    }
 
 }

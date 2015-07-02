@@ -1530,5 +1530,44 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         }
     }
     
+    @Test
+    public void testdeleteMilestoneByStatusAndSpid() throws PAException {
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED));
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_REJECTED));
+        List<StudyMilestoneDTO> dtoList = bean.getByStudyProtocol(spIi);
+        dtoList.size();
+        assertEquals(5, dtoList.size());
+        bean.deleteMilestoneByCodeAndStudy(MilestoneCode.SUBMISSION_REJECTED, spIi);
+        dtoList = bean.getByStudyProtocol(spIi);
+        dtoList.size();
+        assertEquals(4, dtoList.size());
+    }
+    
+    @Test
+    public void testUpdateMilestoneCodeCommentWithDateAndUser() throws PAException {
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED));
+        List<StudyMilestoneDTO> dtoList = bean.getByStudyProtocol(spIi);
+        dtoList.size();
+        assertEquals(4, dtoList.size());
+        bean.updateMilestoneCodeCommentWithDateAndUser(dtoList.get(3), "Test code", "FullName");
+        getCommentByMilestoneIdAndSPID(IiConverter.convertToLong(spIi), IiConverter.convertToLong(dtoList.get(3).getIdentifier()));
+        dtoList = bean.getByStudyProtocol(spIi);
+        assertTrue(StConverter.convertToString(dtoList.get(3).getCommentText()).contains("comment Test code ")); 
+    }
+    
+    /**
+     * @param nciID
+     * @param session
+     * @return
+     * @throws HibernateException
+     */
+    private String getCommentByMilestoneIdAndSPID(Long spId, Long milestoneid)
+            throws HibernateException {
+        final Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        session.clear();
+        return (String) session.createSQLQuery(
+                "select comment_text from study_milestone where study_protocol_identifier=" +spId + "and identifier =" + milestoneid).uniqueResult();
+    }
 
 }
