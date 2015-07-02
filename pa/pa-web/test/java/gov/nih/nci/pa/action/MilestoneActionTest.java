@@ -270,6 +270,6 @@ public class MilestoneActionTest extends AbstractPaActionTest {
         spList.add(spDTO1);
         when(studyProtocolService.getStudyProtocol(action.getSpIi())).thenReturn(spDTO1);
         assertEquals("success", action.unrejectTrial()); 
-        assertEquals("NCI-001-0001 has been restored to previosly active version.", ServletActionContext.getRequest().getAttribute(Constants.SUCCESS_MESSAGE));
+        assertEquals("NCI-001-0001 has been restored to previously active version.", ServletActionContext.getRequest().getAttribute(Constants.SUCCESS_MESSAGE));
     }
 }

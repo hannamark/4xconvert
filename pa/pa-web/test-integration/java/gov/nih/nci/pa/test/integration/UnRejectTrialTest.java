@@ -3,8 +3,6 @@ package gov.nih.nci.pa.test.integration;
 import java.sql.SQLException;
 
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
 import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 
