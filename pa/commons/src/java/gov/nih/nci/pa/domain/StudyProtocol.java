@@ -234,6 +234,19 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     
    
     private String ctroOverRideFlagComments;
+    
+    private Set<StudyDataDiscrepancy> studyDataDiscrepancy = new HashSet<StudyDataDiscrepancy>();
+    private Set<StudyRecordChange> studyRecordChange = new HashSet<StudyRecordChange>();
+    
+    private Boolean useStandardLanguage;
+    private Boolean dateEnteredInPrs;
+    private Boolean designeeAccessRevoked;
+    private Timestamp designeeAccessRevokedDate;
+    private Boolean changesInCtrpCtGov;
+    private Timestamp changesInCtrpCtGovDate;
+    private Boolean sendToCtGovUpdated;
+    
+    
   
     /**
      * @return accrualReportingMethodCode
@@ -1343,6 +1356,145 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
      */
     public void setTrialPublishedDate(Timestamp trialPublishedDate) {
         this.trialPublishedDate = trialPublishedDate;
+    }
+
+    /**
+     * @return studyDataDiscrepancy
+     */ 
+    @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING , fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    public Set<StudyDataDiscrepancy> getStudyDataDiscrepancy() {
+        return studyDataDiscrepancy;
+    }
+
+    /**
+     * @param studyDataDiscrepancy studyDataDiscrepancy
+     */
+    public void setStudyDataDiscrepancy(
+            Set<StudyDataDiscrepancy> studyDataDiscrepancy) {
+        this.studyDataDiscrepancy = studyDataDiscrepancy;
+    }
+
+    /**
+     * @return studyDataDiscrepancy
+     */
+    @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING , fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    public Set<StudyRecordChange> getStudyRecordChange() {
+        return studyRecordChange;
+    }
+
+    /**
+     * @param studyRecordChange 
+     */
+    @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING , fetch = FetchType.LAZY)
+    public void setStudyRecordChange(Set<StudyRecordChange> studyRecordChange) {
+        this.studyRecordChange = studyRecordChange;
+    }
+
+    /**
+     * @return useStandardLanguage
+     */
+    @Column(name = "use_standard_language")
+    public Boolean getUseStandardLanguage() {
+        return useStandardLanguage;
+    }
+
+    /**
+     * @param useStandardLanguage useStandardLanguage
+     */
+    public void setUseStandardLanguage(Boolean useStandardLanguage) {
+        this.useStandardLanguage = useStandardLanguage;
+    }
+
+    /**
+     * @return dateEnteredInPrs
+     */
+    @Column(name = "date_entered_in_prs")
+    public Boolean getDateEnteredInPrs() {
+        return dateEnteredInPrs;
+    }
+
+    /**
+     * @param dateEnteredInPrs dateEnteredInPrs
+     */
+    public void setDateEnteredInPrs(Boolean dateEnteredInPrs) {
+        this.dateEnteredInPrs = dateEnteredInPrs;
+    }
+
+    /**
+     * @return designeeAccessRevoked
+     */
+    @Column(name = "designee_acess_revoked")
+    public Boolean getDesigneeAccessRevoked() {
+        return designeeAccessRevoked;
+    }
+
+    /**
+     * @param designeeAccessRevoked designeeAccessRevoked
+     */
+    public void setDesigneeAccessRevoked(Boolean designeeAccessRevoked) {
+        this.designeeAccessRevoked = designeeAccessRevoked;
+    }
+
+    /**
+     * @return designeeAccessRevokedDate
+     */
+    @Column(name = "designee_acess_revoked_date")
+    public Timestamp getDesigneeAccessRevokedDate() {
+        return designeeAccessRevokedDate;
+    }
+
+    /**
+     * @param designeeAccessRevokedDate designeeAccessRevokedDate
+     */
+    public void setDesigneeAccessRevokedDate(Timestamp designeeAccessRevokedDate) {
+        this.designeeAccessRevokedDate = designeeAccessRevokedDate;
+    }
+
+    /**
+     * @return changesInCtrpCtGov
+     */
+    @Column(name = "changes_in_ctrp_ctgov")
+    public Boolean getChangesInCtrpCtGov() {
+        return changesInCtrpCtGov;
+    }
+
+    /**
+     * @param changesInCtrpCtGov changesInCtrpCtGov
+     */
+    public void setChangesInCtrpCtGov(Boolean changesInCtrpCtGov) {
+        this.changesInCtrpCtGov = changesInCtrpCtGov;
+    }
+
+    /**
+     * @return changesInCtrpCtGovDate
+     */
+    @Column(name = "changes_in_ctrp_ctgov_date")
+    public Timestamp getChangesInCtrpCtGovDate() {
+        return changesInCtrpCtGovDate;
+    }
+
+    /**
+     * @param changesInCtrpCtGovDate changesInCtrpCtGovDate
+     */
+    public void setChangesInCtrpCtGovDate(Timestamp changesInCtrpCtGovDate) {
+        this.changesInCtrpCtGovDate = changesInCtrpCtGovDate;
+    }
+
+    /**
+     * @return sendToCtGovUpdated
+     */
+    @Column(name = "send_to_ctgov_updated")
+    public Boolean getSendToCtGovUpdated() {
+        return sendToCtGovUpdated;
+    }
+
+    /**
+     * @param sendToCtGovUpdated sendToCtGovUpdated
+     */
+    public void setSendToCtGovUpdated(Boolean sendToCtGovUpdated) {
+        this.sendToCtGovUpdated = sendToCtGovUpdated;
     }
 
 

@@ -1847,4 +1847,8 @@
        <comment>Grant copparead/pamaint access to the newly created tables.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9045-2.sql"/>       
     </changeSet>
+	<changeSet id="PO-9014" author="khandalkara">
+       <comment>Implement "Results Cover Sheet" screen.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9014.sql"/>       
+    </changeSet> 
 </databaseChangeLog>

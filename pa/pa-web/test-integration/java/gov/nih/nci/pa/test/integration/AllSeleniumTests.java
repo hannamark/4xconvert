@@ -102,7 +102,7 @@ import org.junit.runners.Suite.SuiteClasses;
         DiseaseTest.class, TrialCheckInOutTest.class, DashboardTest.class,
         TrialSearchTest.class, ManageTermsTest.class, PlannedMarkerTest.class,
         ManageFlaggedTrialsTest.class, WebAppSecurityTest.class,TrialOnHoldTest.class , ResultsReportingDocumentTest.class,
-        UnRejectTrialTest.class
+        UnRejectTrialTest.class , ResultsReportingCoversheetTest.class
 // DuplicateTrialEditTest.class,
 // LookupWithApostropheTest.class,
 // DiseaseTest.class,

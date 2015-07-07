@@ -109,8 +109,10 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyContact;
+import gov.nih.nci.pa.domain.StudyDataDiscrepancy;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
+import gov.nih.nci.pa.domain.StudyRecordChange;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.dto.LastCreatedDTO;
@@ -127,6 +129,7 @@ import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -1573,5 +1576,96 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         DateFormat format = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
         return format.format(date);
     }
+    
+    @Test
+    public void sendVerifyCoverSheetEmail() throws PAException {
+       
+        PAProperties prop = new PAProperties();
+        prop.setName("ccct.comparision.email.tolist");
+        prop.setValue("ccct.comparision.email.tolist");
+        TestSchema.addUpdObject(prop);
+
+        prop = new PAProperties();
+        prop.setName("ctro.coversheet.email.body");
+        prop.setValue("ctro.coversheet.email.body");
+        TestSchema.addUpdObject(prop);
+        
+        prop = new PAProperties();
+        prop.setName("ctro.coversheet.email.subject");
+        prop.setValue("Trial Data Verification sheet ${nciId}");
+        TestSchema.addUpdObject(prop);
+        
+        StudyProtocolDTO studyProtocolDTO = new StudyProtocolDTO();
+        
+        List<StudyDataDiscrepancy> studyDataDiscrepancyList = new ArrayList<StudyDataDiscrepancy>();
+        List<StudyRecordChange> studyRecordChangeList = new ArrayList<StudyRecordChange>();
+        StudyDataDiscrepancy  studyDataDiscrepancy = new StudyDataDiscrepancy();
+        studyDataDiscrepancy.setDiscrepancyType("DiscType");
+        studyDataDiscrepancy.setActionTaken("action taken");
+        studyDataDiscrepancy.setActionCompletionDate(new Timestamp(new Date().getTime()));
+        studyDataDiscrepancyList.add(studyDataDiscrepancy);
+        
+        StudyRecordChange studyRecordChange = new StudyRecordChange();
+        studyRecordChange.setChangeType("change Type");
+        studyRecordChange.setActionTaken("action taken");
+        studyRecordChange.setActionCompletionDate(new Timestamp(new Date().getTime()));
+        studyRecordChangeList.add(studyRecordChange);
+      
+
+        bean.sendCoverSheetEmail("123", studyProtocolDTO, studyDataDiscrepancyList, studyRecordChangeList);
+        String mailSubject= bean.commonMailSubjectReplacementsForNCI(prop.getValue(), "123");
+        assert(mailSubject.contains("123"));  
+     
+      
+    }
+    
+    @Test
+    public void sendVerifyComparisonDocumentToCtro() throws PAException {
+        
+        PAProperties prop = new PAProperties();
+        prop.setName("abstraction.script.mailTo");
+        prop.setValue("abstraction.script.mailTo");
+        TestSchema.addUpdObject(prop);
+
+        prop = new PAProperties();
+        prop.setName("ctro.comparision.email.body");
+        prop.setValue("ctro.comparision.email.body");
+        TestSchema.addUpdObject(prop);
+        
+        prop = new PAProperties();
+        prop.setName("ctro.comparision.email.subject");
+        prop.setValue("Trial comparision document ${nciId}");
+        TestSchema.addUpdObject(prop);
+        
+        bean.sendComparisonDocumentToCtro("123", "456", null);
+        String mailSubject= bean.commonMailSubjectReplacementsForNCI(prop.getValue(), "123");
+        assert(mailSubject.contains("123"));  
+        
+    }
+    
+    @Test
+    public void sendVerifyComparisonDocumentToCcct() throws PAException {
+        
+        PAProperties prop = new PAProperties();
+        prop.setName("ccct.comparision.email.tolist");
+        prop.setValue("ccct.comparision.email.tolist");
+        TestSchema.addUpdObject(prop);
+
+        prop = new PAProperties();
+        prop.setName("ccct.comparision.email.body");
+        prop.setValue("ccct.comparision.email.body");
+        TestSchema.addUpdObject(prop);
+        
+        prop = new PAProperties();
+        prop.setName("ccct.comparision.email.subject");
+        prop.setValue("Trial comparision document ${nciId}");
+        TestSchema.addUpdObject(prop);
+        
+        bean.sendComparisonDocumentToCcct("123", "456", null);
+        String mailSubject= bean.commonMailSubjectReplacementsForNCI(prop.getValue(), "123");
+        assert(mailSubject.contains("123"));  
+        
+    }
+
 
 }

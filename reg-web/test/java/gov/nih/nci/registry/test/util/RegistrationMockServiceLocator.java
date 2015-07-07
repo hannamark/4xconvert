@@ -58,6 +58,7 @@ import gov.nih.nci.pa.service.StudyIdentifiersService;
 import gov.nih.nci.pa.service.StudyInboxServiceLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
+import gov.nih.nci.pa.service.StudyNotesService;
 import gov.nih.nci.pa.service.StudyObjectiveServiceLocal;
 import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
@@ -942,5 +943,11 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
             //Nothing to do
         }
         return statusTransitionService;
+    }
+
+    @Override
+    public StudyNotesService getStudyNotesService() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

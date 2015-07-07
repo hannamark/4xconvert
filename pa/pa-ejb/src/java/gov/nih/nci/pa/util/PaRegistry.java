@@ -100,6 +100,7 @@ import gov.nih.nci.pa.service.StudyIdentifiersService;
 import gov.nih.nci.pa.service.StudyInboxServiceLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
+import gov.nih.nci.pa.service.StudyNotesService;
 import gov.nih.nci.pa.service.StudyObjectiveServiceLocal;
 import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
@@ -776,5 +777,13 @@ public final class PaRegistry { // NOPMD
     public static StatusTransitionService getStatusTransitionService() {
         return getInstance().getServiceLocator().getStatusTransitionService();
     }
+    
+    /**
+     * @return StudyNotesServiceLocal
+     */
+    public static StudyNotesService getStudyNotesService() {
+        return getInstance().getServiceLocator().getStudyNotesService();
+    }
+   
     
 }

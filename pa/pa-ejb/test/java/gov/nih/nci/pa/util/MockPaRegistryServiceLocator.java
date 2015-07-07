@@ -31,6 +31,8 @@ import gov.nih.nci.pa.service.StudyIdentifiersService;
 import gov.nih.nci.pa.service.StudyInboxServiceLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
+import gov.nih.nci.pa.service.StudyNotesService;
+import gov.nih.nci.pa.service.StudyNotesServiceLocal;
 import gov.nih.nci.pa.service.StudyObjectiveServiceLocal;
 import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
@@ -742,5 +744,11 @@ public RegulatoryInformationServiceLocal getRegulatoryInformationService() {
     @Override
     public StatusTransitionService getStatusTransitionService() {
         return mock(StatusTransitionService.class);
+    }
+
+    @Override
+    public StudyNotesService getStudyNotesService() {
+        
+        return mock(StudyNotesServiceLocal.class);
     }
 }

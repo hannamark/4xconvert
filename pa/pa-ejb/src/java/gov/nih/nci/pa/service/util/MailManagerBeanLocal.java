@@ -94,18 +94,24 @@ import gov.nih.nci.pa.domain.CTGovImportLog;
 import gov.nih.nci.pa.domain.EmailAttachment;
 import gov.nih.nci.pa.domain.EmailLog;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudyDataDiscrepancy;
+import gov.nih.nci.pa.domain.StudyNotes;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyRecordChange;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.OpOutcomeCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
@@ -128,6 +134,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.ParseException;
@@ -254,6 +261,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
     private static final String SUCCESSFUL_UPDATES = "${successfulUpdates}";
     private static final String FAILURES = "${failures}";
     private static final String N_VALUE = "${n_value}";
+    private static final String YES_VAL = "YES";
+    private static final String NO_VAL = "NO";
 
     @EJB
     private ProtocolQueryServiceLocal protocolQueryService;
@@ -831,6 +840,18 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
             amendNumber = spDTO.getAmendmentNumber();
         }
         subject = subject.replace(AMENDMENT_NUMBER, amendNumber);
+        return subject;
+    }
+    
+    /**
+     * @param nciId nciId
+     * @param mailSubject mailSubject
+     * @return String
+     */
+    public String commonMailSubjectReplacementsForNCI(String nciId, String mailSubject) {
+        String subject =  mailSubject;
+        subject = subject.replace("${nciId}", nciId);
+        
         return subject;
     }
 
@@ -2571,4 +2592,156 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
         }
         
     }
+
+
+    @Override
+    public void sendCoverSheetEmail(String nciId,
+            StudyProtocolDTO studyProtocolDTO,
+            List<? extends StudyNotes> studyDataDiscrepancyList,
+            List<? extends StudyNotes> studyRecordChangeList) throws PAException {
+       
+        String mailTo = lookUpTableService
+                .getPropertyValue("ccct.comparision.email.tolist");
+        SimpleDateFormat simpleDateFormat = null;
+        String useStandardLanguage = null;
+        String dateEnteredInPrs = null;
+        String designeeAccessRevoked = null;
+        String designeeAccessRevokedDate = "";
+        String changesInCtrpCtGov = null;
+        String changesInCtrpCtGovDate = "";
+        String sendToCtGovUpdated = null;
+        List<String> toEmailAddressList = new ArrayList<String>();
+        Date date = null;
+        
+       try { 
+        
+        simpleDateFormat = new SimpleDateFormat(PAUtil.DATE_FORMAT);
+        
+        if (mailTo != null) {
+            String [] lists = mailTo.split(",");
+            toEmailAddressList = Arrays.asList(lists);
+        }
+        String mailSubject = lookUpTableService.getPropertyValue("ctro.coversheet.email.subject");
+        mailSubject = mailSubject.replace("${nciId}", nciId);
+        
+        if (BlConverter.convertToBool(studyProtocolDTO.getUseStandardLanguage())) {
+            useStandardLanguage = YES_VAL;
+        } else {
+            useStandardLanguage = NO_VAL;
+        }
+        if (BlConverter.convertToBool(studyProtocolDTO.getDateEnteredInPrs())) {
+            dateEnteredInPrs = YES_VAL;
+        } else {
+            dateEnteredInPrs = NO_VAL;
+        }
+        
+        if (BlConverter.convertToBool(studyProtocolDTO.getDesigneeAccessRevoked())) {
+            designeeAccessRevoked = YES_VAL;
+        } else {
+            designeeAccessRevoked = NO_VAL;
+        }
+        Timestamp timestamp = null;
+        timestamp = TsConverter.convertToTimestamp(studyProtocolDTO.getDesigneeAccessRevokedDate());
+        
+        if (timestamp != null) {
+            date = new Date(timestamp.getTime());
+            designeeAccessRevokedDate = simpleDateFormat.format(date); 
+        }
+        
+        if (BlConverter.convertToBool(studyProtocolDTO.getChangesInCtrpCtGov())) {
+            changesInCtrpCtGov = YES_VAL;
+        } else {
+            changesInCtrpCtGov = NO_VAL;
+        }
+        
+        timestamp = null; 
+        timestamp = TsConverter.convertToTimestamp(studyProtocolDTO.getChangesInCtrpCtGovDate());
+        if (timestamp != null) {
+            date = new Date(timestamp.getTime());
+            changesInCtrpCtGovDate = simpleDateFormat.format(date); 
+        }
+        
+        if (BlConverter.convertToBool(studyProtocolDTO.getChangesInCtrpCtGov())) {
+            sendToCtGovUpdated = YES_VAL;
+        } else {
+            sendToCtGovUpdated = NO_VAL;
+        }
+        
+        
+        
+        String body = lookUpTableService.getPropertyValue("ctro.coversheet.email.body");
+        body = body.replace("${useStandardLanguage}", useStandardLanguage);
+        body = body.replace("${dateEnteredInPrs}", dateEnteredInPrs);
+        body = body.replace("${designeeAccessRevoked}", designeeAccessRevoked);
+        body = body.replace("${designeeAccessRevokedDate}", designeeAccessRevokedDate);
+        body = body.replace("${changesInCtrpCtGov}", changesInCtrpCtGov);
+        body = body.replace("${changesInCtrpCtGovDate}", changesInCtrpCtGovDate);
+        body = body.replace("${sendToCtGovUpdated}", sendToCtGovUpdated);
+        
+        StringBuffer notesData = new StringBuffer();
+        
+        //data disc and records changes size changes hence they can not be store in db as template that needs to be
+       //appended to body dynamically
+        notesData.append("<h2>Data Discrepancies (Status, Status Dates, Accrual)</h2>");
+        notesData.append("<table border=\"1\" style=\"width:100%\">");
+        notesData.append("<thead><tr>");
+        notesData.append("<th>Discrepancy Type</th>");
+        notesData.append("<th>Action Taken</th>");
+        notesData.append("<th>Action Completion Date</th>");
+        notesData.append("</thead></tr>");
+        notesData.append("<tbody>");
+        StudyDataDiscrepancy studyDataDiscrepancy = null;
+        for (StudyNotes studyNote : studyDataDiscrepancyList) {
+            
+            studyDataDiscrepancy = (StudyDataDiscrepancy) studyNote;
+            notesData.append("<tr>");
+            notesData.append("<td>" + studyDataDiscrepancy.getDiscrepancyType() + "</td>");
+            notesData.append("<td>" + studyDataDiscrepancy.getActionTaken() + " </td>");
+            notesData.append("<td>" + simpleDateFormat.format(
+                    studyDataDiscrepancy.getActionCompletionDate()) + "</td>");
+            notesData.append("</tr>");
+        }
+        notesData.append("</tbody>");
+        notesData.append("</table>");
+        
+        notesData.append("<h2>Record Changes (e.g. Eligibility Criteria, Addition of Arm)</h2>");
+        notesData.append("<table border=\"1\" style=\"width:100%\">");
+        notesData.append("<thead><tr>");
+        notesData.append("<th>Change Type</th>");
+        notesData.append("<th>Action Taken</th>");
+        notesData.append("<th>Action Completion Date</th>");
+        notesData.append("</thead></tr>");
+        notesData.append("<tbody>");
+        StudyRecordChange studyRecordChange = null;
+        
+        for (StudyNotes studyNote : studyRecordChangeList) {
+            studyRecordChange = new StudyRecordChange();
+            studyRecordChange = (StudyRecordChange) studyNote;
+            notesData.append("<tr>");
+            notesData.append("<td>" + studyRecordChange.getChangeType() + "</td>");
+            notesData.append("<td>" + studyRecordChange.getActionTaken() + "</td>");
+            notesData.append("<td>" + simpleDateFormat.format(studyRecordChange.getActionCompletionDate()) + "</td>");
+            notesData.append("</tr>");
+        }
+        notesData.append("</tbody>");
+        notesData.append("</table>");
+        
+        notesData.append(body);
+        
+        
+        String mailFrom = lookUpTableService.getPropertyValue(FROMADDRESS);
+        
+        //send separate to each receiver
+        for (String toEmail: toEmailAddressList) {
+            sendMailWithHtmlBodyAndAttachment(toEmail, mailFrom, null, mailSubject, notesData.toString(), null, true);
+        }
+        
+        
+       } catch (Exception e) {
+           throw new PAException(e.getMessage());
+       }
+        
+    }
+    
+   
 }

@@ -240,6 +240,15 @@ public class StudyProtocolConverter {
         studyProtocolDTO.setQaCommentsReturnedDate(TsConverter.convertToTs(studyProtocol.getQaCommentsReturnedDate()));
         studyProtocolDTO.setTrialPublishedDate(TsConverter.convertToTs(studyProtocol.getTrialPublishedDate()));
         
+        studyProtocolDTO.setUseStandardLanguage(BlConverter.convertToBl(studyProtocol.getUseStandardLanguage()));
+        studyProtocolDTO.setDateEnteredInPrs(BlConverter.convertToBl(studyProtocol.getDateEnteredInPrs()));
+        studyProtocolDTO.setDesigneeAccessRevoked(BlConverter.convertToBl(studyProtocol.getDesigneeAccessRevoked()));
+        studyProtocolDTO.setDesigneeAccessRevokedDate(
+                TsConverter.convertToTs(studyProtocol.getDesigneeAccessRevokedDate()));
+        studyProtocolDTO.setChangesInCtrpCtGov(BlConverter.convertToBl(studyProtocol.getChangesInCtrpCtGov()));
+        studyProtocolDTO.setChangesInCtrpCtGovDate(TsConverter.convertToTs(studyProtocol.getChangesInCtrpCtGovDate()));
+        studyProtocolDTO.setSendToCtGovUpdated(BlConverter.convertToBl(studyProtocol.getSendToCtGovUpdated()));
+        
         return studyProtocolDTO;
     }
 
@@ -361,6 +370,18 @@ public class StudyProtocolConverter {
         studyProtocol.setQaCommentsReturnedDate(TsConverter
                 .convertToTimestamp(studyProtocolDTO.getQaCommentsReturnedDate()));
         studyProtocol.setTrialPublishedDate(TsConverter.convertToTimestamp(studyProtocolDTO.getTrialPublishedDate()));
+        studyProtocol.setUseStandardLanguage(BlConverter.convertToBoolean(studyProtocolDTO.getUseStandardLanguage()));
+        studyProtocol.setDateEnteredInPrs(BlConverter.convertToBoolean(
+                studyProtocolDTO.getDateEnteredInPrs()));
+        studyProtocol.setDesigneeAccessRevoked(BlConverter.convertToBoolean(
+                studyProtocolDTO.getDesigneeAccessRevoked()));
+        studyProtocol.setDesigneeAccessRevokedDate(TsConverter.convertToTimestamp(
+                studyProtocolDTO.getDesigneeAccessRevokedDate()));
+        studyProtocol.setChangesInCtrpCtGov(BlConverter.convertToBoolean(
+                studyProtocolDTO.getChangesInCtrpCtGov()));
+        studyProtocol.setChangesInCtrpCtGovDate(TsConverter.convertToTimestamp(
+                studyProtocolDTO.getChangesInCtrpCtGovDate()));
+        studyProtocol.setSendToCtGovUpdated(BlConverter.convertToBoolean(studyProtocolDTO.getSendToCtGovUpdated()));
        
        return studyProtocol;
    }

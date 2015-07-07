@@ -153,6 +153,13 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     private Ts qaCommentsReturnedDate;
     private Ts trialPublishedDate;
     private Bl delayedPostingIndicatorChanged;
+    private Bl useStandardLanguage;
+    private Bl dateEnteredInPrs;
+    private Bl designeeAccessRevoked;
+    private Ts designeeAccessRevokedDate;
+    private Bl changesInCtrpCtGov;
+    private Ts changesInCtrpCtGovDate;
+    private Bl sendToCtGovUpdated;
     
     /**
      *
@@ -848,6 +855,104 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
      */
     public void setDelayedPostingIndicatorChanged(Bl delayedPostingIndicatorChanged) {
         this.delayedPostingIndicatorChanged = delayedPostingIndicatorChanged;
+    }
+
+    /**
+     * @return useStandardLanguage
+     */
+    public Bl getUseStandardLanguage() {
+        return useStandardLanguage;
+    }
+
+    /**
+     * @param useStandardLanguage useStandardLanguage
+     */
+    public void setUseStandardLanguage(Bl useStandardLanguage) {
+        this.useStandardLanguage = useStandardLanguage;
+    }
+
+    /**
+     * @return dateEnteredInPrs
+     */
+    public Bl getDateEnteredInPrs() {
+        return dateEnteredInPrs;
+    }
+
+    /**
+     * @param dateEnteredInPrs dateEnteredInPrs
+     */
+    public void setDateEnteredInPrs(Bl dateEnteredInPrs) {
+        this.dateEnteredInPrs = dateEnteredInPrs;
+    }
+
+    /**
+     * @return designeeAccessRevoked
+     */
+    public Bl getDesigneeAccessRevoked() {
+        return designeeAccessRevoked;
+    }
+
+    /**
+     * @param designeeAccessRevoked designeeAccessRevoked
+     */
+    public void setDesigneeAccessRevoked(Bl designeeAccessRevoked) {
+        this.designeeAccessRevoked = designeeAccessRevoked;
+    }
+
+    /**
+     * @return designeeAccessRevokedDate
+     */
+    public Ts getDesigneeAccessRevokedDate() {
+        return designeeAccessRevokedDate;
+    }
+
+    /**
+     * @param designeeAccessRevokedDate designeeAccessRevokedDate
+     */
+    public void setDesigneeAccessRevokedDate(Ts designeeAccessRevokedDate) {
+        this.designeeAccessRevokedDate = designeeAccessRevokedDate;
+    }
+
+    /**
+     * @return changesInCtrpCtGov
+     */
+    public Bl getChangesInCtrpCtGov() {
+        return changesInCtrpCtGov;
+    }
+
+    /**
+     * @param changesInCtrpCtGov changesInCtrpCtGov
+     */
+    public void setChangesInCtrpCtGov(Bl changesInCtrpCtGov) {
+        this.changesInCtrpCtGov = changesInCtrpCtGov;
+    }
+
+    /**
+     * @return changesInCtrpCtGovDate
+     */
+    public Ts getChangesInCtrpCtGovDate() {
+        return changesInCtrpCtGovDate;
+    }
+
+    /**
+     * @param changesInCtrpCtGovDate changesInCtrpCtGovDate
+     */
+    public void setChangesInCtrpCtGovDate(Ts changesInCtrpCtGovDate) {
+        this.changesInCtrpCtGovDate = changesInCtrpCtGovDate;
+    }
+
+    /**
+     * @return sendToCtGovUpdated
+     */
+    public Bl getSendToCtGovUpdated() {
+        return sendToCtGovUpdated;
+    }
+
+    /**
+     * @param sendToCtGovUpdated sendToCtGovUpdated
+     */
+    public void setSendToCtGovUpdated(Bl sendToCtGovUpdated) {
+        this.sendToCtGovUpdated = sendToCtGovUpdated;
     }
     
     

@@ -806,6 +806,15 @@
             
         </action>
         
+         <!--  PO-9014 Implement "Results Cover Sheet" screen -->
+         <action name="resultsReportingCoverSheet*" class="gov.nih.nci.pa.action.ResultsReportingCoverSheetAction" method="{1}">
+        
+            <result name="success">/WEB-INF/jsp/administrative/reportingCoverSheet/reportingCoverSheet.jsp</result>
+             <result name="error">/WEB-INF/jsp/administrative/reportingCoverSheet/reportingCoverSheet.jsp</result>
+             <result name="input">/WEB-INF/jsp/administrative/reportingCoverSheet/reportingCoverSheet.jsp</result>
+            
+        </action>
+        
     </package>
     
     <package name="bare" namespace="/bare" extends="protected"/> 
