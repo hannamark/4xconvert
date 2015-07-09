@@ -370,12 +370,13 @@ public abstract class AbstractRegistrySeleniumTest extends
         moveElementIntoView(By.id("trialDTO.selectedRegAuth"));
         selenium.select("trialDTO.selectedRegAuth",
                 "label=Food and Drug Administration");
-
+        assertFalse(driver.findElement(By.id("trialDTO.delayedPostingIndicatorNo")).isDisplayed());
         moveElementIntoView(By
                 .id("trialDTO.fdaRegulatoryInformationIndicatorYes"));
         selenium.click("trialDTO.fdaRegulatoryInformationIndicatorYes");
         selenium.click("trialDTO.section801IndicatorYes");
         assertFalse(driver.findElement(By.id("trialDTO.delayedPostingIndicatorNo")).isEnabled());
+        assertTrue(driver.findElement(By.id("trialDTO.delayedPostingIndicatorNo")).isSelected());
         selenium.click("trialDTO.dataMonitoringCommitteeAppointedIndicatorYes");
 
         // Add Protocol and IRB Document

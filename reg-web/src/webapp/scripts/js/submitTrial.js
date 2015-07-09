@@ -285,7 +285,6 @@
               }
           } else {
               showRow($('sec801row'));
-              showRow($('delpostindrow'));
           }
       }
   
@@ -299,9 +298,12 @@
               } else {
             	  $('trialDTO.fdaRegulatoryInformationIndicatorNo').checked = false;
             	  $('trialDTO.fdaRegulatoryInformationIndicatorYes').checked = true;
+            	  $('trialDTO.section801IndicatorYes').checked = true;
               }
           } else {
+              $('trialDTO.delayedPostingIndicatorNo').checked  = true;
               showRow($('delpostindrow'));
+              
           }
       }
       

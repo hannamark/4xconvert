@@ -54,7 +54,7 @@
      </div>
 
      <!--   Delayed Posting Indicator-->
-     <div class="form-group" id="delpostindrow">
+     <div class="form-group" id="delpostindrow" style="display: none">
           <label for="trialDTO.delayedPostingIndicator"  class="col-xs-4 control-label"> <fmt:message key="regulatory.delayed.posting.ind"/><span class="required">*</span></label>
           <div class="col-xs-8">
             <s:radio cssClass="radio-inline" id="trialDTO.delayedPostingIndicator" name="trialDTO.delayedPostingIndicator" list="#{'No':'No', 'Yes':'Yes'}" value="trialDTO.delayedPostingIndicator" disabled="true"/>

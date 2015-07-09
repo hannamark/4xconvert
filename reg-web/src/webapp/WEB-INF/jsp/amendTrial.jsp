@@ -330,7 +330,6 @@
                     }
                 } else {
                     showRow($('sec801row'));
-                    showRow($('delpostindrow'));
                 }
             }
         
@@ -344,8 +343,19 @@
                     } else {
                   	  $('trialDTO.fdaRegulatoryInformationIndicatorNo').checked = false;
                   	  $('trialDTO.fdaRegulatoryInformationIndicatorYes').checked = true;
+                  	$('trialDTO.section801IndicatorYes').checked = true;
                     }
                 } else {
+                    var value = '${sessionScope.trialDTO.delayedPostingIndicator}';
+                    if (value !=null && value != '') {
+                    	if (value == 'Yes') {
+                            $('trialDTO.delayedPostingIndicatorYes').checked = true;
+                        } else {
+                            $('trialDTO.delayedPostingIndicatorNo').checked = true;
+                        }
+                    } else {
+                         $('trialDTO.delayedPostingIndicatorNo').checked = true;
+                    }
                     showRow($('delpostindrow'));
                 }
             }
@@ -389,6 +399,20 @@
                    $('trialDTO.sponsorNameField').innerHTML = $('trialDTO.sponsorName').value;
                 }
                
+            });
+            
+            document.observe("dom:loaded", function() {
+             if ($('trialDTO.section801IndicatorYes').checked) {
+                var value = '${sessionScope.trialDTO.delayedPostingIndicator}';
+                if (value !=null && value != '') {
+                   if (value == 'Yes') {
+                       $('trialDTO.delayedPostingIndicatorYes').checked = true;
+                   } else {
+                       $('trialDTO.delayedPostingIndicatorNo').checked = true;
+                   }
+                }
+                showRow($('delpostindrow'));
+              }
             });
             
             Event.observe(window, "load", setDisplayBasedOnTrialType);
