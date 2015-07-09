@@ -68,6 +68,8 @@ function callOnloadFunctions(){
     // leave this function to prevent 'error on page'
 }
 
+
+//script needed for cover sheet screens
 var table;
 var editFunction;
 var editFunctionChangeType;
@@ -76,20 +78,21 @@ jQuery(document).ready(function() {
     
 	
 	
-	
 	table =initSectionDataTable('dataDisc');
 	studyRecordChangeTable = initSectionDataTable('recordChanges');
 	
 	editFunction =initTableEditFunction('dataDisc' ,'disc' , table) ;
 	editFunctionChangeType = initTableEditFunction('recordChanges' ,'studyRecord' , studyRecordChangeTable) ;
 	
-	initDeleteFunction("deleteBtn" , "dataDisc","recordChanges" , "resultsReportingCoverSheetdelete.action","disc");
-	initDeleteFunction("deleteBtnChangeType" , "recordChanges" ,"dataDisc" , "resultsReportingCoverSheetdelete.action","studyrecord");
+	initDeleteFunction("deleteBtn" , "dataDisc","recordChanges" , "trialViewdelete.action","disc");
+	initDeleteFunction("deleteBtnChangeType" , "recordChanges" ,"dataDisc" , "trialViewdelete.action","studyrecord");
 	
-     //set url to be submitted in case of add/edit
-	setCoverSheetUrls("resultsReportingCoverSheetaddOrEdit.action" ,"resultsReportingCoverSheetsuccessfulAdd.action",
-	"resultsReportingCoverSheetaddOrEditRecordChange.action", "resultsReportingCoverSheetsuccessfulAddRecordChange.action",
-	"resultsReportingCoverSheetsaveFinalChanges.action", "resultsReportingCoverSheetsendConverSheetEmail.action");
+	//set url to be submitted in case of add/edit
+    setCoverSheetUrls("trialViewaddOrEdit.action" ,"trialViewsuccessfulAdd.action",
+    "trialViewaddOrEditRecordChange.action", "trialViewsuccessfulAddRecordChange.action",
+    "trialViewsaveFinalChanges.action", "trialViewsendConverSheetEmail.action")
+	
+   
 
 });
 
@@ -108,7 +111,7 @@ setFormat("mm/dd/yyyy");
 </head>
  <body>
 
- <h1><fmt:message key="reportCoverSheet.title"/></h1>
+ <h1><fmt:message key="trialView.title"/></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
  <div class="box">
     <pa:sucessMessage/>
@@ -116,13 +119,17 @@ setFormat("mm/dd/yyyy");
     <s:form name="coverSheetForm" id ="coverSheetForm" action="">
         <s:actionerror/>
         <pa:studyUniqueToken/>
-        <jsp:include page="reportCoverSheetDiscType.jsp"/>
-        <jsp:include page="reportCoverSheetStudyRecord.jsp"/>
-         <jsp:include page="reportCoverSheetFinalCleanup.jsp"/>             
+        
+        <!-- jsp for cover sheet -->
+        <jsp:include page="/WEB-INF/jsp/administrative/reportingCoverSheet/reportCoverSheetDiscType.jsp"/>
+        <jsp:include page="/WEB-INF/jsp/administrative/reportingCoverSheet/reportCoverSheetStudyRecord.jsp"/>
+         <jsp:include page="/WEB-INF/jsp/administrative/reportingCoverSheet/reportCoverSheetFinalCleanup.jsp"/>             
          
 	</s:form>
-	<jsp:include page="reportCoverSheetDisTypeDialog.jsp"/>
-      <jsp:include page="reportCoverSheetStudyRecordDialog.jsp"/> 
+	
+	<!-- jsp for cover sheet -->
+	<jsp:include page="/WEB-INF/jsp/administrative/reportingCoverSheet/reportCoverSheetDisTypeDialog.jsp"/>
+      <jsp:include page="/WEB-INF/jsp/administrative/reportingCoverSheet/reportCoverSheetStudyRecordDialog.jsp"/> 
          
          
     

@@ -831,6 +831,15 @@
             
         </action>
         
+         <!--  PO-9015 Add Data Discrepancies, Record Changes, and Final Record Clean-up sections to the Results Reporting & Tracking – Trial View -->
+         <action name="trialView*" class="gov.nih.nci.pa.action.TrialViewAction" method="{1}">
+        
+            <result name="success">/WEB-INF/jsp/administrative/trialview/trialView.jsp</result>
+             <result name="error">/WEB-INF/jsp/administrative/trialview/trialView.jsp</result>
+             <result name="input">/WEB-INF/jsp/administrative/trialview/trialView.jsp</result>
+            
+        </action>
+        
     </package>
     
     <package name="bare" namespace="/bare" extends="protected"/> 

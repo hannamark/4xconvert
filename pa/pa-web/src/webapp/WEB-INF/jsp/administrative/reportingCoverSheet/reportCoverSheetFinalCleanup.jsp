@@ -76,12 +76,26 @@
        </td>
      </tr>
      </table>
-     <div class="actionsrow">
+     
+         <div class="actionsrow">
+         <div style="padding:5px 10px 10px 10px">
+         </div>
             <del class="btnwrapper">
                 <ul class="btnrow">
-                    <li><s:a href="javascript:void(0)" cssClass="btn" onclick="submitFinalChanges('resultsReportingCoverSheetsaveFinalChanges.action')" id="saveFinal"><span class="btn_img"><span class="save">Save</span></span></s:a>
-                    
+                         <li><s:a href="javascript:void(0)" cssClass="btn" onclick="submitFinalChanges()" id="saveFinal"><span class="btn_img"><span class="save">Save</span></span></s:a>
+                         <s:a href="javascript:void(0)" cssClass="btn" onclick="resetFinalChanges()" ><span class="btn_img"><span class="cancel">Reset</span></span></s:a> 
                     </li>                
-                </ul>   
+                </ul>  
             </del>
-        </div>          
+         </div>
+         <div style="padding:5px 10px 10px 10px;text-align:center">
+         <div style="padding:5px 10px 10px 10px">
+         </div>
+            <del class="btnwrapper">
+                <ul class="btnrow">
+                      <li> <s:a href="javascript:void(0)" cssClass="btn" id="sendCoverSheetEmail" onclick="sendCoverSheetEmail()" ><span class="btn_img">Send Email</span></s:a>
+                    </li>                
+                </ul>  
+            </del>
+        </div>  
+              

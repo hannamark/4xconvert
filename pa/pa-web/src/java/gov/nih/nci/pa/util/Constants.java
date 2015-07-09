@@ -121,6 +121,8 @@ public class Constants {
     public static final String UPDATE_MESSAGE = "Record Updated";
     /** Create Message . */
     public static final String CREATE_MESSAGE = "Record Created";
+    /** Email Message . */
+    public static final String EMAIL_MESSAGE = "Email Sent Successfully";
     /** Participating Organization Tab Data. */
     public static final String PARTICIPATING_ORGANIZATIONS_TAB = "participatingOrganizationsTabs";
     /** Is user in the abstractor role.**/

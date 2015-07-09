@@ -120,7 +120,7 @@ import com.opensymphony.xwork2.Preparable;
 
 @SuppressWarnings({ "PMD.TooManyFields", "PMD.TooManyMethods", "PMD.ExcessiveMethodLength"
     , "PMD.SignatureDeclareThrowsException" , "PMD.SimpleDateFormatNeedsLocale" , "PMD.ExcessiveClassLength" })
-public class ResultsReportingCoverSheetAction extends AbstractMultiObjectDeleteAction implements
+public class TrialViewAction extends AbstractMultiObjectDeleteAction implements
 ServletRequestAware , ServletResponseAware , Preparable {
     
     private HttpServletRequest request;
@@ -150,7 +150,7 @@ ServletRequestAware , ServletResponseAware , Preparable {
 
     
     private static final Logger LOG = Logger
-            .getLogger(ResultsReportingCoverSheetAction.class);
+            .getLogger(TrialViewAction.class);
     
     @Override
     public void prepare() throws Exception {
@@ -199,15 +199,13 @@ ServletRequestAware , ServletResponseAware , Preparable {
             sendToCtGovUpdated = BlConverter.convertToBoolean(studyProtocolDTO.getSendToCtGovUpdated());
            
         } catch (Exception e) {
-            
-            //remove attribute in case of failure
-            request.removeAttribute(Constants.SUCCESS_MESSAGE);
             addActionError(e.getLocalizedMessage());
             return ERROR;
         }
         return SUCCESS;
     }   
     
+   
     /**
      * @return Action result.
      * @throws IOException
@@ -294,7 +292,6 @@ ServletRequestAware , ServletResponseAware , Preparable {
     private void editRecordChange() throws PAException {
         studyNotesService.editStudyRecordChange(changeType, actionTaken, actionCompletionDate, id);
     }
-    
     
     /**
      * @return result
@@ -386,15 +383,7 @@ ServletRequestAware , ServletResponseAware , Preparable {
         }
         return ERROR;
     }
-
-    @Override
-    public void deleteObject(Long objectId) throws PAException {
-        studyNotesService.deleteStudyNotes(objectId, deleteType);
-        
-    }
-
-
-
+    
     @Override
     public void setServletResponse(HttpServletResponse httpResponse) {
         this.response = httpResponse;
@@ -700,6 +689,11 @@ ServletRequestAware , ServletResponseAware , Preparable {
      */
     public void setMailManagerService(MailManagerService mailManagerService) {
         this.mailManagerService = mailManagerService;
+    }
+
+    @Override
+    public void deleteObject(Long objectId) throws PAException {
+        studyNotesService.deleteStudyNotes(objectId, deleteType);
     }
 
    

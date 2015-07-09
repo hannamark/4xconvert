@@ -3,6 +3,21 @@
  */
 var editFunction;
 var editFunctionChangeType;
+var addDiscUrl;
+var addDiscSuccessUrl;
+var addChangeUrl;
+var addChnageSucessUrl;
+var saveFinalChangesUrl;
+var sendEmailUrl;
+function setCoverSheetUrls (addDiscAction, addDiscSucessAction, addChangeAction, addChangeSucessAction, 
+		saveFinalChangesAction, sendEmailAction) {
+	addDiscUrl = addDiscAction;
+	addDiscSuccessUrl = addDiscSucessAction;
+	addChangeUrl = addChangeAction;
+	addChnageSucessUrl = addChangeSucessAction;
+	saveFinalChangesUrl = saveFinalChangesAction;
+	sendEmailUrl = sendEmailAction;
+}
 function initSectionDataTable(tableId) {
 	var table = jQuery('#'+tableId).DataTable({
         "paging":   true,
@@ -163,7 +178,7 @@ function openDiscDialog() {
 	                jQuery.ajax(
 	                        {
 	                            type : "POST",
-	                            url : "resultsReportingCoverSheetaddOrEdit.action",
+	                            url : addDiscUrl,
 	                            data : jQuery('#addDiscrepancyForm').serialize()
 	                        })
 	                
@@ -172,7 +187,7 @@ function openDiscDialog() {
 	                            jQuery('#indicator').hide();
 	                            jQuery("#discrepancyFormDiv").dialog("close");
 	                            if (jQuery('#oprationType').val()=="add") {
-	                            	jQuery('#coverSheetForm')[0].action ="resultsReportingCoverSheetsuccessfulAdd.action";
+	                               	jQuery('#coverSheetForm')[0].action =addDiscSuccessUrl;
 	                            	jQuery('#coverSheetForm').submit();
 	                                
 	                            }
@@ -247,7 +262,7 @@ function openStudyRecordChangeDialog() {
                    jQuery("button.ui-button-text-only:first")
                    .before(jQuery('#indicatorChangeType').show())
                    
-                   var serverUrl="resultsReportingCoverSheetaddOrEditRecordChange.action";
+                   var serverUrl=addChangeUrl;
                    if(jQuery("#oprationType").val()=="edit") {
                 	   var recordIdVal = jQuery("#changeId").val();
                 	   serverUrl = serverUrl +"?id="+recordIdVal
@@ -265,7 +280,7 @@ function openStudyRecordChangeDialog() {
                                jQuery('#indicatorChangeType').hide();
                                jQuery("#studyRecordChangesFormDiv").dialog("close");
                                if (jQuery('#oprationType').val()=="add") {
-                                   jQuery('#studyRecordChangesForm')[0].action ="resultsReportingCoverSheetsuccessfulAddRecordChange.action";
+                                   jQuery('#studyRecordChangesForm')[0].action =addChnageSucessUrl;
                                    jQuery('#studyRecordChangesForm').submit();
                                    
                                }
@@ -300,7 +315,16 @@ function addStudyRecord() {
     openStudyRecordChangeDialog();
    
 }
-function submitFinalChanges(actionUrl) {
-	jQuery('#coverSheetForm')[0].action =actionUrl;
+function submitFinalChanges() {
+	jQuery('#coverSheetForm')[0].action =saveFinalChangesUrl;
+    jQuery('#coverSheetForm').submit();
+}
+
+function resetFinalChanges() {
+	 jQuery('#coverSheetForm')[0].reset();
+}
+
+function sendCoverSheetEmail() {
+	jQuery('#coverSheetForm')[0].action =sendEmailUrl;
     jQuery('#coverSheetForm').submit();
 }

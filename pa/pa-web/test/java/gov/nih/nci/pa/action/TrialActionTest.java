@@ -10,9 +10,8 @@ import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ResultsReportingCoverSheetActionTest  extends TrialAbstractActionTest {
-  
-    
+public class TrialActionTest extends TrialAbstractActionTest {
+
     @Before
     public void setUp() throws PAException {
         
@@ -24,10 +23,10 @@ public class ResultsReportingCoverSheetActionTest  extends TrialAbstractActionTe
     public void testQuery() throws PAException {
         
         beforeQuery();
-        String result = reportingCoverSheetAction.query();
+        String result = trialViewAction.query();
         
         assertEquals("success",result);
-        assert(reportingCoverSheetAction.getStudyDataDiscrepancyList().size() ==0);
+        assert(trialViewAction.getStudyDataDiscrepancyList().size() ==0);
         
      
     }
@@ -35,40 +34,45 @@ public class ResultsReportingCoverSheetActionTest  extends TrialAbstractActionTe
     @Test
     public void testAdd() throws PAException, IOException {
       
-        String result= reportingCoverSheetAction.addOrEdit();
+        String result= trialViewAction.addOrEdit();
         assertEquals(null,result);
+        assertEquals(null,trialViewAction.getStudyDataDiscrepancyList());
+        
         
     }
     
     @Test
     public void testEdit() throws PAException, IOException {
        
-        reportingCoverSheetAction.setId(1L);
-        String result= reportingCoverSheetAction.addOrEdit();
+        trialViewAction.setId(1L);
+        String result= trialViewAction.addOrEdit();
         assertEquals(null,result);
+        assertEquals(null,trialViewAction.getStudyDataDiscrepancyList());
         
     }
     
     @Test
     public void testAddRecordChange() throws PAException, IOException {
       
-        String result= reportingCoverSheetAction.addOrEditRecordChange();
+        String result= trialViewAction.addOrEditRecordChange();
         assertEquals(null,result);
+        assertEquals(null,trialViewAction.getStudyRecordChangeList());
         
     }
     
     @Test
     public void testEditRecordChange() throws PAException, IOException {
        
-        reportingCoverSheetAction.setId(1L);
-        String result= reportingCoverSheetAction.addOrEditRecordChange();
+        trialViewAction.setId(1L);
+        String result= trialViewAction.addOrEditRecordChange();
         assertEquals(null,result);
+        assertEquals(null,trialViewAction.getStudyRecordChangeList());
         
     }
     
     @Test
     public void testSuccessfulAdd() throws PAException, IOException {
-        reportingCoverSheetAction.successfulAdd();
+        trialViewAction.successfulAdd();
         
         assertEquals("Data Discrepancy has been added successfully", ServletActionContext.getRequest().getAttribute(
                 Constants.SUCCESS_MESSAGE));
@@ -77,7 +81,7 @@ public class ResultsReportingCoverSheetActionTest  extends TrialAbstractActionTe
     
     @Test
     public void testSuccessfulAddRecordChange() throws PAException, IOException {
-        reportingCoverSheetAction.successfulAddRecordChange();
+        trialViewAction.successfulAddRecordChange();
         
         assertEquals("Record Change has been added successfully", ServletActionContext.getRequest().getAttribute(
                 Constants.SUCCESS_MESSAGE));
@@ -88,8 +92,8 @@ public class ResultsReportingCoverSheetActionTest  extends TrialAbstractActionTe
     public void testDelete() throws PAException {
         String[] objectsToDelete = new String[1];
         objectsToDelete[0] ="1";
-        reportingCoverSheetAction.setObjectsToDelete(objectsToDelete);
-        String result = reportingCoverSheetAction.delete();
+        trialViewAction.setObjectsToDelete(objectsToDelete);
+        String result = trialViewAction.delete();
         assertEquals("success",result);
         assertEquals(Constants.MULTI_DELETE_MESSAGE, ServletActionContext.getRequest().getAttribute(
                 Constants.SUCCESS_MESSAGE));
@@ -99,8 +103,9 @@ public class ResultsReportingCoverSheetActionTest  extends TrialAbstractActionTe
     @Test
     public void testSaveFinalChanges() throws PAException {
         
-      String result =  reportingCoverSheetAction.saveFinalChanges();
+      String result =  trialViewAction.saveFinalChanges();
       assertEquals("success",result);
       
     }
+    
 }
