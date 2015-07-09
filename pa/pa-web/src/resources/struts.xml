@@ -250,6 +250,22 @@
             </result> 
         </action>
         
+        <action name="resultsDashboard*" class="gov.nih.nci.pa.action.ResultsDashboardAction" method="{1}">
+            <interceptor-ref name="paDefaultInterceptor" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">save</param>
+                <param name="excludeMethods">execute, search</param>
+            </interceptor-ref>
+            <result name="resultAbstractorLanding">/WEB-INF/jsp/resultsDashboard.jsp</result>
+            <result name="nonAbstractorLanding" type="redirectAction">
+                <param name="namespace">../report</param>
+                <param name="actionName">studyProtocolshowCriteria</param>                
+            </result> 
+            <result name="ajaxResponse" type="stream">
+                <param name="inputName">ajaxResponseStream</param>
+            </result>
+        </action>
+        
         <action name="trialCounts*" class="gov.nih.nci.pa.action.TrialCountsAction" method="{1}">
             <interceptor-ref name="paDefaultInterceptor" />
             <result type="stream"/>

@@ -87,6 +87,7 @@ import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
@@ -261,6 +262,10 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         private static final String NULLIFIED_STATUS_PARAM = "nulifiedStatusParam";
         private static final String ONHOLD_OTHER_CODE_PARAM = "onHoldOtherParam";
         private static final String ONHOLD_OTHER_CATEGORIES_PARAM = "onHoldOtherCategoriesParam";
+        private static final String SECTION_801_INDICATOR = "section801Indicator";
+        private static final String PCD_FROM_DATE = "pcdFromDate";
+        private static final String PCD_TO_DATE = "pcdToDate";
+        private static final String PCD_DATE_TYPE = "pcdDateType";
         private final StudyProtocol sp;
         private final StudyProtocolOptions spo;        
 
@@ -306,8 +311,45 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
             }
             
             handleStudySource(whereClause, params);
+            handleResultsFilters(whereClause, params);
         }
 
+        
+        private void handleResultsFilters(StringBuffer whereClause, Map<String, Object> params) {
+            if (spo.getSection801Indicators() != null && spo.getSection801Indicators().size() > 0) {
+                String operator = determineOperator(whereClause);
+                whereClause.append(String.format(" %s %s.section801Indicator in (:%s) " , operator,  
+                        SearchableUtils.ROOT_OBJ_ALIAS, SECTION_801_INDICATOR));
+                params.put(SECTION_801_INDICATOR, spo.getSection801Indicators());
+            }
+            if (spo.getPcdFromDate() != null) {
+                String operator = determineOperator(whereClause);
+                whereClause.append(String.format("%s %s.dates.primaryCompletionDate >= :%s" , operator,  
+                        SearchableUtils.ROOT_OBJ_ALIAS, PCD_FROM_DATE));
+                params.put(PCD_FROM_DATE, spo.getPcdFromDate());
+            }
+            
+            if (spo.getPcdToDate() != null) {
+                String operator = determineOperator(whereClause);
+                whereClause.append(String.format("%s %s.dates.primaryCompletionDate <= :%s" , operator,  
+                        SearchableUtils.ROOT_OBJ_ALIAS, PCD_TO_DATE));
+                params.put(PCD_TO_DATE, spo.getPcdToDate());
+            }
+            
+            if ((spo.getPcdToDate() != null || spo.getPcdFromDate() != null) && spo.getPcdDateTypes() != null 
+                        && spo.getPcdDateTypes().size() > 0) {
+                Set<ActualAnticipatedTypeCode> dateTypeCodes = new HashSet<ActualAnticipatedTypeCode>();
+                for (ActualAnticipatedTypeCode code : spo.getPcdDateTypes()) {
+                    dateTypeCodes.add(code);
+                }
+                String operator = determineOperator(whereClause);
+                whereClause.append(String.format("%s %s.dates.primaryCompletionDateTypeCode in (:%s) " , operator,  
+                        SearchableUtils.ROOT_OBJ_ALIAS, PCD_DATE_TYPE));
+                params.put(PCD_DATE_TYPE, dateTypeCodes);
+            }
+            
+        }
+        
         /**
          * @param whereClause
          * @param params

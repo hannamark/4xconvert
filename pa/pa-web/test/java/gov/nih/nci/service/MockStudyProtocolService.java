@@ -453,4 +453,11 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
             throws PAException {
         return new ArrayList<Long>();
     }
+
+    @Override
+    public boolean updateStudyProtocolResultsDate(Long studyId,
+            String attribute, Timestamp value) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

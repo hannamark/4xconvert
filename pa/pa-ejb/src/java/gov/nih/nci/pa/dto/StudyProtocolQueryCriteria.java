@@ -126,6 +126,13 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private List<MilestoneFilter> milestoneFilters = new ArrayList<MilestoneFilter>();
     private Boolean ctroOverride;
     private Long assignedUserId;
+    
+    private List<Boolean> section801Indicators; 
+    private Date pcdFrom;
+    private Date pcdTo;
+    private String pcdFromType;
+    private String pcdToType;
+    
 
     /**
      * @return the inBoxProcessing
@@ -1098,8 +1105,13 @@ public class StudyProtocolQueryCriteria implements Serializable {
                 .append(submitterAffiliateOrgNameList)
                 .append(", holdRecordExists=").append(holdRecordExists)
                 .append(", assignedUserId=").append(assignedUserId)
-                .append(", currentOrPreviousMilestone=")
-                .append(currentOrPreviousMilestone).append("]");
+                .append(", currentOrPreviousMilestone=").append(currentOrPreviousMilestone)
+                .append(", section801Indicators=").append(section801Indicators)
+                .append(" pcdFromDate=").append(pcdFrom)
+                .append(" pcdToDate=").append(pcdTo)
+                .append(" pcdFromDateType=").append(pcdFromType)
+                .append(" pcdToDateType=").append(pcdToType)
+                .append("]");
         return builder.toString();
     }
 
@@ -1499,6 +1511,80 @@ public class StudyProtocolQueryCriteria implements Serializable {
     public void setCcrIdentifier(String ccrIdentifier) {
         this.ccrIdentifier = ccrIdentifier;
     }
+    
+    
+
+    /**
+     * @return the section801Indicators
+     */
+    public List<Boolean> getSection801Indicators() {
+        return section801Indicators;
+    }
+
+    /**
+     * @param section801Indicators the section801Indicators to set
+     */
+    public void setSection801Indicators(List<Boolean> section801Indicators) {
+        this.section801Indicators = section801Indicators;
+    }
+
+    /**
+     * @return the pcdFrom
+     */
+    public Date getPcdFrom() {
+        return pcdFrom;
+    }
+
+    /**
+     * @param pcdFrom the pcdFrom to set
+     */
+    public void setPcdFrom(Date pcdFrom) {
+        this.pcdFrom = pcdFrom;
+    }
+
+    /**
+     * @return the pcdTo
+     */
+    public Date getPcdTo() {
+        return pcdTo;
+    }
+
+    /**
+     * @param pcdTo the pcdTo to set
+     */
+    public void setPcdTo(Date pcdTo) {
+        this.pcdTo = pcdTo;
+    }
+
+  
+
+    /**
+     * @return the pcdFromType
+     */
+    public String getPcdFromType() {
+        return pcdFromType;
+    }
+
+    /**
+     * @param pcdFromType the pcdFromType to set
+     */
+    public void setPcdFromType(String pcdFromType) {
+        this.pcdFromType = pcdFromType;
+    }
+
+    /**
+     * @return the pcdToType
+     */
+    public String getPcdToType() {
+        return pcdToType;
+    }
+
+    /**
+     * @param pcdToType the pcdToType to set
+     */
+    public void setPcdToType(String pcdToType) {
+        this.pcdToType = pcdToType;
+    }
 
     // CHECKSTYLE:OFF
     /*
@@ -1684,7 +1770,17 @@ public class StudyProtocolQueryCriteria implements Serializable {
         if ((ctroOverride) != null)
             builder.append("ctroOverride=").append(ctroOverride).append(", ");
         if ((assignedUserId) != null)
-            builder.append("assignedUserId=").append(assignedUserId);
+            builder.append("assignedUserId=").append(assignedUserId).append(", ");;
+        if (section801Indicators!= null)
+            builder.append("section801Indicators=").append(section801Indicators).append(", ");
+        if (pcdFrom != null)
+            builder.append("pcdFrom=").append(pcdFrom).append(", ");
+        if (pcdTo != null)
+            builder.append("pcdTo=").append(pcdTo).append(", ");
+        if (pcdFromType != null)
+            builder.append("pcdFromType=").append(pcdFromType).append(", ");
+        if (pcdToType != null)
+            builder.append("pcdToType=").append(pcdToType);
         builder.append("]");
         return builder.toString();
     }

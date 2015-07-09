@@ -90,6 +90,7 @@ import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolAssociationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -375,4 +376,13 @@ public interface StudyProtocolService {
      * @throws PAException PAException
      */
     List<Long> getByPublicTitle(String publicTitle) throws PAException;
+    
+    /**
+     * Update the value of the specified study protocol results date attribute of the study
+     * @param studyId Id of the study
+     * @param attribute name of results date attribute to update
+     * @param value new value
+     * @return <code>true</code> if attribute updated, successfully <code>false</code> otherwise
+     */
+    boolean updateStudyProtocolResultsDate(Long studyId, String attribute, Timestamp value);
 }

@@ -666,6 +666,19 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         }
         dto.setOverriddenExpectedAbstractionCompletionDate((Date) row[EXPECTED_ABSTRACTION_COMPLETION_DATE]);
         dto.setOverriddenExpectedAbstractionCompletionComments((String) row[EXPECTED_ABSTRACTION_COMPLETION_COMMENTS]);
+        dto.setPcdSentToPIODate((Date) row[PCD_SENT_TO_PIO_DATE]);
+        dto.setPcdConfirmedDate((Date) row[PCD_CONFIRM_DATE]);
+        dto.setDesgneeNotifiedDate((Date) row[DESIGNEE_NOTIFIED_DATE]);
+        dto.setReportingInProcessDate((Date) row[REPORTING_IN_PROCESS_DATE]);
+        dto.setThreeMonthReminderDate((Date) row[THREE_MONTH_REMINDER_DATE]);
+        dto.setFiveMonthReminderDate((Date) row[FIVE_MONTH_REMINDER_DATE]);
+        dto.setSevenMonthEscalationtoPIODate((Date) row[SEVEN_MONTH_ESCALATION_TO_PIO_DATE]);
+        dto.setResultsSentToPIODate((Date) row[RESULTS_SENT_TO_PIO_DATE]);
+        dto.setResultsApprovedByPIODate((Date) row[RESULTS_APPROVED_BY_PIO_DATE]);
+        dto.setPrsReleaseDate((Date) row[PRS_RELEASE_DATE]);
+        dto.setQaCommentsReturnedDate((Date) row[QA_COMMENTS_RETURN_DATE]);
+        dto.setTrialPublishedDate((Date) row[TRIAL_PUBLISHED_DATE]);
+        
         loadRecentHoldData(dto, row);
     }
 

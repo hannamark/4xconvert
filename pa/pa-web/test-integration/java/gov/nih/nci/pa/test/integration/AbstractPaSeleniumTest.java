@@ -86,6 +86,7 @@ import static gov.nih.nci.pa.test.integration.util.TestProperties.TEST_DB_DRIVER
 import static gov.nih.nci.pa.test.integration.util.TestProperties.TEST_DB_PASSWORD;
 import static gov.nih.nci.pa.test.integration.util.TestProperties.TEST_DB_URL;
 import static gov.nih.nci.pa.test.integration.util.TestProperties.TEST_DB_USER;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.test.integration.util.TestProperties;
@@ -642,6 +643,11 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         disclaimer(true);
     }
 
+    public final void loginAsResultsAbstractor() {
+        loginPA("results-abstractor", "pass");
+        disclaimer(true);
+    }
+    
     protected boolean isLoggedIn() {
         return selenium.isElementPresent("link=Logout")
                 && !selenium.isElementPresent("link=Login");
@@ -1415,6 +1421,58 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         runner.update(connection, sql);
     }
 
+    protected void addSponsor(TrialInfo info, String orgName) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        info.leadOrgID = info.uuid;
+        String sql = "INSERT INTO study_site (identifier,functional_code,local_sp_indentifier,"
+                + "review_board_approval_number,review_board_approval_date,review_board_approval_status_code,"
+                + "target_accrual_number,study_protocol_identifier,healthcare_facility_identifier,"
+                + "research_organization_identifier,oversight_committee_identifier,"
+                + "status_code,status_date_range_low,date_last_created,date_last_updated,status_date_range_high,"
+                + "review_board_organizational_affiliation,program_code_text,accrual_date_range_low,accrual_date_range_high,"
+                + "user_last_created_id,user_last_updated_id) VALUES "
+                + "((SELECT NEXTVAL('HIBERNATE_SEQUENCE')),'SPONSOR','"
+                + info.leadOrgID
+                + "',null,null,null,null,"
+                + info.id
+                + " "
+                + ",null,"
+                + getResearchOrgId(orgName)
+                + ",null,'PENDING',{ts '2014-04-16 14:56:08.559'},{ts '2014-04-16 14:56:08.559'},"
+                + "{ts '2014-04-16 14:56:08.559'},null,null,null,"
+                + "null,null," + info.csmUserID + "," + info.csmUserID + ")";
+        runner.update(connection, sql);
+    }
+    
+    protected void setSeciont801Indicator(TrialInfo info, Boolean section801) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "update study_protocol set section801_indicator="
+                        + section801 + " where identifier = " + info.id;
+                    ;
+        runner.update(connection, sql);
+    }
+    
+    
+    protected void setPCD(TrialInfo info, String pcd, ActualAnticipatedTypeCode type) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        info.leadOrgID = info.uuid;
+        String sql = "update study_protocol set PRI_COMPL_DATE ="
+                        + getTS(pcd) + ", PRI_COMPL_DATE_TYPE_CODE ='"+ type 
+                        + "' where identifier = " + info.id;
+                    
+        runner.update(connection, sql);
+    }
+    
+    /**
+     * Returns a timestamp string that can be used in the sql for the give date string 
+     * in the format yyyy-mm-dd
+     * @param date
+     * @return ts sting
+     */
+    private String getTS(String date){
+        return "{ts '"+ date +" 00:00:00.000'}";
+    }
+    
     private Number getResearchOrgId(String orgName) throws SQLException {
         QueryRunner runner = new QueryRunner();
         return (Number) runner

@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.service.search;
 
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
@@ -146,6 +147,10 @@ public class StudyProtocolOptions {
     private List<Integer> processingPriority = new ArrayList<Integer>();
     private List<String> studySource = new ArrayList<>();
     private List<String> primaryPurposeCodes = new ArrayList<String>();
+    private List<Boolean> section801Indicators;
+    private Date pcdFromDate;
+    private Date pcdToDate;
+    private List<ActualAnticipatedTypeCode> pcdDateTypes;
     
     /**
      * @return excludeRejectedTrials
@@ -835,4 +840,59 @@ public class StudyProtocolOptions {
         this.onholdOtherReasonCategories = onholdReasonCategories;
     }
 
+  /**
+     * @return the section801Indicators
+     */
+    public List<Boolean> getSection801Indicators() {
+        return section801Indicators;
+    }
+
+    /**
+     * @param section801Indicators the section801Indicators to set
+     */
+    public void setSection801Indicators(List<Boolean> section801Indicators) {
+        this.section801Indicators = section801Indicators;
+    }
+
+    /**
+     * @return the pcdFromDate
+     */
+    public Date getPcdFromDate() {
+        return pcdFromDate;
+    }
+
+    /**
+     * @param pcdFromDate the pcdFromDate to set
+     */
+    public void setPcdFromDate(Date pcdFromDate) {
+        this.pcdFromDate = pcdFromDate;
+    }
+
+    /**
+     * @return the pcdToDate
+     */
+    public Date getPcdToDate() {
+        return pcdToDate;
+    }
+
+    /**
+     * @param pcdToDate the pcdToDate to set
+     */
+    public void setPcdToDate(Date pcdToDate) {
+        this.pcdToDate = pcdToDate;
+    }
+
+    /**
+     * @return the pcdDateTypes
+     */
+    public List<ActualAnticipatedTypeCode> getPcdDateTypes() {
+        return pcdDateTypes;
+    }
+
+    /**
+     * @param pcdDateTypes the pcdDateTypes to set
+     */
+    public void setPcdDateTypes(List<ActualAnticipatedTypeCode> pcdDateTypes) {
+        this.pcdDateTypes = pcdDateTypes;
+    }
 }

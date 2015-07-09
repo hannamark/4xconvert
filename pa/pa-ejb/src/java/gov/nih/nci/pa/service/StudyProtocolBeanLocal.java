@@ -1468,4 +1468,54 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
          }
          return resultSet;
     }
+    
+    @Override
+    public boolean updateStudyProtocolResultsDate(Long studyId, String attribute, Timestamp value) {
+        Session session = PaHibernateUtil.getCurrentSession();
+        StudyProtocol studyProtocol = (StudyProtocol) session
+                .get(StudyProtocol.class, studyId);
+        switch (attribute) {
+        case "pcdSentToPIODate":
+            studyProtocol.setPcdSentToPIODate(value);
+            break;
+        case "pcdConfirmedDate":
+            studyProtocol.setPcdConfirmedDate(value);
+            break;
+        case "desgneeNotifiedDate":
+            studyProtocol.setDesgneeNotifiedDate(value);
+            break;
+        case "reportingInProcessDate":
+            studyProtocol.setReportingInProcessDate(value);
+            break;
+        case "threeMonthReminderDate":
+            studyProtocol.setThreeMonthReminderDate(value);
+            break;
+        case "fiveMonthReminderDate":
+            studyProtocol.setFiveMonthReminderDate(value);
+            break;
+        case "sevenMonthEscalationtoPIODate":
+            studyProtocol.setSevenMonthEscalationtoPIODate(value);
+            break;
+        case "resultsSentToPIODate":
+            studyProtocol.setResultsSentToPIODate(value);
+            break;
+        case "resultsApprovedByPIODate":
+            studyProtocol.setResultsApprovedByPIODate(value);
+            break;
+        case "prsReleaseDate":
+            studyProtocol.setPrsReleaseDate(value);
+            break;
+        case "qaCommentsReturnedDate":
+            studyProtocol.setQaCommentsReturnedDate(value);
+            break;
+        case "trialPublishedDate":
+            studyProtocol.setTrialPublishedDate(value);
+            break;
+        default:
+            return false;
+        }
+        
+        session.update(studyProtocol);
+        return true;
+    }
 }

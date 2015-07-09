@@ -111,6 +111,8 @@ public final class ActionUtils {
         request.getSession().setAttribute(Constants.IS_SCIENTIFIC_ABSTRACTOR,
                 isScientificAbstractor);
         request.getSession().setAttribute(Constants.IS_REPORT_VIEWER, isReportViewer);
+        request.getSession().setAttribute(Constants.IS_RESULTS_ABSTRACTOR, request
+                .isUserInRole(Constants.RESULTS_ABSTRACTOR));
     }
     
     

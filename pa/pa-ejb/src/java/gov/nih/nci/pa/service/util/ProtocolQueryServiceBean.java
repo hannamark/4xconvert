@@ -108,6 +108,7 @@ import gov.nih.nci.pa.dto.MilestoneDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
@@ -541,7 +542,19 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             options.setSearchOffHoldTrials(true);
         }        
         options.setCurrentOrPreviousMilestone(criteria.getCurrentOrPreviousMilestone());
-        
+        if (criteria.getSection801Indicators() != null) {
+            options.setSection801Indicators(criteria.getSection801Indicators());
+        }
+        options.setPcdFromDate(criteria.getPcdFrom());
+        options.setPcdToDate(criteria.getPcdTo());
+        List<ActualAnticipatedTypeCode> pcdDateTypes = new ArrayList<ActualAnticipatedTypeCode>();
+        if (criteria.getPcdFromType() != null) {
+            pcdDateTypes.add(ActualAnticipatedTypeCode.getByCode(criteria.getPcdFromType()));
+        }
+        if (criteria.getPcdToType() != null) {
+            pcdDateTypes.add(ActualAnticipatedTypeCode.getByCode(criteria.getPcdToType()));
+        }
+        options.setPcdDateTypes(pcdDateTypes);
         populateExample(criteria, example);
         return new StudyProtocolQueryBeanSearchCriteria(example, options);
     }
@@ -668,6 +681,9 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         if (CollectionUtils.isNotEmpty(criteria.getLeadOrganizationIds())) {
             result.append(" join obj.studySites as leadOrgSite join leadOrgSite.researchOrganization as leadOrgRo ");
         }
+//        if (criteria.getPcdFrom() != null || criteria.getPcdTo() != null) {
+//            result.append(" join obj.dates as studyDates ");
+//        }
         return result.toString();
     }
 
@@ -698,7 +714,6 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         populateExampleStudyProtocolDiseaseInterventionType(crit, sp);
     }
    
-    
     private void populateExampleStudyProtocolSumm4FundSrc(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
         if (crit.getSumm4FundingSourceId() != null
                 || StringUtils.isNotBlank(crit.getSumm4FundingSourceTypeCode())) {

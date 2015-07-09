@@ -7,6 +7,9 @@
             <c:if test="${sessionScope.isAbstractor || sessionScope.isSuAbstractor || sessionScope.isAdminAbstractor || sessionScope.isScientificAbstractor}">
                 <pa:menuLink href="${pageContext.request.contextPath}/protected/dashboard.action" id="dashboardMenuOption" labelKey="pamenu.abstraction.dashboard" selected="${requestScope.topic == 'dashboard'}"/>            
             </c:if>        
+            <c:if test="${sessionScope.isResultsAbstractor}">
+                <pa:menuLink href="${pageContext.request.contextPath}/protected/resultsDashboard.action" id="resultsDashboardMenuOption" labelKey="pamenu.results.dashboard" selected="${requestScope.topic == 'resultsDashboard'}"/>
+            </c:if>
             <li><a href="javascript:void(0);" class="fakelink"><fmt:message key="pamenu.abstraction.search"/></a></li>
             <li class="stdsub">
                 <ul>

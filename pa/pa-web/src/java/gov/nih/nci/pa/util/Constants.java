@@ -143,6 +143,10 @@ public class Constants {
     public static final String SCIENTIFIC_ABSTRACTOR = "ScientificAbstractor";
     /** CSM Group used to define admin abstractor role.**/
     public static final String ADMIN_ABSTRACTOR = "AdminAbstractor";
+    /** CSM Group used to define results abstractor role.**/
+    public static final String RESULTS_ABSTRACTOR = "ResultsAbstractor";
+    /** Is user in the results abstractor role.**/
+    public static final String IS_RESULTS_ABSTRACTOR = "isResultsAbstractor";
     /** NCI. */
     public static final String NCI = "NCI";
     /** OTHER_IDENTIFIERS_LIST. */
