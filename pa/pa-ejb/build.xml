@@ -9,7 +9,7 @@
     <property file="${basedir}/../../build-pa/tier-properties/build-lite-${tier}.properties"/>
     <property file="${basedir}/../../build-pa/build-lite.properties"/>
     <property file="${basedir}/../../build-pa/version.properties"/>
-    <property name="pa-ejb.coverage.line" value="78"/>
+    <property name="pa-ejb.coverage.line" value="77"/>
     <property name="pa-ejb.coverage.branch" value="64"/>
     <property name="pa-ejb.pmd.maxerrors" value="370"/>
 
@@ -253,6 +253,7 @@
                 <include name="**/*.class" />
             	<exclude name="**/gov/nih/nci/pa/service/ctgov/*.class" />
             	<exclude name="**/gov/nih/nci/pa/util/pomock/*.class" />
+            	<exclude name="**/gov/nih/nci/pa/external/*" />
             </fileset>
             <auxClasspath>            
                  <path refid="compile.classpath"/>
@@ -314,7 +315,7 @@
                 <path refid="compile.classpath"/>
                 <path refid="common.package.classpath"/>
             </classpath>
-            <fileset dir="src" includes="**/*.java" excludes="**/gov/nih/nci/pa/util/pomock/*.java"/>
+            <fileset dir="src" includes="**/*.java" excludes="**/gov/nih/nci/pa/util/pomock/*.java,**/gov/nih/nci/pa/external/*"/>
             <formatter type="plain"/>
             <formatter type="plain" toFile="${pa.report.dir}/pa-ejb/checkstyle.txt"/>
             <formatter type="xml"   toFile="${pa.report.dir}/pa-ejb/checkstyle.xml"/>
@@ -334,7 +335,8 @@
             <formatter type="html" toFile="${pa.report.dir}/pa-ejb/pmd.html"/>
             <fileset dir="src">
                 <include name="**/*.java"/>
-		<exclude name="**/gov/nih/nci/pa/util/pomock/*.java" />
+            	<exclude name="**/gov/nih/nci/pa/util/pomock/*.java" />
+            	<exclude name="**/gov/nih/nci/pa/external/*" />
             </fileset>
          </pmd>
     </target>
@@ -400,6 +402,7 @@
                        **/service/BaseLookUpService.class
                        **/service/ctgov/*                       
                        **/domain/*
+        	           **/external/*
                        **/iso/convert/*
                        **/iso/util/En*Converter*
                        **/service/correlation/*
