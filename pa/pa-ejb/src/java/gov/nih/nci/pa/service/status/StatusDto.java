@@ -17,7 +17,7 @@ import java.util.UUID;
 public class StatusDto implements Serializable, Comparable<StatusDto> {
     
     /**
-     * 
+     * serialVersionUID
      */
     private static final long serialVersionUID = -7251022912127118526L;
     
@@ -30,6 +30,9 @@ public class StatusDto implements Serializable, Comparable<StatusDto> {
     
     private Date updatedOn;
     private String updatedBy;
+    
+    private Date createdOn;
+    private String createdBy;
     
     private boolean editable;
     private boolean deletable;
@@ -211,6 +214,35 @@ public class StatusDto implements Serializable, Comparable<StatusDto> {
      */
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
+    }
+    
+
+    /**
+     * @return the createdOn
+     */
+    public Date getCreatedOn() {
+        return createdOn;
+    }
+
+    /**
+     * @param createdOn the createdOn to set
+     */
+    public void setCreatedOn(Date createdOn) {
+        this.createdOn = createdOn;
+    }
+
+    /**
+     * @return the createdBy
+     */
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    /**
+     * @param createdBy the createdBy to set
+     */
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 
     /**

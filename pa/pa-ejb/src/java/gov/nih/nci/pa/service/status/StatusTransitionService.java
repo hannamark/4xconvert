@@ -2,6 +2,7 @@ package gov.nih.nci.pa.service.status;
 
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.status.json.AppName;
+import gov.nih.nci.pa.service.status.json.StatusRules;
 import gov.nih.nci.pa.service.status.json.TransitionFor;
 import gov.nih.nci.pa.service.status.json.TrialType;
 
@@ -15,7 +16,14 @@ import java.util.List;
  * NCI.
  */
 public interface StatusTransitionService {
-
+    
+    /**
+     * Returns the instance of StatusRules to be used in the validation
+     * @return Instance of StatusRules
+     * @throws PAException - Any error
+     */
+     StatusRules getStatusRules() throws PAException;
+    
     /**
      * Validates a single status transition as per the rules in
      * StatusTransitionConfig
