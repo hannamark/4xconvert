@@ -11,7 +11,7 @@ System.getProperty( "os.name" ).toLowerCase().indexOf( "win" ) >= 0
 	<parameter name="IMAGES_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{OS_WINDOWS}.booleanValue() ?
 "C:\\Users\\ctrp\\code\\reg-web\\src\\webapp\\images\\" :
-"repo:"]]></defaultValueExpression>
+"/Users/vinodh/sb/ctrp-ws/code-12092014/code/pa/pa-web/src/webapp/images/"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="End_Date" class="java.util.Date">
 		<parameterDescription><![CDATA[]]></parameterDescription>
@@ -201,7 +201,7 @@ org.apache.commons.lang.time.DateUtils.addWeeks($P{End_Date}, -2)
 	<title>
 		<band height="37" splitType="Stretch">
 			<image>
-				<reportElement uuid="1dcb890e-b83e-459a-8d6a-1ed970ab71f6" mode="Opaque" x="0" y="0" width="460" height="37" backcolor="#A90101"/>
+				<reportElement mode="Opaque" x="0" y="0" width="460" height="37" backcolor="#A90101" uuid="1dcb890e-b83e-459a-8d6a-1ed970ab71f6"/>
 				<imageExpression><![CDATA[$P{IMAGES_DIR} + "logotype.gif"]]></imageExpression>
 			</image>
 		</band>
@@ -209,21 +209,21 @@ org.apache.commons.lang.time.DateUtils.addWeeks($P{End_Date}, -2)
 	<pageHeader>
 		<band height="42" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="c40c7162-9eac-4604-80df-30028ea8b1aa" mode="Opaque" x="0" y="0" width="460" height="22" forecolor="#FFFFFF" backcolor="#475B82"/>
+				<reportElement mode="Opaque" x="0" y="0" width="460" height="22" forecolor="#FFFFFF" backcolor="#475B82" uuid="c40c7162-9eac-4604-80df-30028ea8b1aa"/>
 				<textElement>
 					<font size="15" isItalic="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Bi-Weekly Trials Count"]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement uuid="ecf30522-3d21-41e3-bd1f-5c6ae85a4f42" mode="Opaque" x="0" y="22" width="460" height="20" forecolor="#FFFFFF" backcolor="#475B82"/>
+				<reportElement mode="Opaque" x="0" y="22" width="460" height="20" forecolor="#FFFFFF" backcolor="#475B82" uuid="ecf30522-3d21-41e3-bd1f-5c6ae85a4f42"/>
 				<textElement textAlignment="Left">
 					<font size="13"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Date Range:  "
 + new SimpleDateFormat("dd-MMM-yyyy").format($P{Calculated_Start_Date})
 + "  to  " +
-new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression>
+new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date}) + $P{Calculated_Start_Date}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -233,7 +233,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 	<detail>
 		<band height="440" splitType="Stretch">
 			<staticText>
-				<reportElement uuid="1fdbe963-cacc-4949-87e9-782e6819bc89" mode="Opaque" x="0" y="0" width="260" height="20" backcolor="#D6D6FF"/>
+				<reportElement mode="Opaque" x="0" y="0" width="260" height="20" backcolor="#D6D6FF" uuid="1fdbe963-cacc-4949-87e9-782e6819bc89"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -247,7 +247,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<text><![CDATA[Submitted Trials]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="815cb5bc-93f6-4009-9b20-f8bde88c743f" mode="Opaque" x="0" y="20" width="260" height="20" backcolor="#D6D6FF"/>
+				<reportElement mode="Opaque" x="0" y="20" width="260" height="20" backcolor="#D6D6FF" uuid="815cb5bc-93f6-4009-9b20-f8bde88c743f"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -261,7 +261,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<text><![CDATA[Abbreviated Trial Category Submissions]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="91864f55-3b33-4438-998b-5a2dac3d2cac" mode="Opaque" x="0" y="40" width="260" height="20" backcolor="#D6D6FF"/>
+				<reportElement mode="Opaque" x="0" y="40" width="260" height="20" backcolor="#D6D6FF" uuid="91864f55-3b33-4438-998b-5a2dac3d2cac"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -275,7 +275,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<text><![CDATA[Completed Trial Category Submissions]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="6070af77-4581-470f-bfcc-7e8081119fc9" mode="Opaque" x="0" y="60" width="260" height="20" backcolor="#D6D6FF"/>
+				<reportElement mode="Opaque" x="0" y="60" width="260" height="20" backcolor="#D6D6FF" uuid="6070af77-4581-470f-bfcc-7e8081119fc9"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -289,7 +289,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<text><![CDATA[Accepted Trials]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="2e4ee9a6-7c01-4012-9965-07e0e2734cc7" mode="Opaque" x="0" y="80" width="260" height="20" backcolor="#D6D6FF"/>
+				<reportElement mode="Opaque" x="0" y="80" width="260" height="20" backcolor="#D6D6FF" uuid="2e4ee9a6-7c01-4012-9965-07e0e2734cc7"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -303,7 +303,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<text><![CDATA[Rejected Trials]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="94ed0571-9003-4a23-b012-51f2a274b3ee" mode="Opaque" x="0" y="100" width="260" height="20" backcolor="#D6D6FF"/>
+				<reportElement mode="Opaque" x="0" y="100" width="260" height="20" backcolor="#D6D6FF" uuid="94ed0571-9003-4a23-b012-51f2a274b3ee"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -317,7 +317,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<text><![CDATA[Trials Went On-Hold]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="20a2c584-cbec-4449-bffa-73a44766c046" mode="Opaque" x="0" y="120" width="260" height="20" backcolor="#D6D6FF"/>
+				<reportElement mode="Opaque" x="0" y="120" width="260" height="20" backcolor="#D6D6FF" uuid="20a2c584-cbec-4449-bffa-73a44766c046"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -331,7 +331,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<text><![CDATA[Still On-Hold Status Trials]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="723a788c-9a71-4af4-9c7b-2406c582863a" mode="Opaque" x="0" y="140" width="260" height="20" backcolor="#D6D6FF"/>
+				<reportElement mode="Opaque" x="0" y="140" width="260" height="20" backcolor="#D6D6FF" uuid="723a788c-9a71-4af4-9c7b-2406c582863a"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -345,7 +345,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<text><![CDATA[Total Abstracted Trials]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="9db77bde-9835-4d48-9bfc-2af09227d430" mode="Opaque" x="0" y="160" width="260" height="20" backcolor="#D6D6FF"/>
+				<reportElement mode="Opaque" x="0" y="160" width="260" height="20" backcolor="#D6D6FF" uuid="9db77bde-9835-4d48-9bfc-2af09227d430"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -359,7 +359,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<text><![CDATA[Abstracted Abbreviated (C) Trials]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="ee9b28b1-2619-4614-a417-ecac65865478" mode="Opaque" x="0" y="180" width="260" height="20" backcolor="#D6D6FF"/>
+				<reportElement mode="Opaque" x="0" y="180" width="260" height="20" backcolor="#D6D6FF" uuid="ee9b28b1-2619-4614-a417-ecac65865478"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -373,7 +373,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<text><![CDATA[Abstracted Completed (C) Trials]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="3925df05-27dc-4d7c-a876-f9034ef26e3f" mode="Opaque" x="0" y="200" width="260" height="20" backcolor="#D6D6FF"/>
+				<reportElement mode="Opaque" x="0" y="200" width="260" height="20" backcolor="#D6D6FF" uuid="3925df05-27dc-4d7c-a876-f9034ef26e3f"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -387,7 +387,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<text><![CDATA[TSR Sent Trials]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="476628bd-e1a9-4630-9062-7b1acd6b6c41" mode="Opaque" x="0" y="220" width="260" height="20" backcolor="#D6D6FF"/>
+				<reportElement mode="Opaque" x="0" y="220" width="260" height="20" backcolor="#D6D6FF" uuid="476628bd-e1a9-4630-9062-7b1acd6b6c41"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -401,7 +401,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<text><![CDATA[Amendments Total Trials Submitted]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="1609a86c-5bf0-4728-b21c-60f4d5b61a5e" mode="Opaque" x="0" y="240" width="260" height="20" backcolor="#D6D6FF"/>
+				<reportElement mode="Opaque" x="0" y="240" width="260" height="20" backcolor="#D6D6FF" uuid="1609a86c-5bf0-4728-b21c-60f4d5b61a5e"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -415,7 +415,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<text><![CDATA[Amendments Accepted Trials Submitted]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="12b2d49c-e798-4291-b8b5-efb4eb4ad675" mode="Opaque" x="0" y="260" width="260" height="20" backcolor="#D6D6FF"/>
+				<reportElement mode="Opaque" x="0" y="260" width="260" height="20" backcolor="#D6D6FF" uuid="12b2d49c-e798-4291-b8b5-efb4eb4ad675"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -429,7 +429,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<text><![CDATA[Rejected Amendment Trials]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="df0cf154-2195-43d8-9526-532f3a01baa3" mode="Opaque" x="0" y="280" width="260" height="20" backcolor="#D6D6FF"/>
+				<reportElement mode="Opaque" x="0" y="280" width="260" height="20" backcolor="#D6D6FF" uuid="df0cf154-2195-43d8-9526-532f3a01baa3"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -443,7 +443,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<text><![CDATA[Still On Hold Amendment Trials]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="03003110-ff4b-4f37-a74c-5115f702b1dc" mode="Opaque" x="0" y="300" width="260" height="20" backcolor="#D6D6FF"/>
+				<reportElement mode="Opaque" x="0" y="300" width="260" height="20" backcolor="#D6D6FF" uuid="03003110-ff4b-4f37-a74c-5115f702b1dc"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -457,7 +457,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<text><![CDATA[Abstracted Amendment Trials]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="502b4052-fc54-406e-a48e-17bd342cec9c" mode="Opaque" x="0" y="320" width="260" height="20" backcolor="#D6D6FF"/>
+				<reportElement mode="Opaque" x="0" y="320" width="260" height="20" backcolor="#D6D6FF" uuid="502b4052-fc54-406e-a48e-17bd342cec9c"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -471,7 +471,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<text><![CDATA[TSR Sent Amendments]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="993b9a85-577f-46a9-8c30-4ac0da717563" mode="Opaque" x="0" y="340" width="260" height="20" backcolor="#D6D6FF"/>
+				<reportElement mode="Opaque" x="0" y="340" width="260" height="20" backcolor="#D6D6FF" uuid="993b9a85-577f-46a9-8c30-4ac0da717563"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -485,7 +485,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<text><![CDATA[Accrual Submitted Trials]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="439085c6-3350-465b-a0ea-884d6f26d624" mode="Opaque" x="0" y="360" width="260" height="20" backcolor="#D6D6FF"/>
+				<reportElement mode="Opaque" x="0" y="360" width="260" height="20" backcolor="#D6D6FF" uuid="439085c6-3350-465b-a0ea-884d6f26d624"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -499,7 +499,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<text><![CDATA[Accrual Validation Passed Count]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="f537c752-41c0-45b3-8d1b-61d43622fed6" mode="Opaque" x="0" y="380" width="260" height="20" backcolor="#D6D6FF"/>
+				<reportElement mode="Opaque" x="0" y="380" width="260" height="20" backcolor="#D6D6FF" uuid="f537c752-41c0-45b3-8d1b-61d43622fed6"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -513,7 +513,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<text><![CDATA[Trials Update All Trials]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="103f950d-022e-4c35-b952-4b4b418c8d73" mode="Opaque" x="0" y="400" width="260" height="20" backcolor="#D6D6FF"/>
+				<reportElement mode="Opaque" x="0" y="400" width="260" height="20" backcolor="#D6D6FF" uuid="103f950d-022e-4c35-b952-4b4b418c8d73"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -527,7 +527,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<text><![CDATA[Trials Update Complete Trials]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="c3298791-4bca-49ef-9108-125fa12e8b94" mode="Opaque" x="0" y="420" width="260" height="20" backcolor="#D6D6FF"/>
+				<reportElement mode="Opaque" x="0" y="420" width="260" height="20" backcolor="#D6D6FF" uuid="c3298791-4bca-49ef-9108-125fa12e8b94"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -541,7 +541,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<text><![CDATA[Trials Update Abbreviated Trials]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="acebb791-55bf-4017-9924-981139b1063e" x="260" y="0" width="200" height="20"/>
+				<reportElement x="260" y="0" width="200" height="20" uuid="acebb791-55bf-4017-9924-981139b1063e"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -555,7 +555,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<textFieldExpression><![CDATA[$F{Submitted_Trials}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="89806530-9d65-4ca5-a6a2-4960a21099b2" x="260" y="20" width="200" height="20"/>
+				<reportElement x="260" y="20" width="200" height="20" uuid="89806530-9d65-4ca5-a6a2-4960a21099b2"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -569,7 +569,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<textFieldExpression><![CDATA[$F{Abbreviated_Trial_Category_Submissions}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="6e8a03ba-00f5-42bf-a62b-8e3e561c256b" x="260" y="40" width="200" height="20"/>
+				<reportElement x="260" y="40" width="200" height="20" uuid="6e8a03ba-00f5-42bf-a62b-8e3e561c256b"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -583,7 +583,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<textFieldExpression><![CDATA[$F{Completed_Trial_Category_Submissions}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="6ae12434-e01d-4f96-bf5c-8df16b3e0ac2" x="260" y="60" width="200" height="20"/>
+				<reportElement x="260" y="60" width="200" height="20" uuid="6ae12434-e01d-4f96-bf5c-8df16b3e0ac2"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -597,7 +597,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<textFieldExpression><![CDATA[$F{Accepted_Trials}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="7429a55c-8777-46cf-adf4-b29f1c771376" x="260" y="80" width="200" height="20"/>
+				<reportElement x="260" y="80" width="200" height="20" uuid="7429a55c-8777-46cf-adf4-b29f1c771376"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -611,7 +611,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<textFieldExpression><![CDATA[$F{Rejected Trials}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="3a717ab8-83ee-4780-bdc4-30cb52d22e83" x="260" y="100" width="200" height="20"/>
+				<reportElement x="260" y="100" width="200" height="20" uuid="3a717ab8-83ee-4780-bdc4-30cb52d22e83"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -625,7 +625,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<textFieldExpression><![CDATA[$F{Trials_Went_On-Hold}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="dc12fae5-20ea-4f47-a62a-1f0b66852b3e" x="260" y="120" width="200" height="20"/>
+				<reportElement x="260" y="120" width="200" height="20" uuid="dc12fae5-20ea-4f47-a62a-1f0b66852b3e"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -639,7 +639,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<textFieldExpression><![CDATA[$F{Still_On_Hold_Status_Trials}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="953007bf-16a6-4e00-ac1a-38f974d336aa" x="260" y="140" width="200" height="20"/>
+				<reportElement x="260" y="140" width="200" height="20" uuid="953007bf-16a6-4e00-ac1a-38f974d336aa"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -653,7 +653,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<textFieldExpression><![CDATA[$F{Total_Abstracted_Trials}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="78e6fcf3-a104-4a37-aae8-7f5998e3952b" x="260" y="160" width="200" height="20"/>
+				<reportElement x="260" y="160" width="200" height="20" uuid="78e6fcf3-a104-4a37-aae8-7f5998e3952b"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -667,7 +667,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<textFieldExpression><![CDATA[$F{Abstracted_Abbreviated(C)_Trials}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="5d11c16f-eb07-441f-9f91-29cf854c7e0a" x="260" y="180" width="200" height="20"/>
+				<reportElement x="260" y="180" width="200" height="20" uuid="5d11c16f-eb07-441f-9f91-29cf854c7e0a"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -681,7 +681,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<textFieldExpression><![CDATA[$F{Abstracted_Completed_(C)_Trials}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="7bc32000-9292-40e1-a4ee-28b839467eb2" x="260" y="200" width="200" height="20"/>
+				<reportElement x="260" y="200" width="200" height="20" uuid="7bc32000-9292-40e1-a4ee-28b839467eb2"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -695,7 +695,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<textFieldExpression><![CDATA[$F{TSR_Sent_Trials}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="9f9bc519-9d09-4b99-bf34-209a8f6c9c0b" x="260" y="220" width="200" height="20"/>
+				<reportElement x="260" y="220" width="200" height="20" uuid="9f9bc519-9d09-4b99-bf34-209a8f6c9c0b"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -709,7 +709,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<textFieldExpression><![CDATA[$F{Amendments_Total_Trials_submiteed}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="88027a7c-ee68-4c91-b480-b417811e3b10" x="260" y="240" width="200" height="20"/>
+				<reportElement x="260" y="240" width="200" height="20" uuid="88027a7c-ee68-4c91-b480-b417811e3b10"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -723,7 +723,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<textFieldExpression><![CDATA[$F{Amendments_Accepted_Trials_submiteed}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="287f2e3f-fe9d-4258-9a61-e2666b204bfd" x="260" y="260" width="200" height="20"/>
+				<reportElement x="260" y="260" width="200" height="20" uuid="287f2e3f-fe9d-4258-9a61-e2666b204bfd"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -737,7 +737,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<textFieldExpression><![CDATA[$F{Rejected_Amendment_Trials}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="361600cb-a4ae-4188-8496-4228d2e0f966" x="260" y="280" width="200" height="20"/>
+				<reportElement x="260" y="280" width="200" height="20" uuid="361600cb-a4ae-4188-8496-4228d2e0f966"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -751,7 +751,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<textFieldExpression><![CDATA[$F{Still_On_Hold_Amendment_Trials}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="6f53b597-ab65-4aa7-a4c0-ffa60d4711d9" x="260" y="300" width="200" height="20"/>
+				<reportElement x="260" y="300" width="200" height="20" uuid="6f53b597-ab65-4aa7-a4c0-ffa60d4711d9"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -765,7 +765,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<textFieldExpression><![CDATA[$F{Abstracted_Amendment_Trials}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="c1dad00f-9600-45a9-a769-6e27cfd7e36e" x="260" y="320" width="200" height="20"/>
+				<reportElement x="260" y="320" width="200" height="20" uuid="c1dad00f-9600-45a9-a769-6e27cfd7e36e"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -779,7 +779,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<textFieldExpression><![CDATA[$F{TSR_Sent_Amendments}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="ecb03729-54ef-436a-82c1-fbce386f1e7a" x="260" y="340" width="200" height="20"/>
+				<reportElement x="260" y="340" width="200" height="20" uuid="ecb03729-54ef-436a-82c1-fbce386f1e7a"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -793,7 +793,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<textFieldExpression><![CDATA[$F{Accrual_Submitted_Trials}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="1714242a-f31b-49d7-bb2c-19d47aff6593" x="260" y="360" width="200" height="20"/>
+				<reportElement x="260" y="360" width="200" height="20" uuid="1714242a-f31b-49d7-bb2c-19d47aff6593"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -807,7 +807,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<textFieldExpression><![CDATA[$F{Accrual_Validation_passed_Count}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="6c7ce1ab-c419-4a4d-bd6c-5a3da11bc6a9" x="260" y="380" width="200" height="20"/>
+				<reportElement x="260" y="380" width="200" height="20" uuid="6c7ce1ab-c419-4a4d-bd6c-5a3da11bc6a9"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -821,7 +821,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<textFieldExpression><![CDATA[$F{Trials_Updated_All_Trials}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="82edc7b1-47ad-4b8f-a8c9-edf8c549c37f" x="260" y="400" width="200" height="20"/>
+				<reportElement x="260" y="400" width="200" height="20" uuid="82edc7b1-47ad-4b8f-a8c9-edf8c549c37f"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -835,7 +835,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<textFieldExpression><![CDATA[$F{Trials_Update_Complete_Trials}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="c6151751-9055-4e8a-86d3-e2f99de6d628" x="260" y="420" width="200" height="20"/>
+				<reportElement x="260" y="420" width="200" height="20" uuid="c6151751-9055-4e8a-86d3-e2f99de6d628"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
