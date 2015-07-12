@@ -12,6 +12,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebElement;
 
 /**
  * @author Denis G. Krylov
@@ -142,7 +144,8 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
                 selenium.getValue("id=trial_" + trial.id + "_site_0_pi_poid"));
 
         selenium.type("id=trial_" + trial.id + "_site_0_localID", "XYZ0001");
-        selenium.type("id=trial_" + trial.id + "_site_0_pgcode", "PG0001");
+        
+        useSelect2ToPickAnOption("trial_" + trial.id + "_site_0_pgcode", "PC-NM-1", "PC-NM-1");
 
         populateStatusHistory(trial);
 
@@ -415,5 +418,46 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
         selenium.click("//table[@id='row']/tbody/tr[1]/td[8]/button");
         waitForPageToLoad();
         driver.switchTo().defaultContent();
+    }
+    
+    @SuppressWarnings("deprecation")
+    private void useSelect2ToPickAnOption(String id, String sendKeys,
+            String option) {
+        WebElement sitesBox = driver.findElement(By
+                .xpath("//span[preceding-sibling::select[@id='" + id
+                        + "']]//input[@type='search']"));
+        sitesBox.click();
+        assertTrue(s.isElementPresent("select2-" + id + "-results"));
+        sitesBox.sendKeys(sendKeys);
+        
+        By xpath = null;
+        try {
+            xpath = By.xpath("//li[@role='treeitem' and text()='" + option
+                    + "']");
+            waitForElementToBecomeAvailable(xpath, 3);
+        } catch (TimeoutException e) {
+            xpath = By.xpath("//li[@role='treeitem']//b[text()='" + option
+                    + "']");
+            waitForElementToBecomeAvailable(xpath, 15);
+        }
+
+        driver.findElement(xpath).click();
+    }
+
+    /**
+     * @param option
+     */
+    @SuppressWarnings("deprecation")
+    private void assertOptionSelected(String option) {
+        assertTrue(s.isElementPresent(getXPathForSelectedOption(option)));
+    }
+
+    /**
+     * @param option
+     * @return
+     */
+    private String getXPathForSelectedOption(String option) {
+        return "//li[@class='select2-selection__choice' and @title='" + option
+                + "']";
     }
 }

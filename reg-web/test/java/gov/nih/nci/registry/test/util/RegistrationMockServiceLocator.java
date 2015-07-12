@@ -10,6 +10,7 @@ import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.OrgFamilyProgramCode;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
@@ -96,6 +97,7 @@ import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.I2EGrantsServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
+import gov.nih.nci.pa.service.util.OrgFamilyProgramCodeService;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderLocal;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
@@ -943,6 +945,32 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
             //Nothing to do
         }
         return statusTransitionService;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.util.ServiceLocator#getOrgFamilyProgramCodeService()
+     */
+    @Override
+    public OrgFamilyProgramCodeService getOrgFamilyProgramCodeService() {
+        OrgFamilyProgramCodeService orgFamPrgCdSvc 
+                =  mock(OrgFamilyProgramCodeService.class);
+        List<OrgFamilyProgramCode> results 
+            = new ArrayList<OrgFamilyProgramCode>();
+        for(int i=0; i<3; i++) {
+            OrgFamilyProgramCode pc = new OrgFamilyProgramCode();
+            pc.setId(1L);
+            pc.setFamilyPoId("1");
+            pc.setProgramCode("PrgCd" + i);
+            pc.setProgramName("PrgNm" + i);
+            
+            results.add(pc);
+        }
+        try {
+            when(orgFamPrgCdSvc.getProgramCodesByFamilyPOId("1")).thenReturn(results);
+        } catch (PAException e) {
+            e.printStackTrace();
+        }
+        return orgFamPrgCdSvc;
     }
 
     @Override

@@ -93,7 +93,9 @@ import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -113,7 +115,7 @@ public class SubmittedOrganizationDTO implements Serializable {
     private String targetAccrualNumber;
     private String investigator;
     private Long investigatorId;
-    private String programCode;
+    private List<String> programCodes;
     private String siteLocalTrialIdentifier;
     private String sitePoId;
     private String dateOpenedforAccrual;
@@ -164,21 +166,38 @@ public class SubmittedOrganizationDTO implements Serializable {
         }
         dateOpenedforAccrual = IvlConverter.convertTs().convertLowToString(sp.getAccrualDateRange());
         dateClosedforAccrual = IvlConverter.convertTs().convertHighToString(sp.getAccrualDateRange());
-        programCode = StConverter.convertToString(sp.getProgramCodeText());
+        setProgramCode(StConverter.convertToString(sp.getProgramCodeText()));
     }
 
     /**
      * @return the programCode
      */
     public String getProgramCode() {
-        return programCode;
+        return StringUtils.join(getProgramCodes(), ",");
     }
 
     /**
-     * @param programCode the programCode to set
+     * @param programCode
+     *            the programCode to set
      */
     public void setProgramCode(String programCode) {
-        this.programCode = programCode;
+        String[] pcArr = StringUtils.split(programCode, ",");
+        setProgramCodes(pcArr == null ? null : Arrays.asList(pcArr));
+    }
+
+    /**
+     * @return the programCodes
+     */
+    public List<String> getProgramCodes() {
+        return programCodes;
+    }
+
+    /**
+     * @param programCodes
+     *            the programCodes to set
+     */
+    public void setProgramCodes(List<String> programCodes) {
+        this.programCodes = programCodes;
     }
 
     /**
@@ -333,7 +352,7 @@ public class SubmittedOrganizationDTO implements Serializable {
                 + ", recruitmentStatusDate=" + recruitmentStatusDate
                 + ", targetAccrualNumber=" + targetAccrualNumber
                 + ", investigator=" + investigator + ", investigatorId="
-                + investigatorId + ", programCode=" + programCode
+                + investigatorId + ", programCode=" + getProgramCode()
                 + ", siteLocalTrialIdentifier=" + siteLocalTrialIdentifier
                 + ", dateOpenedforAccrual=" + dateOpenedforAccrual
                 + ", dateClosedforAccrual=" + dateClosedforAccrual
@@ -388,7 +407,7 @@ public class SubmittedOrganizationDTO implements Serializable {
     public boolean isBlank() {
         return investigatorId == null
                 && StringUtils.isBlank(siteLocalTrialIdentifier)
-                && StringUtils.isBlank(programCode)
+                && CollectionUtils.isEmpty(programCodes)
                 && StringUtils.isBlank(recruitmentStatus)
                 && StringUtils.isBlank(recruitmentStatusDate)
                 && StringUtils.isBlank(dateOpenedforAccrual)

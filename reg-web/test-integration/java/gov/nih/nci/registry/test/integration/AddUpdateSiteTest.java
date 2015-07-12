@@ -94,6 +94,8 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebElement;
 
 /**
  * Tests trial search in Registry, as well as search-related functionality.
@@ -105,7 +107,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testPO8268_SingleSiteFromFamily() throws URISyntaxException,
+    public void abctestPO8268_SingleSiteFromFamily() throws URISyntaxException,
             SQLException {
         TrialInfo info = createAndSelectTrial();
 
@@ -131,7 +133,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testPO_8615_StatusHistoryIsValidatedUponEntrance()
+    public void abctestPO_8615_StatusHistoryIsValidatedUponEntrance()
             throws URISyntaxException, SQLException {
         TrialInfo info = createAndSelectTrial();
 
@@ -162,15 +164,16 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testAddMySite() throws URISyntaxException, SQLException {
+    public void abctestAddMySite() throws URISyntaxException, SQLException {
+        insertOrgFamilyProgramCode("1");
         TrialInfo info = createAndSelectTrial();
         addMySiteAndVerify(info);
-
     }
 
     @SuppressWarnings("deprecation")
     @Test
     public void testUpdateMySite() throws URISyntaxException, SQLException {
+        insertOrgFamilyProgramCode("2");
         TrialInfo info = createAndSelectTrial();
         addMySiteAndVerify(info);
         logoutUser();
@@ -182,7 +185,6 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         // Populate fields.
         s.type("localIdentifier", "DCP_SITE_U");
         pickInvestigator();
-        s.type("programCode", "DCP_PROGRAM_U");
 
         deleteStatus(info, 2);
         deleteStatus(info, 1);
@@ -215,7 +217,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[2]"));
         assertEquals("DCP_SITE_U",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[3]"));
-        assertEquals("DCP_PROGRAM_U",
+        assertEquals("PC-CD-1",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[4]"));
         assertEquals("Approved",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[5]"));
@@ -235,6 +237,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
      * @throws SQLException
      */
     private void addMySiteAndVerify(TrialInfo info) throws SQLException {
+        
         assignTrialOwner("submitter-ci", info.id);
         findInMyTrials();
         invokeAction("Add My Site");
@@ -260,9 +263,9 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
 
         // Investigator.
         pickInvestigator();
-
-        s.type("programCode", "DCP_PROGRAM");
-
+        
+        useSelect2ToPickAnOption("programCodes", "PC-NM-1", "PC-NM-1");
+        pause(5000);
         populateStatusHistory(info);
 
         s.click("xpath=//button/i[@class='fa-floppy-o']");
@@ -271,13 +274,14 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         // Check results.
         waitForTextToAppear(By.className("alert-success"),
                 "Message: Your site has been added to the trial.", 10);
+        pause(15000);
         assertEquals("National Cancer Institute Division of Cancer Prevention",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[1]"));
         assertEquals("Doe,John",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[2]"));
         assertEquals(localID,
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[3]"));
-        assertEquals("DCP_PROGRAM",
+        assertEquals("PC-CD-1",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[4]"));
         assertEquals("Approved",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[5]"));
@@ -285,6 +289,21 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[6]"));
 
         verifySiteStatusHistory(info, localID);
+    }
+    
+    /**
+     * Insert a new program code if not present
+     */
+    private void insertOrgFamilyProgramCode(String orgFamPoId) {
+        QueryRunner runner = new QueryRunner();
+        String sql = "insert into org_family_program_code (identifier, org_family_po_id,"
+                + " program_name, program_code)"
+                + "values((SELECT NEXTVAL('HIBERNATE_SEQUENCE')), '" 
+                + orgFamPoId +"', 'PC-NM-1', 'PC-CD-1')";
+        try {
+            runner.update(connection, sql);
+        } catch (SQLException e) {
+        }
     }
 
     /**
@@ -502,7 +521,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testPO8268_AllSitesFromFamilyAndNotAffiliatedWithCancerCenter()
+    public void abctestPO8268_AllSitesFromFamilyAndNotAffiliatedWithCancerCenter()
             throws URISyntaxException, SQLException {
         TrialInfo info = createAndSelectTrial();
 
@@ -530,8 +549,9 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testPO8268_AllSitesFromFamilyAndAffiliatedWithCancerCenter()
+    public void abctestPO8268_AllSitesFromFamilyAndAffiliatedWithCancerCenter()
             throws URISyntaxException, SQLException {
+        insertOrgFamilyProgramCode("2");
 
         changeUserAffiliation("submitter-ci@example.com", "4",
                 "National Cancer Institute");
@@ -587,7 +607,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         clickAndWait("pickSiteBtn");
         assertEquals("Cancer Therapy Evaluation Program",
                 selenium.getValue("organizationName"));
-        selenium.type("programCode", "CTEP_PGCODE");
+        useSelect2ToPickAnOption("programCodes", "PC-NM-1", "PC-NM-1");
         driver.findElement(By.xpath("//button[normalize-space(text())='Save']"))
                 .click();
         driver.switchTo().defaultContent();
@@ -597,7 +617,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         // Make sure the right site got updated.
         assertEquals("Cancer Therapy Evaluation Program",
                 selenium.getText("//table[@id='row']/tbody/tr[2]/td[1]"));
-        assertEquals("CTEP_PGCODE",
+        assertEquals("PC-CD-1",
                 selenium.getText("//table[@id='row']/tbody/tr[2]/td[4]"));
     }
 
@@ -623,6 +643,47 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 By.xpath("//li/a[normalize-space(text())='" + action + "']"))
                 .click();
         selenium.selectFrame("popupFrame");
+    }
+    
+    @SuppressWarnings("deprecation")
+    private void useSelect2ToPickAnOption(String id, String sendKeys,
+            String option) {
+        WebElement sitesBox = driver.findElement(By
+                .xpath("//span[preceding-sibling::select[@id='" + id
+                        + "']]//input[@type='search']"));
+        sitesBox.click();
+        assertTrue(s.isElementPresent("select2-" + id + "-results"));
+        sitesBox.sendKeys(sendKeys);
+
+        By xpath = null;
+        try {
+            xpath = By.xpath("//li[@role='treeitem' and text()='" + option
+                    + "']");
+            waitForElementToBecomeAvailable(xpath, 3);
+        } catch (TimeoutException e) {
+            xpath = By.xpath("//li[@role='treeitem']//b[text()='" + option
+                    + "']");
+            waitForElementToBecomeAvailable(xpath, 15);
+        }
+
+        driver.findElement(xpath).click();
+    }
+
+    /**
+     * @param option
+     */
+    @SuppressWarnings("deprecation")
+    private void assertOptionSelected(String option) {
+        assertTrue(s.isElementPresent(getXPathForSelectedOption(option)));
+    }
+
+    /**
+     * @param option
+     * @return
+     */
+    private String getXPathForSelectedOption(String option) {
+        return "//li[@class='select2-selection__choice' and @title='" + option
+                + "']";
     }
 
 }

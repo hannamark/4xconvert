@@ -129,6 +129,7 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
         invokeUpdateTrial();
         verifyCalendarPopup();
     }
+   
 
     /**
      * @param info

@@ -1837,7 +1837,15 @@
     </changeSet>  
 	<changeSet id="PO-9011" author="khandalkara">
        <comment>Implement "View/Upload Trial Comparison Documents" screen.</comment>
-       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9011.sql"/>       
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9011.sql"/>
+    </changeSet>
+    <changeSet id="PO-8810" author="chandrasekaravr">
+       <comment>Add table to store org family program codes</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8810.sql"/>       
+    </changeSet>
+    <changeSet id="PO-8810-2" author="chandrasekaravr" failOnError="false" runOnChange="true" runInTransaction="false">
+       <comment>Grant copparead/pamaint access to the newly created tables.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8810-2.sql"/>       
     </changeSet>
     <changeSet id="PO-9045" author="krylovd">
        <comment>Adding 'accounts' table to hold Twitter, Mail, and other account access credentials.</comment>

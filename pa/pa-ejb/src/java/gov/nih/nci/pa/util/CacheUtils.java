@@ -31,6 +31,16 @@ public final class CacheUtils {
     private static final String TSR_SITES_CACHE_KEY = "TSR_SITES_CACHE";    
     private static final String TSR_CACHE_KEY = "TSR_CACHE";
     private static final String STUDY_SITE_CONTACTS_CACHE_KEY = "STUDY_SITE_CONTACTS_CACHE";
+    private static final String ORG_FAM_PRG_CD_CACHE_KEY = "ORG_FAM_PRG_CD_CACHE_KEY";
+    
+    /**
+     * Cache used for storing the org family program codes
+     * 
+     * @return Cache
+     */
+    public static Cache getOrgFamilyProgramCodesCache() {
+        return CACHE_MANAGER.getCache(ORG_FAM_PRG_CD_CACHE_KEY);
+    }
     
     /**
      * @return TSR_CACHE

@@ -93,6 +93,7 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.noniso.dto.OrgFamilyProgramCodeDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
@@ -104,6 +105,7 @@ import gov.nih.nci.pa.service.status.json.TrialType;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
+import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.registry.dto.SubmittedOrganizationDTO;
@@ -116,7 +118,9 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -125,6 +129,7 @@ import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import com.opensymphony.xwork2.Preparable;
 
@@ -141,6 +146,10 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction implement
     private static final String SESSION_TRIAL_NCI_ID_ATTRIBUTE = "NCI_ID";
     private static final String SESSION_TRIAL_TITLE_ATTRIBUTE = "TITLE";
     private static final String SESSION_TRIAL_LEAD_ORG_IDENTIFIER_ATTRIBUTE = "LEAD_ORG_ID";
+    
+    private static final String ORG_FAM_PRG_CDS_JSON_STR = "ORG_FAM_PRG_CDS_JSON_STR";
+    private static final String ORG_FAM_PRG_CDS = "ORG_FAM_PRG_CDS";
+    
     private static final long serialVersionUID = -5720501246071254426L;
     private static final Logger LOG = Logger
             .getLogger(AddUpdateSiteAction.class);
@@ -163,6 +172,9 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction implement
     private boolean redirectToSummary;
     private String studyProtocolId;    
     private String pickedSiteOrgPoId;
+    
+    private List<OrgFamilyProgramCodeDTO> orgFamProgramCodeDtos = new ArrayList<OrgFamilyProgramCodeDTO>();
+    private String orgFamProgramCodesAsJson;
     
     @SuppressWarnings("rawtypes")
     @Override
@@ -203,9 +215,11 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction implement
      */
     public String view() {
         try {
+            clearOrgFamilyProgramCodesFromSession();
             setInitialStatusHistory(new ArrayList<StatusDto>());
             prepareProtocolData();            
-            populateSiteDTO();
+            String poOrgId = populateSiteDTO();
+            initOrgFamilyInfo(poOrgId);
             setSiteDtoInSession();
             // PO-8268 kicks in here. If user can actually update multiple
             // sites, we need to present a dialog
@@ -249,6 +263,7 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction implement
         try {
             makeSureUserDidNotManipulateSiteIdInForm();
             prepareProtocolData();
+            populateOrgFamilyProgramCodesFromSession();
             populateSiteDTOBasedOnOrg(getPickedSiteOrgPoId());
             setSiteDtoInSession();
             return SUCCESS;
@@ -311,9 +326,10 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction implement
                 loggedInUser, spID);
     }
 
-    void populateSiteDTO() throws PAException, NullifiedEntityException {        
+    String populateSiteDTO() throws PAException, NullifiedEntityException {        
         String poOrgId = getUserAffiliationPoOrgId();  
         populateSiteDTOBasedOnOrg(poOrgId);
+        return poOrgId;
     }
 
     /**
@@ -352,6 +368,48 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction implement
         }
         return orgId.toString();
     }
+    
+    /**
+     * Populate participating sites with families info
+     * @param poOrgId
+     * @throws PAException on error
+     */
+    private void initOrgFamilyInfo(String poOrgId) throws PAException {
+        if (StringUtils.isEmpty(poOrgId)) {
+            return;
+        }
+        Map<Long, String> familiesMap = PADomainUtils.populateFamilies(poOrgId);
+        Map<Long, List<OrgFamilyProgramCodeDTO>> famPrgCdsMap = 
+                new HashMap<Long, List<OrgFamilyProgramCodeDTO>>();
+        PADomainUtils.populateOrgFamilyProgramCodes(
+                familiesMap, famPrgCdsMap);
+        if (!famPrgCdsMap.isEmpty()) {
+            orgFamProgramCodeDtos = famPrgCdsMap.values().iterator().next();
+        }
+        try {
+            orgFamProgramCodesAsJson = new ObjectMapper().writeValueAsString(orgFamProgramCodeDtos);
+            
+            ServletActionContext.getRequest()
+            .getSession().setAttribute(ORG_FAM_PRG_CDS, orgFamProgramCodeDtos);
+            ServletActionContext.getRequest()
+            .getSession().setAttribute(ORG_FAM_PRG_CDS_JSON_STR, orgFamProgramCodesAsJson);
+        } catch (Exception e) {
+            throw new PAException("Error converting organization family program codes map into JSON string", e);
+        }
+    }
+    
+    private void clearOrgFamilyProgramCodesFromSession() {
+        ServletActionContext.getRequest().getSession().removeAttribute(ORG_FAM_PRG_CDS);
+        ServletActionContext.getRequest().getSession().removeAttribute(ORG_FAM_PRG_CDS_JSON_STR);
+    }
+   
+    @SuppressWarnings("unchecked")
+    private void populateOrgFamilyProgramCodesFromSession() {
+        setOrgFamProgramCodeDtos((List<OrgFamilyProgramCodeDTO>) 
+                ServletActionContext.getRequest().getSession().getAttribute(ORG_FAM_PRG_CDS));
+        setOrgFamProgramCodesAsJson((String) 
+                ServletActionContext.getRequest().getSession().getAttribute(ORG_FAM_PRG_CDS_JSON_STR));
+    }
 
     /**
      * @return
@@ -374,6 +432,7 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction implement
         try {
             clearErrorsAndMessages();
             siteDTO.setStatusHistory(getStatusHistoryFromSession());
+            populateOrgFamilyProgramCodesFromSession();
             new ParticipatingSiteValidator(siteDTO, this, this, paServiceUtil, statusTransitionService)
                     .validate();
             if (!(hasActionErrors() || hasFieldErrors())) {
@@ -562,5 +621,34 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction implement
     public void setStatusTransitionService(
             StatusTransitionService statusTransitionService) {
         this.statusTransitionService = statusTransitionService;
+    }
+
+    /**
+     * @return the orgFamProgramCodeDtos
+     */
+    public List<OrgFamilyProgramCodeDTO> getOrgFamProgramCodeDtos() {
+        return orgFamProgramCodeDtos;
+    }
+
+    /**
+     * @param orgFamProgramCodeDtos the orgFamProgramCodeDtos to set
+     */
+    public void setOrgFamProgramCodeDtos(
+            List<OrgFamilyProgramCodeDTO> orgFamProgramCodeDtos) {
+        this.orgFamProgramCodeDtos = orgFamProgramCodeDtos;
+    }
+
+    /**
+     * @return the orgFamProgramCodesAsJson
+     */
+    public String getOrgFamProgramCodesAsJson() {
+        return orgFamProgramCodesAsJson;
+    }
+
+    /**
+     * @param orgFamProgramCodesAsJson the orgFamProgramCodesAsJson to set
+     */
+    public void setOrgFamProgramCodesAsJson(String orgFamProgramCodesAsJson) {
+        this.orgFamProgramCodesAsJson = orgFamProgramCodesAsJson;
     }
 }

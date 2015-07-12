@@ -8,6 +8,8 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/bootstrap-multiselect.css" type="text/css" />
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/bootstrap-datetimepicker.min.css" type="text/css" />
 
+<link href="${stylePath}/select2.min.css" media="all" rel="stylesheet" type="text/css"/>
+
 <!-- Custom styles for this template -->
 <link href="${pageContext.request.contextPath}/styles/ctrp.css?23948737894" rel="stylesheet" />
 <link href="${pageContext.request.contextPath}/styles/ctrp-dark.css" rel="alternate stylesheet" title="alternate 1" />

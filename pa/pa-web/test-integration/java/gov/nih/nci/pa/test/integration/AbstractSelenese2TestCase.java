@@ -108,7 +108,8 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
     private static final int MILLISECONDS_PER_SECOND = 1000;
     private int serverPort = 39480;
     private String serverHostname = "localhost";
-    private String driverClass = "org.openqa.selenium.firefox.FirefoxDriver";
+//    private String driverClass = "org.openqa.selenium.firefox.FirefoxDriver";
+    private String driverClass = "org.openqa.selenium.chrome.ChromeDriver";
 
     protected Selenium selenium;
     protected Selenium s;
@@ -146,6 +147,8 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
         s = selenium;
        
     }
+    
+   
 
     /**
      * Converts seconds to milliseconds.

@@ -134,6 +134,8 @@ import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.I2EGrantsServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
+import gov.nih.nci.pa.service.util.OrgFamilyProgramCodeService;
+import gov.nih.nci.pa.service.util.OrgFamilyProgramCodeServiceCachingDecorator;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderLocal;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceCachingDecorator;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
@@ -779,11 +781,19 @@ public final class PaRegistry { // NOPMD
     }
     
     /**
+     * 
+     * @return OrgFamilyProgramCodeService
+     */
+    public static OrgFamilyProgramCodeService getOrgFamilyProgramCodeService() {
+        return new OrgFamilyProgramCodeServiceCachingDecorator(
+                getInstance().getServiceLocator().getOrgFamilyProgramCodeService());
+    }
+
+    /**
      * @return StudyNotesServiceLocal
      */
     public static StudyNotesService getStudyNotesService() {
         return getInstance().getServiceLocator().getStudyNotesService();
     }
    
-    
 }

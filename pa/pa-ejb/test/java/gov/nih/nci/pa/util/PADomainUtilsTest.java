@@ -83,7 +83,9 @@
 package gov.nih.nci.pa.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.services.TooManyResultsException;
@@ -103,6 +105,7 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.noniso.dto.OrgFamilyProgramCodeDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -113,7 +116,9 @@ import gov.nih.nci.services.person.PersonSearchCriteriaDTO;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -364,5 +369,34 @@ public class PADomainUtilsTest {
         sp.getOtherIdentifiers().add(cdr);
         
         assertEquals("CDR11111111111111", PADomainUtils.getCDRId(sp));
+    }
+    
+    @Test
+    public void testPopulateFamiliesByOrgPOId() throws PAException {
+        Map<Long, String> familyMap = PADomainUtils.populateFamilies("22");
+        assertNull(familyMap);
+        
+        familyMap = PADomainUtils.populateFamilies("1");
+        assertNotNull(familyMap);
+        assertFalse(familyMap.isEmpty());
+        assertEquals("value", familyMap.get(1L));
+    }
+    
+    @Test
+    public void testPopulateOrgFamilyProgramCodesByOrgPOId() throws PAException {
+        Map<Long, List<OrgFamilyProgramCodeDTO>> famPrgCdsMap = 
+                new HashMap<Long, List<OrgFamilyProgramCodeDTO>>();
+        Map<Long, String> familyMap = PADomainUtils.populateFamilies("22");
+        PADomainUtils.populateOrgFamilyProgramCodes(familyMap, famPrgCdsMap);
+        assertNull(familyMap);
+        assertTrue(famPrgCdsMap.isEmpty());
+        
+        familyMap = PADomainUtils.populateFamilies("1");
+        PADomainUtils.populateOrgFamilyProgramCodes(familyMap, famPrgCdsMap);
+        assertNotNull(familyMap);
+        assertFalse(familyMap.isEmpty());
+        assertFalse(famPrgCdsMap.isEmpty());
+        assertEquals("value", familyMap.get(1L));
+        assertNotNull(famPrgCdsMap.get(1L));
     }
 }

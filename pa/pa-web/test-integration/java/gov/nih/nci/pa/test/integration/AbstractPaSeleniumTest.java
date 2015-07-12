@@ -87,7 +87,6 @@ import static gov.nih.nci.pa.test.integration.util.TestProperties.TEST_DB_PASSWO
 import static gov.nih.nci.pa.test.integration.util.TestProperties.TEST_DB_URL;
 import static gov.nih.nci.pa.test.integration.util.TestProperties.TEST_DB_USER;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
-import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.test.integration.util.TestProperties;
 

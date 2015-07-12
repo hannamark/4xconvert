@@ -38,6 +38,7 @@ public class MockOrganizationEntityService implements
         OrganizationDTO dto = new OrganizationDTO();
         dto.setFamilyOrganizationRelationships(new DSet<Ii>());
         dto.getFamilyOrganizationRelationships().setItem(new HashSet<Ii>());
+        dto.getFamilyOrganizationRelationships().getItem().add(IiConverter.convertToPoFamilyIi("1"));
         dto.setIdentifier(IiConverter.convertToIi("1"));
         dto.setName(EnOnConverter.convertToEnOn("OrgName"));
         dto.setStatusCode(CdConverter.convertStringToCd("code"));

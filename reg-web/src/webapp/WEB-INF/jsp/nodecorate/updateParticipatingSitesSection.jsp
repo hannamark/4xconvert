@@ -6,6 +6,7 @@ ul.errorMessage > li > span {
 }
 </style>
 <s:if test="participatingSitesList.size > 0" >
+<s:hidden name="famPrgCdsMapJsonStr" id="famPrgCdsMapJsonStr"/>
 <div class="accordion">
 <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section11">Participating Sites<span class="required">*</span></a></div>
 <div id="section11" class="accordion-body in">
@@ -50,8 +51,15 @@ ul.errorMessage > li > span {
                                     </span>
                                 </td>
                                 <td>
-                                    <label><s:textfield  name="participatingSitesList[%{#psstats.index}].programCode" value="%{programCode}" cssClass="form-control"/></label>
+                                    <s:select multiple="true" list="{}" headerKey="" id="participatingSitesList_%{#psstats.index}_programCode" 
+                                    name="participatingSitesList[%{#psstats.index}].programCode" value="%{programCodes}"/>
                                     <s:hidden  name="participatingSitesList[%{#psstats.index}].id" value="%{id}"/>
+                                    <!-- Need not bind -->
+                                    <input type='hidden' name='ps_pc_sel_val_<s:property value="%{#psstats.index}"/>' id='ps_pc_sel_val_<s:property value="%{#psstats.index}"/>'
+                                             value="<s:property value="%{programCode}"/>"/>
+                                    <s:iterator value="%{families.keys}" var="key" status="keystats">
+									   <s:hidden value="%{key}" id="participatingSitesList_%{#psstats.index}_%{#keystats.index}_famPoId" name="participatingSitesList_%{#psstats.index}_%{#keystats.index}_famPoId"/>
+									</s:iterator>
                                 </td>
                             </tr>
                         </s:iterator >

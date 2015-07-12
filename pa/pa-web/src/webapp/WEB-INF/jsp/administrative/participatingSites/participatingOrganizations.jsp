@@ -13,7 +13,11 @@
 <script type="text/javascript">
             var siteRecruitmentStatusDate = new CalendarPopup();
 </script>
-
+<link
+    href="<c:url value='/scripts/js/jquery-ui-1.11.2.custom/jquery-ui.css'/>"
+    rel="stylesheet" media="all" type="text/css" />
+<link rel="stylesheet" type="text/css"
+    href="<c:url value='/scripts/js/DataTables-1.10.4/media/css/jquery.dataTables.min.css'/>">
 </head>
 <SCRIPT LANGUAGE="JavaScript">
 // this function is called from body onload in main.jsp (decorator)
@@ -63,6 +67,21 @@ function loadDiv() {
     return true;
 }
 
+(function ($) {
+    $(function() {
+        $( document ).tooltip();
+        
+        var table = $('#row').DataTable({
+            "paging":   false,
+            bFilter: false,
+            "columnDefs" : [ {
+                "targets" : 5,
+                "orderable" : false
+            }]
+        });
+        
+    });
+})(jQuery);
 
 </SCRIPT>
 
@@ -103,7 +122,10 @@ function loadDiv() {
                     </display:column>
                     <display:column escapeXml="true" property="name" titleKey="participatingOrganizations.name" sortable="true" />
                     <display:column escapeXml="true" property="recruitmentStatus" titleKey="participatingOrganizations.recruitmentStatus" sortable="true" />
-                    <display:column escapeXml="true" property="recruitmentStatusDate" titleKey="participatingOrganizations.recruitmentStatusDate" sortable="true" />
+                    <display:column escapeXml="false" titleKey="participatingOrganizations.recruitmentStatusDate" sortable="false">
+                    <span style="display: none;"><fmt:parseDate value="${row.recruitmentStatusDate}" pattern="MM/dd/yyyy"/></span>
+                    <c:out value="${row.recruitmentStatusDate}" />
+                    </display:column>
                     <display:column titleKey="participatingOrganizations.investigators">
                         <c:forEach var="item" items="${row.investigators}">
                                 <a href="javascript:void(0);" onclick="displayPersonDetails(<c:out value="${item.key}"/>)"><c:out value="${item.value}"/></a>

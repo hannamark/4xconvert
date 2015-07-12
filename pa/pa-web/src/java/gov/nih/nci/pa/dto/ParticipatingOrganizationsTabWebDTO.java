@@ -80,8 +80,11 @@ package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.noniso.dto.OrgFamilyProgramCodeDTO;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * DTO class for storing form data used in participating org.
@@ -99,6 +102,12 @@ public class ParticipatingOrganizationsTabWebDTO implements Serializable {
     private Organization facilityOrganization;
     private Organization researchOrganization;
     private boolean newParticipation = true;
+    
+    //org family info
+    private Long poOrgFamilyId;
+    private String poOrgFamilyName;
+    private List<OrgFamilyProgramCodeDTO> orgFamProgramCodeDtos = new ArrayList<OrgFamilyProgramCodeDTO>();
+    private String orgFamProgramCodesAsJson;
     
 
     /**
@@ -177,5 +186,53 @@ public class ParticipatingOrganizationsTabWebDTO implements Serializable {
     public void setNewParticipation(boolean newParticipation) {
         this.newParticipation = newParticipation;
     }
-
+    /**
+     * @return the poOrgFamilyId
+     */
+    public Long getPoOrgFamilyId() {
+        return poOrgFamilyId;
+    }
+    /**
+     * @param poOrgFamilyId the poOrgFamilyId to set
+     */
+    public void setPoOrgFamilyId(Long poOrgFamilyId) {
+        this.poOrgFamilyId = poOrgFamilyId;
+    }
+    /**
+     * @return the poOrgFamilyName
+     */
+    public String getPoOrgFamilyName() {
+        return poOrgFamilyName;
+    }
+    /**
+     * @param poOrgFamilyName the poOrgFamilyName to set
+     */
+    public void setPoOrgFamilyName(String poOrgFamilyName) {
+        this.poOrgFamilyName = poOrgFamilyName;
+    }
+    /**
+     * @return the orgFamProgramCodeDtos
+     */
+    public List<OrgFamilyProgramCodeDTO> getOrgFamProgramCodeDtos() {
+        return orgFamProgramCodeDtos;
+    }
+    /**
+     * @param orgFamProgramCodeDtos the orgFamProgramCodeDtos to set
+     */
+    public void setOrgFamProgramCodeDtos(
+            List<OrgFamilyProgramCodeDTO> orgFamProgramCodeDtos) {
+        this.orgFamProgramCodeDtos = orgFamProgramCodeDtos;
+    }
+    /**
+     * @return the orgFamProgramCodesAsJson
+     */
+    public String getOrgFamProgramCodesAsJson() {
+        return orgFamProgramCodesAsJson;
+    }
+    /**
+     * @param orgFamProgramCodesAsJson the orgFamProgramCodesAsJson to set
+     */
+    public void setOrgFamProgramCodesAsJson(String orgFamProgramCodesAsJson) {
+        this.orgFamProgramCodesAsJson = orgFamProgramCodesAsJson;
+    }
 }

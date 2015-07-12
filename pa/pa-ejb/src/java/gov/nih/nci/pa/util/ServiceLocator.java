@@ -136,6 +136,7 @@ import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.I2EGrantsServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
+import gov.nih.nci.pa.service.util.OrgFamilyProgramCodeService;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderLocal;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
@@ -545,6 +546,11 @@ public interface ServiceLocator {
      * @return StatusTransitionService
      */
     StatusTransitionService getStatusTransitionService();
+
+    /**
+     * @return OrgFamilyProgramCodeService
+     */
+    OrgFamilyProgramCodeService getOrgFamilyProgramCodeService();
     
     /**
      * @return StudyNotesServiceLocal

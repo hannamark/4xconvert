@@ -88,6 +88,8 @@ import java.util.Date;
 import org.apache.commons.dbutils.QueryRunner;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebElement;
 
 /**
  * Tests creation/editing/deleting of participating sites.
@@ -167,5 +169,117 @@ public class ParticipatingSiteTest extends AbstractPaSeleniumTest {
         
         assertTrue(selenium.isTextPresent("single \' quotes\'"));
       
+    }
+    
+    /**
+     * Creates participating sites with new program code
+     * 
+     * @throws SQLException
+     */
+    @Test
+    public void testAddingPSWithProgramCode() throws SQLException {
+        
+        TrialInfo info = createAndSelectTrial();
+
+        String siteCtepId = "DCP";
+        addSiteToTrial(info, siteCtepId, "Withdrawn");
+        Number siteID = findParticipatingSite(info,
+                "National Cancer Institute Division of Cancer Prevention");
+
+        // Reset Accrual dates.
+        clickAndWait("link=Participating Sites");
+        clickAndWait("//table[@id='row']/tbody/tr/td[7]/a");
+        s.type("participatingOrganizationsedit_dateOpenedForAccrual", "");
+        s.type("participatingOrganizationsedit_dateClosedForAccrual", "");
+        addNewPrgCd("programCodes", "PC-CD-1", "PC-NM-1", false);
+        //checking already present condition
+        addNewPrgCd("programCodes", "PC-CD-1", "PC-NM-1", true);
+        assertOptionSelected("PC-NM-1");
+        
+        s.click("link=Save");
+        waitForElementToBecomeAvailable(By.className("confirm_msg"), 10);
+        assertTrue(selenium.isTextPresent("Message. Record Updated."));
+
+        // Ensure they are showing blanks.
+        clickAndWait("link=Participating Sites");
+        clickAndWait("//table[@id='row']/tbody/tr/td[7]/a");
+        assertEquals(
+                "",
+                s.getValue("participatingOrganizationsedit_dateOpenedForAccrual"));
+        assertEquals(
+                "",
+                s.getValue("participatingOrganizationsedit_dateClosedForAccrual"));
+        
+        QueryRunner runner = new QueryRunner();
+        String sql = "delete from org_family_program_code "
+                + "where org_family_po_id='1' and program_name='PC-NM-1' and program_code='PC-CD-1'";
+        runner.update(connection, sql);
+    }
+    
+    @SuppressWarnings("deprecation")
+    private void addNewPrgCd(String id, String newCd,
+            String newValue, boolean shouldOptionBePresent) {
+        useSelect2ToPickAnOption(id, "Add New", "Add New ...");
+        
+        waitForElementById("popupFrame", 15);
+        selenium.selectFrame("popupFrame");
+        
+        boolean elementPresent = s.isElementPresent("//input[@id='poOrgFamilyName']");
+        assertTrue(elementPresent);
+        selenium.type("orgFamProgramCodeDto.programName", newValue);
+        selenium.type("orgFamProgramCodeDto.programCode", newCd);
+        selenium.click("xpath=//div[@class='actionsrow']//span[normalize-space(text())='Save']");
+        waitForPageToLoad();
+        if (shouldOptionBePresent) {
+            waitForElementToBecomeAvailable(By.className("error_msg"), 10);
+            assertTrue(selenium.isTextPresent("Entered program code and program name combo "
+                    + "already exists for, National Cancer Institute."));
+        } else {
+            waitForElementToBecomeAvailable(By.className("confirm_msg"), 10);
+            assertTrue(selenium.isTextPresent("Message. Record Created."));
+        }
+        clickAndWait("xpath=//div[@class='actionsrow']//span[normalize-space(text())='Close']");
+        driver.switchTo().defaultContent();
+    }
+    
+    @SuppressWarnings("deprecation")
+    private void useSelect2ToPickAnOption(String id, String sendKeys,
+            String option) {
+        WebElement sitesBox = driver.findElement(By
+                .xpath("//span[preceding-sibling::select[@id='" + id
+                        + "']]//input[@type='search']"));
+        sitesBox.click();
+        assertTrue(s.isElementPresent("select2-" + id + "-results"));
+        sitesBox.sendKeys(sendKeys);
+
+        By xpath = null;
+        try {
+            xpath = By.xpath("//li[@role='treeitem' and text()='" + option
+                    + "']");
+            waitForElementToBecomeAvailable(xpath, 3);
+        } catch (TimeoutException e) {
+            xpath = By.xpath("//li[@role='treeitem']//b[text()='" + option
+                    + "']");
+            waitForElementToBecomeAvailable(xpath, 15);
+        }
+
+        driver.findElement(xpath).click();
+    }
+
+    /**
+     * @param option
+     */
+    @SuppressWarnings("deprecation")
+    private void assertOptionSelected(String option) {
+        assertTrue(s.isElementPresent(getXPathForSelectedOption(option)));
+    }
+
+    /**
+     * @param option
+     * @return
+     */
+    private String getXPathForSelectedOption(String option) {
+        return "//li[@class='select2-selection__choice' and @title='" + option
+                + "']";
     }
 }

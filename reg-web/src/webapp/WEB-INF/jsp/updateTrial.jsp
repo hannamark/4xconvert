@@ -16,6 +16,13 @@
         <c:url value="/protected/ajaxorganizationContactgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
         <c:url value="/protected/ajaxManageGrantsActionshowWaitDialog.action" var="reviewProtocolUrl"/>
         <c:url value="/protected/ajaxorganizationGenericContactlookupByTitle.action" var="lookupOrgGenericContactsUrl"/>
+        
+        <style type="text/css">
+        span.select2-container {
+                width: 200px !important;
+                max-width: 280px; 
+            }
+        </style>
         <script type="text/javascript" language="javascript">
             jQuery(function() {
                 jQuery("#serialNumber").autocomplete({delay: 250,
@@ -170,6 +177,84 @@
             document.observe("dom:loaded", function() {
                                                displayTrialStatusDefinition('trialDTO_statusCode');
                                            });
+
+            function initProgramCodeOptions(pcObj) {
+                var pcs = [];
+                if(!pcObj) {
+                    return pcs;
+                    }
+
+                var k=0;
+                pcObj = pcObj.toArray();
+                for(var i=0; i< pcObj.size(); i++) {
+                    k = k+ 1;
+                    pcs[k] = {};
+                    pcs[k]["id"] = pcObj[i].programCode;
+                    pcs[k]["text"] = pcObj[i].programName;
+                }
+                
+                return pcs;
+             }
+
+            function initProgramCodeSelect2(pcId, pcObj) {
+                var pcs = initProgramCodeOptions(pcObj);
+                var selVals = pcId.val();
+                // Init Select2 boxes.
+                pcId.select2({
+                      placeholder: "All",
+                      data: pcs
+                });
+                
+                // Prevent opening of the Select2 box upon unselect.
+                var ts = 0;
+                jQuery(".select2-hidden-accessible").on("select2:unselect", function (e) { 
+                    ts = e.timeStamp;
+                }).on("select2:opening", function (e) { 
+                    if (e.timeStamp - ts < 100) {                   
+                        e.preventDefault();
+                    }
+                });
+             }
+
+            function setProgramCodeValue(pcId, selVal) {
+                if(selVal == null || selVal == '') {
+                    return;
+                 }
+                if(!jQuery.isArray(selVal)) {
+                    selVal = selVal.split(', ');
+                  }
+                pcId.val(selVal).trigger('change');
+           }
+            
+            (function($){
+                $(function(){
+                    var famPrgCdsJson = $("#famPrgCdsMapJsonStr");
+                    var famPrgCds ={};
+                    if(famPrgCdsJson){
+                    	famPrgCds = $.parseJSON(famPrgCdsJson.val());
+                     } 
+                    
+                    var psCount = <s:property value="participatingSitesList.size"/>;
+                    for(var i=0; i<psCount; i++) {
+                        var pcId = $("#participatingSitesList_"+i+"_programCode");
+                        //just using first family program codes for now (expected only one family per PS)
+                        var famPoId = $("#participatingSitesList_"+i+"_0_famPoId");
+                        if(famPoId) {
+                            famPoId = famPoId.val();
+                            var pcObj = famPrgCds[famPoId];
+                            initProgramCodeSelect2(pcId, pcObj);
+
+                            var selPCs = $("#ps_pc_sel_val_"+i);
+                            if(selPCs) {
+                                setProgramCodeValue(pcId, selPCs.val());
+                            }
+                        } else {
+                        	initProgramCodeSelect2(pcId, []);
+                        }
+                        
+                    }
+                });
+            })(jQuery)
         </script>
     </head>
     <body>

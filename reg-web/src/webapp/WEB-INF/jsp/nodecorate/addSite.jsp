@@ -81,6 +81,11 @@ div.error,b.error {
 #siteStatusTable td {
 	border: 0px solid #DDDDDD !important;
 }
+
+span.select2-container {
+    width: 200px !important;
+    max-width: 280px; 
+}
 </style>
 
 <script type="text/javascript" language="javascript">
@@ -109,9 +114,66 @@ div.error,b.error {
         $('investigator').value = name;
         
     }
+
+    function initProgramCodeOptions() {
+    	var pcJson = jQuery("#orgFamProgramCodesAsJson").val();
+        var pcs = [];
+        if(!pcJson) {
+            return pcs;
+            }
+        
+        var pcObj = jQuery.parseJSON( pcJson );
+
+        var k=0;
+        pcObj = pcObj.toArray();
+        for(var i=0; i< pcObj.size(); i++) {
+            k = k+ 1;
+            pcs[k] = {};
+            pcs[k]["id"] = pcObj[i].programCode;
+            pcs[k]["text"] = pcObj[i].programName;
+        }
+        
+        return pcs;
+     }
+
+    function initProgramCodeSelect2(pcId) {
+        var pcs = initProgramCodeOptions();
+        var selVals = pcId.val();
+        // Init Select2 boxes.
+        pcId.select2({
+              placeholder: "All",
+              data: pcs
+        });
+        
+        // Prevent opening of the Select2 box upon unselect.
+        var ts = 0;
+        jQuery(".select2-hidden-accessible").on("select2:unselect", function (e) { 
+            ts = e.timeStamp;
+        }).on("select2:opening", function (e) { 
+            if (e.timeStamp - ts < 100) {                   
+                e.preventDefault();
+            }
+        });
+     }
+
+    function setProgramCodeValue(pcID, selVal) {
+        if(selVal == null || selVal == '') {
+            return;
+         }
+        if(!jQuery.isArray(selVal)) {
+            selVal = selVal.split(',');
+          }
+        pcID.val(selVal).trigger('change');
+   }
+    
     
     (function($) {
-        $(function() {        	
+        $(function() { 
+            var pcID = jQuery("#programCodes");
+            //init program code field as select2
+            initProgramCodeSelect2(pcID);
+            setProgramCodeValue(pcID, '<c:out value="${siteDTO.programCode}"/>'); 
+                   	
             var table = $('#siteStatusHistoryTable')
                     .DataTable(
                             {
@@ -413,6 +475,8 @@ div.error,b.error {
             	   table.ajax.reload();
             }
 
+            
+
         });
     })(jQuery);
 
@@ -437,6 +501,7 @@ div.error,b.error {
 				<s:token />
 				<s:hidden name="studyProtocolId" />
 				<s:hidden name="siteDTO.id" />
+				<s:hidden name="orgFamProgramCodesAsJson" id="orgFamProgramCodesAsJson"/>
 				<div class="container-fluid">
 					<div class="form-group row">
 						<label class="col-xs-4  control-label"> <fmt:message
@@ -517,8 +582,8 @@ div.error,b.error {
 						<label class="col-xs-4 control-label" for="programCode"> <fmt:message
 								key="add.site.programCode" /></label>
 						<div class="col-xs-4">
-							<s:textfield id="programCode" name="siteDTO.programCode"
-								cssClass="form-control" />
+							<s:select multiple="true" name="siteDTO.programCodes" id="programCodes" 
+                                list="{}" headerKey="" value="siteDTO.programCodes" />
 							<span class="alert-danger"> <s:fielderror>
 									<s:param>programCode</s:param>
 								</s:fielderror>

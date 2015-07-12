@@ -76,7 +76,7 @@
                         <s:textarea name="recStatusComments" id="recStatusComments" rows="3" cssStyle="width:240px;" maxlength="160"  cssClass="charcounter"/>
                         <span class="formErrorMsg"> 
                               <s:fielderror>
-                              <s:param>programCode</s:param>
+                              <s:param>recStatusComments</s:param>
                               </s:fielderror>                            
                         </span>                            
                     </td>               
@@ -84,7 +84,8 @@
 				<tr>
                     <td class="label"><label for="programCode">Program Code:</label></td>
                     <td class="value" colspan="2">
-                        <s:textfield name="programCode" id="programCode" maxlength="10" size="10" cssStyle="text-align:left;width:70px;float:left"/>
+                        <s:select multiple="true" name="programCodes" id="programCodes" 
+                                list="{}" headerKey="" value="programCodes" />
                         <span class="formErrorMsg"> 
                               <s:fielderror>
                               <s:param>programCode</s:param>

@@ -50,7 +50,9 @@ public class MockPoOrganizationEntityService implements
         orgDtoList.add(dto);
         
         orgDtoList.add(basicOrgDto("abc1"));
-        orgDtoList.add(basicOrgDto("1"));
+        OrganizationDTO dtoWFam = basicOrgDto("1");
+        dtoWFam.getFamilyOrganizationRelationships().getItem().add(IiConverter.convertToPoFamilyIi("1"));
+        orgDtoList.add(dtoWFam);
         orgDtoList.add(basicOrgDto("584"));
         orgDtoList.add(basicOrgDto("22"));
         familyOrgMap = new HashMap<String, String[]>();

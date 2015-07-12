@@ -83,6 +83,7 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.pa.domain.OrgFamilyProgramCode;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.StudySubject;
@@ -111,6 +112,8 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.noniso.convert.OrgFamilyProgramCodeConverter;
+import gov.nih.nci.pa.noniso.dto.OrgFamilyProgramCodeDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
@@ -128,6 +131,7 @@ import gov.nih.nci.pa.service.status.json.AppName;
 import gov.nih.nci.pa.service.status.json.ErrorType;
 import gov.nih.nci.pa.service.status.json.TransitionFor;
 import gov.nih.nci.pa.service.status.json.TrialType;
+import gov.nih.nci.pa.service.util.OrgFamilyProgramCodeService;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
@@ -145,6 +149,7 @@ import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.family.FamilyDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonDTO;
@@ -152,10 +157,13 @@ import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -165,10 +173,12 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.Status;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.Preparable;
@@ -183,6 +193,11 @@ public class ParticipatingOrganizationsAction
     extends AbstractMultiObjectDeleteAction implements Preparable { // NOPMD  
     private static final long serialVersionUID = 123412653L;
     private static final Logger LOG = Logger.getLogger(ParticipatingOrganizationsAction.class);
+    
+    /**
+     * JSON Mapper
+     */
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     
     private static final String PRIMARY_CONTACT_DISPLAY_FMT = "[%s - %s]";
     private static final String INVESTIGATOR_DISPLAY_FMT = "[%s - %s, %s]%s";
@@ -213,7 +228,8 @@ public class ParticipatingOrganizationsAction
     private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
     private StudySiteContactServiceLocal studySiteContactService;
     private StudySubjectServiceLocal studySubjectService;
-    private StatusTransitionService statusTransitionService;
+    private StatusTransitionService statusTransitionService;    
+    private OrgFamilyProgramCodeService orgFamilyProgramCodeService;
     
     private Ii spIi;
     private StudyProtocolQueryDTO spDTO;
@@ -239,13 +255,18 @@ public class ParticipatingOrganizationsAction
     private String dateOpenedForAccrual;
     private String dateClosedForAccrual;
     private Long studySiteIdentifier;
-    private String programCode;
+    private List<String> programCodes;
     private String statusCode;
     private String statusTransitionWarnings;
     private String statusTransitionErrors;
     private List<StudyOverallStatusWebDTO> siteStatusList;
     private List<StudySubjectWebDto> subjects;
     
+    private Long poOrgFamilyId;
+    private String poOrgFamilyName;
+    private List<OrgFamilyProgramCodeDTO> orgFamProgramCodeDtos = new ArrayList<OrgFamilyProgramCodeDTO>();
+    private String orgFamProgramCodesAsJson;
+
     //tracks status transition validity
     private boolean isValidTransition;
 
@@ -284,6 +305,9 @@ public class ParticipatingOrganizationsAction
         studySiteContactService = PaRegistry.getStudySiteContactService();
         studySubjectService = PaRegistry.getStudySubjectService();
         statusTransitionService = PaRegistry.getStatusTransitionService();
+        orgFamilyProgramCodeService = PaRegistry
+                .getOrgFamilyProgramCodeService();
+
         spDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession()
                 .getAttribute(Constants.TRIAL_SUMMARY);
         spIi = IiConverter.convertToStudyProtocolIi(spDTO.getStudyProtocolId());
@@ -345,11 +369,17 @@ public class ParticipatingOrganizationsAction
         setRecStatusDate(ServletActionContext.getRequest().getParameter(REC_STATUS_DATE));
         setRecStatusComments(ServletActionContext.getRequest().getParameter("recStatusComments"));
         setTargetAccrualNumber(ServletActionContext.getRequest().getParameter("targetAccrualNumber"));
-        setProgramCode(ServletActionContext.getRequest().getParameter("programCode"));
+        setProgramCodes(ServletActionContext.getRequest().getParameterValues("programCode"));
         setDateOpenedForAccrual(ServletActionContext.getRequest().getParameter("dateOpenedForAccrual"));
         setDateClosedForAccrual(ServletActionContext.getRequest().getParameter("dateClosedForAccrual"));
         setSiteLocalTrialIdentifier(ServletActionContext.getRequest().getParameter("localProtocolIdenfier"));
         
+        ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
+                .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
+        if (tab != null) {
+            copyOrgFamilyInfoFrom(tab);
+        }
+
         facilitySaveOrUpdate();
         if (hasFieldErrors() || !isValidTransition) {
             return "error_edit";
@@ -394,7 +424,11 @@ public class ParticipatingOrganizationsAction
             orgFromPO.setCountry(org.getCountryName());
             orgFromPO.setName(org.getName());
             orgFromPO.setZip(org.getPostalCode());
+            
+            initOrgFamilyProgramCodeDtos();
+            copyOrgFamilyInfoTo(tab);
         }
+        
         enforceBusinessRules();
         if ("true".equalsIgnoreCase(getProprietaryTrialIndicator())) {
             enforceBusinessRulesForProprietary();
@@ -642,6 +676,13 @@ public class ParticipatingOrganizationsAction
         setCurrentAction("edit");
         StudySiteDTO spDto = studySiteService.get(IiConverter.convertToIi(cbValue));
         editOrg = correlationUtils.getPAOrganizationByIi(spDto.getHealthcareFacilityIi());
+        String orgPoId = editOrg.getIdentifier();
+        
+        ParticipatingOrganizationsTabWebDTO tab = new ParticipatingOrganizationsTabWebDTO();
+        PaOrganizationDTO paOrgDTO = getPaOrganizationByPoId(orgPoId, true);
+        initializeFamilyInfoForSelectedOrg(paOrgDTO);
+        copyOrgFamilyInfoTo(tab);
+
         orgFromPO.setCity(editOrg.getCity());
         orgFromPO.setCountry(editOrg.getCountryName());
         orgFromPO.setName(editOrg.getName());
@@ -650,7 +691,7 @@ public class ParticipatingOrganizationsAction
         StudySiteAccrualStatusDTO status = studySiteAccrualStatusService
                 .getCurrentStudySiteAccrualStatusByStudySite(spDto.getIdentifier());
         handleSetMethodForEdit(spDto, status);
-        ParticipatingOrganizationsTabWebDTO tab = new ParticipatingOrganizationsTabWebDTO();
+        
         tab.setStudyParticipationId(cbValue);
         tab.setFacilityOrganization(editOrg);
         tab.setPoHealthCareFacilityIi(null);
@@ -859,15 +900,105 @@ public class ParticipatingOrganizationsAction
 
     /**
      * @return the organizationList
-     * @throws PAException on error.
+     * @throws PAException
+     *             on error.
      */
     public String displayOrg() throws PAException {
-        //gov.nih.nci.pa.dto.OrganizationDTO paOrgDTO = new gov.nih.nci.pa.dto.OrganizationDTO();
-        PaOrganizationDTO paOrgDTO = new PaOrganizationDTO();
+        // gov.nih.nci.pa.dto.OrganizationDTO paOrgDTO = new
+        // gov.nih.nci.pa.dto.OrganizationDTO();
         clearErrorsAndMessages();
         String orgId = ServletActionContext.getRequest().getParameter("orgId");
+        
+        ParticipatingOrganizationsTabWebDTO tab = new ParticipatingOrganizationsTabWebDTO();
+        
+        PaOrganizationDTO paOrgDTO = getPaOrganizationByPoId(orgId, true);
+        initializeFamilyInfoForSelectedOrg(paOrgDTO);
+        copyOrgFamilyInfoTo(tab);
+        
+        // store selection
+        Organization org = new Organization();
+        org.setCity(paOrgDTO.getCity());
+        org.setCountryName(paOrgDTO.getCountry());
+        org.setIdentifier(IiConverter.convertToString(selectedOrgDTO
+                .getIdentifier()));
+        org.setName(paOrgDTO.getName());
+        org.setPostalCode(paOrgDTO.getZip());
+        editOrg = new Organization();
+        editOrg.setCity(paOrgDTO.getCity());
+        editOrg.setCountryName(paOrgDTO.getCountry());
+        editOrg.setIdentifier(IiConverter.convertToString(selectedOrgDTO
+                .getIdentifier()));
+        editOrg.setName(paOrgDTO.getName());
+        editOrg.setPostalCode(paOrgDTO.getZip());
+        // setting the org values to the member var
+        orgFromPO.setCity(paOrgDTO.getCity());
+        orgFromPO.setCountry(paOrgDTO.getCountry());
+        orgFromPO.setState(paOrgDTO.getState());
+        orgFromPO.setName(paOrgDTO.getName());
+        orgFromPO.setZip(paOrgDTO.getZip());
+        
+        tab.setPoOrganizationIi(selectedOrgDTO.getIdentifier());
+        tab.setFacilityOrganization(org);
+        setNewParticipation(false);
+
+        ServletActionContext.getRequest().getSession()
+                .setAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB, tab);
+        return DISPLAYJSP;
+    }
+
+    /**
+     * @param paOrgDTO
+     * @throws PAException
+     */
+    private void initializeFamilyInfoForSelectedOrg(PaOrganizationDTO paOrgDTO)
+            throws PAException {
+        // get org family info
+        if (paOrgDTO.getFamilies() != null && !paOrgDTO.getFamilies().isEmpty()) {
+            Map.Entry<Long, String> entry = paOrgDTO.getFamilies().entrySet()
+                    .iterator().next();
+            setPoOrgFamilyId(entry.getKey());
+            setPoOrgFamilyName(entry.getValue());
+            initOrgFamilyProgramCodeDtos();
+        }
+    }
+
+    /**
+     * @throws PAException
+     */
+    private void initOrgFamilyProgramCodeDtos() throws PAException {
+        if (getPoOrgFamilyId() == null) {
+            return;
+        }
+        List<OrgFamilyProgramCode> prgCodes = orgFamilyProgramCodeService
+                .getProgramCodesByFamilyPOId(getPoOrgFamilyId().toString());
+        setOrgFamProgramCodeDtos(new OrgFamilyProgramCodeConverter()
+                .convertFromDomainToDtos(prgCodes));
+        try {
+            setOrgFamProgramCodesAsJson(MAPPER
+                    .writeValueAsString(getOrgFamProgramCodeDtos()));
+        } catch (Exception e) {
+            LOG.error("Error converting organization family program codes to JSON", e);
+        }
+    }
+
+    /**
+     * Retrieves the PaOrganizationDTO by org PO Id along with families info, if
+     * required
+     * 
+     * @param orgPoId
+     *            PO Id for the organization
+     * @param fetchFamilies flag to indicate to fetch family info
+     * @return PaOrganizationDTO instance
+     * @throws PAException
+     *             on error
+     */
+    @SuppressWarnings("unchecked")
+    public PaOrganizationDTO getPaOrganizationByPoId(String orgPoId,
+            boolean fetchFamilies) throws PAException {
+        PaOrganizationDTO paOrgDTO = new PaOrganizationDTO();
         OrganizationDTO criteria = new OrganizationDTO();
-        criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
+        criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long
+                .valueOf(orgPoId)));
 
         LimitOffset limit = new LimitOffset(1, 0);
         try {
@@ -879,32 +1010,39 @@ public class ParticipatingOrganizationsAction
         // convert the PO DTO to the pa domain
         paOrgDTO = PADomainUtils.convertPoOrganizationDTO(selectedOrgDTO, null);
 
-        // store selection
-        Organization org = new Organization();
-        org.setCity(paOrgDTO.getCity());
-        org.setCountryName(paOrgDTO.getCountry());
-        org.setIdentifier(IiConverter.convertToString(selectedOrgDTO.getIdentifier()));
-        org.setName(paOrgDTO.getName());
-        org.setPostalCode(paOrgDTO.getZip());
-        editOrg = new Organization();
-        editOrg.setCity(paOrgDTO.getCity());
-        editOrg.setCountryName(paOrgDTO.getCountry());
-        editOrg.setIdentifier(IiConverter.convertToString(selectedOrgDTO.getIdentifier()));
-        editOrg.setName(paOrgDTO.getName());
-        editOrg.setPostalCode(paOrgDTO.getZip());
-        // setting the org values to the member var
-        orgFromPO.setCity(paOrgDTO.getCity());
-        orgFromPO.setCountry(paOrgDTO.getCountry());
-        orgFromPO.setState(paOrgDTO.getState());
-        orgFromPO.setName(paOrgDTO.getName());
-        orgFromPO.setZip(paOrgDTO.getZip());
-        ParticipatingOrganizationsTabWebDTO tab = new ParticipatingOrganizationsTabWebDTO();
-        tab.setPoOrganizationIi(selectedOrgDTO.getIdentifier());
-        tab.setFacilityOrganization(org);
-        setNewParticipation(false);
-        ServletActionContext.getRequest().getSession().setAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB, tab);
-        return DISPLAYJSP;
+        if (!fetchFamilies) {
+            return paOrgDTO;
+        }
+        // set family info
+        Set<Ii> famOrgRelIiList = new HashSet<Ii>();
+        if (CollectionUtils.isNotEmpty(selectedOrgDTO
+                .getFamilyOrganizationRelationships().getItem())) {
+            famOrgRelIiList.addAll(selectedOrgDTO
+                    .getFamilyOrganizationRelationships().getItem());
+            
+            Map<Ii, FamilyDTO> familyMap = PoRegistry.getFamilyService()
+                    .getFamilies(famOrgRelIiList);
+            paOrgDTO.setFamilies(PADomainUtils.getFamilies(
+                    selectedOrgDTO.getFamilyOrganizationRelationships(), familyMap));
+        }
+        
+        return paOrgDTO;
     }
+
+    private void copyOrgFamilyInfoTo(ParticipatingOrganizationsTabWebDTO tab) {
+        tab.setPoOrgFamilyId(getPoOrgFamilyId());
+        tab.setPoOrgFamilyName(getPoOrgFamilyName());
+        tab.setOrgFamProgramCodeDtos(getOrgFamProgramCodeDtos());
+        tab.setOrgFamProgramCodesAsJson(getOrgFamProgramCodesAsJson());
+    }
+
+    private void copyOrgFamilyInfoFrom(ParticipatingOrganizationsTabWebDTO tab) {
+        setPoOrgFamilyId(tab.getPoOrgFamilyId());
+        setPoOrgFamilyName(tab.getPoOrgFamilyName());
+        setOrgFamProgramCodeDtos(tab.getOrgFamProgramCodeDtos());
+        setOrgFamProgramCodesAsJson(tab.getOrgFamProgramCodesAsJson());
+    }
+
 
     /**
      * This method is called upon clicking the second tab (Investigators).
@@ -1778,19 +1916,46 @@ public class ParticipatingOrganizationsAction
             List<StudyOverallStatusWebDTO> siteStatusList) {
         this.siteStatusList = siteStatusList;
     }
+
     /**
-      * @return the programCode
-    */
+     * @return the programCode
+     */
     public String getProgramCode() {
-      return programCode;
+        return StringUtils.join(getProgramCodes(), ",");
     }
 
     /**
-     * @param programCode the programCode to set
+     * @param programCode
+     *            the programCode to set
      */
-     public void setProgramCode(String programCode) {
-       this.programCode = programCode;
-     }
+    public void setProgramCode(String programCode) {
+        String[] pcArr = StringUtils.split(programCode, ",");
+        setProgramCodes(pcArr);
+    }
+
+    /**
+     * @return the programCodes
+     */
+    public List<String> getProgramCodes() {
+        return programCodes;
+    }
+
+    /**
+     * @param programCodes
+     *            the programCodes to set
+     */
+    public void setProgramCodes(String[] programCodes) {
+        setProgramCodes(programCodes == null ? new ArrayList<String>() : Arrays
+                .asList(programCodes));
+    }
+
+    /**
+     * @param programCodes
+     *            the programCodes to set
+     */
+    public void setProgramCodes(List<String> programCodes) {
+        this.programCodes = programCodes;
+    }
 
     /**
      * @param correlationUtils the correlationUtils to set
@@ -1902,6 +2067,22 @@ public class ParticipatingOrganizationsAction
     }
 
     /**
+     * @return the orgFamilyProgramCodeService
+     */
+    public OrgFamilyProgramCodeService getOrgFamilyProgramCodeService() {
+        return orgFamilyProgramCodeService;
+    }
+
+    /**
+     * @param orgFamilyProgramCodeService the orgFamilyProgramCodeService to set
+     */
+    public void setOrgFamilyProgramCodeService(
+            OrgFamilyProgramCodeService orgFamilyProgramCodeService) {
+        this.orgFamilyProgramCodeService = orgFamilyProgramCodeService;
+    }
+
+    
+    /**
      * 
      * @return subjects subjects
      */
@@ -1915,4 +2096,66 @@ public class ParticipatingOrganizationsAction
     public void setSubjects(List<StudySubjectWebDto> subjects) {
         this.subjects = subjects;
     }
+
+    /**
+     * @return the poOrgFamilyId
+     */
+    public Long getPoOrgFamilyId() {
+        return poOrgFamilyId;
+    }
+
+    /**
+     * @param poOrgFamilyId
+     *            the poOrgFamilyId to set
+     */
+    public void setPoOrgFamilyId(Long poOrgFamilyId) {
+        this.poOrgFamilyId = poOrgFamilyId;
+    }
+
+    /**
+     * @return the poOrgFamilyName
+     */
+    public String getPoOrgFamilyName() {
+        return poOrgFamilyName;
+    }
+
+    /**
+     * @param poOrgFamilyName
+     *            the poOrgFamilyName to set
+     */
+    public void setPoOrgFamilyName(String poOrgFamilyName) {
+        this.poOrgFamilyName = poOrgFamilyName;
+    }
+
+    /**
+     * @return the orgFamProgramCodeDtos
+     */
+    public List<OrgFamilyProgramCodeDTO> getOrgFamProgramCodeDtos() {
+        return orgFamProgramCodeDtos;
+    }
+
+    /**
+     * @param orgFamProgramCodeDtos
+     *            the orgFamProgramCodeDtos to set
+     */
+    public void setOrgFamProgramCodeDtos(
+            List<OrgFamilyProgramCodeDTO> orgFamProgramCodeDtos) {
+        this.orgFamProgramCodeDtos = orgFamProgramCodeDtos;
+    }
+
+    /**
+     * @return the orgFamProgramCodesAsJson
+     */
+    public String getOrgFamProgramCodesAsJson() {
+        return orgFamProgramCodesAsJson;
+    }
+
+    /**
+     * @param orgFamProgramCodesAsJson
+     *            the orgFamProgramCodesAsJson to set
+     */
+    public void setOrgFamProgramCodesAsJson(String orgFamProgramCodesAsJson) {
+        this.orgFamProgramCodesAsJson = orgFamProgramCodesAsJson;
+    }
+
 }

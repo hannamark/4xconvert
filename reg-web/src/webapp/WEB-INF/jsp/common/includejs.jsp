@@ -6,6 +6,7 @@
 <script type='text/javascript' src="${scriptPath}/js/bootstrap-datetimepicker.min.js"></script> 
 <script type='text/javascript' src="${scriptPath}/js/bootstrap-multiselect.js"></script>
 <script type="text/javascript" src="${scriptPath}/js/jquery-ui-1.8.23.custom.min.js"></script> 
+<script type="text/javascript" src="${scriptPath}/js/select2.min.js"></script>
 
 <script type="text/javascript">
 jQuery.noConflict();
