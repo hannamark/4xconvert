@@ -104,10 +104,10 @@ import org.openqa.selenium.WebElement;
  */
 @SuppressWarnings("deprecation")
 public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
-
+    
     @SuppressWarnings("deprecation")
     @Test
-    public void abctestPO8268_SingleSiteFromFamily() throws URISyntaxException,
+    public void testPO8268_SingleSiteFromFamily() throws URISyntaxException,
             SQLException {
         TrialInfo info = createAndSelectTrial();
 
@@ -133,7 +133,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void abctestPO_8615_StatusHistoryIsValidatedUponEntrance()
+    public void testPO_8615_StatusHistoryIsValidatedUponEntrance()
             throws URISyntaxException, SQLException {
         TrialInfo info = createAndSelectTrial();
 
@@ -155,7 +155,6 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         waitForElementToBecomeVisible(
                 By.xpath("//table[@id='siteStatusHistoryTable']/tbody/tr[2]/td[4]"),
                 15);
-        pause(5000);
         assertEquals(
                 "Interim status [APPROVED] is missing",
                 selenium.getText("//table[@id='siteStatusHistoryTable']/tbody/tr[2]/td[4]"));
@@ -164,8 +163,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void abctestAddMySite() throws URISyntaxException, SQLException {
-        insertOrgFamilyProgramCode("1");
+    public void testAddMySite() throws URISyntaxException, SQLException {
         TrialInfo info = createAndSelectTrial();
         addMySiteAndVerify(info);
     }
@@ -173,7 +171,6 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
     @SuppressWarnings("deprecation")
     @Test
     public void testUpdateMySite() throws URISyntaxException, SQLException {
-        insertOrgFamilyProgramCode("2");
         TrialInfo info = createAndSelectTrial();
         addMySiteAndVerify(info);
         logoutUser();
@@ -265,7 +262,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         pickInvestigator();
         
         useSelect2ToPickAnOption("programCodes", "PC-NM-1", "PC-NM-1");
-        pause(5000);
+        
         populateStatusHistory(info);
 
         s.click("xpath=//button/i[@class='fa-floppy-o']");
@@ -274,7 +271,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         // Check results.
         waitForTextToAppear(By.className("alert-success"),
                 "Message: Your site has been added to the trial.", 10);
-        pause(15000);
+        
         assertEquals("National Cancer Institute Division of Cancer Prevention",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[1]"));
         assertEquals("Doe,John",
@@ -289,21 +286,6 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[6]"));
 
         verifySiteStatusHistory(info, localID);
-    }
-    
-    /**
-     * Insert a new program code if not present
-     */
-    private void insertOrgFamilyProgramCode(String orgFamPoId) {
-        QueryRunner runner = new QueryRunner();
-        String sql = "insert into org_family_program_code (identifier, org_family_po_id,"
-                + " program_name, program_code)"
-                + "values((SELECT NEXTVAL('HIBERNATE_SEQUENCE')), '" 
-                + orgFamPoId +"', 'PC-NM-1', 'PC-CD-1')";
-        try {
-            runner.update(connection, sql);
-        } catch (SQLException e) {
-        }
     }
 
     /**
@@ -521,7 +503,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void abctestPO8268_AllSitesFromFamilyAndNotAffiliatedWithCancerCenter()
+    public void testPO8268_AllSitesFromFamilyAndNotAffiliatedWithCancerCenter()
             throws URISyntaxException, SQLException {
         TrialInfo info = createAndSelectTrial();
 
@@ -549,10 +531,8 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void abctestPO8268_AllSitesFromFamilyAndAffiliatedWithCancerCenter()
+    public void testPO8268_AllSitesFromFamilyAndAffiliatedWithCancerCenter()
             throws URISyntaxException, SQLException {
-        insertOrgFamilyProgramCode("2");
-
         changeUserAffiliation("submitter-ci@example.com", "4",
                 "National Cancer Institute");
 
@@ -667,23 +647,6 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         }
 
         driver.findElement(xpath).click();
-    }
-
-    /**
-     * @param option
-     */
-    @SuppressWarnings("deprecation")
-    private void assertOptionSelected(String option) {
-        assertTrue(s.isElementPresent(getXPathForSelectedOption(option)));
-    }
-
-    /**
-     * @param option
-     * @return
-     */
-    private String getXPathForSelectedOption(String option) {
-        return "//li[@class='select2-selection__choice' and @title='" + option
-                + "']";
     }
 
 }

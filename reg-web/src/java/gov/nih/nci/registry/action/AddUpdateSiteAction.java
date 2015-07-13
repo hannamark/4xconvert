@@ -263,8 +263,9 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction implement
         try {
             makeSureUserDidNotManipulateSiteIdInForm();
             prepareProtocolData();
-            populateOrgFamilyProgramCodesFromSession();
+            clearOrgFamilyProgramCodesFromSession();
             populateSiteDTOBasedOnOrg(getPickedSiteOrgPoId());
+            initOrgFamilyInfo(getPickedSiteOrgPoId());
             setSiteDtoInSession();
             return SUCCESS;
         } catch (Exception e) {

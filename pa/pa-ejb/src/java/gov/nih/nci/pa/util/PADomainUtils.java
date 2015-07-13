@@ -805,7 +805,7 @@ public class PADomainUtils {
             return PADomainUtils.getFamilies(
                     selectedOrgDTO.getFamilyOrganizationRelationships(), familyMap);
         }
-        return null;
+        return new HashMap<Long, String>();
     }
     
     /**

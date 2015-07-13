@@ -374,7 +374,7 @@ public class PADomainUtilsTest {
     @Test
     public void testPopulateFamiliesByOrgPOId() throws PAException {
         Map<Long, String> familyMap = PADomainUtils.populateFamilies("22");
-        assertNull(familyMap);
+        assertTrue(familyMap.isEmpty());
         
         familyMap = PADomainUtils.populateFamilies("1");
         assertNotNull(familyMap);
@@ -388,7 +388,7 @@ public class PADomainUtilsTest {
                 new HashMap<Long, List<OrgFamilyProgramCodeDTO>>();
         Map<Long, String> familyMap = PADomainUtils.populateFamilies("22");
         PADomainUtils.populateOrgFamilyProgramCodes(familyMap, famPrgCdsMap);
-        assertNull(familyMap);
+        assertTrue(familyMap.isEmpty());
         assertTrue(famPrgCdsMap.isEmpty());
         
         familyMap = PADomainUtils.populateFamilies("1");

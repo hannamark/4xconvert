@@ -133,8 +133,9 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
 
     @Test
     public void testAddSite() throws SQLException {
+        
         TrialInfo trial = createTrialAndBeginAddingSites();
-
+        
         // Select Investigator
         searchAndSelectPerson(
                 By.id("trial_" + trial.id + "_site_0_pi_lookupBtn"), "John",
@@ -389,7 +390,7 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
     @Test
     public void testAddSiteValidationMissingFields() throws SQLException {
         TrialInfo trial = createTrialAndBeginAddingSites();
-        selenium.type("id=trial_" + trial.id + "_site_0_pgcode", "PG0001");
+        useSelect2ToPickAnOption("trial_" + trial.id + "_site_0_pgcode", "PC-NM-1", "PC-NM-1");
         clickAndWait("id=saveBtn");
         waitForTextToAppear(By.className("alert-danger"),
                 "Local Trial Identifier is required", WAIT_FOR_ELEMENT_TIMEOUT);
@@ -442,22 +443,5 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
         }
 
         driver.findElement(xpath).click();
-    }
-
-    /**
-     * @param option
-     */
-    @SuppressWarnings("deprecation")
-    private void assertOptionSelected(String option) {
-        assertTrue(s.isElementPresent(getXPathForSelectedOption(option)));
-    }
-
-    /**
-     * @param option
-     * @return
-     */
-    private String getXPathForSelectedOption(String option) {
-        return "//li[@class='select2-selection__choice' and @title='" + option
-                + "']";
     }
 }

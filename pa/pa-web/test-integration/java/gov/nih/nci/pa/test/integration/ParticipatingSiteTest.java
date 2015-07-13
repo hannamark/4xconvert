@@ -191,10 +191,10 @@ public class ParticipatingSiteTest extends AbstractPaSeleniumTest {
         clickAndWait("//table[@id='row']/tbody/tr/td[7]/a");
         s.type("participatingOrganizationsedit_dateOpenedForAccrual", "");
         s.type("participatingOrganizationsedit_dateClosedForAccrual", "");
-        addNewPrgCd("programCodes", "PC-CD-1", "PC-NM-1", false);
+        addNewPrgCd("programCodes", "PC-CD-3", "PC-NM-3", false);
         //checking already present condition
-        addNewPrgCd("programCodes", "PC-CD-1", "PC-NM-1", true);
-        assertOptionSelected("PC-NM-1");
+        addNewPrgCd("programCodes", "PC-CD-3", "PC-NM-3", true);
+        assertOptionSelected("PC-NM-3");
         
         s.click("link=Save");
         waitForElementToBecomeAvailable(By.className("confirm_msg"), 10);
@@ -212,7 +212,7 @@ public class ParticipatingSiteTest extends AbstractPaSeleniumTest {
         
         QueryRunner runner = new QueryRunner();
         String sql = "delete from org_family_program_code "
-                + "where org_family_po_id='1' and program_name='PC-NM-1' and program_code='PC-CD-1'";
+                + "where org_family_po_id='1' and program_name='PC-NM-3' and program_code='PC-CD-3'";
         runner.update(connection, sql);
     }
     

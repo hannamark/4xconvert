@@ -5,7 +5,7 @@
 	<tns:recruitmentStatus>Closed to Accrual and Intervention</tns:recruitmentStatus>
 	<tns:recruitmentStatusDate>2014-01-02</tns:recruitmentStatusDate>
 	<tns:localTrialIdentifier>tns:localTrialIdentifier</tns:localTrialIdentifier>
-	<tns:programCode>tns:programCode</tns:programCode>
+	<tns:programCode>PG0000002</tns:programCode>
 	<tns:openedForAccrual>2010-05-02</tns:openedForAccrual>
 	<tns:closedForAccrual>2011-06-04</tns:closedForAccrual>
 	<tns:targetAccrualNumber>343</tns:targetAccrualNumber>
