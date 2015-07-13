@@ -176,6 +176,7 @@
         
             document.observe("dom:loaded", function() {
                                                displayTrialStatusDefinition('trialDTO_statusCode');
+                                               initAllPSPrgCds();
                                            });
 
             function initProgramCodeOptions(pcObj) {
@@ -225,36 +226,37 @@
                   }
                 pcId.val(selVal).trigger('change');
            }
-            
-            (function($){
-                $(function(){
-                    var famPrgCdsJson = $("#famPrgCdsMapJsonStr");
-                    var famPrgCds ={};
-                    if(famPrgCdsJson){
-                    	famPrgCds = $.parseJSON(famPrgCdsJson.val());
-                     } 
-                    
-                    var psCount = <s:property value="participatingSitesList.size"/>;
-                    for(var i=0; i<psCount; i++) {
-                        var pcId = $("#participatingSitesList_"+i+"_programCode");
-                        //just using first family program codes for now (expected only one family per PS)
-                        var famPoId = $("#participatingSitesList_"+i+"_0_famPoId");
-                        if(famPoId) {
-                            famPoId = famPoId.val();
-                            var pcObj = famPrgCds[famPoId];
-                            initProgramCodeSelect2(pcId, pcObj);
 
-                            var selPCs = $("#ps_pc_sel_val_"+i);
-                            if(selPCs) {
-                                setProgramCodeValue(pcId, selPCs.val());
-                            }
-                        } else {
-                        	initProgramCodeSelect2(pcId, []);
+            function initAllPSPrgCds() {
+            	var famPrgCdsJsonObj = jQuery("#famPrgCdsMapJsonStr");
+                var famPrgCdsJson = famPrgCdsJsonObj.val();
+                var famPrgCds ={};
+                if(famPrgCdsJson){
+                    famPrgCds = jQuery.parseJSON(famPrgCdsJson);
+                 } 
+                
+                var psCount = <s:property value="participatingSitesList.size"/>;
+                for(var i=0; i<psCount; i++) {
+                    var pcId = jQuery("#participatingSitesList_"+i+"_programCode");
+                    //just using first family program codes for now (expected only one family per PS)
+                    var famPoId = jQuery("#participatingSitesList_"+i+"_0_famPoId");
+                    if(famPoId) {
+                        famPoId = famPoId.val();
+                        var pcObj = famPrgCds[famPoId];
+                        initProgramCodeSelect2(pcId, pcObj);
+
+                        var selPCs = jQuery("#ps_pc_sel_val_"+i);
+                        if(selPCs) {
+                            setProgramCodeValue(pcId, selPCs.val());
                         }
-                        
+                    } else {
+                        initProgramCodeSelect2(pcId, []);
                     }
-                });
-            })(jQuery)
+                    
+                }
+
+            }
+            
         </script>
     </head>
     <body>
