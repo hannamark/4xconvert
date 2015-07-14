@@ -266,6 +266,9 @@ public class SubjectAccrualValidatorBean implements SubjectAccrualValidator {
                     errMsg.append(String.format(REQUIRED_MSG, DIDENTIFIERSTRING));
                
             }
+        } else  if (StringUtils.equalsIgnoreCase(IiConverter.convertToString(subjectAccrual
+                    .getDiseaseIdentifier()), "not found")) {
+            errMsg.append("Disease code does not exist for given Disease code System.");
         } else {
             AccrualDisease disease = diseaseService.get(subjectAccrual.getDiseaseIdentifier());
             if (disease == null) {

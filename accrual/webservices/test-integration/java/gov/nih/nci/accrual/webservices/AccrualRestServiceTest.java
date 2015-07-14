@@ -804,7 +804,31 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
         assertEquals(400, getReponseCode(response));
         assertTrue(EntityUtils.toString(response.getEntity(), "utf-8")
            .contains("The subject's disease's coding system ICD9 is different from the one used on the trial: ICD10"));
+        
+        subjects.getStudySubject().clear();
+        subject = createSubject("SU001","ICD9","1v99.00");
+        subjects.getStudySubject().add(subject);
+        
+        baseURL = "http://" + TestProperties.getServerHostname() + ":"
+                + TestProperties.getServerPort() + "/accrual-services";
+        xml = marshall(subjects);
+        entity = new StringEntity(xml);
+        
+        
+        url = baseURL + "/sites/" + siteID;
+        LOG.info("Hitting " + url);
+        LOG.info("Payload: " + xml);
+        req = new HttpPut(url);
+        req.addHeader("Accept", TEXT_PLAIN);
+        req.addHeader("Content-Type", APPLICATION_XML);
+        req.setEntity(entity);
 
+        response = httpClient.execute(req);
+        LOG.info("Response code: " + getReponseCode(response));
+        assertEquals(400, getReponseCode(response));
+        assertTrue(EntityUtils.toString(response.getEntity(), "utf-8")
+           .contains("Disease code does not exist for given Disease code System."));
+        
     }
 
     private void submitAndVerify(TrialRegistrationConfirmation rConf,

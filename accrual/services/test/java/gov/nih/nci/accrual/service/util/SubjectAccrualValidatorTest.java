@@ -298,6 +298,14 @@ public class SubjectAccrualValidatorTest {
          errors = new StringBuffer();
           bean.validateDiseaseAndParticipatingSite(subject, errors);
           assertEquals("234 is not a valid value for Disease Identifier.\n", errors.toString());
+          
+
+          
+          subject = createSubjectAccrualDTO();
+          subject.setDiseaseIdentifier(IiConverter.convertToIi("not found"));
+          errors = new StringBuffer();
+           bean.validateDiseaseAndParticipatingSite(subject, errors);
+           assertEquals("Disease code does not exist for given Disease code System.", errors.toString());
     }
 
     private StudySubjectDto createStudySubjectDto() {

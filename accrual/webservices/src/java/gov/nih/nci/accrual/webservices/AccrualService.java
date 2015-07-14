@@ -426,7 +426,7 @@ public final class AccrualService extends BaseRestService { // NOPMD
                 .getAccrualDiseaseService()
                 .getByCode(code.getCodeSystem(), code.getValue());
         return disease != null ? IiConverter.convertToIi(disease.getId())
-                : IiConverter.convertToIi((String) null);
+                : IiConverter.convertToIi("not found");
     }
 
     private DSet<Cd> convertRace(List<Race> races) {
