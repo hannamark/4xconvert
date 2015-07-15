@@ -50,7 +50,7 @@
                     <ul class="btnrow">
                         <li><s:a href="javascript:void(0);" onclick="addDisc();"
                                 cssClass="btn" id="addDisc">
-                                <span class="btn_img"><span class="save">Add </span></span>
+                                <span class="btn_img"><span class="add">Add </span></span>
                             </s:a></li>
                         <c:if test="${not empty studyDataDiscrepancyList}">
                             <li><s:a href="javascript:void(0);" id="deleteBtn"

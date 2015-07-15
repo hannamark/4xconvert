@@ -33,6 +33,7 @@ public class TrialViewTest extends AbstractPaSeleniumTest {
         assertTrue(count ==0);
         
         assertTrue(selenium.isTextPresent("No Data Discrepancies found."));
+        assertTrue(selenium.isTextPresent("No Trial Documents exist on the trial."));
     }
     
     private long getRecordCount(long trialId, String typeCode)

@@ -45,7 +45,7 @@
                     <ul class="btnrow">
                         <li><s:a href="javascript:void(0);" onclick="addStudyRecord();"
                                 cssClass="btn" id="addStudyRecord">
-                                <span class="btn_img"><span class="save">Add </span></span>
+                                <span class="btn_img"><span class="add">Add </span></span>
                             </s:a></li>
                         <c:if test="${not empty studyRecordChangeList}">
                             <li><s:a href="javascript:void(0);" id="deleteBtnChangeType"

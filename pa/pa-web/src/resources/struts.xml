@@ -829,6 +829,7 @@
             <result name="success">/WEB-INF/jsp/administrative/reportingTrialDocuments/reportingTrialDocuments.jsp</result>
             <result name="input">/WEB-INF/jsp/administrative/reportingTrialDocuments/reportingTrialDocumentAdd.jsp</result>
             <result name="error">/WEB-INF/jsp/administrative/reportingTrialDocuments/reportingTrialDocuments.jsp</result>
+            <result name="errorDocument">/WEB-INF/jsp/administrative/reportingTrialDocuments/reportingTrialDocumentAdd.jsp</result>
             
         </action>
         
@@ -847,6 +848,7 @@
             <result name="success">/WEB-INF/jsp/administrative/trialview/trialView.jsp</result>
              <result name="error">/WEB-INF/jsp/administrative/trialview/trialView.jsp</result>
              <result name="input">/WEB-INF/jsp/administrative/trialview/trialView.jsp</result>
+             <result name="errorDocument">/WEB-INF/jsp/administrative/reportingTrialDocuments/reportingTrialDocumentAdd.jsp</result>
             
         </action>
         

@@ -82,28 +82,44 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyDataDiscrepancy;
 import gov.nih.nci.pa.domain.StudyNotes;
 import gov.nih.nci.pa.domain.StudyRecordChange;
+import gov.nih.nci.pa.dto.TrialDocumentWebDTO;
+import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyNotesService;
 import gov.nih.nci.pa.service.StudyProtocolService;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.MailManagerService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
@@ -119,7 +135,8 @@ import com.opensymphony.xwork2.Preparable;
  */
 
 @SuppressWarnings({ "PMD.TooManyFields", "PMD.TooManyMethods", "PMD.ExcessiveMethodLength"
-    , "PMD.SignatureDeclareThrowsException" , "PMD.SimpleDateFormatNeedsLocale" , "PMD.ExcessiveClassLength" })
+    , "PMD.SignatureDeclareThrowsException" , "PMD.SimpleDateFormatNeedsLocale" , "PMD.ExcessiveClassLength"
+    , "PMD.CyclomaticComplexity" })
 public class TrialViewAction extends AbstractMultiObjectDeleteAction implements
 ServletRequestAware , ServletResponseAware , Preparable {
     
@@ -147,7 +164,17 @@ ServletRequestAware , ServletResponseAware , Preparable {
     private Boolean sendToCtGovUpdated;
     private MailManagerService mailManagerService;
     private PAServiceUtils paServiceUtil = new PAServiceUtils();
-
+    
+    private File upload;
+    private String uploadFileName;
+    private List<TrialDocumentWebDTO> trialDocumentList;
+    private TrialDocumentWebDTO trialDocumentWebDTO = new TrialDocumentWebDTO();
+    private String page;
+    private   Map<Long, String> usersMap = new HashMap<Long, String>();
+    private Long ctroUserId;
+    private Long ccctUserId;
+    private static final String ERROR_DOCUMENT = "errorDocument";
+    
     
     private static final Logger LOG = Logger
             .getLogger(TrialViewAction.class);
@@ -172,6 +199,8 @@ ServletRequestAware , ServletResponseAware , Preparable {
             Date date;
             SimpleDateFormat dateFormat = new SimpleDateFormat(PAUtil.DATE_FORMAT);
             Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(getStudyProtocolId());
+            
+            //data needed for cover sheet page
             studyDataDiscrepancyList = studyNotesService.getStudyNotesList(studyProtocolId, StudyDataDiscrepancy.class);
                    
             studyRecordChangeList = studyNotesService.
@@ -197,6 +226,22 @@ ServletRequestAware , ServletResponseAware , Preparable {
             }
 
             sendToCtGovUpdated = BlConverter.convertToBoolean(studyProtocolDTO.getSendToCtGovUpdated());
+            
+            //date needed for document action
+            usersMap = CSMUserService.getInstance().getCcctAndCtroUsers();
+            List<DocumentDTO> isoList = PaRegistry.getDocumentService().
+                    getReportsDocumentsByStudyProtocol(studyProtocolIi);
+            if (isoList != null && !(isoList.isEmpty())) {
+                trialDocumentList = new ArrayList<TrialDocumentWebDTO>();
+                for (DocumentDTO dto : isoList) {
+                    trialDocumentList.add(new TrialDocumentWebDTO(dto));
+                }
+            } else if (request.getAttribute(Constants.SUCCESS_MESSAGE) == null 
+                    && request.getAttribute(Constants.FAILURE_MESSAGE) == null) {
+                
+                request.setAttribute(Constants.SUCCESS_MESSAGE,
+                        getText("error.trialDocument.noRecords"));
+            }
            
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
@@ -383,6 +428,178 @@ ServletRequestAware , ServletResponseAware , Preparable {
         }
         return ERROR;
     }
+    
+    /**
+     * @return result
+     */
+    public String create() {
+        if (StringUtils.isEmpty(trialDocumentWebDTO.getTypeCode())) {
+            addFieldError("trialDocumentWebDTO.typeCode",
+                    getText("error.trialDocument.typeCode"));
+        }
+        if (StringUtils.isEmpty(uploadFileName)) {
+            addFieldError("trialDocumentWebDTO.uploadFileName",
+                    getText("error.trialDocument.uploadFileName"));
+        }
+        if (hasFieldErrors()) {
+            return ERROR_DOCUMENT;
+        }
+        try {
+            Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(getStudyProtocolId());
+            DocumentDTO docDTO = new DocumentDTO();
+            docDTO.setStudyProtocolIdentifier(studyProtocolIi);
+            docDTO.setTypeCode(
+                    CdConverter.convertStringToCd(trialDocumentWebDTO.getTypeCode()));
+            docDTO.setFileName(StConverter.convertToSt(uploadFileName));
+            docDTO.setText(EdConverter.convertToEd(IOUtils.toByteArray(new FileInputStream(upload))));
+            PaRegistry.getDocumentService().create(docDTO);
+            
+          
+             
+            
+            
+            //send notification email  if comparison document is uploaded
+            if (docDTO.getTypeCode().getCode().equals(DocumentTypeCode.COMPARISON.getCode())) {
+                File newFile = new File(upload.getParent(), uploadFileName);
+                FileUtils.copyFile(upload, newFile);
+
+                sendCtroNotificationEmail(docDTO.getStudyProtocolIdentifier(), newFile);
+            }
+            
+            query();
+            request.setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
+            return SUCCESS;
+        } catch (Exception e) {
+            request.setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+            return ERROR_DOCUMENT;
+        }
+    }
+    
+    /**
+     * @return result
+     */
+    public String update() {
+        if (StringUtils.isEmpty(trialDocumentWebDTO.getTypeCode())) {
+            addFieldError("trialDocumentWebDTO.typeCode", getText("error.trialDocument.typeCode"));
+        }
+        if (StringUtils.isEmpty(uploadFileName)) {
+            addFieldError("trialDocumentWebDTO.uploadFileName", getText("error.trialDocument.uploadFileName"));
+        }
+        if (hasFieldErrors()) {
+            return ERROR_DOCUMENT;
+        }
+        try {
+
+            Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(getStudyProtocolId());
+            DocumentDTO  docDTO = new DocumentDTO();
+            docDTO.setIdentifier(IiConverter.convertToIi(id));
+            docDTO.setStudyProtocolIdentifier(studyProtocolIi);
+            docDTO.setTypeCode(
+                    CdConverter.convertStringToCd(trialDocumentWebDTO.getTypeCode()));
+            docDTO.setFileName(StConverter.convertToSt(uploadFileName));
+            
+            final FileInputStream stream = new FileInputStream(upload);
+            docDTO.setText(EdConverter.convertToEd(IOUtils.toByteArray(stream)));
+            IOUtils.closeQuietly(stream);
+            PaRegistry.getDocumentService().update(docDTO);
+            //check if before or after results document is updated
+            if (docDTO.getTypeCode().getCode().equals(DocumentTypeCode.BEFORE_RESULTS.getCode()) 
+                || docDTO.getTypeCode().getCode().equals(DocumentTypeCode.AFTER_RESULTS.getCode())) {
+                
+                List<DocumentDTO> isoList = PaRegistry.getDocumentService().
+                        getReportsDocumentsByStudyProtocol(studyProtocolIi);
+                //delete comparison document
+                for (DocumentDTO documentDTO : isoList) {
+                   if (documentDTO.getTypeCode().getCode().equals("Comparison")) {
+                       String [] delteObjectsArray = new String[1];
+                       delteObjectsArray[0] = IiConverter.convertToString(documentDTO.getIdentifier());
+                       setObjectsToDelete(delteObjectsArray);
+                   }
+                }
+                if (getObjectsToDelete() != null &&  getObjectsToDelete().length > 0) {
+                    deleteType = "trialDocument";
+                    deleteSelectedObjects();
+                }
+            }
+            //send notification email  if comparison document is uploaded
+            if (docDTO.getTypeCode().getCode().equals(DocumentTypeCode.COMPARISON.getCode())) {
+                File newFile = new File(upload.getParent(), uploadFileName);
+                FileUtils.copyFile(upload, newFile);
+                sendCtroNotificationEmail(docDTO.getStudyProtocolIdentifier() , newFile);
+            }
+            request.setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+            query();
+        } catch (Exception e) {
+            request.setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+            return ERROR_DOCUMENT;
+        }
+        return SUCCESS;
+    }
+    
+    /**
+     * @return result
+     */
+    public String reviewCtro() {
+      
+        try {
+
+            DocumentDTO  docDTO =
+            PaRegistry.getDocumentService().get(IiConverter.convertToIi(id));
+            docDTO.setCtroUserId(getCtroUserId());
+            docDTO.setCtroUserReviewDateTime(TsConverter.convertToTs(new Date()));
+            
+            PaRegistry.getDocumentService().updateForReview(docDTO);
+            request.setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+            
+            File file = new File(docDTO.getFileName().getValue());
+            FileUtils.writeByteArrayToFile(file, docDTO.getText().getData());
+
+            sendCcctNotificationEmail(docDTO.getStudyProtocolIdentifier() , file);
+            
+            query();
+        } catch (Exception e) {
+            request.setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+            return ERROR;
+        }
+        return SUCCESS;
+    }
+    
+    /**
+     * @return result
+     */
+    public String reviewCcct() {
+      
+        try {
+
+            DocumentDTO  docDTO =
+            PaRegistry.getDocumentService().get(IiConverter.convertToIi(id));
+            docDTO.setCcctUserId(getCcctUserId());
+            docDTO.setCcctUserReviewDateTime(TsConverter.convertToTs(new Date()));
+            
+            PaRegistry.getDocumentService().updateForReview(docDTO);
+            request.setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+            query();
+        } catch (Exception e) {
+            request.setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+            return ERROR;
+        }
+        return SUCCESS;
+    }
+    
+    private void sendCtroNotificationEmail(Ii studyProtocolIdentifier , File attachment) throws PAException {
+        
+        
+        String nciID = paServiceUtil.getTrialNciId(Long.valueOf(studyProtocolIdentifier.getExtension()));
+        String nctId = paServiceUtil.getStudyIdentifier(studyProtocolIdentifier, PAConstants.NCT_IDENTIFIER_TYPE);
+        PaRegistry.getMailManagerService().sendComparisonDocumentToCtro(nciID , nctId,  attachment);
+    }
+    
+    private void sendCcctNotificationEmail(Ii studyProtocolIdentifier , File attachment) throws PAException {
+        String nciID = paServiceUtil.getTrialNciId(Long.valueOf(studyProtocolIdentifier.getExtension()));
+        String nctId = paServiceUtil.getStudyIdentifier(studyProtocolIdentifier, PAConstants.NCT_IDENTIFIER_TYPE);
+        PaRegistry.getMailManagerService().sendComparisonDocumentToCcct(nciID , nctId,  attachment);
+    }
+
     
     @Override
     public void setServletResponse(HttpServletResponse httpResponse) {
@@ -693,7 +910,127 @@ ServletRequestAware , ServletResponseAware , Preparable {
 
     @Override
     public void deleteObject(Long objectId) throws PAException {
-        studyNotesService.deleteStudyNotes(objectId, deleteType);
+        if (deleteType != null && deleteType.equals("trialDocument")) {
+            PaRegistry.getDocumentService().delete(
+                    IiConverter.convertToDocumentIi(objectId),
+                    StConverter.convertToSt(trialDocumentWebDTO
+                            .getInactiveCommentText()));
+        } else {
+            studyNotesService.deleteStudyNotes(objectId, deleteType);    
+        }
+        
+    }
+
+    /**
+     * @return upload
+     */
+    public File getUpload() {
+        return upload;
+    }
+
+    /**
+     * @param upload upload
+     */
+    public void setUpload(File upload) {
+        this.upload = upload;
+    }
+
+    /**
+     * @return uploadFileName
+     */
+    public String getUploadFileName() {
+        return uploadFileName;
+    }
+
+    /**
+     * @param uploadFileName uploadFileName
+     */
+    public void setUploadFileName(String uploadFileName) {
+        this.uploadFileName = uploadFileName;
+    }
+
+    /**
+     * @return trialDocumentList trialDocumentList
+     */
+    public List<TrialDocumentWebDTO> getTrialDocumentList() {
+        return trialDocumentList;
+    }
+
+    /**
+     * @param trialDocumentList trialDocumentList
+     */
+    public void setTrialDocumentList(List<TrialDocumentWebDTO> trialDocumentList) {
+        this.trialDocumentList = trialDocumentList;
+    }
+
+    /**
+     * @return trialDocumentWebDTO
+     */
+    public TrialDocumentWebDTO getTrialDocumentWebDTO() {
+        return trialDocumentWebDTO;
+    }
+
+    /**
+     * @param trialDocumentWebDTO trialDocumentWebDTO
+     */
+    public void setTrialDocumentWebDTO(TrialDocumentWebDTO trialDocumentWebDTO) {
+        this.trialDocumentWebDTO = trialDocumentWebDTO;
+    }
+
+    /**
+     * @return page
+     */
+    public String getPage() {
+        return page;
+    }
+
+    /**
+     * @param page page
+     */
+    public void setPage(String page) {
+        this.page = page;
+    }
+
+    /**
+     * @return usersMap
+     */
+    public Map<Long, String> getUsersMap() {
+        return usersMap;
+    }
+
+    /**
+     * @param usersMap usersMap
+     */
+    public void setUsersMap(Map<Long, String> usersMap) {
+        this.usersMap = usersMap;
+    }
+
+    /**
+     * @return ctroUserId
+     */
+    public Long getCtroUserId() {
+        return ctroUserId;
+    }
+
+    /**
+     * @param ctroUserId ctroUserId
+     */
+    public void setCtroUserId(Long ctroUserId) {
+        this.ctroUserId = ctroUserId;
+    }
+
+    /**
+     * @return ccctUserId
+     */
+    public Long getCcctUserId() {
+        return ccctUserId;
+    }
+
+    /**
+     * @param ccctUserId ccctUserId
+     */
+    public void setCcctUserId(Long ccctUserId) {
+        this.ccctUserId = ccctUserId;
     }
 
    

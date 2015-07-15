@@ -29,6 +29,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
@@ -125,8 +126,13 @@ public class ResultsReportingDocumentActionTest extends AbstractPaActionTest{
     @Test
     public void testCreate() throws Exception {
        String result = reportingDocumentAction.create();
-       assertEquals("input",result);
+       assertEquals("errorDocument",result);
        assertTrue(reportingDocumentAction.hasFieldErrors());
+       
+       Map<String, List<String>> errors = reportingDocumentAction.getFieldErrors();
+       assertTrue(errors.keySet().size() > 0);
+       assertTrue(errors.keySet().contains("trialDocumentWebDTO.typeCode"));
+       
        
        trialDocumentWebDTO.setTypeCode("After Results");
        reportingDocumentAction.setTrialDocumentWebDTO(trialDocumentWebDTO);
@@ -146,7 +152,7 @@ public class ResultsReportingDocumentActionTest extends AbstractPaActionTest{
     public void testSaveFile() {
         
         String result = reportingDocumentAction.saveFile();
-        assertEquals("error",result);
+        assertEquals("errorDocument",result);
 
     }
 
@@ -166,8 +172,12 @@ public class ResultsReportingDocumentActionTest extends AbstractPaActionTest{
     @Test
     public void testUpdate() throws Exception {
         String result = reportingDocumentAction.update();
-        assertEquals("input",result);
+        assertEquals("errorDocument",result);
         assertTrue(reportingDocumentAction.hasFieldErrors());
+        Map<String, List<String>> errors = reportingDocumentAction.getFieldErrors();
+        assertTrue(errors.keySet().size() > 0);
+        assertTrue(errors.keySet().contains("trialDocumentWebDTO.typeCode"));
+      
         
         trialDocumentWebDTO.setTypeCode("After Results");
         reportingDocumentAction.setTrialDocumentWebDTO(trialDocumentWebDTO);

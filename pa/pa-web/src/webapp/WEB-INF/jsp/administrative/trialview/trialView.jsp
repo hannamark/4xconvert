@@ -55,6 +55,7 @@ fieldset>input[id="actionCompletionDateChangeType"] {
     src="${scriptPath}/js/jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
 <script type="text/javascript"
     src="${scriptPath}/js/resultscoversheet/resultsCoverSheet.js"></script>
+<script type="text/javascript"   src="${scriptPath}/js/resultsDocuments/resultsDocuments.js"></script>    
 <!-- DataTables -->
 <script type="text/javascript" charset="utf8"
     src="${scriptPath}/js/DataTables-1.10.4/media/js/jquery.dataTables.min.js"></script>
@@ -107,6 +108,11 @@ addCalendar("Cal3", "Select Date", "designeeAccessRevokedDate", "coverSheetForm"
 addCalendar("Cal4", "Select Date", "changesInCtrpCtGovDate", "coverSheetForm");
 setFormat("mm/dd/yyyy");
 
+
+setDocumentPageUrl("resultsReportingDocumentinput.action?parentPage=trialView",
+		"resultsReportingDocumentedit.action?parentPage=trialView","trialViewdelete.action",
+				"trialViewreviewCtro.action","trialViewreviewCcct.action");
+
 </SCRIPT>
 </head>
  <body>
@@ -116,11 +122,16 @@ setFormat("mm/dd/yyyy");
  <div class="box">
     <pa:sucessMessage/>
     <pa:failureMessage/>
-    <s:form name="coverSheetForm" id ="coverSheetForm" action="">
+   
         <s:actionerror/>
         <pa:studyUniqueToken/>
         
-        <!-- jsp for cover sheet -->
+         <!-- jsp for trial comparision document -->
+        <s:set name="requestUrl" value="trialViewquery.action" />
+         <jsp:include page="/WEB-INF/jsp/administrative/reportingTrialDocuments/reportingTrialDocumentsList.jsp"/>
+         
+     <s:form name="coverSheetForm" id ="coverSheetForm" action="">
+        <!-- jsp for cover sheet do not include anything in this form please create separate form for another views-->
         <jsp:include page="/WEB-INF/jsp/administrative/reportingCoverSheet/reportCoverSheetDiscType.jsp"/>
         <jsp:include page="/WEB-INF/jsp/administrative/reportingCoverSheet/reportCoverSheetStudyRecord.jsp"/>
          <jsp:include page="/WEB-INF/jsp/administrative/reportingCoverSheet/reportCoverSheetFinalCleanup.jsp"/>             
@@ -131,7 +142,7 @@ setFormat("mm/dd/yyyy");
 	<jsp:include page="/WEB-INF/jsp/administrative/reportingCoverSheet/reportCoverSheetDisTypeDialog.jsp"/>
       <jsp:include page="/WEB-INF/jsp/administrative/reportingCoverSheet/reportCoverSheetStudyRecordDialog.jsp"/> 
          
-         
+          <s:hidden name="parentPage" id="parentPage" value="trialView" />     
     
 </div>
 	 

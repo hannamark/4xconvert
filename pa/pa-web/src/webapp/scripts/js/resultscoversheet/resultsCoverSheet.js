@@ -123,10 +123,11 @@ function initDeleteFunction(deleteButtonId , tableId, otherTableId , actionUrl ,
                     return false;
                 }
                 else {
-                if (confirm("Click OK to remove selected records. Cancel to abort"))
+                if (confirm("Click OK to remove selected records. Cancel to abort")) {
                 	jQuery("#deleteType").val(value);
                 	jQuery('#coverSheetForm')[0].action =actionUrl;
                     jQuery('#coverSheetForm').submit();
+                  } 
                 }
                
             });

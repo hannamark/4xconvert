@@ -1858,5 +1858,9 @@
 	<changeSet id="PO-9014" author="khandalkara">
        <comment>Implement "Results Cover Sheet" screen.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9014.sql"/>       
-    </changeSet> 
+    </changeSet>
+<changeSet id="PO-9011-Update" author="khandalkara">
+       <comment>Implement "View/Upload Trial Comparison Documents" screen.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9011-Update.sql"/>       
+    </changeSet>	
 </databaseChangeLog>

@@ -7,42 +7,49 @@
 <head>
     <title><fmt:message key="trialDocument.addtitle" /></title>
     <s:head />
-    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
-    <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
 </head>
 <SCRIPT LANGUAGE="JavaScript">
 
 // this function is called from body onload in main.jsp (decorator)
 function callOnloadFunctions(){
-    setFocusToFirstControl();       
+     
 }
 function handleAction(){
     var page;
+    var addSubmitUrl;
+    var editSubmitUrl;
     page=document.forms[0].page.value;
+    var parentPage=jQuery("#parentPage").val();
+    if(parentPage=="coverSheet") {
+    	addSubmitUrl ="resultsReportingDocumentcreate.action";
+    	editSubmitUrl="resultsReportingDocumentupdate.action";
+    }
+    else {
+    	addSubmitUrl ="trialViewcreate.action";
+    	editSubmitUrl="trialViewupdate.action";
+    }
     if (page == "Edit"){
-    	document.forms[0].action="resultsReportingDocumentupdate.action";
+    	document.forms[0].action=editSubmitUrl;
     	document.forms[0].submit();  	
     } else {
-       	document.forms[0].action="resultsReportingDocumentcreate.action";
+       	document.forms[0].action=addSubmitUrl;
     	document.forms[0].submit();   
     } 
 } 
-function tooltip() {
-BubbleTips.activateTipOn("acronym");
-BubbleTips.activateTipOn("dfn"); 
-}
+
 
 </SCRIPT>
 <body>
-<c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
-<c:set var="topic" scope="request" value="reviewdocs"/>
-</c:if>
-<c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  != 'Submitted'}">
-<c:set var="topic" scope="request" value="abstractdocs"/>
-</c:if>
+
  <h1><fmt:message key="trialDocument.title" /></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
- <s:url id="cancelUrl" namespace="/protected" action="resultsReportingDocumentquery?studyProtocolId=%{studyProtocolId}"/>
+ <s:if test="parentPage.equals('coverSheet')">
+    <s:url id="cancelUrl" namespace="/protected" action="resultsReportingDocumentquery?studyProtocolId=%{studyProtocolId}"/>            
+ </s:if>
+ <s:else>
+   <s:url id="cancelUrl" namespace="/protected" action="trialViewquery?studyProtocolId=%{studyProtocolId}"/>                  
+ </s:else> 
+ 
   <div class="box">  
    <pa:sucessMessage/>
    <pa:failureMessage/>
@@ -103,7 +110,9 @@ BubbleTips.activateTipOn("dfn");
                 </ul>   
             </del>
         </div> 
-       <s:hidden name="studyProtocolId" id="studyProtocolId" />        
+       <s:hidden name="studyProtocolId" id="studyProtocolId" />     
+       <s:hidden name="parentPage" id="parentPage"/> 
+         
     </s:form>
    </div>
  </body>

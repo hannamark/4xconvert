@@ -124,7 +124,8 @@ import org.apache.struts2.interceptor.ServletResponseAware;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods", "PMD.ExcessiveMethodLength" })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods", "PMD.ExcessiveMethodLength"
+    , "PMD.ExcessiveClassLength" })
 public class ResultsReportingDocumentAction extends AbstractMultiObjectDeleteAction implements
 ServletRequestAware , ServletResponseAware {
 
@@ -144,6 +145,8 @@ ServletRequestAware , ServletResponseAware {
     private Long ctroUserId;
     private Long ccctUserId;
     private HttpServletRequest request;
+    private String parentPage;
+    private static final String ERROR_DOCUMENT = "errorDocument";
 
 
     /**
@@ -171,7 +174,7 @@ ServletRequestAware , ServletResponseAware {
 
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
-            return ERROR;
+            return ERROR_DOCUMENT;
         }
         
        
@@ -198,7 +201,7 @@ ServletRequestAware , ServletResponseAware {
                      getText("error.trialDocument.uploadFileName"));
          }
          if (hasFieldErrors()) {
-             return INPUT;
+             return ERROR_DOCUMENT;
          }
          try {
              Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(getStudyProtocolId());
@@ -227,7 +230,7 @@ ServletRequestAware , ServletResponseAware {
              return SUCCESS;
          } catch (Exception e) {
              request.setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
-             return INPUT;
+             return ERROR_DOCUMENT;
          }
      }
 
@@ -263,11 +266,11 @@ ServletRequestAware , ServletResponseAware {
                      + err);
              this.addActionError("File not found: " + err.getLocalizedMessage());
              query();
-             return ERROR;
+             return ERROR_DOCUMENT;
          } catch (Exception e) {
              request.setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
              query();
-             return ERROR;
+             return ERROR_DOCUMENT;
          }
          return NONE;
      }
@@ -298,7 +301,7 @@ ServletRequestAware , ServletResponseAware {
              addFieldError("trialDocumentWebDTO.uploadFileName", getText("error.trialDocument.uploadFileName"));
          }
          if (hasFieldErrors()) {
-             return INPUT;
+             return ERROR_DOCUMENT;
          }
          try {
 
@@ -342,7 +345,7 @@ ServletRequestAware , ServletResponseAware {
              query();
          } catch (Exception e) {
              request.setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
-             return INPUT;
+             return ERROR_DOCUMENT;
          }
          return SUCCESS;
      }
@@ -370,7 +373,7 @@ ServletRequestAware , ServletResponseAware {
              query();
          } catch (Exception e) {
              request.setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
-             return SUCCESS;
+             return ERROR;
          }
          return SUCCESS;
      }
@@ -392,7 +395,7 @@ ServletRequestAware , ServletResponseAware {
              query();
          } catch (Exception e) {
              request.setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
-             return SUCCESS;
+             return ERROR;
          }
          return SUCCESS;
      }
@@ -609,6 +612,20 @@ ServletRequestAware , ServletResponseAware {
     public void setServletRequest(HttpServletRequest servletRequest) {
         this.request = servletRequest;
         
+    }
+
+    /**
+     * @return parentPage
+     */
+    public String getParentPage() {
+        return parentPage;
+    }
+
+    /**
+     * @param parentPage parentPage
+     */
+    public void setParentPage(String parentPage) {
+        this.parentPage = parentPage;
     }
 
 }
