@@ -195,5 +195,9 @@
 	<classpathentry kind="var" path="PA_LIB/pa-web/jaxb-impl-2.2.6.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/sdk-client-framework-1.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/cadsrapi41-beans-1.0.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/poi-3.12.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/poi-ooxml-3.12.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/poi-ooxml-schemas-3.12.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/xmlbeans-2.6.0.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>
