@@ -15,6 +15,7 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -321,6 +322,12 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
     @Override
     public List<Long> getByPublicTitle(String publicTitle) throws PAException {
         return null;
+    }
+
+    
+    public boolean updateStudyProtocolResultsDate(Long studyId,
+            String attribute, Timestamp value) {       
+        return false;
     }
     
 }
