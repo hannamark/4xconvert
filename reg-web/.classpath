@@ -45,6 +45,8 @@
 	<classpathentry kind="var" path="PA_LIB/ear/po-services-1.0.1.IR6-client.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/spring-beans-3.2.2.RELEASE.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/spring-core-3.2.2.RELEASE.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/jackson-core-asl-1.9.13.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/jackson-mapper-asl-1.9.13.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/picketbox-spi-bare-4.0.19.SP2.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/asm-3.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/axis-1.2RC2.jar"/>
