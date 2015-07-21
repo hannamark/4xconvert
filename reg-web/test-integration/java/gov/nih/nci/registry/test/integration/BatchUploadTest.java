@@ -301,7 +301,7 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
         // wait for email to arrive
         long stamp = System.currentTimeMillis();
         while (server.getReceivedEmailSize() < numOfEmails
-                && System.currentTimeMillis() - stamp < 30 * 1000) {
+                && System.currentTimeMillis() - stamp < 45 * 1000) {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
