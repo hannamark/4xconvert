@@ -112,6 +112,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletRequestAware;
@@ -365,7 +366,7 @@ ServletRequestAware , ServletResponseAware {
              PaRegistry.getDocumentService().updateForReview(docDTO);
              request.setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
              
-             File file = new File(docDTO.getFileName().getValue());
+             File file = new File(SystemUtils.JAVA_IO_TMPDIR + "/" + docDTO.getFileName().getValue());
              FileUtils.writeByteArrayToFile(file, docDTO.getText().getData());
 
              sendCcctNotificationEmail(docDTO.getStudyProtocolIdentifier() , file);

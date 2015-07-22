@@ -114,6 +114,17 @@ jQuery(function() {
         jQuery('[rel=popover]').popover()
     });
 	
+//popover with html for menu tool tips create this separte function so that it does not affect other tooltips
+//this is to enable display html in tooltip 	
+   jQuery(function (jQuery) {
+		    jQuery('[rel=popoverwithhtml]').popover({ 
+		        html : true, 
+		        content: function() {
+		          return $('#popover_content_wrapper').html();
+		        }
+		      })
+	    });
+	
 // Date Picker
 	jQuery(function() {
 	    jQuery('.datetimepicker').datetimepicker({

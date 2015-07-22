@@ -27,10 +27,18 @@
           </li>
           <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Register Trial <b class="caret"></b></a>
             <ul class="dropdown-menu register-trial">
-              <li><a href="${pageContext.request.contextPath}/protected/submitTrial.action?sum4FundingCatCode=National">National<i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.regtrial_national"/>" data-placement="right" data-trigger="hover" data-toggle="modal" data-target=".bs-modal-lg"></i></a></li>
-              <li><a href="${pageContext.request.contextPath}/protected/submitTrial.action?sum4FundingCatCode=Externally Peer-Reviewed">Externally Peer-Reviewed<i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.regtrial_peer"/>" data-placement="right" data-trigger="hover" data-toggle="modal" data-target=".bs-modal-lg"></i></a></li>
-              <li><a href="${pageContext.request.contextPath}/protected/submitTrial.action?sum4FundingCatCode=Institutional">Institutional<i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.regtrial_institutional" />" data-placement="right" data-trigger="hover" data-toggle="modal" data-target=".bs-modal-lg"></i></a></li>
-              <li><a href="${pageContext.request.contextPath}/protected/submitProprietaryTrialinputNct.action">Industrial/Other<i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.regtrial_industrial" />" data-placement="right" data-trigger="hover" data-toggle="modal" data-target=".bs-modal-lg"></i></a></li>
+              <li><a href="${pageContext.request.contextPath}/protected/submitTrial.action?sum4FundingCatCode=National">National<i class="fa-question-circle help-text" id="popover" rel="popoverwithhtml" 
+              data-content="<s:property escapeHtml="true" escapeXml="false" 
+                                value="@gov.nih.nci.pa.util.MiscDocumentUtils@getDocumentContent('TrialCategory.National','Registry')"/>" data-placement="right" data-trigger="hover" data-toggle="modal" data-target=".bs-modal-lg"></i></a></li>
+              <li><a href="${pageContext.request.contextPath}/protected/submitTrial.action?sum4FundingCatCode=Externally Peer-Reviewed">Externally Peer-Reviewed<i class="fa-question-circle help-text" id="popover" rel="popoverwithhtml" 
+              data-content="<s:property escapeHtml="true" escapeXml="false" 
+                                value="@gov.nih.nci.pa.util.MiscDocumentUtils@getDocumentContent('TrialCategory.ExternallyPeerReviewed','Registry')"/>" data-placement="right" data-trigger="hover" data-toggle="modal" data-target=".bs-modal-lg"></i></a></li>
+              <li><a href="${pageContext.request.contextPath}/protected/submitTrial.action?sum4FundingCatCode=Institutional">Institutional<i class="fa-question-circle help-text" id="popover" rel="popoverwithhtml"
+               data-content="<s:property escapeHtml="true" escapeXml="false" 
+                                value="@gov.nih.nci.pa.util.MiscDocumentUtils@getDocumentContent('TrialCategory.Institutional','Registry')"/>" data-placement="right" data-trigger="hover" data-toggle="modal" data-target=".bs-modal-lg"></i></a></li>
+              <li><a href="${pageContext.request.contextPath}/protected/submitProprietaryTrialinputNct.action">Industrial/Other<i class="fa-question-circle help-text" id="popover" rel="popoverwithhtml" 
+              data-content="<s:property escapeHtml="true" escapeXml="false" 
+                                value="@gov.nih.nci.pa.util.MiscDocumentUtils@getDocumentContent('TrialCategory.Industrial','Registry')"/>" data-placement="right" data-trigger="hover" data-toggle="modal" data-target=".bs-modal-lg"></i></a></li>
               <li><a href="#" data-toggle="modal" data-target="#myModal">View Category Definitions</a></li>
               <li><a href="${pageContext.request.contextPath}/protected/addSites.action">Add Sites</a></li>
               <s:set name="isUserRegAdmin" value="@gov.nih.nci.pa.service.util.CSMUserService@isCurrentUserRegAdmin()" scope="page" />

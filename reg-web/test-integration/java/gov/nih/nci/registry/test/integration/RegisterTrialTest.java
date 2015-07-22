@@ -148,6 +148,34 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         }
 
     }
+    
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testOrgNameWithQuotes() {
+        loginAndAcceptDisclaimer();
+        hoverLink("Register Trial");
+        pause(500);
+        clickAndWait("link=National");
+        waitForElementById("trialDTO.leadOrgTrialIdentifier", 30);
+        
+     // Select Lead Organization
+        moveElementIntoView(By.id("trialDTO.leadOrganizationNameField"));
+        hover(By.id("trialDTO.leadOrganizationNameField"));
+        clickAndWaitAjax("link=Search...");
+        waitForElementById("popupFrame", 60);
+        selenium.selectFrame("popupFrame");
+        waitForElementById("orgNameSearch", 30);
+        selenium.type("orgNameSearch", "double");
+        clickAndWaitAjax("id=search_organization_btn");
+        waitForElementById("row", 15);
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[9]/button");
+        waitForPageToLoad();
+        driver.switchTo().defaultContent();
+        moveElementIntoView(By.id("trialDTO.leadOrganizationNameField"));
+        WebElement orgElement = driver.findElement(By.id("trialDTO.leadOrganizationNameField"));
+        String text = orgElement.getText();
+        assertEquals("Double \" quotes\"", text);
+    }
 
     @SuppressWarnings("deprecation")
     @Test
