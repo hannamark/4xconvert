@@ -79,11 +79,6 @@ public class StudyMilestoneBeanLocal
     
      private static final String ENTIRE_TRIAL = "ENTIRE_TRIAL";
 
-    /**
-     * Date format for TSR file names.
-     */
-    public static final String DATE_FORMAT = "yyyy-MM-dd-HHmm";
-
     private static final Logger LOG = Logger.getLogger(StudyMilestoneBeanLocal.class);
     
     /** TRIAL_SUMMARY_REPORT stop search milestones. **/
@@ -783,7 +778,7 @@ public class StudyMilestoneBeanLocal
                                     : ("A" + amendNum));
                     final String nciID = spDTO.getNciIdentifier();
                     String filename = TSR + nciID + "_"
-                            + DateFormatUtils.format(new Date(), DATE_FORMAT)
+                            + DateFormatUtils.format(new Date(), PAConstants.TSR_DATE_FORMAT)
                             + discriminator + EXTENSION_RTF;
                     ByteArrayOutputStream tsrStream = getTsrReportGeneratorService()
                             .generateRtfTsrReport(studyID);

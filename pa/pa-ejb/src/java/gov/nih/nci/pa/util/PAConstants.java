@@ -207,4 +207,9 @@ public class PAConstants {
      * 
      */
     public static final String NON_INTERVENTIONAL = "NonInterventional";
+    
+    /**
+     * TSR Filename Date format.
+     */
+    public static final String TSR_DATE_FORMAT = "yyyy-MM-dd-HHmm";
 }

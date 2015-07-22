@@ -1,15 +1,17 @@
 package gov.nih.nci.pa.test.integration;
 
 import gov.nih.nci.pa.enums.StudySourceCode;
-import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
+import gov.nih.nci.pa.util.PAConstants;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -61,7 +63,30 @@ public class TrialSearchTest extends AbstractTrialStatusTest {
         }
 
     }
+    
+    @SuppressWarnings({ "deprecation", "unused", "unchecked" })
+    @Test
+    public void testTSRExport() throws Exception {    	
+        TrialInfo trial = createAcceptedTrial();
+        loginAsSuperAbstractor();
+        clickAndWait("trialSearchMenuOption");
+        s.type("identifier", trial.nciID);
+        clickAndWait("link=Search");
 
+        // Finally, download CSV.
+        if (!isPhantomJS()) {
+        	String fileName = "TsrReport_" 
+                + DateFormatUtils.format(new Date(), PAConstants.TSR_DATE_FORMAT) + ".rtf";
+        	selenium.click("xpath=//a[normalize-space(text())='View TSR']");            
+            pause(OP_WAIT_TIME);
+            File tsr = new File(downloadDir, fileName);
+            assertTrue(tsr.exists());
+            tsr.deleteOnExit();            
+            tsr.delete();
+        }
+    }
+
+    
     @SuppressWarnings("deprecation")
     @Test
     public void testSearchByStudySource() throws Exception {

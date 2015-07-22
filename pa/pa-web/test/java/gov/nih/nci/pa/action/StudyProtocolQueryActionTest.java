@@ -26,20 +26,24 @@ import gov.nih.nci.pa.service.StudyIdentifiersService;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.service.MockCorrelationUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import junit.framework.Assert;
 
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+import com.mockrunner.mock.web.MockHttpServletResponse;
 
 
 /**
@@ -275,6 +279,10 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
         when(tsrReportGeneratorService.generateRtfTsrReport(IiConverter.convertToIi(1L))).thenReturn(reportData);
         getRequest().setupAddParameter("studyProtocolId", "1");
         assertEquals("none", spqAction.viewTSR());
+        String fileNameDateStr = DateFormatUtils.format(new Date(), PAConstants.TSR_DATE_FORMAT);
+        MockHttpServletResponse response = (MockHttpServletResponse) ServletActionContext.getResponse();
+        String contentDisposition = response.getHeader("Content-Disposition");
+        assertTrue(contentDisposition.matches(".*" + fileNameDateStr + ".*"));
     }
 
     /**

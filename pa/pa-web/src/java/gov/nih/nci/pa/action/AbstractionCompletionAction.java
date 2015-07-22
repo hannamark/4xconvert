@@ -88,17 +88,20 @@ import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
@@ -119,7 +122,8 @@ public class AbstractionCompletionAction extends ActionSupport implements Prepar
     private static final String TSR = "TSR_";
     private static final String EXTENSION_RTF = ".rtf";
     private static final String ABSTRACTION_ERROR = "An error happened during abstraction: ";
-
+    
+    
     private AbstractionCompletionServiceLocal abstractionCompletionService;
     private CTGovXmlGeneratorServiceLocal ctGovXmlGeneratorService;   
     private TSRReportGeneratorServiceLocal tsrReportGeneratorService;
@@ -210,8 +214,10 @@ public class AbstractionCompletionAction extends ActionSupport implements Prepar
             HttpSession session = ServletActionContext.getRequest().getSession();
             Ii studyProtocolIi = (Ii) session.getAttribute(Constants.STUDY_PROTOCOL_II);
             ByteArrayOutputStream reportData = tsrReportGeneratorService.generateRtfTsrReport(studyProtocolIi);
-            int randomInt = new Random().nextInt(MAXIMUM_RANDOM_FILE_NUMBER);
-            String fileName = TSR + randomInt + studyProtocolIi.getExtension() + EXTENSION_RTF;
+            int randomInt = new Random().nextInt(MAXIMUM_RANDOM_FILE_NUMBER);            
+            String fileNameDateStr = DateFormatUtils.format(new Date(), PAConstants.TSR_DATE_FORMAT);
+            String fileName = TSR + randomInt + "_" + fileNameDateStr 
+                    + "_" + studyProtocolIi.getExtension() + EXTENSION_RTF;
             getServletResponse().setContentType("application/rtf");
             servletResponse.setContentLength(reportData.size());
             servletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");

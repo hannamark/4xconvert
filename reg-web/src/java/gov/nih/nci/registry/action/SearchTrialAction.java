@@ -55,6 +55,7 @@ import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
@@ -70,6 +71,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
@@ -87,7 +89,7 @@ public class SearchTrialAction extends BaseSearchTrialAction implements Preparab
     private static final String FAILURE_MESSAGE = "failureMessage";
 
     private static final String CTGOVIMPORT = "ctgovimport";
-
+    
     private static final Logger LOG = Logger
             .getLogger(SearchTrialAction.class);    
     
@@ -780,8 +782,11 @@ public class SearchTrialAction extends BaseSearchTrialAction implements Preparab
                     .getResponse();
             ByteArrayOutputStream reportData = tsrReportGeneratorService
                     .generateRtfTsrReport(studyProtocolIi);
+            
+            String fileName = "TsrReport_" 
+                  + DateFormatUtils.format(new Date(), PAConstants.TSR_DATE_FORMAT) + ".rtf";
             servletResponse.setHeader("Content-disposition",
-                    "inline; filename=TsrReport.rtf");
+                    "inline; filename=\"" + fileName + "\"");
             servletResponse.setContentType("application/rtf;");
             servletResponse.setContentLength(reportData.size());
             ServletOutputStream servletout = servletResponse.getOutputStream();

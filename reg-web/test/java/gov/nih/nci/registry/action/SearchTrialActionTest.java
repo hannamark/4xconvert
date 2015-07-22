@@ -29,9 +29,7 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
-import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
@@ -41,6 +39,7 @@ import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.CacheUtils;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.registry.dto.SearchProtocolCriteria;
 import gov.nih.nci.registry.service.MockPAOrganizationService;
@@ -56,17 +55,18 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.plaf.basic.BasicIconFactory;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
@@ -385,6 +385,7 @@ public class SearchTrialActionTest extends AbstractHibernateTestCase {
         queryCriteria.setNciIdentifier("NCI-2009-00001");
         ServletActionContext.getRequest().getSession().setAttribute("studySearchCriteria", queryCriteria);
         queryCriteria.setStudyProtocolId(1L);
+        String fileNameDateStr = DateFormatUtils.format(new Date(), PAConstants.TSR_DATE_FORMAT);
         assertEquals("error", action.viewTSR());
         action.setStudyProtocolId(1L);
         Ii spIi = IiConverter.convertToIi(action.getStudyProtocolId());
@@ -395,6 +396,8 @@ public class SearchTrialActionTest extends AbstractHibernateTestCase {
         assertEquals(null, result);
         MockHttpServletResponse response = (MockHttpServletResponse) ServletActionContext.getResponse();
         assertEquals("Wrong content type", "application/rtf;", response.getContentType());
+        String contentDisposition = response.getHeader("Content-Disposition");
+        assertTrue(contentDisposition.matches(".*" + fileNameDateStr + ".*"));
         verify(tsrReportGeneratorService).generateRtfTsrReport(spIi);
     }
     

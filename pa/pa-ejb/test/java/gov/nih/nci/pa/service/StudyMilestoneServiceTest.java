@@ -999,7 +999,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
                                 "TSR_NCI_ID_"
                                         + DateFormatUtils
                                                 .format(new Date(),
-                                                        "yyyy-MM-dd-HHmm")
+                                                        PAConstants.TSR_DATE_FORMAT)
                                         + "_A10.rtf", docDTO.getFileName()
                                         .getValue());
                         return null;

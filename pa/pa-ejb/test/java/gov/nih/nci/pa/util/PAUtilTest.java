@@ -139,6 +139,18 @@ public class PAUtilTest {
         assertEquals(PAUtil.normalizeDateStringWithTime("01/16/2009"),
                 "2009-01-16 00:00:00");
     }
+    
+    /**
+     * Test method for
+     * {@link gov.nih.nci.pa.util.PAUtil#normalizeTimeString(java.lang.String)}
+     * .
+     */
+    @Test
+    public void normalizeTimeString() {
+        assertNull(PAUtil.normalizeTimeString(null));
+        assertNotNull(PAUtil.normalizeTimeString("01/16/2009"));
+        assertEquals("00:00:00", PAUtil.normalizeTimeString("01/16/2009"));
+    }
 
     /**
      * Test method for
@@ -182,7 +194,7 @@ public class PAUtilTest {
     @Test
     public void testToday() {
         assertNotNull(PAUtil.today());
-    }
+    }    
 
     @Test
     public void testYesOrNo() {

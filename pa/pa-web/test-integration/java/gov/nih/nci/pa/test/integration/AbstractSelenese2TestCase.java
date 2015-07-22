@@ -130,7 +130,7 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
         FirefoxProfile profile = new FirefoxProfile();
         profile.setPreference("browser.download.dir", downloadDir.getCanonicalPath());
         profile.setPreference("browser.download.folderList", 2);
-        profile.setPreference("browser.helperApps.neverAsk.saveToDisk", "text/csv");
+        profile.setPreference("browser.helperApps.neverAsk.saveToDisk", "text/csv,application/rtf");        
         
         final Class<?> clazz = Class.forName(driverClass);
         try {
@@ -146,8 +146,6 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
         s = selenium;
        
     }
-    
-   
 
     /**
      * Converts seconds to milliseconds.

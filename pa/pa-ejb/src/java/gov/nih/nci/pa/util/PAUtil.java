@@ -178,7 +178,10 @@ import de.jollyday.HolidayManager;
  */
 @SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity" })
 public class PAUtil {
+    
     private static final String OTHER = "Other";
+    
+    private static final int TM_FMT_INDX = 6;
     /**
      * Date format.
      */
@@ -350,6 +353,24 @@ public class PAUtil {
         sdf.applyPattern(ValidDateFormat.getDateFormats().get(1).getPattern());
         return sdf.format(outDate);
     }
+    
+    /**
+     * Convert an input string to a normalized time string.
+     * The output format is determined by the seventh element in
+     * the static dateFormats array.
+     *
+     * @param inDate string to be normalized
+     * @return normalized string 
+     */
+    public static String normalizeTimeString(String inDate) {
+        Date outDate = dateStringToDate(inDate);
+        if (outDate == null) {
+            return null;
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        sdf.applyPattern(ValidDateFormat.getDateFormats().get(TM_FMT_INDX).getPattern());
+        return sdf.format(outDate);
+    }
 
     /**
      * Convert an input string to a Timestamp.
@@ -367,7 +388,8 @@ public class PAUtil {
      */
     public static String today() {
         return normalizeDateString(new Timestamp((new Date()).getTime()).toString());
-    }
+    }  
+    
 
     /**
      * Util method to validate email addresses.

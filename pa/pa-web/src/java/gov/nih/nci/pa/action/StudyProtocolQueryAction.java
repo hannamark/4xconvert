@@ -106,10 +106,12 @@ import gov.nih.nci.pa.util.ActionUtils;
 import gov.nih.nci.pa.util.CacheUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -119,6 +121,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletRequestAware;
@@ -141,6 +144,7 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
     private static final String SHOW_VIEW = "view";
     private static final String BARE = "/bare/";
     private static final String POPUP_STUDY_ALTERNATE_TITLES = "popUpStudyAlternateTitles";
+    
     
     private static final Logger LOG = Logger.getLogger(StudyProtocolQueryAction.class);
     
@@ -339,7 +343,10 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
             String pId = ServletActionContext.getRequest().getParameter("studyProtocolId");
             ByteArrayOutputStream reportData =
                     tsrReportGeneratorService.generateRtfTsrReport(IiConverter.convertToIi(pId));
-            servletResponse.setHeader("Content-disposition", "inline; filename=TsrReport.rtf");
+            
+            String fileName = "TsrReport_" 
+                       + DateFormatUtils.format(new Date(), PAConstants.TSR_DATE_FORMAT) + ".rtf";            
+            servletResponse.setHeader("Content-disposition", "inline; filename=\"" + fileName + "\"");
             servletResponse.setContentType("application/rtf;");
             servletResponse.setContentLength(reportData.size());
             ServletOutputStream servletout = servletResponse.getOutputStream();

@@ -10,7 +10,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO.ErrorMessageTypeEnum;
@@ -21,15 +20,18 @@ import gov.nih.nci.pa.service.util.CTGovXmlGeneratorOptions;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAConstants;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.struts2.ServletActionContext;
 import org.junit.After;
 import org.junit.Before;
@@ -192,12 +194,15 @@ public class AbstractionCompletionActionTest {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         output.write("rtfData".getBytes());
         when(tsrReportGeneratorService.generateRtfTsrReport(spIi)).thenReturn(output);
+        String fileNameDateStr = DateFormatUtils.format(new Date(), PAConstants.TSR_DATE_FORMAT);
         String result = sut.viewTSR();
         assertEquals("none", result);
         MockHttpServletResponse response = (MockHttpServletResponse) ServletActionContext.getResponse();
         assertEquals("Wrong content type", "application/rtf", response.getContentType());
-        assertEquals("Wrong Pragma header", "public", response.getHeader("Pragma"));
+        assertEquals("Wrong Pragma header", "public", response.getHeader("Pragma"));        
         assertEquals("Wrong Cache-Control header", "max-age=0", response.getHeader("Cache-Control"));
+        String contentDisposition = response.getHeader("Content-Disposition");
+        assertTrue(contentDisposition.matches(".*" + fileNameDateStr + ".*"));
         verify(tsrReportGeneratorService).generateRtfTsrReport(spIi);
     }
 

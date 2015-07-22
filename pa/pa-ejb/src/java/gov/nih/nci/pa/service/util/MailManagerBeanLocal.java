@@ -195,6 +195,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.log4j.Logger;
 import org.apache.xml.serialize.LineSeparator;
 import org.apache.xml.serialize.OutputFormat;
@@ -386,8 +387,9 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
     private String getTSRFile(Ii studyProtocolID, String nciIdentifier, StringBuffer pathToFile, String format)
         throws PAException {
 
-        String tsrFile =
-            pathToFile.append(File.separator).append(TSR).append(nciIdentifier).append(format).toString();
+        String fileNameDateStr =  DateFormatUtils.format(new Date(), PAConstants.TSR_DATE_FORMAT);
+        String tsrFile = pathToFile.append(File.separator).append(TSR).append(nciIdentifier)
+                .append(fileNameDateStr).append(format).toString();
         ByteArrayOutputStream tsrStream = null;
         OutputStream tsrFileStream = null;
         try {
