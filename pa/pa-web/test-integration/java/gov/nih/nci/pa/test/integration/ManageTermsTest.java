@@ -87,6 +87,8 @@ package gov.nih.nci.pa.test.integration;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.ArrayListHandler;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -252,6 +254,58 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
         clickAndWait("link=Sync Term");
         
         assertTrue(selenium.isTextPresent("Message. Intervention C800 synchronized with NCI thesaurus."));        
+    }
+    
+    /**
+     * test import intervention
+     * @throws SQLException 
+     */
+    @Test
+    public void testImportInterventionNameTypeCode() throws SQLException{
+        Actions action = new Actions(driver);
+        action.moveToElement(driver.findElement(By.xpath("//span[@class='btn_img']"))).perform();
+        clickAndWait("xpath=//a[@href='manageTermssearchIntervention.action?searchStart=true']");
+        assertTrue(selenium.isTextPresent("Import New Intervention From NCIt"));
+        
+        // Test valid import
+        selenium.type("id=ntTermIdentifier", "C1861");
+        clickAndWait("link=Look Up");
+        assertTrue(selenium.isTextPresent("Import New Intervention From NCIt"));        
+        assertEquals("C1861",selenium.getValue("id=ntTermIdentifier"));
+        boolean flag = false;
+        WebElement dropdown = driver.findElement(By.id("intervAltNames"));
+        Select select = new Select(dropdown);
+        List<WebElement> options = select.getOptions();
+        for (WebElement we : options) {            
+                flag = true;           
+        }            
+        assertTrue(flag);
+        clickAndWait("link=Import");
+        
+        
+        assertTrue(selenium.isTextPresent("Message. New intervention C1861 added successfully."));        
+        
+        String nameTypeCode = getNameTypeCode("C1861");
+        assertEquals("Chemical structure name", nameTypeCode);
+        
+        
+        //Test sync        
+        action.moveToElement(driver.findElement(By.xpath("//span[@class='btn_img']"))).perform();
+        clickAndWait("xpath=//a[@href='manageTermssearchIntervention.action?searchStart=true']");
+        assertTrue(selenium.isTextPresent("Import New Intervention From NCIt"));
+        
+        selenium.type("id=ntTermIdentifier", "C48398");
+        clickAndWait("link=Look Up");
+        assertTrue(selenium.isTextPresent("Synchronize Existing Intervention Term With NCIt"));        
+        assertTrue(selenium.isTextPresent("Value in CTRP"));
+        assertTrue(selenium.isTextPresent("Value in NCIt"));
+        clickAndWait("link=Sync Term");
+        
+        assertTrue(selenium.isTextPresent("Message. Intervention C48398 synchronized with NCI thesaurus."));
+        
+        String nameTypeCodeSynced = getNameTypeCode("C48398");
+        assertEquals("Chemical structure name", nameTypeCodeSynced);
+        
     }
     
     
@@ -441,8 +495,9 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
                             .isTextPresent("Disease with NCIt code CTEST1234 already exists!"));
         }
     } 
-    
-    /*@Test
+   
+    /*
+    @Test
     public void testEnterDiseaseWithParentAndChildTerm() {
         Actions action = new Actions(driver);
         action.moveToElement(driver.findElements(By.xpath("//span[@class='btn_img']")).get(1)).perform();
@@ -524,7 +579,8 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
         // Click save and Cancel
         selenium.click("link=Save");
         assertTrue(selenium.isTextPresent("Message. New Disease CTEST1235 added successfully."));
-    } */
+    } 
+    */
 
     /**
      * Test cancel on disease details page 
@@ -620,5 +676,25 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
                 15);
         selenium.click("xpath=//div[@class='breadcrumbFeaturedElement']/div[@class='breadcrumbFeaturedElementText']");
 
+    }
+    
+    
+    private String getNameTypeCode(String interventionCode)
+            throws SQLException {
+    	
+        String sql;       
+        
+        sql = "select it_al.name_type_code from intervention it join "
+        		+ "intervention_alternate_name it_al on it.identifier = it_al.intervention_identifier " 
+        		+ "	where it.nt_term_identifier='"+interventionCode+"' and length(it_al.name) > 200";
+       
+        String nameTypeCode = "";
+        QueryRunner runner = new QueryRunner();
+        final List<Object[]> results = runner.query(connection, sql,
+                new ArrayListHandler());
+        for (Object[] row : results) {
+        	nameTypeCode = (String) row[0];           
+        }
+        return nameTypeCode;
     }
 }

@@ -83,6 +83,10 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     private static final String SYNC_DISEASE = "syncDisease";
 
     private static final String AJAX_RESPONSE = "ajaxResponse";
+    
+    private static final int MAX_SYN_LENGTH = 200;
+    
+    private static final String CHEMICAL_STRUCTURE_NAME = "Chemical structure name";
 
     private InterventionServiceLocal interventionService;
     private InterventionAlternateNameServiceLocal interventionAltNameService;
@@ -192,7 +196,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                 dto.setPdqTermIdentifier(StConverter.convertToSt(intervention.getIdentifier()));
                 dto.setNtTermIdentifier(StConverter.convertToSt(intervention.getNtTermIdentifier()));
                 dto.setName(StConverter.convertToSt(intervention.getName()));
-                dto.setCtGovTypeCode(CdConverter.convertStringToCd(intervention.getCtGovType()));
+                dto.setCtGovTypeCode(CdConverter.convertStringToCd(intervention.getCtGovType()));                
                 dto.setTypeCode(CdConverter.convertStringToCd(intervention.getType()));
                 dto.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
                 dto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(PAUtil.today())));
@@ -204,10 +208,14 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                
                 if (interventionWebDTO != null && interventionWebDTO.getAlterNames() != null) {
                     for (String altName : interventionWebDTO.getAlterNames().keySet()) {
-                        InterventionAlternateNameDTO altDto = new InterventionAlternateNameDTO();
+                        InterventionAlternateNameDTO altDto = new InterventionAlternateNameDTO();                      
                         altDto.setName(StConverter.convertToSt(altName));
+                        if (altName.length() > MAX_SYN_LENGTH) {
+                           altDto.setNameTypeCode(StConverter.convertToSt(CHEMICAL_STRUCTURE_NAME));
+                        } else {
                         altDto.setNameTypeCode(StConverter.convertToSt(
-                                interventionWebDTO.getAlterNames().get(altName)));
+                                    interventionWebDTO.getAlterNames().get(altName)));
+                        }                        
                         altDto.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
                         altDto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(PAUtil
                                 .today())));
@@ -219,7 +227,11 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                     for (String altName : intervention.getAlterNamesList()) {
                         InterventionAlternateNameDTO altDto = new InterventionAlternateNameDTO();
                         altDto.setName(StConverter.convertToSt(altName));
-                        altDto.setNameTypeCode(StConverter.convertToSt(ALTNAME_TYPECODE_SYNONYM));
+                        if (altName.length() > MAX_SYN_LENGTH) {
+                           altDto.setNameTypeCode(StConverter.convertToSt(CHEMICAL_STRUCTURE_NAME));
+                        } else {
+                           altDto.setNameTypeCode(StConverter.convertToSt(ALTNAME_TYPECODE_SYNONYM));
+                        }                        
                         altDto.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
                         altDto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(PAUtil
                                 .today())));
@@ -377,7 +389,11 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                 for (String altName : intervention.getAlterNames().keySet()) {
                     InterventionAlternateNameDTO altDto = new InterventionAlternateNameDTO();
                     altDto.setName(StConverter.convertToSt(altName));
-                    altDto.setNameTypeCode(StConverter.convertToSt(intervention.getAlterNames().get(altName)));
+                    if (altName.length() > MAX_SYN_LENGTH) {
+                        altDto.setNameTypeCode(StConverter.convertToSt(CHEMICAL_STRUCTURE_NAME));
+                    } else {
+                        altDto.setNameTypeCode(StConverter.convertToSt(intervention.getAlterNames().get(altName)));
+                    }
                     altDto.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
                     altDto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(PAUtil.today())));
                     altDto.setInterventionIdentifier(currentIntrv.getIdentifier());
@@ -1255,6 +1271,9 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     public void setExactSearch(boolean exactSearch) {
         this.exactSearch = exactSearch;
     }
+    
+    
+   
     
     
 }
