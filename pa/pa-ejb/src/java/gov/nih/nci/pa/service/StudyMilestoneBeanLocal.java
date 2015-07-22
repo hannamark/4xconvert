@@ -859,9 +859,15 @@ public class StudyMilestoneBeanLocal
     @Override
     public void updateMilestoneCodeCommentWithDateAndUser(StudyMilestoneDTO dto, 
                String reason, String submitterFullName) throws PAException {
+       if (!ISOUtil.isStNull(dto.getCommentText())) {
        dto.setCommentText(StConverter.convertToSt(StringUtils.defaultString(StConverter
-            .convertToString(dto.getCommentText())) + " " + reason 
+            .convertToString(dto.getCommentText())) + " " + TsConverter
+            .convertToTimestamp(dto.getMilestoneDate()) + " \n\n" + reason 
               + " " + new Timestamp(System.currentTimeMillis()).toString() + " " + submitterFullName));
+       } else {
+           dto.setCommentText(StConverter.convertToSt(reason 
+                 + " " + new Timestamp(System.currentTimeMillis()).toString() + " " + submitterFullName));
+       }
        super.update(dto);
     }
 

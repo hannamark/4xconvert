@@ -1552,7 +1552,21 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.updateMilestoneCodeCommentWithDateAndUser(dtoList.get(3), "Test code", "FullName");
         getCommentByMilestoneIdAndSPID(IiConverter.convertToLong(spIi), IiConverter.convertToLong(dtoList.get(3).getIdentifier()));
         dtoList = bean.getByStudyProtocol(spIi);
-        assertTrue(StConverter.convertToString(dtoList.get(3).getCommentText()).contains("comment Test code ")); 
+        assertTrue(StConverter.convertToString(dtoList.get(3).getCommentText()).contains("comment " + TsConverter
+               .convertToTimestamp(dtoList.get(3).getMilestoneDate())+ " \n\nTest code ")); 
+    }
+    
+    @Test
+    public void testUpdateMilestoneCodeCommentWithDateAndUserNull() throws PAException {
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED));
+        List<StudyMilestoneDTO> dtoList = bean.getByStudyProtocol(spIi);
+        dtoList.size();
+        assertEquals(4, dtoList.size());
+        dtoList.get(3).setCommentText(null);
+        bean.updateMilestoneCodeCommentWithDateAndUser(dtoList.get(3), "Test code", "FullName");
+        getCommentByMilestoneIdAndSPID(IiConverter.convertToLong(spIi), IiConverter.convertToLong(dtoList.get(3).getIdentifier()));
+        dtoList = bean.getByStudyProtocol(spIi);
+        assertTrue(StConverter.convertToString(dtoList.get(3).getCommentText()).contains("Test code ")); 
     }
     
     /**
