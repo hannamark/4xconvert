@@ -1866,5 +1866,13 @@
 	<changeSet id="PO-8829-Update" author="khandalkara">
        <comment>Update definitions in Registry to match new OCC Data Guide definitions.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8829-Update.sql"/>       
+    </changeSet>
+    <changeSet id="PO-9016" author="gunnikrishnan">
+       <comment>Add Study processing errors</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9016.sql"/>
+    </changeSet> 
+    <changeSet id="PO-9016-1" author="gunnikrishnan">
+       <comment>Add properties for CT GOV email</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9016-1.sql"/>
     </changeSet>	
 </databaseChangeLog>

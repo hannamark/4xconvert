@@ -47,6 +47,7 @@ import org.springframework.util.ReflectionUtils;
 
 import com.dumbster.smtp.SimpleSmtpServer;
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+import com.icegreen.greenmail.util.ServerSetupTest;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -190,7 +191,12 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
         addPaProperty("other.identifiers.row", "");
         addPaProperty("ctep.ccr.learOrgIds", "NCICCR");
         addPaProperty("allowed.regulatory.authorities.no.country.name", "IDMC");
-
+        addPaProperty("ctgov.upload.error.regex", "Study Number \\d+ \\(([^\\)]*)\\)\\s*ERROR:([^\\n]*)");
+        addPaProperty("imap.server", ServerSetupTest.IMAP.getLocalHostAddress());
+        addPaProperty("imap.port", String.valueOf(ServerSetupTest.IMAPS.getPort()));
+        addPaProperty("imap.folder", "INBOX");
+        addPaProperty("ctgov.upload.errorEmail.subject", "PRS Protocol Upload Notification");
+        addPaProperty("ctgov.upload.errorEmail.account", "CTGovUploadErrorEmailAccount");
         addPaProperty(
                 "closed_industrial_trial_statuses",
                 "CLOSED_TO_ACCRUAL, CLOSED_TO_ACCRUAL_AND_INTERVENTION, ADMINISTRATIVELY_COMPLETE, COMPLETE");

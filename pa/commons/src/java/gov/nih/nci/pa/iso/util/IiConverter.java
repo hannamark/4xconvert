@@ -398,6 +398,10 @@ public class IiConverter {
    /** The ii root value for family organization relationship. */
    public static final String PO_FAMILY_ORG_REL_ROOT = "2.16.840.1.113883.3.26.4.6.2";
 
+   /** Study processing error name*/
+   public static final String STUDY_PROCESSING_ERROR_NAME = "Study Processing Error Identifier";
+   /** Study processing error ROOT*/
+   public static final String STUDY_PROCESSING_ERROR_ROOT = "2.16.840.1.113883.3.26.4.6.3";
 
     /**
      * Convert to ii.
@@ -982,6 +986,18 @@ public class IiConverter {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(SUBJECT_ACCRUAL_IDENTIFIER_NAME);
         ii.setRoot(SUBJECT_ACCRUAL_ROOT);
+        return ii;
+    }
+    
+    /**
+     * converts to StudyProcessingErrror Ii.
+     * @param id id
+     * @return Ii
+     */
+    public static Ii convertToStudyProcessingErrorIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(STUDY_PROCESSING_ERROR_NAME);
+        ii.setRoot(STUDY_PROCESSING_ERROR_ROOT);
         return ii;
     }
 }

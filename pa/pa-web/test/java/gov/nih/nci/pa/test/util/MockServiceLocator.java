@@ -153,6 +153,7 @@ import gov.nih.nci.pa.service.StudyObjectiveServiceLocal;
 import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
+import gov.nih.nci.pa.service.StudyProcessingErrorService;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolStageServiceLocal;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
@@ -1103,4 +1104,8 @@ public class MockServiceLocator implements ServiceLocator {
         return Mockito.mock(StudyNotesServiceLocal.class);
     }  
     
+    @Override
+    public StudyProcessingErrorService getStudyProcessingErrorService() {
+        return Mockito.mock(StudyProcessingErrorService.class);
+    }  
 }

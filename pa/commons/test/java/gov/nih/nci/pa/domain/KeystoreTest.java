@@ -103,7 +103,7 @@ public class KeystoreTest {
 
     }
 
-    static void setFinalStatic(Field field, Object newValue) throws Exception {
+    public static void setFinalStatic(Field field, Object newValue) throws Exception {
         field.setAccessible(true);
 
         Field modifiersField = Field.class.getDeclaredField("modifiers");

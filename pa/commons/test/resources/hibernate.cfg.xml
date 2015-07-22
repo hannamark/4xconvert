@@ -146,7 +146,9 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         
         <!-- mapping classes for database-driven lists of values (LOVs) -->
         <mapping class="gov.nih.nci.pa.lov.PrimaryPurposeCode" />
-        <mapping class="gov.nih.nci.pa.lov.ConsortiaTrialCategoryCode" />
+        <mapping class="gov.nih.nci.pa.lov.ConsortiaTrialCategoryCode" />        
+        
+        <mapping class="gov.nih.nci.pa.domain.StudyProcessingError" />
         
         <mapping resource="queries.xml" />
 

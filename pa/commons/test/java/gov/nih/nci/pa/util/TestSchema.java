@@ -134,6 +134,7 @@ import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
+import gov.nih.nci.pa.domain.StudyProcessingError;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolAssociation;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
@@ -251,6 +252,7 @@ public class TestSchema {
     public static User user;
     public static Long inactiveProtocolId;
     public static List<Long> assayTypeIds;
+    public static List<Long> studyProtocolErrorIds;
 
     /**
      * 
@@ -305,7 +307,8 @@ public class TestSchema {
         studyOnholdIds = new ArrayList<Long>();
         assayTypeIds = new ArrayList<Long>();
         studyProtocols = new ArrayList<StudyProtocol>();
-
+        studyProtocolErrorIds = new ArrayList<Long>();
+        
         User curator = getUser(true);
         addUpdObject(curator);
 
@@ -969,7 +972,19 @@ public class TestSchema {
         mechanism.setFundingMechanismCode("D71");
         addUpdObject(mechanism);    
         
-        
+        StudyProcessingError spe = new StudyProcessingError();
+        spe.setStudyProtocol(TestSchema.studyProtocols.get(0));
+        TestSchema.studyProtocols.get(0).getStudyProcessingErrors().add(spe);
+        spe.setCmsTicketId("cmsTicketId");
+        spe.setErrorDate(new Timestamp(System.currentTimeMillis()));
+        spe.setErrorMessage("Some error message");
+        spe.setActionTaken("Some action taken");
+        spe.setComment("Some comment");
+        spe.setRecurringError(true);
+        spe.setResolutionDate(new Timestamp(System.currentTimeMillis()));
+        addUpdObject(spe);
+        addUpdObject(sp);        
+        studyProtocolErrorIds.add(spe.getId());
         
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();

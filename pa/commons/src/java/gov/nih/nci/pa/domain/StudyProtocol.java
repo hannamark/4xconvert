@@ -246,6 +246,7 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     private Timestamp changesInCtrpCtGovDate;
     private Boolean sendToCtGovUpdated;
     
+    private List<StudyProcessingError> studyProcessingErrors = new ArrayList<StudyProcessingError>();
     
   
     /**
@@ -1497,5 +1498,39 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
         this.sendToCtGovUpdated = sendToCtGovUpdated;
     }
 
+    /**
+     * @return the studyProcessingErrors
+     */
+    @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING , fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @Sort(type = SortType.COMPARATOR, comparator = StudyProcessingErrorComparator.class)
+    public List<StudyProcessingError> getStudyProcessingErrors() {
+        return studyProcessingErrors;
+    }
 
+    /**
+     * @param studyProcessingErrors the studyProcessingErrors to set
+     */
+    public void setStudyProcessingErrors(
+            List<StudyProcessingError> studyProcessingErrors) {
+        this.studyProcessingErrors = studyProcessingErrors;
+    }
+
+    /**
+     * Sorts study processing error by descending order of error date
+     * 
+     * @author gunnikrishnan
+     */
+    public static final class StudyProcessingErrorComparator implements
+            Comparator<StudyProcessingError>, Serializable {
+        private static final long serialVersionUID = 5117406038792440950L;
+
+        @Override
+        @SuppressWarnings("PMD.NPathComplexity")
+        public int compare(StudyProcessingError spe1, StudyProcessingError spe2) {
+            Timestamp date1 = spe1.getErrorDate() != null ? spe1.getErrorDate() : new Timestamp(0);
+            Timestamp date2 = spe2.getErrorDate() != null ? spe2.getErrorDate() : new Timestamp(0);
+            return -date1.compareTo(date2);
+        }
+    }
 }

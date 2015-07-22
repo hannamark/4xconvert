@@ -170,11 +170,13 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 import javax.mail.Address;
 import javax.mail.BodyPart;
+import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Session;
+import javax.mail.Store;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
@@ -264,7 +266,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
     private static final String N_VALUE = "${n_value}";
     private static final String YES_VAL = "YES";
     private static final String NO_VAL = "NO";
-
+    
     @EJB
     private ProtocolQueryServiceLocal protocolQueryService;
     @EJB
@@ -2744,6 +2746,75 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
        }
         
     }
+
+    @Override
+    public List<MailMessage> getNewEmails(String mailServer, int port, String user, String password, String folder) 
+            throws PAException {
+        if (StringUtils.isEmpty(mailServer) || port <= 0 || StringUtils.isEmpty(user) 
+                || StringUtils.isEmpty(password) || StringUtils.isEmpty(folder)) {
+            throw new PAException("One of mail server, port, user, password or folder not specified, unable to read "
+                    + "email");
+        }
+        Store store = null;
+        Folder mailFolder = null;
+        try {
+            Properties mailProps = new Properties();
+            mailProps.setProperty("mail.store.protocol", "imaps");
+            mailProps.setProperty("mail.imaps.port", String.valueOf(port));
+            Session mailSession = Session.getInstance(mailProps);
+            store = mailSession.getStore();
+            store.connect(mailServer, user, password);
+            mailFolder = store.getFolder(folder);
+            mailFolder.open(Folder.READ_WRITE);
+            
+            List<MailMessage> result = new ArrayList<MailManagerService.MailMessage>();
+            int newMailCount = mailFolder.getUnreadMessageCount();
+            if (newMailCount > 0) {
+                int mailCount = mailFolder.getMessageCount(); 
+                int start = mailCount - newMailCount + 1;
+                Message[] messages = mailFolder.getMessages(start, mailCount);
+                for (int i = 0; i < messages.length; i++) {
+                    result.add(loadMessage(messages[i]));    
+                }
+            } 
+            return result;
+        } catch (MessagingException|IOException e) {
+            throw new PAException("Exception while reading messages from IMAP email server using user " + user, e);
+        } finally {
+            try {
+                if (store != null) {
+                    store.close();
+                    if (mailFolder != null && mailFolder.isOpen()) {
+                        mailFolder.close(false);
+                    }
+                }
+            } catch (MessagingException me) { }
+        }
+    }
     
+    /**
+     * Pre-load message details for use after the mail session is closed
+     */
+    private MailMessage loadMessage(Message m) throws MessagingException, IOException {
+        MailMessage mm = new MailMessage();
+        if (m.getContent() instanceof MimeMultipart) {
+            mm.setMessage(((MimeMultipart) m.getContent()).getBodyPart(0).getContent().toString());
+        } else {
+            mm.setMessage(m.getContent().toString());
+        }
+        String [] from = new String[m.getFrom().length];
+        for (int i = 0; i < m.getFrom().length; i++) {
+            from[i] = m.getFrom()[i].toString();
+        }
+        mm.setFrom(from);        
+        String [] to = new String[m.getAllRecipients().length];
+        for (int i = 0; i < m.getAllRecipients().length; i++) {
+            to[i] = m.getAllRecipients()[i].toString();
+        }
+        mm.setTo(to);
+        mm.setSendDate(m.getSentDate());
+        mm.setSubject(m.getSubject());
+        return mm;
+    }
    
 }

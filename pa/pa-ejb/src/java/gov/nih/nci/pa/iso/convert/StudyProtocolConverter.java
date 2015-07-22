@@ -86,6 +86,7 @@ import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.SecondaryPurpose;
 import gov.nih.nci.pa.domain.StudyAlternateTitle;
+import gov.nih.nci.pa.domain.StudyProcessingError;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
@@ -107,6 +108,8 @@ import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -248,7 +251,10 @@ public class StudyProtocolConverter {
         studyProtocolDTO.setChangesInCtrpCtGov(BlConverter.convertToBl(studyProtocol.getChangesInCtrpCtGov()));
         studyProtocolDTO.setChangesInCtrpCtGovDate(TsConverter.convertToTs(studyProtocol.getChangesInCtrpCtGovDate()));
         studyProtocolDTO.setSendToCtGovUpdated(BlConverter.convertToBl(studyProtocol.getSendToCtGovUpdated()));
-        
+
+        // Copy StudyProcessingErrors 
+        studyProtocolDTO.setStudyProcessingErrors(new ArrayList<StudyProcessingError>(
+                (Collection<StudyProcessingError>) studyProtocol.getStudyProcessingErrors()));        
         return studyProtocolDTO;
     }
 
@@ -382,7 +388,10 @@ public class StudyProtocolConverter {
         studyProtocol.setChangesInCtrpCtGovDate(TsConverter.convertToTimestamp(
                 studyProtocolDTO.getChangesInCtrpCtGovDate()));
         studyProtocol.setSendToCtGovUpdated(BlConverter.convertToBoolean(studyProtocolDTO.getSendToCtGovUpdated()));
-       
+
+        // Copy StudyProcessingErrors
+        studyProtocol.setStudyProcessingErrors(new ArrayList<StudyProcessingError>(
+                (Collection<StudyProcessingError>) studyProtocolDTO.getStudyProcessingErrors()));
        return studyProtocol;
    }
 

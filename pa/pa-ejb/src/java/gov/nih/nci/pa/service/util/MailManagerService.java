@@ -90,6 +90,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -508,4 +509,91 @@ public interface MailManagerService {
             List<? extends StudyNotes> studyRecordChangeList) throws PAException;
     
     
+    /**
+     * Gets all new (unread) emails from the specified folder of the specified mail user
+     * @param mailServer POP mail server
+     * @param port mail server port
+     * @param user mail user /email
+     * @param password mail user password
+     * @param folder mail folder 
+     * @return list of new emails Messages, an empty message array if there are no new emails
+     * @throws PAException when there are errors getting emails
+     */
+    List<MailMessage> getNewEmails(String mailServer, int port, String user, String password, String folder)
+            throws PAException;
+    
+    /**
+     * An email message
+     * @author gunnikrishnan
+     */
+    public class MailMessage implements Serializable {
+        
+        private static final long serialVersionUID = 1L;
+        
+        private String subject;
+        private String message;
+        private String[] from;
+        private String[] to;
+        private Date sendDate;
+        /**
+         * @return the subject
+         */
+        public String getSubject() {
+            return subject;
+        }
+        /**
+         * @param subject the subject to set
+         */
+        public void setSubject(String subject) {
+            this.subject = subject;
+        }
+        /**
+         * @return the message
+         */
+        public String getMessage() {
+            return message;
+        }
+        /**
+         * @param message the message to set
+         */
+        public void setMessage(String message) {
+            this.message = message;
+        }
+        /**
+         * @return the from
+         */
+        public String[] getFrom() {
+            return from;
+        }
+        /**
+         * @param from the from to set
+         */
+        public void setFrom(String[] from) {
+            this.from = from;
+        }
+        /**
+         * @return the to
+         */
+        public String[] getTo() {
+            return to;
+        }
+        /**
+         * @param to the to to set
+         */
+        public void setTo(String[] to) {
+            this.to = to;
+        }
+        /**
+         * @return the sendDate
+         */
+        public Date getSendDate() {
+            return sendDate;
+        }
+        /**
+         * @param sendDate the sendDate to set
+         */
+        public void setSendDate(Date sendDate) {
+            this.sendDate = sendDate;
+        }
+    }
 }

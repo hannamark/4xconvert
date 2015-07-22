@@ -87,8 +87,10 @@ import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.domain.StudyProcessingError;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -160,6 +162,7 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     private Bl changesInCtrpCtGov;
     private Ts changesInCtrpCtGovDate;
     private Bl sendToCtGovUpdated;
+    private List<StudyProcessingError> studyProcessingErrors = new ArrayList<StudyProcessingError>();
     
     /**
      *
@@ -953,6 +956,21 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
      */
     public void setSendToCtGovUpdated(Bl sendToCtGovUpdated) {
         this.sendToCtGovUpdated = sendToCtGovUpdated;
+    }
+
+    /**
+     * @return the studyProcessingErrors
+     */
+    public List<StudyProcessingError> getStudyProcessingErrors() {
+        return studyProcessingErrors;
+    }
+
+    /**
+     * @param studyProcessingErrors the studyProcessingErrors to set
+     */
+    public void setStudyProcessingErrors(
+            List<StudyProcessingError> studyProcessingErrors) {
+        this.studyProcessingErrors = studyProcessingErrors;
     }
     
     

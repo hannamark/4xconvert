@@ -107,6 +107,7 @@ import gov.nih.nci.pa.service.StudyObjectiveServiceLocal;
 import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
+import gov.nih.nci.pa.service.StudyProcessingErrorServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolStageServiceLocal;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
@@ -785,4 +786,8 @@ public class JndiServiceLocator implements ServiceLocator {
         return lookup("StudyNotesServiceLocal!gov.nih.nci.pa.service.StudyNotesService");
     }
 
+    @Override
+    public StudyProcessingErrorServiceLocal getStudyProcessingErrorService() {
+        return lookup("StudyProcessingErrorBeanLocal!gov.nih.nci.pa.service.StudyProcessingErrorServiceLocal");
+    }
 }

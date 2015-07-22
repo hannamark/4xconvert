@@ -152,7 +152,7 @@ public final class Keystore {
     /**
      * @return KeyPair
      */
-    KeyPair getKeypair() {
+    public KeyPair getKeypair() {
         try {
             KeyStore keyStore = KeyStore.getInstance(KEYSTORE_FORMAT);
             keyStore.load(FileUtils.openInputStream(KEYSTORE_FILE),

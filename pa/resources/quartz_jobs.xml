@@ -387,4 +387,29 @@
             </cron>
         </trigger>
     </job>
+    
+    <job>
+        <job-detail>
+            <name>ctgovUploadErrorProcessingJobTrigger</name>
+            <group>DEFAULT</group>
+            <job-class>gov.nih.nci.pa.util.EJBInvokerJob</job-class>
+            <volatility>false</volatility>
+            <durability>true</durability>
+            <recover>false</recover>
+            <job-data-map allows-transient-data="true">
+                <entry>
+                    <key>ejb</key>
+                    <value>StudyProcessingErrorBeanLocal</value>
+                </entry>
+                <entry>
+                    <key>interfaceName</key>
+                    <value>gov.nih.nci.pa.service.StudyProcessingErrorServiceLocal</value>
+                </entry>
+                <entry>
+                    <key>method</key>
+                    <value>processStudyUploadErrors</value>
+                </entry>
+            </job-data-map>
+        </job-detail>
+    </job>  
 </quartz> 

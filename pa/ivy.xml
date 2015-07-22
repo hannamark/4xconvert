@@ -203,6 +203,8 @@
     <dependency conf="test->master" org="org.springframework" name="spring-test" rev="3.2.2.RELEASE"/>
     <dependency conf="test->master" org="dumbster" name="dumbster" rev="1.6"/>
     <dependency conf="test->master" org="net.sf.opencsv" name="opencsv" rev="2.1"/> 
+    <dependency conf="test->master" org="com.icegreen" name="greenmail" rev="1.4.1"/>
+    <dependency conf="test->master" org="org.apache.commons" name="commons-lang3" rev="3.1"/>
 
     <!-- other test targets -->
     <dependency conf="test-checkstyle->master,runtime" org="com.google.guava" name="guava" rev="15.0" force="true">
