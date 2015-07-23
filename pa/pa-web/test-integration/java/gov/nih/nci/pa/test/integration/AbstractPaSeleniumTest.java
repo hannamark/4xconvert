@@ -91,6 +91,8 @@ import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.test.integration.util.TestProperties;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -197,8 +199,21 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     /**
      * @return
      */
-    private int randomPort() {
-        return (int) (32768 + Math.random() * 32766);
+    private static int randomPort() {
+        int port;
+        while (isPortInUse((port = (int) (32768 + Math.random() * 32766)))) {
+            System.out.println("Port " + port + " in use; trying another...");
+        }
+        return port;
+    }
+
+    private static boolean isPortInUse(final int port) {
+        try {
+            new ServerSocket(port).close();
+        } catch (IOException e) {
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -646,7 +661,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         loginPA("results-abstractor", "pass");
         disclaimer(true);
     }
-    
+
     protected boolean isLoggedIn() {
         return selenium.isElementPresent("link=Logout")
                 && !selenium.isElementPresent("link=Login");
@@ -1283,17 +1298,19 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + " ORDER BY status_date ASC, identifier ASC";
         return loadTrialStatuses(sql);
     }
-    protected String getCurrentDWS(TrialInfo trial)
-            throws SQLException {
+
+    protected String getCurrentDWS(TrialInfo trial) throws SQLException {
         QueryRunner runner = new QueryRunner();
         return (String) runner
                 .query(connection,
                         "select status_code from document_workflow_status "
-                + "where study_protocol_identifier="
-                + (trial.id != null ? trial.id : getTrialIdByNciId(trial.nciID))
-                + " ORDER BY status_date_range_low desc, identifier desc LIMIT 1",
+                                + "where study_protocol_identifier="
+                                + (trial.id != null ? trial.id
+                                        : getTrialIdByNciId(trial.nciID))
+                                + " ORDER BY status_date_range_low desc, identifier desc LIMIT 1",
                         new ArrayHandler())[0];
     }
+
     protected List<TrialStatus> getDeletedTrialStatuses(TrialInfo trial)
             throws SQLException {
         final String sql = "select status_code, status_date, addl_comments, comment_text from study_overall_status "
@@ -1420,7 +1437,8 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         runner.update(connection, sql);
     }
 
-    protected void addSponsor(TrialInfo info, String orgName) throws SQLException {
+    protected void addSponsor(TrialInfo info, String orgName)
+            throws SQLException {
         QueryRunner runner = new QueryRunner();
         info.leadOrgID = info.uuid;
         String sql = "INSERT INTO study_site (identifier,functional_code,local_sp_indentifier,"
@@ -1442,36 +1460,38 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + "null,null," + info.csmUserID + "," + info.csmUserID + ")";
         runner.update(connection, sql);
     }
-    
-    protected void setSeciont801Indicator(TrialInfo info, Boolean section801) throws SQLException {
+
+    protected void setSeciont801Indicator(TrialInfo info, Boolean section801)
+            throws SQLException {
         QueryRunner runner = new QueryRunner();
         String sql = "update study_protocol set section801_indicator="
-                        + section801 + " where identifier = " + info.id;
-                    ;
+                + section801 + " where identifier = " + info.id;
+        ;
         runner.update(connection, sql);
     }
-    
-    
-    protected void setPCD(TrialInfo info, String pcd, ActualAnticipatedTypeCode type) throws SQLException {
+
+    protected void setPCD(TrialInfo info, String pcd,
+            ActualAnticipatedTypeCode type) throws SQLException {
         QueryRunner runner = new QueryRunner();
         info.leadOrgID = info.uuid;
-        String sql = "update study_protocol set PRI_COMPL_DATE ="
-                        + getTS(pcd) + ", PRI_COMPL_DATE_TYPE_CODE ='"+ type 
-                        + "' where identifier = " + info.id;
-                    
+        String sql = "update study_protocol set PRI_COMPL_DATE =" + getTS(pcd)
+                + ", PRI_COMPL_DATE_TYPE_CODE ='" + type
+                + "' where identifier = " + info.id;
+
         runner.update(connection, sql);
     }
-    
+
     /**
-     * Returns a timestamp string that can be used in the sql for the give date string 
-     * in the format yyyy-mm-dd
+     * Returns a timestamp string that can be used in the sql for the give date
+     * string in the format yyyy-mm-dd
+     * 
      * @param date
      * @return ts sting
      */
-    private String getTS(String date){
-        return "{ts '"+ date +" 00:00:00.000'}";
+    private String getTS(String date) {
+        return "{ts '" + date + " 00:00:00.000'}";
     }
-    
+
     private Number getResearchOrgId(String orgName) throws SQLException {
         QueryRunner runner = new QueryRunner();
         return (Number) runner
@@ -1811,6 +1831,10 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
             return HashCodeBuilder.reflectionHashCode(this);
         }
 
+    }
+    
+    public static void main(String[] args) {
+        randomPort();
     }
 
 }
