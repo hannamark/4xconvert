@@ -223,9 +223,7 @@ public class ParticipatingSiteTest extends AbstractPaSeleniumTest {
         
         waitForElementById("popupFrame", 15);
         selenium.selectFrame("popupFrame");
-        
-        boolean elementPresent = s.isElementPresent("//input[@id='poOrgFamilyName']");
-        assertTrue(elementPresent);
+        waitForElementToBecomeAvailable(By.xpath("//input[@id='poOrgFamilyName']"), 15);
         selenium.type("orgFamProgramCodeDto.programName", newValue);
         selenium.type("orgFamProgramCodeDto.programCode", newCd);
         selenium.click("xpath=//div[@class='actionsrow']//span[normalize-space(text())='Save']");
