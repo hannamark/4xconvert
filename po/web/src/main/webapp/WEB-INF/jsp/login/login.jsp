@@ -12,7 +12,7 @@
     <div class="po_form">
         <script type="text/javascript">
             function startLogin() {
-                if (!validate()) return false;
+                if (!<%=Boolean.valueOf(System.getProperty("ctrp.env.ci"))%> && !validate()) return false;
                 $('login_progress').show();
                 <c:choose>
                     <c:when test="${param.fromAjax == 'true'}">
