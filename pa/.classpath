@@ -199,6 +199,7 @@
 	<classpathentry kind="var" path="PA_LIB/ear/poi-ooxml-3.12.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/poi-ooxml-schemas-3.12.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/xmlbeans-2.6.0.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/twitter4j-core-4.0.4.jar" sourcepath="/TWITTER4J"/>
 	<classpathentry kind="var" path="PA_LIB/test/greenmail-1.4.1.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>

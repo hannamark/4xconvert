@@ -60,6 +60,7 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
 
     public static final int CTGOV_API_MOCK_PORT = (int) (51235 + Math.random() * 1000);
     public static final int SMTP_PORT = (int) (51235 + Math.random() * 10000);
+    public static final int TWITTER_MOCK_PORT = (int) (40000 + Math.random() * 10000);
 
     private EjbFactory ejbFactory;
 
@@ -191,12 +192,16 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
         addPaProperty("other.identifiers.row", "");
         addPaProperty("ctep.ccr.learOrgIds", "NCICCR");
         addPaProperty("allowed.regulatory.authorities.no.country.name", "IDMC");
-        addPaProperty("ctgov.upload.error.regex", "Study Number \\d+ \\(([^\\)]*)\\)\\s*ERROR:([^\\n]*)");
+        addPaProperty("ctgov.upload.error.regex",
+                "Study Number \\d+ \\(([^\\)]*)\\)\\s*ERROR:([^\\n]*)");
         addPaProperty("imap.server", ServerSetupTest.IMAP.getLocalHostAddress());
-        addPaProperty("imap.port", String.valueOf(ServerSetupTest.IMAPS.getPort()));
+        addPaProperty("imap.port",
+                String.valueOf(ServerSetupTest.IMAPS.getPort()));
         addPaProperty("imap.folder", "INBOX");
-        addPaProperty("ctgov.upload.errorEmail.subject", "PRS Protocol Upload Notification");
-        addPaProperty("ctgov.upload.errorEmail.account", "CTGovUploadErrorEmailAccount");
+        addPaProperty("ctgov.upload.errorEmail.subject",
+                "PRS Protocol Upload Notification");
+        addPaProperty("ctgov.upload.errorEmail.account",
+                "CTGovUploadErrorEmailAccount");
         addPaProperty(
                 "closed_industrial_trial_statuses",
                 "CLOSED_TO_ACCRUAL, CLOSED_TO_ACCRUAL_AND_INTERVENTION, ADMINISTRATIVELY_COMPLETE, COMPLETE");
@@ -205,9 +210,15 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
                 .getResourceAsStream("statusvalidations.json"));
         addPaProperty("status.rules", statusRulesStr);
 
+        addPaProperty("twitter.enabled", "true");
+        addPaProperty("twitter.api.url", "http://localhost:"
+                + TWITTER_MOCK_PORT + "/1.1/");
+        addPaProperty("twitter.account", "twitter.default");
+        addPaProperty("twitter.timeout.read", "2000");
+
     }
 
-    private void addPaProperty(String name, String value) {
+    protected void addPaProperty(String name, String value) {
         final Session s = PaHibernateUtil.getCurrentSession();
         s.createQuery("delete from PAProperties where name='" + name + "'")
                 .executeUpdate();

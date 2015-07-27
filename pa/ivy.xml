@@ -90,11 +90,11 @@
     <dependency conf="compile->master" org="org.springframework" name="spring-oxm" rev="3.2.2.RELEASE"/>
     <dependency conf="compile->master" org="org.springframework" name="spring-web" rev="3.2.2.RELEASE"/>
     <dependency conf="compile->master" org="org.springframework.ws" name="spring-ws" rev="2.1.4.RELEASE"/>
+    
     <dependency conf="ear->master" org="org.apache.poi" name="poi" rev="3.12"/>
     <dependency conf="ear->master" org="org.apache.poi" name="poi-ooxml" rev="3.12"/>
     <dependency conf="ear->master" org="org.apache.poi" name="poi-ooxml-schemas" rev="3.12"/>
-    <dependency conf="ear->master" org="org.apache.xmlbeans" name="xmlbeans" rev="2.6.0"/>
-    
+    <dependency conf="ear->master" org="org.apache.xmlbeans" name="xmlbeans" rev="2.6.0"/>    
     <dependency conf="ear->master" org="antlr" name="antlr" rev="2.7.7"/>
     <dependency conf="ear->master" org="com.lowagie" name="itext" rev="2.1.7"/>
     <dependency conf="ear->master" org="com.lowagie" name="itext-rtf" rev="2.1.7"/>
@@ -141,6 +141,7 @@
     <dependency conf="ear->master" org="org.apache.poi" name="poi-ooxml" rev="3.12"/>
     <dependency conf="ear->master" org="org.apache.poi" name="poi-ooxml-schemas" rev="3.12"/>
     <dependency conf="ear->master" org="org.apache.xmlbeans" name="xmlbeans" rev="2.6.0"/>
+    <dependency conf="ear->master" org="org.twitter4j" name="twitter4j-core" rev="4.0.4"/>
 
     <dependency conf="pa-web->master" org="aopalliance" name="aopalliance" rev="1.0"/> 
     <dependency conf="pa-web->master" org="asm" name="asm" rev="3.3"/>
@@ -193,6 +194,7 @@
     
     <!-- test -->
     <dependency conf="test->master" org="com.google.code.gson" name="gson" rev="2.2.4"/>
+    <dependency conf="test->master" org="org.json" name="json" rev="20140107"/>
     <dependency conf="test->master" org="org.hsqldb" name="hsqldb" rev="1.8.0.10"/>
     <dependency conf="test->master" org="c3p0" name="c3p0" rev="0.9.1.2"/>
     <dependency conf="test->master" org="com.mockrunner" name="mockrunner" rev="0.4.1"/>

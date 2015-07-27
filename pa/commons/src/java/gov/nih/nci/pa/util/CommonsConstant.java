@@ -98,6 +98,10 @@ public class CommonsConstant {
     public static final String NO = "No";
     /** Pa Internal. **/
     public static final String PA_INTERNAL = "PA-InternalIdentifier";
+    /**
+     *  TWEET_LENGTH
+     */
+    public static final int TWEET_LENGTH = 140;
     
     /**
      * SELECT_NEXTVAL_NCI_IDENTIFIERS_SEQ

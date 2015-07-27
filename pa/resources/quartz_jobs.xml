@@ -411,5 +411,31 @@
                 </entry>
             </job-data-map>
         </job-detail>
-    </job>  
+    </job>
+    
+    <job>
+        <job-detail>
+            <name>tweetQueueProcessingJob</name>
+            <group>DEFAULT</group>
+            <job-class>gov.nih.nci.pa.util.EJBInvokerJob</job-class>
+            <volatility>false</volatility>
+            <durability>true</durability>
+            <recover>false</recover>
+            <job-data-map allows-transient-data="true">
+                <entry>
+                    <key>ejb</key>
+                    <value>TwitterBeanLocal</value>
+                </entry>
+                <entry>
+                    <key>interfaceName</key>
+                    <value>gov.nih.nci.pa.service.util.TwitterServiceLocal</value>
+                </entry>
+                <entry>
+                    <key>method</key>
+                    <value>processQueue</value>
+                </entry>
+            </job-data-map>
+        </job-detail>
+    </job>    
+      
 </quartz> 

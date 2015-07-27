@@ -128,6 +128,24 @@ end-if
 /subsystem=logging/logger=com.arjuna:assign-handler(name="ARJUNA")
 /subsystem=logging/logger=com.arjuna:write-attribute(name="use-parent-handlers", value="false")
 
+# Direct Twitter logging into a separate log file.
+if (outcome == success) of /subsystem=logging/logger=Twitter:read-resource
+	/subsystem=logging/logger=Twitter:remove
+end-if
+if (outcome == success) of /subsystem=logging/periodic-rotating-file-handler=Twitter:read-resource
+	/subsystem=logging/periodic-rotating-file-handler=Twitter:remove
+end-if
+
+/subsystem=logging/periodic-rotating-file-handler=Twitter:add(file={"path"=>"twitter.log", "relative-to"=>"jboss.server.log.dir"},suffix=".yyyy-MM-dd")
+/subsystem=logging/periodic-rotating-file-handler=Twitter:change-log-level(level="INFO")
+/subsystem=logging/periodic-rotating-file-handler=Twitter:write-attribute(name="append", value="true")
+/subsystem=logging/periodic-rotating-file-handler=Twitter:write-attribute(name="autoflush", value="true")
+/subsystem=logging/periodic-rotating-file-handler=Twitter:write-attribute(name="formatter", value="%d{HH:mm:ss,SSS} %s%E%n")
+/subsystem=logging/periodic-rotating-file-handler=Twitter:write-attribute(name="suffix", value=".yyyy-MM-dd")
+/subsystem=logging/logger=Twitter:add
+/subsystem=logging/logger=Twitter:write-attribute(name="level", value="INFO")
+/subsystem=logging/logger=Twitter:assign-handler(name="Twitter")
+/subsystem=logging/logger=Twitter:write-attribute(name="use-parent-handlers", value="false")
 
 reload
 

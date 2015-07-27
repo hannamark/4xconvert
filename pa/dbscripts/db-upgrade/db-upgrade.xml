@@ -1874,9 +1874,13 @@
     <changeSet id="PO-9016-1" author="gunnikrishnan">
        <comment>Add properties for CT GOV email</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9016-1.sql"/>
-    </changeSet>	
+    </changeSet>
     <changeSet id="PO-8331" author="Reshma">
        <comment>insert a new value in consortia_category </comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8331.sql"/>       
     </changeSet>
+    <changeSet id="PO-9090" author="krylovd">
+       <comment>Add Twitter configuration parameters and queue tables.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9090.sql"/>
+    </changeSet>    
 </databaseChangeLog>

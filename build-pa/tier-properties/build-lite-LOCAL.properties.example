@@ -55,3 +55,6 @@ maven.password=
 pa.ssh.host=
 pa.ssh.user=
 pa.ssh.password=
+
+# Pa Keystore Password
+keystore.password=myKeystorePassword
