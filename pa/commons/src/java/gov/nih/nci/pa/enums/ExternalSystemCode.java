@@ -14,6 +14,10 @@ public enum ExternalSystemCode implements CodedEnum<String> {
      */
     TWITTER("Twitter"),
     /**
+     * Go.USA.gov
+     */
+    GO_USA_GOV("Go.USA.gov"),
+    /**
      * Mailbox
      */
     MAILBOX("Mailbox");

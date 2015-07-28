@@ -27,6 +27,7 @@
 			<accessrule kind="accessible" pattern="com/sun/net/httpserver/**"/>
 		</accessrules>
 	</classpathentry>
+	<classpathentry kind="var" path="PA_LIB/ear/gson-2.2.4.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/freemarker-2.3.19.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/antlr-2.7.7.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/commons-beanutils-1.8.0.jar"/>
@@ -62,7 +63,6 @@
 	<classpathentry kind="var" path="PA_LIB/pa-web/commons-io-2.0.1.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/commons-lang3-3.1.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/displaytag-1.2.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/gson-2.2.4.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/jericho-html-2.4.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/jstl-1.1.2.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/nci-commons-ctrp-struts2-1.4.10.1.jar"/>

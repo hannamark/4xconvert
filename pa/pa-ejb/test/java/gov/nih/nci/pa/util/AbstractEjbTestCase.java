@@ -61,6 +61,7 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
     public static final int CTGOV_API_MOCK_PORT = (int) (51235 + Math.random() * 1000);
     public static final int SMTP_PORT = (int) (51235 + Math.random() * 10000);
     public static final int TWITTER_MOCK_PORT = (int) (40000 + Math.random() * 10000);
+    public static final int GO_USA_GOV_MOCK_PORT = (int) (40000 + Math.random() * 10000);
 
     private EjbFactory ejbFactory;
 
@@ -215,6 +216,15 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
                 + TWITTER_MOCK_PORT + "/1.1/");
         addPaProperty("twitter.account", "twitter.default");
         addPaProperty("twitter.timeout.read", "2000");
+
+        addPaProperty(
+                "go.usa.gov.api.shorten.url",
+                "http://localhost:"
+                        + GO_USA_GOV_MOCK_PORT
+                        + "/api/shorten.json?login={user_name}&apiKey={api_key}&longUrl={longUrl}");
+        addPaProperty("go.usa.gov.api.timeout", "3000");
+        addPaProperty("go.usa.gov.api.shorten.json.path",
+                "response.data.entry.[0].short_url");
 
     }
 

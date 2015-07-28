@@ -1882,5 +1882,9 @@
     <changeSet id="PO-9090" author="krylovd">
        <comment>Add Twitter configuration parameters and queue tables.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9090.sql"/>
-    </changeSet>    
+    </changeSet>
+    <changeSet id="PO-9093" author="krylovd">
+       <comment>Add configuration parameters for go.usa.gov URL shortener.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9093.sql"/>
+    </changeSet>
 </databaseChangeLog>
