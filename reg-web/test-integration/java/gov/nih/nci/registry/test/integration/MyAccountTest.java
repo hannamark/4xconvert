@@ -82,21 +82,33 @@
  */
 package gov.nih.nci.registry.test.integration;
 
+import java.util.List;
+
+import org.apache.commons.lang.SystemUtils;
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 /**
  * @author Michael Visee
  */
 public class MyAccountTest extends AbstractRegistrySeleniumTest {
+	
+	private static final int OP_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 10000
+            : 2000;
 
     /**
-     * Test the MyAccount scenario in the successfull case.
+     * Test the MyAccount scenario in the successful case.
      */
     @Test
     public void testMyAccountSuccess() {
         loginAndAcceptDisclaimer();
-        clickAndWait("id=myAccountMenuOption");
-        clickAndWait("link=Submit");
+        clickAndWait("css=a.nav-user");
+        clickAndWait("css=a.account");
+        driver.switchTo().frame(0);
+        clickAndWait("css=button.btn-primary");
         assertTrue(selenium.isTextPresent("Your account was successfully updated"));
     }
     
@@ -105,16 +117,18 @@ public class MyAccountTest extends AbstractRegistrySeleniumTest {
      */
     @Test
     public void testMyAccountFailure() {
-        loginAndAcceptDisclaimer();
-        clickAndWait("id=myAccountMenuOption");
+    	loginAndAcceptDisclaimer();
+        clickAndWait("css=a.nav-user");
+        clickAndWait("css=a.account");
+        driver.switchTo().frame(0);
         selenium.type("id=registryUserWebDTO.emailAddress", "");
         selenium.type("id=registryUserWebDTO.firstName", "");
         selenium.type("id=registryUserWebDTO.lastName", "");
         selenium.type("id=registryUserWebDTO.addressLine", "");
         selenium.type("id=registryUserWebDTO.city", "");
         selenium.type("id=registryUserWebDTO.postalCode", "");
-        selenium.type("id=registryUserWebDTO.phone", "");
-        clickAndWait("link=Submit");
+        selenium.type("id=registryUserWebDTO.phone", "");         
+        clickAndWait("css=button.btn-primary");
         assertTrue(selenium.isTextPresent("Email Address is required"));
         assertTrue(selenium.isTextPresent("First Name is required"));
         assertTrue(selenium.isTextPresent("Last Name is required"));
@@ -122,5 +136,45 @@ public class MyAccountTest extends AbstractRegistrySeleniumTest {
         assertTrue(selenium.isTextPresent("City is required"));
         assertTrue(selenium.isTextPresent("Zip Code is required"));
         assertTrue(selenium.isTextPresent("Phone number is required"));
+    }
+    
+    /**
+     * Testing logout when there is a change in org affiliation
+     */
+    @Test
+    public void testOrgChangeLogout() {
+    	loginAndAcceptDisclaimer();    	
+        clickAndWait("css=a.nav-user");
+        clickAndWait("css=a.account");
+        driver.switchTo().frame(0);
+    	moveElementIntoView(By.id("registryUserWebDTO.affiliateOrgField"));    
+        JavascriptExecutor js = (JavascriptExecutor) driver;                
+        js.executeScript("showPopWin('orgPoplookuporgs.action', 850, 550, loadAffliatedOrgDiv, 'Select Affiliated Organization')");
+        pause(OP_WAIT_TIME);
+        
+        // Searching for organization
+        driver.switchTo().frame(0);
+        selenium.type("id=orgNameSearch", "Cancer Therapy Evaluation Program");             
+        WebElement element = driver.findElement(By.id("search_organization_btn"));
+        JavascriptExecutor executor = (JavascriptExecutor)driver;
+        executor.executeScript("arguments[0].click();", element);
+        waitForElementById("row", 20);       
+        
+        // Changing the organization
+        WebElement selectButton = driver.findElement(By.xpath("//table[@id='row']/tbody/tr/td[8]/button"));
+        JavascriptExecutor selectExecutor = (JavascriptExecutor)driver;
+        selectExecutor.executeScript("arguments[0].click();", selectButton);          
+        
+        // Saving / updating the account
+        driver.switchTo().defaultContent();
+        driver.switchTo().frame(0);
+        waitForElementToBecomeAvailable(By.xpath("//button[normalize-space(text())='Save']"), 20);
+        WebElement save = driver.findElement(By.xpath("//button[normalize-space(text())='Save']"));
+        JavascriptExecutor saveExecutor = (JavascriptExecutor)driver;
+        saveExecutor.executeScript("arguments[0].click();", save);
+        
+        // Checking for logout to occur
+        pause(OP_WAIT_TIME);
+        verifyLoginPage();
     }
 }

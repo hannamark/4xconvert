@@ -454,7 +454,7 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
         try {
             String redirectPage = updateExistingUser(registryUser);
             addActionMessage("Your account was successfully updated");
-            return redirectPage;
+            return affiliatedOrgUpdated ? "logout" : redirectPage;
         } catch (Exception e) {
             LOG.error("error while updating user info", e);
             return Constants.APPLICATION_ERROR;
