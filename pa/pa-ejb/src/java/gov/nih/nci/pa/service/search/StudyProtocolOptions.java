@@ -87,6 +87,8 @@ import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.enums.StudyFlagReasonCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 
@@ -138,6 +140,7 @@ public class StudyProtocolOptions {
     private String submitterAffiliateOrgId;
     private List<String> submitterAffiliateOrgName = new ArrayList<String>();
     private Boolean nciSponsored;
+    private Boolean hasTweets;
     private Boolean holdRecordExists;
     private boolean excludeCtepDcpTrials;
     private MilestoneCode currentOrPreviousMilestone;  
@@ -151,6 +154,8 @@ public class StudyProtocolOptions {
     private Date pcdFromDate;
     private Date pcdToDate;
     private List<ActualAnticipatedTypeCode> pcdDateTypes;
+    private StudyFlagReasonCode notFlaggedWith;
+    private List<RecruitmentStatusCode> siteStatusCodes = new ArrayList<>();
     
     /**
      * @return excludeRejectedTrials
@@ -894,5 +899,47 @@ public class StudyProtocolOptions {
      */
     public void setPcdDateTypes(List<ActualAnticipatedTypeCode> pcdDateTypes) {
         this.pcdDateTypes = pcdDateTypes;
+    }
+
+    /**
+     * @return the hasTweets
+     */
+    public Boolean getHasTweets() {
+        return hasTweets;
+    }
+
+    /**
+     * @param hasTweets the hasTweets to set
+     */
+    public void setHasTweets(Boolean hasTweets) {
+        this.hasTweets = hasTweets;
+    }
+
+    /**
+     * @return the notFlaggedWith
+     */
+    public StudyFlagReasonCode getNotFlaggedWith() {
+        return notFlaggedWith;
+    }
+
+    /**
+     * @param notFlaggedWith the notFlaggedWith to set
+     */
+    public void setNotFlaggedWith(StudyFlagReasonCode notFlaggedWith) {
+        this.notFlaggedWith = notFlaggedWith;
+    }
+
+    /**
+     * @return the siteStatusCodes
+     */
+    public List<RecruitmentStatusCode> getSiteStatusCodes() {
+        return siteStatusCodes;
+    }
+
+    /**
+     * @param siteStatusCodes the siteStatusCodes to set
+     */
+    public void setSiteStatusCodes(List<RecruitmentStatusCode> siteStatusCodes) {
+        this.siteStatusCodes = siteStatusCodes;
     }
 }

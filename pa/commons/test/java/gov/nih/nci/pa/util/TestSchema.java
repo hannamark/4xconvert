@@ -1040,13 +1040,13 @@ public class TestSchema {
     }
 
     public static void createAnatomicSites() {
-        AnatomicSite as01 = TestSchema.createAnatomicSiteObj("Lung");
+        AnatomicSite as01 = TestSchema.createAnatomicSiteObj("Lung", "lungcancer");
         addUpdObject(as01);
         anatomicSiteIds.add(as01.getId());
-        AnatomicSite as02 = TestSchema.createAnatomicSiteObj("Kidney");
+        AnatomicSite as02 = TestSchema.createAnatomicSiteObj("Kidney", "kidneycancer,kidneyblastoma");
         addUpdObject(as02);
         anatomicSiteIds.add(as02.getId());
-        AnatomicSite as03 = TestSchema.createAnatomicSiteObj("Heart");
+        AnatomicSite as03 = TestSchema.createAnatomicSiteObj("Heart", " heartcancer, glioblastoma , melanoma");
         addUpdObject(as03);
         anatomicSiteIds.add(as03.getId());
     }
@@ -1507,8 +1507,12 @@ public class TestSchema {
         create.setDateLastUpdated(TODAY);
         return create;
     }
-
+    
     public static AnatomicSite createAnatomicSiteObj(String preferredName) {
+       return createAnatomicSiteObj(preferredName, preferredName.toLowerCase());
+    }
+
+    public static AnatomicSite createAnatomicSiteObj(String preferredName, String hashtags) {
         AnatomicSite create = new AnatomicSite();
         create.setCode(preferredName);
         create.setDisplayName("displayName");
@@ -1517,6 +1521,7 @@ public class TestSchema {
         create.setDateLastCreated(TODAY);
         create.setUserLastUpdated(getUser());
         create.setDateLastUpdated(TODAY);
+        create.setTwitterHashtags(hashtags);
         return create;
     }
 

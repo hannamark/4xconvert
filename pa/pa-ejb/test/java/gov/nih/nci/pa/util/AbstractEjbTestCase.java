@@ -62,6 +62,7 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
     public static final int SMTP_PORT = (int) (51235 + Math.random() * 10000);
     public static final int TWITTER_MOCK_PORT = (int) (40000 + Math.random() * 10000);
     public static final int GO_USA_GOV_MOCK_PORT = (int) (40000 + Math.random() * 10000);
+    public static final int CANCER_GOV_MOCK_PORT = (int) (40000 + Math.random() * 10000);
 
     private EjbFactory ejbFactory;
 
@@ -225,6 +226,13 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
         addPaProperty("go.usa.gov.api.timeout", "3000");
         addPaProperty("go.usa.gov.api.shorten.json.path",
                 "response.data.entry.[0].short_url");
+
+        addPaProperty("twitter.trials.complete.basetext",
+                "A new NCI-sponsored {hashtags} study is now accepting patients. {url}");
+        addPaProperty("twitter.trials.industrial.basetext",
+                "A new NCI-sponsored {hashtags} study is now accepting patients. {url}");
+        addPaProperty("twitter.trials.url", "http://localhost:"
+                + CANCER_GOV_MOCK_PORT + "/clinicaltrials/{nctid}");
 
     }
 

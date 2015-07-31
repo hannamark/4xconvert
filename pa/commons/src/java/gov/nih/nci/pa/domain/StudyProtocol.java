@@ -621,6 +621,7 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     )
     @ForeignKey(name = "FK_STUDY_ANATOMIC_SITE_STUDY_PROTOCOL", inverseName = "FK_STUDY_ANATOMIC_SITE_ANATOMIC_SITES")
     @Searchable(nested = true)
+    @Sort(type = SortType.COMPARATOR, comparator = AnatomicSiteComparator.class)
     public Set<AnatomicSite> getSummary4AnatomicSites() {
         return summary4AnatomicSites;
     }

@@ -5,6 +5,8 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import gov.nih.nci.pa.enums.IdentifierType;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.enums.StudyFlagReasonCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.service.search.StudyProtocolOptions.MilestoneFilter;
 
@@ -79,6 +81,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private String submissionType;
     private List<SubmissionTypeCode> trialSubmissionTypes = new ArrayList<SubmissionTypeCode>();
     private Boolean nciSponsored;
+    private Boolean hasTweets;
 
     // for Inbox Processing
     private Boolean inBoxProcessing;
@@ -111,6 +114,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private List<OnholdReasonCode> onholdReasons = new ArrayList<OnholdReasonCode>();
     private List<String> onholdOtherReasonCategories = new ArrayList<String>();
     private List<String> studySource = new ArrayList<>();
+    private List<RecruitmentStatusCode> siteStatusCodes = new ArrayList<>();
 
     private String familyId = "0";
     private String participatingSiteFamilyId = "0";
@@ -126,13 +130,14 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private List<MilestoneFilter> milestoneFilters = new ArrayList<MilestoneFilter>();
     private Boolean ctroOverride;
     private Long assignedUserId;
-    
-    private List<Boolean> section801Indicators; 
+
+    private List<Boolean> section801Indicators;
     private Date pcdFrom;
     private Date pcdTo;
     private String pcdFromType;
     private String pcdToType;
-    
+
+    private StudyFlagReasonCode notFlaggedWith;
 
     /**
      * @return the inBoxProcessing
@@ -1064,13 +1069,13 @@ public class StudyProtocolQueryCriteria implements Serializable {
                 .append(studyMilestone).append(", submissionType=")
                 .append(submissionType).append(", trialSubmissionTypes=")
                 .append(trialSubmissionTypes).append(", nciSponsored=")
-                .append(nciSponsored).append(", inBoxProcessing=")
-                .append(inBoxProcessing).append(", studyLockedBy=")
-                .append(studyLockedBy).append(", trialCategory=")
-                .append(trialCategory).append(", ctepDcpCategory=")
-                .append(ctepDcpCategory).append(", holdStatus=")
-                .append(holdStatus).append(", userId=").append(userId)
-                .append(", ctgovXmlRequiredIndicator=")
+                .append(nciSponsored).append(", hasTweets=").append(hasTweets)
+                .append(", inBoxProcessing=").append(inBoxProcessing)
+                .append(", studyLockedBy=").append(studyLockedBy)
+                .append(", trialCategory=").append(trialCategory)
+                .append(", ctepDcpCategory=").append(ctepDcpCategory)
+                .append(", holdStatus=").append(holdStatus).append(", userId=")
+                .append(userId).append(", ctgovXmlRequiredIndicator=")
                 .append(ctgovXmlRequiredIndicator)
                 .append(", summ4FundingSourceId=").append(summ4FundingSourceId)
                 .append(", summ4FundingSourceTypeCode=")
@@ -1089,9 +1094,11 @@ public class StudyProtocolQueryCriteria implements Serializable {
                 .append(", pdqDiseases=").append(pdqDiseases)
                 .append(", phaseCodes=").append(phaseCodes).append(", states=")
                 .append(states).append(", summary4AnatomicSites=")
-                .append(summary4AnatomicSites).append(", onholdOtherReasonCategories=")
+                .append(summary4AnatomicSites)
+                .append(", onholdOtherReasonCategories=")
                 .append(onholdOtherReasonCategories).append(", onholdReasons=")
-                .append(onholdReasons).append(", familyId=").append(familyId)
+                .append(onholdReasons).append(", siteStatusCodes=")
+                .append(siteStatusCodes).append(", familyId=").append(familyId)
                 .append(", participatingSiteFamilyId=")
                 .append(participatingSiteFamilyId).append(", submitter=")
                 .append(submitter).append(", checkedOut=").append(checkedOut)
@@ -1105,13 +1112,13 @@ public class StudyProtocolQueryCriteria implements Serializable {
                 .append(submitterAffiliateOrgNameList)
                 .append(", holdRecordExists=").append(holdRecordExists)
                 .append(", assignedUserId=").append(assignedUserId)
-                .append(", currentOrPreviousMilestone=").append(currentOrPreviousMilestone)
+                .append(", currentOrPreviousMilestone=")
+                .append(currentOrPreviousMilestone)
                 .append(", section801Indicators=").append(section801Indicators)
-                .append(" pcdFromDate=").append(pcdFrom)
-                .append(" pcdToDate=").append(pcdTo)
-                .append(" pcdFromDateType=").append(pcdFromType)
+                .append(" pcdFromDate=").append(pcdFrom).append(" pcdToDate=")
+                .append(pcdTo).append(" pcdFromDateType=").append(pcdFromType)
                 .append(" pcdToDateType=").append(pcdToType)
-                .append("]");
+                .append(" notFlaggedWith=").append(notFlaggedWith).append("]");
         return builder.toString();
     }
 
@@ -1511,8 +1518,6 @@ public class StudyProtocolQueryCriteria implements Serializable {
     public void setCcrIdentifier(String ccrIdentifier) {
         this.ccrIdentifier = ccrIdentifier;
     }
-    
-    
 
     /**
      * @return the section801Indicators
@@ -1522,7 +1527,8 @@ public class StudyProtocolQueryCriteria implements Serializable {
     }
 
     /**
-     * @param section801Indicators the section801Indicators to set
+     * @param section801Indicators
+     *            the section801Indicators to set
      */
     public void setSection801Indicators(List<Boolean> section801Indicators) {
         this.section801Indicators = section801Indicators;
@@ -1536,7 +1542,8 @@ public class StudyProtocolQueryCriteria implements Serializable {
     }
 
     /**
-     * @param pcdFrom the pcdFrom to set
+     * @param pcdFrom
+     *            the pcdFrom to set
      */
     public void setPcdFrom(Date pcdFrom) {
         this.pcdFrom = pcdFrom;
@@ -1550,13 +1557,12 @@ public class StudyProtocolQueryCriteria implements Serializable {
     }
 
     /**
-     * @param pcdTo the pcdTo to set
+     * @param pcdTo
+     *            the pcdTo to set
      */
     public void setPcdTo(Date pcdTo) {
         this.pcdTo = pcdTo;
     }
-
-  
 
     /**
      * @return the pcdFromType
@@ -1566,7 +1572,8 @@ public class StudyProtocolQueryCriteria implements Serializable {
     }
 
     /**
-     * @param pcdFromType the pcdFromType to set
+     * @param pcdFromType
+     *            the pcdFromType to set
      */
     public void setPcdFromType(String pcdFromType) {
         this.pcdFromType = pcdFromType;
@@ -1580,7 +1587,8 @@ public class StudyProtocolQueryCriteria implements Serializable {
     }
 
     /**
-     * @param pcdToType the pcdToType to set
+     * @param pcdToType
+     *            the pcdToType to set
      */
     public void setPcdToType(String pcdToType) {
         this.pcdToType = pcdToType;
@@ -1668,6 +1676,8 @@ public class StudyProtocolQueryCriteria implements Serializable {
                     .append(trialSubmissionTypes).append(", ");
         if ((nciSponsored) != null)
             builder.append("nciSponsored=").append(nciSponsored).append(", ");
+        if ((hasTweets) != null)
+            builder.append("hasTweets=").append(hasTweets).append(", ");
         if ((inBoxProcessing) != null)
             builder.append("inBoxProcessing=").append(inBoxProcessing)
                     .append(", ");
@@ -1729,8 +1739,12 @@ public class StudyProtocolQueryCriteria implements Serializable {
                     .append(summary4AnatomicSites).append(", ");
         if (isNotEmpty(onholdReasons))
             builder.append("onholdReasons=").append(onholdReasons).append(", ");
+        if (isNotEmpty(siteStatusCodes))
+            builder.append("siteStatusCodes=").append(siteStatusCodes)
+                    .append(", ");
         if (isNotEmpty(onholdOtherReasonCategories))
-            builder.append("onholdOtherReasonCategories=").append(onholdOtherReasonCategories).append(", ");
+            builder.append("onholdOtherReasonCategories=")
+                    .append(onholdOtherReasonCategories).append(", ");
         if ((studySource) != null)
             builder.append("studySource=").append(studySource).append(", ");
         if (isNotBlank(familyId) && !"0".equals(familyId))
@@ -1770,9 +1784,12 @@ public class StudyProtocolQueryCriteria implements Serializable {
         if ((ctroOverride) != null)
             builder.append("ctroOverride=").append(ctroOverride).append(", ");
         if ((assignedUserId) != null)
-            builder.append("assignedUserId=").append(assignedUserId).append(", ");;
-        if (section801Indicators!= null)
-            builder.append("section801Indicators=").append(section801Indicators).append(", ");
+            builder.append("assignedUserId=").append(assignedUserId)
+                    .append(", ");
+        ;
+        if (section801Indicators != null)
+            builder.append("section801Indicators=")
+                    .append(section801Indicators).append(", ");
         if (pcdFrom != null)
             builder.append("pcdFrom=").append(pcdFrom).append(", ");
         if (pcdTo != null)
@@ -1781,6 +1798,8 @@ public class StudyProtocolQueryCriteria implements Serializable {
             builder.append("pcdFromType=").append(pcdFromType).append(", ");
         if (pcdToType != null)
             builder.append("pcdToType=").append(pcdToType);
+        if (notFlaggedWith != null)
+            builder.append("notFlaggedWith=").append(notFlaggedWith);
         builder.append("]");
         return builder.toString();
     }
@@ -1793,11 +1812,57 @@ public class StudyProtocolQueryCriteria implements Serializable {
     }
 
     /**
-     * @param onholdOtherReasonCategories the onholdOtherReasonCategories to set
+     * @param onholdOtherReasonCategories
+     *            the onholdOtherReasonCategories to set
      */
     public void setOnholdOtherReasonCategories(
             List<String> onholdOtherReasonCategories) {
         this.onholdOtherReasonCategories = onholdOtherReasonCategories;
+    }
+
+    /**
+     * @return the hasTweets
+     */
+    public Boolean getHasTweets() {
+        return hasTweets;
+    }
+
+    /**
+     * @param hasTweets
+     *            the hasTweets to set
+     */
+    public void setHasTweets(Boolean hasTweets) {
+        this.hasTweets = hasTweets;
+    }
+
+    /**
+     * @return the notFlaggedWith
+     */
+    public StudyFlagReasonCode getNotFlaggedWith() {
+        return notFlaggedWith;
+    }
+
+    /**
+     * @param notFlaggedWith
+     *            the notFlaggedWith to set
+     */
+    public void setNotFlaggedWith(StudyFlagReasonCode notFlaggedWith) {
+        this.notFlaggedWith = notFlaggedWith;
+    }
+
+    /**
+     * @return the siteStatusCodes
+     */
+    public List<RecruitmentStatusCode> getSiteStatusCodes() {
+        return siteStatusCodes;
+    }
+
+    /**
+     * @param siteStatusCodes
+     *            the siteStatusCodes to set
+     */
+    public void setSiteStatusCodes(List<RecruitmentStatusCode> siteStatusCodes) {
+        this.siteStatusCodes = siteStatusCodes;
     }
 
 }

@@ -266,6 +266,8 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         private static final String PCD_FROM_DATE = "pcdFromDate";
         private static final String PCD_TO_DATE = "pcdToDate";
         private static final String PCD_DATE_TYPE = "pcdDateType";
+        private static final String FLAG_CODE_PARAM = "flagReason";
+        private static final String SITE_STATUSES_PARAM = "siteStatuses";
         private final StudyProtocol sp;
         private final StudyProtocolOptions spo;        
 
@@ -664,7 +666,10 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
             handleCheckouts(whereClause, params);
             handleSubmissionDateRange(whereClause, params);            
             handleNciSponsored(whereClause, params);
-            handleCTEPAndDCP(whereClause, params);            
+            handleFlags(whereClause, params);
+            handleCTEPAndDCP(whereClause, params);  
+            handleTweetingCriteria(whereClause, params);
+            handleSiteStatusCriteria(whereClause, params);
 
             if (spo.isInboxProcessing()) {
                 String operator = determineOperator(whereClause);
@@ -701,6 +706,33 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
             }
             
             searchByIntervention(whereClause, params);
+        }
+
+        private void handleSiteStatusCriteria(StringBuffer whereClause,
+                Map<String, Object> params) {
+            if (CollectionUtils.isNotEmpty(spo.getSiteStatusCodes())) {
+                String operator = determineOperator(whereClause);
+                whereClause
+                        .append(String
+                                .format(" %s exists (select ss from StudySite ss join ss.studySiteAccrualStatuses ssas "
+                                        + " where ss.studyProtocol.id = %s.id "
+                                        + " and ss.functionalCode = :%s "
+                                        + " and ssas.statusCode in (:%s)"
+                                        + " and ssas.id = (select max(id) "
+                                        + "    from StudySiteAccrualStatus where studySite.id = ss.id"
+                                        + "    and deleted=false"
+                                        + "    and statusDate = (select max(statusDate) "
+                                        + "        from StudySiteAccrualStatus where studySite.id =ss.id"
+                                        + "        and deleted=false))) ",
+                                        operator,
+                                        SearchableUtils.ROOT_OBJ_ALIAS,
+                                        PARTICIPATING_SITE_FUNCTIONAL_CODE_PARAM,
+                                        SITE_STATUSES_PARAM));
+                params.put(PARTICIPATING_SITE_FUNCTIONAL_CODE_PARAM,
+                        StudySiteFunctionalCode.TREATING_SITE);
+                params.put(SITE_STATUSES_PARAM, spo.getSiteStatusCodes());
+            }
+
         }
 
         /**
@@ -906,6 +938,27 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 }
             }
         }
+        
+        /**
+         * @param whereClause
+         * @param params
+         */
+        private void handleFlags(StringBuffer whereClause,
+                Map<String, Object> params) {
+            if (spo.getNotFlaggedWith() != null) {
+                String operator = determineOperator(whereClause);
+                whereClause
+                        .append(String
+                                .format(" %s (not exists (select f.id from StudyProtocolFlag f where "
+                                        + "f.studyProtocol.id = %s.id and f.flagReason = :"
+                                        + FLAG_CODE_PARAM
+                                        + " and f.deleted<>true)) ", operator,
+                                        SearchableUtils.ROOT_OBJ_ALIAS));
+
+                params.put(FLAG_CODE_PARAM, spo.getNotFlaggedWith());
+            }
+        }
+        
 
         /**
          * @param whereClause
@@ -918,6 +971,29 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
             } else if (Boolean.FALSE.equals(spo.getNciSponsored())) {
                 addNciSponsoredClause(whereClause, params, true);
             }
+        }
+        
+        /**
+         * @param whereClause
+         * @param params
+         */
+        private void handleTweetingCriteria(StringBuffer whereClause,
+                Map<String, Object> params) {
+            if (Boolean.TRUE.equals(spo.getHasTweets())) {
+                addHasTweetsClause(whereClause, params, false);
+            } else if (Boolean.FALSE.equals(spo.getHasTweets())) {
+                addHasTweetsClause(whereClause, params, true);
+            }
+        }
+
+        private void addHasTweetsClause(StringBuffer whereClause,
+                Map<String, Object> params, boolean negation) {
+            String operator = determineOperator(whereClause);
+            whereClause.append(String.format(
+                    " %s (%s exists (select t.id from Tweet t where "
+                            + "t.studyProtocol.id = %s.id )) ", operator,
+                    (negation ? "not" : ""), SearchableUtils.ROOT_OBJ_ALIAS));
+
         }
 
         /**
@@ -959,25 +1035,18 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                         .contains(SubmissionTypeCode.A)) {
                     whereClause
                             .append(String
-                                    .format("(%s.submissionNumber > 1 and %s.amendmentDate is not null "
-                                            + "and (select count(id) from %s.studyInbox where closeDate is null) = 0)"
-                                            + " or ",
-                                            SearchableUtils.ROOT_OBJ_ALIAS,
+                                    .format("(%s.submissionNumber > 1 and %s.amendmentDate is not null) or ",
                                             SearchableUtils.ROOT_OBJ_ALIAS,
                                             SearchableUtils.ROOT_OBJ_ALIAS));
                 }
                 if (spo.getTrialSubmissionTypes()
                         .contains(SubmissionTypeCode.O)) {
-                    whereClause
-                            .append(String
-                                    .format("(%s.submissionNumber = 1 and %s.amendmentNumber is null "
-                                            + "and %s.amendmentDate is null and (select count(id) from %s.studyInbox"
-                                            + " where "
-                                            + "closeDate is null) = 0) or ",
-                                            SearchableUtils.ROOT_OBJ_ALIAS,
-                                            SearchableUtils.ROOT_OBJ_ALIAS,
-                                            SearchableUtils.ROOT_OBJ_ALIAS,
-                                            SearchableUtils.ROOT_OBJ_ALIAS));
+                    whereClause.append(String.format(
+                            "(%s.submissionNumber = 1 and %s.amendmentNumber is null "
+                                    + "and %s.amendmentDate is null) or ",
+                            SearchableUtils.ROOT_OBJ_ALIAS,
+                            SearchableUtils.ROOT_OBJ_ALIAS,
+                            SearchableUtils.ROOT_OBJ_ALIAS));
                 }
                 if (spo.getTrialSubmissionTypes()
                         .contains(SubmissionTypeCode.U)) {

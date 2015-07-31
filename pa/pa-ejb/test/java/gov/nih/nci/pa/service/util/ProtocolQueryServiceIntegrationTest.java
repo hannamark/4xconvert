@@ -113,8 +113,11 @@ import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyProtocolFlag;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
+import gov.nih.nci.pa.domain.Tweet;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
@@ -130,11 +133,14 @@ import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
+import gov.nih.nci.pa.enums.StudyFlagReasonCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
+import gov.nih.nci.pa.enums.TweetStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PDQDiseaseServiceBean;
@@ -158,6 +164,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Rule;
@@ -490,7 +497,7 @@ public class ProtocolQueryServiceIntegrationTest extends
         otherCriteria.setOfficialTitle("Cancer");
         otherCriteria.setSubmissionType("Original");
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
-        assertEquals("Size does not match.", 7, results.size());
+        assertEquals("Size does not match.", 8, results.size());
 
         otherCriteria.setSubmissionType("Amendment");
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
@@ -1006,6 +1013,60 @@ public class ProtocolQueryServiceIntegrationTest extends
         assertTrue(expectedResult.contains(result.get(0).getId()));
         assertTrue(expectedResult.contains(result.get(1).getId()));
     }
+    
+    @Test
+    public void getStudyProtocolQueryResultListByParticipatingSiteStatus()
+            throws PAException {
+        TestBean<Long, Long> testBean = createStudyProtocolListForSearchByParticipatingSite();
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setSiteStatusCodes(Arrays.asList(RecruitmentStatusCode.ACTIVE));
+        List<StudyProtocol> result = localEjb
+                .getStudyProtocolQueryResultList(criteria);
+        assertEquals(4, result.size());
+        
+        criteria = new StudyProtocolQueryCriteria();
+        criteria.setSiteStatusCodes(Arrays.asList(RecruitmentStatusCode.ENROLLING_BY_INVITATION));
+        result = localEjb
+                .getStudyProtocolQueryResultList(criteria);
+        assertEquals(0, result.size());
+
+    }
+    
+    @Test
+    public void getStudyProtocolQueryResultListByFlag() throws PAException {
+        TestBean<Long, Long> testBean = createStudyProtocolListForSearchByParticipatingSite();
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setNotFlaggedWith(StudyFlagReasonCode.DO_NOT_SUBMIT_TWEETS);
+        criteria.setSiteStatusCodes(Arrays.asList(RecruitmentStatusCode.ACTIVE));
+        List<StudyProtocol> result = localEjb
+                .getStudyProtocolQueryResultList(criteria);
+        assertEquals(3, result.size());
+
+        criteria = new StudyProtocolQueryCriteria();
+        criteria.setNotFlaggedWith(StudyFlagReasonCode.DO_NOT_ENFORCE_UNIQUE_SUBJECTS_ACCROSS_SITES);
+        criteria.setSiteStatusCodes(Arrays.asList(RecruitmentStatusCode.ACTIVE));
+        result = localEjb.getStudyProtocolQueryResultList(criteria);
+        assertEquals(1, result.size());
+
+    }
+    
+    @Test
+    public void getStudyProtocolQueryResultListTweets() throws PAException {
+        TestBean<Long, Long> testBean = createStudyProtocolListForSearchByParticipatingSite();
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setHasTweets(true);
+        criteria.setSiteStatusCodes(Arrays.asList(RecruitmentStatusCode.ACTIVE));
+        List<StudyProtocol> result = localEjb
+                .getStudyProtocolQueryResultList(criteria);
+        assertEquals(1, result.size());
+
+        criteria = new StudyProtocolQueryCriteria();
+        criteria.setHasTweets(false);
+        criteria.setSiteStatusCodes(Arrays.asList(RecruitmentStatusCode.ACTIVE));
+        result = localEjb.getStudyProtocolQueryResultList(criteria);
+        assertEquals(3, result.size());
+
+    }
 
     @Test
     public void getStudyProtocolQueryResultListByAnatomicSites()
@@ -1312,9 +1373,12 @@ public class ProtocolQueryServiceIntegrationTest extends
         result.input.add(organization.getId());
 
         StudyProtocol studyProtocol1 = createStudyProtocol();
+        addFlag(studyProtocol1, StudyFlagReasonCode.DO_NOT_SUBMIT_TWEETS);
+        addTweet(studyProtocol1, "My first tweet", TweetStatusCode.SENT);
         result.output.add(studyProtocol1.getId());
 
         StudyProtocol studyProtocol2 = createStudyProtocol();
+        addFlag(studyProtocol2, StudyFlagReasonCode.DO_NOT_ENFORCE_UNIQUE_SUBJECTS_ACCROSS_SITES);
         Iterator<StudySite> it2 = studyProtocol2.getStudySites().iterator();
         it2.next();
 
@@ -1325,6 +1389,7 @@ public class ProtocolQueryServiceIntegrationTest extends
         result.output.add(studyProtocol2.getId());
 
         StudyProtocol studyProtocol3 = createStudyProtocol();
+        addFlag(studyProtocol3, StudyFlagReasonCode.DO_NOT_ENFORCE_UNIQUE_SUBJECTS_ACCROSS_SITES);
         Iterator<StudySite> it3 = studyProtocol3.getStudySites().iterator();
         it3.next();
 
@@ -1335,9 +1400,32 @@ public class ProtocolQueryServiceIntegrationTest extends
         result.output.add(studyProtocol3.getId());
 
         StudyProtocol studyProtocol4 = createStudyProtocol();
+        addFlag(studyProtocol4, StudyFlagReasonCode.DO_NOT_ENFORCE_UNIQUE_SUBJECTS_ACCROSS_SITES);
         result.output.add(studyProtocol4.getId());
 
         return result;
+    }
+
+    private void addTweet(StudyProtocol sp, String text,
+            TweetStatusCode status) {
+        Tweet t = new Tweet();
+        t.setCreateDate(new Date());
+        t.setSentDate(new Date());
+        t.setStatus(status);
+        t.setStudyProtocol(sp);
+        t.setText(text);
+        TestSchema.addUpdObject(t);
+    }
+
+    private void addFlag(StudyProtocol sp,
+            StudyFlagReasonCode code) {
+       StudyProtocolFlag f = new StudyProtocolFlag();
+       f.setDateFlagged(new Date());
+       f.setDeleted(false);
+       f.setFlagReason(code);
+       f.setStudyProtocol(sp);
+       f.setFlaggingUser(TestSchema.user);
+       TestSchema.addUpdObject(f);
     }
 
     private TestBean<Long, Long> createStudyProtocolListForSearchByAnatomicSites() {
@@ -1589,6 +1677,35 @@ public class ProtocolQueryServiceIntegrationTest extends
         TestSchema.addUpdObject(result.getHealthCareFacility());
         result.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
         TestSchema.addUpdObject(result);
+        
+        StudySiteAccrualStatus ssas = new StudySiteAccrualStatus();
+        ssas.setDateLastCreated(new Date());
+        ssas.setDeleted(false);
+        ssas.setStatusCode(RecruitmentStatusCode.ACTIVE);
+        ssas.setStatusDate(new Timestamp(System.currentTimeMillis()));
+        ssas.setStudySite(result);
+        TestSchema.addUpdObject(ssas);
+        result.getStudySiteAccrualStatuses().add(ssas);
+        
+        ssas = new StudySiteAccrualStatus();
+        ssas.setDateLastCreated(new Date());
+        ssas.setDeleted(false);
+        ssas.setStatusCode(RecruitmentStatusCode.IN_REVIEW);
+        ssas.setStatusDate(new Timestamp(System.currentTimeMillis()-DateUtils.MILLIS_IN_DAY));
+        ssas.setStudySite(result);
+        TestSchema.addUpdObject(ssas);
+        result.getStudySiteAccrualStatuses().add(ssas);
+        
+        ssas = new StudySiteAccrualStatus();
+        ssas.setDateLastCreated(new Date());
+        ssas.setDeleted(true);
+        ssas.setStatusCode(RecruitmentStatusCode.ENROLLING_BY_INVITATION);
+        ssas.setStatusDate(new Timestamp(System.currentTimeMillis()+DateUtils.MILLIS_IN_DAY));
+        ssas.setStudySite(result);
+        TestSchema.addUpdObject(ssas);
+        result.getStudySiteAccrualStatuses().add(ssas);
+
+        
         return result;
     }
 

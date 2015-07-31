@@ -506,6 +506,9 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         options.setTrialSubmissionType(SubmissionTypeCode.getByCode(criteria.getSubmissionType()));
         options.getTrialSubmissionTypes().addAll(criteria.getTrialSubmissionTypes());
         options.setNciSponsored(criteria.getNciSponsored());
+        options.setNotFlaggedWith(criteria.getNotFlaggedWith());
+        options.setSiteStatusCodes(criteria.getSiteStatusCodes());
+        options.setHasTweets(criteria.getHasTweets());
         options.setInboxProcessing(BooleanUtils.isTrue(criteria.isInBoxProcessing()));
         options.setPhaseCodesByValues(criteria.getPhaseCodes());
         options.setCountryName(criteria.getCountryName());
@@ -864,6 +867,8 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && criteria.getSubmittedOnOrAfter() == null
                 && criteria.getSubmittedOnOrBefore() == null
                 && criteria.getNciSponsored() == null
+                && criteria.getNotFlaggedWith() == null
+                && criteria.getHasTweets() == null
                 && criteria.getHoldRecordExists() == null
                 && criteria.getCtroOverride() == null
                 && criteria.getCurrentOrPreviousMilestone() == null               
@@ -873,6 +878,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && StringUtils.isEmpty(criteria.getLeadOrganizationTrialIdentifier())
                 && CollectionUtils.isEmpty(criteria.getPrincipalInvestigatorIds())
                 && CollectionUtils.isEmpty(criteria.getPrimaryPurposeCodes())
+                && CollectionUtils.isEmpty(criteria.getSiteStatusCodes())
                 && StringUtils.isEmpty(criteria.getPhaseAdditionalQualifierCode())
                 && StringUtils.isEmpty(criteria.getStudyStatusCode())
                 && CollectionUtils.isEmpty(criteria.getStudyStatusCodeList())

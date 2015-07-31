@@ -49,6 +49,9 @@ public class QuartzInitializerServlet extends
                 CTGOV_UPLOAD_ERROR_PROCESSING_JOB_TRIGGER);
         setupJobSchedule(sc, "twitter.queue.process.schedule",
                 "tweetQueueProcessingJob", "tweetQueueProcessingJobTrigger");
+        setupJobSchedule(sc, "twitter.trials.scan.schedule",
+                "trialTweetingJob", "trialTweetingJobTrigger");
+        
 
     }
 
