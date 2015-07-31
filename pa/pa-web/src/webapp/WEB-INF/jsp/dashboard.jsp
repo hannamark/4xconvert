@@ -323,7 +323,7 @@ a.count {
         //** On DOM Ready **
         //******************
         $(function () {
-        	
+            
         	$( "#transitionErrors" ).dialog({
                 modal: true,
                 autoOpen : false,                         
@@ -918,8 +918,6 @@ a.count {
                         handleAction('search');
             });
 
-            
-
         });
 	}(jQuery));
         
@@ -971,6 +969,7 @@ a.count {
         if ($('workloadid')!=null) {
             Event.observe($('workloadid'), "click", function() {
                      updateHelpTopic('workload');
+              jQuery('#wl_table_container').doubleScroll('refresh');
             });
         }		
 		
@@ -1053,6 +1052,8 @@ a.count {
 		}
 		return true;
 	}
+
+
 </script>
 </head>
 <body>
