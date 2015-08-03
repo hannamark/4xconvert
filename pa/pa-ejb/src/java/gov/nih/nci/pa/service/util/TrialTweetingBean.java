@@ -74,9 +74,13 @@ public class TrialTweetingBean implements TrialTweetingService {
     @EJB
     private URLShortenerServiceLocal urlShortenerService;
 
+    private Boolean mostRecentEnabledCheck;
+
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void processTrials() throws PAException, IOException {
+        final boolean wasDisabledOnPreviousCheck = Boolean.FALSE
+                .equals(mostRecentEnabledCheck);
         if (!isTweetingEnabled()) {
             return;
         }
@@ -86,6 +90,11 @@ public class TrialTweetingBean implements TrialTweetingService {
                 + " trial(s) can potentially be tweeted, but this number is before we check Cancer.gov");
         if (isFirstTimeRun()) {
             LOG.info("Tweeting job appears to be running for the first time. "
+                    + "In this case we do not tweet about the trials we found; "
+                    + "instead we mark them for future exclusion.");
+            markWithCanceledTweets(trials);
+        } else if (wasDisabledOnPreviousCheck) {
+            LOG.info("Tweeting job appears to be running after having been disabled for some time. "
                     + "In this case we do not tweet about the trials we found; "
                     + "instead we mark them for future exclusion.");
             markWithCanceledTweets(trials);
@@ -293,9 +302,10 @@ public class TrialTweetingBean implements TrialTweetingService {
      * @return
      * @throws PAException
      */
+    // CHECKSTYLE:OFF
     private boolean isTweetingEnabled() throws PAException {
-        return Boolean.valueOf(lookUpTableService
-                .getPropertyValue("twitter.enabled"));
+        return (mostRecentEnabledCheck = Boolean.valueOf(lookUpTableService
+                .getPropertyValue("twitter.enabled")));
     }
 
     /**

@@ -21,7 +21,7 @@ update anatomic_sites set twitter_hashtags='eyecancer' where code='Eye and Orbit
 update anatomic_sites set twitter_hashtags='hodgkinslymphoma' where code='Hodgkin''s Lymphoma';
 update anatomic_sites set twitter_hashtags='kaposisarcoma' where code='Kaposi''s Sarcoma';
 update anatomic_sites set twitter_hashtags='kidneycancer' where code='Kidney';
-update anatomic_sites set twitter_hashtags='Larynxcancer,laryngealcancer,throatcancer' where code='Larynx';
+update anatomic_sites set twitter_hashtags='larynxcancer,laryngealcancer,throatcancer' where code='Larynx';
 update anatomic_sites set twitter_hashtags='leukemia,bloodcancer' where code='Leukemia, not otherwise specified';
 update anatomic_sites set twitter_hashtags='leukemia,bloodcancer' where code='Leukemia, other';
 update anatomic_sites set twitter_hashtags='oralcancer,mouthcancer' where code='Lip, Oral Cavity and Pharynx';

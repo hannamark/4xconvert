@@ -133,6 +133,36 @@ public class TrialTweetingBeanTest extends AbstractEjbTestCase {
         assertEquals(TweetStatusCode.CANCELED, t.getStatus());
     }
 
+    @Test
+    public void enablingAfterBeingDisabledForAWhile() throws PAException,
+            IOException {
+
+        deleteAllTweetsAndRemoveBodySites();
+        createCancelledTweet();
+
+        addPaProperty("twitter.enabled", "false");
+        bean.processTrials();
+        addPaProperty("twitter.enabled", "true");
+        bean.processTrials();
+
+        assertEquals(
+                ((Number) PaHibernateUtil.getCurrentSession()
+                        .createCriteria(Tweet.class)
+                        .setProjection(Projections.rowCount()).uniqueResult())
+                        .intValue(),
+                2);
+
+        Tweet t = (Tweet) PaHibernateUtil
+                .getCurrentSession()
+                .createCriteria(Tweet.class)
+                .add(Restrictions.eq("studyProtocol",
+                        (TestSchema.studyProtocols.get(0)))).setMaxResults(1)
+                .uniqueResult();
+        assertEquals(TestSchema.studyProtocols.get(0).getId(), t
+                .getStudyProtocol().getId());
+        assertEquals(TweetStatusCode.CANCELED, t.getStatus());
+    }
+
     /**
      * @throws HibernateException
      */
@@ -249,10 +279,13 @@ public class TrialTweetingBeanTest extends AbstractEjbTestCase {
 
         AnatomicSite site1 = TestSchema.createAnatomicSiteObj(
                 "Non-Hodgkin's Lymphoma",
-                " nonhodgkinslymphoma, nonhodgkins, nonhodgkin"); // nonhodgkin is
-                                                               // not going to
-                                                               // fit into the
-                                                               // tweet
+                " nonhodgkinslymphoma, nonhodgkins, nonhodgkin"); // nonhodgkin
+                                                                  // is
+                                                                  // not going
+                                                                  // to
+                                                                  // fit into
+                                                                  // the
+                                                                  // tweet
         TestSchema.addUpdObject(site1);
         AnatomicSite site2 = TestSchema.createAnatomicSiteObj("Anus",
                 "anuscancer ,analcancer, a3");
@@ -285,13 +318,14 @@ public class TrialTweetingBeanTest extends AbstractEjbTestCase {
     /**
      * @throws HibernateException
      */
-    private void createCancelledTweet() throws HibernateException {
+    private Tweet createCancelledTweet() throws HibernateException {
         Tweet t = new Tweet();
         t.setText(StringUtils.EMPTY);
         t.setStatus(TweetStatusCode.CANCELED);
         t.setStudyProtocol(TestSchema.createStudyProtocolObj());
         t.setCreateDate(new Date());
         PaHibernateUtil.getCurrentSession().save(t);
+        return t;
     }
 
     @After
