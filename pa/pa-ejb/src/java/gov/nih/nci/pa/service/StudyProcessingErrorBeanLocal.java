@@ -84,7 +84,10 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Account;
 import gov.nih.nci.pa.domain.StudyProcessingError;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.dto.StudyProcessingErrorConverter;
+import gov.nih.nci.pa.dto.StudyProcessingErrorDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerService.MailMessage;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
@@ -92,8 +95,10 @@ import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -110,8 +115,10 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 
 import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
+ * StudyProcessing error service implementation 
  * @author gunnikrishnan
  */
 @Stateless
@@ -122,7 +129,7 @@ public class StudyProcessingErrorBeanLocal extends
         AbstractBaseSearchBean<StudyProcessingError> implements
         StudyProcessingErrorServiceLocal {
 
-    private static final int RECURRENT_DAYS = -30;
+    private static final int RECURRENT_DAYS = -31;
     // CT.gov Upload Error Mialbox properties
     private static final String IMAP_SERVER = "imap.server";
     private static final String IMAP_PORT = "imap.port";
@@ -145,7 +152,7 @@ public class StudyProcessingErrorBeanLocal extends
     private StudyProtocolServiceLocal studyProtocolService;
 
     @Override
-    public StudyProcessingError getStudyProcessingError(Long id)
+    public StudyProcessingErrorDTO getStudyProcessingError(Long id)
             throws PAException {
         Session session = PaHibernateUtil.getCurrentSession();
         StudyProcessingError studyProcessingError = (StudyProcessingError) session
@@ -155,19 +162,39 @@ public class StudyProcessingErrorBeanLocal extends
             throw new PAException(
                     "No matching study processing error for Ii.extension " + id);
         }
-        return studyProcessingError;
+        return StudyProcessingErrorConverter.convertFromDomainToDTO(studyProcessingError);
     }
 
     @Override
-    public StudyProcessingError updateStudyProcessingError(
-            StudyProcessingError studyProcessingError) throws PAException {
-        if (studyProcessingError == null) {
-            throw new PAException(" studyProcessingError should not be null.");
+    public StudyProcessingErrorDTO updateStudyProcessingError(
+            StudyProcessingErrorDTO studyProcessingErrorDto) throws PAException {
+        if (studyProcessingErrorDto == null) {
+            throw new PAException(" studyProcessingErrorDto should not be null.");
         }
 
         Session session = PaHibernateUtil.getCurrentSession();
-        session.update(studyProcessingError);
-        return studyProcessingError;
+        StudyProcessingError studyProcessingError = (StudyProcessingError) session
+                .get(StudyProcessingError.class, studyProcessingErrorDto.getIdentifier());
+        
+        studyProcessingError.setActionTaken(studyProcessingErrorDto.getActionTaken());
+        studyProcessingError.setCmsTicketId(studyProcessingErrorDto.getCmsTicketId());
+        studyProcessingError.setComment(studyProcessingErrorDto.getComment());
+        studyProcessingError.setDateLastUpdated(new Date());
+        studyProcessingError.setErrorMessage(studyProcessingErrorDto.getErrorMessage());
+        studyProcessingError.setErrorDate(studyProcessingErrorDto.getErrorDate());
+        studyProcessingError.setErrorType(studyProcessingErrorDto.getErrorType());
+        studyProcessingError.setRecurringError(studyProcessingErrorDto.getRecurringError());
+        studyProcessingError.setResolutionDate(studyProcessingErrorDto.getResolutionDate());
+        if (studyProcessingErrorDto.getStudyId() > 0) {
+            studyProcessingError.setStudyProtocol((StudyProtocol) session.get(StudyProtocol.class,
+                                            studyProcessingErrorDto.getStudyId()));
+        }
+        studyProcessingError.setUserLastUpdated(CSMUserService.getInstance()
+                                .getCSMUser(UsernameHolder.getUser()));
+        
+        session.saveOrUpdate(studyProcessingError);
+        session.flush();
+        return StudyProcessingErrorConverter.convertFromDomainToDTO(studyProcessingError);
     }
 
     @Override
@@ -183,6 +210,7 @@ public class StudyProcessingErrorBeanLocal extends
         }
 
         Session session = PaHibernateUtil.getCurrentSession();
+        studyProcessingError.setDateLastCreated(new Date());
         session.save(studyProcessingError);
         return IiConverter.convertToStudyProtocolIi(studyProcessingError
                 .getId());
@@ -191,7 +219,7 @@ public class StudyProcessingErrorBeanLocal extends
     @Override
     public void processStudyUploadErrors() {
         try {
-            LOG.info("Stating study upload errors processing...");
+            LOG.info("Starting study upload errors processing...");
             Account ctGovemailAcc = getCTGovMailAccount();
             List<MailMessage> newCTGovMails = mailManagerSerivceLocal
                     .getNewEmails(lookUpTableService
@@ -350,10 +378,51 @@ public class StudyProcessingErrorBeanLocal extends
     /**
      * @param studyProtocolService the studyProtocolService to set
      */
-    void setStudyProtocolService(
-            StudyProtocolServiceLocal studyProtocolService) {
+    void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
         this.studyProtocolService = studyProtocolService;
     }
-    
-    
+
+    @Override
+    public List<StudyProcessingErrorDTO> getStudyProcessingErrorByStudy(Long studyId) {
+        List<StudyProcessingErrorDTO> speDtos = new ArrayList<StudyProcessingErrorDTO>();
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, RECURRENT_DAYS);
+        Session session = PaHibernateUtil.getCurrentSession();
+        List<StudyProcessingError> spes = session
+                .createQuery("select spe from StudyProcessingError spe where"
+                        + " id in (select max(spe.id) from "
+                        + "StudyProcessingError spe where spe.errorDate >:errorDate and spe.studyProtocol.id =:studyId"
+                        + " group by spe.studyProtocol, spe.errorMessage) order by spe.id desc")
+                       .setParameter("errorDate", cal.getTime())
+                       .setParameter("studyId", studyId).list();
+        if (spes != null) {
+            for (Iterator iterator = spes.iterator(); iterator.hasNext();) {
+                speDtos.add(StudyProcessingErrorConverter.convertFromDomainToDTO((StudyProcessingError) iterator
+                        .next()));
+            }   
+        }
+        return speDtos;
+    }
+
+    @Override
+    public List<StudyProcessingErrorDTO> getLatestStudyProcessingErrors() {
+        List<StudyProcessingErrorDTO> speDtos = new ArrayList<StudyProcessingErrorDTO>();
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, RECURRENT_DAYS);
+        Session session = PaHibernateUtil.getCurrentSession();
+        List<StudyProcessingError> spes  = session
+                        .createQuery("select spe from StudyProcessingError spe where"
+                            + " id in (select max(spe.id) from "
+                            + "StudyProcessingError spe where spe.errorDate > :errorDate "
+                            + "group by spe.studyProtocol, spe.errorMessage) order by spe.id desc")
+                           .setParameter("errorDate", cal.getTime()).list();
+        if (spes != null) {
+            for (Iterator iterator = spes.iterator(); iterator.hasNext();) {
+                speDtos.add(StudyProcessingErrorConverter.convertFromDomainToDTO((StudyProcessingError) iterator
+                        .next()));
+            }   
+        }
+        return speDtos;
+    }
 }
+

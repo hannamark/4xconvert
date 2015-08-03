@@ -76,61 +76,202 @@
 *
 *
 */
-package gov.nih.nci.pa.service;
+package gov.nih.nci.pa.dto;
 
-import java.util.List;
+import java.io.Serializable;
+import java.sql.Timestamp;
 
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.StudyProcessingError;
-import gov.nih.nci.pa.dto.StudyProcessingErrorDTO;
 
 /**
- * @author gunnikrishnan
- * StudyProcessingError services
+ * StudyProcessingErrorDTO for transferring Study processing error object
+ * @author  Gopal Unnikrishnan (unnikrishnang)
  */
-public interface StudyProcessingErrorService {
-
-
-    /**
-     * Get StudyProcessingError by DB id 
-     * @param id study processing error identifier
-     * @return StudyProcessingError
-     * @throws PAException when there are errors getting
-     */
-    StudyProcessingErrorDTO getStudyProcessingError(Long id) throws PAException;
-
- 
-    /**
-     * Update the study processing error record in DB
-     * @param studyProcessingError studyProcessingError to update 
-     * @return updated studyProcessingError
-     * @throws PAException when there are errors updating
-     */
-    StudyProcessingErrorDTO updateStudyProcessingError(StudyProcessingErrorDTO studyProcessingError) throws PAException;
-
-    /**
-     * Create a study processing error in DB 
-     * @param studyProcessingError studyProcessingError to create 
-     * @return ID of the newly created study processing error
-     * @throws PAException when there are errors creating
-     */
-    Ii createStudyProcessingError(StudyProcessingError studyProcessingError) throws PAException;
+public class StudyProcessingErrorDTO implements Serializable {
+    private static final long serialVersionUID = 7235772554482606356L;
+    
+    private Long identifier;
+    private Timestamp errorDate;
+    private String errorMessage;
+    private Boolean recurringError;
+    private String comment;
+    private String errorType;
+    private String cmsTicketId;
+    private String actionTaken;
+    private Timestamp resolutionDate;
+    private String user;
+    private Timestamp date;
+    
+    private Long studyId;
+    private String studyNCIId;
+    private String studyNCTId;
     
     /**
-     * Study upload errors processing job
+     * @return the errorDate
      */
-    void processStudyUploadErrors();
-    
+    public Timestamp getErrorDate() {
+        return errorDate;
+    }
     /**
-     * Get list of study processing errors by study
-     * @param studyId study identifier
-     * @return list of studyprocessing error DTOs
+     * @param errorDate the errorDate to set
      */
-    List<StudyProcessingErrorDTO> getStudyProcessingErrorByStudy(Long studyId);
-    
+    public void setErrorDate(Timestamp errorDate) {
+        this.errorDate = errorDate;
+    }
     /**
-     * Get the latest study processing error for each study
-     * @return list of studyprocessing error DTOs
+     * @return the errorMessage
      */
-    List<StudyProcessingErrorDTO> getLatestStudyProcessingErrors();
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+    /**
+     * @param errorMessage the errorMessage to set
+     */
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+    /**
+     * @return the recurringError
+     */
+    public Boolean getRecurringError() {
+        return recurringError;
+    }
+    /**
+     * @param recurringError the recurringError to set
+     */
+    public void setRecurringError(Boolean recurringError) {
+        this.recurringError = recurringError;
+    }
+    /**
+     * @return the comment
+     */
+    public String getComment() {
+        return comment;
+    }
+    /**
+     * @param comment the comment to set
+     */
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+    /**
+     * @return the errorType
+     */
+    public String getErrorType() {
+        return errorType;
+    }
+    /**
+     * @param errorType the errorType to set
+     */
+    public void setErrorType(String errorType) {
+        this.errorType = errorType;
+    }
+    /**
+     * @return the cmsTicketId
+     */
+    public String getCmsTicketId() {
+        return cmsTicketId;
+    }
+    /**
+     * @param cmsTicketId the cmsTicketId to set
+     */
+    public void setCmsTicketId(String cmsTicketId) {
+        this.cmsTicketId = cmsTicketId;
+    }
+    /**
+     * @return the actionTaken
+     */
+    public String getActionTaken() {
+        return actionTaken;
+    }
+    /**
+     * @param actionTaken the actionTaken to set
+     */
+    public void setActionTaken(String actionTaken) {
+        this.actionTaken = actionTaken;
+    }
+    /**
+     * @return the resolutionDate
+     */
+    public Timestamp getResolutionDate() {
+        return resolutionDate;
+    }
+    /**
+     * @param resolutionDate the resolutionDate to set
+     */
+    public void setResolutionDate(Timestamp resolutionDate) {
+        this.resolutionDate = resolutionDate;
+    }
+    /**
+     * @return the user
+     */
+    public String getUser() {
+        return user;
+    }
+    /**
+     * @param user the user to set
+     */
+    public void setUser(String user) {
+        this.user = user;
+    }
+    /**
+     * @return the date
+     */
+    public Timestamp getDate() {
+        return date;
+    }
+    /**
+     * @param date the date to set
+     */
+    public void setDate(Timestamp date) {
+        this.date = date;
+    }
+    /**
+     * @return the studyNCIId
+     */
+    public String getStudyNCIId() {
+        return studyNCIId;
+    }
+    /**
+     * @param studyNCIId the studyNCIId to set
+     */
+    public void setStudyNCIId(String studyNCIId) {
+        this.studyNCIId = studyNCIId;
+    }
+    /**
+     * @return the studyNCTId
+     */
+    public String getStudyNCTId() {
+        return studyNCTId;
+    }
+    /**
+     * @param studyNCTId the studyNCTId to set
+     */
+    public void setStudyNCTId(String studyNCTId) {
+        this.studyNCTId = studyNCTId;
+    }
+    /**
+     * @return the identifier
+     */
+    public Long getIdentifier() {
+        return identifier;
+    }
+    /**
+     * @param identifier the identifier to set
+     */
+    public void setIdentifier(Long identifier) {
+        this.identifier = identifier;
+    }
+    /**
+     * @return the studyId
+     */
+    public Long getStudyId() {
+        return studyId;
+    }
+    /**
+     * @param studyId the studyId to set
+     */
+    public void setStudyId(Long studyId) {
+        this.studyId = studyId;
+    }
+    
 }

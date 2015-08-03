@@ -76,61 +76,184 @@
 *
 *
 */
-package gov.nih.nci.pa.service;
+package gov.nih.nci.pa.action;
 
+import gov.nih.nci.pa.dto.StudyProcessingErrorDTO;
+import gov.nih.nci.pa.service.StudyProcessingErrorService;
+import gov.nih.nci.pa.util.PaRegistry;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.StudyProcessingError;
-import gov.nih.nci.pa.dto.StudyProcessingErrorDTO;
+import org.apache.log4j.Logger;
+
+import com.opensymphony.xwork2.Preparable;
 
 /**
- * @author gunnikrishnan
- * StudyProcessingError services
+ * Results reporting study processing error action taken action
+ * 
+ * @author Gopal Unnikrishnan (unnikrishnang)
+ * 
  */
-public interface StudyProcessingErrorService {
-
-
-    /**
-     * Get StudyProcessingError by DB id 
-     * @param id study processing error identifier
-     * @return StudyProcessingError
-     * @throws PAException when there are errors getting
-     */
-    StudyProcessingErrorDTO getStudyProcessingError(Long id) throws PAException;
-
- 
-    /**
-     * Update the study processing error record in DB
-     * @param studyProcessingError studyProcessingError to update 
-     * @return updated studyProcessingError
-     * @throws PAException when there are errors updating
-     */
-    StudyProcessingErrorDTO updateStudyProcessingError(StudyProcessingErrorDTO studyProcessingError) throws PAException;
-
-    /**
-     * Create a study processing error in DB 
-     * @param studyProcessingError studyProcessingError to create 
-     * @return ID of the newly created study processing error
-     * @throws PAException when there are errors creating
-     */
-    Ii createStudyProcessingError(StudyProcessingError studyProcessingError) throws PAException;
+public class ResultsReportingActionsTakenAction extends
+        AbstractCheckInOutAction implements Preparable {
+    private static final Logger LOG = Logger.getLogger(ResultsReportingActionsTakenAction.class);
+    private static final long serialVersionUID = 2798002815820931245L;
+    private static final String AJAX_RESPONSE = "ajaxResponse";
     
+    private long studyProtocolId;
+    private List<StudyProcessingErrorDTO> studyProcessingErrors;
+    private long studyProcessingErrId;
+    private StudyProcessingErrorDTO studyProcessingErrDto;
+
+    private StudyProcessingErrorService studyProcessingErrorService;
+    private InputStream ajaxResponseStream;
+
+    @Override
+    public void prepare() {
+        studyProcessingErrorService = PaRegistry
+                .getStudyProcessingErrorService();
+        studyProcessingErrors = new ArrayList<StudyProcessingErrorDTO>();
+    }
+
     /**
-     * Study upload errors processing job
+     * View the study processing errors
+     * @return result
      */
-    void processStudyUploadErrors();
+    public String view() {
+        try {
+            if (studyProtocolId <= 0) {
+                setStudyProcessingErrors(studyProcessingErrorService
+                    .getLatestStudyProcessingErrors());
+            } else {
+                setStudyProcessingErrors(studyProcessingErrorService.getStudyProcessingErrorByStudy(studyProtocolId));
+            }
+            return SUCCESS;
+        } catch (Exception e) {
+            LOG.error("Exception while displaying results reporting action taken", e);
+            addActionError(e.getLocalizedMessage());
+            return ERROR;
+        }
+    }
+
+    /**
+     * Update SPE AJAX action
+     * @return result view
+     */
+    public String updateSpeAjax() {
+        String result;
+        try {            
+            StudyProcessingErrorDTO speDto = studyProcessingErrorService
+                    .getStudyProcessingError(studyProcessingErrDto
+                            .getIdentifier());
+            if (speDto != null) {
+                speDto.setActionTaken(studyProcessingErrDto.getActionTaken());
+                speDto.setComment(studyProcessingErrDto.getComment());
+                speDto.setCmsTicketId(studyProcessingErrDto.getCmsTicketId());
+                speDto.setResolutionDate(studyProcessingErrDto
+                        .getResolutionDate());
+                speDto.setErrorType(studyProcessingErrDto.getErrorType());
+                studyProcessingErrorService.updateStudyProcessingError(speDto);
+                result = SUCCESS;
+            } else {
+               result = "StudyProcessingError with Id = "
+                       + studyProcessingErrDto.getIdentifier()
+                       + " not found in DB, refresh the page and try again";
+            }
+
+        } catch (Exception e) {
+            LOG.error("Exception while updating results reporting action taken", e);
+            result = "Exception while updating results reporting action taken" + e;
+        }
+        ajaxResponseStream = new ByteArrayInputStream(result.getBytes());
+        return AJAX_RESPONSE;
+    }
+
+    /**
+     * @return studyProtocolId
+     */
+    public Long getStudyProtocolId() {
+        return studyProtocolId;
+    }
+
+    /**
+     * @param studyProtocolId
+     *            studyProtocolId
+     */
+    public void setStudyProtocolId(Long studyProtocolId) {
+        this.studyProtocolId = studyProtocolId;
+    }
+
+    /**
+     * @return the studyProcessingErrors
+     */
+    public List<StudyProcessingErrorDTO> getStudyProcessingErrors() {
+        return studyProcessingErrors;
+    }
+
+    /**
+     * @param studyProcessingErrors
+     *            the studyProcessingErrors to set
+     */
+    public void setStudyProcessingErrors(
+            List<StudyProcessingErrorDTO> studyProcessingErrors) {
+        this.studyProcessingErrors = studyProcessingErrors;
+    }
+
+    /**
+     * @return the studyProcessingErrId
+     */
+    public long getStudyProcessingErrId() {
+        return studyProcessingErrId;
+    }
+
+    /**
+     * @param studyProcessingErrId
+     *            the studyProcessingErrId to set
+     */
+    public void setStudyProcessingErrId(long studyProcessingErrId) {
+        this.studyProcessingErrId = studyProcessingErrId;
+    }
+
+    /**
+     * @return the studyProcessingErrDto
+     */
+    public StudyProcessingErrorDTO getStudyProcessingErrDto() {
+        return studyProcessingErrDto;
+    }
+
+    /**
+     * @param studyProcessingErrDto
+     *            the studyProcessingErrDto to set
+     */
+    public void setStudyProcessingErrDto(
+            StudyProcessingErrorDTO studyProcessingErrDto) {
+        this.studyProcessingErrDto = studyProcessingErrDto;
+    }
+
+    /**
+     * @return the ajaxResponseStream
+     */
+    public InputStream getAjaxResponseStream() {
+        return ajaxResponseStream;
+    }
+
+    /**
+     * @param ajaxResponseStream the ajaxResponseStream to set
+     */
+    public void setAjaxResponseStream(InputStream ajaxResponseStream) {
+        this.ajaxResponseStream = ajaxResponseStream;
+    }
+
+    /**
+     * @param studyProcessingErrorService the studyProcessingErrorService to set
+     */
+    public void setStudyProcessingErrorService(
+            StudyProcessingErrorService studyProcessingErrorService) {
+        this.studyProcessingErrorService = studyProcessingErrorService;
+    }
     
-    /**
-     * Get list of study processing errors by study
-     * @param studyId study identifier
-     * @return list of studyprocessing error DTOs
-     */
-    List<StudyProcessingErrorDTO> getStudyProcessingErrorByStudy(Long studyId);
     
-    /**
-     * Get the latest study processing error for each study
-     * @return list of studyprocessing error DTOs
-     */
-    List<StudyProcessingErrorDTO> getLatestStudyProcessingErrors();
 }

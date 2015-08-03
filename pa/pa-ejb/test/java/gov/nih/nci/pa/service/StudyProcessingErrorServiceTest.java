@@ -87,6 +87,7 @@ import gov.nih.nci.pa.domain.AccountTest;
 import gov.nih.nci.pa.domain.Keystore;
 import gov.nih.nci.pa.domain.KeystoreTest;
 import gov.nih.nci.pa.domain.StudyProcessingError;
+import gov.nih.nci.pa.dto.StudyProcessingErrorDTO;
 import gov.nih.nci.pa.enums.ExternalSystemCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.AbstractEjbTestCase;
@@ -117,7 +118,6 @@ import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.DummySSLSocketFactory;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import com.sun.corba.se.spi.activation.ServerOperations;
 
 /**
  * @author gunnikrishnan
@@ -180,7 +180,7 @@ public class StudyProcessingErrorServiceTest extends AbstractEjbTestCase {
 
     @Test
     public void testGetStudyProcessingError() throws Exception {
-        StudyProcessingError spe = bean
+        StudyProcessingErrorDTO spe = bean
                 .getStudyProcessingError(TestSchema.studyProtocolErrorIds
                         .get(0));
         assertNotNull(spe);
@@ -193,7 +193,7 @@ public class StudyProcessingErrorServiceTest extends AbstractEjbTestCase {
 
     @Test
     public void testUpdateProcessingError() throws Exception {
-        StudyProcessingError spe = bean
+        StudyProcessingErrorDTO spe = bean
                 .getStudyProcessingError(TestSchema.studyProtocolErrorIds
                         .get(0));
         assertNotNull(spe);
@@ -326,7 +326,7 @@ public class StudyProcessingErrorServiceTest extends AbstractEjbTestCase {
             assertEquals(c1.getTimeInMillis(), errors.get(3).getErrorDate().getTime());
             assertEquals(true, errors.get(3).getRecurringError());
             assertEquals("detailedDescription -- Textblock contains an invalid character at position: 1463", errors.get(4).getErrorMessage());
-            assertEquals(c2.getTimeInMillis(), errors.get(4).getErrorDate().getTime());
+            assertEquals(c2.getTimeInMillis(),errors.get(4).getErrorDate().getTime());
             assertEquals(false, errors.get(4).getRecurringError());
     }
     
@@ -473,6 +473,93 @@ public class StudyProcessingErrorServiceTest extends AbstractEjbTestCase {
         assertEquals("detailedDescription2 -- Textblock contains an invalid character at position: 3000", errors.get(3).getErrorMessage());
         assert(errors.get(3).getErrorDate().getTime() - System.currentTimeMillis() < 5000 );
         assertEquals(false, errors.get(3).getRecurringError());
+    }
+    
+    @Test
+    public void testGetStudyProcessingErrrorsByStudy() throws Exception{
+        MimeMessage message = new MimeMessage( (Session) null);
+        message.setFrom(new InternetAddress("ctgov@nci.gov"));
+        message.addRecipient(Message.RecipientType.TO, new InternetAddress(
+                "ctrp@nci.gov"));
+        message.setSubject("PRS Protocol Upload Notification");
+        message.setText("Batch Job J0004413 completed successfully. \n"+
+                "Number of new studies 0 \n"+
+                "Number of changed studies 71 \n"+
+                "Number of unchanged studies 293 \n"+
+                "Number of failures 0 \n"+
+                "Total number of studies processed 364 \n"+
+                "Total number of studies submitted 364 \n"+
+                "\n"+
+                "------------------------ \n"+
+                "Errors Encountered \n"+
+                "\n"+
+                "Study Number 24 (NCI-2010-00001) \n"+
+                "ERROR: primaryCompletionDate -- Anticipated Primary Completion Date cannot be in the past. \n"+
+                "\n"+
+                "Study Number 50 (NCI-2009-00002) \n"+
+                "ERROR: primaryCompletionDate -- Anticipated Primary Completion Date cannot be in the past. \n"+
+                "\n"+
+                "\n"+
+                "\n"+
+                "Study Number 108 (NCI-2009-00001) \n"+
+                "ERROR: detailedDescription -- Textblock contains an invalid character at position: 1463 \n"+
+                "\n"+
+                "------------------------ \n"+
+                "\n"+
+                "You can check the details via the Check Upload Status option, under the PRS Home page's Records menu. \n"+
+                "The Job ID for this job is J0004413.\n");
+ 
+        // use greenmail to store the message
+        user.deliver(message);
+        
+        message = new MimeMessage( (Session) null);
+        message.setFrom(new InternetAddress("ctgov@nci.gov"));
+        message.addRecipient(Message.RecipientType.TO, new InternetAddress(
+                "ctrp@nci.gov"));
+        message.setSubject("PRS Protocol Upload Notification");
+        message.setText("Batch Job J0004413 completed successfully. \n"+
+                "Number of new studies 0 \n"+
+                "Number of changed studies 71 \n"+
+                "Number of unchanged studies 293 \n"+
+                "Number of failures 0 \n"+
+                "Total number of studies processed 364 \n"+
+                "Total number of studies submitted 364 \n"+
+                "\n"+
+                "------------------------ \n"+
+                "Errors Encountered \n"+
+                "\n"+
+                "Study Number 24 (NCI-2010-00001) \n"+
+                "ERROR: primaryCompletionDate -- Anticipated Primary Completion Date cannot be in the past. \n"+
+                "\n"+
+                "Study Number 50 (NCI-2009-00002) \n"+
+                "ERROR: primaryCompletionDate -- Anticipated Primary Completion Date cannot be in the past. \n"+
+                "\n"+
+                "\n"+
+                "\n"+
+                "Study Number 108 (NCI-2009-00001) \n"+
+                "ERROR: detailedDescription -- Textblock contains an invalid character at position: 1463 \n"+
+                "Study Number 108 (NCI-2009-00001) \n"+
+                "ERROR: detailedDescription2 -- Textblock contains an invalid character at position: 3000 \n"+
+                "\n"+
+                "------------------------ \n"+
+                "\n"+
+                "You can check the details via the Check Upload Status option, under the PRS Home page's Records menu. \n"+
+                "The Job ID for this job is J0004413.\n");
+ 
+        // use greenmail to store the message
+        user.deliver(message);
+        bean.processStudyUploadErrors();
+        
+        List<StudyProcessingErrorDTO> errors = bean.getStudyProcessingErrorByStudy(TestSchema.studyProtocolIds
+                .get(0));  
+        assertEquals(3, errors.size());
+        assertEquals("detailedDescription2 -- Textblock contains an invalid character at position: 3000", errors.get(0).getErrorMessage());
+        assert(errors.get(0).getErrorDate().getTime() - System.currentTimeMillis() < 5000 );
+        assertEquals(false, errors.get(0).getRecurringError());
+        assertEquals("detailedDescription -- Textblock contains an invalid character at position: 1463", errors.get(1).getErrorMessage());
+        assert(errors.get(1).getErrorDate().getTime() - System.currentTimeMillis() < 5000 );
+        assertEquals(true, errors.get(1).getRecurringError());
+        
     }
     
     private void createMailAccount() {
