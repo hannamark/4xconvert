@@ -1131,7 +1131,7 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
         private static final long serialVersionUID = 5117406038792440978L;
 
         @Override
-        @SuppressWarnings("PMD.NPathComplexity")
+        @SuppressWarnings({ "PMD.NPathComplexity", "PMD.CyclomaticComplexity" })
         public int compare(StudyOverallStatus sos1, StudyOverallStatus sos2) {
             if (sos1.getId() == null && sos2.getId() == null
                     && sos1.getStatusDate() == null
