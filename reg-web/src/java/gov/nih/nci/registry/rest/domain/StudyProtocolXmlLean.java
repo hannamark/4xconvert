@@ -39,6 +39,7 @@ public final class StudyProtocolXmlLean implements Comparable<StudyProtocolXmlLe
     private String piFullName;
     private StudyStatusCode studyStatusCode;
     private String nctIdentifier;
+    private DocumentWorkflowStatusCode documentWorkflowStatusCode;
 
     /**
      * Generate a list of StudyProtocolXmlLean from search result list.
@@ -60,7 +61,10 @@ public final class StudyProtocolXmlLean implements Comparable<StudyProtocolXmlLe
         return result;
     }
 
-    private StudyProtocolXmlLean() {
+    /**
+     * 
+     */
+    public StudyProtocolXmlLean() {
         // required for to prevent JAXBMarshalException: IllegalAnnotationsException
     }
 
@@ -75,10 +79,10 @@ public final class StudyProtocolXmlLean implements Comparable<StudyProtocolXmlLe
     /**
      * @param searchResultDto the dto from results service
      */
-    private StudyProtocolXmlLean(StudyProtocolQueryDTO searchResultDto) {
+    public StudyProtocolXmlLean(StudyProtocolQueryDTO searchResultDto) {
         try {
             BeanUtils.copyProperties(this, searchResultDto);
-        } catch (Exception e) {
+       } catch (Exception e) {
             LOG.error(e);
         }
     }
@@ -168,5 +172,20 @@ public final class StudyProtocolXmlLean implements Comparable<StudyProtocolXmlLe
      */
     public void setNctIdentifier(String nctIdentifier) {
         this.nctIdentifier = nctIdentifier;
+    }
+
+    /**
+     * @return documentWorkflowStatusCode
+     */
+    public DocumentWorkflowStatusCode getDocumentWorkflowStatusCode() {
+        return documentWorkflowStatusCode;
+    }
+
+    /**
+     * @param documentWorkflowStatusCode documentWorkflowStatusCode
+     */
+    public void setDocumentWorkflowStatusCode(
+            DocumentWorkflowStatusCode documentWorkflowStatusCode) {
+        this.documentWorkflowStatusCode = documentWorkflowStatusCode;
     }
 }
