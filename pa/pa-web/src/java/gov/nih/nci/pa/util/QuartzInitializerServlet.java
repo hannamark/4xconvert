@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.pa.util;
 
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -28,6 +29,12 @@ public class QuartzInitializerServlet extends
 
     private static final String DAILY_TRIGGER_GROUP = "DailyTriggerGroup";
 
+    private static final int SECONDS = 5;
+    private static final long HOW_OFTEN_TO_CHECK_FOR_SCHEDULE_CHANGE = Boolean
+            .valueOf(System.getProperty("ctrp.env.ci")) ? DateUtils.MILLIS_PER_SECOND
+            * SECONDS
+            : DateUtils.MILLIS_PER_MINUTE;
+
     private static final Logger LOG = Logger
             .getLogger(QuartzInitializerServlet.class);
 
@@ -51,7 +58,6 @@ public class QuartzInitializerServlet extends
                 "tweetQueueProcessingJob", "tweetQueueProcessingJobTrigger");
         setupJobSchedule(sc, "twitter.trials.scan.schedule",
                 "trialTweetingJob", "trialTweetingJobTrigger");
-        
 
     }
 
@@ -75,17 +81,23 @@ public class QuartzInitializerServlet extends
                         CronTrigger trigger = new CronTrigger(triggerName,
                                 DAILY_TRIGGER_GROUP, jobName, "DEFAULT", cron);
                         trigger.setMisfireInstruction(CronTrigger.MISFIRE_INSTRUCTION_FIRE_ONCE_NOW);
-                        scheduler.rescheduleJob(triggerName,
-                                DAILY_TRIGGER_GROUP, trigger);
+                        Date nextFireTime;
+                        if (scheduler.getTrigger(triggerName,
+                                DAILY_TRIGGER_GROUP) != null) {
+                            nextFireTime = scheduler.rescheduleJob(triggerName,
+                                    DAILY_TRIGGER_GROUP, trigger);
+                        } else {
+                            nextFireTime = scheduler.scheduleJob(trigger);
+                        }
                         LOG.warn("Next fire time for " + jobName + ": "
-                                + trigger.getNextFireTime());
+                                + nextFireTime);
                         lastValue = cron;
                     }
                 } catch (Exception e) {
                     LOG.error(e, e);
                 }
             }
-        }, 0, DateUtils.MILLIS_PER_MINUTE);
+        }, 0, HOW_OFTEN_TO_CHECK_FOR_SCHEDULE_CHANGE);
 
     }
 

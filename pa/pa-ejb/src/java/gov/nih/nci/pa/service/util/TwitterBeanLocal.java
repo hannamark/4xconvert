@@ -89,6 +89,7 @@ public class TwitterBeanLocal implements TwitterServiceLocal {
                     break;
                 }
             }
+            s.flush();
         }
     }
 

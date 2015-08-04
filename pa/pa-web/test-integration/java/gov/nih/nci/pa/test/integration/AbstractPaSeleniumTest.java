@@ -1364,6 +1364,49 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
      * @return
      * @throws SQLException
      */
+    protected Tweet getTweetById(final Number id) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        final List<Object[]> results = runner
+                .query(connection,
+                        "select tweet_text, status, sent_date, errors, identifier from tweets where identifier="
+                                + id, new ArrayListHandler());
+        Object[] row = results.get(0);
+        Tweet t = new Tweet();
+        t.text = (String) row[0];
+        t.status = (String) row[1];
+        t.sentDate = (Date) row[2];
+        t.errors = (String) row[3];
+        t.tweetID = (Number) row[4];
+        return t;
+    }
+
+    /**
+     * @param sql
+     * @return
+     * @throws SQLException
+     */
+    protected Account getAccountByName(final String name) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        final List<Object[]> results = runner.query(connection,
+                "select username, encrypted_password from accounts where account_name='"
+                        + name + "'", new ArrayListHandler());
+        Object[] row = results.get(0);
+        Account a = new Account();
+        a.username = (String) row[0];
+        a.encryptedPassword = (String) row[1];
+
+        gov.nih.nci.pa.domain.Account account = new gov.nih.nci.pa.domain.Account();
+        account.setEncryptedPassword(a.encryptedPassword);
+        a.unencryptedPassword = account.getDecryptedPassword();
+
+        return a;
+    }
+
+    /**
+     * @param sql
+     * @return
+     * @throws SQLException
+     */
     private List<TrialStatus> loadTrialStatuses(final String sql)
             throws SQLException {
         List<TrialStatus> list = new ArrayList<>();
@@ -1435,6 +1478,85 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + "{ts '2014-04-16 14:56:08.559'},null,null,null,"
                 + "null,null," + info.csmUserID + "," + info.csmUserID + ")";
         runner.update(connection, sql);
+    }
+
+    protected void addNctIdentifier(TrialInfo info, String nctID)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        info.nctID = nctID;
+        String sql = "INSERT INTO study_site (identifier,functional_code,local_sp_indentifier,"
+                + "review_board_approval_number,review_board_approval_date,review_board_approval_status_code,"
+                + "target_accrual_number,study_protocol_identifier,healthcare_facility_identifier,"
+                + "research_organization_identifier,oversight_committee_identifier,"
+                + "status_code,status_date_range_low,date_last_created,date_last_updated,status_date_range_high,"
+                + "review_board_organizational_affiliation,program_code_text,accrual_date_range_low,accrual_date_range_high,"
+                + "user_last_created_id,user_last_updated_id) VALUES "
+                + "((SELECT NEXTVAL('HIBERNATE_SEQUENCE')),'IDENTIFIER_ASSIGNER','"
+                + nctID
+                + "',null,null,null,null,"
+                + info.id
+                + " "
+                + ",null,"
+                + getResearchOrgId("ClinicalTrials.gov")
+                + ",null,'PENDING',now(),now(),"
+                + "now(),null,null,null,"
+                + "null,null," + info.csmUserID + "," + info.csmUserID + ")";
+        runner.update(connection, sql);
+    }
+
+    protected void addParticipatingSite(TrialInfo trial, String orgName,
+            String status) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "INSERT INTO study_site (identifier,functional_code,local_sp_indentifier,"
+                + "review_board_approval_number,review_board_approval_date,review_board_approval_status_code,"
+                + "target_accrual_number,study_protocol_identifier,healthcare_facility_identifier,"
+                + "research_organization_identifier,oversight_committee_identifier,"
+                + "status_code,status_date_range_low,date_last_created,date_last_updated,status_date_range_high,"
+                + "review_board_organizational_affiliation,program_code_text,accrual_date_range_low,accrual_date_range_high,"
+                + "user_last_created_id,user_last_updated_id) VALUES "
+                + "((SELECT NEXTVAL('HIBERNATE_SEQUENCE')),'TREATING_SITE','',null,null,null,null,"
+                + trial.id
+                + ","
+                + findOrCreateHcf(orgName)
+                + ",null,null,'ACTIVE',now(),now(),"
+                + "now(),null,null,null,"
+                + "null,null," + trial.csmUserID + "," + trial.csmUserID + ")";
+        runner.update(connection, sql);
+
+        runner.update(
+                connection,
+                "insert into study_site_accrual_status(identifier, status_code, status_date, study_site_identifier, deleted) values "
+                        + "((SELECT NEXTVAL('HIBERNATE_SEQUENCE')),"
+                        + "'"
+                        + status
+                        + "', now(), (select max (identifier) from study_site), false)");
+
+    }
+
+    private Number findOrCreateHcf(String orgName) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        final String sql = "select hcf.identifier from healthcare_facility hcf "
+                + "inner join organization o on hcf.organization_identifier=o.identifier"
+                + "  where o.name='" + orgName + "' limit 1";
+        final Object[] results = runner.query(connection, sql,
+                new ArrayHandler());
+        Number hcfID = results != null ? (Number) results[0] : null;
+        if (hcfID == null) {
+            createHcf(orgName);
+            hcfID = (Number) runner.query(connection, sql, new ArrayHandler())[0];
+        }
+        return hcfID;
+    }
+
+    private void createHcf(String orgName) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "INSERT INTO healthcare_facility (identifier,assigned_identifier,status_code,status_date_range_low,organization_identifier) "
+                + "VALUES ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')) ,'"
+                + getOrgIdByName(orgName)
+                + "','PENDING',now(),"
+                + getOrgIdByName(orgName) + ")";
+        runner.update(connection, sql);
+
     }
 
     protected void addSponsor(TrialInfo info, String orgName)
@@ -1762,8 +1884,17 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         action.perform();
     }
 
+    /**
+     * @throws SQLException
+     */
+    protected void setPaProperty(String name, String value) throws SQLException {
+        new QueryRunner().update(connection, "update pa_properties set value='"
+                + value + "' where name='" + name + "'");
+    }
+
     public static final class TrialInfo implements Comparable<TrialInfo> {
 
+        public String nctID;
         public String uuid;
         public String title;
         public Long id;
@@ -1810,6 +1941,30 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
 
     }
 
+    public static final class Account {
+        public String username;
+        public String encryptedPassword;
+        public String unencryptedPassword;
+
+        @Override
+        public String toString() {
+            return ToStringBuilder.reflectionToString(this);
+        }
+    }
+
+    public static final class Tweet {
+        public String text;
+        public String status;
+        public Date sentDate;
+        public String errors;
+        public Number tweetID;
+
+        @Override
+        public String toString() {
+            return ToStringBuilder.reflectionToString(this);
+        }
+    }
+
     public static final class SiteStatus {
         public String statusCode;
         public Date statusDate;
@@ -1832,7 +1987,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         }
 
     }
-    
+
     public static void main(String[] args) {
         randomPort();
     }

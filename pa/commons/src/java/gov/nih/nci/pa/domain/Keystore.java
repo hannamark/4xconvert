@@ -10,6 +10,7 @@ import static org.apache.commons.codec.digest.DigestUtils.sha384Hex;
 
 import java.io.CharArrayWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -153,10 +154,11 @@ public final class Keystore {
      * @return KeyPair
      */
     public KeyPair getKeypair() {
+        FileInputStream is = null;
         try {
             KeyStore keyStore = KeyStore.getInstance(KEYSTORE_FORMAT);
-            keyStore.load(FileUtils.openInputStream(KEYSTORE_FILE),
-                    getKeystorePassword());
+            is = FileUtils.openInputStream(KEYSTORE_FILE);
+            keyStore.load(is, getKeystorePassword());
             final PrivateKeyEntry entry = (KeyStore.PrivateKeyEntry) keyStore
                     .getEntry(KEYPAIR_NAME, new KeyStore.PasswordProtection(
                             getKeystorePassword()));
@@ -167,6 +169,8 @@ public final class Keystore {
                 | IOException e) {
             LOG.error(e, e);
             return null;
+        } finally {
+            IOUtils.closeQuietly(is);
         }
     }
 

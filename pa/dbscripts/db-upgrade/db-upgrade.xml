@@ -1884,6 +1884,7 @@
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9090.sql"/>
     </changeSet>
     <changeSet id="PO-9093" author="krylovd">
+       <validCheckSum>ANY</validCheckSum>
        <comment>Add configuration parameters for go.usa.gov URL shortener.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9093.sql"/>
     </changeSet>

@@ -390,7 +390,7 @@
     
     <job>
         <job-detail>
-            <name>ctgovUploadErrorProcessingJobTrigger</name>
+            <name>ctgovUploadErrorProcessingJob</name>
             <group>DEFAULT</group>
             <job-class>gov.nih.nci.pa.util.EJBInvokerJob</job-class>
             <volatility>false</volatility>
@@ -417,7 +417,7 @@
         <job-detail>
             <name>tweetQueueProcessingJob</name>
             <group>DEFAULT</group>
-            <job-class>gov.nih.nci.pa.util.EJBInvokerJob</job-class>
+            <job-class>gov.nih.nci.pa.util.StatefulEJBInvokerJob</job-class>
             <volatility>false</volatility>
             <durability>true</durability>
             <recover>false</recover>
@@ -441,7 +441,7 @@
         <job-detail>
             <name>trialTweetingJob</name>
             <group>DEFAULT</group>
-            <job-class>gov.nih.nci.pa.util.EJBInvokerJob</job-class>
+            <job-class>gov.nih.nci.pa.util.StatefulEJBInvokerJob</job-class>
             <volatility>false</volatility>
             <durability>true</durability>
             <recover>false</recover>

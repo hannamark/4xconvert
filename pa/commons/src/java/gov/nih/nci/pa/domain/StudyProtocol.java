@@ -1133,11 +1133,21 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
         @Override
         @SuppressWarnings("PMD.NPathComplexity")
         public int compare(StudyOverallStatus sos1, StudyOverallStatus sos2) {
-            Timestamp date1 = sos1.getStatusDate() != null ? sos1.getStatusDate() : new Timestamp(0);
-            Timestamp date2 = sos2.getStatusDate() != null ? sos2.getStatusDate() : new Timestamp(0);
-            
-             Long id1 = sos1.getId() != null ? sos1.getId() : 0;
-             Long id2 = sos2.getId() != null ? sos2.getId() : 0;
+            if (sos1.getId() == null && sos2.getId() == null
+                    && sos1.getStatusDate() == null
+                    && sos2.getStatusDate() == null
+                    && sos1.getStatusCode() != null
+                    && sos2.getStatusCode() != null) {
+                return sos1.getStatusCode().compareTo(sos2.getStatusCode());
+            }
+
+            Timestamp date1 = sos1.getStatusDate() != null ? sos1
+                    .getStatusDate() : new Timestamp(0);
+            Timestamp date2 = sos2.getStatusDate() != null ? sos2
+                    .getStatusDate() : new Timestamp(0);
+
+            Long id1 = sos1.getId() != null ? sos1.getId() : 0;
+            Long id2 = sos2.getId() != null ? sos2.getId() : 0;
             if (date1.equals(date2)) {
                 return -id1.compareTo(id2);
             }
