@@ -364,12 +364,11 @@ public class TwitterTest extends AbstractTrialStatusTest {
             throws Exception {
         setUpForFirstRun();
 
-        for (DocumentWorkflowStatusCode dws : EnumSet.complementOf(EnumSet.of(
-                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE,
-                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE))) {
-            for (StudyStatusCode ssc : EnumSet.complementOf(EnumSet.of(
-                    StudyStatusCode.ACTIVE,
-                    StudyStatusCode.ENROLLING_BY_INVITATION))) {
+        for (DocumentWorkflowStatusCode dws : EnumSet.of(
+                DocumentWorkflowStatusCode.ABSTRACTED,
+                DocumentWorkflowStatusCode.VERIFICATION_PENDING)) {
+            for (StudyStatusCode ssc : (EnumSet.of(StudyStatusCode.APPROVED,
+                    StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL))) {
                 testNoTweetForCompleteTrial(dws.name(), ssc.name());
             }
         }
@@ -381,12 +380,12 @@ public class TwitterTest extends AbstractTrialStatusTest {
             throws Exception {
         setUpForFirstRun();
 
-        for (DocumentWorkflowStatusCode dws : EnumSet.complementOf(EnumSet.of(
-                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE,
-                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE))) {
-            for (RecruitmentStatusCode ssc : EnumSet.complementOf(EnumSet.of(
-                    RecruitmentStatusCode.ACTIVE,
-                    RecruitmentStatusCode.ENROLLING_BY_INVITATION))) {
+        for (DocumentWorkflowStatusCode dws : (EnumSet.of(
+                DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED,
+                DocumentWorkflowStatusCode.ACCEPTED))) {
+            for (RecruitmentStatusCode ssc : (EnumSet.of(
+                    RecruitmentStatusCode.APPROVED,
+                    RecruitmentStatusCode.IN_REVIEW))) {
                 testNoTweetForIndustrialTrial(dws.name(), ssc.name());
             }
         }
