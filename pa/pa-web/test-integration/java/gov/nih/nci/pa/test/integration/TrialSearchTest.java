@@ -63,10 +63,10 @@ public class TrialSearchTest extends AbstractTrialStatusTest {
         }
 
     }
-    
+
     @SuppressWarnings({ "deprecation", "unused", "unchecked" })
     @Test
-    public void testTSRExport() throws Exception {    	
+    public void testTSRExport() throws Exception {
         TrialInfo trial = createAcceptedTrial();
         loginAsSuperAbstractor();
         clickAndWait("trialSearchMenuOption");
@@ -75,18 +75,18 @@ public class TrialSearchTest extends AbstractTrialStatusTest {
 
         // Finally, download CSV.
         if (!isPhantomJS()) {
-        	String fileName = "TsrReport_" 
-                + DateFormatUtils.format(new Date(), PAConstants.TSR_DATE_FORMAT) + ".rtf";
-        	selenium.click("xpath=//a[normalize-space(text())='View TSR']");            
+            String fileName = "TsrReport_"
+                    + DateFormatUtils.format(new Date(),
+                            PAConstants.TSR_DATE_FORMAT) + ".rtf";
+            selenium.click("xpath=//a[normalize-space(text())='View TSR']");
             pause(OP_WAIT_TIME);
             File tsr = new File(downloadDir, fileName);
             assertTrue(tsr.exists());
-            tsr.deleteOnExit();            
+            tsr.deleteOnExit();
             tsr.delete();
         }
     }
 
-    
     @SuppressWarnings("deprecation")
     @Test
     public void testSearchByStudySource() throws Exception {
@@ -125,9 +125,11 @@ public class TrialSearchTest extends AbstractTrialStatusTest {
         assertFalse(isTrialInSearchResults(trial));
 
         // now create a study inbox; this will make the trial submission an
-        // Update.
+        // Update or Original.
         createStudyInbox(trial);
-        runSearch("submissionType", new String[] { "Original", "Amendment" });
+        runSearch("submissionType", new String[] { "Original" });
+        assertTrue(isTrialInSearchResults(trial));
+        runSearch("submissionType", new String[] { "Amendment" });
         assertFalse(isTrialInSearchResults(trial));
         runSearch("submissionType", new String[] { "Update" });
         assertTrue(isTrialInSearchResults(trial));
@@ -143,11 +145,14 @@ public class TrialSearchTest extends AbstractTrialStatusTest {
         runSearch("submissionType", new String[] { "Amendment" });
         assertTrue(isTrialInSearchResults(trial));
 
-        // And by the way, amendment with unack. updates is an *Update*
+        // And by the way, amendment with unack. updates is Amendment and
+        // Update.
         createStudyInbox(trial);
-        runSearch("submissionType", new String[] { "Original", "Amendment" });
+        runSearch("submissionType", new String[] { "Original" });
         assertFalse(isTrialInSearchResults(trial));
         runSearch("submissionType", new String[] { "Update" });
+        assertTrue(isTrialInSearchResults(trial));
+        runSearch("submissionType", new String[] { "Amendment" });
         assertTrue(isTrialInSearchResults(trial));
 
     }
