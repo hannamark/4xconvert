@@ -279,6 +279,12 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
         }
     }
 
+    @Test
+    public void testRegistrationWithoutTrialOwnerElement_PO9091()
+            throws Exception {
+        registerAndVerify("/integration_register_complete_no_owner.xml");
+    }
+
     private void verifyFailureToRegister(String file, int code,
             String expectedErrMsg) throws JAXBException, SAXException,
             UnsupportedEncodingException, ClientProtocolException, IOException {
@@ -301,39 +307,43 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
         TrialInfo trial = new TrialInfo();
         trial.id = conf.getPaTrialID();
         if (reg.isClinicalTrialsDotGovXmlRequired()) {
-        assertEquals("false", getTrialField(trial, "DELAYED_POSTING_INDICATOR").toString());
-        assertEquals(3, server.getReceivedEmailSize());
-        Iterator<SmtpMessage> emailIter = server.getReceivedEmail();
-        for (int i=0 ; emailIter.hasNext(); i++) {
-            SmtpMessage email = (SmtpMessage) emailIter.next();
-            String body = email.getBody();
-            System.out.println(body);
-            switch (i) {
-            case 0 : verifyCreateBodyDSPWarning(body);
-                     break;
-            case 1 : verifyCreateBodyDSPCTRO(body);
-                     break;
-            default : break;
+            assertEquals("false",
+                    getTrialField(trial, "DELAYED_POSTING_INDICATOR")
+                            .toString());
+            assertEquals(3, server.getReceivedEmailSize());
+            Iterator<SmtpMessage> emailIter = server.getReceivedEmail();
+            for (int i = 0; emailIter.hasNext(); i++) {
+                SmtpMessage email = (SmtpMessage) emailIter.next();
+                String body = email.getBody();
+                System.out.println(body);
+                switch (i) {
+                case 0:
+                    verifyCreateBodyDSPWarning(body);
+                    break;
+                case 1:
+                    verifyCreateBodyDSPCTRO(body);
+                    break;
+                default:
+                    break;
+                }
             }
         }
-        }
     }
-    
+
     /**
      * @param body
      */
     private void verifyCreateBodyDSPWarning(final String body) {
-        assertTrue(body.contains(
-                "WARNING:</b> The trial submitted has a Delayed Posting Indicator value of \"Yes\""));
+        assertTrue(body
+                .contains("WARNING:</b> The trial submitted has a Delayed Posting Indicator value of \"Yes\""));
     }
-    
+
     /**
      * @param body
      */
     private void verifyCreateBodyDSPCTRO(final String body) {
-        assertTrue(body.contains(
-                "Dear CTRO Staff,</p><p>The trial below was submitted with the value for the Delayed Posting Indicator set to \"Yes\":"));
+        assertTrue(body
+                .contains("Dear CTRO Staff,</p><p>The trial below was submitted with the value for the Delayed Posting Indicator set to \"Yes\":"));
     }
-    
 
 }

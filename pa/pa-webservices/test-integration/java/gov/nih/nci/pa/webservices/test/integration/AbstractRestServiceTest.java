@@ -452,7 +452,9 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
                     reg.getTrialOwner().get(0),
                     selenium.getText("xpath=//table[@id='row']//tr[1]//td[2]/a"));
         } else {
-            assertTrue(selenium.isTextPresent("Nothing found to display."));
+            assertEquals(
+                    "submitter-ci@example.com",
+                    selenium.getText("xpath=//table[@id='row']//tr[1]//td[2]/a"));
         }
 
     }
@@ -759,7 +761,7 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
                             : "No", selenium.getSelectedLabel("id=fdaindid"));
             assertEquals(reg.getRegulatoryInformation().isSection801() ? "Yes"
                     : "No", selenium.getSelectedLabel("id=sec801id"));
-            
+
             assertEquals(reg.getRegulatoryInformation()
                     .isDataMonitoringCommitteeAppointed() ? "Yes" : "No",
                     selenium.getSelectedLabel("id=datamonid"));

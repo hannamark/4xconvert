@@ -132,7 +132,7 @@ public class TrialRegistrationService extends BaseRestService {
             StudyRegulatoryAuthorityDTO studyRegAuthDTO = new StudyRegulatoryAuthorityDTOBuilder()
                     .build(reg);
 
-            DSet<Tel> owners = new DSet<>();
+            final DSet<Tel> owners = new DSet<>();
             owners.setItem(new LinkedHashSet<Tel>());
             for (String emailAddr : reg.getTrialOwner()) {
                 Tel telEmail = new Tel();
@@ -148,7 +148,8 @@ public class TrialRegistrationService extends BaseRestService {
                             sponsorOrgDTO, partyDTO, leadOrgSiteIdDTO,
                             studyIdentifierDTOs, summary4orgDTO,
                             summary4studyResourcingDTO, studyRegAuthDTO,
-                            BlConverter.convertToBl(Boolean.FALSE), owners);
+                            BlConverter.convertToBl(Boolean.FALSE),
+                            (owners.getItem().isEmpty() ? null : owners));
             long paTrialID = IiConverter.convertToLong(studyProtocolIi);
             return buildTrialRegConfirmationResponse(paTrialID);
         } catch (Exception e) {
