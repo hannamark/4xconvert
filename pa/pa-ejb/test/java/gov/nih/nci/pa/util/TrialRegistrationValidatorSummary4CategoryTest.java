@@ -103,7 +103,7 @@ import org.junit.runners.Parameterized.Parameters;
  */
 @RunWith(Parameterized.class)
 public class TrialRegistrationValidatorSummary4CategoryTest {
-    private static final String ERROR = "Please enter valid value for Summary 4 Sponsor Category.";
+    private static final String ERROR = "Please enter valid value for Data Table 4 Sponsor Category.";
     private static final String INSTITUTIONAL = SummaryFourFundingCategoryCode.INSTITUTIONAL.getCode();
     private static final String INDUSTRIAL = SummaryFourFundingCategoryCode.INDUSTRIAL.getCode();
     private static final String FAKE = "fake";

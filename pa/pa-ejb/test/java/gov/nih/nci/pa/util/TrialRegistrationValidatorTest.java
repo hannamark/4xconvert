@@ -957,12 +957,12 @@ public class TrialRegistrationValidatorTest {
                                                              sponsorOrganizationDTO, summary4OrganizationDTO,
                                                              piPersonDTO, piPersonDTO, leadOrganizationDTO, errorMsg);
         when(validator.validatePoObject(leadOrganizationDTO, "Lead Organization", true)).thenReturn("1");
-        when(validator.validatePoObject(summary4organizationDTO, "Summary 4 Organization", false)).thenReturn("2");
+        when(validator.validatePoObject(summary4organizationDTO, "Data Table 4 Organization", false)).thenReturn("2");
         when(validator.validatePoObject(piPersonDTO, "Principal Investigator", true)).thenReturn("3");
         validator.validatePOObjects(studyProtocolDTO, leadOrganizationDTO, sponsorOrganizationDTO,
         		summary4OrganizationDTO, piPersonDTO, piPersonDTO, leadOrganizationDTO, errorMsg);
         verify(validator).validatePoObject(leadOrganizationDTO, "Lead Organization", true);
-        verify(validator).validatePoObject(summary4organizationDTO, "Summary 4 Organization", false);
+        verify(validator).validatePoObject(summary4organizationDTO, "Data Table 4 Organization", false);
         verify(validator).validatePoObject(piPersonDTO, "Principal Investigator", true);
         verify(validator, never()).validatePoObject(sponsorOrganizationDTO, "Sponsor Organization", true);
         verify(paServiceUtils, never()).isIiExistInPO(responsiblePartyContactIi);
@@ -987,14 +987,14 @@ public class TrialRegistrationValidatorTest {
                                                              sponsorOrganizationDTO, summary4OrganizationDTO,
                                                              piPersonDTO, piPersonDTO, leadOrganizationDTO, errorMsg);
         when(validator.validatePoObject(leadOrganizationDTO, "Lead Organization", true)).thenReturn("1");
-        when(validator.validatePoObject(summary4organizationDTO, "Summary 4 Organization", false)).thenReturn("2");
+        when(validator.validatePoObject(summary4organizationDTO, "Data Table 4 Organization", false)).thenReturn("2");
         when(validator.validatePoObject(piPersonDTO, "Principal Investigator", true)).thenReturn("3");
         when(validator.validatePoObject(sponsorOrganizationDTO, "Sponsor Organization", true)).thenReturn("4");       
         validator.setPaServiceUtils(paServiceUtils);
         validator.validatePOObjects(studyProtocolDTO, leadOrganizationDTO, sponsorOrganizationDTO,
         		summary4OrganizationDTO, piPersonDTO, piPersonDTO, leadOrganizationDTO, errorMsg);
         verify(validator).validatePoObject(leadOrganizationDTO, "Lead Organization", true);
-        verify(validator).validatePoObject(summary4organizationDTO, "Summary 4 Organization", false);
+        verify(validator).validatePoObject(summary4organizationDTO, "Data Table 4 Organization", false);
         verify(validator).validatePoObject(piPersonDTO, "Principal Investigator", true);
         verify(validator).validatePoObject(sponsorOrganizationDTO, "Sponsor Organization", true);
         
@@ -1019,14 +1019,14 @@ public class TrialRegistrationValidatorTest {
                                                              sponsorOrganizationDTO, summary4OrganizationDTO,
                                                              piPersonDTO, null, null, errorMsg);
         when(validator.validatePoObject(leadOrganizationDTO, "Lead Organization", true)).thenReturn("");
-        when(validator.validatePoObject(summary4organizationDTO, "Summary 4 Organization", false)).thenReturn("");
+        when(validator.validatePoObject(summary4organizationDTO, "Data Table 4 Organization", false)).thenReturn("");
         when(validator.validatePoObject(piPersonDTO, "Principal Investigator", true)).thenReturn("");
         when(validator.validatePoObject(sponsorOrganizationDTO, "Sponsor Organization", true)).thenReturn("");
         validator.setPaServiceUtils(paServiceUtils);
         validator.validatePOObjects(studyProtocolDTO, leadOrganizationDTO, sponsorOrganizationDTO,
         		summary4OrganizationDTO, piPersonDTO, null, null, errorMsg);
         verify(validator).validatePoObject(leadOrganizationDTO, "Lead Organization", true);
-        verify(validator).validatePoObject(summary4organizationDTO, "Summary 4 Organization", false);
+        verify(validator).validatePoObject(summary4organizationDTO, "Data Table 4 Organization", false);
         verify(validator).validatePoObject(piPersonDTO, "Principal Investigator", true);
         verify(validator).validatePoObject(sponsorOrganizationDTO, "Sponsor Organization", true);
         verify(paServiceUtils, never()).isIiExistInPO(null);
@@ -1356,7 +1356,7 @@ public class TrialRegistrationValidatorTest {
         verify(paServiceUtils).validateRecuritmentStatusDateRule(studySiteAccrualStatusDTO, studySiteDTO);
         verify(validator).validatePoObject(leadOrganizationDTO, "Lead Organization", false);
         verify(validator).validatePoObject(studySiteOrganizationDTO, "Study Site Organization", false);
-        verify(validator).validatePoObject(summary4OrganizationDTO, "Summary 4 Organization", false);
+        verify(validator).validatePoObject(summary4OrganizationDTO, "Data Table 4 Organization", false);
         verify(validator).validatePoObject(studySiteInvestigatorDTO, "Study Site Investigator", false);
         verify(validator).validateSummary4Resourcing(eq(studyProtocolDTO), eq(summary4StudyResourcingDTO),
                                                      (StringBuilder) any());
