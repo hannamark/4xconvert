@@ -593,7 +593,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         driver.switchTo().defaultContent();
         waitForPageToLoad();
         waitForTextToAppear(By.className("alert-success"),
-                "Message: Your site information has been updated.", 20);
+                "Message: Your site information has been updated.", 30);
         // Make sure the right site got updated.
         assertEquals("Cancer Therapy Evaluation Program",
                 selenium.getText("//table[@id='row']/tbody/tr[2]/td[1]"));
