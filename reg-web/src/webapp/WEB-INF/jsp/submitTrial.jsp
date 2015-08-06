@@ -29,75 +29,75 @@
   }
   
   function lookup4loadleadorg(selection, name) {
-		if(selection === undefined || selection == "") {
-			$('trialDTO.leadOrganizationNameField').innerHTML = 'Please Select Lead Organization';
-	  		$("trialDTO.leadOrganizationIdentifier").value = '';
-	  		$('trialDTO.leadOrganizationName').value = '';
-		} else if(selection == -1) {
-	      	showPopup("${lookupOrgUrl}",loadLeadOrgDiv, 'Select Lead Organization');
-	  	} else if(selection > 0) {
-	  		$('trialDTO.leadOrganizationNameField').innerHTML = name;
-	  		$('trialDTO.leadOrganizationName').value = name;
-	  		$("trialDTO.leadOrganizationIdentifier").value = selection;
-	  	} else {
-	  		//if there is no valid selection we undo the selection enteirly.
-	  		$('trialDTO.leadOrganizationNameField').innerHTML = 'Please Select Lead Organization';
-	  		$("trialDTO.leadOrganizationIdentifier").value = '';
-	  		$('trialDTO.leadOrganizationName').value = '';
-	  	}
-		$('dropdown-leadOrganization').hide();
-	  }
-	  
-	  function lookup4sponsor(selection, name) {
-		  if(selection === undefined || selection == "") {
-				$('trialDTO.sponsorNameField').innerHTML = 'Please Select Sponsor Organization';
-				$('trialDTO.sponsorName').value = '';
-		  		$("trialDTO.sponsorIdentifier").value = '';
-			} else if(selection == -1) {
-				showPopup('${lookupOrgUrl}', loadSponsorDiv, 'Select Sponsor');
-		  	} else if(selection > 0) {
-		  		$('trialDTO.sponsorNameField').innerHTML = name;
-		  		$('trialDTO.sponsorName').value = name;
-		  		$("trialDTO.sponsorIdentifier").value = selection;
-		  	} else {
-		  		//if there is no valid selection we undo the selection enteirly.
-		  		$('trialDTO.sponsorNameField').innerHTML = 'Please Select Sponsor Organization';
-		  		$("trialDTO.sponsorIdentifier").value = '';
-		  		$('trialDTO.sponsorName').value = '';
-		  	}
-		  	$('dropdown-sponsorOrganization').hide();
-	      
-	  }
-	  
-	  function lookup4loadSummary4Sponsor(selection, name) {
-		if(selection === undefined || selection == "") {
-			//do nothing
-		} else if(selection == -1) {
-			showPopup('${lookupOrgUrl}', loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
-	  	} else if(selection > 0) {
+        if(selection === undefined || selection == "") {
+            $('trialDTO.leadOrganizationNameField').innerHTML = 'Please Select Lead Organization';
+            $("trialDTO.leadOrganizationIdentifier").value = '';
+            $('trialDTO.leadOrganizationName').value = '';
+        } else if(selection == -1) {
+            showPopup("${lookupOrgUrl}",loadLeadOrgDiv, 'Select Lead Organization');
+        } else if(selection > 0) {
+            $('trialDTO.leadOrganizationNameField').innerHTML = name;
+            $('trialDTO.leadOrganizationName').value = name;
+            $("trialDTO.leadOrganizationIdentifier").value = selection;
+        } else {
+            //if there is no valid selection we undo the selection enteirly.
+            $('trialDTO.leadOrganizationNameField').innerHTML = 'Please Select Lead Organization';
+            $("trialDTO.leadOrganizationIdentifier").value = '';
+            $('trialDTO.leadOrganizationName').value = '';
+        }
+        $('dropdown-leadOrganization').hide();
+      }
+      
+      function lookup4sponsor(selection, name) {
+          if(selection === undefined || selection == "") {
+                $('trialDTO.sponsorNameField').innerHTML = 'Please Select Sponsor Organization';
+                $('trialDTO.sponsorName').value = '';
+                $("trialDTO.sponsorIdentifier").value = '';
+            } else if(selection == -1) {
+                showPopup('${lookupOrgUrl}', loadSponsorDiv, 'Select Sponsor');
+            } else if(selection > 0) {
+                $('trialDTO.sponsorNameField').innerHTML = name;
+                $('trialDTO.sponsorName').value = name;
+                $("trialDTO.sponsorIdentifier").value = selection;
+            } else {
+                //if there is no valid selection we undo the selection enteirly.
+                $('trialDTO.sponsorNameField').innerHTML = 'Please Select Sponsor Organization';
+                $("trialDTO.sponsorIdentifier").value = '';
+                $('trialDTO.sponsorName').value = '';
+            }
+            $('dropdown-sponsorOrganization').hide();
+          
+      }
+      
+      function lookup4loadSummary4Sponsor(selection, name) {
+        if(selection === undefined || selection == "") {
+            //do nothing
+        } else if(selection == -1) {
+            showPopup('${lookupOrgUrl}', loadSummary4SponsorDiv, 'Select Data Table 4 Sponsor/Source');
+        } else if(selection > 0) {
           var url = '/registry/protected/popupaddSummaryFourOrg.action';
           var params = { orgId: selection, chosenName : name };
           var div = document.getElementById('loadSummary4FundingSponsorField');   
           div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';    
           var aj = callAjaxPost(div, url, params);
-	  	}
-		$('dropdown-sum4Organization').hide();
-	      
-	  }
-	  
-	  document.observe("dom:loaded", function() {
-	                                     displayTrialStatusDefinition('trialDTO_statusCode');
-	                                     if($('trialDTO.leadOrganizationName').value) {
-	                                     	$('trialDTO.leadOrganizationNameField').innerHTML = $('trialDTO.leadOrganizationName').value;
-	  									 }
-	                                     if($('trialDTO.sponsorName').value) {
-	                                     	$('trialDTO.sponsorNameField').innerHTML = $('trialDTO.sponsorName').value;
-	  									 }
-	                     		  		
-	                                 });
-	  
-	             
-	  Event.observe(window, "load", setDisplayBasedOnTrialType);
+        }
+        $('dropdown-sum4Organization').hide();
+          
+      }
+      
+      document.observe("dom:loaded", function() {
+                                         displayTrialStatusDefinition('trialDTO_statusCode');
+                                         if($('trialDTO.leadOrganizationName').value) {
+                                            $('trialDTO.leadOrganizationNameField').innerHTML = $('trialDTO.leadOrganizationName').value;
+                                         }
+                                         if($('trialDTO.sponsorName').value) {
+                                            $('trialDTO.sponsorNameField').innerHTML = $('trialDTO.sponsorName').value;
+                                         }
+                                        
+                                     });
+      
+                 
+      Event.observe(window, "load", setDisplayBasedOnTrialType);
   
   </script>
 </head>
@@ -314,16 +314,16 @@
           </div>
           <%@ include file="/WEB-INF/jsp/nodecorate/updateStatusSection.jsp" %>
           <div class="accordion">
-          	<div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section9"><fmt:message key="submit.trial.indInfo"/></a></div>
-          		<div id="section9" class="accordion-body in">
-            		<div class="container">
-              			<p><fmt:message key="submit.trial.indInstructionalText"/></p>
-              			<%@ include file="/WEB-INF/jsp/nodecorate/indide.jsp" %>
-              			<p/>
-		              <div id="indidediv" class="table-header-wrap">
-		                  <%@ include file="/WEB-INF/jsp/nodecorate/addIdeIndIndicator.jsp" %>
-		              </div>
-          			  <div class="mt10 align-center scrollable"><i class="fa-angle-left"></i> Scroll left/right to view full table <i class="fa-angle-right"></i></div>
+            <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section9"><fmt:message key="submit.trial.indInfo"/></a></div>
+                <div id="section9" class="accordion-body in">
+                    <div class="container">
+                        <p><fmt:message key="submit.trial.indInstructionalText"/></p>
+                        <%@ include file="/WEB-INF/jsp/nodecorate/indide.jsp" %>
+                        <p/>
+                      <div id="indidediv" class="table-header-wrap">
+                          <%@ include file="/WEB-INF/jsp/nodecorate/addIdeIndIndicator.jsp" %>
+                      </div>
+                      <div class="mt10 align-center scrollable"><i class="fa-angle-left"></i> Scroll left/right to view full table <i class="fa-angle-right"></i></div>
             </div>
           </div>
         </div>
@@ -340,10 +340,10 @@
           </div>
          </div>
           <div class="align-center button-row">
-		      <button type="button" class="btn btn-icon btn-primary" onclick="partialSave()"><i class="fa-floppy-o"></i>Save as Draft</button>
-		      <button type="button" class="btn btn-icon btn-primary review" onclick="reviewProtocol()"><i class="fa-file-text-o"></i>Review Trial</button>
-		      <button type="button" class="btn btn-icon btn-default" onclick="cancelProtocol()"><i class="fa-times-circle"></i>Cancel</button>
-		    </div>
+              <button type="button" class="btn btn-icon btn-primary" onclick="partialSave()"><i class="fa-floppy-o"></i>Save as Draft</button>
+              <button type="button" class="btn btn-icon btn-primary review" onclick="reviewProtocol()"><i class="fa-file-text-o"></i>Review Trial</button>
+              <button type="button" class="btn btn-icon btn-default" onclick="cancelProtocol()"><i class="fa-times-circle"></i>Cancel</button>
+            </div>
           <s:hidden name="uuidhidden"/>
       </s:form>
 </body>

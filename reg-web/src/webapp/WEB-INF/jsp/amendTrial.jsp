@@ -104,7 +104,7 @@
                 if(selection === undefined || selection == "") {
                     //do nothing
                 } else if(selection == -1) {
-                    showPopup('${lookupOrgUrl}', loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
+                    showPopup('${lookupOrgUrl}', loadSummary4SponsorDiv, 'Select Data Table 4 Sponsor/Source');
                 } else if(selection > 0) {
                   var url = '/registry/protected/popupaddSummaryFourOrg.action';
                   var params = { orgId: selection, chosenName : name };
@@ -325,8 +325,8 @@
                         hideRow($('sec801row'));
                         hideRow($('delpostindrow'));
                     } else {
-                  	  $('trialDTO.fdaRegulatoryInformationIndicatorNo').checked = false;
-                  	  $('trialDTO.fdaRegulatoryInformationIndicatorYes').checked = true;
+                      $('trialDTO.fdaRegulatoryInformationIndicatorNo').checked = false;
+                      $('trialDTO.fdaRegulatoryInformationIndicatorYes').checked = true;
                     }
                 } else {
                     showRow($('sec801row'));
@@ -341,14 +341,14 @@
                         $('trialDTO.delayedPostingIndicatorNo').checked = false;
                         $('trialDTO.delayedPostingIndicatorYes').checked = false;
                     } else {
-                  	  $('trialDTO.fdaRegulatoryInformationIndicatorNo').checked = false;
-                  	  $('trialDTO.fdaRegulatoryInformationIndicatorYes').checked = true;
-                  	$('trialDTO.section801IndicatorYes').checked = true;
+                      $('trialDTO.fdaRegulatoryInformationIndicatorNo').checked = false;
+                      $('trialDTO.fdaRegulatoryInformationIndicatorYes').checked = true;
+                    $('trialDTO.section801IndicatorYes').checked = true;
                     }
                 } else {
                     var value = '${sessionScope.trialDTO.delayedPostingIndicator}';
                     if (value !=null && value != '') {
-                    	if (value == 'Yes') {
+                        if (value == 'Yes') {
                             $('trialDTO.delayedPostingIndicatorYes').checked = true;
                         } else {
                             $('trialDTO.delayedPostingIndicatorNo').checked = true;
@@ -443,44 +443,44 @@
                 </c:if>
                 <s:hidden name="page" />
                 <div class="form-group">
-	              <label for="organization-type" class="col-xs-4 control-label left-align">XML Required, Enable "Upload from NCI CTRP" in <a data-placement="top" rel="tooltip" data-original-title="Open in new window" href="http://www.clinicaltrials.gov/" target="_new">ClinicalTrials.gov</a>?</label>                    
-	              <div class="col-xs-4">
-	                  <s:radio cssClass="radio-inline" name="trialDTO.xmlRequired" id="xmlRequired"  list="#{true:'Yes', false:'No'}" onclick="hidePrimaryCompletionDate(), toggledisplayDivs(this);"/>
-	                  <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.ct_gov_xml"/>" data-placement="top" data-trigger="hover"></i>
-	              </div>                    
-	          </div>
-	          <button type="button" class="expandcollapse btn btn-icon btn-sm btn-default" state="0"><i class="fa-minus-circle"></i> Collapse All</button>
-          	 <div class="accordion-group">
-          	 	<div class="accordion">
+                  <label for="organization-type" class="col-xs-4 control-label left-align">XML Required, Enable "Upload from NCI CTRP" in <a data-placement="top" rel="tooltip" data-original-title="Open in new window" href="http://www.clinicaltrials.gov/" target="_new">ClinicalTrials.gov</a>?</label>                    
+                  <div class="col-xs-4">
+                      <s:radio cssClass="radio-inline" name="trialDTO.xmlRequired" id="xmlRequired"  list="#{true:'Yes', false:'No'}" onclick="hidePrimaryCompletionDate(), toggledisplayDivs(this);"/>
+                      <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.ct_gov_xml"/>" data-placement="top" data-trigger="hover"></i>
+                  </div>                    
+              </div>
+              <button type="button" class="expandcollapse btn btn-icon btn-sm btn-default" state="0"><i class="fa-minus-circle"></i> Collapse All</button>
+             <div class="accordion-group">
+                <div class="accordion">
                   <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section0"><fmt:message key="trial.amendDetails"/></a></div>
                       <div id="section0" class="accordion-body in">
                           <div class="container">
                               <div class="form-group">
                                   <label for="trialDTO.localAmendmentNumber" class="col-xs-4 control-label"><fmt:message key="view.trial.amendmentNumber"/></label>
                                   <div class="col-xs-4">
-                                  		<s:textfield id="trialDTO.localAmendmentNumber" name="trialDTO.localAmendmentNumber" maxlength="200" cssClass="form-control"  />
-                                  		<span class="alert-danger">
-				                            <s:fielderror>
-				                                <s:param>trialDTO.localAmendmentNumber</s:param>
-				                            </s:fielderror>
-				                        </span>
+                                        <s:textfield id="trialDTO.localAmendmentNumber" name="trialDTO.localAmendmentNumber" maxlength="200" cssClass="form-control"  />
+                                        <span class="alert-danger">
+                                            <s:fielderror>
+                                                <s:param>trialDTO.localAmendmentNumber</s:param>
+                                            </s:fielderror>
+                                        </span>
                                   </div>
                               </div>
                               <div class="form-group">
-				                <label for="trialDTO.amendmentDate" class="col-xs-4 control-label"><fmt:message key="view.trial.amendmentDate"/><span class="required">*</span></label>
-				                <div class="col-xs-2">
-				                  <div id="datetimepicker" class="datetimepicker input-append">                    
-				                    <s:textfield id="trialDTO.amendmentDate" name="trialDTO.amendmentDate" data-format="MM/dd/yyyy" type="text" cssClass="form-control" placeholder="mm/dd/yyyy"/>
-				                    <span class="add-on btn-default"><i class="fa-calendar"></i></span>
-				                    <span class="alert-danger">
-				                        <s:fielderror>
-				                            <s:param>trialDTO.amendmentDate</s:param>
-				                        </s:fielderror>
-				                    </span>
-				                  </div>
-				                </div>                                
-				                <div class="col-xs-4"><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.current_trial_status_date"/>"  data-placement="top" data-trigger="hover"></i></div>
-				             </div>
+                                <label for="trialDTO.amendmentDate" class="col-xs-4 control-label"><fmt:message key="view.trial.amendmentDate"/><span class="required">*</span></label>
+                                <div class="col-xs-2">
+                                  <div id="datetimepicker" class="datetimepicker input-append">                    
+                                    <s:textfield id="trialDTO.amendmentDate" name="trialDTO.amendmentDate" data-format="MM/dd/yyyy" type="text" cssClass="form-control" placeholder="mm/dd/yyyy"/>
+                                    <span class="add-on btn-default"><i class="fa-calendar"></i></span>
+                                    <span class="alert-danger">
+                                        <s:fielderror>
+                                            <s:param>trialDTO.amendmentDate</s:param>
+                                        </s:fielderror>
+                                    </span>
+                                  </div>
+                                </div>                                
+                                <div class="col-xs-4"><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.current_trial_status_date"/>"  data-placement="top" data-trigger="hover"></i></div>
+                             </div>
                           </div>
                       </div>
                   </div>
@@ -490,16 +490,16 @@
                     <%@ include file="/WEB-INF/jsp/nodecorate/amendDetailsSection.jsp" %>
                     <%@ include file="/WEB-INF/jsp/nodecorate/amendLeadOrganizationSection.jsp" %>
                     <s:if test="%{trialDTO.xmlRequired == true}">
-		                  <div id="sponsorDiv" style="display:''">
-		                      <%@ include file="/WEB-INF/jsp/nodecorate/trialResponsibleParty.jsp" %>
-		                  </div>
-		              </s:if>
-		              <s:else>
-		                  <div id="sponsorDiv" style="display:none">
-		                      <%@ include file="/WEB-INF/jsp/nodecorate/trialResponsibleParty.jsp" %>
-		                  </div>
-		              </s:else>
-		              
+                          <div id="sponsorDiv" style="display:''">
+                              <%@ include file="/WEB-INF/jsp/nodecorate/trialResponsibleParty.jsp" %>
+                          </div>
+                      </s:if>
+                      <s:else>
+                          <div id="sponsorDiv" style="display:none">
+                              <%@ include file="/WEB-INF/jsp/nodecorate/trialResponsibleParty.jsp" %>
+                          </div>
+                      </s:else>
+                      
                     <!--  summary4 information -->
                     <%@ include file="/WEB-INF/jsp/nodecorate/summaryFourInfo.jsp" %>
                     
@@ -575,67 +575,67 @@
                                   <s:param>trialDTO.nciGrant</s:param>
                               </s:fielderror>
                           </span>                              
-                   		</div>
-              		</div>
-          		</div>
+                        </div>
+                    </div>
+                </div>
   
-	  			<!-- Status section -->
-          		<%@ include file="/WEB-INF/jsp/nodecorate/updateStatusSection.jsp" %>
+                <!-- Status section -->
+                <%@ include file="/WEB-INF/jsp/nodecorate/updateStatusSection.jsp" %>
           
-		          <div class="accordion">
-		          	<div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section9"><fmt:message key="submit.trial.indInfo"/></a></div>
-		          		<div id="section9" class="accordion-body in">
-		            		<div class="container">
-		              			<p><fmt:message key="submit.trial.indInstructionalText"/></p>
-		              			<%@ include file="/WEB-INF/jsp/nodecorate/indide.jsp" %>
-		              			<p/>
-				              <div id="indidediv" class="table-header-wrap">
-				                  <%@ include file="/WEB-INF/jsp/nodecorate/addIdeIndIndicator.jsp" %>
-				              </div>
-		          			  <div class="mt10 align-center scrollable"><i class="fa-angle-left"></i> Scroll left/right to view full table <i class="fa-angle-right"></i></div>
-		            </div>
-		          </div>
-		        </div>
+                  <div class="accordion">
+                    <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section9"><fmt:message key="submit.trial.indInfo"/></a></div>
+                        <div id="section9" class="accordion-body in">
+                            <div class="container">
+                                <p><fmt:message key="submit.trial.indInstructionalText"/></p>
+                                <%@ include file="/WEB-INF/jsp/nodecorate/indide.jsp" %>
+                                <p/>
+                              <div id="indidediv" class="table-header-wrap">
+                                  <%@ include file="/WEB-INF/jsp/nodecorate/addIdeIndIndicator.jsp" %>
+                              </div>
+                              <div class="mt10 align-center scrollable"><i class="fa-angle-left"></i> Scroll left/right to view full table <i class="fa-angle-right"></i></div>
+                    </div>
+                  </div>
+                </div>
         
-		        <s:if test="%{trialDTO.xmlRequired == true}">
-		             <div id="regDiv" style="display:''">
-		                 <!-- Regulatory page -->
-		                 <%@ include file="/WEB-INF/jsp/nodecorate/regulatoryInformation.jsp" %>
-		             </div>
-		         </s:if>
-		         <s:else>
-		             <div id="regDiv" style="display:none">
-		                 <!-- Regulatory page -->
-		                 <%@ include file="/WEB-INF/jsp/nodecorate/regulatoryInformation.jsp" %>
-		             </div>
-		         </s:else>
+                <s:if test="%{trialDTO.xmlRequired == true}">
+                     <div id="regDiv" style="display:''">
+                         <!-- Regulatory page -->
+                         <%@ include file="/WEB-INF/jsp/nodecorate/regulatoryInformation.jsp" %>
+                     </div>
+                 </s:if>
+                 <s:else>
+                     <div id="regDiv" style="display:none">
+                         <!-- Regulatory page -->
+                         <%@ include file="/WEB-INF/jsp/nodecorate/regulatoryInformation.jsp" %>
+                     </div>
+                 </s:else>
              
-		         <c:if test="${requestScope.protocolDocument != null}">
-		          <div class="accordion">
+                 <c:if test="${requestScope.protocolDocument != null}">
+                  <div class="accordion">
                     <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section15">Existing Trial Related Documents</a></div>
                         <div id="section15" class="accordion-body in">
                             <div class="container">
-				                <div class="table-header-wrap">
-				                	<jsp:include page="/WEB-INF/jsp/searchTrialViewDocs.jsp"/>
-				                </div>
-		                </div>
-	                </div>
-	              </div>
-		         </c:if>
-		         <div id="uploadDocDiv">
-		            <%@ include file="/WEB-INF/jsp/nodecorate/uploadDocuments.jsp" %>
-		         </div>
+                                <div class="table-header-wrap">
+                                    <jsp:include page="/WEB-INF/jsp/searchTrialViewDocs.jsp"/>
+                                </div>
+                        </div>
+                    </div>
+                  </div>
+                 </c:if>
+                 <div id="uploadDocDiv">
+                    <%@ include file="/WEB-INF/jsp/nodecorate/uploadDocuments.jsp" %>
+                 </div>
         
-     		</div> 
-     		           
-	           <p align="center" class="info">
-	              Please verify ALL the trial information you provided on this screen before clicking the &#34;Review Trial&#34; button below.
-	              <br>Once you submit the trial you will not be able to modify the information.
-	           </p>
-	        <div class="align-center button-row">
-		      <button type="button" class="btn btn-icon btn-primary review" onclick="reviewProtocol()"><i class="fa-file-text-o"></i>Review Trial</button>
-		      <button type="button" class="btn btn-icon btn-default" onclick="cancelProtocol()"><i class="fa-times-circle"></i>Cancel</button>
-		    </div>
+            </div> 
+                       
+               <p align="center" class="info">
+                  Please verify ALL the trial information you provided on this screen before clicking the &#34;Review Trial&#34; button below.
+                  <br>Once you submit the trial you will not be able to modify the information.
+               </p>
+            <div class="align-center button-row">
+              <button type="button" class="btn btn-icon btn-primary review" onclick="reviewProtocol()"><i class="fa-file-text-o"></i>Review Trial</button>
+              <button type="button" class="btn btn-icon btn-default" onclick="cancelProtocol()"><i class="fa-times-circle"></i>Cancel</button>
+            </div>
                 
                 <s:hidden name="uuidhidden"/>
             </s:form>

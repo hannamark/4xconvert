@@ -6,10 +6,10 @@
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/dataTables.colVis.min.js'/>"></script>
 <script type="text/javascript" language="javascript">
 jQuery(function() {
-	jQuery('#row').dataTable( {
-		"sDom": 'pCrfltip',
-		"pagingType": "full_numbers",
-		 "order": [[ 0, "desc" ]],
+    jQuery('#row').dataTable( {
+        "sDom": 'pCrfltip',
+        "pagingType": "full_numbers",
+         "order": [[ 0, "desc" ]],
         "oColVis": {
             "buttonText": "Choose columns"
         },
@@ -23,7 +23,7 @@ jQuery(function() {
                 "sLast": ">>"
               }
         }
-	});
+    });
 });
 </script>
 <style type="text/css">
@@ -33,15 +33,15 @@ jQuery(function() {
 }
 /*To not wrap header*/
 thead th { 
-	white-space: nowrap; 
+    white-space: nowrap; 
 }
 /*Increase column chooser items width*/
 ul.ColVis_collection {
-	width:250px;
+    width:250px;
 }
 /*Reduce Column chooser button height*/
 button.ColVis_Button {
-	height : 25px;
+    height : 25px;
 }
 </style>
 </head>
@@ -132,66 +132,66 @@ button.ColVis_Button {
                 <display:column escapeXml="true" titleKey="search.trial.studyStatusCode" property="studyStatusCode.code" headerScope="col"/>
                 <display:column titleKey="search.trial.documentWorkflowStatus" property="documentWorkflowStatusCode.code" headerScope="col"/>
                  <display:column title="Available Actions" media="html">
-          	 		<s:if test="%{#attr.row.actionVisible}">
-                	<div class="btn-group">
+                    <s:if test="%{#attr.row.actionVisible}">
+                    <div class="btn-group">
                         <button data-toggle="dropdown" class="btn btn-default dropdown-toggle btn-sm" type="button">Select Action <span class="caret"></span></button>
                         <ul role="menu" class="dropdown-menu" id="actmenu" >
-								<li>
-									<s:if test="%{!(#attr.row.update == null || #attr.row.update.equals(''))}">									
-										<s:if test="%{#attr.row.proprietaryTrial}">
-				                        <s:url id="url" action="updateProprietaryTrialview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
-					                        <s:a href="%{url}"><s:property value="%{#attr.row.update}" /></s:a>
-					                    </s:if>
-					                    <s:else>
-					                        <s:url id="url" action="updateTrialview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
-					                        <s:a href="%{url}"><s:property value="%{#attr.row.update}" /></s:a>
-					                    </s:else>
-									</s:if>																	
-								</li>
-								<li>
-									<s:if test="%{!(#attr.row.amend == null || #attr.row.amend.equals(''))}">
-										<s:url action="amendTrialview.action" var="urlTag" >
-										    <s:param name="studyProtocolId"><s:property value="%{#attr.row.studyProtocolId}" /></s:param>
-										</s:url>
-										<s:a href="%{urlTag}">Amend</s:a>
-									</s:if>
-								</li>
-								<li>
-									<s:if test="%{!(#attr.row.statusChangeLinkText == null || #attr.row.statusChangeLinkText.equals(''))}">
-										<s:if test="%{#attr.row.proprietaryTrial}">
-					                    </s:if>
-					                    <s:else>
-					                        <s:url id="updateTrialStatusUrl" action="updateTrialStatuspopupview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
-					                        <a href="javascript:void(0)" onclick="showPopup('${updateTrialStatusUrl}', '', 'Update Trial Status');">Change Status</a>
-					                    </s:else>
-				                    </s:if>
-								</li>
-								<li>
-									<s:if test="%{#attr.row.showViewTSR.booleanValue() == true}">
-				                         <a href="javascript:void(0)" onclick="viewTsr('${row.studyProtocolId}');">View TSR</a>
-				                    </s:if>
-								</li>
-								<li>
+                                <li>
+                                    <s:if test="%{!(#attr.row.update == null || #attr.row.update.equals(''))}">                                 
+                                        <s:if test="%{#attr.row.proprietaryTrial}">
+                                        <s:url id="url" action="updateProprietaryTrialview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
+                                            <s:a href="%{url}"><s:property value="%{#attr.row.update}" /></s:a>
+                                        </s:if>
+                                        <s:else>
+                                            <s:url id="url" action="updateTrialview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
+                                            <s:a href="%{url}"><s:property value="%{#attr.row.update}" /></s:a>
+                                        </s:else>
+                                    </s:if>                                                                 
+                                </li>
+                                <li>
+                                    <s:if test="%{!(#attr.row.amend == null || #attr.row.amend.equals(''))}">
+                                        <s:url action="amendTrialview.action" var="urlTag" >
+                                            <s:param name="studyProtocolId"><s:property value="%{#attr.row.studyProtocolId}" /></s:param>
+                                        </s:url>
+                                        <s:a href="%{urlTag}">Amend</s:a>
+                                    </s:if>
+                                </li>
+                                <li>
+                                    <s:if test="%{!(#attr.row.statusChangeLinkText == null || #attr.row.statusChangeLinkText.equals(''))}">
+                                        <s:if test="%{#attr.row.proprietaryTrial}">
+                                        </s:if>
+                                        <s:else>
+                                            <s:url id="updateTrialStatusUrl" action="updateTrialStatuspopupview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
+                                            <a href="javascript:void(0)" onclick="showPopup('${updateTrialStatusUrl}', '', 'Update Trial Status');">Change Status</a>
+                                        </s:else>
+                                    </s:if>
+                                </li>
+                                <li>
+                                    <s:if test="%{#attr.row.showViewTSR.booleanValue() == true}">
+                                         <a href="javascript:void(0)" onclick="viewTsr('${row.studyProtocolId}');">View TSR</a>
+                                    </s:if>
+                                </li>
+                                <li>
                                     <s:if test="%{#attr.row.showSendXml.booleanValue() == true}">
                                          <a href="javascript:void(0)" onclick="viewXml('${row.studyProtocolId}');">View XML</a>
                                     </s:if>
                                 </li>
-								<li>
-									<s:if test="%{#attr.row.currentUserCanAddSite}">
-				                        <s:url id="addMySiteUrl" action="addSitepopupview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
-				                        <a href="javascript:void(0);" onclick="showPopup('${addMySiteUrl}', '', 'Add Participating Site');" 
-				                           onkeypress="showPopup('${addMySiteUrl}', '', 'Add Participating Site');">Add My Site</a>
-				                    </s:if>
-								</li>
-								<li>
-									<s:if test="%{#attr.row.currentUserCanEditSite}">
-				                        <s:url id="updateMySiteUrl" action="addSitepopupview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
-				                        <a href="javascript:void(0);" onclick="showPopup('${updateMySiteUrl}', '', 'Update Participating Site');" 
-				                           onkeypress="showPopup('${updateMySiteUrl}', '', 'Update Participating Sit');">Update My Site</a>
-				                    </s:if>
-								</li>
-								
-								<li>
+                                <li>
+                                    <s:if test="%{#attr.row.currentUserCanAddSite}">
+                                        <s:url id="addMySiteUrl" action="addSitepopupview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
+                                        <a href="javascript:void(0);" onclick="showPopup('${addMySiteUrl}', '', 'Add Participating Site');" 
+                                           onkeypress="showPopup('${addMySiteUrl}', '', 'Add Participating Site');">Add My Site</a>
+                                    </s:if>
+                                </li>
+                                <li>
+                                    <s:if test="%{#attr.row.currentUserCanEditSite}">
+                                        <s:url id="updateMySiteUrl" action="addSitepopupview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
+                                        <a href="javascript:void(0);" onclick="showPopup('${updateMySiteUrl}', '', 'Update Participating Site');" 
+                                           onkeypress="showPopup('${updateMySiteUrl}', '', 'Update Participating Sit');">Update My Site</a>
+                                    </s:if>
+                                </li>
+                                
+                                <li>
                                     <s:if test="%{#attr.row.verifyData.booleanValue() == true}">
                                         <s:url id="editUrl" namespace="/protected" action="trialDataVerificationview">
                                             <s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}"/>
@@ -201,35 +201,35 @@ button.ColVis_Button {
                                         </s:a>
                                     </s:if>
                                 </li>
-							</ul>
-						</div>  
-					</s:if>              		                    	                    
+                            </ul>
+                        </div>  
+                    </s:if>                                                                 
                  </display:column>  
                  <display:column title="Accrual Disease Terminology" media="html">
-	                <s:if test="%{#attr.row.showAccrualOption.booleanValue() == true}">
-	                <s:set name="accrualDiseaseCode" value="%{#attr.row.accrualDiseaseCode}"/>
-	                <s:select id="accrualDisease_%{#attr.row.studyProtocolId}" headerKey="" headerValue="--Select--" name="accrualDiseaseTerminology_%{#attr.row.studyProtocolId}" 
-	                list="#accrualDiseaseValues" onchange="saveDiseaseCode('%{#attr.row.studyProtocolId}',this.value)" value="accrualDiseaseCode" cssClass="form-control" />
-	                </s:if>
-	                <s:if test="%{#attr.row.showAccrualOption.booleanValue() == false}">
-	                	<c:out value="${row.accrualDiseaseCode}"/>
-	                </s:if>
+                    <s:if test="%{#attr.row.showAccrualOption.booleanValue() == true}">
+                    <s:set name="accrualDiseaseCode" value="%{#attr.row.accrualDiseaseCode}"/>
+                    <s:select id="accrualDisease_%{#attr.row.studyProtocolId}" headerKey="" headerValue="--Select--" name="accrualDiseaseTerminology_%{#attr.row.studyProtocolId}" 
+                    list="#accrualDiseaseValues" onchange="saveDiseaseCode('%{#attr.row.studyProtocolId}',this.value)" value="accrualDiseaseCode" cssClass="form-control" />
+                    </s:if>
+                    <s:if test="%{#attr.row.showAccrualOption.booleanValue() == false}">
+                        <c:out value="${row.accrualDiseaseCode}"/>
+                    </s:if>
                 </display:column>
                 <display:column title="Accrual Disease Terminology" media="csv excel xml">
-                	<c:out value="${row.accrualDiseaseCode}"/>
+                    <c:out value="${row.accrualDiseaseCode}"/>
                 </display:column>
                 <display:column title="Sites" media="html">
-                	<s:url id="viewParticipatingSites" action="participatingSitespopup"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
-                   	<a href="javascript:void(0)" onclick="showPopup('${viewParticipatingSites}', '', 'View Participating Sites');">View</a>
+                    <s:url id="viewParticipatingSites" action="participatingSitespopup"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
+                    <a href="javascript:void(0)" onclick="showPopup('${viewParticipatingSites}', '', 'View Participating Sites');">View</a>
                 </display:column> 
                 <display:column title="Phase" property="phaseName" />
                 <display:column title="Primary Purpose" property="primaryPurpose" />
                 <display:column title="Category" property="trialCategory" />  
                 <display:column title="Trial Start Date" property="startDate" format="{0,date,MM/dd/yyyy}" />                                             
-          	    <display:column title="Responsible Party" property="responsiblePartyName" />          	   
-          	    <display:column title="<div style='width:150px;text-align: left;'>Sponsor</div>" property="sponsorName" media="html"/>
-          	    <display:column title="Sponsor" property="sponsorName" media="csv excel xml"/>
-          	    <display:column title="Summary 4 Funding Sponsor Type" property="summary4FundingSponsorType" />
+                <display:column title="Responsible Party" property="responsiblePartyName" />               
+                <display:column title="<div style='width:150px;text-align: left;'>Sponsor</div>" property="sponsorName" media="html"/>
+                <display:column title="Sponsor" property="sponsorName" media="csv excel xml"/>
+                <display:column title="Data Table 4 Funding Sponsor Type" property="summary4FundingSponsorType" />
                 <display:column titleKey="search.trial.recordVerificationDate" property="recordVerificationDate" format="{0,date,MM/dd/yyyy}" />
                 <display:column title="<div style='width:150px;text-align: left;'>Submitter</div>" property="lastCreated.userLastDisplayName" media="html"/>
                 <display:column title="Submitter" property="lastCreated.userLastDisplayName" media="csv excel xml"/>

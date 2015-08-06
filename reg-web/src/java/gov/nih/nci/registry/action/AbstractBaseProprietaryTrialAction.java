@@ -81,7 +81,7 @@ public class AbstractBaseProprietaryTrialAction extends ManageFileAction
         if (!StringUtils.isEmpty(trialDTO.getSummaryFourFundingCategoryCode())
                 && CollectionUtils.isEmpty(trialDTO.getSummaryFourOrgIdentifiers())) {
             addFieldError("summary4FundingSponsor",
-                    "Select the Summary 4 Funding Sponsor");
+                    "Select the Data Table 4 Funding Sponsor");
         }
         if (StringUtils.isEmpty(trialDTO.getSummaryFourFundingCategoryCode())
                 && CollectionUtils.isNotEmpty(trialDTO.getSummaryFourOrgIdentifiers())) {

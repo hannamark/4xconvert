@@ -48,13 +48,13 @@
             }
             
             function lookup4loadSiteOrg (selection, name) {
-            	if(selection === undefined || selection == "") {
+                if(selection === undefined || selection == "") {
                     $('trialDTO.siteOrganizationNameField').innerHTML = 'Please Select Submitting Organization';
                     $("trialDTO.siteOrganizationIdentifier").value = '';
                     $('trialDTO.siteOrganizationName').value = '';
                 } else if (selection == -1) {
                     showPopup("${lookupOrgUrl}", function() {
-                    	lookup4loadSiteOrg(orgid, chosenname);
+                        lookup4loadSiteOrg(orgid, chosenname);
                     }, 'Select Submitting Organization');
                 } else if(selection > 0) {
                     $('trialDTO.siteOrganizationNameField').innerHTML = name;
@@ -82,7 +82,7 @@
                 if(selection === undefined || selection == "") {
                     //do nothing
                 } else if(selection == -1) {
-                    showPopup('${lookupOrgUrl}', loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
+                    showPopup('${lookupOrgUrl}', loadSummary4SponsorDiv, 'Select Data Table 4 Sponsor/Source');
                 } else if(selection > 0) {
                   var url = '/registry/protected/popupaddSummaryFourOrg.action';
                   var params = { orgId: selection, chosenName : name };
@@ -192,12 +192,12 @@
                         </div>
                         <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='<fmt:message key="tooltip.trial_id" />'  data-placement="top" data-trigger="hover"></i>
                     </div>
-	                <div class="form-group">
+                    <div class="form-group">
                         <label for="trialDTO.siteOrganizationName" class="col-xs-4 control-label"><fmt:message key="submit.proprietary.trial.siteOrganization"/><span class="required">*</span></label>
                         <div class="col-xs-6"><%@ include file="/WEB-INF/jsp/nodecorate/trialSiteOrganization.jsp" %>
                         <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='<fmt:message key="tooltip.submitting_organization_name" />'  data-placement="top" data-trigger="hover"></i></div>
                     </div>
-	               <div class="form-group">
+                   <div class="form-group">
                         <label for="trialDTO.localSiteIdentifier" class="col-xs-4 control-label"><fmt:message key="submit.proprietary.trial.siteidentifier"/><span class="required">*</span></label>
                         <div class="col-xs-4">
                             <s:textfield id="trialDTO.localSiteIdentifier" name="trialDTO.localSiteIdentifier"  maxlength="200"  cssClass="form-control" />
@@ -209,8 +209,8 @@
                         </div>
                         <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='<fmt:message key="tooltip.submitting_organization_local_trial_identifier"/>'  data-placement="top" data-trigger="hover"></i>
                     </div>  
-	                   
-	               <div class="form-group">
+                       
+                   <div class="form-group">
                         <label for="trialDTO.nctIdentifier" class="col-xs-4 control-label"><fmt:message key="submit.trial.nctNumber"/></label>
                         <div class="col-xs-4">
                             <s:textfield id="trialDTO.nctIdentifier" name="trialDTO.nctIdentifier"  maxlength="200"  cssClass="form-control" />
@@ -222,7 +222,7 @@
                         </div>
                         <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='<fmt:message key="tooltip.nct_number" />'  data-placement="top" data-trigger="hover"></i>
                     </div>  
-	             </div>
+                 </div>
                  </div>
                  </div>
                  <div class="accordion">
@@ -264,18 +264,18 @@
                     <div class="form-group non-interventional">
                         <label for="trialDTO.studySubtypeCode" class="col-xs-4 control-label"><fmt:message key="submit.trial.studySubtypeCode"/><span class="required">*</span></label>
                         <div class="col-xs-4">
-	                        <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.StudySubtypeCode@getDisplayNames()" />
-	                        <s:select headerKey="" headerValue="--Select--" id ="trialDTO.studySubtypeCode" name="trialDTO.studySubtypeCode" list="#typeCodeValues"  cssClass="form-control" 
-	                                        value="trialDTO.studySubtypeCode"/>
-	                        <span class="alert-danger">
-	                          <s:fielderror>
-	                          <s:param>trialDTO.studySubtypeCode</s:param>
-	                         </s:fielderror>
-	                        </span>
+                            <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.StudySubtypeCode@getDisplayNames()" />
+                            <s:select headerKey="" headerValue="--Select--" id ="trialDTO.studySubtypeCode" name="trialDTO.studySubtypeCode" list="#typeCodeValues"  cssClass="form-control" 
+                                            value="trialDTO.studySubtypeCode"/>
+                            <span class="alert-danger">
+                              <s:fielderror>
+                              <s:param>trialDTO.studySubtypeCode</s:param>
+                             </s:fielderror>
+                            </span>
                         </div>
                     </div>  
  
- 			        <%@ include file="/WEB-INF/jsp/nodecorate/primaryPurposeOther.jsp" %>
+                    <%@ include file="/WEB-INF/jsp/nodecorate/primaryPurposeOther.jsp" %>
                     <%@ include file="/WEB-INF/jsp/nodecorate/phase.jsp" %>
                     <!-- include po person jsp -->
                     <div class="form-group">
@@ -295,19 +295,19 @@
                      <div class="form-group">
                         <label for="trialDTO.summaryFourFundingCategoryCode" class="col-xs-4 control-label"><fmt:message key="update.proprietary.trial.summary4FundingCategory"/><span class="required">*</span></label>
                         <div class="col-xs-4">
-	                        <s:select headerKey="" headerValue="--Select--"
-	                                  id="trialDTO.summaryFourFundingCategoryCode"
-	                                  name="trialDTO.summaryFourFundingCategoryCode"
-	                                  list="#{'National':'National', 'Externally Peer-Reviewed':'Externally Peer-Reviewed','Institutional':'Institutional','Industrial':'Industrial/Other'}"
-	                                  cssClass="form-control" disabled="true" />
-	                         <span class="alert-danger">
-	                               <s:fielderror>
-	                                   <s:param>trialDTO.summaryFourFundingCategoryCode</s:param>
-	                               </s:fielderror>
-	                         </span>
-	                   </div>
-	                   <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='<fmt:message key="tooltip.summary_4_funding_sponsor_type" />'  data-placement="top" data-trigger="hover"></i>
-	                 </div>
+                            <s:select headerKey="" headerValue="--Select--"
+                                      id="trialDTO.summaryFourFundingCategoryCode"
+                                      name="trialDTO.summaryFourFundingCategoryCode"
+                                      list="#{'National':'National', 'Externally Peer-Reviewed':'Externally Peer-Reviewed','Institutional':'Institutional','Industrial':'Industrial/Other'}"
+                                      cssClass="form-control" disabled="true" />
+                             <span class="alert-danger">
+                                   <s:fielderror>
+                                       <s:param>trialDTO.summaryFourFundingCategoryCode</s:param>
+                                   </s:fielderror>
+                             </span>
+                       </div>
+                       <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='<fmt:message key="tooltip.summary_4_funding_sponsor_type" />'  data-placement="top" data-trigger="hover"></i>
+                     </div>
                     
                     <div class="form-group">
                         <label for="trialDTO.summaryFourOrgName" class="col-xs-4 control-label"><fmt:message key="update.proprietary.trial.summary4Sponsor"/><span class="required">*</span></label>

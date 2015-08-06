@@ -591,7 +591,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
     @Test
     public void nullSummary4Organization() throws Exception {
         thrown.expect(PAException.class);
-        thrown.expectMessage("Validation Exception Summary 4 Organization cannot be null.\n");
+        thrown.expectMessage("Validation Exception Data Table 4 Organization cannot be null.\n");
 
         InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
         StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);

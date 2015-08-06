@@ -108,7 +108,7 @@ public class AnatomicSiteTest extends AbstractPaSeleniumTest {
         acceptTrial();
         verifyTrialAccepted();
 
-        clickAndWait("link=Summary 4 Anatomic Site");
+        clickAndWait("link=Data Table 4 Anatomic Site");
         assertTrue(selenium.isElementPresent("link=Add"));
         clickAndWait("link=Add");
 

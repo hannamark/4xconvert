@@ -154,7 +154,7 @@ import org.apache.commons.lang.StringUtils;
         "PMD.CyclomaticComplexity" })
 public class TrialRegistrationValidator {
 
-    private static final String SUMMARY_4_ORGANIZATION = "Summary 4 Organization";
+    private static final String SUMMARY_4_ORGANIZATION = "Data Table 4 Organization";
     /**
      * FDA Regulated Intervention Indicator must be Yes since it has Trial IND/IDE records.
      */
@@ -574,7 +574,7 @@ public class TrialRegistrationValidator {
         boolean industrial = StringUtils
             .equalsIgnoreCase(category, SummaryFourFundingCategoryCode.INDUSTRIAL.getCode());
         if ((categoryCode == null) || (proprietary && !industrial) || (!proprietary && industrial)) {
-            errorMsg.append("Please enter valid value for Summary 4 Sponsor Category.");
+            errorMsg.append("Please enter valid value for Data Table 4 Sponsor Category.");
         }
     }
 
@@ -585,7 +585,7 @@ public class TrialRegistrationValidator {
      * @param leadOrganizationDTO The lead organization
      * @param sponsorOrganizationDTO The sponsor organization    
      * @param summary4OrganizationDTO The summary4 organization
-     * @param summary4StudyResourcingDTO The summary 4 category code
+     * @param summary4StudyResourcingDTO The Data Table 4 category code
      * @param principalInvestigatorDTO The principal investigator
      * @param studyRegAuthDTO The regulatory authority
      * @param studyResourcingDTOs The list of nih grants
@@ -905,7 +905,7 @@ public class TrialRegistrationValidator {
      * @param leadOrganizationDTO The lead organization
      * @param sponsorOrganizationDTO The sponsor organization    
      * @param summary4OrganizationDTO The summary4 organization
-     * @param summary4StudyResourcingDTO The summary 4 category code
+     * @param summary4StudyResourcingDTO The Data Table 4 category code
      * @param principalInvestigatorDTO The principal investigator
      * @param leadOrganizationSiteIdentifierDTO The lead organization site    
      * @param studyRegAuthDTO The regulatory authority
@@ -1052,7 +1052,7 @@ public class TrialRegistrationValidator {
      * @param studySiteOrganizationDTO The Study Site Organization
      * @param studySiteDTO The study site
      * @param nctIdentifierDTO The NCT identifier
-     * @param summary4OrganizationDTO The Summary 4 Organization
+     * @param summary4OrganizationDTO The Data Table 4 Organization
      * @param summary4StudyResourcingDTO The summary4 resourcing
      * @throws PAException If a validation error occurs
      */

@@ -579,9 +579,9 @@ public class TrialBatchDataValidator {
             return fieldErr;
         }
         if (!orgDTOIsEmpty(summ4Sponsor)) {
-            fieldErr.append(validate(summ4Sponsor, "Summary 4 Funding Sponsor/Source's "));
+            fieldErr.append(validate(summ4Sponsor, "Data Table 4 Funding Sponsor/Source's "));
             fieldErr.append(validateCountryAndStateInfo(summ4Sponsor.getCountry(), summ4Sponsor.getState(),
-                    "Summary 4 Funding Sponsor/Source's "));
+                    "Data Table 4 Funding Sponsor/Source's "));
         }
         return fieldErr;
     }

@@ -418,7 +418,7 @@ public class TSRReportLabelText { //NOPMD
     /**
      * Table Summary 4 information.
      */
-    public static final String TABLE_SUMMARY_4_INFORMATION = "Summary 4 Information";
+    public static final String TABLE_SUMMARY_4_INFORMATION = "Data Table 4 Information";
     /**
      * Funding Category.
      */
