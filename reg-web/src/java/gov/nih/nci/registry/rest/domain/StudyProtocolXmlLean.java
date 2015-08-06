@@ -6,6 +6,7 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -13,6 +14,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -40,6 +42,7 @@ public final class StudyProtocolXmlLean implements Comparable<StudyProtocolXmlLe
     private StudyStatusCode studyStatusCode;
     private String nctIdentifier;
     private DocumentWorkflowStatusCode documentWorkflowStatusCode;
+    private Date documentWorkflowStatusDate;
 
     /**
      * Generate a list of StudyProtocolXmlLean from search result list.
@@ -187,5 +190,20 @@ public final class StudyProtocolXmlLean implements Comparable<StudyProtocolXmlLe
     public void setDocumentWorkflowStatusCode(
             DocumentWorkflowStatusCode documentWorkflowStatusCode) {
         this.documentWorkflowStatusCode = documentWorkflowStatusCode;
+    }
+
+    /**
+     * @return DocumentWorkflowStatusDate
+     */
+    @XmlJavaTypeAdapter(DateAdapter.class)
+    public Date getDocumentWorkflowStatusDate() {
+        return documentWorkflowStatusDate;
+    }
+
+    /**
+     * @param documentWorkflowStatusDate documentWorkflowStatusDate
+     */
+    public void setDocumentWorkflowStatusDate(Date documentWorkflowStatusDate) {
+       this.documentWorkflowStatusDate = documentWorkflowStatusDate;
     }
 }

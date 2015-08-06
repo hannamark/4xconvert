@@ -18,6 +18,7 @@ import gov.nih.nci.registry.rest.exception.BadRequestException;
 import gov.nih.nci.registry.rest.exception.BadRequestExceptionHandler;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.core.GenericEntity;
@@ -76,6 +77,7 @@ public class StudyProtocolRsrcTest {
                                 studyProtocolQueryDTO.setLeadOrganizationName("leadOrganizationNameForPaId");
                                 studyProtocolQueryDTO.setPiFullName("piFullName1");
                                 studyProtocolQueryDTO.setStudyStatusCode(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION);
+                                studyProtocolQueryDTO.setDocumentWorkflowStatusDate(new Date());
                                 list.add(studyProtocolQueryDTO);
                                
                             }
@@ -89,6 +91,7 @@ public class StudyProtocolRsrcTest {
                                 studyProtocolQueryDTO.setLeadOrganizationName("leadOrganizationNameForNciId");
                                 studyProtocolQueryDTO.setPiFullName("piFullName");
                                 studyProtocolQueryDTO.setStudyStatusCode(StudyStatusCode.APPROVED);
+                                studyProtocolQueryDTO.setDocumentWorkflowStatusDate(new Date());
                                 list.add(studyProtocolQueryDTO);
                             }
                             else if (studyProtocolQueryCriteria.getIdentifierType().equals(IdentifierType.CTEP.getCode()) &&
@@ -101,6 +104,7 @@ public class StudyProtocolRsrcTest {
                                 studyProtocolQueryDTO.setLeadOrganizationName("leadOrganizationNameForCtepId");
                                 studyProtocolQueryDTO.setPiFullName("piFullName");
                                 studyProtocolQueryDTO.setStudyStatusCode(StudyStatusCode.APPROVED);
+                                studyProtocolQueryDTO.setDocumentWorkflowStatusDate(new Date());
                                 list.add(studyProtocolQueryDTO);
                             }
                             else if (studyProtocolQueryCriteria.getIdentifierType().equals(IdentifierType.DCP.getCode()) &&
@@ -113,6 +117,7 @@ public class StudyProtocolRsrcTest {
                                 studyProtocolQueryDTO.setLeadOrganizationName("leadOrganizationNameForDcpId");
                                 studyProtocolQueryDTO.setPiFullName("piFullName");
                                 studyProtocolQueryDTO.setStudyStatusCode(StudyStatusCode.APPROVED);
+                                studyProtocolQueryDTO.setDocumentWorkflowStatusDate(new Date());
                                 list.add(studyProtocolQueryDTO);
                             }
                             else if (studyProtocolQueryCriteria.getIdentifierType().equals(IdentifierType.NCT.getCode()) &&
@@ -125,6 +130,7 @@ public class StudyProtocolRsrcTest {
                                 studyProtocolQueryDTO.setLeadOrganizationName("leadOrganizationNameForNctId");
                                 studyProtocolQueryDTO.setPiFullName("piFullName");
                                 studyProtocolQueryDTO.setStudyStatusCode(StudyStatusCode.APPROVED);
+                                studyProtocolQueryDTO.setDocumentWorkflowStatusDate(new Date());
                                 list.add(studyProtocolQueryDTO);
                             }
                           
