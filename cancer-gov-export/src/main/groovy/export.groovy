@@ -276,6 +276,7 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 
 	def studyProtocolID = spRow.identifier
 	def lastChangedDate = spRow.date_last_created
+	def lastChangedDateUsedInLiueOfVerificationDate = false
 
 	xml.clinical_study {
 		xml.required_header {
@@ -585,9 +586,13 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 			xml.description("Clinical trial summary from the National Library of Medicine (NLM)'s database")
 		}
 
+		
 		if (spRow.verification_date) {
 			xml.verification_date(spRow.verification_date.format("MMMM yyyy"))
 			lastChangedDate = spRow.verification_date
+		} else {
+			xml.verification_date(lastChangedDate.format("MMMM yyyy"))
+			lastChangedDateUsedInLiueOfVerificationDate = true
 		}
 
 		xml.lastchanged_date(lastChangedDate.format("MMMM d, yyyy"))
@@ -641,6 +646,10 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 		}
 		trialFile.setText(trialFile.getText("UTF-8").replaceFirst("<lastchanged_date>.*?</lastchanged_date>", "<lastchanged_date>"+
 				lastChangedDate.format("MMMM d, yyyy")+"</lastchanged_date>"), "UTF-8")
+		if (lastChangedDateUsedInLiueOfVerificationDate) {
+			trialFile.setText(trialFile.getText("UTF-8").replaceFirst("<verification_date>.*?</verification_date>", "<verification_date>"+
+				lastChangedDate.format("MMMM yyyy")+"</verification_date>"), "UTF-8")
+		}
 	}
 
 	// We need to validate the file we just produced against the NLM's XSD to make sure we didn't produce something odd due to a bug or something.
