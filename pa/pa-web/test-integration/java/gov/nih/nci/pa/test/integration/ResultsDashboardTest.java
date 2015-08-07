@@ -113,7 +113,7 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         deactivateAllTrials();
         registerTestTrials();
         loginAsResultsAbstractor();
-        clickAndWait("link=Results Reporting Dashboard");
+        clickAndWait("link=Results Reporting");
         assertTrue(selenium.isTextPresent("Results Reporting & Tracking Dashboard"));
     }
     

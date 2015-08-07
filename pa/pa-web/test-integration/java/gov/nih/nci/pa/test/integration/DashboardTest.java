@@ -106,7 +106,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         assertTrue(isTrialInResultsTab(trial));
 
         // Now verify On-Hold panel picked it up as well.
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         waitForElementToBecomeVisible(
                 By.xpath("//table[@id='on_hold_trials_table']//tr[@id='TotalHold']"),
                 20);
@@ -137,7 +137,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
                 "CTRP");
 
         loginAsSuperAbstractor();
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
 
         s.click("searchid");
         s.click("resetBtn");
@@ -216,7 +216,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         // Admin CheckOut
         loginAsAdminAbstractor();
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         clickAndWait("xpath=//table[@id='wl']//td/a[normalize-space(text())='"
                 + admin.nciID.replaceFirst("NCI-", "") + "']");
         clickAndWait("link=Admin Check Out");
@@ -224,7 +224,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         // Scientific check out.
         loginAsScientificAbstractor();
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         clickAndWait("xpath=//table[@id='wl']//td/a[normalize-space(text())='"
                 + scientific.nciID.replaceFirst("NCI-", "") + "']");
         clickAndWait("link=Scientific Check Out");
@@ -232,13 +232,13 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         // Admin & Scientific check out.
         loginAsSuperAbstractor();
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         clickAndWait("xpath=//table[@id='wl']//td/a[normalize-space(text())='"
                 + admSci.nciID.replaceFirst("NCI-", "") + "']");
         clickAndWait("link=Admin/Scientific Check Out");
 
         // Now test the panel.
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         assertTrue(s.isElementPresent("count_panels_container"));
         waitForElementToBecomeVisible(
                 By.xpath("//table[@id='abstractors_work_table']//tr[3]"), 20);
@@ -288,14 +288,14 @@ public class DashboardTest extends AbstractTrialStatusTest {
         clickAndWait("//table[@id='abstractors_work_table']//tr[1]/td[1]/a");
         verifyResultsTabActive();
         assertTrue(isTrialInResultsTab(admSci));
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         waitForElementToBecomeVisible(
                 By.xpath("//table[@id='abstractors_work_table']//tr[3]"), 20);
 
         clickAndWait("//table[@id='abstractors_work_table']//tr[2]/td[1]/a");
         verifyResultsTabActive();
         assertTrue(isTrialInResultsTab(scientific));
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         waitForElementToBecomeVisible(
                 By.xpath("//table[@id='abstractors_work_table']//tr[3]"), 20);
 
@@ -322,7 +322,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         // Now test the panel.
         loginAsSuperAbstractor();
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         assertTrue(s.isElementPresent("count_panels_container"));
         waitForElementToBecomeVisible(
                 By.xpath("//table[@id='trial_dist_table']//tr[4]"), 20);
@@ -384,7 +384,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         // Now test the panel.
         loginAsSuperAbstractor();
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         assertTrue(s.isElementPresent("count_panels_container"));
         waitForElementToBecomeVisible(
                 By.xpath("//table[@id='on_hold_trials_table']//tr[@id='TotalHold']"),
@@ -514,7 +514,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         // Now test the panel.
         loginAsSuperAbstractor();
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         assertTrue(s.isElementPresent("count_panels_container"));
         waitForElementToBecomeVisible(
                 By.xpath("//table[@id='milestones_in_progress_table']//tr[@id='TotalMilestone']"),
@@ -569,11 +569,11 @@ public class DashboardTest extends AbstractTrialStatusTest {
         // Non-super abstractors should not see the panel.
         logoutPA();
         loginAsAdminAbstractor();
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         assertFalse(s.isElementPresent("count_panels_container"));
         logoutPA();
         loginAsScientificAbstractor();
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         assertFalse(s.isElementPresent("count_panels_container"));
         logoutPA();
 
@@ -701,7 +701,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
     public void testExpectedAbstractionCompletionDate() throws Exception {
         loginAsSuperAbstractor();
         TrialInfo trial = createAcceptedTrial();
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         verifyWorkfloadTabActive();
         assertTrue(isTrialInWorkloadTab(trial));
 
@@ -790,7 +790,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         logoutPA();
         loginAsAdminAbstractor();
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         verifyWorkfloadTabActive();
         assertTrue(isTrialInWorkloadTab(trial));
         verifyOverrideSpanAfterSubmit(
@@ -801,7 +801,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         logoutPA();
         loginAsScientificAbstractor();
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         verifyWorkfloadTabActive();
         assertTrue(isTrialInWorkloadTab(trial));
         verifyOverrideSpanAfterSubmit(
@@ -963,7 +963,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
     public void testRefreshButton() throws Exception {
         TrialInfo complete = createAcceptedTrial();
         loginAsSuperAbstractor();
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
 
         // Refresh Workload tab.
         refresh();
@@ -1021,7 +1021,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
                                 + amendment.id);
 
         loginAsSuperAbstractor();
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         assertTrue(isTrialInWorkloadTab(abbreviated));
         assertTrue(isTrialInWorkloadTab(complete));
         assertTrue(isTrialInWorkloadTab(amendment));
@@ -1199,14 +1199,14 @@ public class DashboardTest extends AbstractTrialStatusTest {
                 "Submitted On");
 
         // Submission Plus 10 Business Days
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         verifyDateRangeFilter(first,
                 getColumnValue(2, "Submission Plus 10 Business Days"), second,
                 getColumnValue(1, "Submission Plus 10 Business Days"),
                 "Submission Plus 10 Business Days");
 
         // Expected Abstraction Completion Date
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         verifyDateRangeFilter(first,
                 getColumnValue(2, "Expected Abstraction Completion Date"),
                 second,
@@ -1267,7 +1267,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
     private void verifyDateRangeFilter(TrialInfo first, String date1,
             TrialInfo second, String date2, String columnHeader) {
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         verifyWorkfloadTabActive();
 
         // Find Funnel for this column; it will be unselected.
@@ -1459,7 +1459,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         TrialInfo submittedTrial = createSubmittedTrial();
         loginAsSuperAbstractor();
 
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         verifyWorkfloadTabActive();
         assertTrue(s.isTextPresent("2 trials found, displaying all trials."));
 
@@ -1469,12 +1469,12 @@ public class DashboardTest extends AbstractTrialStatusTest {
         // Admin/Scientific Abstractors see less.
         logoutPA();
         loginAsAdminAbstractor();
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         verifyWorkfloadTabActive();
         verifyAdminScientificAbstractorWorkloadHeaders();
         logoutPA();
         loginAsScientificAbstractor();
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         verifyWorkfloadTabActive();
         verifyAdminScientificAbstractorWorkloadHeaders();
 
@@ -1482,27 +1482,27 @@ public class DashboardTest extends AbstractTrialStatusTest {
         // trials).
         logoutPA();
         loginAsSuperAbstractor();
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         assertTrue(isTrialInWorkloadTab(submittedTrial));
         assertTrue(isTrialInWorkloadTab(acceptedTrial));
         changePaProperty("dashboard.workload.milestones",
                 "Submission Received Date");
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         assertTrue(isTrialInWorkloadTab(submittedTrial));
         assertFalse(isTrialInWorkloadTab(acceptedTrial));
         changePaProperty("dashboard.workload.milestones",
                 "Submission Acceptance Date");
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         assertFalse(isTrialInWorkloadTab(submittedTrial));
         assertTrue(isTrialInWorkloadTab(acceptedTrial));
         changePaProperty("dashboard.workload.milestones",
                 "Submission Received Date,Submission Acceptance Date");
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         assertTrue(isTrialInWorkloadTab(submittedTrial));
         assertTrue(isTrialInWorkloadTab(acceptedTrial));
         addDWS(submittedTrial, "REJECTED");
         addDWS(acceptedTrial, "REJECTED");
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         assertFalse(isTrialInWorkloadTab(submittedTrial));
         assertFalse(isTrialInWorkloadTab(acceptedTrial));
         restorePaPropertiesToOriginal();
@@ -1510,20 +1510,20 @@ public class DashboardTest extends AbstractTrialStatusTest {
         // Verify submission type.
         deactivateAllTrials();
         acceptedTrial = createAcceptedTrial();
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         assertTrue(isTrialInWorkloadTab(acceptedTrial));
         verifyColumnValue(1, "Submission Type", "Complete");
         new QueryRunner().update(connection,
                 "update study_protocol set proprietary_trial_indicator=true where identifier="
                         + acceptedTrial.id);
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         assertTrue(isTrialInWorkloadTab(acceptedTrial));
         verifyColumnValue(1, "Submission Type", "Abbreviated");
         new QueryRunner()
                 .update(connection,
                         "update study_protocol set proprietary_trial_indicator=false, amendment_date=now() where identifier="
                                 + acceptedTrial.id);
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         assertTrue(isTrialInWorkloadTab(acceptedTrial));
         verifyColumnValue(1, "Submission Type", "Amendment");
 
@@ -1534,14 +1534,14 @@ public class DashboardTest extends AbstractTrialStatusTest {
                 .update(connection,
                         "update study_protocol set date_last_created='2015-05-22 09:15.000' where identifier="
                                 + acceptedTrial.id);
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         verifyColumnValue(1, "Submitted On", "05/22/2015");
         verifyColumnValue(1, "Submission Plus 10 Business Days", "06/08/2015");
         new QueryRunner()
                 .update(connection,
                         "update study_protocol set date_last_created='2015-06-01 09:15.000' where identifier="
                                 + acceptedTrial.id);
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         verifyColumnValue(1, "Submitted On", "06/01/2015");
         verifyColumnValue(1, "Submission Plus 10 Business Days", "06/15/2015");
 
@@ -1550,21 +1550,21 @@ public class DashboardTest extends AbstractTrialStatusTest {
                 .update(connection,
                         "update study_protocol set date_last_created='2015-05-22 09:15.000' where identifier="
                                 + acceptedTrial.id);
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         verifyColumnValue(1, "Expected Abstraction Completion Date",
                 "06/08/2015");
         verifyColumnValue(1, "Business Days on Hold (CTRP)", "0");
         verifyColumnValue(1, "Business Days on Hold (Submitter)", "0");
         addOnHold(acceptedTrial, "SUBMISSION_INCOM", date("05/26/2015"),
                 date("05/27/2015"), "CTRP");
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         verifyColumnValue(1, "Expected Abstraction Completion Date",
                 "06/08/2015");
         verifyColumnValue(1, "Business Days on Hold (CTRP)", "2");
         verifyColumnValue(1, "Business Days on Hold (Submitter)", "0");
         addOnHold(acceptedTrial, "SUBMISSION_INCOM", date("05/26/2015"),
                 date("05/27/2015"), "Submitter");
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         verifyColumnValue(1, "Expected Abstraction Completion Date",
                 "06/10/2015");
         verifyColumnValue(1, "Business Days on Hold (CTRP)", "2");
@@ -1573,7 +1573,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
                 date("05/25/2015"), "Submitter");
         addOnHold(acceptedTrial, "SUBMISSION_INCOM", date("05/23/2015"),
                 date("05/25/2015"), "CTRP");
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         verifyColumnValue(1, "Expected Abstraction Completion Date",
                 "06/10/2015");
         verifyColumnValue(1, "Business Days on Hold (CTRP)", "2");
@@ -1586,7 +1586,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         new QueryRunner().update(connection,
                 "update study_protocol set date_last_created=" + jdbcTs(date)
                         + " where identifier=" + acceptedTrial.id);
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         verifyColumnValue(
                 1,
                 "Business Days Since Submitted",
@@ -1598,7 +1598,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         verifyColumnValue(1, "Current On-Hold Date", "");
         addOnHold(acceptedTrial, "SUBMISSION_INCOM", date("05/23/2015"), null,
                 "CTRP");
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         verifyColumnValue(1, "Current On-Hold Date", "05/23/2015");
 
         // Accepted
@@ -1620,7 +1620,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
                 jdbcTs(DateUtils.addDays(date, 4)));
         addMilestone(acceptedTrial, "READY_FOR_TSR",
                 jdbcTs(DateUtils.addDays(date, 5)));
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         verifyColumnValue(1, "Admin Abstraction Completed",
                 fmt(DateUtils.addDays(date, 1)));
         verifyColumnValue(1, "Admin QC Completed",
@@ -1637,21 +1637,21 @@ public class DashboardTest extends AbstractTrialStatusTest {
         clickAndWait("link=Admin/Scientific Check Out");
         assertTrue(s
                 .isTextPresent("Message. Trial Check-Out (Admin and Scientific) Successful"));
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         assertTrue(isTrialInWorkloadTab(acceptedTrial));
         verifyColumnValue(1, "Checked Out By", "CI, ctrpsubstractor (AS)");
         deactivateAllTrials();
         acceptedTrial = createAcceptedTrial();
         logoutPA();
         loginAsAdminAbstractor();
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         clickAndWait("link=" + acceptedTrial.nciID.replaceFirst("NCI-", ""));
         clickAndWait("link=Admin Check Out");
         refresh();
         verifyColumnValue(1, "Checked Out By", "admin-ci (AD)");
         logoutPA();
         loginAsScientificAbstractor();
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         clickAndWait("link=" + acceptedTrial.nciID.replaceFirst("NCI-", ""));
         clickAndWait("link=Scientific Check Out");
         refresh();
@@ -1673,7 +1673,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
                         "update study_protocol set date_last_created='2015-05-04 09:15.000' where identifier="
                                 + second.id);
         loginAsSuperAbstractor();
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         verifyColumnValue(1, "NCI Trial Identifier",
                 first.nciID.replaceFirst("NCI-", ""));
         verifyColumnValue(2, "NCI Trial Identifier",
@@ -1833,15 +1833,15 @@ public class DashboardTest extends AbstractTrialStatusTest {
         // Finally, sort by check out.
         logoutPA();
         loginAsAdminAbstractor();
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         clickAndWait("link=" + first.nciID.replaceFirst("NCI-", ""));
         clickAndWait("link=Admin Check Out");
         logoutPA();
         loginAsScientificAbstractor();
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         clickAndWait("link=" + second.nciID.replaceFirst("NCI-", ""));
         clickAndWait("link=Scientific Check Out");
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         sort("Checked Out By");
         verifyColumnValue(1, "NCI Trial Identifier",
                 first.nciID.replaceFirst("NCI-", ""));
@@ -1871,7 +1871,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
                         + jdbcTs(new Date()) + " where identifier=" + trial.id);
         logoutPA();
         loginAsSuperAbstractor();
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         verifyWorkfloadTabActive();
 
         // Export banner must be at top and at bottom.
@@ -2144,7 +2144,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         logoutUser();
         TrialInfo trial = createAcceptedTrial();
         loginAsAdminAbstractor();
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         clickAndWait("link=" + trial.nciID.replaceFirst("NCI-", ""));
         clickAndWait("link=Admin Check Out");
         assertTrue(s
@@ -2167,7 +2167,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         logoutUser();
         TrialInfo trial = createAcceptedTrial();
         loginAsScientificAbstractor();
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         clickAndWait("link=" + trial.nciID.replaceFirst("NCI-", ""));
         clickAndWait("link=Scientific Check Out");
         assertTrue(s
@@ -2668,7 +2668,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
      * 
      */
     protected void goToDashboardSearch() {
-        clickAndWait("link=Dashboard");
+        clickAndWait("id=dashboardMenuOption");
         clickAndWait("searchid");
     }
 }

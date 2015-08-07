@@ -4,12 +4,35 @@
     <li class="stdnav">
         <div><fmt:message key="pamenu.abstraction"/></div>
         <ul>
-            <c:if test="${sessionScope.isAbstractor || sessionScope.isSuAbstractor || sessionScope.isAdminAbstractor || sessionScope.isScientificAbstractor}">
-                <pa:menuLink href="${pageContext.request.contextPath}/protected/dashboard.action" id="dashboardMenuOption" labelKey="pamenu.abstraction.dashboard" selected="${requestScope.topic == 'dashboard'}"/>            
-            </c:if>        
-            <c:if test="${sessionScope.isResultsAbstractor}">
-                <pa:menuLink href="${pageContext.request.contextPath}/protected/resultsDashboard.action" id="resultsDashboardMenuOption" labelKey="pamenu.results.dashboard" selected="${requestScope.topic == 'resultsDashboard'}"/>
-            </c:if>
+            <li><a href="javascript:void(0);" class="fakelink"><fmt:message key="pamenu.abstraction.dashboard"/></a></li>
+            <li class="stdsub">
+                <ul>
+                <c:if test="${sessionScope.isAbstractor==true}">
+                    <c:set var="dashboardMenu"  value="pamenu.abstraction.dashboardAbs" />
+                </c:if>
+                <c:if test="${sessionScope.isAdminAbstractor==true}">
+                   <c:set var="dashboardMenu" value="pamenu.abstraction.dashboardAdmin" />
+                </c:if>
+                <c:if test="${sessionScope.isScientificAbstractor==true}">
+                   <c:set var="dashboardMenu" value="pamenu.abstraction.dashboardSci" />
+                </c:if>
+
+                <c:if test="${sessionScope.isAdminAbstractor==true && sessionScope.isScientificAbstractor==true}">
+                    <c:set var="dashboardMenu"  value="pamenu.abstraction.dashboardAbsSci" />
+                </c:if>
+                <c:if test="${sessionScope.isSuAbstractor==true}">
+                    <c:set var="dashboardMenu" value="pamenu.abstraction.dashboardSuAbs" />
+                </c:if>
+                   <c:if test="${sessionScope.isAbstractor || sessionScope.isSuAbstractor || sessionScope.isAdminAbstractor || sessionScope.isScientificAbstractor}">
+                       <pa:menuLink href="${pageContext.request.contextPath}/protected/dashboard.action" id="dashboardMenuOption" labelKey="${dashboardMenu}" selected="${requestScope.topic == 'dashboard'}"/>            
+                   </c:if>
+                   
+                   <c:if test="${sessionScope.isResultsAbstractor}">
+                       <pa:menuLink href="${pageContext.request.contextPath}/protected/resultsDashboard.action" id="resultsDashboardMenuOption" labelKey="pamenu.results.dashboard" selected="${requestScope.topic == 'resultsDashboard'}"/>
+                   </c:if>
+                </ul>
+            </li>
+            
             <li><a href="javascript:void(0);" class="fakelink"><fmt:message key="pamenu.abstraction.search"/></a></li>
             <li class="stdsub">
                 <ul>
