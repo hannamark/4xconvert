@@ -219,7 +219,7 @@ public class StudyInboxServiceBean // NOPMD
                     recordChange(
                             dto.getOrganizationIdentifier().getExtension(),
                             updto.getOrganizationIdentifier().getExtension(),
-                            "Summary 4 Funding Sponsor was changed." + SEPARATOR, comments);
+                            "Data Table 4 Funding Sponsor was changed." + SEPARATOR, comments);
                     break;
                 }
             }

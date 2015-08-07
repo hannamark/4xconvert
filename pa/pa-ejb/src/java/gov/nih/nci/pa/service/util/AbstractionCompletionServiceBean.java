@@ -1647,8 +1647,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         			Organization org = correlationUtils.getPAOrganizationByIi(IiConverter.convertToPaOrganizationIi(paOrgId));
         			if (org != null && EntityStatusCode.NULLIFIED.getCode().equals(org.getStatusCode().getCode())) {
         				messages.addWarning("Select NCI Specific Information from Administrative Data menu.",
-        						" Summary 4 Funding Sponsor  status has been set to nullified, "
-        								+ "Please select another Summary 4 Funding Sponsor", 2);
+        						" Data Table 4 Funding Sponsor status has been set to nullified, "
+        								+ "Please select another Data Table 4 Funding Sponsor", 2);
         			}
         		}
         	}

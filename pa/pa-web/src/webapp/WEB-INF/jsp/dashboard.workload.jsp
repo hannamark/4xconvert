@@ -131,7 +131,7 @@
 	<display:column title="CDR ID" property="cdrId" media="excel csv xml" />
 	<display:column title="Amendment #" property="amendmentNumber"
 		media="excel csv xml" />
-	<display:column title="Summary 4 Funding"
+	<display:column title="Data Table 4 Funding"
 		property="summary4FundingSponsorType" media="excel csv xml" />
 	<display:column title="On Hold Date" property="recentOnHoldDate"
 		format="{0,date,MM/dd/yyyy}" media="excel csv xml" />

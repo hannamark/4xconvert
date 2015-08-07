@@ -578,9 +578,9 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assertEquals("Doe,John", getTrialConfValue("Principal Investigator:")
                 .replaceAll("\\s", ""));
         assertEquals("National",
-                getTrialConfValue("Summary 4 Funding Sponsor Type:"));
+                getTrialConfValue("Data Table 4 Funding Sponsor Type:"));
         assertEquals("National Cancer Institute",
-                getTrialConfValue("Summary 4 Funding Sponsor:"));
+                getTrialConfValue("Data Table 4 Funding Sponsor:"));
         assertEquals("PG" + rand, getTrialConfValue("Program code:"));
 
         assertEquals("", selenium.getValue("trialDTO_statusCode"));
@@ -783,7 +783,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assertEquals("Industrial",
                 getTrialConfValue("Trial Submission Category:"));
         assertEquals("M.D. Anderson Cancer Center",
-                getTrialConfValue("Summary 4 Funding Sponsor/Source:"));
+                getTrialConfValue("Data Table 4 Funding Sponsor/Source:"));
         assertEquals("Yes", getTrialConfValue("Industrial?"));
 
         // Add My Site
@@ -1207,7 +1207,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 .isTextPresent("Please choose a 'Sponsor' using the lookup"));
         assertTrue(selenium.isTextPresent("Responsible Party is required"));
         assertTrue(selenium
-                .isTextPresent("Select the Summary 4 Funding Sponsor"));
+                .isTextPresent("Select the Data Table 4 Funding Sponsor"));
         assertTrue(selenium.isTextPresent("Trial status history is required"));
         assertTrue(selenium.isTextPresent("Please enter a valid status"));
         assertTrue(selenium.isTextPresent("Please enter a valid date"));
@@ -1353,9 +1353,9 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 .replaceAll("\\s", ""));
 
         assertEquals(category,
-                getTrialConfValue("Summary 4 Funding Sponsor Type:"));
+                getTrialConfValue("Data Table 4 Funding Sponsor Type:"));
         assertEquals("National Cancer Institute",
-                getTrialConfValue("Summary 4 Funding Sponsor/Source:"));
+                getTrialConfValue("Data Table 4 Funding Sponsor/Source:"));
         assertEquals("PG" + rand, getTrialConfValue("Program code:"));
 
         verifyTrialStatus(nciID, "Approved");

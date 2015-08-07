@@ -78,7 +78,7 @@
                 var url = 'ajaxTrialValidationdisplaySummary4FundingSponsor.action';
                 var params = { orgId: orgid };
                 var div = $('loadSummary4FundingSponsorField');   
-                div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading Summary 4 Sponsor...</div>';
+                div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading Data Table 4 Sponsor...</div>';
                 var aj = callAjaxPost(div, url, params);
             }
             

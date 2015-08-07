@@ -1291,7 +1291,7 @@ a.count {
 											<s:set name="anatomicSites"
 												value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getAnatomicSites()" />
                                         <td scope="row" class="label"><label
-                                            for="anatomicSites">Summary 4 Anatomic Site</label></td>
+                                            for="anatomicSites">Data Table 4 Anatomic Site</label></td>
                                         <td><s:select size="2" multiple="true"
                                                 listKey="id" listValue="displayName"
                                                 id="anatomicSites" name="anatomicSites" list="#anatomicSites"
@@ -1373,7 +1373,7 @@ a.count {
 										media="excel csv xml" />
 									<display:column title="Amendment #" property="amendmentNumber"
 										media="excel csv xml" />
-                                    <display:column  title="Summary 4 Funding" property="summary4FundingSponsorType"
+                                    <display:column  title="Data Table 4 Funding" property="summary4FundingSponsorType"
                                         media="excel csv xml"/>                                        
                                     <display:column  title="On Hold Date" property="recentOnHoldDate" format="{0,date,MM/dd/yyyy}"
 										media="excel csv xml" />
@@ -1584,7 +1584,7 @@ reason: ${not empty results.onHoldReasons?results.onHoldReasons:'N/A'}
 										</td>
 									</tr>
 									<tr>
-										<td scope="row" class="label">Summary 4 Funding</td>
+										<td scope="row" class="label">Data Table 4 Funding</td>
                                         <td><c:out value="${func:capitalizeFully(fn:replace(queryDTO.summary4FundingSponsorType, '_',' '))}"></c:out>
 										</td>
 									</tr>

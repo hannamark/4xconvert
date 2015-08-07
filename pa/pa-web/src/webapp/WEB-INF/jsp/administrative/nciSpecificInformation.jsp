@@ -153,7 +153,7 @@
                     </tr>      
                     <tr>
                         <td scope="row" class="label">
-                            <label for="summary4FundingSponsor">Summary 4 Funding Sponsor/Source:</label>
+                            <label for="summary4FundingSponsor">Data Table 4 Funding Sponsor/Source:</label>
                         </td>
                         <td class="value">
                             <div id="loadOrgField">
