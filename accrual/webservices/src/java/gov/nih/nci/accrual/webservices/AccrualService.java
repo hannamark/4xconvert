@@ -9,6 +9,7 @@ import gov.nih.nci.accrual.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
+import gov.nih.nci.accrual.webservices.types.BatchFile;
 import gov.nih.nci.accrual.webservices.types.DiseaseCode;
 import gov.nih.nci.accrual.webservices.types.Race;
 import gov.nih.nci.accrual.webservices.types.StudySubject;
@@ -17,6 +18,7 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Ed;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
@@ -24,6 +26,7 @@ import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -41,6 +44,7 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -261,6 +265,23 @@ public final class AccrualService extends BaseRestService { // NOPMD
             return handleException(e);
         }
     }
+    
+    @POST
+    @Path("/batch")
+    @NoCache
+    public Response submitBatchFile(@Validate BatchFile batchFile ) {
+        try {
+             
+             if (batchFile!=null && batchFile.getValue() !=null && batchFile.getValue().length > 0) {
+                 submitBatchFile(batchFile.getValue());
+             } else {
+                 return Response.status(Status.BAD_REQUEST).type(TXT_PLAIN).build();
+             }
+            return Response.status(Status.OK).type(TXT_PLAIN).build();
+        } catch (Exception e) {
+            return handleException(e);
+        }
+    }
 
     /**
      * @param idType
@@ -451,5 +472,15 @@ public final class AccrualService extends BaseRestService { // NOPMD
                     + IiConverter.convertToString(siteID) + " is not found.");
         }
         return dto;
+    }
+    
+    /** Submit batch file for processing
+     * @param batchData
+     * @throws PAException 
+     * @throws Exception
+     */
+    private void submitBatchFile(byte [] batchData) throws PAException  {
+       Ed batchFile = EdConverter.convertToEd(batchData);
+       AccrualServiceLocator.getInstance().getSubjectAccrualService().submitBatchData(batchFile);
     }
 }

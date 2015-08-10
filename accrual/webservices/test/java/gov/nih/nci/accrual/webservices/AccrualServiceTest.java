@@ -22,6 +22,7 @@ import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.accrual.util.PoServiceLocator;
 import gov.nih.nci.accrual.util.ServiceLocatorAccInterface;
 import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
+import gov.nih.nci.accrual.webservices.types.BatchFile;
 import gov.nih.nci.accrual.webservices.types.ObjectFactory;
 import gov.nih.nci.accrual.webservices.types.StudySubject;
 import gov.nih.nci.accrual.webservices.types.StudySubjects;
@@ -49,6 +50,9 @@ import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.util.pomock.MockIdentifiedOrganizationCorrelationService;
 import gov.nih.nci.pa.util.pomock.MockOrganizationEntityService;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.Arrays;
@@ -63,6 +67,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
@@ -449,6 +454,27 @@ public class AccrualServiceTest {
                 + "nci" + "/" + "NCI-2014-00001" + " is not found.",
                 r.getEntity());
 
+    }
+    
+    @Test
+    public void testSubmitEmptyBatchFile() {
+      BatchFile batchFile = new BatchFile();
+       Response response = service.submitBatchFile(batchFile);
+       assertEquals(Status.BAD_REQUEST.getStatusCode() , response.getStatus());
+        
+    }
+    
+    @Test
+    public void testSubmitBatchFile() throws URISyntaxException, IOException {
+        
+        File file = new File(this.getClass().getResource("/CDUS_Complete_Rest_unit.txt").toURI());
+        String data = FileUtils.readFileToString(file);
+        BatchFile batchFile = new BatchFile();
+        batchFile.setValue(data.getBytes());
+        
+       Response response = service.submitBatchFile(batchFile);
+       assertEquals(Status.OK.getStatusCode() , response.getStatus());
+        
     }
 
     @Test
