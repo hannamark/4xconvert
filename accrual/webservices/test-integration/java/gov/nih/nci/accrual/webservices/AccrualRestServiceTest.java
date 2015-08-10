@@ -248,11 +248,12 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
      * @throws UnsupportedEncodingException
      * @throws IOException
      * @throws ClientProtocolException
+     * @throws SQLException
      */
     private void submitAccrualCountAndVerify(
             TrialRegistrationConfirmation rConf, String serviceURL,
             String accrualCount) throws UnsupportedEncodingException,
-            IOException, ClientProtocolException {
+            IOException, ClientProtocolException, SQLException {
         HttpResponse response;
         baseURL = "http://" + TestProperties.getServerHostname() + ":"
                 + TestProperties.getServerPort() + "/accrual-services";
@@ -277,7 +278,8 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
     }
 
     private void verifyAccrualCount(TrialRegistrationConfirmation rConf,
-            String accrualCount) {
+            String accrualCount) throws SQLException {
+        removeDcpIdFromTrial(rConf);
         login();
         clickAndWait("link=Trial Search");
         clickAndWait("link=" + rConf.getNciTrialID());
@@ -475,7 +477,7 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
         subject.setZipCode("99999");
         subjects.getStudySubject().add(subject);
         submitAndVerify(rConf, siteID, subjects, "/sites/" + siteID);
-        
+
         assertEquals(
                 "1",
                 new QueryRunner()
@@ -775,8 +777,7 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
         submitAndVerify(rConf, siteID, subjects,
                 "/trials/nci/" + rConf.getNciTrialID() + "/sites/ctep/DCP");
     }
-    
-    
+
     @Test
     public final void testSubmitStudySubjectsDiseaseError()
             throws ClientProtocolException, ParseException, JAXBException,
@@ -794,15 +795,14 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
         grantAccrualAccess("submitter-ci", siteID);
 
         StudySubjects subjects = new ObjectFactory().createStudySubjects();
-        StudySubject subject = createSubject("SU001","ICD9","141.0");
+        StudySubject subject = createSubject("SU001", "ICD9", "141.0");
         subjects.getStudySubject().add(subject);
-        
+
         baseURL = "http://" + TestProperties.getServerHostname() + ":"
                 + TestProperties.getServerPort() + "/accrual-services";
         String xml = marshall(subjects);
         StringEntity entity = new StringEntity(xml);
-        
-        
+
         String url = baseURL + "/sites/" + siteID;
         LOG.info("Hitting " + url);
         LOG.info("Payload: " + xml);
@@ -814,19 +814,19 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
         response = httpClient.execute(req);
         LOG.info("Response code: " + getReponseCode(response));
         assertEquals(400, getReponseCode(response));
-        assertTrue(EntityUtils.toString(response.getEntity(), "utf-8")
-           .contains("The subject's disease's coding system ICD9 is different from the one used on the trial: ICD10"));
-        
+        assertTrue(EntityUtils
+                .toString(response.getEntity(), "utf-8")
+                .contains(
+                        "The subject's disease's coding system ICD9 is different from the one used on the trial: ICD10"));
         subjects.getStudySubject().clear();
-        subject = createSubject("SU001","ICD9","1v99.00");
+        subject = createSubject("SU001", "ICD9", "1v99.00");
         subjects.getStudySubject().add(subject);
-        
+
         baseURL = "http://" + TestProperties.getServerHostname() + ":"
                 + TestProperties.getServerPort() + "/accrual-services";
         xml = marshall(subjects);
         entity = new StringEntity(xml);
-        
-        
+
         url = baseURL + "/sites/" + siteID;
         LOG.info("Hitting " + url);
         LOG.info("Payload: " + xml);
@@ -838,15 +838,15 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
         response = httpClient.execute(req);
         LOG.info("Response code: " + getReponseCode(response));
         assertEquals(400, getReponseCode(response));
-        assertTrue(EntityUtils.toString(response.getEntity(), "utf-8")
-           .contains("Disease code does not exist for given Disease code System."));
-        
+        assertTrue(EntityUtils
+                .toString(response.getEntity(), "utf-8")
+                .contains(
+                        "Disease code does not exist for given Disease code System."));
     }
+
     
-    @Test
-    public final void testSubmitEmptyBatchFile()
-            throws Exception {
-       
+
+    public final void testSubmitEmptyBatchFile() throws Exception {
 
         baseURL = "http://" + TestProperties.getServerHostname() + ":"
                 + TestProperties.getServerPort() + "/accrual-services/batch";
@@ -858,20 +858,15 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
 
         HttpResponse response = httpClient.execute(req);
         assertEquals(400, getReponseCode(response));
-       
-        
+
     }
-    
+
     @Test
-    public final void testSubmitBatchFile()
-            throws Exception {
-        
-       
-        
+    public final void testSubmitBatchFile() throws Exception {
+
         baseURL = "http://" + TestProperties.getServerHostname() + ":"
                 + TestProperties.getServerPort() + "/services";
-        
-        
+
         TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset_accrual.xml");
         ParticipatingSite upd = readParticipatingSiteFromFile("/integration_ps_accruing_add_accrual.xml");
         HttpResponse response = addSite("pa", rConf.getPaTrialID() + "", upd);
@@ -879,18 +874,17 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
         long siteID = Long.parseLong(EntityUtils.toString(response.getEntity(),
                 "utf-8"));
         grantAccrualAccess("submitter-ci", siteID);
-        
-      
 
-     
         baseURL = "http://" + TestProperties.getServerHostname() + ":"
                 + TestProperties.getServerPort() + "/accrual-services/batch";
-        
-        File file = new File(this.getClass().getResource("/CDUS_Complete_Rest.txt").toURI());
-     
+
+        File file = new File(this.getClass()
+                .getResource("/CDUS_Complete_Rest.txt").toURI());
+
         String data = FileUtils.readFileToString(file);
-        String modifiedData  = data.replaceAll("\\{nciId\\}", rConf.getNciTrialID());
-     
+        String modifiedData = data.replaceAll("\\{nciId\\}",
+                rConf.getNciTrialID());
+
         BatchFile batchFile = new BatchFile();
         batchFile.setValue(modifiedData.getBytes());
         String xml = marshall(batchFile);
@@ -901,40 +895,38 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
 
         response = httpClient.execute(req);
         assertEquals(200, getReponseCode(response));
-        
+
         waitForEmailsToArrive(3);
         Iterator emailIter = server.getReceivedEmail();
-        
-        //skip trial registration emails
+
+        // skip trial registration emails
         emailIter.next();
         emailIter.next();
-        
-        //check if submission is sucessful
+
+        // check if submission is sucessful
         SmtpMessage email = (SmtpMessage) emailIter.next();
         String subject = email.getHeaderValues("Subject")[0];
         String body = email.getBody().replaceAll("\\s+", " ")
                 .replaceAll(">\\s+", ">");
-        
-       assertEquals("NCI CTRP: Accrual SUBMISSION SUCCESSFUL for "+rConf.getNciTrialID(), subject);
-       assert body.contains("The CTRP processed your file successfully.");
-       
-       //check if records added in database
-       long count = getRecordCount(rConf.getPaTrialID());
-       
-       assert count==2;
-       
+
+        assertEquals(
+                "NCI CTRP: Accrual SUBMISSION SUCCESSFUL for "
+                        + rConf.getNciTrialID(), subject);
+        assert body.contains("The CTRP processed your file successfully.");
+
+        // check if records added in database
+        long count = getRecordCount(rConf.getPaTrialID());
+
+        assert count == 2;
+
     }
-    
+
     @Test
-    public final void testSubmitBatchFileWithZip()
-            throws Exception {
-        
-       
-        
+    public final void testSubmitBatchFileWithZip() throws Exception {
+
         baseURL = "http://" + TestProperties.getServerHostname() + ":"
                 + TestProperties.getServerPort() + "/services";
-        
-        
+
         TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset_accrual.xml");
         ParticipatingSite upd = readParticipatingSiteFromFile("/integration_ps_accruing_add_accrual.xml");
         HttpResponse response = addSite("pa", rConf.getPaTrialID() + "", upd);
@@ -942,21 +934,18 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
         long siteID = Long.parseLong(EntityUtils.toString(response.getEntity(),
                 "utf-8"));
         grantAccrualAccess("submitter-ci", siteID);
-        
-      
 
-     
         baseURL = "http://" + TestProperties.getServerHostname() + ":"
                 + TestProperties.getServerPort() + "/accrual-services/batch";
-        
-        File file = new File(this.getClass().getResource("/CDUS_Complete_Rest.txt").toURI());
-        
-        
-     
+
+        File file = new File(this.getClass()
+                .getResource("/CDUS_Complete_Rest.txt").toURI());
+
         String data = FileUtils.readFileToString(file);
-        String modifiedData  = data.replaceAll("\\{nciId\\}", rConf.getNciTrialID());
-        
-        //zip this file in memory 
+        String modifiedData = data.replaceAll("\\{nciId\\}",
+                rConf.getNciTrialID());
+
+        // zip this file in memory
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ZipOutputStream zos = new ZipOutputStream(baos);
         ZipEntry entry = new ZipEntry("CDUS_Complete_Rest.zip");
@@ -965,10 +954,10 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
         zos.write(modifiedData.getBytes());
         zos.closeEntry();
         zos.close();
-        
-        byte [] zipData = baos.toByteArray();
+
+        byte[] zipData = baos.toByteArray();
         baos.close();
-     
+
         BatchFile batchFile = new BatchFile();
         batchFile.setValue(zipData);
         String xml = marshall(batchFile);
@@ -979,31 +968,166 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
 
         response = httpClient.execute(req);
         assertEquals(200, getReponseCode(response));
-        
+
         waitForEmailsToArrive(3);
         Iterator emailIter = server.getReceivedEmail();
-        
-        //skip trial registration emails
+
+        // skip trial registration emails
         emailIter.next();
         emailIter.next();
-        
-        //check if submission is sucessful
+
+        // check if submission is sucessful
         SmtpMessage email = (SmtpMessage) emailIter.next();
         String subject = email.getHeaderValues("Subject")[0];
         String body = email.getBody().replaceAll("\\s+", " ")
                 .replaceAll(">\\s+", ">");
-        
-       assertEquals("NCI CTRP: Accrual SUBMISSION SUCCESSFUL for "+rConf.getNciTrialID(), subject);
-       assert body.contains("The CTRP processed your file successfully.");
-       
-       //check if records added in database
-       long count = getRecordCount(rConf.getPaTrialID());
-       
-       assert count==2;
-       
+
+        assertEquals(
+                "NCI CTRP: Accrual SUBMISSION SUCCESSFUL for "
+                        + rConf.getNciTrialID(), subject);
+        assert body.contains("The CTRP processed your file successfully.");
+
+        // check if records added in database
+        long count = getRecordCount(rConf.getPaTrialID());
+
+        assert count == 2;
+
     }
     
+    @Test
+    public final void testSubmitStudySubjectsDcpId()
+            throws ClientProtocolException, ParseException, JAXBException,
+            SAXException, SQLException, IOException,
+            DatatypeConfigurationException, java.text.ParseException {
 
+        baseURL = "http://" + TestProperties.getServerHostname() + ":"
+                + TestProperties.getServerPort() + "/services";
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
+
+        ParticipatingSite upd = readParticipatingSiteFromFile("/integration_ps_accruing_add.xml");
+
+        String dcpString = "dcp001";
+        Integer site_dcpID = insertDcpID(rConf, dcpString);
+        LOG.info("site_dcpID : " + site_dcpID);
+
+        HttpResponse response = addSite("pa", "" + rConf.getPaTrialID(), upd);
+        assertEquals(200, getReponseCode(response));
+        long siteID = Long.parseLong(EntityUtils.toString(response.getEntity(),
+                "utf-8"));
+        LOG.info("siteID : " + siteID);
+        grantAccrualAccess("submitter-ci", siteID);
+
+        StudySubjects subjects = new ObjectFactory().createStudySubjects();
+        StudySubject subject = createSubject("SU001");
+        subjects.getStudySubject().add(subject);
+
+        submitAndVerify(rConf, siteID, subjects, "/trials/dcp/" + dcpString
+                + "/sites/ctep/DCP");
+    }
+
+    @Test
+    public final void testDeleteStudySubjectDcpId()
+            throws ClientProtocolException, ParseException, JAXBException,
+            SAXException, SQLException, IOException,
+            DatatypeConfigurationException, java.text.ParseException {
+
+        baseURL = "http://" + TestProperties.getServerHostname() + ":"
+                + TestProperties.getServerPort() + "/services";
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
+        long siteID = addSiteSubjectsAndVerify(rConf);
+        String dcpId = "dcp001";
+        Integer site_dcpID = insertDcpID(rConf, dcpId);
+        deleteAndVerify(rConf, "/trials/dcp/" + dcpId
+                + "/sites/ctep/DCP/subjects/SU001");
+    }
+
+    @Test
+    public final void testUpdateAccrualCountBySiteDcpId()
+            throws ClientProtocolException, ParseException, JAXBException,
+            SAXException, SQLException, IOException,
+            DatatypeConfigurationException, java.text.ParseException {
+
+        baseURL = "http://" + TestProperties.getServerHostname() + ":"
+                + TestProperties.getServerPort() + "/services";
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
+        makeAbbreviated(rConf);
+        ParticipatingSite upd = readParticipatingSiteFromFile("/integration_ps_accruing_add.xml");
+
+        String dcpId = "dcp001";
+        Integer site_dcpID = insertDcpID(rConf, dcpId);
+        LOG.info("site_dcpID : " + site_dcpID);
+
+        HttpResponse response = addSite("pa", rConf.getPaTrialID() + "", upd);
+        assertEquals(200, getReponseCode(response));
+        long siteID = Long.parseLong(EntityUtils.toString(response.getEntity(),
+                "utf-8"));
+
+        grantAccrualAccess("submitter-ci", siteID);
+        LOG.info("siteID : " + siteID);
+
+        String serviceURL = "/trials/dcp/" + dcpId + "/sites/ctep/DCP/count";
+        String accrualCount = "1566";
+
+        submitAccrualCountAndVerify(rConf, serviceURL, accrualCount);
+    }
+
+    private long getRecordCount(long trialId) throws SQLException {
+
+        String sql = "select count(*) from study_subject where study_protocol_identifier ="
+                + trialId;
+
+        long recordCount = 0;
+        QueryRunner runner = new QueryRunner();
+        final List<Object[]> results = runner.query(connection, sql,
+                new ArrayListHandler());
+        for (Object[] row : results) {
+            recordCount = (long) row[0];
+
+        }
+        return recordCount;
+    }
+
+    private String marshall(BatchFile batchFile) throws JAXBException {
+        JAXBContext jc = JAXBContext.newInstance(ObjectFactory.class);
+        Marshaller m = jc.createMarshaller();
+        StringWriter out = new StringWriter();
+        m.marshal(new JAXBElement<BatchFile>(new QName(
+                "gov.nih.nci.accrual.webservices.types", "batchFile"),
+                BatchFile.class, batchFile), out);
+        return out.toString();
+    }
+
+    private Integer insertDcpID(TrialRegistrationConfirmation rConf, String dcp)
+            throws SQLException {
+        String orgName = "National Cancer Institute Division of Cancer Prevention";
+
+        String sql = "INSERT INTO study_site( identifier, functional_code, local_sp_indentifier, review_board_approval_number, review_board_approval_date, "
+                + " review_board_approval_status_code, target_accrual_number, study_protocol_identifier, healthcare_facility_identifier,"
+                + " research_organization_identifier, oversight_committee_identifier,             status_code, "
+                + "status_date_range_low, date_last_created, date_last_updated,             "
+                + "status_date_range_high, review_board_organizational_affiliation,             "
+                + "program_code_text, accrual_date_range_low, accrual_date_range_high,         "
+                + "    user_last_created_id, user_last_updated_id)    VALUES "
+                + "((SELECT NEXTVAL('HIBERNATE_SEQUENCE')),'IDENTIFIER_ASSIGNER', "
+                + "'"
+                + dcp
+                + "' , NULL, current_timestamp, NULL,             null, "
+                + rConf.getPaTrialID()
+                + ", null ,"
+                + getOrgIdByName(orgName)
+                + ","
+                + "NULL, 'PENDING' , current_timestamp , current_timestamp, current_timestamp ,             "
+                + "current_timestamp , null,'', current_timestamp  , current_timestamp , NULL, NULL);";
+
+        QueryRunner runner = new QueryRunner();
+        runner.update(connection, sql);
+
+        Integer ssId = (Integer) runner
+                .query(connection,
+                        "select identifier from study_site order by identifier desc limit 1",
+                        new ArrayHandler())[0];
+        return ssId;
+    }
 
     private void submitAndVerify(TrialRegistrationConfirmation rConf,
             long siteID, StudySubjects subjects, String serviceURL)
@@ -1032,13 +1156,29 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
         verifySubjectsOnTrial(rConf, siteID, subjects);
     }
 
+    private void removeDcpIdFromTrial(TrialRegistrationConfirmation rConf)
+            throws SQLException {
+        String orgName = "National Cancer Institute Division of Cancer Prevention";
+        QueryRunner runner = new QueryRunner();
+        runner.update(
+                connection,
+                "delete from study_site where functional_code::text = 'IDENTIFIER_ASSIGNER'::text AND "
+                        + "(research_organization_identifier = "
+                        + getOrgIdByName(orgName)
+                        + " ) "
+                        + "AND study_protocol_identifier = "
+                        + rConf.getPaTrialID());
+
+    }
+
     private void verifySubjectsOnTrial(TrialRegistrationConfirmation rConf,
             long siteID, StudySubjects subjects) throws SQLException {
+        removeDcpIdFromTrial(rConf);
         login();
         for (StudySubject ss : subjects.getStudySubject()) {
             clickAndWait("link=Trial Search");
             clickAndWait("link=" + rConf.getNciTrialID());
-            selenium.select("xpath=//select[@name='row_length']", "100");            
+            selenium.select("xpath=//select[@name='row_length']", "100");
             verifySubject(ss, siteID);
         }
     }
@@ -1053,10 +1193,12 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
 
     private void verifySubject(StudySubject ss, long siteID)
             throws SQLException {
-        moveElementIntoView(By.xpath("//a[text()='"+ss.getIdentifier().toUpperCase()+"']"));
+        moveElementIntoView(By.xpath("//a[text()='"
+                + ss.getIdentifier().toUpperCase() + "']"));
         clickAndWait("link=" + ss.getIdentifier().toUpperCase());
         clickAndWait("xpath=//i[@class='fa-pencil']");
-        assertEquals(ss.getIdentifier().toUpperCase(), selenium.getValue("id=identifier"));
+        assertEquals(ss.getIdentifier().toUpperCase(),
+                selenium.getValue("id=identifier"));
         assertEquals(DateFormatUtils.format(ss.getBirthDate()
                 .toGregorianCalendar(), "MM/yyyy"),
                 selenium.getValue("id=birthDate"));
@@ -1084,8 +1226,7 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
         assertEquals(siteID + "", selenium.getValue("id=organizationName"));
 
     }
-    
-    
+
     private String getDiseaseId(DiseaseCode disease) throws SQLException {
         QueryRunner runner = new QueryRunner();
         return ""
@@ -1107,7 +1248,7 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
     private void login() {
         openAndWait("/accrual");
         selenium.type("j_username", "submitter-ci");
-        selenium.type("j_password", "pass");        
+        selenium.type("j_password", "pass");
         clickAndWait("xpath=//i[@class='fa-arrow-circle-right']");
         clickAndWait("id=acceptDisclaimer");
 
@@ -1120,15 +1261,6 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
         m.marshal(new JAXBElement<StudySubjects>(new QName(
                 "gov.nih.nci.accrual.webservices.types", "studySubjects"),
                 StudySubjects.class, subjects), out);
-        return out.toString();
-    }
-    private String marshall(BatchFile batchFile) throws JAXBException {
-        JAXBContext jc = JAXBContext.newInstance(ObjectFactory.class);
-        Marshaller m = jc.createMarshaller();
-        StringWriter out = new StringWriter();
-        m.marshal(new JAXBElement<BatchFile>(new QName(
-                "gov.nih.nci.accrual.webservices.types", "batchFile"),
-                BatchFile.class, batchFile), out);
         return out.toString();
     }
 
@@ -1162,34 +1294,16 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
 
         return ss;
     }
-    
-    
-    
-    private StudySubject createSubject(String id, String diseaseCode, String diseaseValue)
-            throws DatatypeConfigurationException, java.text.ParseException {
+
+    private StudySubject createSubject(String id, String diseaseCode,
+            String diseaseValue) throws DatatypeConfigurationException,
+            java.text.ParseException {
         StudySubject ss = createSubject(id);
         final DiseaseCode disease = new DiseaseCode();
         disease.setCodeSystem(diseaseCode);
         disease.setValue(diseaseValue);
         ss.setDisease(disease);
         return ss;
-    }
-    
-    private long getRecordCount(long trialId)
-            throws SQLException {
-      
-         String sql = "select count(*) from study_subject where study_protocol_identifier ="+trialId;   
-       
-       
-        long recordCount =0;
-        QueryRunner runner = new QueryRunner();
-        final List<Object[]> results = runner.query(connection, sql,
-                new ArrayListHandler());
-        for (Object[] row : results) {
-            recordCount = (long) row[0];
-           
-        }
-        return recordCount;
     }
 
     @Override

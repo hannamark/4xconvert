@@ -235,6 +235,21 @@ public class AccrualServiceTest {
 
     /**
      * Test method for
+     * {@link gov.nih.nci.accrual.webservices.AccrualService#updateAccrualCount(java.lang.String, java.lang.String, java.lang.String, int)}
+     * .
+     * 
+     * @throws PAException
+     */
+    @Test
+    public final void testUpdateAccrualCountByDcpId() throws PAException {
+        Response r = service.updateAccrualCount("dcp", "NCI-2014-00001", "DCP",
+                89234);
+        assertEquals(Status.OK.getStatusCode(), r.getStatus());
+        verifyAccrualCountMethodCalls();
+    }
+
+    /**
+     * Test method for
      * {@link gov.nih.nci.accrual.webservices.AccrualService#deleteStudySubject(long, java.lang.String)}
      * .
      * 
@@ -309,7 +324,7 @@ public class AccrualServiceTest {
         assertEquals(Status.OK.getStatusCode(), r.getStatus());
         verifyManageSubjectsCall(reg);
     }
-    
+
     /**
      * .
      * 
@@ -341,7 +356,6 @@ public class AccrualServiceTest {
                 CdConverter.convertCdToString(dto.getPaymentMethod()));
         assertEquals("1", dto.getDiseaseIdentifier().getExtension());
     }
-
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private void verifyManageSubjectsCall(StudySubjects reg) throws PAException {
@@ -428,6 +442,15 @@ public class AccrualServiceTest {
     }
 
     @Test
+    public final void testSubmitStudySubjectsDcpId() throws JAXBException,
+            PAException {
+        StudySubjects reg = readStudySubjectsFromFile("/add_update_subject_icdo3.xml");
+        Response r = service.submitStudySubjects("dcp", "103816", "DCP", reg);
+        assertEquals(Status.OK.getStatusCode(), r.getStatus());
+        verifyManageSubjectsCall(reg);
+    }
+
+    @Test
     public final void testTrialNotFound() throws PAException {
         StudyProtocolServiceRemote spSvc = PaServiceLocator.getInstance()
                 .getStudyProtocolService();
@@ -455,26 +478,27 @@ public class AccrualServiceTest {
                 r.getEntity());
 
     }
-    
+
     @Test
     public void testSubmitEmptyBatchFile() {
-      BatchFile batchFile = new BatchFile();
-       Response response = service.submitBatchFile(batchFile);
-       assertEquals(Status.BAD_REQUEST.getStatusCode() , response.getStatus());
-        
+        BatchFile batchFile = new BatchFile();
+        Response response = service.submitBatchFile(batchFile);
+        assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+
     }
-    
+
     @Test
     public void testSubmitBatchFile() throws URISyntaxException, IOException {
-        
-        File file = new File(this.getClass().getResource("/CDUS_Complete_Rest_unit.txt").toURI());
+
+        File file = new File(this.getClass()
+                .getResource("/CDUS_Complete_Rest_unit.txt").toURI());
         String data = FileUtils.readFileToString(file);
         BatchFile batchFile = new BatchFile();
         batchFile.setValue(data.getBytes());
-        
-       Response response = service.submitBatchFile(batchFile);
-       assertEquals(Status.OK.getStatusCode() , response.getStatus());
-        
+
+        Response response = service.submitBatchFile(batchFile);
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+
     }
 
     @Test
