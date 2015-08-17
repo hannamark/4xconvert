@@ -67,6 +67,13 @@
 	                  <li><a id="viewAccrualAccessAssignmentHistoryMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('${pageContext.request.contextPath}/siteadmin/manageAccrualAccessassignmentHistory.action');" >Assignment History</a></li>
 	                </ul>
 	              </li>
+	              <!-- Added for PO-7595 #Start -->
+                  
+                  <li class="dropdown-submenu">
+                    <a id="viewReportViewersMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('${pageContext.request.contextPath}/siteadmin/viewReportViewerssearch.action');">Report Viewers</a>
+                  </li>
+                  
+                  <!-- Added for PO-7595 #End -->
 	            </ul>
 	          </li>
           </c:if>

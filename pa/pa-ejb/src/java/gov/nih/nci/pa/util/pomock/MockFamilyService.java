@@ -79,6 +79,21 @@ public final class MockFamilyService implements FamilyServiceRemote { // NOPMD
         return dto;
     }
 
+    public static FamilyOrganizationRelationshipDTO createRelatedFamilyOrganizationRelationship(
+            FamilyOrganizationRelationshipDTO dto, FamilyDTO familyDTO) {
+	
+	familyDTO = create(familyDTO);
+	
+	dto.setFamilyIdentifier(familyDTO.getIdentifier());
+	dto.setIdentifier(IiConverter.convertToPoFamilyIi(SEQ+++""));
+
+	FAMILIES.put(IiConverter.convertToLong(familyDTO.getIdentifier()), familyDTO);
+        RELATIONSHIPS.put(IiConverter.convertToLong(dto.getIdentifier()), dto);
+
+        return dto;
+    }
+    
+    
     /*
      * (non-Javadoc)
      * 

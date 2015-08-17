@@ -132,6 +132,8 @@ public class RegistryUser extends AbstractEntity implements Auditable {
     private Boolean enableEmails;
     private Boolean siteAccrualSubmitter;
     private Boolean familyAccrualSubmitter;
+    private Boolean enableReports;
+    private String reportGroups;
 
     /**
      * @return the csmUser
@@ -489,5 +491,43 @@ public class RegistryUser extends AbstractEntity implements Auditable {
      */
     public void setFamilyAccrualSubmitter(Boolean familyAccrualSubmitter) {
         this.familyAccrualSubmitter = familyAccrualSubmitter;
+    }
+    
+    /*
+     * Created below fields for JIRA PO-7595
+     */
+
+    /**
+     * @return enableReports - shows whether user have permission to view
+     *         reports
+     */
+    @Column(name = "ENABLE_REPORTS")
+    public Boolean getEnableReports() {
+      return enableReports;
+    }
+
+    /**
+     * @param enableReports
+     *            - sets whether user have permission to view reports
+     */
+    public void setEnableReports(Boolean enableReports) {
+      this.enableReports = enableReports;
+    }
+
+    /**
+     * @return reportGroups - shows all the report groups those are allowed for
+     *         the user
+     */
+    @Column(name = "REPORT_GROUPS")
+    public String getReportGroups() {
+      return reportGroups;
+    }
+
+    /**
+     * @param reportGroups
+     *            - sets all the allowed report groups for the user
+     */
+    public void setReportGroups(String reportGroups) {
+      this.reportGroups = reportGroups;
     }
 }

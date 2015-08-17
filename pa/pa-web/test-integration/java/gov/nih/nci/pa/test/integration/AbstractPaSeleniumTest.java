@@ -895,6 +895,93 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                                 + ctgovEntryID);
     }
 
+    protected Number createCSMUser()throws SQLException {
+	
+	QueryRunner runner = new QueryRunner();
+	String idSql = "select max(user_id) + 1 from csm_user";
+	
+        Number id = (Number) runner
+                .query(connection,
+                        idSql,
+                        new ArrayHandler())[0];
+        
+        String loginName = "test"+id.intValue();
+        
+        String sql = "INSERT INTO csm_user VALUES ("+id.intValue()+", "
+        	+ "'"+loginName+"', '', '', NULL, NULL, NULL, NULL, 'BtM2GNbiAxg=', "
+        	+ "NULL, NULL, NULL, '2015-08-04', 0, NULL, NULL)";
+        
+        runner.update(connection, sql);
+        
+        return id;
+    }
+    
+    protected Number createRegistryUser(Number csmUserId)throws SQLException {
+	QueryRunner runner = new QueryRunner();
+	String idSql = "select max(identifier) + 1 from registry_user";
+	
+        
+        Number id = (Number) runner
+                .query(connection,
+                        idSql,
+                        new ArrayHandler())[0];
+        String firstName = "test"+id.intValue();
+        
+        String sql = "INSERT INTO registry_user VALUES ("+id.intValue()+", "
+        	+ "'"+firstName+"', NULL, 'CI', '2115 E. Jefferson St.', 'North Bethesda', 'Maryland', '20852', 'USA', '123-456-7890', "
+        	+ "'National Cancer Institute Division of Cancer Prevention'," 
+        	+csmUserId+", NULL, NULL, 'Test Org', NULL, NULL, 'testusersel@example.com', 3, "
+        	+ "'MEMBER', NULL, NULL, true, false, false, false, NULL)";
+        
+        runner.update(connection, sql);
+        
+        return id;
+    }
+    
+    protected boolean checkReportViewerColumnUpdated(Number id) throws SQLException {
+	boolean retVal = false;
+	
+	QueryRunner runner = new QueryRunner();
+        String sql = "select enable_reports, report_groups from registry_user where identifier = "+id.intValue();
+
+        Object[] queryResponse = runner.query(connection, sql, new ArrayHandler());
+	
+        if(queryResponse != null && queryResponse.length >=  2) {
+            
+          boolean enableReports = (boolean)queryResponse[0];
+          String reportGroups = (String)queryResponse[1];
+         
+          if(enableReports && reportGroups.equals("Data Table 4")){
+              retVal = true;
+          }
+	} 
+	
+	return retVal;
+    }
+    
+    protected int removeCSMUser(Number userId) throws SQLException {
+	QueryRunner runner = new QueryRunner();
+	
+        String sql = "delete from csm_user where user_id="+userId;
+        
+        
+        int count = runner.update(connection, sql);
+        
+        return count;
+    }
+    
+    protected int removeRegistryUser(Number userId) throws SQLException {
+	QueryRunner runner = new QueryRunner();
+	
+        String sql = "delete from registry_user where identifier="+userId;
+        
+        
+        int count = runner.update(connection, sql);
+        
+        return count;
+    }
+    
+    
     protected Number createCtGovImportLogEntry(TrialInfo trial,
             Number studyInboxID) throws SQLException {
         QueryRunner runner = new QueryRunner();

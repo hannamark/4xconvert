@@ -432,6 +432,14 @@
             <result name="byTrial">/WEB-INF/jsp/viewAccrualAccessAssignmentByTrial.jsp</result>
             <result name="success">/WEB-INF/jsp/manageAccrualAccess.jsp</result>
         </action>
+        <!-- Added for PO-7595 #Start -->
+        <action name="viewReportViewers*" class="gov.nih.nci.registry.action.ReportViewerAction" method="{1}">
+            <result name="success">/WEB-INF/jsp/reportViewers.jsp</result>
+            <result name="input">/WEB-INF/jsp/reportViewers.jsp</result>
+            <result name="viewResults">/WEB-INF/jsp/reportViewers.jsp</result>
+        </action>
+        <!-- Added for PO-7595 #End -->
+        
     </package>
 
     <package name="ctrojson" namespace="/ctro/json" extends="json-default">

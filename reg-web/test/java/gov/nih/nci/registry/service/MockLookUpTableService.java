@@ -43,6 +43,18 @@ public class MockLookUpTableService implements LookUpTableServiceRemote {
         map.put("trial.batchUpload.reportCreateMsg", "create report ${tableRows} ${changeDate}");
         map.put("trial.batchUpload.reporAmendtMsg", "amend report ${tableRows} ${changeDate}");
         map.put("trial.batchUpload.reportMsg", "normal report");
+        
+        /*
+         * Added for test case ReportViewerActionTest - JIRA: PO-7595
+         * 
+         * */
+        map.put("regweb.reportview.availableReports", "Data Table 4,Data Table 3");
+        map.put("regweb.reportview.mail.from","example@semanticbits.com");
+        map.put("regweb.reportview.mail.to","example@semanticbits.com");
+        map.put("regweb.reportview.mail.subject","JUnit Test Mail");
+        map.put("regweb.reportview.mail.body","JUnit Test Mail");
+        map.put("regweb.reportview.dt4.ldapgroup","TEST_GROUP_REPORT_VIEW");
+
     }
 
     /**
