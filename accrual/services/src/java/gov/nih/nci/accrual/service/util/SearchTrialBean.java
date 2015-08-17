@@ -187,26 +187,67 @@ public class SearchTrialBean implements SearchTrialService {
     + " (select study_protocol_identifier from rv_dcp_id where study_protocol_identifier "
     + " =sp.identifier and local_sp_indentifier is not null))";
     
-    /** The Constant NO_CTEP_DCP_TRIALID_SQRY_FAMILY. */
-    public static final String NO_CTEP_DCP_TRIALID_SQRY_FAMILY =
-    "select distinct(sp.identifier) from study_site_accrual_status ssas" 
-    + " join study_site ss on ssas.study_site_identifier=ss.identifier"
-    + " join study_protocol sp on ss.study_protocol_identifier=sp.identifier"
-    + " join study_otheridentifiers so on sp.identifier=so.study_protocol_id"
-    + " join study_resourcing sr on sr.study_protocol_identifier=sp.identifier"
-    + " join healthcare_facility hcf on hcf.identifier=ss.healthcare_facility_identifier"
-    + " join organization org on org.identifier= hcf.organization_identifier"
-    + " where so.root='2.16.840.1.113883.3.26.4.3' and sp.status_code='ACTIVE'"
-    + " and ss.functional_code = 'TREATING_SITE' and ssas.status_code <> 'IN_REVIEW' "
-    + " and sr.summ_4_rept_indicator='true' and sr.type_code!='NATIONAL'"
-    + " and ssas.identifier in (select identifier from study_site_accrual_status where "
-    + " study_site_identifier  = ss.identifier and deleted=false"
-    + " order by status_date desc, identifier desc limit 1)"
-    + " and org.assigned_identifier IN (:orgIDS)"
-    + " and( not exists (select study_protocol_identifier from rv_ctep_id where study_protocol_identifier"
-    + " = sp.identifier and local_sp_indentifier is not null) and not exists "
-    + " (select study_protocol_identifier from rv_dcp_id where study_protocol_identifier "
-    + " =sp.identifier and local_sp_indentifier is not null))";
+//    /** The Constant NO_CTEP_DCP_TRIALID_SQRY_FAMILY. */
+//    public static final String NO_CTEP_DCP_TRIALID_SQRY_FAMILY =
+//    "select distinct(sp.identifier) from study_site_accrual_status ssas" 
+//    + " join study_site ss on ssas.study_site_identifier=ss.identifier"
+//    + " join study_protocol sp on ss.study_protocol_identifier=sp.identifier"
+//    + " join study_otheridentifiers so on sp.identifier=so.study_protocol_id"
+//    + " join study_resourcing sr on sr.study_protocol_identifier=sp.identifier"
+//    + " join healthcare_facility hcf on hcf.identifier=ss.healthcare_facility_identifier"
+//    + " join organization org on org.identifier= hcf.organization_identifier"
+//    + " where so.root='2.16.840.1.113883.3.26.4.3' and sp.status_code='ACTIVE'"
+//    + " and ss.functional_code = 'TREATING_SITE' and ssas.status_code <> 'IN_REVIEW' "
+//    + " and sr.summ_4_rept_indicator='true' and sr.type_code!='NATIONAL'"
+//    + " and ssas.identifier in (select identifier from study_site_accrual_status where "
+//    + " study_site_identifier  = ss.identifier and deleted=false"
+//    + " order by status_date desc, identifier desc limit 1)"
+//    + " and org.assigned_identifier IN (:orgIDS)"
+//    + " and( not exists (select study_protocol_identifier from rv_ctep_id where study_protocol_identifier"
+//    + " = sp.identifier and local_sp_indentifier is not null) and not exists "
+//    + " (select study_protocol_identifier from rv_dcp_id where study_protocol_identifier "
+//    + " =sp.identifier and local_sp_indentifier is not null))";
+    
+    /**
+     * The constant LEAD_ORG_TRIALID_LIST
+     */
+    
+    public static final String LEAD_ORG_TRIALID_LIST =
+    "SELECT sp.identifier FROM study_protocol sp"
+    + " INNER JOIN study_resourcing sr on sr.study_protocol_identifier=sp.identifier"
+    + " INNER JOIN study_site ss  on ss.study_protocol_identifier=sp.identifier"
+    + " INNER JOIN research_organization ro on ro.identifier= ss.research_organization_identifier"
+    + " INNER JOIN organization org  on org.identifier = ro.organization_identifier"
+    + " WHERE sp.status_code = 'ACTIVE' AND sp.proprietary_trial_indicator = false AND sr.summ_4_rept_indicator = true" 
+    + " AND sr.type_code != 'NATIONAL' AND ss.functional_code = 'LEAD_ORGANIZATION'  "
+    + "AND org.assigned_identifier IN (:orgIDS)";
+    
+    /**
+     * The Constant NO_CTEP_DCP_TRIAL_ID
+     */
+    public static final String CTEP_DCP_TRIAL_ID =
+    "SELECT DISTINCT(sp.identifier) FROM study_protocol sp"
+    + " WHERE sp.status_code = 'ACTIVE' AND ( exists (select study_protocol_identifier from rv_ctep_id"
+    + " where study_protocol_identifier=sp.identifier and local_sp_indentifier is not null) or  exists"
+    + " (select study_protocol_identifier from rv_dcp_id where"
+    + " study_protocol_identifier=sp.identifier and local_sp_indentifier is not null))  AND  sp.identifier in (:spIds)";
+    /**
+     * The constant TRIALID_LIST_FAMILY
+     */
+    public static final String TRIALID_LIST_FAMILY = 
+     "select DISTINCT(ss.study_protocol_identifier) from study_site ss "
+     + " join study_site_accrual_status ssas on (ssas.study_site_identifier = ss.identifier) "
+     + " where ss.functional_code ='TREATING_SITE' and ss.study_protocol_identifier in (:spIds) "
+     + " and ssas.status_code <> 'IN_REVIEW'"
+     + " and ssas.identifier in (select identifier from study_site_accrual_status where "
+     + " study_site_identifier  = ss.identifier and deleted=false"
+     + " order by status_date desc, identifier desc limit 1)";
+    
+    /** The Constant LEAD_ORG_QRY_FAMILY_ORGS. */
+    public static final String LEAD_ORG_QRY_FAMILY_ORGS = "select study_protocol_identifier "
+            + "from rv_lead_organization where study_protocol_identifier in (:spIds)"
+            + " and assigned_identifier in (:orgIDS)";
+    
     /**
      * {@inheritDoc}
      */
@@ -393,27 +434,44 @@ public class SearchTrialBean implements SearchTrialService {
                  String status = row[1].toString();
                  trialsWorkFlowStatus.put(studyId, status);
             }
-
+            Set<Long> trialsWithoutCTEPOrDCPId = new HashSet<Long>();
             for (Long trialId : noCtepDcpTrialIdsList) {
                if (isEligibleForAccrual(trialId, trialsWorkFlowStatus)) {
-                    finalTrialsWithoutCTEPOrDCPId.add(trialId);
+                   trialsWithoutCTEPOrDCPId.add(trialId);
                }
+            }
+            // trialsWithoutCTEPOrDCPId contains user his/her affiliated organization*** participating on any trial 
+            // Now check if these trial's lead organization is a member of his/her affiliated organization family.
+            List<Long> values = accrualUtil.getAllFamilyOrgs(ru.getAffiliatedOrganizationId());
+            query = session.createSQLQuery(LEAD_ORG_QRY_FAMILY_ORGS);
+            query.setParameterList("orgIDS", AccrualUtil.convertPoOrgIdsToStrings(values));
+            if (!noCtepDcpTrialIdsList.isEmpty()) {
+                query.setParameterList(SPID, trialsWithoutCTEPOrDCPId);   
+            } else {
+                query.setParameter(SPID, null,  Hibernate.LONG);  
+            }
+            queryList = query.list();
+            for (BigInteger obj : queryList) {
+                Long studyProtocolId = obj.longValue();
+                finalTrialsWithoutCTEPOrDCPId.add(studyProtocolId);
             }
         }
         if (ru.getFamilyAccrualSubmitter()) {
-            List<Long> values = accrualUtil.getAllFamilyOrgs(ru.getAffiliatedOrganizationId());
-            SQLQuery query = session.createSQLQuery(NO_CTEP_DCP_TRIALID_SQRY_FAMILY);
+            List<Long> values = accrualUtil.getAllFamilyOrgs(ru.getAffiliatedOrganizationId()); // step1
+            //step2
+            SQLQuery query = session.createSQLQuery(LEAD_ORG_TRIALID_LIST);
             query.setParameterList("orgIDS", AccrualUtil.convertPoOrgIdsToStrings(values));
             List<BigInteger> queryList = query.list();
-            List<Long> noCtepDcpTrialIdsFamilyList = new ArrayList<Long>(); 
+            List<Long> leadOrgTrials = new ArrayList<Long>(); 
             for (BigInteger obj : queryList) {
                 Long studyProtocolId = obj.longValue();
-                noCtepDcpTrialIdsFamilyList.add(studyProtocolId);
+                leadOrgTrials.add(studyProtocolId);
             }
+            //step3
             Map<Long, String> trialsWorkFlowStatus1 = new HashMap<Long, String>();
             SQLQuery qr = session.createSQLQuery(DWF_QRY);
-            if (!noCtepDcpTrialIdsFamilyList.isEmpty()) {
-                qr.setParameterList(SPID, noCtepDcpTrialIdsFamilyList);   
+            if (!leadOrgTrials.isEmpty()) {
+                qr.setParameterList(SPID, leadOrgTrials);   
             } else {
                 qr.setParameter(SPID, null,  Hibernate.LONG);  
             }
@@ -423,11 +481,72 @@ public class SearchTrialBean implements SearchTrialService {
                  String status = row[1].toString();
                  trialsWorkFlowStatus1.put(studyId, status);
             }
-            for (Long trialId : noCtepDcpTrialIdsFamilyList) {
-               if (isEligibleForAccrual(trialId, trialsWorkFlowStatus1)) {
-                  finalTrialsWithoutCTEPOrDCPIdFamily.add(trialId);
-               }
+            
+            //step4
+            List<Long> leadOrgTrialsNoCtepDcpID = new ArrayList<Long>(); 
+            query = session.createSQLQuery(CTEP_DCP_TRIAL_ID);
+            if (!leadOrgTrials.isEmpty()) {
+                query.setParameterList(SPID, leadOrgTrials);   
+            } else {
+                query.setParameter(SPID, null,  Hibernate.LONG);  
             }
+            List<BigInteger> list = query.list();
+            List<Long> ctepDcpTrials = new ArrayList<Long>();
+            for (BigInteger obj : list) {
+                Long studyProtocolId = obj.longValue();
+                ctepDcpTrials.add(studyProtocolId);
+            }
+            for (Long trialId : leadOrgTrials) {
+                if (!ctepDcpTrials.contains(trialId)) {
+                    leadOrgTrialsNoCtepDcpID.add(trialId);
+                }
+             }
+            // step5
+            List<Long> trialsWithoutCTEPOrDCPIdFamily = new ArrayList<Long>();
+            for (Long trialId : leadOrgTrialsNoCtepDcpID) {
+                if (isEligibleForAccrual(trialId, trialsWorkFlowStatus1)) {
+                   trialsWithoutCTEPOrDCPIdFamily.add(trialId);
+                }
+             }
+            //step6
+            query = session.createSQLQuery(TRIALID_LIST_FAMILY);
+            if (!trialsWithoutCTEPOrDCPIdFamily.isEmpty()) {
+                query.setParameterList(SPID, trialsWithoutCTEPOrDCPIdFamily);   
+            } else {
+                query.setParameter(SPID, null,  Hibernate.LONG);  
+            }
+            List<BigInteger> lists = query.list();
+            for (BigInteger obj : lists) {
+                Long studyProtocolId = obj.longValue();
+                finalTrialsWithoutCTEPOrDCPIdFamily.add(studyProtocolId);
+            }
+            
+//            SQLQuery query = session.createSQLQuery(NO_CTEP_DCP_TRIALID_SQRY_FAMILY);
+//            query.setParameterList("orgIDS", AccrualUtil.convertPoOrgIdsToStrings(values));
+//            List<BigInteger> queryList = query.list();
+//            List<Long> noCtepDcpTrialIdsFamilyList = new ArrayList<Long>(); 
+//            for (BigInteger obj : queryList) {
+//                Long studyProtocolId = obj.longValue();
+//                noCtepDcpTrialIdsFamilyList.add(studyProtocolId);
+//            }
+//            Map<Long, String> trialsWorkFlowStatus1 = new HashMap<Long, String>();
+//            SQLQuery qr = session.createSQLQuery(DWF_QRY);
+//            if (!noCtepDcpTrialIdsFamilyList.isEmpty()) {
+//                qr.setParameterList(SPID, noCtepDcpTrialIdsFamilyList);   
+//            } else {
+//                qr.setParameter(SPID, null,  Hibernate.LONG);  
+//            }
+//            List<Object[]> trialsDWFS1 = qr.list();
+//            for (Object[] row : trialsDWFS1) {
+//                 Long studyId = ((BigInteger) row[0]).longValue();
+//                 String status = row[1].toString();
+//                 trialsWorkFlowStatus1.put(studyId, status);
+//            }
+//            for (Long trialId : noCtepDcpTrialIdsFamilyList) {
+//               if (isEligibleForAccrual(trialId, trialsWorkFlowStatus1)) {
+//                  finalTrialsWithoutCTEPOrDCPIdFamily.add(trialId);
+//               }
+//            }
            for (Long trialId : finalTrialsWithoutCTEPOrDCPIdFamily) {
                if (!finalTrialsWithoutCTEPOrDCPId.contains(trialId)) {
                  finalTrialsWithoutCTEPOrDCPId.add(trialId);

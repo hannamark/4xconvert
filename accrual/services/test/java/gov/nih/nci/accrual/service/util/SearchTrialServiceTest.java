@@ -238,6 +238,18 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
         ssas.setStatusDate(new Timestamp(new Date().getTime()));
         ssas.setStatusCode(RecruitmentStatusCode.ACTIVE);
         TestSchema.addUpdObject(ssas);
+        StudySite ss2 = new StudySite();
+        ss2.setLocalStudyProtocolIdentifier("NCT11222");
+        ss2.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ss2.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
+        ss2.setHealthCareFacility(CTGOV_HCF);
+        ss2.setStudyProtocol(TestSchema.studyProtocols.get(2));
+        TestSchema.addUpdObject(ss2);
+        ssas = new StudySiteAccrualStatus();
+        ssas.setStudySite(ss2);
+        ssas.setStatusDate(new Timestamp(new Date().getTime()));
+        ssas.setStatusCode(RecruitmentStatusCode.ACTIVE);
+        TestSchema.addUpdObject(ssas);
        
         List<Long> values = new ArrayList<Long>();
         values.add(1L);
@@ -263,7 +275,7 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
     public void search(Long registryUserId, boolean shouldBeAuthorized) throws Exception {
     	
         Ii ruIi = IiConverter.convertToIi(registryUserId);
-        int goodCount = shouldBeAuthorized ? 2: 1;
+        int goodCount = shouldBeAuthorized ? 4: 2;
         ServiceLocatorPaInterface svcLocal = mock(ServiceLocatorPaInterface.class);
         RegistryUserServiceRemote registrySvr = mock(RegistryUserServiceRemote.class);
         RegistryUser ru = TestSchema.registryUsers.get(1);
@@ -299,8 +311,8 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
             Cd status = str.getStudyStatusCode();
             assertNotNull(status);
             
-            if (goodCount > 1) {
-               str = results.get(1);
+            if (goodCount > 2) {
+               str = results.get(3);
                aid = str.getAssignedIdentifier();
                assertEquals("NCI-2009-00005", aid.getValue());
                id = str.getIdentifier();
@@ -325,17 +337,21 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
         }
 
         crit.setAssignedIdentifier(StConverter.convertToSt(assignedId.getExtension()));
-        assertEquals(goodCount-1, bean.search(crit, ruIi).size());
+        if (goodCount > 2) {
+            assertEquals(1, bean.search(crit, ruIi).size());
+        } else {
+        	assertEquals(0, bean.search(crit, ruIi).size());
+        }
         crit.setAssignedIdentifier(BST);
         assertEquals(0, bean.search(crit, ruIi).size());
 
         // get by title
         crit = new SearchTrialCriteriaDto();
         crit.setOfficialTitle(StConverter.convertToSt(TestSchema.studyProtocols.get(0).getOfficialTitle()));
-        if (goodCount == 2) {
+        if (goodCount == 4) {
             assertEquals(2, bean.search(crit, ruIi).size());
         } else {
-            assertEquals(1, bean.search(crit, ruIi).size());
+            assertEquals(0, bean.search(crit, ruIi).size());
         }
         crit.setOfficialTitle(BST);
         assertEquals(0, bean.search(crit, ruIi).size());
@@ -343,7 +359,12 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
         // get by title
         crit = new SearchTrialCriteriaDto();
         crit.setLeadOrgTrialIdentifier(StConverter.convertToSt("NCT111111111111111"));
-        assertEquals(goodCount-1, bean.search(crit, ruIi).size());
+        if (goodCount > 2) {
+            assertEquals(1, bean.search(crit, ruIi).size());
+        } else {
+            assertEquals(0, bean.search(crit, ruIi).size());
+        }
+        
         crit.setLeadOrgTrialIdentifier(BST);
         assertEquals(0, bean.search(crit, ruIi).size());
         
@@ -356,10 +377,18 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
          session.createSQLQuery("create table  rv_ctep_id(study_protocol_identifier bigint, local_sp_indentifier character varying)").executeUpdate();
          session.createSQLQuery("create table  rv_dcp_id(study_protocol_identifier bigint, local_sp_indentifier character varying)").executeUpdate();
          session.createSQLQuery("create table rv_dwf_current(status_code character varying, status_date_range_low timestamp, study_protocol_identifier bigint)").executeUpdate();
+         session.createSQLQuery("create table rv_lead_organization(study_protocol_identifier bigint, assigned_identifier  character varying,"
+          		+ "  name  character varying, local_sp_indentifier character varying )").executeUpdate();
          session.createSQLQuery("insert into rv_ctep_id values (" + new BigInteger(TestSchema.studyProtocols.get(0).getId().toString()) + ", 'test');").executeUpdate();
          session.createSQLQuery("insert into rv_dcp_id values (" + new BigInteger(TestSchema.studyProtocols.get(0).getId().toString()) + ", 'test');").executeUpdate();   
          session.createSQLQuery("insert into rv_dwf_current values ('ABSTRACTION_VERIFIED_RESPONSE'," + "now(), "
          		+ new BigInteger(TestSchema.studyProtocols.get(4).getId().toString()) + ");").executeUpdate();
+         session.createSQLQuery("insert into rv_dwf_current values ('ABSTRACTION_VERIFIED_RESPONSE'," + "now(), "
+          		+ new BigInteger(TestSchema.studyProtocols.get(0).getId().toString()) + ");").executeUpdate();
+         session.createSQLQuery("insert into rv_dwf_current values ('ABSTRACTION_VERIFIED_RESPONSE'," + "now(), "
+          		+ new BigInteger(TestSchema.studyProtocols.get(2).getId().toString()) + ");").executeUpdate();
+         session.createSQLQuery("insert into rv_lead_organization values (" + new BigInteger(TestSchema.studyProtocols.get(4).getId().toString()) + ",'1','org1','test');").executeUpdate();
+         
         }
     	 return count++;
     }
