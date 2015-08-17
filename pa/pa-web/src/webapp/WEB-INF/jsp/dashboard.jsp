@@ -179,7 +179,7 @@ a.count {
 
 <script type="text/javascript" language="javascript">
     jQuery.noConflict();
-    
+    var tabs
     var interventionLookupURL = '<c:url value='/protected/popupIntsearch.action'/>';
     var diseaseLookupURL = '<c:url value='/protected/ajaxDiseaseTreesearch.action'/>';
     var diseaseNameLookupURL = '<c:url value='/protected/ajaxDiseaseTreegetName.action'/>';
@@ -191,8 +191,19 @@ a.count {
     var abstractorsWorkURL = '<c:url value='/protected/trialCountsabstractorsWork.action'/>';
     
 	function handleAction(action) {
-		document.forms[0].action = "dashboard" + action + ".action";
-		document.forms[0].submit();
+		
+		
+		if(action!= undefined) {
+			document.forms[0].action = "dashboard" + action + ".action";
+	        document.forms[0].submit();
+		}
+		else {
+			var activeTab = tabs.activeContainer.id;
+			if(activeTab=="search") {
+				handleAction('search');
+			}
+		}
+		
 	}
 	
 	function handleCheckoutAction(action) {
@@ -949,7 +960,7 @@ a.count {
 		setWidth(90, 1, 15, 1);
 		setFormat("mm/dd/yyyy");
 		
-		var tabs = new Control.Tabs($('maintabs'));
+		tabs = new Control.Tabs($('maintabs'));
 		
 		<c:if test="${not empty failureMessage}">
         tabs.setActiveTab('search');

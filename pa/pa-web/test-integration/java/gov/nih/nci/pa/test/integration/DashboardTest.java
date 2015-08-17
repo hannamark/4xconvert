@@ -27,6 +27,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
@@ -1263,6 +1264,24 @@ public class DashboardTest extends AbstractTrialStatusTest {
                 jdbcTs(DateUtils.addDays(new Date(), 1)));
         verifyDateRangeFilter(first, today, second, tomorrow, "Ready for TSR");
 
+    }
+    
+    @Test
+    public void testEnterKeyForSearch() {
+        loginAsSuperAbstractor();
+        clickAndWait("id=dashboardMenuOption");
+
+        s.click("searchid");
+        
+        //press enter on this page
+        selenium.keyPressNative("10");
+       
+        //check if search is called
+        selenium.isTextPresent("At least one criteria is required");
+        
+       
+      
+       
     }
 
     private void verifyDateRangeFilter(TrialInfo first, String date1,
