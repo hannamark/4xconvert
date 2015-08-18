@@ -48,7 +48,7 @@ public class MockLookUpTableService implements LookUpTableServiceRemote {
          * Added for test case ReportViewerActionTest - JIRA: PO-7595
          * 
          * */
-        map.put("regweb.reportview.availableReports", "Data Table 4,Data Table 3");
+        map.put("regweb.reportview.availableReports", "Data Table 4:ROLE_DEV,Data Table 3:ROLE_DT3");
         map.put("regweb.reportview.mail.from","example@semanticbits.com");
         map.put("regweb.reportview.mail.to","example@semanticbits.com");
         map.put("regweb.reportview.mail.subject","JUnit Test Mail");
