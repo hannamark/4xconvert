@@ -17,6 +17,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -75,7 +79,7 @@ public class JasperServerRestClient {
         userMarshaller = userJxContext.createMarshaller();
         userMarshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
         userMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        
+        trustAllCerts();
         objFact = new ObjectFactory();
         try {
             httpTimeout = Integer.parseInt(getPropertyValue("jasper.rest.http.timeout.millis"));
@@ -362,6 +366,31 @@ public class JasperServerRestClient {
     return response;
     }
 
+    
+    private void trustAllCerts(){
+    	
+    	// Create a trust manager that does not validate certificate chains
+    	TrustManager[] trustAllCerts = new TrustManager[]{
+    	    new X509TrustManager() {
+    	        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+    	            return null;
+    	        }
+    	        public void checkClientTrusted(
+    	            java.security.cert.X509Certificate[] certs, String authType) {
+    	        }
+    	        public void checkServerTrusted(
+    	            java.security.cert.X509Certificate[] certs, String authType) {
+    	        }
+    	    }
+    	};
+    	// Install the all-trusting trust manager
+    	try {
+    	    SSLContext sc = SSLContext.getInstance("SSL");
+    	    sc.init(null, trustAllCerts, new java.security.SecureRandom());
+    	    HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+    	} catch (Exception e) {
+    	}
+    }
     /**
      * Invokes REST api to update the user on Jasper server
      * @param restUrl - Jasper server URL
@@ -429,6 +458,7 @@ public class JasperServerRestClient {
      * @throws IOException - unable to open connection
      */
     private HttpURLConnection setUsernamePassword(URL url) throws IOException {
+    	
     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
     urlConnection.setConnectTimeout(httpTimeout);
     urlConnection.setReadTimeout(httpTimeout);
