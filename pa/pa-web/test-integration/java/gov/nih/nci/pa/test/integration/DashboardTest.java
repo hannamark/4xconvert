@@ -242,7 +242,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         clickAndWait("id=dashboardMenuOption");
         assertTrue(s.isElementPresent("count_panels_container"));
         waitForElementToBecomeVisible(
-                By.xpath("//table[@id='abstractors_work_table']//tr[3]"), 20);
+                By.xpath("//table[@id='abstractors_work_table']//tr[3]"), 30);
 
         // Panel must be collapsible, but initially open.
         verifyPanelWidget("abstractors_work", "Abstractors Work in Progress");
