@@ -104,7 +104,7 @@ import org.openqa.selenium.WebElement;
  */
 @SuppressWarnings("deprecation")
 public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
-    
+
     @SuppressWarnings("deprecation")
     @Test
     public void testPO8268_SingleSiteFromFamily() throws URISyntaxException,
@@ -234,7 +234,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
      * @throws SQLException
      */
     private void addMySiteAndVerify(TrialInfo info) throws SQLException {
-        
+
         assignTrialOwner("submitter-ci", info.id);
         findInMyTrials();
         invokeAction("Add My Site");
@@ -260,9 +260,9 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
 
         // Investigator.
         pickInvestigator();
-        
+
         useSelect2ToPickAnOption("programCodes", "PC-NM-1", "PC-NM-1");
-        
+
         populateStatusHistory(info);
 
         s.click("xpath=//button/i[@class='fa-floppy-o']");
@@ -271,7 +271,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         // Check results.
         waitForTextToAppear(By.className("alert-success"),
                 "Message: Your site has been added to the trial.", 10);
-        
+
         assertEquals("National Cancer Institute Division of Cancer Prevention",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[1]"));
         assertEquals("Doe,John",
@@ -592,13 +592,16 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 .click();
         driver.switchTo().defaultContent();
         waitForPageToLoad();
-        waitForTextToAppear(By.className("alert-success"),
-                "Message: Your site information has been updated.", 30);
-        // Make sure the right site got updated.
-        assertEquals("Cancer Therapy Evaluation Program",
-                selenium.getText("//table[@id='row']/tbody/tr[2]/td[1]"));
-        assertEquals("PC-CD-1",
-                selenium.getText("//table[@id='row']/tbody/tr[2]/td[4]"));
+
+        if (!isPhantomJS()) {
+            waitForTextToAppear(By.className("alert-success"),
+                    "Message: Your site information has been updated.", 30);
+            // Make sure the right site got updated.
+            assertEquals("Cancer Therapy Evaluation Program",
+                    selenium.getText("//table[@id='row']/tbody/tr[2]/td[1]"));
+            assertEquals("PC-CD-1",
+                    selenium.getText("//table[@id='row']/tbody/tr[2]/td[4]"));
+        }
     }
 
     /**
@@ -624,7 +627,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 .click();
         selenium.selectFrame("popupFrame");
     }
-    
+
     @SuppressWarnings("deprecation")
     private void useSelect2ToPickAnOption(String id, String sendKeys,
             String option) {
