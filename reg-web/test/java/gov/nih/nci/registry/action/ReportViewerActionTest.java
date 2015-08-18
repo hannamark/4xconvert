@@ -6,7 +6,6 @@ package gov.nih.nci.registry.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,6 @@ import com.mockrunner.mock.web.MockHttpSession;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.CSMUserService;
-import gov.nih.nci.pa.service.util.MailManagerBeanLocal;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.registry.service.MockLookUpTableService;
@@ -49,7 +47,7 @@ public class ReportViewerActionTest extends AbstractRegWebTest {
 
     private void setupProperties() throws PAException {
 	action.setLookUpTableService(new MockLookUpTableService());
-	action.setMailManagerService(mock(MailManagerBeanLocal.class));
+	//action.setMailManagerService(mock(MailManagerBeanLocal.class));
 	MockRegistryUserService regUserSvc = new MockRegistryUserService();
 
 	action.setRegistryUserService(regUserSvc);
@@ -68,7 +66,7 @@ public class ReportViewerActionTest extends AbstractRegWebTest {
 	assertEquals("viewResults", action.search());
 	List<RegistryUser> lst = (List<RegistryUser>) sess.getAttribute("regUsersList");
 	assertNotNull(lst);
-	assertEquals(4, lst.size());
+	assertEquals(2, lst.size());
 
 	List<RegistryUser> rlst = (List<RegistryUser>) sess.getAttribute("reportList");
 	assertNotNull(rlst);
@@ -130,7 +128,7 @@ public class ReportViewerActionTest extends AbstractRegWebTest {
 	testSearch();
 	assertEquals("viewResults", action.view());
 	assertNotNull(action.getRegistryUsers());
-	assertEquals(4, action.getRegistryUsers().size());
+	assertEquals(2, action.getRegistryUsers().size());
     }
 
     @Test

@@ -425,46 +425,7 @@ public class Users {
              */
             public void setRoleName(String value) {
                 this.roleName = value;
-            }
-            
-            /**
-             * overrides default equals
-             * @param o - Roles
-             * @return - returns true if rolenames are equal
-             */
-            public boolean equals(Roles o) {
-            
-            return getRoleName().equals(o.getRoleName());
-            
-            }
-
-            /**
-             * overrides hashcode
-             * @return - int
-             */
-            @Override
-            public int hashCode() {
-                return super.hashCode();
-            }
-        }
-
-        /**
-         * overrides default equals
-         * @param o - Roles
-         * @return - returns true if rolenames are equal
-         */
-        public boolean equals(User o) {
-        
-            return getUsername().equals(o.getUsername());
-        
-        }
-        /**
-         * overrides hashcode
-         * @return - int
-         */
-        @Override
-        public int hashCode() {
-            return super.hashCode();
-        }
+             }
+        }        
     }
 }

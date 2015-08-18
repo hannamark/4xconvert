@@ -15,8 +15,11 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.pomock.MockFamilyService;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.correlation.FamilyOrganizationRelationshipDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.family.FamilyDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
@@ -25,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Vrushali
@@ -36,9 +40,7 @@ public class MockOrganizationEntityService implements
     static {
         orgDtoList = new ArrayList<OrganizationDTO>();
         OrganizationDTO dto = new OrganizationDTO();
-        dto.setFamilyOrganizationRelationships(new DSet<Ii>());
-        dto.getFamilyOrganizationRelationships().setItem(new HashSet<Ii>());
-        dto.getFamilyOrganizationRelationships().getItem().add(IiConverter.convertToPoFamilyIi("1"));
+        
         dto.setIdentifier(IiConverter.convertToIi("1"));
         dto.setName(EnOnConverter.convertToEnOn("OrgName"));
         dto.setStatusCode(CdConverter.convertStringToCd("code"));
@@ -46,6 +48,24 @@ public class MockOrganizationEntityService implements
                 create("streetAddressLine", "deliveryAddressLine", 
                         "cityOrMunicipality", "stateOrProvince",
                         "postalCode", "USA"));
+        
+        
+        /*
+         * Created family and family organization dto's to make a relationship.
+         */
+        FamilyDTO familyDto = new FamilyDTO();
+        familyDto.setName(EnOnConverter.convertToEnOn("National Cancer Institute"));
+        familyDto.setStatusCode(CdConverter.convertStringToCd("Active"));
+        FamilyOrganizationRelationshipDTO famOrgDTO = new FamilyOrganizationRelationshipDTO();
+        famOrgDTO.setOrgIdentifier(dto.getIdentifier());
+        famOrgDTO = MockFamilyService.createRelatedFamilyOrganizationRelationship(famOrgDTO, familyDto);
+
+        DSet<Ii> dset = new DSet<Ii>();
+        Set<Ii> item = new HashSet<Ii>();
+        item.add(famOrgDTO.getIdentifier());
+        dset.setItem(item);
+        
+        dto.setFamilyOrganizationRelationships(dset);
         orgDtoList.add(dto);
     }
     /**

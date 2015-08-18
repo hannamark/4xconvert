@@ -55,15 +55,21 @@ public final class MockFamilyService implements FamilyServiceRemote { // NOPMD
      */
     private static FamilyDTO create(FamilyDTO dto) {
         dto.setIdentifier(IiConverter.convertToPoFamilyIi((SEQ++) + ""));
+        System.out.println("MockFamilySvc: familyName: " + EnOnConverter.convertEnOnToString(dto.getName()) + " id: " + SEQ);
         FAMILIES.put(IiConverter.convertToLong(dto.getIdentifier()), dto);
         return dto;
     }
 
     public static void reset() {
-        SEQ = 1;
+        SEQ = 0;
         FAMILIES.clear();
         RELATIONSHIPS.clear();
 
+        FamilyDTO famDto = new FamilyDTO();
+        famDto.setIdentifier(IiConverter.convertToPoFamilyIi("1"));
+        famDto.setName(EnOnConverter.convertToEnOn("FamilyName"));
+        create(famDto);
+        
         FamilyDTO dto = new FamilyDTO();
         dto.setName(EnOnConverter.convertToEnOn("National Cancer Institute"));
         dto.setStatusCode(CdConverter.convertStringToCd("Active"));

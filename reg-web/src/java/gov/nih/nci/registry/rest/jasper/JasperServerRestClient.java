@@ -13,9 +13,9 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -46,14 +46,14 @@ public class JasperServerRestClient {
     private String baseUrl = "http://localhost:8080/jasperserver/rest/user";
     private String username = "jasperadmin";
     private String password = "jasperadmin";
-    private final String get = "GET";
-    private final String post = "POST";
+    private static final String GET = "GET";
+    private static final String POST = "POST";
     private LookUpTableServiceRemote lookupTableService;
     private ObjectFactory objFact;
     private Marshaller userMarshaller;
     private Unmarshaller usersUnmarshaller;
     private int httpTimeout;
-    private final int httpSuccessCode = 200;
+    private static final Integer HTTP_SUCCESS_CODE = 200;
     /**
      * 
      * @param baseURL - Jasper server base URL
@@ -100,7 +100,7 @@ public class JasperServerRestClient {
      * @throws PAException
      *             throws PAException
      */
-    public String getPropertyValue(String name) throws PAException {
+    private String getPropertyValue(String name) throws PAException {
     String retString = "";
 
     try {
@@ -118,7 +118,7 @@ public class JasperServerRestClient {
     /**
      * @return lookup table service
      */
-    public LookUpTableServiceRemote getLookUpTableService() {
+    private LookUpTableServiceRemote getLookUpTableService() {
     return lookupTableService;
     }
 
@@ -170,8 +170,8 @@ public class JasperServerRestClient {
      */
     public Users getAllUserDetails() {
     Users users = null;
-    String xmlResponse = sendHTTPRequest(baseUrl, get, null);
-    if (xmlResponse.length() > httpSuccessCode + "".length()) {
+    String xmlResponse = sendHTTPRequest(baseUrl, GET, null);
+    if (xmlResponse.length() > HTTP_SUCCESS_CODE.toString().length()) {
         users = unmarshallXML(xmlResponse);
     }
     return users;
@@ -184,8 +184,8 @@ public class JasperServerRestClient {
      */
     public Users getUserDetails(String userName) {
     Users users = null;
-    String xmlResponse = sendHTTPRequest(baseUrl + "/" + userName, get, null);
-    if (xmlResponse.length() > httpSuccessCode + "".length()) {
+    String xmlResponse = sendHTTPRequest(baseUrl + "/" + userName, GET, null);
+    if (xmlResponse.length() > HTTP_SUCCESS_CODE.toString().length()) {
         users = unmarshallXML(xmlResponse);
     }
 
@@ -218,7 +218,7 @@ public class JasperServerRestClient {
     
     String response = "";
     if (roleFound) {
-        response = sendHTTPRequest(baseUrl + "/" + user.getUsername(), post, postBody);
+        response = sendHTTPRequest(baseUrl + "/" + user.getUsername(), POST, postBody);
         LOG.debug("post response: " + response);
     }
 
@@ -232,7 +232,7 @@ public class JasperServerRestClient {
      * @param reportGroupMap - report groups map
      * @return - List of Roles objects
      */
-    private ArrayList<Roles> getRolesFromReportIds(String reportIds, HashMap<String, String> reportGroupMap) {
+    private List<Roles> getRolesFromReportIds(String reportIds, Map<String, String> reportGroupMap) {
 
     ArrayList<Roles> updateRoles = new ArrayList<Roles>();
     String[] reportIdsArr = reportIds.split("[,]");
@@ -249,9 +249,9 @@ public class JasperServerRestClient {
      * @param reportGroupMap - map of user id and roles
      * @return - List of Jasper converted Roles
      */
-    private ArrayList<Roles> getAllRolesFromGroups(HashMap<String, String> reportGroupMap) {
+    private List<Roles> getAllRolesFromGroups(Map<String, String> reportGroupMap) {
     
-    ArrayList<Roles> updateRoles = new ArrayList<Roles>();
+    List<Roles> updateRoles = new ArrayList<Roles>();
     
     for (String groupName : reportGroupMap.values()) {
         updateRoles.add(getRole(groupName));
@@ -280,12 +280,12 @@ public class JasperServerRestClient {
      * @param reportGroupMap - user-role group from pa_properties
      * @return - Response after update
      */
-    public String updateRoles(User user, String reportIds, HashMap<String, String> reportGroupMap) {
+    public String updateRoles(User user, String reportIds, Map<String, String> reportGroupMap) {
 
     String response = "";
     List<Roles> userRoles = user.getRoles();
 
-    ArrayList<Roles> allRegistryRolesList = getAllRolesFromGroups(reportGroupMap);
+    List<Roles> allRegistryRolesList = getAllRolesFromGroups(reportGroupMap);
     
     // remove
     
@@ -304,10 +304,10 @@ public class JasperServerRestClient {
     
     if (reportIds != null && reportIds.length() > 0) {
         
-        ArrayList<Roles> updateRolesList = getRolesFromReportIds(reportIds, reportGroupMap);
+        List<Roles> updateRolesList = getRolesFromReportIds(reportIds, reportGroupMap);
         userRoles.addAll(updateRolesList);
         
-        System.out.println("User: " + user.getUsername());
+        LOG.debug("User: " + user.getUsername());
         for (Roles roles : updateRolesList) {
         
         LOG.debug("  Role: " + roles.getRoleName());
@@ -317,7 +317,7 @@ public class JasperServerRestClient {
     String postBody = marshallXML(user);
 
     LOG.debug("post body: " + postBody);
-    response = sendHTTPRequest(baseUrl + "/" + user.getUsername(), post, postBody);
+    response = sendHTTPRequest(baseUrl + "/" + user.getUsername(), POST, postBody);
     LOG.debug("post response: " + response);
 
     return response;
@@ -351,7 +351,7 @@ public class JasperServerRestClient {
 
         String postBody = marshallXML(user);
 
-        response = sendHTTPRequest(baseUrl + "/" + user.getUsername(), post, postBody);
+        response = sendHTTPRequest(baseUrl + "/" + user.getUsername(), POST, postBody);
         LOG.debug("post response: " + response);
 
     } else {
@@ -369,28 +369,29 @@ public class JasperServerRestClient {
      * @param postBody - Post body 
      * @return - Response after update
      */
-    private String sendHTTPRequest(String restUrl, String method, String postBody) {
+    private String sendHTTPRequest(String restUrl, 
+                                   String method, 
+                                   String postBody) {
     int httpResponseCode = -1;
-    System.out.println("url: " + restUrl);
+    LOG.debug("url: " + restUrl);
     StringBuilder httpResponse = new StringBuilder();
     BufferedReader reader = null; 
     HttpURLConnection urlConnection = null;
     try {
         URL url = new URL(restUrl);
         urlConnection = setUsernamePassword(url);
-        System.out.println(method);
         urlConnection.setRequestMethod(method);
         urlConnection.setDoOutput(true);
         urlConnection.setRequestProperty("Content-Type", "text/xml;charset=UTF-8");
 
         if (postBody != null && postBody.length() > 0) {
-        System.out.println("postBody: " + postBody);
+        LOG.debug("postBody: " + postBody);
         setPostBody(urlConnection, postBody);
         }
 
         httpResponseCode = urlConnection.getResponseCode();
 
-        if (httpResponseCode != httpSuccessCode) {
+        if (httpResponseCode != HTTP_SUCCESS_CODE) {
         return httpResponse.append(httpResponseCode).toString();
         }
 
@@ -403,7 +404,7 @@ public class JasperServerRestClient {
         
 
         return httpResponse.toString();
-    } catch (Exception e) {
+    } catch (IOException e) {
         throw new RuntimeException(e);
     } finally {
         if (reader != null) {
