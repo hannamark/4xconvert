@@ -220,7 +220,7 @@ public class ReportViewerAction extends ActionSupport implements Preparable {
     ServletActionContext.getRequest().getSession().setAttribute(ReportViewerAction.REPORT_ROLE_LIST, reportGroupMap);
     }
 
-    /**
+   /* *//**
      * 
      * @param mailBody
      *            e-mail body
@@ -229,7 +229,7 @@ public class ReportViewerAction extends ActionSupport implements Preparable {
      * @return formatted email body
      * @throws PAException
      *             throws PAException
-     */
+     *//*
     private String formatMailBody(String mailBody, RegistryUser regUser) throws PAException {
     String loginName = regUser.getCsmUser().getLoginName();
 
@@ -241,7 +241,7 @@ public class ReportViewerAction extends ActionSupport implements Preparable {
         .replace("{USER_EMAIL_ID}", regUser.getEmailAddress());
     return returnBody;
     }
-
+*/
 
     /**
      * save.
@@ -310,7 +310,8 @@ public class ReportViewerAction extends ActionSupport implements Preparable {
         }
 
         String jasperRoleUpdateResponse = "";
-        User targetUser = jasperUserMap.get(regUser.getCsmUser().getLoginName());
+        String loginName = gov.nih.nci.pa.util.CsmUserUtil.getGridIdentityUsername(regUser.getCsmUser().getLoginName());
+        User targetUser = jasperUserMap.get(loginName);
         
         if (targetUser != null) {
             

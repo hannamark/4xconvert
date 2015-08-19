@@ -40,6 +40,9 @@ public class MockOrganizationEntityService implements
     static {
         orgDtoList = new ArrayList<OrganizationDTO>();
         OrganizationDTO dto = new OrganizationDTO();
+        dto.setFamilyOrganizationRelationships(new DSet<Ii>());
+        dto.getFamilyOrganizationRelationships().setItem(new HashSet<Ii>());
+        dto.getFamilyOrganizationRelationships().getItem().add(IiConverter.convertToPoFamilyIi("1"));
         
         dto.setIdentifier(IiConverter.convertToIi("1"));
         dto.setName(EnOnConverter.convertToEnOn("OrgName"));
@@ -49,15 +52,27 @@ public class MockOrganizationEntityService implements
                         "cityOrMunicipality", "stateOrProvince",
                         "postalCode", "USA"));
         
+       orgDtoList.add(dto);
         
         /*
          * Created family and family organization dto's to make a relationship.
          */
+        
+        OrganizationDTO dto2 = new OrganizationDTO();
+        
+        dto2.setIdentifier(IiConverter.convertToIi("2"));
+        dto2.setName(EnOnConverter.convertToEnOn("OrgName"));
+        dto2.setStatusCode(CdConverter.convertStringToCd("code"));
+        dto2.setPostalAddress(AddressConverterUtil.
+                create("streetAddressLine", "deliveryAddressLine", 
+                        "cityOrMunicipality", "stateOrProvince",
+                        "postalCode", "USA"));
+        
         FamilyDTO familyDto = new FamilyDTO();
         familyDto.setName(EnOnConverter.convertToEnOn("National Cancer Institute"));
         familyDto.setStatusCode(CdConverter.convertStringToCd("Active"));
         FamilyOrganizationRelationshipDTO famOrgDTO = new FamilyOrganizationRelationshipDTO();
-        famOrgDTO.setOrgIdentifier(dto.getIdentifier());
+        famOrgDTO.setOrgIdentifier(dto2.getIdentifier());
         famOrgDTO = MockFamilyService.createRelatedFamilyOrganizationRelationship(famOrgDTO, familyDto);
 
         DSet<Ii> dset = new DSet<Ii>();
@@ -65,8 +80,11 @@ public class MockOrganizationEntityService implements
         item.add(famOrgDTO.getIdentifier());
         dset.setItem(item);
         
-        dto.setFamilyOrganizationRelationships(dset);
-        orgDtoList.add(dto);
+        dto2.setFamilyOrganizationRelationships(dset);
+        
+        
+        
+        orgDtoList.add(dto2);
     }
     /**
      * {@inheritDoc}

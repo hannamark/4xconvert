@@ -26,8 +26,7 @@ import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.registry.service.MockLookUpTableService;
 import gov.nih.nci.registry.service.MockRegistryUserService;
-import gov.nih.nci.registry.test.util.MockPoServiceLocator;
-//import gov.nih.nci.registry.util.SiteAdministrationCriteria;
+import gov.nih.nci.registry.test.util.MockPoServiceLocatorReport;
 import gov.nih.nci.registry.util.ReportViewerCriteria;
 
 /**
@@ -42,6 +41,7 @@ public class ReportViewerActionTest extends AbstractRegWebTest {
 	CSMUserService.getInstance();
 	CSMUserService.setInstance(new MockCSMUserService());
 	action = new ReportViewerAction();
+	action.prepare();
 	setupProperties();
     }
 
@@ -51,7 +51,7 @@ public class ReportViewerActionTest extends AbstractRegWebTest {
 	MockRegistryUserService regUserSvc = new MockRegistryUserService();
 
 	action.setRegistryUserService(regUserSvc);
-	PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
+	PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocatorReport());
     }
 
     @SuppressWarnings("unchecked")
@@ -60,7 +60,7 @@ public class ReportViewerActionTest extends AbstractRegWebTest {
 	// action = new ReportViewerAction();
 	MockHttpServletRequest request = new MockHttpServletRequest();
 	HttpSession sess = new MockHttpSession();
-	request.setRemoteUser("firstName");
+	request.setRemoteUser("FirstName");
 	request.setSession(sess);
 	ServletActionContext.setRequest(request);
 	assertEquals("viewResults", action.search());
@@ -85,7 +85,7 @@ public class ReportViewerActionTest extends AbstractRegWebTest {
 	// action = new ReportViewerAction();
 	MockHttpServletRequest request = new MockHttpServletRequest();
 	HttpSession sess = new MockHttpSession();
-	request.setRemoteUser("firstName");
+	request.setRemoteUser("FirstName");
 	request.setSession(sess);
 	ServletActionContext.setRequest(request);
 	assertEquals("viewResults", action.search());

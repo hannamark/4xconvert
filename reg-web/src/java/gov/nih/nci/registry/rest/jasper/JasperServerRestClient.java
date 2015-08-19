@@ -202,7 +202,7 @@ public class JasperServerRestClient {
      * @param role - Role name in the String format
      * @return - Returns any string returned
      */
-    public String removeRole(User user, String role) {
+    /*public String removeRole(User user, String role) {
 
     List<Roles> userRoles = user.getRoles();
     boolean roleFound = false;
@@ -227,7 +227,7 @@ public class JasperServerRestClient {
     }
 
     return response;
-    }
+    }*/
     
     
     /**
@@ -258,15 +258,20 @@ public class JasperServerRestClient {
     List<Roles> updateRoles = new ArrayList<Roles>();
     
     for (String groupName : reportGroupMap.values()) {
-        updateRoles.add(getRole(groupName));
+        
+        if (groupName.contains("|")) {
+          updateRoles.add(getRole(groupName.split("[|]")[0], groupName.split("[|]")[1]));            
+        } else {
+          updateRoles.add(getRole(groupName));
         }
+    }
     
     return updateRoles;
     }
     
     /**
-     * 
-     * @param roleName - converts string role into Japser Role
+     * converts string role into Japser Role
+     * @param roleName - string role name to convert into Japser Role
      * @return
      */
     private Roles getRole(String roleName) {
@@ -275,6 +280,21 @@ public class JasperServerRestClient {
     roles.setExternallyDefined("false");
     
     return roles;
+    }
+    
+    /**
+     * converts string role and tenant id into Japser Role
+     * @param roleName - string role name to convert into Japser Role
+     * @param tenantId - tenantId that needs to be set to the role
+     * @return
+     */
+    private Roles getRole(String roleName, String tenantId) {
+        Roles roles = objFact.createUsersUserRoles();
+        roles.setRoleName(roleName);
+        roles.setExternallyDefined("false");
+        roles.setTenantId(tenantId);
+        
+        return roles;
     }
     
     /**
@@ -333,7 +353,7 @@ public class JasperServerRestClient {
      * @param role - Role 
      * @return - Response
      */
-    public String addRole(User user, String role) {
+    /*public String addRole(User user, String role) {
 
     List<Roles> userRoles = user.getRoles();
     boolean roleFound = false;
@@ -364,7 +384,7 @@ public class JasperServerRestClient {
     }
 
     return response;
-    }
+    }*/
 
     /**
      *  trusts all certificates

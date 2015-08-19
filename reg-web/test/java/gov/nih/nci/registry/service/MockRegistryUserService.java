@@ -95,6 +95,17 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         dto.setSiteAccrualSubmitter(false);
         dto.setFamilyAccrualSubmitter(false);
         userList.add(dto);
+        
+        dto = new RegistryUser();
+        dto.setFirstName("FirstName");
+        dto.setLastName("lastName");
+        dto.setId(1L);
+        dto.setCsmUser(new User());
+        dto.setAffiliatedOrganizationId(2L);
+        dto.setAffiliatedOrgUserType(UserOrgType.MEMBER);
+        dto.setSiteAccrualSubmitter(false);
+        dto.setFamilyAccrualSubmitter(false);
+        userList.add(dto);
     }
 
     /**

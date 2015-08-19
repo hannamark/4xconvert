@@ -39,10 +39,10 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 /**
- * @author Vrushali
+ * @author vpoluri
  *
  */
-public class MockPoServiceLocator implements PoServiceLocator {
+public class MockPoServiceLocatorReport implements PoServiceLocator {
 
 
     private final OrganizationEntityServiceRemote orgEntityServiceRemote = new MockOrganizationEntityService();
@@ -142,7 +142,7 @@ public class MockPoServiceLocator implements PoServiceLocator {
     @Override
     @SuppressWarnings("unchecked")
     public FamilyServiceRemote getFamilyService() {
-        FamilyServiceRemote svc = mock(FamilyServiceRemote.class);
+        /*FamilyServiceRemote svc = mock(FamilyServiceRemote.class);
         Map<Ii, FamilyDTO> results = new HashMap<Ii, FamilyDTO>();
         
         FamilyDTO famDto = new FamilyDTO();
@@ -150,9 +150,9 @@ public class MockPoServiceLocator implements PoServiceLocator {
         famDto.setName(EnOnConverter.convertToEnOn("FamilyName"));
         results.put(IiConverter.convertToPoFamilyIi("1"), famDto);
        
-        when(svc.getFamilies(any(Set.class))).thenReturn(results);
+        when(svc.getFamilies(any(Set.class))).thenReturn(results);*/
         
-        //MockFamilyService svc = new MockFamilyService();
+        MockFamilyService svc = new MockFamilyService();
         
         return svc;
     }

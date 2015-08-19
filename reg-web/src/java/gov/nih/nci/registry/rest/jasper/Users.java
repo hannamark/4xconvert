@@ -104,6 +104,16 @@ public class Users {
         return this.user;
     }
 
+    /**
+     * 
+     * @param user - user to set
+     */
+    public void setUser(List<Users.User> user) {
+        if (user == null) {
+            user = new ArrayList<Users.User>();
+        }
+        this.user = user;
+    }
 
     /**
      * <p>Java class for anonymous complex type.
@@ -150,7 +160,8 @@ public class Users {
         "fullName",
         "previousPasswordChangeTime",
         "roles",
-        "username"
+        "username",
+        "tenantId"
     })
     /**
      * 
@@ -172,7 +183,9 @@ public class Users {
         private List<Users.User.Roles> roles;
         @XmlElement(required = true)
         private String username;
-
+        @XmlElement(required = true)
+        private String tenantId;
+        
         /**
          * Gets the value of the emailAddress property.
          * 
@@ -323,6 +336,17 @@ public class Users {
         }
 
         /**
+         * 
+         * @param roles - roles to set
+         */
+        public void setRoles(List<Users.User.Roles> roles) {
+            if (roles == null) {
+                roles = new ArrayList<Users.User.Roles>();
+            }
+            this.roles = roles;
+        }
+        
+        /**
          * Gets the value of the username property.
          * 
          * @return
@@ -344,6 +368,21 @@ public class Users {
          */
         public void setUsername(String value) {
             this.username = value;
+        }
+
+
+        /**
+         * @return the tenantId
+         */
+        public String getTenantId() {
+             return tenantId;
+        }
+
+        /**
+         * @param tenantId the tenantId to set
+         */
+        public void setTenantId(String tenantId) {
+              this.tenantId = tenantId;
         }
 
 
@@ -370,7 +409,8 @@ public class Users {
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
             "externallyDefined",
-            "roleName"
+            "roleName",
+            "tenantId"
         })
         public static class Roles {
 
@@ -378,6 +418,8 @@ public class Users {
             private String externallyDefined;
             @XmlElement(required = true)
             private String roleName;
+            @XmlElement(required = true)
+            private String tenantId;
 
             /**
              * Gets the value of the externallyDefined property.
@@ -426,6 +468,20 @@ public class Users {
             public void setRoleName(String value) {
                 this.roleName = value;
              }
+
+            /**
+             * @return the tenantId
+             */
+            public String getTenantId() {
+                return tenantId;
+            }
+
+            /**
+             * @param tenantId the tenantId to set
+             */
+            public void setTenantId(String tenantId) {
+                this.tenantId = tenantId;
+            }
         }        
     }
 }

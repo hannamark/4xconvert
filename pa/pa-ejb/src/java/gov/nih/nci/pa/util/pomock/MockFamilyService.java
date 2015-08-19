@@ -55,20 +55,15 @@ public final class MockFamilyService implements FamilyServiceRemote { // NOPMD
      */
     private static FamilyDTO create(FamilyDTO dto) {
         dto.setIdentifier(IiConverter.convertToPoFamilyIi((SEQ++) + ""));
-        System.out.println("MockFamilySvc: familyName: " + EnOnConverter.convertEnOnToString(dto.getName()) + " id: " + SEQ);
         FAMILIES.put(IiConverter.convertToLong(dto.getIdentifier()), dto);
         return dto;
     }
 
     public static void reset() {
-        SEQ = 0;
+        SEQ = 1;
         FAMILIES.clear();
         RELATIONSHIPS.clear();
 
-        FamilyDTO famDto = new FamilyDTO();
-        famDto.setIdentifier(IiConverter.convertToPoFamilyIi("1"));
-        famDto.setName(EnOnConverter.convertToEnOn("FamilyName"));
-        create(famDto);
         
         FamilyDTO dto = new FamilyDTO();
         dto.setName(EnOnConverter.convertToEnOn("National Cancer Institute"));
@@ -133,6 +128,7 @@ public final class MockFamilyService implements FamilyServiceRemote { // NOPMD
         Map<Ii, FamilyDTO> retMap = new LinkedHashMap<Ii, FamilyDTO>();
         for (Ii familyOrgRelationshipIi : familyOrgRelationshipIis) {
             Long extension = IiConverter.convertToLong(familyOrgRelationshipIi);
+            familyOrgRelationshipIi = IiConverter.convertToPoFamilyIi(extension.toString());
             retMap.put(familyOrgRelationshipIi, (localMap.get(extension)));
         }
         return retMap;
