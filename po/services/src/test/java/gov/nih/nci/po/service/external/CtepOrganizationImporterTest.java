@@ -83,7 +83,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
      * Root used by CTEP to identify organizations
      */
     public static final String CTEP_ORG_ROOT = "2.16.840.1.113883.3.26.6.2";
-    private static final String CTEP_LOGIN_NAME = "/O=caBIG/OU=caGrid/OU=Training/OU=National Cancer Institute/CN=ctepecm";
+    private static final String CTEP_LOGIN_NAME = "ctepecm";
     private CtepOrganizationImporter importer = null;
     private OrganizationServiceBean oSvc;
     private IdentifiedOrganizationServiceBean ioSvc;

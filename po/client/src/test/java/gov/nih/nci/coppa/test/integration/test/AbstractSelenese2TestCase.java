@@ -87,7 +87,10 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverBackedSelenium;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
+import com.google.common.base.Predicate;
 import com.thoughtworks.selenium.SeleneseTestCase;
 import com.thoughtworks.selenium.Selenium;
 
@@ -103,6 +106,7 @@ public abstract class AbstractSelenese2TestCase extends SeleneseTestCase {
     private String driverClass = "org.openqa.selenium.firefox.FirefoxDriver";
 
     protected Selenium selenium;
+    protected Selenium s;
     protected WebDriver driver;
     protected String url;
 
@@ -112,13 +116,14 @@ public abstract class AbstractSelenese2TestCase extends SeleneseTestCase {
         String hostname = getServerHostname();
         int port = getServerPort();
         String driverClass = getDriverClass();
-        url = port == 0 ? "http://" + hostname : "http://" + hostname
-                + ":" + port;
-        
+        url = port == 0 ? "http://" + hostname : "http://" + hostname + ":"
+                + port;
+
         driver = (WebDriver) Class.forName(driverClass).newInstance();
         selenium = new WebDriverBackedSelenium(driver, url);
         selenium.setTimeout(toMillisecondsString(PAGE_TIMEOUT_SECONDS));
         selenium.setSpeed("50");
+        s = selenium;
 
     }
 
@@ -197,6 +202,28 @@ public abstract class AbstractSelenese2TestCase extends SeleneseTestCase {
      */
     protected void clickAndWaitSaveButton() {
         clickAndWait("save_button");
+    }
+
+    protected void waitForElementToBecomeInvisible(final By by,
+            int timeoutSeconds) {
+        WebDriverWait wait = new WebDriverWait(driver, timeoutSeconds);
+        wait.until(new Predicate<WebDriver>() {
+            @Override
+            public boolean apply(WebDriver wd) {
+                return !wd.findElement(by).isDisplayed();
+            }
+        });
+    }
+
+    protected void waitForElementToBecomeVisible(By by, int timeoutSeconds) {
+        waitForElementToBecomeAvailable(by, timeoutSeconds);
+        WebDriverWait wait = new WebDriverWait(driver, timeoutSeconds);
+        wait.until(ExpectedConditions.visibilityOf(driver.findElement(by)));
+    }
+
+    protected void waitForElementToBecomeAvailable(By by, int timeoutSeconds) {
+        WebDriverWait wait = new WebDriverWait(driver, timeoutSeconds);
+        wait.until(ExpectedConditions.presenceOfElementLocated(by));
     }
 
     /**

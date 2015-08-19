@@ -306,6 +306,15 @@
             <result name="success">/WEB-INF/jsp/mailable/addresses.jsp</result>
         </action>       
     </package>
+    
+    <package name="security" namespace="/security" extends="common">        
+         <action name="manage/groups/*" class="gov.nih.nci.po.web.security.ManageUserGroupsAction" method="{1}">
+            <interceptor-ref name="poDefaultStack" />            
+            <result name="input">/WEB-INF/jsp/security/managerGroups.jsp</result>
+            <result name="success">/WEB-INF/jsp/security/managerGroups.jsp</result>
+        </action>
+    </package>
+    
 
     <package name="protected" namespace="/protected" extends="common">
         <action name="home">

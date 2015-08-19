@@ -152,7 +152,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
      */
     public static final String CTEP_ORG_ROOT = "2.16.840.1.113883.3.26.6.2";
     private static final String CTEP_USER_LOGIN
-            = "/O=caBIG/OU=caGrid/OU=Training/OU=National Cancer Institute/CN=ctepecm";
+            = "ctepecm";
 
     private final OrganizationServiceLocal orgService = PoRegistry.getOrganizationService();
     private final OrganizationCRServiceLocal orgCRService = PoRegistry.getInstance().getServiceLocator()

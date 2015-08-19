@@ -4,7 +4,19 @@
         <profile>
             <id>bda</id>
             <properties>
-		<grid.target>@grid.target@</grid.target>
+            
+                <ldap.url>@ldap.url@</ldap.url>		        
+                <ldap.user>@ldap.user@</ldap.user>
+                <ldap.password>@ldap.password@</ldap.password>
+                <ldap.security.authentication>@ldap.security.authentication@</ldap.security.authentication>
+                <ldap.security.protocol>@ldap.security.protocol@</ldap.security.protocol>
+                <ldap.timeouts.connect>@ldap.timeouts.connect@</ldap.timeouts.connect>
+                <ldap.timeouts.read>@ldap.timeouts.read@</ldap.timeouts.read>
+                <ldap.context>@ldap.context@</ldap.context>
+                <ldap.uid.attrname>@ldap.uid.attrname@</ldap.uid.attrname>
+                <ldap.migration.grouperToIdStringMap>@ldap.migration.grouperToIdStringMap@</ldap.migration.grouperToIdStringMap>
+                <ldap.migration.excludes>@ldap.migration.excludes@</ldap.migration.excludes>
+                                
                 <database.hostname>@database.server@</database.hostname>
                 <database.port>@database.port@</database.port>
                 <database.url.prefix>jdbc:postgresql://@database.server@:@database.port@/</database.url.prefix>

@@ -79,6 +79,26 @@ end-if
 /subsystem=logging/logger=org.hornetq.core.server:assign-handler(name="HORNETQ")
 /subsystem=logging/logger=org.hornetq.core.server:write-attribute(name="use-parent-handlers", value="false")
 
+
+if (outcome == success) of /subsystem=logging/logger=gov.nih.nci.coppa.services.ldap:read-resource
+	/subsystem=logging/logger=gov.nih.nci.coppa.services.ldap:remove
+end-if
+if (outcome == success) of /subsystem=logging/periodic-rotating-file-handler=LDAP:read-resource
+	/subsystem=logging/periodic-rotating-file-handler=LDAP:remove
+end-if
+
+/subsystem=logging/periodic-rotating-file-handler=LDAP:add(file={"path"=>"ldap.log", "relative-to"=>"jboss.server.log.dir"},suffix=".yyyy-MM-dd")
+/subsystem=logging/periodic-rotating-file-handler=LDAP:change-log-level(level="INFO")
+/subsystem=logging/periodic-rotating-file-handler=LDAP:write-attribute(name="append", value="true")
+/subsystem=logging/periodic-rotating-file-handler=LDAP:write-attribute(name="autoflush", value="true")
+/subsystem=logging/periodic-rotating-file-handler=LDAP:write-attribute(name="formatter", value="%d{HH:mm:ss,SSS} %s%E%n")
+/subsystem=logging/periodic-rotating-file-handler=LDAP:write-attribute(name="suffix", value=".yyyy-MM-dd")
+/subsystem=logging/logger=gov.nih.nci.coppa.services.ldap:add
+/subsystem=logging/logger=gov.nih.nci.coppa.services.ldap:write-attribute(name="level", value="INFO")
+/subsystem=logging/logger=gov.nih.nci.coppa.services.ldap:assign-handler(name="LDAP")
+/subsystem=logging/logger=gov.nih.nci.coppa.services.ldap:write-attribute(name="use-parent-handlers", value="false")
+
+
 reload
 
 if (outcome == success) of /subsystem=datasources/xa-data-source=po-xa-ds:read-resource

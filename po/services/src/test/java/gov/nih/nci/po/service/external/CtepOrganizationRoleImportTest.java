@@ -77,7 +77,7 @@ import static org.mockito.Mockito.when;
  */
 public abstract class CtepOrganizationRoleImportTest<ROLE_TYPE extends Correlation> extends AbstractMockTest {
 
-    private static final String CTEP_LOGIN_NAME = "/O=caBIG/OU=caGrid/OU=Training/OU=National Cancer Institute/CN=ctepecm";
+    private static final String CTEP_LOGIN_NAME = "ctepecm";
     private static final Country USA = new Country("United States", "840", "US", "USA");
 
     private CtepOrganizationImporter importer;

@@ -350,8 +350,10 @@
                     <webResources>
                         <resource>
                             <!-- this is relative to the pom.xml directory -->
-                            <directory>${project.basedir}/src/main/resources
-                            </directory>
+                            <directory>${project.basedir}/src/main/resources</directory>
+                            <excludes>
+                                <exclude>**/ldap.properties</exclude>
+                            </excludes>
                             <filtering>true</filtering>
                         </resource>
                     </webResources>
@@ -629,7 +631,7 @@
                                     <resource>
                                         <directory>${project.basedir}/src/main/resources</directory>
                                         <excludes>
-                                            <exclude>gridauth.properties</exclude>
+                                            <exclude>ldap.properties</exclude>
                                         </excludes>
                                     </resource>
                                 </resources>

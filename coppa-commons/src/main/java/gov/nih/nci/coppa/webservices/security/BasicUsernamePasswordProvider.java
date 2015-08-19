@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 
 /**
  *
- * {@link UsernameTokenGridAuthenticator} implementation that uses the logic
+ * {@link UsernameTokenAuthenticator} implementation that uses the logic
  * from {@link org.apache.catalina.authenticator.BasicAuthenticator} to parse out the
  * username and password from the request.
  *

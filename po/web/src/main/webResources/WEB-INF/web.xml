@@ -13,19 +13,24 @@
             <http-only>true</http-only>
         </cookie-config>    
     </session-config>
+
+    <listener>
+        <listener-class>gov.nih.nci.coppa.services.ldap.GridToLDAPAccountMigrator</listener-class>
+    </listener>
     
     <listener>
         <listener-class>liquibase.integration.servlet.LiquibaseServletListener</listener-class>
     </listener>
     
     <listener>
-        <listener-class>gov.nih.nci.coppa.web.SyncGTSListener</listener-class>
+        <listener-class>gov.nih.nci.coppa.web.CSMInitializingListener</listener-class>
     </listener>
-
-    <!-- This servlet handles the syncing of GridGrouper groups to CSM.  -->
-    <listener>
-        <listener-class>gov.nih.nci.coppa.web.CSMSyncListener</listener-class>
-    </listener>
+    
+    <!-- CSM. -->
+    <context-param>
+        <param-name>csmApplicationName</param-name>
+        <param-value>po</param-value>
+    </context-param>
     
     <!-- Liquibase Parameters -->
     <context-param>
@@ -145,6 +150,12 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>struts2</filter-name>
+        <url-pattern>*.jsp</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>        
+    </filter-mapping>    
+    <filter-mapping>
+        <filter-name>struts2</filter-name>
         <url-pattern>/struts/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
@@ -185,6 +196,7 @@
         </web-resource-collection>
         <auth-constraint>
             <role-name>Curator</role-name>
+            <role-name>SecurityAdmin</role-name>
         </auth-constraint>
     </security-constraint>
     <security-constraint>
@@ -196,6 +208,16 @@
             <http-method>TRACE</http-method>
         </web-resource-collection>
         <auth-constraint />
+    </security-constraint>
+    
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>security</web-resource-name>
+            <url-pattern>/security/*</url-pattern>          
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>SecurityAdmin</role-name>
+        </auth-constraint>
     </security-constraint>
 
     <login-config>
@@ -209,5 +231,9 @@
     <security-role>
         <description>Curators organize and oversee data quality in PO.</description>
         <role-name>Curator</role-name>
+    </security-role>
+    <security-role>
+        <description>Security administrators manager users and groups in PO.</description>
+        <role-name>SecurityAdmin</role-name>
     </security-role>
 </web-app>

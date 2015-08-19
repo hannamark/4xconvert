@@ -118,6 +118,7 @@ import javax.naming.NamingException;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
+import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -126,18 +127,14 @@ import org.junit.Assert;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 
-
-
-
-
 public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
-    
+
     private static final String PHANTOM_JS_DRIVER = "org.openqa.selenium.phantomjs.PhantomJSDriver";
     protected static final String DEFAULT_URL = "http://default.example.com";
     protected static final String DEFAULT_EMAIL = "default@example.com";
-    
-    private static int PAGE_SIZE = 20;    
-    
+
+    private static int PAGE_SIZE = 20;
+
     private static final Logger LOG = Logger.getLogger(AbstractPoWebTest.class);
 
     protected static final String SELECT_A_COUNTRY = "--Select a Country--";
@@ -147,9 +144,9 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
     protected static final String COUNTRY_MUST_BE_SET = "Country must be set";
 
     protected static final String STATUS_MUST_BE_SET = "Status must be set";
-    
+
     protected static final String ALIAS_STRING = "test_alias_123";
-    
+
     private Connection conn = null;
     private ResultSetHandler<Object[]> h = null;
 
@@ -188,12 +185,14 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         super.setServerHostname(TstProperties.getServerHostname());
         super.setServerPort(TstProperties.getServerPort());
         super.setDriverClass(TstProperties.getDriverClass());
-        //super.setDriverClass(PHANTOM_JS_DRIVER);
-        System.setProperty("phantomjs.binary.path", TstProperties.getPhantomJsPath());
-        
+        // super.setDriverClass(PHANTOM_JS_DRIVER);
+        System.setProperty("phantomjs.binary.path",
+                TstProperties.getPhantomJsPath());
+
         // getting the database connection
-        conn = DataGeneratorUtil.getJDBCConnection(); 
-        // Create a ResultSetHandler implementation to convert the first row into an Object[].
+        conn = DataGeneratorUtil.getJDBCConnection();
+        // Create a ResultSetHandler implementation to convert the first row
+        // into an Object[].
         h = new ResultSetHandler<Object[]>() {
             public Object[] handle(ResultSet rs) throws SQLException {
                 if (!rs.next()) {
@@ -208,21 +207,21 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
                 return result;
             }
         };
-        
+
         super.setUp();
     }
 
     @Override
-    public void tearDown() throws Exception { 
+    public void tearDown() throws Exception {
         takeScreenShot();
         logoutUser();
         closeBrowser();
         DbUtils.closeQuietly(conn);
         super.tearDown();
     }
-    
+
     private void takeScreenShot() {
-        try {           
+        try {
             final String screenShotFileName = getClass().getSimpleName()
                     + "_ScreenShot_"
                     + new Timestamp(System.currentTimeMillis()).toString()
@@ -241,7 +240,6 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
 
     }
 
-
     @SuppressWarnings("deprecation")
     protected void reInitializeWebDriver() throws Exception {
         closeBrowser();
@@ -255,7 +253,7 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
     private boolean isPhantomJS() {
         return driver.getClass().getName().equals(PHANTOM_JS_DRIVER);
     }
-    
+
     /**
      * 
      */
@@ -266,7 +264,7 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
             openAndHandleStuckPhantomJsDriver(url);
         }
     }
-    
+
     private void openAndHandleStuckPhantomJsDriver(final String url) {
         int tries = 0;
         while (tries < 5) {
@@ -306,22 +304,9 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
     protected void logoutUser() {
         openAndWait("/po-web/login/logout.action");
     }
+
     protected void login(String username, String password) {
-        System.out.println("About to call application...");
-        open("/po-web");
-        assertTrue(selenium.isTextPresent("Login"));
-        assertTrue(selenium.isTextPresent("CONTACT US"));
-        System.out.println("About to click Login link...");
-        clickAndWait("link=Login");
-        selenium.type("j_username", username);
-        selenium.type("j_password", password);                
-        clickAndWait("id=loginButton");
-        assertTrue(selenium.isElementPresent("id=Help"));
-        assertTrue(selenium.isElementPresent("id=Logout"));
-        assertTrue(selenium.isElementPresent("id=accept_disclaimer"));
-        assertTrue(selenium.isElementPresent("id=reject_disclaimer"));
-        System.out.println("About to click id=accept_disclaimer...");
-        clickAndWait("id=accept_disclaimer");
+        performLoginAndAcceptDisclaimer(username, password);
         assertTrue(selenium.isElementPresent("id=EntityInboxOrganization"));
         assertTrue(selenium.isElementPresent("id=SearchOrganization"));
         assertTrue(selenium.isElementPresent("id=CreateOrganization"));
@@ -335,7 +320,36 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         System.out.println("Completed login().");
     }
 
-   
+    /**
+     * @param username
+     * @param password
+     */
+    protected void performLoginAndAcceptDisclaimer(String username,
+            String password) {
+        attemptLogin(username, password);
+        assertTrue(selenium.isElementPresent("id=Help"));
+        assertTrue(selenium.isElementPresent("id=Logout"));
+        assertTrue(selenium.isElementPresent("id=accept_disclaimer"));
+        assertTrue(selenium.isElementPresent("id=reject_disclaimer"));
+        System.out.println("About to click id=accept_disclaimer...");
+        clickAndWait("id=accept_disclaimer");
+    }
+
+    /**
+     * @param username
+     * @param password
+     */
+    protected void attemptLogin(String username, String password) {
+        System.out.println("About to call application...");
+        open("/po-web");
+        assertTrue(selenium.isTextPresent("Login"));
+        assertTrue(selenium.isTextPresent("CONTACT US"));
+        System.out.println("About to click Login link...");
+        clickAndWait("link=Login");
+        selenium.type("j_username", username);
+        selenium.type("j_password", password);
+        clickAndWait("id=loginButton");
+    }
 
     public void loginAsCurator() {
         login("curator", "pass");
@@ -344,9 +358,10 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
     public void loginAsJohnDoe() {
         login("jdoe01", "pass");
     }
-    
+
     protected boolean isLoggedIn() {
-        return selenium.isElementPresent("link=Logout") && !selenium.isElementPresent("link=Login");
+        return selenium.isElementPresent("link=Logout")
+                && !selenium.isElementPresent("link=Login");
     }
 
     protected void openCreateOrganization() {
@@ -375,9 +390,9 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         waitForElementById("ttyEntry_value", 10);
         waitForElementById("urlEntry_value", 10);
     }
-    
-    protected void waitForAliasFormsToLoad() {        
-        waitForElementById("alias_value", 10); 
+
+    protected void waitForAliasFormsToLoad() {
+        waitForElementById("alias_value", 10);
     }
 
     private void goHome() {
@@ -388,7 +403,7 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
     }
 
     protected void openAndWait(String url) {
-        open(url);        
+        open(url);
         waitForPageToLoad();
     }
 
@@ -410,9 +425,11 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
 
     /**
      * Searches in the given column for the given text
-     *
-     * @param text - string to search for
-     * @param column - table column to search in
+     * 
+     * @param text
+     *            - string to search for
+     * @param column
+     *            - table column to search in
      * @return the row number where the text was found. -1 if not found
      */
     protected int getRow(String text, int column) {
@@ -421,9 +438,11 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
 
     /**
      * Searches in the given column for the given text
-     *
-     * @param text - string to search for (contains search)
-     * @param column - table column to search in
+     * 
+     * @param text
+     *            - string to search for (contains search)
+     * @param column
+     *            - table column to search in
      * @return the row number where the text was found. -1 if not found
      */
     protected int getRowThatContainsText(String text, int column) {
@@ -441,7 +460,8 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
                     // there are no rows on the page
                     return -1;
                 }
-                LOG.info("problem looking for " + text + " at (" + row + "," + column + ") Stopped at : " + tblValue);
+                LOG.info("problem looking for " + text + " at (" + row + ","
+                        + column + ") Stopped at : " + tblValue);
                 throw e;
             }
             if (contains && tblValue.contains(text)) {
@@ -452,7 +472,8 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
 
             if (row % PAGE_SIZE == 0) {
                 // Moving to next page
-                // this will fail once there are no more pages and the text parameter is not found
+                // this will fail once there are no more pages and the text
+                // parameter is not found
                 try {
                     clickAndWait("link=Next");
                 } catch (Exception e1) {
@@ -494,7 +515,8 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
 
     private void verifyEmail() {
         waitForElementById("email-remove-0", 5);
-        assertEquals(DEFAULT_EMAIL + " | Remove", selenium.getText("email-entry-0"));
+        assertEquals(DEFAULT_EMAIL + " | Remove",
+                selenium.getText("email-entry-0"));
 
         waitForElementById("emailEntry_value", 5);
         clear("emailEntry_value");
@@ -506,43 +528,46 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         selenium.type("emailEntry_value", "abc@example.com");
         selenium.click("email-add");
         waitForElementById("email-remove-1", 5);
-        assertEquals("abc@example.com | Remove", selenium.getText("email-entry-1"));
+        assertEquals("abc@example.com | Remove",
+                selenium.getText("email-entry-1"));
 
         waitForElementById("emailEntry_value", 5);
         selenium.type("emailEntry_value", "example.com");
         selenium.click("email-add");
         waitForElementById("wwerr_emailEntry_value", 5);
-        assertTrue(selenium.isTextPresent("Email Address is not a well-formed email address"));
+        assertTrue(selenium
+                .isTextPresent("Email Address is not a well-formed email address"));
 
         clear("emailEntry_value");
     }
-    
-    
+
     /**
      * Verify the Alias behave properly at Org & OrgRole level.
      */
-    protected void verifyAlias() {       
-        waitForElementById("alias_value", 5);      
+    protected void verifyAlias() {
+        waitForElementById("alias_value", 5);
         selenium.type("alias_value", ALIAS_STRING);
         selenium.click("alias-add");
         waitForElementById("alias-remove-0", 5);
-        assertEquals("test_alias_123 | Remove", selenium.getText("alias-entry-0"));
+        assertEquals("test_alias_123 | Remove",
+                selenium.getText("alias-entry-0"));
 
         waitForElementById("alias_value", 5);
         selenium.type("alias_value", " ");// left blank
-        selenium.click("alias-add");    
+        selenium.click("alias-add");
         pause(1000);
         assertTrue(selenium.isTextPresent("Alias must be set"));
 
         clear("alias_value");
     }
-    
+
     /**
      * Verify an existing Alias at Org & OrgRole level.
      */
-    protected void verifyExistingAlias() {     
+    protected void verifyExistingAlias() {
         waitForElementById("alias-remove-0", 5);
-        assertEquals("test_alias_123 | Remove", selenium.getText("alias-entry-0"));
+        assertEquals("test_alias_123 | Remove",
+                selenium.getText("alias-entry-0"));
     }
 
     private void clear(String locator) {
@@ -566,7 +591,8 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         selenium.type("phoneEntry_value", "1234567890123456789012345678901");
         selenium.click("phone-add");
         waitForElementById("wwerr_phoneEntry_value", 5);
-        assertTrue(selenium.isTextPresent("Phone length must be between 0 and 30"));
+        assertTrue(selenium
+                .isTextPresent("Phone length must be between 0 and 30"));
 
         clear("phoneEntry_value");
     }
@@ -588,7 +614,8 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         selenium.type("faxEntry_value", "1234567890123456789012345678901");
         selenium.click("fax-add");
         waitForElementById("wwerr_faxEntry_value", 5);
-        assertTrue(selenium.isTextPresent("Fax length must be between 0 and 30"));
+        assertTrue(selenium
+                .isTextPresent("Fax length must be between 0 and 30"));
 
         clear("faxEntry_value");
     }
@@ -610,7 +637,8 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         selenium.type("ttyEntry_value", "1234567890123456789012345678901");
         selenium.click("tty-add");
         waitForElementById("wwerr_ttyEntry_value", 5);
-        assertTrue(selenium.isTextPresent("TTY length must be between 0 and 30"));
+        assertTrue(selenium
+                .isTextPresent("TTY length must be between 0 and 30"));
 
         clear("ttyEntry_value");
     }
@@ -629,7 +657,8 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         selenium.type("urlEntry_value", "http://www.example.com");
         selenium.click("url-add");
         waitForElementById("url-remove-1", 5);
-        assertEquals("http://www.example.com | Remove", selenium.getText("url-entry-1"));
+        assertEquals("http://www.example.com | Remove",
+                selenium.getText("url-entry-1"));
 
         waitForElementById("urlEntry_value", 5);
         selenium.type("urlEntry_value", "example.com");
@@ -641,17 +670,31 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
     }
 
     protected void verifyPostalAddress(ENTITYTYPE type) {
-        assertEquals("123 abc ave.", selenium.getValue("curateEntityForm_" + type.name()
-                + "_postalAddress_streetAddressLine"));
-        assertEquals("", selenium.getValue("curateEntityForm_" + type.name() + "_postalAddress_deliveryAddressLine"));
-        assertEquals("mycity", selenium.getValue("curateEntityForm_" + type.name()
-                + "_postalAddress_cityOrMunicipality"));
-        assertEquals("VA", selenium.getValue(type.name() + ".postalAddress.stateOrProvince"));
-        assertEquals("12345", selenium.getValue("curateEntityForm_" + type.name() + "_postalAddress_postalCode"));
+        assertEquals(
+                "123 abc ave.",
+                selenium.getValue("curateEntityForm_" + type.name()
+                        + "_postalAddress_streetAddressLine"));
+        assertEquals(
+                "",
+                selenium.getValue("curateEntityForm_" + type.name()
+                        + "_postalAddress_deliveryAddressLine"));
+        assertEquals(
+                "mycity",
+                selenium.getValue("curateEntityForm_" + type.name()
+                        + "_postalAddress_cityOrMunicipality"));
+        assertEquals(
+                "VA",
+                selenium.getValue(type.name()
+                        + ".postalAddress.stateOrProvince"));
+        assertEquals(
+                "12345",
+                selenium.getValue("curateEntityForm_" + type.name()
+                        + "_postalAddress_postalCode"));
     }
 
-    protected void createPerson(String status, String prefix, String fName, String mName, String lName, String suffix,
-            Address address, String email, String phone, String url, String fax) {
+    protected void createPerson(String status, String prefix, String fName,
+            String mName, String lName, String suffix, Address address,
+            String email, String phone, String url, String fax) {
         // wait for ajax page content to load
         waitForElementById("emailEntry_value", 10);
         waitForElementById("phoneEntry_value", 10);
@@ -668,16 +711,19 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         inputAddressInfo(address, "curateEntityForm", "person");
         // add contact info
         inputContactInfo(email, phone, fax, null, url);
-        //save the person
+        // save the person
         clickAndWaitSaveButton();
-        //verify person created message
-        assertTrue("Success message is missing", selenium.isTextPresent("Person was successfully created"));
+        // verify person created message
+        assertTrue("Success message is missing",
+                selenium.isTextPresent("Person was successfully created"));
     }
 
-    protected void createOrganization(String status, String name, Address address, String email, String phone,
-            String fax, String tty, String url) {
+    protected void createOrganization(String status, String name,
+            Address address, String email, String phone, String fax,
+            String tty, String url) {
         openCreateOrganization();
-        selenium.select("curateEntityForm.organization.statusCode", "label=" + status);
+        selenium.select("curateEntityForm.organization.statusCode", "label="
+                + status);
         selenium.type("curateEntityForm_organization_name", name);
 
         // add postal address info
@@ -685,18 +731,20 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
 
         // add contact info
         inputContactInfo(email, phone, fax, tty, url);
-        
+
         // add Alias
         inputAlias();
 
         // save the organization
         clickAndWaitSaveButton();
         // verify organization created message
-        assertTrue("Success message is missing", selenium.isTextPresent("Organization was successfully created"));
+        assertTrue("Success message is missing",
+                selenium.isTextPresent("Organization was successfully created"));
     }
 
-    protected void createGenericOrganizationalContact(String status, String title, String type, Address address,
-            String email, String phone, String fax, String tty, String url, boolean verify) {
+    protected void createGenericOrganizationalContact(String status,
+            String title, String type, Address address, String email,
+            String phone, String fax, String tty, String url, boolean verify) {
         waitForTelecomFormsToLoad();
         selenium.type("curateRoleForm_role_title", title);
         selenium.select("curateRoleForm.role.status", "label=" + status);
@@ -715,40 +763,57 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         clickAndWaitSaveButton();
         if (verify) {
             // verify OC created message
-            assertTrue("Success message is missing", selenium
-                    .isTextPresent("Organizational Contact was successfully created"));
+            assertTrue(
+                    "Success message is missing",
+                    selenium.isTextPresent("Organizational Contact was successfully created"));
         }
     }
 
-    protected void inputAddressInfo(Address address, String formName, String objectType) {
-        selenium.select(formName + "." + objectType + ".postalAddress.country", "label=" + address.getCountry());
+    protected void inputAddressInfo(Address address, String formName,
+            String objectType) {
+        selenium.select(formName + "." + objectType + ".postalAddress.country",
+                "label=" + address.getCountry());
         waitForElementById(objectType + ".postalAddress.stateOrProvince", 10);
-        selenium.type(formName + "_" + objectType + "_postalAddress_streetAddressLine", address.getStreetAddressLine());
-        selenium.type(formName + "_" + objectType + "_postalAddress_deliveryAddressLine", address
-                .getDeliveryAddressLine());
-        selenium
-        .type(formName + "_" + objectType + "_postalAddress_cityOrMunicipality", address.getCityOrMunicipality());
-        selenium.select(objectType + ".postalAddress.stateOrProvince", "value=" + address.getStateOrProvince());
-        selenium.type(formName + "_" + objectType + "_postalAddress_postalCode", address.getPostalCode());
+        selenium.type(formName + "_" + objectType
+                + "_postalAddress_streetAddressLine",
+                address.getStreetAddressLine());
+        selenium.type(formName + "_" + objectType
+                + "_postalAddress_deliveryAddressLine",
+                address.getDeliveryAddressLine());
+        selenium.type(formName + "_" + objectType
+                + "_postalAddress_cityOrMunicipality",
+                address.getCityOrMunicipality());
+        selenium.select(objectType + ".postalAddress.stateOrProvince", "value="
+                + address.getStateOrProvince());
+        selenium.type(
+                formName + "_" + objectType + "_postalAddress_postalCode",
+                address.getPostalCode());
     }
 
     protected void inputAddressInfoPopup(Address address) {
         clickAndWait("add_address");
         pause(3000);
         selenium.selectFrame("popupFrame");
-        selenium.select("postalAddressForm.address.country", "label=" + address.getCountry());
+        selenium.select("postalAddressForm.address.country",
+                "label=" + address.getCountry());
         waitForElementById("address.stateOrProvince", 10);
-        selenium.type("postalAddressForm_address_streetAddressLine", address.getStreetAddressLine());
-        selenium.type("postalAddressForm_address_deliveryAddressLine", address.getDeliveryAddressLine());
-        selenium.type("postalAddressForm_address_cityOrMunicipality", address.getCityOrMunicipality());
-        selenium.select("address.stateOrProvince", "value=" + address.getStateOrProvince());
-        selenium.type("postalAddressForm_address_postalCode", address.getPostalCode());
+        selenium.type("postalAddressForm_address_streetAddressLine",
+                address.getStreetAddressLine());
+        selenium.type("postalAddressForm_address_deliveryAddressLine",
+                address.getDeliveryAddressLine());
+        selenium.type("postalAddressForm_address_cityOrMunicipality",
+                address.getCityOrMunicipality());
+        selenium.select("address.stateOrProvince",
+                "value=" + address.getStateOrProvince());
+        selenium.type("postalAddressForm_address_postalCode",
+                address.getPostalCode());
         selenium.click("id=submitPostalAddressForm");
         pause(10000);
         driver.switchTo().defaultContent();
     }
 
-    protected void inputContactInfo(String email, String phone, String fax, String tty, String url) {
+    protected void inputContactInfo(String email, String phone, String fax,
+            String tty, String url) {
 
         inputEmailAndUrl(email, url);
 
@@ -770,8 +835,10 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
 
     }
 
-    protected void inputContactInfoForUSAndCan(String email, String[] phone, String[] fax, String[] tty, String url) {
-        inputContactInfo(email, StringUtils.join(phone, "-"), StringUtils.join(fax, "-"), StringUtils.join(tty, "-"), url);
+    protected void inputContactInfoForUSAndCan(String email, String[] phone,
+            String[] fax, String[] tty, String url) {
+        inputContactInfo(email, StringUtils.join(phone, "-"),
+                StringUtils.join(fax, "-"), StringUtils.join(tty, "-"), url);
     }
 
     private void inputEmailAndUrl(String email, String url) {
@@ -788,7 +855,7 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         }
     }
 
-    protected void inputForTel(String[]tel, String type) {
+    protected void inputForTel(String[] tel, String type) {
         if (tel.length >= 3) {
             selenium.type(type + "Entry_part1", tel[0]);
             selenium.type(type + "Entry_part2", tel[1]);
@@ -796,52 +863,58 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
             if (tel.length == 4) {
                 selenium.type(type + "Entry_part4", tel[3]);
             }
-            selenium.click("//div[@id='us_format_"+type+"']//a[@id='" + type + "-add']");
-            waitForElementById(type +"-entry-0", 5);
+            selenium.click("//div[@id='us_format_" + type + "']//a[@id='"
+                    + type + "-add']");
+            waitForElementById(type + "-entry-0", 5);
         }
     }
 
     protected void inputNonUSFormatTel(String tel, String type) {
         selenium.type(type + "Entry_value", tel);
-        selenium.click("//div[@id='no_format_"+type+"']//a[@id='" + type + "-add']");
-         waitForElementById(type +"-entry-0", 5);
+        selenium.click("//div[@id='no_format_" + type + "']//a[@id='" + type
+                + "-add']");
+        waitForElementById(type + "-entry-0", 5);
     }
-    
-    protected void inputAlias() {  
+
+    protected void inputAlias() {
         selenium.type("alias_value", ALIAS_STRING);
         selenium.click("alias-add");
         waitForElementById("alias-entry-0", 5);
     }
 
     public Address getAddress() {
-        return new Address("123 Main Street", "40 5th Street", "Ashburn", "VA", "20147", "United States");
+        return new Address("123 Main Street", "40 5th Street", "Ashburn", "VA",
+                "20147", "United States");
     }
 
     public Address getForeignAddress() {
-        return new Address("123 Main Street", "40 5th Street", "Bogata", null, "20147", "Columbia");
+        return new Address("123 Main Street", "40 5th Street", "Bogata", null,
+                "20147", "Columbia");
     }
 
     protected String createPerson() {
         String lname = "lastName" + System.currentTimeMillis();
         createPerson("PENDING", "Dr", "Jakson", "L", lname, "III",
-                getAddress(), "sample@example.com", "703-111-2345", "http://www.example.com", "703-111-1234");
+                getAddress(), "sample@example.com", "703-111-2345",
+                "http://www.example.com", "703-111-1234");
         return lname;
     }
 
     protected String createOrganization() {
         String name = "orgName" + System.currentTimeMillis();
-        createOrganization("ACTIVE", name, getAddress(), "sample@example.com", "703-111-2345",
-                "703-111-1234", null, "http://www.example.com");
+        createOrganization("ACTIVE", name, getAddress(), "sample@example.com",
+                "703-111-2345", "703-111-1234", null, "http://www.example.com");
         return name;
     }
 
     protected void accessManageClinicalResearchStaffScreen() {
         clickAndWait("link=Manage Clinical Research Staff(s)");
-        assertTrue(selenium.isTextPresent("Clinical Research Staff Information"));
+        assertTrue(selenium
+                .isTextPresent("Clinical Research Staff Information"));
     }
 
     protected void accessManageIdentifiedOrganizationScreen() {
-        clickAndWait("link=Identified Org (0)");        
+        clickAndWait("link=Identified Org (0)");
     }
 
     protected void accessManageOrganizationalContactScreen() {
@@ -853,11 +926,11 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
     }
 
     protected void accessManageIdentifiedPersonScreen() {
-        clickAndWait("link=OPI (0)");        
+        clickAndWait("link=OPI (0)");
     }
 
     protected void accessManageResearchOrganizationScreen() {
-        clickAndWait("link=RO (0)");        
+        clickAndWait("link=RO (0)");
     }
 
     protected void accessManageHealthCareProviderScreen() {
@@ -867,7 +940,8 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
 
     protected void accessFamilyScreen() {
         clickAndWait("link=Manage Family(s)");
-        assertTrue(selenium.isTextPresent("Family Organization Relationship Information"));
+        assertTrue(selenium
+                .isTextPresent("Family Organization Relationship Information"));
     }
 
     protected void selectOrganizationScoper(String orgId, String orgName) {
@@ -881,61 +955,69 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         /* select record to use at duplicate */
         clickAndWait("mark_as_dup_" + orgId);
         driver.switchTo().defaultContent();
-        assertEquals(orgName + " (" + orgId + ")", selenium.getText("wwctrl_curateRoleForm_role_scoper_id"));
+        assertEquals(orgName + " (" + orgId + ")",
+                selenium.getText("wwctrl_curateRoleForm_role_scoper_id"));
     }
 
     /**
-     * Use this to add postal addresses using the popup.
-     * Verifies values exist somewhere on the page after the popup save button is pressed.
-     * Unfortunately, we're unable to control the order the postalAdresses are displayed (backed by a HashSet),
-     * so we can only verify the existence of text on the page.
-     *
+     * Use this to add postal addresses using the popup. Verifies values exist
+     * somewhere on the page after the popup save button is pressed.
+     * Unfortunately, we're unable to control the order the postalAdresses are
+     * displayed (backed by a HashSet), so we can only verify the existence of
+     * text on the page.
+     * 
      * *** SPECIFY UNIQUE VALUES ON THE PAGE
      */
-    protected void addPostalAddressUsingPopup(String street1, String street2, String city, String stateCode, String zip,
-            String countryName, int totalNumberOfAddressesAfterAdd) {
-                assertTrue(totalNumberOfAddressesAfterAdd > 0);
-                waitForElementById("add_address", 10);
-                clickAndWait("add_address");
-                selenium.selectFrame("popupFrame");
-                selenium.select("postalAddressForm.address.country", "label="+countryName);
-                //might need to wait for //div[@id=address.div_stateOrProvince] to reload
-                pause(3000);
-                waitForElementById("address.stateOrProvince", 10);
+    protected void addPostalAddressUsingPopup(String street1, String street2,
+            String city, String stateCode, String zip, String countryName,
+            int totalNumberOfAddressesAfterAdd) {
+        assertTrue(totalNumberOfAddressesAfterAdd > 0);
+        waitForElementById("add_address", 10);
+        clickAndWait("add_address");
+        selenium.selectFrame("popupFrame");
+        selenium.select("postalAddressForm.address.country", "label="
+                + countryName);
+        // might need to wait for //div[@id=address.div_stateOrProvince] to
+        // reload
+        pause(3000);
+        waitForElementById("address.stateOrProvince", 10);
 
-                selenium.type("postalAddressForm_address_streetAddressLine", street1);
-                selenium.type("postalAddressForm_address_deliveryAddressLine", street2);
-                selenium.type("postalAddressForm_address_cityOrMunicipality", city);
-                
-                try {
-                    selenium.select("address.stateOrProvince", "value="+stateCode);
-                } catch (Exception e) {
-                    System.out.println("Oops; not a SELECT element.");
-                    selenium.type("address.stateOrProvince", stateCode);
-                }               
-                
-                selenium.type("postalAddressForm_address_postalCode", zip);
-                selenium.click("//a[@id='submitPostalAddressForm']/span/span");
-                driver.switchTo().defaultContent();
-                totalNumberOfAddressesAfterAdd--;
-                waitForElementById("postalAddress"+totalNumberOfAddressesAfterAdd, 10);
-                selenium.isTextPresent(street1);
-                selenium.isTextPresent(street2);
-                selenium.isTextPresent(city);
-                selenium.isTextPresent(stateCode);
-                selenium.isTextPresent(zip);
-                selenium.isTextPresent(countryName);
-            }
+        selenium.type("postalAddressForm_address_streetAddressLine", street1);
+        selenium.type("postalAddressForm_address_deliveryAddressLine", street2);
+        selenium.type("postalAddressForm_address_cityOrMunicipality", city);
+
+        try {
+            selenium.select("address.stateOrProvince", "value=" + stateCode);
+        } catch (Exception e) {
+            System.out.println("Oops; not a SELECT element.");
+            selenium.type("address.stateOrProvince", stateCode);
+        }
+
+        selenium.type("postalAddressForm_address_postalCode", zip);
+        selenium.click("//a[@id='submitPostalAddressForm']/span/span");
+        driver.switchTo().defaultContent();
+        totalNumberOfAddressesAfterAdd--;
+        waitForElementById("postalAddress" + totalNumberOfAddressesAfterAdd, 10);
+        selenium.isTextPresent(street1);
+        selenium.isTextPresent(street2);
+        selenium.isTextPresent(city);
+        selenium.isTextPresent(stateCode);
+        selenium.isTextPresent(zip);
+        selenium.isTextPresent(countryName);
+    }
 
     public enum ENTITYTYPE {
         person, organization;
     }
 
-    protected Ii createRemoteOrg(String orgName) throws EntityValidationException, NamingException, URISyntaxException, CurationException {
+    protected Ii createRemoteOrg(String orgName)
+            throws EntityValidationException, NamingException,
+            URISyntaxException, CurationException {
 
         OrganizationDTO dto = new OrganizationDTO();
         dto.setName(TestConvertHelper.convertToEnOn(orgName));
-        dto.setPostalAddress(TestConvertHelper.createAd("123 abc ave.", null, "mycity", "WY", "12345", "USA"));
+        dto.setPostalAddress(TestConvertHelper.createAd("123 abc ave.", null,
+                "mycity", "WY", "12345", "USA"));
         DSet<Tel> telco = new DSet<Tel>();
         telco.setItem(new HashSet<Tel>());
         dto.setTelecomAddress(telco);
@@ -947,7 +1029,8 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         TelUrl url = new TelUrl();
         url.setValue(new URI(DEFAULT_URL));
         dto.getTelecomAddress().getItem().add(url);
-        Ii id = RemoteServiceHelper.getOrganizationEntityService().createOrganization(dto);
+        Ii id = RemoteServiceHelper.getOrganizationEntityService()
+                .createOrganization(dto);
         dto.setIdentifier(id);
         return id;
     }
@@ -955,25 +1038,32 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
     protected void savePersonAsActive(Ii id) {
         selenium.select("curateEntityForm.person.statusCode", "label=ACTIVE");
         clickAndWaitSaveButton();
-        assertEquals("PO: Persons and Organizations - Person Details", selenium.getTitle());
-        assertFalse(selenium.isElementPresent("//a[@id='person_id_" + id.getExtension() + "']/span/span"));
+        assertEquals("PO: Persons and Organizations - Person Details",
+                selenium.getTitle());
+        assertFalse(selenium.isElementPresent("//a[@id='person_id_"
+                + id.getExtension() + "']/span/span"));
     }
 
     protected void saveOrganizationAsActive(Ii id) {
-        selenium.select("curateEntityForm.organization.statusCode", "label=ACTIVE");
+        selenium.select("curateEntityForm.organization.statusCode",
+                "label=ACTIVE");
         clickAndWaitSaveButton();
-        assertTrue("Organization was successfully created!", selenium
-                .isTextPresent("Organization was successfully created"));
-        assertEquals("PO: Persons and Organizations - Person Details", selenium.getTitle());
-        assertFalse(selenium.isElementPresent("//a[@id='organization_id_" + id.getExtension() + "']/span/span"));
+        assertTrue("Organization was successfully created!",
+                selenium.isTextPresent("Organization was successfully created"));
+        assertEquals("PO: Persons and Organizations - Person Details",
+                selenium.getTitle());
+        assertFalse(selenium.isElementPresent("//a[@id='organization_id_"
+                + id.getExtension() + "']/span/span"));
     }
 
-    protected void verifyPresenceOfRequiredIndicator(boolean expectedValue, String labelFor) {
+    protected void verifyPresenceOfRequiredIndicator(boolean expectedValue,
+            String labelFor) {
         assertEquals(expectedValue, isRequiredIndicatorPresent(labelFor));
     }
 
     private boolean isRequiredIndicatorPresent(String labelFor) {
-        String xpath = "//label[@for='" + labelFor + "']/span[@class='required' and ./text()='*']";
+        String xpath = "//label[@for='" + labelFor
+                + "']/span[@class='required' and ./text()='*']";
         return selenium.isElementPresent(xpath);
     }
 
@@ -985,14 +1075,13 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         String labelSelectReliability = "label=--Select a Reliability--";
 
         /*
-         * 1. Set value to Select A Reliability.
-         * 2. Select VRF. Verify that there was no confirmation message.
-         * 3. Switch value to UNF. Verify the presence of a confirmation message.
-         * 4. Switch value to Select A Reliability. Verify the presence of a confirmation message.
-         * 5. Switch value to UNV. Verify the absence of a confirmation message.
-         * 6. Switch back to Select A Reliability.
-         * 7. Test that the Cancel button behaves as expected.
-         * 8. Test that the OK button behaves as expected.
+         * 1. Set value to Select A Reliability. 2. Select VRF. Verify that
+         * there was no confirmation message. 3. Switch value to UNF. Verify the
+         * presence of a confirmation message. 4. Switch value to Select A
+         * Reliability. Verify the presence of a confirmation message. 5. Switch
+         * value to UNV. Verify the absence of a confirmation message. 6. Switch
+         * back to Select A Reliability. 7. Test that the Cancel button behaves
+         * as expected. 8. Test that the OK button behaves as expected.
          */
 
         selenium.select(elementId, labelSelectReliability);
@@ -1000,46 +1089,93 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         assertFalse(selenium.isConfirmationPresent());
         selenium.select(elementId, labelUNV);
         assertTrue(selenium.isConfirmationPresent());
-        assertTrue(selenium.getConfirmation().matches(confirmationMessagePattern));
+        assertTrue(selenium.getConfirmation().matches(
+                confirmationMessagePattern));
         selenium.select(elementId, labelSelectReliability);
         assertTrue(selenium.isConfirmationPresent());
-        assertTrue(selenium.getConfirmation().matches(confirmationMessagePattern));
+        assertTrue(selenium.getConfirmation().matches(
+                confirmationMessagePattern));
         selenium.select(elementId, labelUNV);
         assertFalse(selenium.isConfirmationPresent());
         selenium.select(elementId, labelSelectReliability);
         assertTrue(selenium.isConfirmationPresent());
-        assertTrue(selenium.getConfirmation().matches(confirmationMessagePattern));
+        assertTrue(selenium.getConfirmation().matches(
+                confirmationMessagePattern));
 
         selenium.select(elementId, labelUNV);
-        //handle pressing cancel on confirmation for changing reliability
-        //press cancel to abort the value change
+        // handle pressing cancel on confirmation for changing reliability
+        // press cancel to abort the value change
         selenium.chooseCancelOnNextConfirmation();
         selenium.select(elementId, labelVRF);
         assertTrue(selenium.isConfirmationPresent());
-        assertTrue(selenium.getConfirmation().matches(confirmationMessagePattern));
+        assertTrue(selenium.getConfirmation().matches(
+                confirmationMessagePattern));
         assertEquals("UNV", selenium.getValue(elementId).trim());
-        //press OK to accept the change
+        // press OK to accept the change
         selenium.select(elementId, labelVRF);
         assertTrue(selenium.isConfirmationPresent());
-        assertTrue(selenium.getConfirmation().matches(confirmationMessagePattern));
+        assertTrue(selenium.getConfirmation().matches(
+                confirmationMessagePattern));
         assertEquals("VRF", selenium.getValue(elementId).trim());
     }
-    
-    protected void setCreatedByInOrg(Long orgId){       
+
+    protected void setCreatedByInOrg(Long orgId) {
         long curatorDbId = 0;
         try {
             QueryRunner queryRunner = new QueryRunner();
             Object[] result = queryRunner.query(conn,
-                    "select user_id from csm_user where login_name ='curator'", h);
+                    "select user_id from csm_user where login_name ='curator'",
+                    h);
             // get the DB Id of 'curator'
             curatorDbId = ((Long) result[0]).longValue();
-            
-            // set 'createdBy' in the Org    
-            queryRunner.update(conn, "update organization set created_by_id = ? WHERE id = ?", curatorDbId, orgId);
-            
+
+            // set 'createdBy' in the Org
+            queryRunner.update(conn,
+                    "update organization set created_by_id = ? WHERE id = ?",
+                    curatorDbId, orgId);
+
         } catch (SQLException e) {
             Assert.fail("Exception occured inside setCreatedByInOrg. The exception is: "
                     + e);
         }
+    }
+
+    protected Number createCSMUser(String loginName) throws SQLException {
+
+        QueryRunner runner = new QueryRunner();
+        String idSql = "select max(user_id) + 1 from csm_user";
+
+        Number id = (Number) runner.query(conn, idSql, new ArrayHandler())[0];
+        String sql = "INSERT INTO csm_user (user_id, login_name,first_name,last_name,update_date,migrated_flag) VALUES ("
+                + id.intValue()
+                + ", "
+                + "'"
+                + loginName
+                + "', '', '', now(),0)";
+
+        runner.update(conn, sql);
+
+        return id;
+    }
+
+    protected void assignUserToGroup(Number userID, String group)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "insert into csm_user_group (user_id, group_id) values ("
+                + userID
+                + ", (select group_id from csm_group where group_name='"
+                + group + "')  )";
+        runner.update(conn, sql);
+    }
+
+    protected boolean isUserInGroup(Number userID, String group)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        final String sql = "select user_group_id from csm_user_group where user_id="
+                + userID
+                + " and group_id=(select group_id from csm_group where group_name='"
+                + group + "')";
+        final Object[] results = runner.query(conn, sql, new ArrayHandler());
+        return results != null;
     }
 }

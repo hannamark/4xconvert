@@ -100,7 +100,8 @@ import org.junit.runners.Suite.SuiteClasses;
         ManageResearchOrganizationWithCRTest.class,
         OrganizationFamilyTest.class, OrganizationRelationshipTest.class,
         SearchOrganizationTest.class, SearchPersonTest.class,
-        SelectOrganizationTest.class, UsePersonsAddressButtonTest.class })
+        SelectOrganizationTest.class, UsePersonsAddressButtonTest.class,
+        ManageUserGroupsTest.class })
 public class AllSeleniumTests {
 
 }

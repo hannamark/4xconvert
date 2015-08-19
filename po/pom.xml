@@ -11,15 +11,26 @@
     <inceptionYear>2008</inceptionYear>
 
     <properties>
-        <grid.target>nci_qa-2.x</grid.target>
+        <ldap.url>ldaps://cbioweb-ldap.nci.nih.gov:636</ldap.url>                
+        <ldap.user>cn=ncicb-dev-ldap,ou=nci,o=nih</ldap.user>
+        <ldap.password></ldap.password>
+        <ldap.security.authentication>simple</ldap.security.authentication>
+        <ldap.security.protocol>ssl</ldap.security.protocol>
+        <ldap.timeouts.connect>60000</ldap.timeouts.connect>
+        <ldap.timeouts.read>60000</ldap.timeouts.read>
+        <ldap.context>ou=nci,o=nih</ldap.context>
+        <ldap.uid.attrname>uid</ldap.uid.attrname>
+        <ldap.migration.grouperToIdStringMap>cagrid2-gridgrouper-qa=/O=caBIG/OU=caGrid/OU=QA LOA1/OU=NCICB QA AuthnSvc IdP/CN=;cagrid-gridgrouper-stage=/O=caBIG/OU=caGrid/OU=Stage LOA1/OU=NCI STAGE/CN=;cagrid-gridgrouper-prod=/O=caBIG/OU=caGrid/OU=LOA1/OU=NCI/CN=;cagrid-gridgrouper.nci.nih.gov=/O=caBIG/OU=caGrid/OU=LOA1/OU=NCI/CN=</ldap.migration.grouperToIdStringMap>
+        <ldap.migration.excludes>/O=caBIG/OU=caGrid/OU=QA LOA1/OU=NCICB QA AuthnSvc IdP/CN=CTRPQATester1</ldap.migration.excludes>
+
         <jboss.home>${user.home}/apps/po/poear/jboss-eap-6.2</jboss.home>
         <jboss.hostname>localhost</jboss.hostname>
         <jboss.port>39080</jboss.port>
         <jboss.naming.port>31099</jboss.naming.port>        
         <log.level.nci-commons>DEBUG</log.level.nci-commons>
         <log.level.po>DEBUG</log.level.po>
-        <nci-commons.version>1.4.10.1</nci-commons.version>
-        <coppa-commons.version>1.3.13-SNAPSHOT</coppa-commons.version>
+        <nci-commons.version>1.4.11-SNAPSHOT</nci-commons.version>
+        <coppa-commons.version>1.3.14-SNAPSHOT</coppa-commons.version>
         <iso-datatypes.version>2.0</iso-datatypes.version>
         <maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
         <maven-checkstyle-plugin.version>2.4</maven-checkstyle-plugin.version>
@@ -51,9 +62,7 @@
         <powermock.version>1.5.5</powermock.version>
 
         <jackson.version>1.9.13</jackson.version>
-
-        <csm.sync.frequency.seconds>240</csm.sync.frequency.seconds>
-
+        
         <database.hostname>localhost</database.hostname>
         <database.port>5432</database.port>
         <database.url.prefix>jdbc:postgresql://${database.hostname}:${database.port}/</database.url.prefix>
@@ -67,10 +76,6 @@
         <jdbc.artifactId>postgresql</jdbc.artifactId>
         <jdbc.version>8.2-507.jdbc3</jdbc.version>
 
-        <ldap.host.url />
-        <ldap.searchable.base />
-        <ldap.user.id.label />
-
         <cobertura.check.haltOnFailure>true</cobertura.check.haltOnFailure>
         <web.auth.method>FORM</web.auth.method>
 
@@ -83,63 +88,7 @@
         <developerConnection>scm:svn:https://ncisvn.nci.nih.gov/svn/coppa/trunk/code/po</developerConnection>
         <url>https://ncisvn.nci.nih.gov/svn/coppa/trunk/code/po</url>
     </scm>
-
-    <issueManagement>
-        <system>Jira</system>
-        <url>https://tracker.nci.nih.gov/browse/PO</url>
-    </issueManagement>
-
-    <ciManagement>
-        <system>Hudson</system>
-        <url>http://ncias-c475-v.nci.nih.gov:48080/hudson/</url>
-        <notifiers>
-            <notifier>
-                <type>mail</type>
-                <address>team-po@5amsolutions.com</address>
-            </notifier>
-        </notifiers>
-    </ciManagement>
-
-    <mailingLists>
-        <mailingList>
-            <name>PO Dev Team List</name>
-            <post>team-po@5amsolutions.com</post>
-        </mailingList>
-    </mailingLists>
-
-    <developers>
-        <developer>
-            <email>smiller@5amsolutions.com</email>
-            <id>smiller</id>
-            <name>Scott Miller</name>
-        </developer>
-        <developer>
-            <email>tparnell@5amsolutions.com</email>
-            <id>tparnell</id>
-            <name>Todd Parnell</name>
-        </developer>
-        <developer>
-            <email>gax@5amsolutions.com</email>
-            <id>gax</id>
-            <name>Ashenafi Gax Ayalew</name>
-        </developer>
-        <developer>
-            <email>smatyas@5amsolutions.com</email>
-            <id>smatyas</id>
-            <name>Stephen Matyas</name>
-        </developer>
-        <developer>
-            <email>lpower@5amsolutions.com</email>
-            <id>lpower</id>
-            <name>Leslie Power</name>
-        </developer>
-        <developer>
-            <email>slustbader@5amsolutions.com</email>
-            <id>slustbader</id>
-            <name>Steve Lustbader</name>
-        </developer>
-    </developers>
-
+   
     <modules>
         <module>services</module>
         <module>web</module>

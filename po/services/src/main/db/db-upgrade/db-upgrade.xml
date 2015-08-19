@@ -243,4 +243,9 @@
        <comment>Change grid grouper URLs to use SHA2 endpoints.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/1.0.2/PO-8813.sql"/>       
     </changeSet>
+    <changeSet id="PO-9112" author="krylovd">  
+       <validCheckSum>ANY</validCheckSum>     
+       <comment>Remove CTRP's reliance on grid for authentication and authorization.</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/1.1/PO-9112.sql"/>       
+    </changeSet>    
 </databaseChangeLog>

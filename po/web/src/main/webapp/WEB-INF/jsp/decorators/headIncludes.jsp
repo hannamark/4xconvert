@@ -3,6 +3,8 @@
 <link href="<c:url value='/styles/curate.css'/>" rel="stylesheet" type="text/css" media="all"/>
 <link href="<c:url value='/styles/submodal.css'/>" rel="stylesheet" type="text/css" media="all"/>
 <link href="<c:url value='/styles/overwrites.css'/>" rel="stylesheet" type="text/css" media="all"/>
+<link href="<c:url value='/styles/jquery.dataTables.min.css'/>" rel="stylesheet" type="text/css" media="all"/>
+<link href="<c:url value='/styles/select2.min.css'/>" rel="stylesheet" type="text/css" media="all"/>
 <sj:head />
 <script type="text/javascript">
     var $j = jQuery.noConflict();
@@ -30,3 +32,5 @@
 <script type="text/javascript" language="javascript" src="<c:url value="/scripts/submodal/submodal.js"/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/po.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/ajaxHelper.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/jquery.dataTables.min.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/select2.min.js'/>"></script>

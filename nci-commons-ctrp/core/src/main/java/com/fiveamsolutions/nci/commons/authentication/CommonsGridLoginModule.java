@@ -218,7 +218,8 @@ public class CommonsGridLoginModule implements LoginModule {
         if (gridServicePrincipal.equals(username) && getDecryptedPassword().equals(password)) {
             // Set the Grid User Identity as the authenticated username
             // The password stacking configuration will user the grid identity to authorize access to EJBs
-            state.put(CommonLoginModule.JBOSS_PASSWORD_STACKING_USER_PARAM, gridUserIdentity);
+            state.put(CommonLoginModule.JBOSS_PASSWORD_STACKING_USER_PARAM,
+                    gridUserIdentity.replaceFirst("^.*?/CN=", "").toLowerCase());
             state.put(CommonLoginModule.JBOSS_PASSWORD_STACKING_PASSWORD_PARAM, password);
 
             loginSuccessful = true;
