@@ -1892,6 +1892,11 @@
        <validCheckSum>ANY</validCheckSum>
        <comment>Add configuration parameters for tweeting job.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9096.sql"/>
+    </changeSet>
+    <changeSet id="PO-9038" author="lagarwal">
+       <validCheckSum>ANY</validCheckSum>
+       <comment>Increase varchar to 1000</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9038.sql"/>
     </changeSet>    
     <changeSet id="PO-7595" author="vpoluri">
        <comment>Create columns for report viewer in table registry_user</comment>

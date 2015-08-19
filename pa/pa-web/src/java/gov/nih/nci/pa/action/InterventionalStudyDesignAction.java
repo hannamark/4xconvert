@@ -135,7 +135,7 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
     /**
      * Maximum length for Outcome description.
      */
-    static final int MAXIMUM_CHAR_OUTCOME_DESC = 600;
+    static final int MAXIMUM_CHAR_OUTCOME_DESC = 999;
     private static final long serialVersionUID = -8139821069851279621L;
     private static final String OUTCOME = "outcome";
     private static final String FALSE = "false";
@@ -593,7 +593,7 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
           addFieldError("webDTO.outcomeMeasure.name", getText("error.maximumChar.254"));
         }
         if (StringUtils.length(webDTO.getOutcomeMeasure().getDescription()) > MAXIMUM_CHAR_OUTCOME_DESC) {
-          addFieldError("webDTO.outcomeMeasure.description", getText("error.maximumChar.600"));
+          addFieldError("webDTO.outcomeMeasure.description", getText("error.maximumChar.999"));
         }
         addErrors(webDTO.getOutcomeMeasure().getTimeFrame(), "webDTO.outcomeMeasure.timeFrame",
                 "error.outcome.timeFrame");

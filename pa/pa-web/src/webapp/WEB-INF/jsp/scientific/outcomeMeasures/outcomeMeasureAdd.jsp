@@ -123,7 +123,7 @@ BubbleTips.activateTipOn("dfn");
                     </td>
                     <td class="value">
                         <s:textarea id="fileName1" name="webDTO.outcomeMeasure.description" rows="20" cssStyle="width:400px"
-                            maxlength="600" cssClass="charcounter"/>
+                            maxlength="999" cssClass="charcounter"/>
                         <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>webDTO.outcomeMeasure.description</s:param>
