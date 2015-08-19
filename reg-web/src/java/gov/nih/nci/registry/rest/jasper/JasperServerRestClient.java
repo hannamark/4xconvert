@@ -196,39 +196,6 @@ public class JasperServerRestClient {
     return users;
     }
 
-    /**
-     * Removes a user role
-     * @param user - User object
-     * @param role - Role name in the String format
-     * @return - Returns any string returned
-     */
-    /*public String removeRole(User user, String role) {
-
-    List<Roles> userRoles = user.getRoles();
-    boolean roleFound = false;
-
-    Iterator<Roles> rolesItr = userRoles.iterator();
-
-    while (rolesItr.hasNext()) {
-        if (role.equalsIgnoreCase(rolesItr.next().getRoleName())) {
-        roleFound = true;
-        rolesItr.remove();
-        }
-    }
-
-    String postBody = marshallXML(user);
-
-    LOG.debug(postBody);
-    
-    String response = "";
-    if (roleFound) {
-        response = sendHTTPRequest(baseUrl + "/" + user.getUsername(), POST, postBody);
-        LOG.debug("post response: " + response);
-    }
-
-    return response;
-    }*/
-    
     
     /**
      * Converts give user corresponding roles into list of Roles objects
@@ -242,7 +209,14 @@ public class JasperServerRestClient {
     String[] reportIdsArr = reportIds.split("[,]");
 
         for (String reportId : reportIdsArr) {
-        updateRoles.add(getRole(reportGroupMap.get(reportId)));
+            String reportName = reportGroupMap.get(reportId);
+            if (reportName.contains("|")) {
+                String[] roleTenantArr = reportName.split("[|]");
+                updateRoles.add(getRole(roleTenantArr[0], roleTenantArr[1]));
+            } else {
+                updateRoles.add(getRole(reportName));        
+            }
+        
         }
     
     return updateRoles;
@@ -314,16 +288,26 @@ public class JasperServerRestClient {
     // remove
     
     Iterator<Roles> rolesItr = userRoles.iterator();
-
+    boolean roleUserFound = false;
+    
     while (rolesItr.hasNext()) {
         String roleName = rolesItr.next().getRoleName();
+        
+        if ("ROLE_USER".equals(roleName)) {
+           roleUserFound = true;         
+        }
         
         for (Roles roles : allRegistryRolesList) {
         if (roles.getRoleName().equalsIgnoreCase(roleName)) {
             rolesItr.remove();
             break;
-            }
+          }
         }
+    }
+    
+    if (!roleUserFound) {
+        Roles roleUser = getRole("ROLE_USER", "organization_1");
+        userRoles.add(roleUser);
     }
     
     if (reportIds != null && reportIds.length() > 0) {
@@ -331,11 +315,6 @@ public class JasperServerRestClient {
         List<Roles> updateRolesList = getRolesFromReportIds(reportIds, reportGroupMap);
         userRoles.addAll(updateRolesList);
         
-        LOG.debug("User: " + user.getUsername());
-        for (Roles roles : updateRolesList) {
-        
-        LOG.debug("  Role: " + roles.getRoleName());
-        }
     }
 
     String postBody = marshallXML(user);
@@ -346,45 +325,6 @@ public class JasperServerRestClient {
 
     return response;
     }
-
-    /**
-     * adds a role to the User
-     * @param user - User
-     * @param role - Role 
-     * @return - Response
-     */
-    /*public String addRole(User user, String role) {
-
-    List<Roles> userRoles = user.getRoles();
-    boolean roleFound = false;
-
-    for (Roles roleObj : userRoles) {
-        if (role.equalsIgnoreCase(roleObj.getRoleName())) {
-        roleFound = true;
-        }
-    }
-
-    String response = "";
-
-    if (!roleFound) {
-        Roles roles = objFact.createUsersUserRoles();
-
-        roles.setExternallyDefined("false");
-        roles.setRoleName(role);
-        user.getRoles().add(roles);
-
-        String postBody = marshallXML(user);
-
-        response = sendHTTPRequest(baseUrl + "/" + user.getUsername(), POST, postBody);
-        LOG.debug("post response: " + response);
-
-    } else {
-
-        LOG.warn("Role already exist for the user");
-    }
-
-    return response;
-    }*/
 
     /**
      *  trusts all certificates
