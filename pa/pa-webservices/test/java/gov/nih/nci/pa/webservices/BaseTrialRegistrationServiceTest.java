@@ -32,6 +32,7 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.pomock.MockOrganizationEntityService;
 import gov.nih.nci.pa.util.pomock.MockPersonEntityService;
 import gov.nih.nci.pa.webservices.types.BaseTrialInformation;
+import gov.nih.nci.pa.webservices.types.CompleteTrialAmendment;
 import gov.nih.nci.pa.webservices.types.CompleteTrialRegistration;
 import gov.nih.nci.pa.webservices.types.Grant;
 import gov.nih.nci.pa.webservices.types.INDIDE;
@@ -498,4 +499,14 @@ public abstract class BaseTrialRegistrationServiceTest extends
             ArgumentCaptor<Bl> isBatchMode) {
         assertFalse(isBatchMode.getValue().getValue().booleanValue());
     }
+    
+    @SuppressWarnings("rawtypes")
+    protected void verifyIdentifierAssigners(CompleteTrialRegistration reg,
+            ArgumentCaptor<List> captor) {
+        assertEquals(2, captor.getValue().size());
+        StudySiteDTO dto = (StudySiteDTO) captor.getValue().get(1);
+        String dcpId = dto.getLocalStudyProtocolIdentifier().getValue();
+        assertEquals(reg.getDcpIdentifier(), dcpId);
+   }
+
 }

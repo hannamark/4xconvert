@@ -63,7 +63,7 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
     @SuppressWarnings("rawtypes")
     @Test
     public void testAmendAndCloseSitesPO_8323() throws Exception {
-        final String file = "/integration_register_complete_success.xml";
+        final String file = "/integration_register_complete_success_no_dcp.xml";
         CompleteTrialRegistration reg = readCompleteTrialRegistrationFromFile(file);
         TrialRegistrationConfirmation rConf = register(file);
 
@@ -165,7 +165,7 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
     @Test
     public void testAmend() throws Exception {
         CompleteTrialRegistration reg = readCompleteTrialRegistrationFromFile("/integration_register_complete_success.xml");
-        TrialRegistrationConfirmation rConf = register("/integration_register_complete_success.xml");
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_success_no_dcp.xml");
 
         addDummyCtepDcpToTrial();
 
@@ -191,7 +191,7 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
     @Test
     public void testAmendDoesNotResetCtroOverride() throws Exception {
         CompleteTrialRegistration reg = readCompleteTrialRegistrationFromFile("/integration_register_complete_success.xml");
-        TrialRegistrationConfirmation rConf = register("/integration_register_complete_success.xml");
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_success_no_dcp.xml");
 
         addDummyCtepDcpToTrial();
 
@@ -225,7 +225,7 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
 
     @Test
     public void testAmendNonCtGov() throws Exception {
-        TrialRegistrationConfirmation rConf = register("/integration_register_complete_success.xml");
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_success_no_dcp.xml");
         addDummyCtepDcpToTrial();
         prepareTrialForAmendment(rConf);
 
@@ -395,6 +395,27 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
         verifyAmendment(upd, uConf);
 
     }
+    
+
+    @Test
+    public void testAmendByDCPId() throws Exception {
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_success_no_dcp.xml");
+        clickAndWait("link=General Trial Details");
+        selenium.select("id=otherIdentifierType", "label=" + "DCP Identifier");
+        selenium.type("id=otherIdentifierOrg", "DCP00000000001");
+        clickAndWait("id=otherIdbtnid");
+        prepareTrialForAmendment(rConf);
+
+        CompleteTrialAmendment upd = readCompleteTrialAmendmentFromFile("/integration_amend_complete.xml");
+        HttpResponse response = amendTrialFromJAXBElement("dcp",
+                "DCP00000000001", upd);
+        TrialRegistrationConfirmation uConf = processTrialRegistrationResponseAndDoBasicVerification(response);
+        assertEquals(rConf.getPaTrialID(), uConf.getPaTrialID());
+        assertEquals(rConf.getNciTrialID(), uConf.getNciTrialID());
+
+        verifyAmendment(upd, uConf);
+
+    }
 
     @Test
     public void testAmendOnTopOfMinimalDataset() throws Exception {
@@ -528,7 +549,7 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
     @Test
     public void testAmendDSPWarning() throws Exception {
         CompleteTrialRegistration reg = readCompleteTrialRegistrationFromFile("/integration_register_complete_success.xml");
-        TrialRegistrationConfirmation rConf = register("/integration_register_complete_success.xml");
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_success_no_dcp.xml");
 
         addDummyCtepDcpToTrial();
 

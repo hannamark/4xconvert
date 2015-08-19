@@ -231,6 +231,18 @@ public class TrialRegistrationServiceCompleteAmendmentTest extends
                 r.getEntity().toString());
 
     }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void testAmendByDCPID() throws JAXBException,
+            SAXException, PAException, NullifiedEntityException {
+        final String filename = "/amend_complete.xml";
+        CompleteTrialAmendment reg = readCompleteTrialAmendmentFromFile(filename);
+        Response r = service.amendCompleteTrial("dcp", "DCP123", reg);
+        assertEquals(Status.OK.getStatusCode(), r.getStatus());
+      
+
+    }
 
     @SuppressWarnings("unchecked")
     @Test

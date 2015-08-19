@@ -179,6 +179,16 @@ public class TrialRegistrationServiceCompleteUpdateTest extends
         updateAndVerify("ctep", "CTEP0000000001", reg);
 
     }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void testUpdateTrialByDCPID() throws JAXBException,
+            SAXException, PAException, NullifiedEntityException {
+        final String filename = "/update_complete.xml";
+        CompleteTrialUpdate reg = readCompleteTrialUpdateFromFile(filename);
+        updateAndVerify("dcp", "dcp123", reg);
+
+    }
 
     @SuppressWarnings("unchecked")
     @Test

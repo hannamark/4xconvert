@@ -217,6 +217,25 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
         verifyUpdate(upd, uConf);
 
     }
+    
+    @Test
+    public void testUpdateByDCPID() throws Exception {
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
+        clickAndWait("link=General Trial Details");
+        selenium.select("id=otherIdentifierType", "label=" + "DCP Identifier");
+        selenium.type("id=otherIdentifierOrg", "DCP00001");
+        clickAndWait("id=otherIdbtnid");
+
+        CompleteTrialUpdate upd = readCompleteTrialUpdateFromFile("/integration_update_complete.xml");
+        HttpResponse response = updateTrialFromJAXBElement("dcp", "DCP00001",
+                upd);
+        TrialRegistrationConfirmation uConf = processTrialRegistrationResponseAndDoBasicVerification(response);
+        assertEquals(rConf.getPaTrialID(), uConf.getPaTrialID());
+        assertEquals(rConf.getNciTrialID(), uConf.getNciTrialID());
+
+        verifyUpdate(upd, uConf);
+
+    }
 
     @Test
     public void testUpdateExistingNctIdStays() throws Exception {

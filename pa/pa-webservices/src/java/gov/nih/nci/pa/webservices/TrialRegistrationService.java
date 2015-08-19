@@ -121,6 +121,9 @@ public class TrialRegistrationService extends BaseRestService {
             studyIdentifierDTOs.add(new StudySiteDTOBuilder()
                     .buildClinicalTrialsGovIdAssigner(reg
                             .getClinicalTrialsDotGovTrialID()));
+            
+            studyIdentifierDTOs.add(new StudySiteDTOBuilder()
+            .buildDcpIdAssigner(reg.getDcpIdentifier()));
 
             List<OrganizationDTO> summary4orgDTO = new OrganizationDTOBuilder()
                     .build(reg.getSummary4FundingSponsor());
@@ -131,6 +134,8 @@ public class TrialRegistrationService extends BaseRestService {
                             .getCategory().value())));
             StudyRegulatoryAuthorityDTO studyRegAuthDTO = new StudyRegulatoryAuthorityDTOBuilder()
                     .build(reg);
+            
+            
 
             final DSet<Tel> owners = new DSet<>();
             owners.setItem(new LinkedHashSet<Tel>());

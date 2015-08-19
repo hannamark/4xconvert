@@ -404,6 +404,13 @@ public class TrialRegistrationServiceCompleteRegistrationTest extends
         verifyStudyRegAuthDTO(reg, studyRegAuthDTO);
         verifyBatchMode(reg, isBatchMode);
         verifyOwners(reg, owners);
+        
+        String dcpIdFromXml = reg.getDcpIdentifier();
+        if(dcpIdFromXml!=null) {
+            verifyIdentifierAssigners(reg, studyIdentifierDTOs);    
+        }
+        
+        
     }
 
     private void verifyOtherIdentifiers(CompleteTrialRegistration reg,
@@ -427,7 +434,7 @@ public class TrialRegistrationServiceCompleteRegistrationTest extends
 
     protected void verifyCtGovIdentifierAssignerSite(BaseTrialInformation reg,
             ArgumentCaptor<List> captor) {
-        assertEquals(1, captor.getValue().size());
+        assertEquals(2, captor.getValue().size());
         StudySiteDTO dto = (StudySiteDTO) captor.getValue().get(0);
         assertEquals(reg.getClinicalTrialsDotGovTrialID(), dto
                 .getLocalStudyProtocolIdentifier().getValue());

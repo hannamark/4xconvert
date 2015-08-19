@@ -401,6 +401,13 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
                 getTrialIdentificationTableCellValue("Trial Type"));
         assertEquals(conf.getNciTrialID(),
                 getTrialIdentificationTableCellValue("NCI Trial Identifier"));
+        
+        //get dcp value
+        if(reg.getDcpIdentifier()!=null) {
+            assertEquals(reg.getDcpIdentifier(),
+                    getTrialIdentificationTableCellValue("DCP Identifier"));
+        }
+        
         assertEquals(
                 reg.isClinicalTrialsDotGovXmlRequired() ? "Yes" : "No",
                 getTrialIdentificationTableCellValue("ClinicalTrials.gov XML required?"));

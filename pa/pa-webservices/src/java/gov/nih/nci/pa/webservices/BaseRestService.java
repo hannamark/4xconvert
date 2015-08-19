@@ -77,6 +77,9 @@ public class BaseRestService implements ContextResolver<JAXBContext> {
         } else if ("ctep".equalsIgnoreCase(idType)) {
             ii.setExtension(trialID);
             ii.setRoot(IiConverter.CTEP_STUDY_PROTOCOL_ROOT);
+        }  else if ("dcp".equalsIgnoreCase(idType)) {
+            ii.setExtension(trialID);
+            ii.setRoot(IiConverter.DCP_STUDY_PROTOCOL_ROOT);
         }
         return PaRegistry.getStudyProtocolService().getStudyProtocol(ii);
     }

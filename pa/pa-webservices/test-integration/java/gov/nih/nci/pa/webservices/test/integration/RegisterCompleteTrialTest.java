@@ -63,7 +63,7 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
 
     @Test
     public void testRegisterSuccess() throws Exception {
-        registerAndVerify("/integration_register_complete_success.xml");
+        registerAndVerify("/integration_register_complete_success_no_dcp.xml");
     }
 
     @Test
