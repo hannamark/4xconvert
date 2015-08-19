@@ -41,7 +41,7 @@ public class UsernameTokenAuthenticator extends AuthenticatorBase {
 
     private static final Logger LOG = Logger
             .getLogger(UsernameTokenAuthenticator.class);
-    
+
     private static final String CTRP_CI = "ctrp.env.ci";
 
     private List<UsernamePasswordProvider> usernamePasswordProviderList;
@@ -215,24 +215,27 @@ public class UsernameTokenAuthenticator extends AuthenticatorBase {
      * @param basicAuthInfo
      *            The credentials to use.
      * @return The principal resulting from authenticating against the realm.
-     * @throws IOException 
+     * @throws IOException
      */
     private Principal doAuthentication(BasicAuthInfo basicAuthInfo)
             throws IOException {
+        Principal principal = null;
+
         final String password = basicAuthInfo.getPassword();
         final String username = basicAuthInfo.getUsername();
+
         if (Boolean.valueOf(System.getProperty(CTRP_CI))
                 && "pass".equals(password)) {
             LOG.warn(CTRP_CI
                     + " runtime property is set to true: we are running in a CI environment. "
                     + "Skipping LDAP authentication and going directly to CSM.");
-            return new GenericPrincipal(context.getRealm(), username, password);
+            principal = new GenericPrincipal(context.getRealm(), username,
+                    password);
+        } else {
+            // do LDAP auth
+            principal = new LDAPAuthenticator().authenticateAndCreateCsmUser(
+                    username, password);
         }
-
-        // do LDAP auth
-        Principal principal = new LDAPAuthenticator()
-                .authenticateAndCreateCsmUser(username, password);
-
         if (principal != null) {
             principal = context.getRealm().authenticate(principal.getName(),
                     password);
