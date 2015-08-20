@@ -63,9 +63,13 @@ public class JasperServerRestClient {
      * @param baseURL - Jasper server base URL
      * @param jasperAdminUser - Jasper admin username
      * @param jasperAdminPwd - Jasper admin password
+     * @param allowTrustedSites - trust all certs flag
      */
     
-    public JasperServerRestClient(String baseURL, String jasperAdminUser, String jasperAdminPwd) {
+    public JasperServerRestClient(String baseURL, 
+                                  String jasperAdminUser, 
+                                  String jasperAdminPwd,
+                                  boolean allowTrustedSites) {
     try {
         
         baseUrl = baseURL;
@@ -79,7 +83,9 @@ public class JasperServerRestClient {
         userMarshaller = userJxContext.createMarshaller();
         userMarshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
         userMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        trustAllCerts();
+        if (allowTrustedSites) {
+            trustAllCerts();
+        }
         objFact = new ObjectFactory();
         try {
             httpTimeout = Integer.parseInt(getPropertyValue("jasper.rest.http.timeout.millis"));
@@ -289,12 +295,15 @@ public class JasperServerRestClient {
     
     Iterator<Roles> rolesItr = userRoles.iterator();
     boolean roleUserFound = false;
+    Roles roleUserObjFound = null;
     
     while (rolesItr.hasNext()) {
-        String roleName = rolesItr.next().getRoleName();
+        Roles itrRole = rolesItr.next();
+        String roleName = itrRole.getRoleName();
         
         if ("ROLE_USER".equals(roleName)) {
-           roleUserFound = true;         
+           roleUserFound = true;
+           roleUserObjFound = itrRole;
         }
         
         for (Roles roles : allRegistryRolesList) {
@@ -305,16 +314,24 @@ public class JasperServerRestClient {
         }
     }
     
-    if (!roleUserFound) {
-        Roles roleUser = getRole("ROLE_USER", "organization_1");
-        userRoles.add(roleUser);
-    }
-    
     if (reportIds != null && reportIds.length() > 0) {
+        
+        if (!roleUserFound) {
+            Roles roleUser = getRole("ROLE_USER");
+            userRoles.add(roleUser);
+        }
         
         List<Roles> updateRolesList = getRolesFromReportIds(reportIds, reportGroupMap);
         userRoles.addAll(updateRolesList);
         
+    } else if (roleUserFound) {
+        Iterator<Roles> userRolesItr = userRoles.iterator();
+        while (userRolesItr.hasNext()) {
+            Roles role = userRolesItr.next();
+            if (role.getRoleName().equals("ROLE_USER")) {
+                userRolesItr.remove();
+            }
+        }
     }
 
     String postBody = marshallXML(user);

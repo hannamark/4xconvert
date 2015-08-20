@@ -56,8 +56,14 @@ public class ReportViewerAction extends ActionSupport implements Preparable {
         String baseURL = getPropertyValue("jasper.base.user.rest.url");
         String userName = getPropertyValue("jasper.admin.username");
         String password = getPropertyValue("jasper.admin.password");
-
-        jasperRestClient = new JasperServerRestClient(baseURL, userName, password);
+        String allowTrusted = getPropertyValue("regweb.jasper.allow.allssl");
+        boolean allowTrustedSites = false;
+        try {
+            allowTrustedSites = Boolean.parseBoolean(allowTrusted);
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+        }
+        jasperRestClient = new JasperServerRestClient(baseURL, userName, password, allowTrustedSites);
     } catch (Exception e) {
         LOG.error(e.getMessage(), e);
         LOG.log(Priority.DEBUG, "Error while retreving jasper properties : " + e.getMessage());

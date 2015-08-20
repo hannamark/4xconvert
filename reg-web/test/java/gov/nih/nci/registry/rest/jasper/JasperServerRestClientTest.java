@@ -29,7 +29,7 @@ public class JasperServerRestClientTest {
 		String jasperAdmin = "jasperadmin";
 		String jasperPwd = "jasperadmin";
 		
-		restClient = new JasperServerRestClient(baseURL, jasperAdmin, jasperPwd);
+		restClient = new JasperServerRestClient(baseURL, jasperAdmin, jasperPwd, true);
 		reportGroupMap = new HashMap<String, String>();
 		
 		reportGroupMap.put("DT4","ROLE_DT4");
