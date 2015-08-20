@@ -108,7 +108,7 @@ public class Users {
      * 
      * @param user - user to set
      */
-    public void setUser(List<Users.User> user) {
+    public void setUser(List<Users.User> user) { // NOPMD
         if (user == null) {
             user = new ArrayList<Users.User>();
         }
@@ -339,7 +339,7 @@ public class Users {
          * 
          * @param roles - roles to set
          */
-        public void setRoles(List<Users.User.Roles> roles) {
+        public void setRoles(List<Users.User.Roles> roles) { // NOPMD
             if (roles == null) {
                 roles = new ArrayList<Users.User.Roles>();
             }

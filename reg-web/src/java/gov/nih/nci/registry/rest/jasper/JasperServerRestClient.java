@@ -334,7 +334,7 @@ public class JasperServerRestClient {
         // Create a trust manager that does not validate certificate chains
         TrustManager[] trustAllCerts = new TrustManager[] {
             new X509TrustManager() {
-                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                public java.security.cert.X509Certificate[] getAcceptedIssuers() { // NOPMD
                     return null;
                 }
                 public void checkClientTrusted(
@@ -397,7 +397,7 @@ public class JasperServerRestClient {
 
         return httpResponse.toString();
     } catch (IOException e) {
-        throw new RuntimeException(e);
+        throw new RuntimeException(e); // NOPMD
     } finally {
         if (reader != null) {
         try {
