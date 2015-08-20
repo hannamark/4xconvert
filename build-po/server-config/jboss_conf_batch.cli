@@ -12,7 +12,7 @@ connect
         
 /subsystem=infinispan/cache-container=security:add(default-cache=auth-cache)
 /subsystem=infinispan/cache-container=security/local-cache=auth-cache:add(batching=true)
-/subsystem=infinispan/cache-container=security/local-cache=auth-cache/expiration=EXPIRATION:add(lifespan=300000)
+/subsystem=infinispan/cache-container=security/local-cache=auth-cache/expiration=EXPIRATION:add(lifespan=60000)
 /subsystem=security/security-domain=po:write-attribute(name=cache-type,value="infinispan")
 /subsystem=security/security-domain=po/authentication=classic:remove() {allow-resource-service-restart=true}
 /subsystem=security/security-domain=po/authentication=classic:add( \
