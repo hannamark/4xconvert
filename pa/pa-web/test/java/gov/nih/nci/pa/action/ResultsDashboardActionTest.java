@@ -102,6 +102,17 @@ public class ResultsDashboardActionTest extends AbstractPaActionTest {
         assertNotNull(action.getAjaxResponseStream());
     }
     
+    @Test
+    public void testChartData() throws PAException {
+        getRequest().setUserInRole(Constants.RESULTS_ABSTRACTOR, true);
+        ResultsDashboardAction action = getAction();
+        assertEquals("resultAbstractorLanding", action.search());
+        assertEquals(1,action.getNotStartedCnt());
+        assertEquals(0,action.getInProcessCnt());
+        assertEquals(1,action.getCompletedCnt());
+        assertEquals(0,action.getIssuesCnt());
+    }
+    
     private void loadCriteriaIntoAction(ResultsDashboardAction action) {
         action.setSection801IndicatorYes(true);
         action.setSection801IndicatorNo(true);
@@ -135,6 +146,7 @@ public class ResultsDashboardActionTest extends AbstractPaActionTest {
         
         StudyProtocolQueryDTO dto2 = new StudyProtocolQueryDTO();
         dto2.setStudyProtocolId(2L);
+        dto2.setTrialPublishedDate(new Date());
         when(
                 mock.getStudyProtocolByCriteria(any(StudyProtocolQueryCriteria.class)))
                 .thenReturn(new ArrayList(Arrays.asList(dto1, dto2)));

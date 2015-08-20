@@ -134,6 +134,12 @@ td.middle {
 label.pcd {
     width: 50px;
 }
+
+table.results {
+    width:100%;
+    padding: 5px;
+}
+
 </style>
 
 <script type="text/javascript"
@@ -157,6 +163,9 @@ label.pcd {
 	src="<c:url value="/scripts/js/control.tabs.js"/>"></script>
 <script type="text/javascript" language="javascript"
 	src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
+	
+<script type="text/javascript"
+    src="${scriptPath}/js/Chart.min.js"></script>
 
 <c:url value="/protected/popupOrglookuporgs.action" var="lookupOrgUrl" />
 <c:url value="/protected/popupDisdisplayDiseaseWidget.action"
@@ -171,6 +180,7 @@ jQuery(function() {
 	
 	jQuery("#pcdFrom").datepicker();
 	jQuery("#pcdTo").datepicker();
+	initChart();
 	if ('${pcdFrom}' != '') {
       jQuery("#pcdFrom").val(jQuery.datepicker.formatDate('mm/dd/yy', new Date('${pcdFrom}')));
 	}
@@ -228,6 +238,70 @@ function resetValues() {
     if ($('error_msg_div')!=null) {
         $('error_msg_div').hide();
     }
+}
+
+function initChart() {
+	var chartData = [
+	                 {
+	                     value: ${inProcessCnt},
+	                     color:"#4F81BC",
+	                     highlight: "#5F91CC",
+	                     label: "In Process"
+	                 },
+	                 {
+	                     value: ${completedCnt},
+	                     color: "#C0504E",
+	                     highlight: "#DA6351",
+	                     label: "Completed"
+	                 },
+	                 {
+	                     value: ${notStartedCnt},
+	                     color: "#A0B953",
+	                     highlight: "#BFC860",
+	                     label: "Not Started"
+	                 },
+                     {
+                         value: ${issuesCnt},
+                         color: "#7B65A5",
+                         highlight: "#8F78B0",
+                         label: "Issues"
+                     }
+	             ]
+
+	var ctx = jQuery("#resultsChart").get(0).getContext("2d");
+   var opts = {
+		    //Number - Amount of animation steps
+		    animationSteps : 60,
+		    //String - Animation easing effect
+		    animationEasing : "easeOutBounce",
+		    //Boolean - Whether we animate the rotation of the Doughnut
+		    animateRotate : true,
+		    //Boolean - Whether we should show a stroke on each segment
+		    segmentShowStroke : false,
+		    legendTemplate : ${'"<ul class=\'<%=name.toLowerCase()%>-legend\'><% for (var i=0; i<segments.length; i++){%><li><span style=\'background-color:<%=segments[i].fillColor%>;width:15px; height:15px; float:left;\'></span><%if(segments[i].label){%>&nbsp;&nbsp;<%=segments[i].label%><%}%></li><%}%></ul>"'}
+	}
+	var statChart = new Chart(ctx).Pie(chartData,opts);
+	jQuery("#legend").html(statChart.generateLegend());
+}
+
+function searchResults(url, studyNCIid){
+	var studyIdentifier; 
+	if(studyNCIid != ''){
+		 var ajaxReq = new Ajax.Request('resultsDashboardajaxGetStudyStudyProtocolIdByNCIId.action?', {
+             method: 'post',
+             parameters: 'studyNCIId='+studyNCIid.trim(),
+             onSuccess: function(response) {
+            	 if(response.responseText != ''){
+            		 window.location.href = url+'?studyProtocolId='+response.responseText;
+            	 } else {
+            		 alert("No trial with NCI ID '"+studyNCIid+"' found in PA!");
+            	 }
+             }
+           });
+		 
+	} else if (url == 'resultsReportingActionsTakenview.action') {
+		window.location.href = url;
+	}
 }
 </script>
 </head>
@@ -368,5 +442,67 @@ function resetValues() {
              </display:table>
          </div>
        </s:if>
+       <div id="chart" class="box">
+          <h2>.</h2>
+         <table class="results">
+          <tr>
+           <td align="center" width="40%" style="border-bottom: 2px solid black;border-left:  2px solid black;" >
+             <h4><fmt:message key="resultsdashboard.chartHeader"/></h4><br>
+             <canvas id="resultsChart" width="300" height="300"></canvas>
+            </td>
+           <td width="10%" style="border-bottom: 2px solid black;border-right: 2px solid black; vertical-align: middle">
+             <div id="legend"></div>
+           </td>
+           <td  width="50%" height="100%" style="border-bottom: 2px solid black;">
+            <table class="results" height="350px">
+              <tr height="10%" style="border-right: 2px solid black;">
+                <td colspan="2"><h4><fmt:message key="resultsdashboard.designee"/></h4></td>
+              </tr>
+              <tr height="15%" style="border-right: 2px solid black;">
+                <td style="padding: 10px;">
+                 <label for="designeeTrialId" > <fmt:message key="resultsdashboard.trialId"/></label> <input type="text" id="designeeTrialId" name="designeeTrialId" size="20"/>
+                 </td>
+                 <td >
+                 <!--<s:a href="javascript:void(0)" cssClass="btn" onclick="searchResults('', jQuery('#designeeTrialId').val())"><span class="btn_img"><span class="search">Search</span></span></s:a>-->
+                </td>
+              </tr>
+              <tr height="10%" style="border-top: 2px solid black;border-right: 2px solid black;">
+                <td colspan="2"><h4><fmt:message key="resultsdashboard.trialCompDocs"/></h4></td>
+              </tr>
+              <tr  height="15%" style="border-right: 2px solid black;">
+                <td style="padding: 10px;">
+                 <label for="trialCompDocsTrialId" > <fmt:message key="resultsdashboard.trialId"/></label> <input type="text" id="trialCompDocsTrialId" name="trialCompDocsTrialId" size="20"/>
+                 </td>
+                 <td>
+                 <s:a id="trialCompDocsTrialSearch" href="javascript:void(0)" cssClass="btn" onclick="searchResults('resultsReportingDocumentquery.action', jQuery('#trialCompDocsTrialId').val())"><span class="btn_img"><span class="search">Search</span></span></s:a>
+                </td>
+              </tr>
+              <tr height="10%" style="border-top: 2px solid black;border-right: 2px solid black;">
+                <td colspan="2"><h4><fmt:message key="resultsdashboard.coverSheet"/></h4></td>
+              </tr>
+              <tr height="15%" style="border-right: 2px solid black;">
+                <td style="padding: 10px;">
+                 <label for="coverSheetTrialId" > <fmt:message key="resultsdashboard.trialId"/></label> <input type="text" id="coverSheetTrialId" name="coverSheetTrialId" size="20"/>
+                 </td>
+                 <td>
+                 <s:a id="coverSheetTrialSearch" href="javascript:void(0)" cssClass="btn" onclick="searchResults('resultsReportingCoverSheetquery.action', jQuery('#coverSheetTrialId').val())"><span class="btn_img"><span class="search">Search</span></span></s:a>
+                </td>
+              </tr>
+              <tr height="10%" style="border-top: 2px solid black;border-right: 2px solid black;">
+                <td colspan="2"><h4><fmt:message key="resultsdashboard.uploadErrors"/></h4></td>
+              </tr>
+              <tr height="15%" style="border-right: 2px solid black">
+                <td style="padding: 10px;">
+                 <label for="uploadErrorsTrialId" ><fmt:message key="resultsdashboard.trialId"/></label> <input type="text" id="uploadErrorsTrialId" name="uploadErrorsTrialId" size="20"/>
+                 </td>
+                 <td>
+                 <s:a id="uploadErrorsTrialSearch" href="javascript:void(0)" cssClass="btn" onclick="searchResults('resultsReportingActionsTakenview.action', jQuery('#uploadErrorsTrialId').val())"><span class="btn_img"><span class="search">Search</span></span></s:a>
+                </td>
+              </tr>
+            </table>
+           </td>
+         </tr>
+         </table>
+       </div>
     </body>
 </html>

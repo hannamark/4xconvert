@@ -220,5 +220,5 @@ public class StudyProcessingError extends AbstractStudyEntity implements Auditab
     public void setResolutionDate(Timestamp resolutionDate) {
         this.resolutionDate = resolutionDate;
     }
-     
+    
 }

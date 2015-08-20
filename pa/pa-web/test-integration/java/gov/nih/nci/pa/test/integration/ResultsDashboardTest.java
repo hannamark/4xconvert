@@ -144,6 +144,12 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isTextPresent(testTrials.get(2).nciID));
         assertFalse(selenium.isTextPresent(testTrials.get(3).nciID));
         assertFalse(selenium.isTextPresent(testTrials.get(4).nciID));
+        assertTrue(selenium.isTextPresent("Results Reporting Progress"));
+        assertTrue(selenium.isTextPresent("Add/Update Designee or PIO Contact"));
+        assertTrue(selenium.isTextPresent("View/Upload Trial Comparison Documents"));
+        assertTrue(selenium.isTextPresent("Results Cover Sheet"));
+        assertTrue(selenium.isTextPresent("XML Upload Errors & Actions Taken"));
+        assertTrue(selenium.isTextPresent("Enter Trial ID:"));
     }
     
     @Test       
@@ -254,8 +260,9 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         selenium.type("id=qaCommentsReturnedDate_"+trialId, "01/11/2015");
         selenium.type("id=trialPublishedDate_"+trialId, "01/12/2015");
         driver.findElement(By.id("trialPublishedDate_"+trialId)).sendKeys("\t");
-        pause(2000);
+        pause(1000);
         clickAndWait("link=Search");
+        pause(1000);
         assertEquals("01/01/2015",driver.findElement(By.id("pcdSentToPIODate_"+trialId)).getAttribute("value"));
         assertEquals("01/02/2015",driver.findElement(By.id("pcdConfirmedDate_"+trialId)).getAttribute("value"));
         assertEquals("01/03/2015",driver.findElement(By.id("desgneeNotifiedDate_"+trialId)).getAttribute("value"));
@@ -268,6 +275,48 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         assertEquals("01/10/2015",driver.findElement(By.id("prsReleaseDate_"+trialId)).getAttribute("value"));
         assertEquals("01/11/2015",driver.findElement(By.id("qaCommentsReturnedDate_"+trialId)).getAttribute("value"));
         assertEquals("01/12/2015",driver.findElement(By.id("trialPublishedDate_"+trialId)).getAttribute("value"));
+    } 
+    
+    @Test
+    public void testPiechart(){
+        assertTrue(selenium.isTextPresent("Results Reporting Progress"));
+        assertTrue(selenium.isTextPresent("In Process"));
+        assertTrue(selenium.isTextPresent("Completed"));
+        assertTrue(selenium.isTextPresent("Not Started"));
+        assertTrue(selenium.isTextPresent("Issues"));
+        assertNotNull(driver.findElement(By.id("resultsChart")));
+    }
+
+    public void testSearchTrialComparison(){
+        selenium.type("id=trialCompDocsTrialId", testTrials.get(0).nciID);
+        clickSearchForResultsReportingData("trialCompDocsTrialSearch");
+        assertTrue(selenium.isTextPresent("Results Reporting & Tracking - View/Upload Trial Comparison Documents"));
+        assertTrue(selenium.isTextPresent(testTrials.get(0).nciID+": "+testTrials.get(0).title));
+    }
+    
+    public void testSearchResultsCoverSheet(){
+        selenium.type("id=coverSheetTrialId", testTrials.get(0).nciID);
+        clickSearchForResultsReportingData("coverSheetTrialSearch");
+        assertTrue(selenium.isTextPresent("Results Reporting & Tracking & Cover Sheet"));
+        assertTrue(selenium.isTextPresent(testTrials.get(0).nciID+": "+testTrials.get(0).title));
+    }
+    
+    public void testSearchUploadErrors(){
+        selenium.type("id=uploadErrorsTrialId", testTrials.get(0).nciID);
+        clickSearchForResultsReportingData("uploadErrorsTrialSearch");
+        pause(1000);
+        assertTrue(selenium.isTextPresent("Summary Of XML Upload Errors & Actions Taken"));
+        assertTrue(selenium.isTextPresent(testTrials.get(0).nciID+": "+testTrials.get(0).title));
+    }
+    
+    public void testSearchUploadErrorsNoTrialId(){
+        clickSearchForResultsReportingData("uploadErrorsTrialSearch");
+        assertTrue(selenium.isTextPresent("Summary Of XML Upload Errors & Actions Taken"));
+        assertFalse(selenium.isTextPresent(testTrials.get(0).nciID+": "+testTrials.get(0).title));
+    }
+    
+    private void clickSearchForResultsReportingData(String searchBtnId){
+        clickAndWaitAjax("//*[@id='"+searchBtnId+"']");
     }
     
     private void registerTestTrials()

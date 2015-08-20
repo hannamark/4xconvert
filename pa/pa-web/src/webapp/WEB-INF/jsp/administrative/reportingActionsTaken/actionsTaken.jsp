@@ -102,11 +102,22 @@ function editActionTaken(id, cell) {
     <s:actionerror/>
     <pa:studyUniqueToken/>
     <h2><fmt:message key="actionsTaken.title" /></h2>
+    <s:if test="studyProtocolId != ''">
+    <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
+    </s:if>
     <s:if test="studyProcessingErrors != null">
        <s:set name="studyProcessingErrors" value="studyProcessingErrors" scope="request"/>
+       <div>
 	   <display:table name="${studyProcessingErrors}" id="spe" class="data" sort="list"  pagesize="9999999"
 	   requestURI="resultsReportingActionsTakenview.action" export="false"
 	   decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator">
+	        <display:setProperty name="basic.msg.empty_list"
+                        value="No XML upload error records found." />
+            <display:setProperty name="basic.empty.showtable" value="false" />
+            <display:setProperty name="paging.banner.one_item_found" value="" />
+            <display:setProperty name="paging.banner.all_items_found" value="" />
+            <display:setProperty name="paging.banner.onepage" value="" />
+            <display:setProperty name="export.xml" value="false" />
 		    <display:column titleKey="actionsTaken.errorDate" property="errorDate" format="{0,date,MM/dd/yyyy}"/>
 		    <display:column titleKey="actionsTaken.nciID" property="studyNCIId"/>
 		    <display:column titleKey="actionsTaken.nctID" property="studyNCTId"/>
@@ -127,6 +138,7 @@ function editActionTaken(id, cell) {
 	    	 </display:column>
 	    	 <display:column property="identifier"  class="hidden" headerClass="hidden"/>
 	 	</display:table>
+    </div>
 	</s:if>
    </div>
    <jsp:include page="editActionsTaken.jsp"/>
