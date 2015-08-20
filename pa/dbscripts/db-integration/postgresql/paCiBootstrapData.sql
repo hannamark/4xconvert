@@ -62,4 +62,11 @@ insert into org_family_program_code (identifier, org_family_po_id,program_name, 
 insert into org_family_program_code (identifier, org_family_po_id,program_name, program_code) values((SELECT NEXTVAL('HIBERNATE_SEQUENCE')), '3', 'PG0000001', 'PG0000001');
 insert into org_family_program_code (identifier, org_family_po_id,program_name, program_code) values((SELECT NEXTVAL('HIBERNATE_SEQUENCE')), '3', 'PG0000002', 'PG0000002');
 
-        
+-- Adding to support PO-9142 integration tests.
+
+INSERT INTO PA_PROPERTIES VALUES ((select max(identifier) + 1 from pa_properties),'regweb.jasper.allow.allssl','true');
+UPDATE PA_PROPERTIES SET VALUE='http://localhost:20101/reports/rest/user' WHERE NAME='jasper.base.user.rest.url';
+
+
+
+

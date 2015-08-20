@@ -7,12 +7,16 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
+import gov.nih.nci.registry.service.MockRestClientNCITServer;
+
 public class ReportViewITest extends AbstractRegistrySeleniumTest{
 
+    MockRestClientNCITServer mockRestClientNCITServer = new MockRestClientNCITServer();
+    
   @Before
   public void setUp() throws Exception {
     super.setUp();
-
+    mockRestClientNCITServer.startServer(20101);
   }
 
   @Test
@@ -42,7 +46,7 @@ public class ReportViewITest extends AbstractRegistrySeleniumTest{
 	assert(status);
     }
 
-    waitForEmailsToArrive(1);
+    //waitForEmailsToArrive(1);
     logoutUser();
 
     int count = removeCSMUser(csmUserId);
@@ -89,7 +93,7 @@ public class ReportViewITest extends AbstractRegistrySeleniumTest{
   @After
   public void tearDown() throws Exception {
     super.tearDown();
-
+    mockRestClientNCITServer.stopServer();
   }
 
 }
