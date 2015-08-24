@@ -134,8 +134,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private List<Boolean> section801Indicators;
     private Date pcdFrom;
     private Date pcdTo;
-    private String pcdFromType;
-    private String pcdToType;
+    private String pcdType;    
 
     private StudyFlagReasonCode notFlaggedWith;
 
@@ -1116,8 +1115,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
                 .append(currentOrPreviousMilestone)
                 .append(", section801Indicators=").append(section801Indicators)
                 .append(" pcdFromDate=").append(pcdFrom).append(" pcdToDate=")
-                .append(pcdTo).append(" pcdFromDateType=").append(pcdFromType)
-                .append(" pcdToDateType=").append(pcdToType)
+                .append(pcdTo).append(" pcdFromDateType=").append(pcdType)                
                 .append(" notFlaggedWith=").append(notFlaggedWith).append("]");
         return builder.toString();
     }
@@ -1565,34 +1563,19 @@ public class StudyProtocolQueryCriteria implements Serializable {
     }
 
     /**
-     * @return the pcdFromType
+     * @return the pcdType
      */
-    public String getPcdFromType() {
-        return pcdFromType;
+    public String getPcdType() {
+        return pcdType;
     }
 
     /**
-     * @param pcdFromType
-     *            the pcdFromType to set
+     * @param pcdType
+     *            the pcdType to set
      */
-    public void setPcdFromType(String pcdFromType) {
-        this.pcdFromType = pcdFromType;
-    }
-
-    /**
-     * @return the pcdToType
-     */
-    public String getPcdToType() {
-        return pcdToType;
-    }
-
-    /**
-     * @param pcdToType
-     *            the pcdToType to set
-     */
-    public void setPcdToType(String pcdToType) {
-        this.pcdToType = pcdToType;
-    }
+    public void setPcdType(String pcdType) {
+        this.pcdType = pcdType;
+    }   
 
     // CHECKSTYLE:OFF
     /*
@@ -1794,10 +1777,8 @@ public class StudyProtocolQueryCriteria implements Serializable {
             builder.append("pcdFrom=").append(pcdFrom).append(", ");
         if (pcdTo != null)
             builder.append("pcdTo=").append(pcdTo).append(", ");
-        if (pcdFromType != null)
-            builder.append("pcdFromType=").append(pcdFromType).append(", ");
-        if (pcdToType != null)
-            builder.append("pcdToType=").append(pcdToType);
+        if (pcdType != null)
+            builder.append("pcdFromType=").append(pcdType).append(", ");     
         if (notFlaggedWith != null)
             builder.append("notFlaggedWith=").append(notFlaggedWith);
         builder.append("]");

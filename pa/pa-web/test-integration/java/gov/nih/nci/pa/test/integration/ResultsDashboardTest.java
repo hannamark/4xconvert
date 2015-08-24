@@ -192,7 +192,7 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
     public void testResultsSearchWithDateTypeFilter(){
         selenium.type("id=pcdFrom", "01/01/2015");
         selenium.type("id=pcdTo", "12/31/2015");
-        final Select selectBox = new Select(driver.findElement(By.id("pcdFromType")));
+        final Select selectBox = new Select(driver.findElement(By.id("pcdType")));
         selectBox.selectByValue("Anticipated");
         clickAndWait("link=Search");
         assertTrue(selenium.isTextPresent("One item found.1"));
@@ -201,24 +201,7 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         assertFalse(selenium.isTextPresent(testTrials.get(2).nciID));
         assertFalse(selenium.isTextPresent(testTrials.get(3).nciID));
         assertFalse(selenium.isTextPresent(testTrials.get(4).nciID));
-    }
-    
-    @Test       
-    public void testResultsSearchWithBothDateTypeFilter(){
-        selenium.type("id=pcdFrom", "01/01/2015");
-        selenium.type("id=pcdTo", "12/31/2015");
-        final Select dateTypeFrom = new Select(driver.findElement(By.id("pcdFromType")));
-        dateTypeFrom.selectByValue("Anticipated");
-        final Select dateTypeTo = new Select(driver.findElement(By.id("pcdToType")));
-        dateTypeTo.selectByValue("Actual");
-        clickAndWait("link=Search");
-        assertTrue(selenium.isTextPresent("2 items found, displaying all items.1"));
-        assertTrue(selenium.isTextPresent(testTrials.get(0).nciID));
-        assertTrue(selenium.isTextPresent(testTrials.get(1).nciID));
-        assertFalse(selenium.isTextPresent(testTrials.get(2).nciID));
-        assertFalse(selenium.isTextPresent(testTrials.get(3).nciID));
-        assertFalse(selenium.isTextPresent(testTrials.get(4).nciID));
-    }        
+    }    
     
     @Test       
     public void testResultsSearchBySection801Yes(){

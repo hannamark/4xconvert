@@ -346,19 +346,12 @@ function searchResults(url, studyNCIid){
 	                       </tr>
 	                       <tr>
 		                       <td class="label middle" align="right" >
-		                          <label for="pcdFromType"><fmt:message key="resultsdashboard.pcdType"/></label>
+		                          <label for="pcdType"><fmt:message key="resultsdashboard.pcdType"/></label>
 		                       </td>
                                <td  scope="row" class="label middle">
-		                          <s:select headerKey="" headerValue="--Select--" id="pcdFromType" name="pcdFromType" 
-                                  list="#{'Actual':'Actual','Anticipated':'Anticipated'}"  value="pcdFromType" cssStyle="width:120px" />
-		                       </td>
-		                       <td class="label middle" align="right" >
-		                          <label for="pcdToType"> <fmt:message key="resultsdashboard.pcdType"/></label>
-		                       </td>
-                               <td  scope="row" class="label middle">   
-                                  <s:select headerKey="" headerValue="--Select--" id="pcdToType" name="pcdToType" 
-                                  list="#{'Actual':'Actual','Anticipated':'Anticipated'}"  value="pcdToType" cssStyle="width:120px" />
-                               </td>
+		                          <s:select headerKey="" headerValue="Any" id="pcdType" name="pcdType" 
+                                  list="#{'Actual':'Actual','Anticipated':'Anticipated'}"  value="pcdType" cssStyle="width:120px" />
+		                       </td>		                       
 		                    </tr>
                          </table>
                      </td>

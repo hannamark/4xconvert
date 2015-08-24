@@ -551,12 +551,9 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         options.setPcdFromDate(criteria.getPcdFrom());
         options.setPcdToDate(criteria.getPcdTo());
         List<ActualAnticipatedTypeCode> pcdDateTypes = new ArrayList<ActualAnticipatedTypeCode>();
-        if (criteria.getPcdFromType() != null) {
-            pcdDateTypes.add(ActualAnticipatedTypeCode.getByCode(criteria.getPcdFromType()));
-        }
-        if (criteria.getPcdToType() != null) {
-            pcdDateTypes.add(ActualAnticipatedTypeCode.getByCode(criteria.getPcdToType()));
-        }
+        if (criteria.getPcdType() != null) {
+            pcdDateTypes.add(ActualAnticipatedTypeCode.getByCode(criteria.getPcdType()));
+        }        
         options.setPcdDateTypes(pcdDateTypes);
         populateExample(criteria, example);
         return new StudyProtocolQueryBeanSearchCriteria(example, options);

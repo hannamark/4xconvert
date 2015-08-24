@@ -68,8 +68,7 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
     private Boolean section801IndicatorNo;
     private Date pcdFrom;
     private Date pcdTo;
-    private String pcdFromType;
-    private String pcdToType;
+    private String pcdType;    
     
     //Results
     private List<StudyProtocolQueryDTO> results;
@@ -179,8 +178,7 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
     private void clearFilters() {
         pcdFrom = null;
         pcdTo = null;
-        pcdFromType = null;
-        pcdToType = null;
+        pcdType = null;
     }
 
     private boolean canAccessDashboard() {
@@ -238,8 +236,7 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         criteria.setSection801Indicators(section801Indicators);
         criteria.setPcdFrom(pcdFrom);
         criteria.setPcdTo(pcdTo);
-        criteria.setPcdFromType(pcdFromType);
-        criteria.setPcdToType(pcdToType);
+        criteria.setPcdType(pcdType);
         return criteria;
     }
     
@@ -380,34 +377,18 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
 
 
     /**
-     * @return the pcdFromType
+     * @return the pcdType
      */
-    public String getPcdFromType() {
-        return pcdFromType;
+    public String getPcdType() {
+        return pcdType;
     }
 
 
     /**
-     * @param pcdFromType the pcdFromType to set
+     * @param pcdType the pcdType to set
      */
-    public void setPcdFromType(String pcdFromType) {
-        this.pcdFromType = pcdFromType;
-    }
-
-
-    /**
-     * @return the pcdToType
-     */
-    public String getPcdToType() {
-        return pcdToType;
-    }
-
-
-    /**
-     * @param pcdToType the pcdToType to set
-     */
-    public void setPcdToType(String pcdToType) {
-        this.pcdToType = pcdToType;
+    public void setPcdType(String pcdType) {
+        this.pcdType = pcdType;
     }
 
 
