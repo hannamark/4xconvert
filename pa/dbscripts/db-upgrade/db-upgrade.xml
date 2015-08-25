@@ -1911,5 +1911,9 @@
        <comment>Insert new properties in PA_PROPERTIES and remove unused properties</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-7595-2.sql"/>       
     </changeSet>
+        <changeSet id="PO-9144" author="vpoluri">
+       <comment>Insert new properties in PA_PROPERTIES</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9144.sql"/>       
+    </changeSet>
     
 </databaseChangeLog>

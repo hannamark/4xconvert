@@ -199,7 +199,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     /**
      * @return
      */
-    private static int randomPort() {
+    protected static int randomPort() {
         int port;
         while (isPortInUse((port = (int) (32768 + Math.random() * 32766)))) {
             System.out.println("Port " + port + " in use; trying another...");

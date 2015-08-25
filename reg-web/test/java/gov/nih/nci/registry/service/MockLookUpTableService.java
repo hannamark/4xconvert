@@ -58,6 +58,7 @@ public class MockLookUpTableService implements LookUpTableServiceRemote {
         map.put("jasper.base.user.rest.url","http://localhost:20101/reports/rest/user");
         map.put("jasper.admin.username","jasperadmin");
         map.put("jasper.admin.password","jasperadmin");
+        map.put("reg.web.admin.showReportsMenu", "true");
     }
 
     /**

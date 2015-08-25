@@ -18,6 +18,9 @@
                 <param name="filterScriptTags">true</param>
             </interceptor>
 
+            <interceptor name="reportViewerIntercept"
+                         class="gov.nih.nci.registry.interceptor.ReportViewerInterceptor" />
+            
             <interceptor-stack name="methodValidationStack">
                 <interceptor-ref name="showDisclaimer" />
                 <interceptor-ref name="exception" />
@@ -434,9 +437,12 @@
         </action>
         <!-- Added for PO-7595 #Start -->
         <action name="viewReportViewers*" class="gov.nih.nci.registry.action.ReportViewerAction" method="{1}">
+            <interceptor-ref name="methodValidationStack" />   
+            <interceptor-ref name="reportViewerIntercept"/>
             <result name="success">/WEB-INF/jsp/reportViewers.jsp</result>
             <result name="input">/WEB-INF/jsp/reportViewers.jsp</result>
             <result name="viewResults">/WEB-INF/jsp/reportViewers.jsp</result>
+            <result name="noAccess">/WEB-INF/jsp/noAccess.jsp</result>
         </action>
         <!-- Added for PO-7595 #End -->
         

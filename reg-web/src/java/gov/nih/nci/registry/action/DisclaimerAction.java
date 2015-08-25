@@ -80,6 +80,7 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import javax.servlet.http.HttpServletRequest;
@@ -94,6 +95,7 @@ import com.opensymphony.xwork2.ActionSupport;
 public class DisclaimerAction extends ActionSupport {
 
     private static final long serialVersionUID = 1L;
+    private LookUpTableServiceRemote lookupTableService;
 
     /**
      * @return string
@@ -103,9 +105,10 @@ public class DisclaimerAction extends ActionSupport {
     public String accept() throws PAException {
         HttpServletRequest request = ServletActionContext.getRequest();
         request.getSession().setAttribute("disclaimerAccepted", true);
+        String isReportsAllowed = getShowReportViewerFlag();
+        request.getSession().setAttribute("isReportsAllowed", isReportsAllowed);
 
-        RegistryUser registryUser = PaRegistry.getRegistryUserService()
-                .getUser(request.getRemoteUser());
+        RegistryUser registryUser = PaRegistry.getRegistryUserService().getUser(request.getRemoteUser());
         if (registryUser == null) {
             return "missing_account";
         } else {
@@ -113,4 +116,30 @@ public class DisclaimerAction extends ActionSupport {
         }
     }
 
+    /**
+     * 
+     * @return - returns isReportsAllowed flag
+     */
+    private String getShowReportViewerFlag() {
+
+        String isReportsAllowed = null;
+        try {
+            isReportsAllowed = getLookupTableService().getPropertyValue("reg.web.admin.showReportsMenu");
+
+        } catch (PAException e) {
+            LOG.error(e.getMessage(), e);
+        }
+
+        return isReportsAllowed;
+    }
+
+    /**
+     * @return the lookupTableService
+     */
+    public LookUpTableServiceRemote getLookupTableService() {
+        if (lookupTableService == null) {
+            lookupTableService = PaRegistry.getLookUpTableService();
+        }
+        return lookupTableService;
+    }
 }

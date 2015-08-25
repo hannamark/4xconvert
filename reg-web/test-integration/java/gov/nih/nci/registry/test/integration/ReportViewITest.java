@@ -1,5 +1,7 @@
 package gov.nih.nci.registry.test.integration;
 
+import java.sql.SQLException;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,10 +15,27 @@ public class ReportViewITest extends AbstractRegistrySeleniumTest{
 
     MockRestClientNCITServer mockRestClientNCITServer = new MockRestClientNCITServer();
     
+    public static int REST_SERVER_PORT;
+    
   @Before
   public void setUp() throws Exception {
     super.setUp();
-    mockRestClientNCITServer.startServer(20101);
+    REST_SERVER_PORT = randomPort();
+    mockRestClientNCITServer.startServer(REST_SERVER_PORT);
+    setupProperties();
+  }
+  
+  private void setupProperties() throws SQLException {
+      
+      String url = "http://localhost:"+REST_SERVER_PORT+"/reports/rest/user";
+      setPaProperty("jasper.base.user.rest.url", url);
+      setPaProperty("jasper.admin.username", "jasperadmin");
+      setPaProperty("jasper.admin.password", "jasperadmin");
+      setPaProperty("reg.web.admin.showReportsMenu", "true");
+      setPaProperty("regweb.jasper.allow.allssl", "true");
+      setPaProperty("regweb.reportview.availableReports", "Data Table 4:ROLE_DT4_CC_PSUSER|organization_1");
+      setPaProperty("jasper.rest.http.timeout.millis", "10000");
+      
   }
 
   @Test
@@ -83,12 +102,50 @@ public class ReportViewITest extends AbstractRegistrySeleniumTest{
     assert ( count > 0);
   }
   
+  @Test
+  public void testInterceptor() throws Exception {
+
+    setPaProperty("reg.web.admin.showReportsMenu", "false");
+    loginAndAcceptDisclaimer();
+
+    driver.findElement(By.linkText("Administration")).click();
+    
+    WebElement element = null; 
+    try {
+        element = driver.findElement(By.id("viewReportViewersMenuOption"));
+    } catch (Exception e) {}
+    
+    assertNull(element);
+    
+  }
+  
+  
+  /*
+   * driver.get("http://localhost:39480/registry/siteadmin/viewReportViewerssearch.action");
+    assertEquals("You do not have access to this page. Please contact System Admin.", driver.findElement(By.cssSelector("h2")).getText());
+   */
+  
+  @Test
+  public void testInterceptorNoAccess() throws Exception {
+
+    setPaProperty("reg.web.admin.showReportsMenu", "false");
+    loginAndAcceptDisclaimer();
+
+    openAndWait("/registry/siteadmin/viewReportViewerssearch.action");
+    //driver.get("http://localhost:39480/registry/siteadmin/viewReportViewerssearch.action");
+    assertEquals("You do not have access to this page. Please contact System Admin.", driver.findElement(By.cssSelector("h2")).getText());
+    
+    
+    
+  }
   
   private void navigateToReportViewerPage(){
       driver.findElement(By.linkText("Administration")).click();
       driver.findElement(By.id("viewReportViewersMenuOption")).click();
       assertEquals("Report Viewers", driver.findElement(By.cssSelector("h1.heading")).getText());
   }
+  
+  
   
   @After
   public void tearDown() throws Exception {
