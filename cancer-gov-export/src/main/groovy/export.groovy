@@ -67,7 +67,7 @@ def getTrialsSQL = """
         ra_country.name || ': ' || ra.authority_name as reg_authority,
 		ra_country.identifier as reg_authority_country_id,
         CASE
-            WHEN sos.status_code = 'APPROVED' then 'Approved for marketing'
+            WHEN sos.status_code = 'APPROVED' then 'Not yet recruiting'
             WHEN sos.status_code = 'IN_REVIEW' then 'Not yet recruiting'
             WHEN sos.status_code = 'ACTIVE' then 'Recruiting'
             WHEN sos.status_code = 'ENROLLING_BY_INVITATION' then 'Enrolling by invitation'
