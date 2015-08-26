@@ -80,11 +80,13 @@ package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.domain.AbstractLookUpEntity;
+import gov.nih.nci.pa.domain.Account;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.FundingMechanism;
 import gov.nih.nci.pa.domain.NIHinstitute;
 import gov.nih.nci.pa.domain.PAProperties;
+import gov.nih.nci.pa.enums.ExternalSystemCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.CacheUtils;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -270,5 +272,21 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
     public List<String> getStudyAlternateTitleTypes() throws PAException {
         String studyAlternateTitleTypes = getPropertyValue(STUDY_ALTERNATE_TITLE_TYPES);
         return Arrays.asList(studyAlternateTitleTypes.split(","));
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Account getJasperCredentialsAccount()
+            throws PAException {
+        return (Account) PaHibernateUtil
+                .getCurrentSession()
+                .createQuery(
+                        "from Account where accountName=:name and externalSystem=:system")
+                .setMaxResults(1)
+                .setString("name", "jasper.token")
+                .setParameter("system", ExternalSystemCode.JASPER)
+                .uniqueResult();
     }
 }

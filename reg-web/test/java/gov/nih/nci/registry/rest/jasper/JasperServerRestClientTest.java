@@ -6,11 +6,16 @@ import static org.junit.Assert.assertNotNull;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hibernate.Session;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import gov.nih.nci.pa.util.MockPaRegistryServiceLocator;
+import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.rest.jasper.Users.User;
+import gov.nih.nci.registry.service.MockLookUpTableService;
 import gov.nih.nci.registry.service.MockRestClientNCITServer;
 
 public class JasperServerRestClientTest {
@@ -25,36 +30,32 @@ public class JasperServerRestClientTest {
         mockRestClientNCITServer.startServer(NCIT_API_MOCK_PORT);
         String baseURL = "http://localhost:" + NCIT_API_MOCK_PORT + "/reports/rest/user";
 
-        String jasperAdmin = "jasperadmin";
-        String jasperPwd = "jasperadmin";
+        MockPaRegistryServiceLocator paReg = new MockPaRegistryServiceLocator();
+        PaRegistry.getInstance().setServiceLocator(paReg);
 
-        restClient = new JasperServerRestClient(baseURL, jasperAdmin, jasperPwd, true);
+        restClient = new JasperServerRestClient(baseURL, true);
+        
         reportGroupMap = new HashMap<String, String>();
-
         reportGroupMap.put("DT4", "ROLE_DT4");
         reportGroupMap.put("DT3", "ROLE_DT3|ORG_2");
+        
     }
 
     @Test
     public void testGetAllUserDetails() {
 
         Users resp = restClient.getAllUserDetails();
-
         assertNotNull(resp);
 
     }
 
     @Test
     public void testGetUserDetails() {
-
         Users resp = restClient.getUserDetails("firstName");
         assertNotNull(resp);
         assertEquals("firstName", resp.getUser().get(0).getUsername());
     }
 
-    /*
-     * @Test public void testRemoveRole() { fail("Not yet implemented"); }
-     */
     @Test
     public void testUpdateRoles() {
         Users users = restClient.getUserDetails("firstName");

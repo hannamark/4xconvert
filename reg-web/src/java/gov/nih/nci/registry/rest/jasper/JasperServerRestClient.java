@@ -32,6 +32,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
 
+import gov.nih.nci.pa.domain.Account;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -62,21 +63,25 @@ public class JasperServerRestClient {
      * 
      * @param baseURL
      *            - Jasper server base URL
-     * @param jasperAdminUser
-     *            - Jasper admin username
-     * @param jasperAdminPwd
-     *            - Jasper admin password
+     *            
      * @param allowTrustedSites - enables to allow all tursted sites
      */
 
-    public JasperServerRestClient(String baseURL, String jasperAdminUser, String jasperAdminPwd,
-            boolean allowTrustedSites) {
+    public JasperServerRestClient(String baseURL, boolean allowTrustedSites) {
         try {
 
             baseUrl = baseURL;
-            username = jasperAdminUser;
-            password = jasperAdminPwd;
             lookupTableService = PaRegistry.getLookUpTableService();
+            
+            try {
+                Account account = lookupTableService.getJasperCredentialsAccount(); 
+                username = account.getUsername();
+                password = account.getDecryptedPassword();
+            } catch (PAException e1) {
+                LOG.error(e1.getMessage(), e1);
+            }
+            
+            
             JAXBContext usersJxContext = JAXBContext.newInstance(Users.class);
             usersUnmarshaller = usersJxContext.createUnmarshaller();
 
@@ -128,10 +133,17 @@ public class JasperServerRestClient {
     /**
      * @return lookup table service
      */
-    private LookUpTableServiceRemote getLookUpTableService() {
+    public LookUpTableServiceRemote getLookUpTableService() {
         return lookupTableService;
     }
 
+    /**
+     * @param lookupTableService1 - lookupTableService
+     */
+    public void setLookUpTableService(LookUpTableServiceRemote lookupTableService1) {
+        this.lookupTableService = lookupTableService1;
+    }
+    
     /**
      * 
      * @param users
@@ -485,7 +497,7 @@ public class JasperServerRestClient {
         outputStream.write(postBody.getBytes());
         outputStream.flush();
     }
-
+    
     /**
      * Get string as stream
      * 

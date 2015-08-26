@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.domain.AbstractLookUpEntity;
+import gov.nih.nci.pa.domain.Account;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.FundingMechanism;
@@ -174,4 +175,11 @@ public interface LookUpTableServiceRemote {
      * @throws PAException when error.
      */
     <T extends AbstractLookUpEntity> T getLookupEntityByCode(Class<T> clazz, String code) throws PAException;
+
+    /**
+     * Returns the jasper account
+     * @return - Account object
+     * @throws PAException - throws PAException
+     */
+    Account getJasperCredentialsAccount() throws PAException;
 }

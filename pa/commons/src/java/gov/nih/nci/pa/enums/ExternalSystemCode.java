@@ -20,7 +20,12 @@ public enum ExternalSystemCode implements CodedEnum<String> {
     /**
      * Mailbox
      */
-    MAILBOX("Mailbox");
+    MAILBOX("Mailbox"),
+    
+    /**
+     * Jasper
+     */
+    JASPER("Jasper");
 
     private final String code;
 
