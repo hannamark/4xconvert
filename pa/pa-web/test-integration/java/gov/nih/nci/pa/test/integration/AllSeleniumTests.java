@@ -107,11 +107,9 @@ import org.junit.runners.Suite.SuiteClasses;
         ResultsDashboardTest.class, TrialViewTest.class,
         NCISpecificInformationTest.class,
         ResultsReportingActionsTakenTest.class, TwitterTest.class,
-        DashboardMenuTest.class, ManageUserGroupsTest.class
-// DuplicateTrialEditTest.class,
-// LookupWithApostropheTest.class,
-// DiseaseTest.class,
-// TrialMilestoneSearchTest.class
+        DashboardMenuTest.class, RssOwnershipTest.class,
+        ManageUserGroupsTest.class
+
 })
 public class AllSeleniumTests {
 

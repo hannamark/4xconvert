@@ -147,6 +147,16 @@ public class MockOrganizationEntityService implements
             org = new OrganizationDTO();
             org.setName(EnOnConverter.convertToEnOn("single \' quotes\'"));
             createOrg(org);
+            
+
+            org = new OrganizationDTO();
+            org.setName(EnOnConverter.convertToEnOn("SWOG"));
+            createOrg(org);
+            PO_ID_TO_CTEP_ID.put(
+                    IiConverter.convertToString(org.getIdentifier()),
+                    "SWOG");
+            org.setStatusCode(CdConverter
+                    .convertToCd(EntityStatusCode.ACTIVE));
 
         } catch (Exception e) {
             e.printStackTrace(); // NOPMD

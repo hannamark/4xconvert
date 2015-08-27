@@ -100,8 +100,7 @@ public class PaEarPropertyReaderTest {
         assertEquals("localhost:80", PaEarPropertyReader.getLookUpServerInfo());
         assertEquals("Submitter", PaEarPropertyReader.getCSMSubmitterGroup());
         assertEquals("pawikiurl", PaEarPropertyReader.getPaHelpUrl());
-        assertEquals("regwikiurl", PaEarPropertyReader.getRegistryHelpUrl());
-        assertEquals("cteprss", PaEarPropertyReader.getRssUser());
+        assertEquals("regwikiurl", PaEarPropertyReader.getRegistryHelpUrl());        
         assertEquals("prefix", PaEarPropertyReader.getNciLdapPrefix());
         assertEquals("trialStatusRulesURL", PaEarPropertyReader.getStateTransitionDiagramUrl());
         assertEquals("ftp://ctrppa:ctrppa@localhost:51239/", PaEarPropertyReader.getCTGovFtpURL());

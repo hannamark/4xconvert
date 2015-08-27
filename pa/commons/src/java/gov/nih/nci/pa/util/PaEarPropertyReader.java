@@ -109,8 +109,7 @@ public class PaEarPropertyReader {
     private static final String CSM_SUBMITTER_GROUP = "csm.submitter.group";
     private static final String ALLOWED_UPLOAD_FILE_TYPES = "allowed.uploadfile.types";
     private static final String BATCH_UPLOAD_PATH = "batch.upload.path";
-    private static final String TOOLTIPS_PATH = "tooltips.path";
-    private static final String CTEP_RSS_USER = "cteprss.user";
+    private static final String TOOLTIPS_PATH = "tooltips.path";    
     private static final String INVALID_DIRECTORY_ERROR_MSG = " is not a valid directory.";
     private static final String PA_HELP_URL = "wikiHelp.baseUrl.pa";
     private static final String REGISTRY_HELP_URL = "wikiHelp.baseUrl.registry";
@@ -254,15 +253,7 @@ public class PaEarPropertyReader {
         return getPropTemplate(ALLOWED_UPLOAD_FILE_TYPES);
     }
 
-    /**
-     * Returns the ctep rss user, required owner of collaborative trials.
-     * @return the name of the user
-     * @throws PAException if the property is missing
-     */
-    public static String getRssUser() throws PAException {
-        return getPropTemplate(CTEP_RSS_USER);
-    }
-
+    
     /**
      * Returns the base URL of the wiki-based help for PA.
      * @return url

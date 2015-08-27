@@ -106,7 +106,6 @@ import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -152,6 +151,7 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
     private PersonEntityServiceRemote personEntityService;
     private ProtocolQueryServiceLocal protocolQueryService;
     private TrialRegistrationServiceLocal trialRegistrationService;
+    private RegistryUserService registryUserService;
     private CorrelationUtilsRemote correlationUtils = new CorrelationUtils();
    
     private OrganizationDTO selectedLeadOrg;
@@ -161,16 +161,9 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
 
     private static final Logger LOG = Logger.getLogger(TrialValidationAction.class);
 
-    private static Long rssUserId;
-
-    private static RegistryUserService regUserSvc = null;
-
     private TrialHelper trialHelper = new TrialHelper();
     private static final String DISPLAY_SUMMARY4FUNDING_SPONSOR = "display_summary4funding_sponsor";
-
-    static {
-        setRegistryUserService(PaRegistry.getRegistryUserService());
-    }
+  
 
     /**
      * {@inheritDoc}
@@ -184,6 +177,7 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
         personEntityService = PoRegistry.getPersonEntityService();
         protocolQueryService = PaRegistry.getProtocolQueryService();
         trialRegistrationService = PaRegistry.getTrialRegistrationService();
+        registryUserService = PaRegistry.getRegistryUserService();
         if (gtdDTO != null) {
             gtdDTO.setPrimaryPurposeAdditionalQualifierCode(PAUtil.lookupPrimaryPurposeAdditionalQualifierCode(gtdDTO
                 .getPrimaryPurposeCode()));
@@ -381,12 +375,13 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
         if (StringUtils.equalsIgnoreCase(operation, "accept")) {
             createMilestones(MilestoneCode.SUBMISSION_ACCEPTED);
             if (trialHelper.shouldRssOwnTrial(studyProtocolIi)) {
+                final Long rssUserId = getRssUserID();
                 if (rssUserId == null) {
                     ServletActionContext.getRequest().setAttribute(
                             Constants.FAILURE_MESSAGE,
                             "Unable to find ctep-rss user and assign as owner");
                 } else {
-                    regUserSvc.assignOwnership(rssUserId,
+                    registryUserService.assignOwnership(rssUserId,
                             Long.valueOf(studyProtocolIi.getExtension()));
                 }
             }
@@ -775,22 +770,18 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
         this.trialRegistrationService = trialRegistrationService;
     }
 
-    /**
-     * Injection setter for RegistryUserService.
-     *
-     * @param svc the service to set.
-     */
-    public static void setRegistryUserService(RegistryUserService svc) {
-        regUserSvc = svc;
-        RegistryUser regUser = null;
+    
+    private Long getRssUserID() {
         try {
-            regUser = regUserSvc.getUser(PaEarPropertyReader.getRssUser());
+            RegistryUser regUser = registryUserService
+                    .getUser(lookUpTableService
+                            .getPropertyValue("cteprss.user"));
+            return regUser != null ? regUser.getId() : null;
         } catch (PAException e) {
-            LOG.error(e);
+            LOG.error(e, e);
+            return null;
         }
-        if (regUser != null) {
-            rssUserId = regUser.getId();
-        }
+
     }
 
     /**
@@ -813,5 +804,12 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
      */
     public void setCorrelationUtils(CorrelationUtilsRemote correlationUtils) {
         this.correlationUtils = correlationUtils;
+    }
+
+    /**
+     * @param registryUserService the registryUserService to set
+     */
+    public void setRegistryUserService(RegistryUserService registryUserService) {
+        this.registryUserService = registryUserService;
     }
 }

@@ -173,8 +173,7 @@
                 <filter token="gridgrouper.admin.user" value="${gridgrouper.admin.user}"/>
                 <filter token="gridgrouper.admin.password" value="${gridgrouper.admin.password}"/>
                 <filter token="gridgrouper.url" value="${gridgrouper.url}"/>
-                <filter token="idps.allow.password.editing" value="${idps.allow.password.editing}"/>
-                <filter token="cteprss.user" value="${cteprss.user}"/>
+                <filter token="idps.allow.password.editing" value="${idps.allow.password.editing}"/>                
                 <filter token="register.mail.body.url" value="${register.mail.body.url}"/>
                 <filter token="mock.po" value="${mock.po}" />
                 <filter token="nci.ldap.prefix" value="${nci.ldap.prefix}" />

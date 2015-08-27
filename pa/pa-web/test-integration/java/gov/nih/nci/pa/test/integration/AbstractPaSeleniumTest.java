@@ -969,7 +969,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
 
     protected Number createRegistryUser(Number csmUserId) throws SQLException {
         QueryRunner runner = new QueryRunner();
-        String idSql = "select max(identifier) + 1 from registry_user";
+        String idSql = "SELECT NEXTVAL('HIBERNATE_SEQUENCE')";
 
         Number id = (Number) runner
                 .query(connection, idSql, new ArrayHandler())[0];
