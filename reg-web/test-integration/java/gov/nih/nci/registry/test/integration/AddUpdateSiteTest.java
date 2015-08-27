@@ -163,9 +163,20 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testAddMySite() throws URISyntaxException, SQLException {
+    public void testAddMySite_PO9100PickASiteFromMultipleOrgs() throws URISyntaxException, SQLException {
+    	// User can add more than 1 org as site, in this case the Pick Site selection screen appears first
         TrialInfo info = createAndSelectTrial();
         addMySiteAndVerify(info);
+    }
+    
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testPO9100_AddSiteSingleOrganization() throws URISyntaxException, SQLException {
+    	// User can only add 1 org as site, as other orgs(CTEP,NCI) are associated with a site.
+        TrialInfo info = createAndSelectTrial();
+        addSiteToTrial(info, "CTEP", "In Review");
+        addSiteToTrial(info, "NCI", "In Review");
+        addMySiteAndVerify_SingleOrganization(info);
     }
 
     @SuppressWarnings("deprecation")
@@ -239,6 +250,14 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         findInMyTrials();
         invokeAction("Add My Site");
 
+        String[] options = selenium.getSelectOptions("pickedSiteOrgPoId");
+        assertEquals(3, options.length);
+        selenium.select("pickedSiteOrgPoId",
+                "label=National Cancer Institute Division of Cancer Prevention");
+        clickAndWait("pickSiteBtn");
+        assertEquals("National Cancer Institute Division of Cancer Prevention",
+                selenium.getValue("organizationName"));
+
         verifyTrialData(info);
 
         // Check validation.
@@ -288,6 +307,64 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         verifySiteStatusHistory(info, localID);
     }
 
+    private void addMySiteAndVerify_SingleOrganization(TrialInfo info) throws SQLException {
+        assignTrialOwner("submitter-ci", info.id);
+        findInMyTrials();
+        invokeAction("Add My Site");
+
+        assertEquals("National Cancer Institute Division of Cancer Prevention",
+                selenium.getValue("organizationName"));
+        
+        verifyTrialData(info);
+
+        // Check validation.
+        clickAndWait("xpath=//button[text()='Save']");
+        assertEquals(
+                "Local Trial Identifier is required",
+                s.getText("xpath=//span[@class='alert-danger' and preceding-sibling::input[@id='localIdentifier']]"));
+        assertEquals(
+                "Please choose a Site Principal Investigator using the lookup",
+                s.getText("xpath=//span[@class='alert-danger' and preceding-sibling::input[@id='investigator']]"));
+        assertTrue(s
+                .isTextPresent("A valid Recruitment Status Date is required"));
+        assertTrue(s
+                .isTextPresent("Please enter a value for Recruitment Status"));
+
+        // Populate fields.
+        final String localID = "DCP_SITE";
+        s.type("localIdentifier", localID);
+
+        // Investigator.
+        pickInvestigator();
+
+        useSelect2ToPickAnOption("programCodes", "PC-NM-1", "PC-NM-1");
+
+        populateStatusHistory(info);
+
+        s.click("xpath=//button/i[@class='fa-floppy-o']");
+        driver.switchTo().defaultContent();
+
+        // Check results.
+        waitForTextToAppear(By.className("alert-success"),
+                "Message: Your site has been added to the trial.", 10);
+
+        assertEquals("National Cancer Institute Division of Cancer Prevention",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[1]"));
+        assertEquals("Doe,John",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[2]"));
+        assertEquals(localID,
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[3]"));
+        assertEquals("PC-CD-1",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[4]"));
+        assertEquals("Approved",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[5]"));
+        assertEquals(today,
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[6]"));
+
+        verifySiteStatusHistory(info, localID);
+
+    }
+    
     /**
      * @param info
      * @param localID

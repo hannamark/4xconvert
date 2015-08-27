@@ -79,10 +79,18 @@
 package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
+
+import org.hibernate.Session;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -105,22 +113,11 @@ import gov.nih.nci.pa.util.pomock.MockFamilyService;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.security.authorization.domainobjects.User;
-import gov.nih.nci.services.correlation.FamilyOrganizationRelationshipDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.family.FamilyDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
-
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
-
-import org.hibernate.Session;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  * @author hreinhart
@@ -154,7 +151,7 @@ public class ParticipatingSiteBeanLocalTest extends AbstractEjbTestCase {
         PoRegistry.getResearchOrganizationCorrelationService()
                 .createCorrelation(roDTO);
         new MockFamilyService().relate(mayoCancerCenter, fam);
-        addSite(mayoCancerCenter, TestSchema.studyProtocols.get(0));
+        
 
         // Sibling 1
         mayoFL = new OrganizationDTO();
@@ -166,7 +163,7 @@ public class ParticipatingSiteBeanLocalTest extends AbstractEjbTestCase {
         PoRegistry.getResearchOrganizationCorrelationService()
                 .createCorrelation(roDTO);
         new MockFamilyService().relate(mayoFL, fam);
-        addSite(mayoFL, TestSchema.studyProtocols.get(0));
+       
 
         // Sibling 2
         mayoMN = new OrganizationDTO();
@@ -178,9 +175,14 @@ public class ParticipatingSiteBeanLocalTest extends AbstractEjbTestCase {
         PoRegistry.getResearchOrganizationCorrelationService()
                 .createCorrelation(roDTO);
         new MockFamilyService().relate(mayoMN, fam);
-        addSite(mayoMN, TestSchema.studyProtocols.get(0));
 
     }
+    
+	private void addSites() throws Exception {
+		addSite(mayoCancerCenter, TestSchema.studyProtocols.get(0));
+		addSite(mayoFL, TestSchema.studyProtocols.get(0));
+		addSite(mayoMN, TestSchema.studyProtocols.get(0));
+	}
 
     private void addSite(OrganizationDTO org, StudyProtocol studyProtocol)
             throws EntityValidationException, CurationException, PAException {
@@ -215,8 +217,8 @@ public class ParticipatingSiteBeanLocalTest extends AbstractEjbTestCase {
     }
 
     @Test
-    public void getListOfSitesUserCanUpdateCancerCenter() throws PAException,
-            NullifiedRoleException {
+    public void getListOfSitesUserCanUpdateCancerCenter() throws Exception {
+    	addSites();
         Session s = PaHibernateUtil.getCurrentSession();
         User user = CSMUserService.getInstance().getCSMUser(
                 UsernameHolder.getUser());
@@ -252,7 +254,8 @@ public class ParticipatingSiteBeanLocalTest extends AbstractEjbTestCase {
 
     @Test
     public void getListOfSitesUserCanUpdateNonCancerCenter()
-            throws PAException, NullifiedRoleException {
+            throws Exception {
+    	addSites();
         Session s = PaHibernateUtil.getCurrentSession();
         User user = CSMUserService.getInstance().getCSMUser(
                 UsernameHolder.getUser());
@@ -279,6 +282,67 @@ public class ParticipatingSiteBeanLocalTest extends AbstractEjbTestCase {
                 "from Organization where name='"
                         + EnOnConverter.convertEnOnToString(mayoMN.getName())
                         + "'").uniqueResult()));
+    }
+    
+    @Test
+    public void testGetListOfSitesUserCanAdd() throws PAException,
+            NullifiedRoleException {
+        Session s = PaHibernateUtil.getCurrentSession();
+        User user = CSMUserService.getInstance().getCSMUser(
+                UsernameHolder.getUser());
+        RegistryUser ru = TestSchema.createRegistryUser(user);
+        s.flush();
+        
+        ru.setAffiliatedOrganizationId(IiConverter
+                .convertToLong(mayoCancerCenter.getIdentifier()));
+        ru.setAffiliateOrg(EnOnConverter.convertEnOnToString(mayoCancerCenter
+                .getName()));
+        s.update(ru);
+        s.flush();
+
+        List<Organization> sites = remoteEjb.getListOfSitesUserCanAdd(ru,
+                IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols
+                        .get(0).getId()));
+        assertEquals(3, sites.size());
+    }
+    
+    @Test
+    public void testGetListOfSitesUserCanAddExcludeTheAddedSite() throws PAException,
+            NullifiedRoleException, EntityValidationException, CurationException {
+    	
+    	addSite(mayoCancerCenter, TestSchema.studyProtocols.get(0));
+    	
+        Session s = PaHibernateUtil.getCurrentSession();
+        User user = CSMUserService.getInstance().getCSMUser(
+                UsernameHolder.getUser());
+        RegistryUser ru = TestSchema.createRegistryUser(user);
+        s.flush();
+        
+        ru.setAffiliatedOrganizationId(IiConverter
+                .convertToLong(mayoCancerCenter.getIdentifier()));
+        ru.setAffiliateOrg(EnOnConverter.convertEnOnToString(mayoCancerCenter
+                .getName()));
+        s.update(ru);
+        s.flush();
+
+        List<Organization> sites = remoteEjb.getListOfSitesUserCanAdd(ru,
+                IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols
+                        .get(0).getId()));
+        assertEquals(2, sites.size());
+        
+        assertTrue(!sites.contains(s.createQuery(
+                "from Organization where name='"
+                        + EnOnConverter.convertEnOnToString(mayoCancerCenter
+                                .getName()) + "'").uniqueResult()));
+        assertTrue(sites.contains(s.createQuery(
+                "from Organization where name='"
+                        + EnOnConverter.convertEnOnToString(mayoFL.getName())
+                        + "'").uniqueResult()));
+        assertTrue(sites.contains(s.createQuery(
+                "from Organization where name='"
+                        + EnOnConverter.convertEnOnToString(mayoMN.getName())
+                        + "'").uniqueResult()));
+
     }
 
 }

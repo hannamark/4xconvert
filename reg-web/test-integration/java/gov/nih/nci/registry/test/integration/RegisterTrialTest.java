@@ -94,7 +94,6 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.poi.hssf.record.UseSelFSRecord;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -790,6 +789,15 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         clickAndWait("xpath=//button[text()='Add My Site']");
         waitForElementById("popupFrame", 20);
         selenium.selectFrame("popupFrame");
+        
+        String[] options = selenium.getSelectOptions("pickedSiteOrgPoId");
+        assertEquals(3, options.length);
+        selenium.select("pickedSiteOrgPoId",
+                "label=National Cancer Institute Division of Cancer Prevention");
+        clickAndWait("pickSiteBtn");
+        assertEquals("National Cancer Institute Division of Cancer Prevention",
+                selenium.getValue("organizationName"));
+
         selenium.type("localIdentifier", "XYZ0000001");
 
         clickAndWaitAjax("xpath=//button/i[@class='fa-search']");
@@ -836,7 +844,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assertEquals("", selenium.getText("//table[@id='row']/tbody/tr/td[8]"));
 
     }
-
+    
     @SuppressWarnings("deprecation")
     @Test
     public void testReviewEditSubmit() throws Exception {

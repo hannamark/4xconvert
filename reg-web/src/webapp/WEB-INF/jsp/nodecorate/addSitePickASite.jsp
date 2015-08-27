@@ -58,11 +58,20 @@
 					Participating Site:<span class="required">*</span>
 				</label>
 				<div class="col-xs-4">
+				<s:if test="%{addSitesMultiple}">
+						<s:select id="pickedSiteOrgPoId" listKey="identifier"
+						listValue="name" name="pickedSiteOrgPoId"
+						list="listOfSitesUserCanAdd" value="userAffiliationPoOrgId"
+						cssClass="form-control" />
+                 </s:if>
+                 <s:else>
 					<s:select id="pickedSiteOrgPoId" listKey="identifier"
 						listValue="name" name="pickedSiteOrgPoId"
 						list="listOfSitesUserCanUpdate" value="userAffiliationPoOrgId"
 						cssClass="form-control" />
+				</s:else>
 				</div>
+				
 			</div>
 			<div class="align-center button-row">
 				<button id="pickSiteBtn" type="submit"

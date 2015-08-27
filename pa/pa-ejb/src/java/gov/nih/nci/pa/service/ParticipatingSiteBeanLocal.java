@@ -83,6 +83,35 @@
 package gov.nih.nci.pa.service;
 
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.ejb.EJBTransactionRolledbackException;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.exception.ConstraintViolationException;
+
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
@@ -130,6 +159,7 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -140,36 +170,9 @@ import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
+import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
-
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
-import javax.ejb.EJBTransactionRolledbackException;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.exception.ConstraintViolationException;
 
 /**
  * @author mshestopalov
@@ -914,6 +917,60 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
                 StudySiteFunctionalCode.TREATING_SITE);
         qry.setParameterList("orgId", allFamilyMembersPoIds);
         return qry.list();
+    }
+    
+    @SuppressWarnings("unchecked")
+    private OrganizationDTO getPOOrganizationEntity(Ii entityIi) {
+        OrganizationDTO poOrg = null;
+        try {
+            poOrg = PoRegistry.getOrganizationEntityService()
+                              .getOrganization(IiConverter.convertToPoOrganizationIi(entityIi.getExtension()));
+        } catch (NullifiedEntityException e) {
+            poOrg = null;
+        }
+        return poOrg;
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Organization> getListOfSitesUserCanAdd(RegistryUser user,
+            Ii studyProtocolID) throws PAException, NullifiedRoleException {
+        Long userOrgPoId = user.getAffiliatedOrganizationId();
+        List<Long> siblingsPoIds = FamilyHelper
+                .getAllRelatedOrgs(userOrgPoId);
+        Collection<OrganizationDTO> allMembersList = new TreeSet<OrganizationDTO>(
+                new Comparator<OrganizationDTO>() {
+                    @Override
+                    public int compare(OrganizationDTO o1, OrganizationDTO o2) {
+                        return IiConverter.convertToLong(o1.getIdentifier())
+                                .compareTo(
+                                        IiConverter.convertToLong(o2
+                                                .getIdentifier()));
+                    }
+                });
+        OrganizationDTO affiliation = getPOOrganizationEntity(IiConverter.convertToIi(userOrgPoId));
+        allMembersList.add(affiliation);
+        for (Long poID : siblingsPoIds) {
+            OrganizationDTO sibling = getPOOrganizationEntity(IiConverter.convertToIi(poID));
+            if (sibling != null) {
+                allMembersList.add(sibling);
+            }
+        }
+        List<OrganizationDTO> properlySortedList = new ArrayList<OrganizationDTO>();
+        properlySortedList.add(affiliation);
+        allMembersList.remove(affiliation);
+        properlySortedList.addAll(allMembersList);        
+        Collection<OrganizationDTO> candidates = PaRegistry.getParticipatingOrgService()
+                .getOrganizationsThatAreNotSiteYet(IiConverter.convertToLong(studyProtocolID), properlySortedList);
+       
+         List<Organization> orgsThatCanBeAddeddASite = new ArrayList<>(candidates.size());
+         for (OrganizationDTO tempOrgDto : candidates) {
+             Organization org = new Organization();
+             org.setIdentifier(tempOrgDto.getIdentifier().getExtension());
+             org = PaRegistry.getPAOrganizationService().getOrganizationByIndetifers(org);
+             orgsThatCanBeAddeddASite.add(org);
+          }
+        return orgsThatCanBeAddeddASite;
     }
 
     private void removeCancerCentersFromCollection(

@@ -83,6 +83,23 @@
 
 package gov.nih.nci.registry.action;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
+import org.codehaus.jackson.map.ObjectMapper;
+
+import com.opensymphony.xwork2.Preparable;
+
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
@@ -115,23 +132,6 @@ import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.struts2.ServletActionContext;
-import org.codehaus.jackson.map.ObjectMapper;
-
-import com.opensymphony.xwork2.Preparable;
 
 /**
  * Add a participating site to the trial.
@@ -168,11 +168,10 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction implement
     private OrganizationEntityServiceRemote organizationService;
     private StatusTransitionService statusTransitionService;
     
-
+    private boolean addSitesMultiple = false;
     private boolean redirectToSummary;
     private String studyProtocolId;    
     private String pickedSiteOrgPoId;
-    
     private List<OrgFamilyProgramCodeDTO> orgFamProgramCodeDtos = new ArrayList<OrgFamilyProgramCodeDTO>();
     private String orgFamProgramCodesAsJson;
     
@@ -206,7 +205,7 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction implement
     public boolean isOpenSitesWarningRequired() {     
         return false;
     }
-
+    
 
     /**
      * Prepare and display the site add/update pop-up.
@@ -221,13 +220,26 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction implement
             String poOrgId = populateSiteDTO();
             initOrgFamilyInfo(poOrgId);
             setSiteDtoInSession();
+            
+            //Ii spID = IiConverter.convertToStudyProtocolIi(Long
+            //        .parseLong(getStudyProtocolId()));        
+            setAddSitesMultiple(StringUtils.isBlank(siteDTO.getId()) 
+            //&& participatingSiteService.getParticipatingSite(spID, getUserAffiliationPoOrgId()) == null
+            && getListOfSitesUserCanAdd().size() > 1);
+            
             // PO-8268 kicks in here. If user can actually update multiple
             // sites, we need to present a dialog
             // asking which one she or he wants to update.
             if (canUpdateMultipleSites()) {
                 return PICK_A_SITE;
             } else {
-                return SUCCESS;
+                // PO-9100 Add Multiple sites check is performed to Allow user to specify any organization in Family 
+                // as participating site at time  of importing Industrial Trial
+                if (addSitesMultiple)  {
+                    return PICK_A_SITE;
+                 } else {
+                    return SUCCESS;
+                 }
             }
         } catch (Exception e) {
             addActionError(e.getMessage());
@@ -237,6 +249,20 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction implement
     }
 
     /**
+     * @return addSitesMultiple 
+     */    
+    public boolean isAddSitesMultiple() {
+        return addSitesMultiple;
+    }
+
+    /**
+     * @param addSitesMultiple for the view
+     */   
+     public void setAddSitesMultiple(boolean addSitesMultiple) {
+        this.addSitesMultiple = addSitesMultiple;
+     }
+
+     /**
      * @throws NumberFormatException
      * @throws PAException
      */
@@ -261,7 +287,9 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction implement
      */
     public String pickSite() {
         try {
-            makeSureUserDidNotManipulateSiteIdInForm();
+            if (canUpdateMultipleSites()) {
+               makeSureUserDidNotManipulateSiteIdInForm();
+            }
             prepareProtocolData();
             clearOrgFamilyProgramCodesFromSession();
             populateSiteDTOBasedOnOrg(getPickedSiteOrgPoId());
@@ -307,11 +335,10 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction implement
 
     private boolean canUpdateMultipleSites() throws PAException,
             NullifiedRoleException {
-        return StringUtils.isNotBlank(siteDTO.getId())
-                && getListOfSitesUserCanUpdate().size() > 1;
+        return StringUtils.isNotBlank(siteDTO.getId()) && getListOfSitesUserCanUpdate().size() > 1;
     }
 
-    /**
+     /**
      * @return List<Organization>
      * @throws PAException
      *             PAException
@@ -326,6 +353,21 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction implement
         return participatingSiteService.getListOfSitesUserCanUpdate(
                 loggedInUser, spID);
     }
+    
+    /**
+     * @return List<Organization>
+     * @throws PAException
+     *             PAException
+     * @throws NullifiedRoleException
+     *             NullifiedRoleException
+     */
+    public final List<Organization> getListOfSitesUserCanAdd() throws PAException,
+    NullifiedRoleException {
+       RegistryUser loggedInUser = getRegistryUser();
+      Ii spID = IiConverter.convertToStudyProtocolIi(Long
+          .parseLong(getStudyProtocolId()));
+      return participatingSiteService.getListOfSitesUserCanAdd(loggedInUser, spID);
+    }    
 
     String populateSiteDTO() throws PAException, NullifiedEntityException {        
         String poOrgId = getUserAffiliationPoOrgId();  

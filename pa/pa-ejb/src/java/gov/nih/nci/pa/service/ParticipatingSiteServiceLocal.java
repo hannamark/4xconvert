@@ -82,6 +82,11 @@
  */
 package gov.nih.nci.pa.service;
 
+import java.util.Collection;
+import java.util.List;
+
+import javax.ejb.Local;
+
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
@@ -100,11 +105,6 @@ import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
-
-import java.util.Collection;
-import java.util.List;
-
-import javax.ejb.Local;
 
 /**
  * 
@@ -355,5 +355,15 @@ public interface ParticipatingSiteServiceLocal {
             StudyOverallStatusDTO currentStatus, boolean mustNotifyTrialOwners)
             throws PAException;
 
-   
+    /**
+     * Returns a list of participating sites acting on the given trial, which user can Add.
+     * @param user RegistryUser
+     * @param studyProtocolID studyProtocolID
+     * @return List<Organization>
+     * @throws PAException  PAException
+     * @throws NullifiedRoleException  NullifiedRoleException
+     */   
+    List<Organization> getListOfSitesUserCanAdd(RegistryUser user, Ii studyProtocolID) 
+          throws PAException, NullifiedRoleException;
+
 }
