@@ -218,7 +218,8 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  */
 @Stateless
 @Interceptors({ RemoteAuthorizationInterceptor.class,
-        PaHibernateSessionInterceptor.class, StudySourceInterceptor.class })
+        PaHibernateSessionInterceptor.class, StudySourceInterceptor.class,
+        DeGridificationInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean // NOPMD
     implements TrialRegistrationServiceLocal { // NOPMD
