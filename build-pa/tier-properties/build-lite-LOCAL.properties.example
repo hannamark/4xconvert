@@ -22,7 +22,7 @@ grid.security.jndi.principal=Gr1DU5er
 grid.security.jndi.credentials=ltHZmZ1rqYq8j2uyHEABIQ==
 
 ctgov.ftp.url=ftp://ctrppa:ctrppa@localhost/
-cteprss.user=ctep-rss
+
 log.level=INFO
 
 selenium.server.port=4444
