@@ -90,6 +90,7 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
@@ -151,6 +152,8 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     
     @EJB
     private MailManagerServiceLocal mailManagerService;
+    
+    private CSMUserUtil csmUtil = new CSMUserService();
     
     /**
      * {@inheritDoc}
@@ -332,6 +335,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
             addCriteria(criteria, regUser.getPrsOrgName(), "regUser.prsOrgName");
             addCriteria(criteria, regUser.getFirstName(), "regUser.firstName");
             addCriteria(criteria, regUser.getLastName(), "regUser.lastName");
+            addCriteria(criteria, regUser.getToken(), "regUser.token");
         }
         return criteria.list();
     }
@@ -601,35 +605,41 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
-    public void activateAccount(String email, String username) throws PAException {
-        if (StringUtils.isEmpty(email)) {
-            throw new PAException("Cannot activate account with empty email.");
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void activateAccount(String token, String loginName) throws PAException {
+        if (StringUtils.isBlank(token)) {
+            throw new PAException("Cannot activate account with an empty token");
         }
 
         Session session = PaHibernateUtil.getCurrentSession();
         Criteria criteria = session.createCriteria(RegistryUser.class);
-        criteria.add(Restrictions.eq("emailAddress", email));
+        criteria.add(Restrictions.eq("token", token));
         criteria.add(Restrictions.isNull("csmUser"));
 
         RegistryUser regUser = null;
         try {
             regUser = (RegistryUser) criteria.uniqueResult();
         } catch (HibernateException e) {
-            throw new PAException("Multiple registry accounts for the same email address were found.", e);
+            throw new PAException("Multiple registry accounts for the same token were found.", e);
         }
         if (regUser == null) {
-            throw new PAException("Unable to find user with email " + email
+            throw new PAException("Unable to find user with token " + token
                     + " .Unable to activate account.");
         }
-
-        String loginName = PaEarPropertyReader.getNciLdapPrefix() + username;
+        
         User csmUser = CSMUserService.getInstance().getCSMUser(loginName);
         if (csmUser == null) {
-            throw new PAException("Your account is not ready for activation");
+            csmUser = csmUtil.createCSMUser(regUser, loginName, null);
         }
-
+        if (!csmUtil.isUserInGroup(loginName,
+                PaEarPropertyReader.getCSMSubmitterGroup())) {
+            csmUtil.assignUserToGroup(loginName,
+                    PaEarPropertyReader.getCSMSubmitterGroup());
+        }
         regUser.setCsmUser(csmUser);
+        regUser.setToken(null);
         session.update(regUser);
+        mailManagerService.sendAccountActivationEmail(regUser);
 
     }
 
@@ -977,6 +987,13 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
                ssItter.remove(); 
             }
         }
+    }
+
+    /**
+     * @param csmUtil the csmUtil to set
+     */
+    public void setCsmUtil(CSMUserUtil csmUtil) {
+        this.csmUtil = csmUtil;
     }
     
 

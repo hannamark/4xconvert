@@ -37,7 +37,7 @@
 	<classpathentry kind="var" path="PA_LIB/ear/commons-fileupload-1.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/commons-io-1.4.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/commons-lang-2.4.jar"/>
-	<classpathentry kind="var" path="PA_LIB/ear/coppa-commons-1.3.13-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/coppa-commons-1.3.14-SNAPSHOT.jar" sourcepath="/COPPA_COMMONS_PATH"/>
 	<classpathentry kind="var" path="PA_LIB/ear/dom4j-1.6.1.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/ehcache-1.2.4.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/iso-datatypes-2.0.0-alpha1.jar"/>
@@ -47,7 +47,7 @@
 	<classpathentry kind="var" path="PA_LIB/ear/joda-time-1.6.2.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/jollyday-0.4.5.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/mockito-all-1.9.5.jar"/>
-	<classpathentry kind="var" path="PA_LIB/ear/nci-commons-ctrp-core-1.4.10.1.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/nci-commons-ctrp-core-1.4.11-SNAPSHOT.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/ognl-3.0.6.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/ojdbc6.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/po-services-1.0.1.IR6-client.jar"/>
@@ -56,16 +56,16 @@
 	<classpathentry kind="var" path="PA_LIB/pa-web/acegi-security-1.0.4.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/ajaxtags-1.3-beta-rc7.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/aopalliance-1.0.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/asm-3.3.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/asm-commons-3.3.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/asm-tree-3.3.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/asm-3.3.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/asm-commons-3.3.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/asm-tree-3.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/commons-fileupload-1.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/commons-io-2.0.1.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/commons-lang3-3.1.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/displaytag-1.2.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/jericho-html-2.4.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/jstl-1.1.2.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/nci-commons-ctrp-struts2-1.4.10.1.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-web/nci-commons-ctrp-struts2-1.4.11-SNAPSHOT.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/ognl-3.0.6.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/quartz-all-1.6.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/sitemesh-2.3.jar"/>
@@ -79,55 +79,34 @@
 	<classpathentry kind="var" path="PA_LIB/pa-web/struts2-spring-plugin-2.3.16.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/xwork-core-2.3.16.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/picketbox-spi-bare-4.0.19.SP2.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/csmapi-4.2.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/csmapi-4.2.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/log4j-jboss-logmanager-1.0.2.Final.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/hibernate-jpa-2.0-api-1.0.1.Final.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/jboss-servlet-api_3.0_spec-1.0.2.Final.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/jboss-ejb-api_3.1_spec-1.0.2.Final.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/mail-1.4.5.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/gridgrouper-client-1.3.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/gridgrouper-stubs-1.3.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/jcog-1.2.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/ws-core-client-4.0.3.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/axis-wsdl4j-1.2.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/axis-1.2RC2.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/gridgrouper-common-1.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/jboss-interceptors-api_1.1_spec-1.0.1.Final.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/jboss-annotations-api_1.1_spec-1.0.1.Final.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/jboss-ejb3-ext-api-2.1.0.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/caGrid-dorian-client-1.3.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/caGrid-dorian-common-1.3.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/caGrid-authentication-service-client-1.4.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/caGrid-authentication-service-stubs-1.4.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/caGrid-dorian-stubs-1.3.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/caGrid-dorian-service-1.3.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/cagrid-opensaml-1.3.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/csm-service-1.3.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/csm-stubs-1.3.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/cagrid-core-1.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/jboss-jms-api_1.1_spec-1.0.1.Final.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/clm-3.2.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/clm-3.2.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/jboss-jsp-api_2.2_spec-1.0.1.Final.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/caGrid-ServiceSecurityProvider-client-1.4.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/caGrid-ServiceSecurityProvider-common-1.4.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/hibernate-annotations-3.2.0.ga.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/hibernate-commons-annotations-3.3.0.ga.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/asm-3.3.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/javassist-3.10.0.GA.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/hibernate-annotations-3.2.0.ga.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/hibernate-commons-annotations-3.3.0.ga.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/javassist-3.10.0.GA.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/jboss-jaxrpc-api_1.1_spec-1.0.1.Final.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/jboss-logmanager-1.5.1.Final.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/jboss-transaction-api_1.1_spec-1.0.1.Final.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/ws-addressing-1.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/jboss-as-web-7.2.0.Final.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/jbossweb-7.2.2.Final.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/xercesImpl-2.9.1.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/hibernate-3.2.0.ga.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/hibernate-validator-3.0.0.ga.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/hibernate-3.2.0.ga.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/hibernate-validator-3.0.0.ga.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/jboss-jaxrs-api_1.1_spec-1.0.1.Final.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/resteasy-jaxb-provider-2.3.7.Final.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/resteasy-jaxrs-2.3.7.Final.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/httpclient-4.3.4.jar"/>
-	<classpathentry kind="var" path="PA_LIB/compile/cglib-2.2.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/cglib-2.2.jar"/>
 	<classpathentry kind="var" path="PA_LIB/test/coppa-commons-test-1.3.7.jar"/>
 	<classpathentry kind="var" path="PA_LIB/test/hsqldb-1.8.0.10.jar"/>
 	<classpathentry kind="var" path="PA_LIB/test/c3p0-0.9.1.2.jar"/>

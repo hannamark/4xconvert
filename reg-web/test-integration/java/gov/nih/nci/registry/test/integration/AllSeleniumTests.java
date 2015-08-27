@@ -90,36 +90,14 @@ import org.junit.runners.Suite.SuiteClasses;
  * 
  * Class to control the order that selenium tests are run in.
  * 
- * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
+ * @author dkrylov
  */
 @RunWith(Suite.class)
 @SuiteClasses(value = { LoginTest.class, AddSitesTest.class,
-        RegisterAbbreviatedTrialTest.class, RegisterTrialTest.class, AmendTrialTest.class,
-        TrialSearchTest.class, AddUpdateSiteTest.class, BatchUploadTest.class, UpdateTrialTest.class, ReportViewITest.class, MyAccountTest.class /*
-                                                                               * DisplayTrialOwnershipTest
-                                                                               * .
-                                                                               * class
-                                                                               * ,
-                                                                               * SearchUserTest
-                                                                               * .
-                                                                               * class
-                                                                               * ,
-                                                                               * 
-                                                                               * .
-                                                                               * class
-                                                                               * ,
-                                                                               * TrialSearchTest
-                                                                               * .
-                                                                               * class
-                                                                               * ,
-                                                                               * SetupPaTrialData
-                                                                               * .
-                                                                               * class
-                                                                               * ,
-                                                                               * ViewTrialTest
-                                                                               * .
-                                                                               * class
-                                                                               */})
+        RegisterAbbreviatedTrialTest.class, RegisterTrialTest.class,
+        AmendTrialTest.class, TrialSearchTest.class, AddUpdateSiteTest.class,
+        BatchUploadTest.class, UpdateTrialTest.class, ReportViewITest.class,
+        MyAccountTest.class, SignUpTest.class })
 public class AllSeleniumTests {
 
 }

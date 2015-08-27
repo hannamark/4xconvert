@@ -138,8 +138,9 @@
             <result name="registerUserError">/WEB-INF/jsp/registerUser.jsp</result>
             <result name="myAccountError">/WEB-INF/jsp/nodecorate/myAccount.jsp</result>
             <result name="confirmation">WEB-INF/jsp/registerUserConfirmation.jsp</result>
-            <result name="existingGridAccount">/WEB-INF/jsp/existingGridAccount.jsp</result>
-            <result name="activation">/WEB-INF/jsp/registerUserConfirmation.jsp</result>            
+            <result name="existingLdapAccount">/WEB-INF/jsp/existingLdapAccount.jsp</result>
+            <result name="activation">/WEB-INF/jsp/registerUserConfirmation.jsp</result>
+            <result name="enterLdapID">/WEB-INF/jsp/registerUserEnterLdapID.jsp</result>            
             <result name="logout" type="redirectAction">
         		<param name="actionName">logout</param>        		
     		</result>

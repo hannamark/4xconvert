@@ -3,7 +3,7 @@
 <SCRIPT LANGUAGE="JavaScript">
         function handleAction(){
             document.existingAccount.page.value = "Submit";
-            document.existingAccount.action="registerUserregisterExistingGridAccount.action";
+            document.existingAccount.action="registerUserregisterExistingLdapAccount.action";
             if (validate()) {
                 document.existingAccount.submit()
              }
@@ -45,23 +45,12 @@
                 <s:hidden name="page" />
                  <div class="form-group">
                     <label for="username" class="col-xs-4 control-label"><fmt:message key="register.user.username"/></label>
-                    <div class="col-xs-7"><s:textfield name="userWebDTO.username" maxlength="15" size="20" cssClass="form-control" id="username"/></div>
+                    <div class="col-xs-7"><s:textfield required="true" name="userWebDTO.username" maxlength="15" size="20" cssClass="form-control" id="username"/></div>
                  </div>
                  <div class="form-group">
                     <label for="password" class="col-xs-4 control-label"><fmt:message key="register.user.password"/></label>
-                    <div class="col-xs-7"><s:password  name="userWebDTO.password"  showPassword="true" maxlength="100" size="35"   cssClass="form-control" id="password"/></div>
+                    <div class="col-xs-7"><s:password required="true"  name="userWebDTO.password"  showPassword="true" maxlength="100" size="35"   cssClass="form-control" id="password"/></div>
 				</div>
-				<s:if test="%{identityProviders.size == 1}">
-                    <s:iterator var="idp" value="identityProviders">
-                        <s:hidden name="selectedIdentityProvider"/>
-                    </s:iterator>
-                </s:if>
-                <s:else>
-                 <div class="form-group">
-					<label for="selectedIdentityProvider" class="col-xs-4 control-label">Account Source:</label></td>
-                    <div class="col-xs-7"><s:select name="selectedIdentityProvider" list="identityProviders" listKey="value" listValue="key" id="selectedIdentityProvider" cssClass="form-control"/></div>
-                 </div>          
-               </s:else>
                <div class="bottom">
 	              <button type="button" class="btn btn-icon-alt btn-primary" onClick="handleAction();">Next<i class="fa-arrow-circle-right"></i></button>
                </div>

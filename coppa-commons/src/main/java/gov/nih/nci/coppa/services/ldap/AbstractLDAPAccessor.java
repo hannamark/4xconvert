@@ -89,19 +89,18 @@ abstract class AbstractLDAPAccessor {
 
     protected SearchResult searchForUserInLDAP(String loginName)
             throws NamingException {
-        Hashtable<String, String> environment = prepareLDAPEnvironmentProperties(); // NOPMD
-        String[] attributeIDs = { ldapProperties.getProperty(LDAP_UID_ATTRNAME) };
+        Hashtable<String, String> environment = prepareLDAPEnvironmentProperties(); // NOPMD        
         String searchFilter = "("
                 + ldapProperties.getProperty(LDAP_UID_ATTRNAME) + "="
                 + loginName + ")";
 
         DirContext dirContext = null;
-
+        
         try {
             dirContext = new InitialDirContext(environment);
 
             SearchControls searchControls = new SearchControls();
-            searchControls.setReturningAttributes(attributeIDs);
+            searchControls.setReturningAttributes(null);
             searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
             final NamingEnumeration<SearchResult> searchEnum = dirContext

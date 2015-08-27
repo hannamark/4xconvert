@@ -178,6 +178,13 @@ function displayWaitPanel() {
 	$('progress_indicator_panel').show();
 }
 
+function hideWaitPanel() {
+	if ($('progress_indicator_panel')==null) {
+		return;
+	}
+	$('progress_indicator_panel').hide();
+}
+
 Event.observe(window, "load", function() {
 	var rudMenuLink = $('registeredUserDetailsMenuOption');
 	if (rudMenuLink!=null) {

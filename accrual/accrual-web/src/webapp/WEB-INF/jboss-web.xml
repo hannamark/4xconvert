@@ -2,6 +2,6 @@
 <jboss-web>
 	<security-domain>accrual</security-domain>
 	<valve>
-		<class-name>gov.nih.nci.coppa.services.grid.util.CaGridFormAuthenticatorValve</class-name>
+		<class-name>gov.nih.nci.coppa.services.ldap.LDAPFormAuthenticatorValve</class-name>
 	</valve>
 </jboss-web>

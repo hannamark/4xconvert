@@ -25,8 +25,7 @@
              <s:hidden name="userWebDTO.username" />
               <%@ include file="/WEB-INF/jsp/nodecorate/accountCommonForm.jsp" %>
               <div class="bottom">
-	              <button type="button" class="btn btn-icon-alt btn-primary" onClick="document.myAccount.submit();">Sign Up<i class="fa-arrow-circle-right"></i></button>
-	              <!-- <button type="button" class="btn btn-icon btn-default" onClick="reset();"><i class="fa-repeat"></i>Reset</button>  -->
+	              <button type="button" class="btn btn-icon-alt btn-primary" onClick="document.myAccount.submit();">Sign Up<i class="fa-arrow-circle-right"></i></button>	              
             </div>
          </s:form>
        </div>

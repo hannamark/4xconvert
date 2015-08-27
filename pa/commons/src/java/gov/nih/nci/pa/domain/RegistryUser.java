@@ -134,6 +134,7 @@ public class RegistryUser extends AbstractEntity implements Auditable {
     private Boolean familyAccrualSubmitter;
     private Boolean enableReports;
     private String reportGroups;
+    private String token;
 
     /**
      * @return the csmUser
@@ -529,5 +530,20 @@ public class RegistryUser extends AbstractEntity implements Auditable {
      */
     public void setReportGroups(String reportGroups) {
       this.reportGroups = reportGroups;
+    }
+
+    /**
+     * @return the token
+     */
+    @Column(name = "TOKEN")    
+    public String getToken() {
+        return token;
+    }
+
+    /**
+     * @param token the token to set
+     */
+    public void setToken(String token) {
+        this.token = token;
     }
 }

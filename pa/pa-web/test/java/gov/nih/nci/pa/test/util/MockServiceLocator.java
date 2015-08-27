@@ -183,7 +183,6 @@ import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.FlaggedTrialService;
-import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.I2EGrantsServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
@@ -207,7 +206,6 @@ import gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
-import gov.nih.nci.pa.util.SAMLToAttributeMapper;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.service.MockOrganizationCorrelationService;
 import gov.nih.nci.service.MockPlannedActivityService;
@@ -798,37 +796,6 @@ public class MockServiceLocator implements ServiceLocator {
     @Override
     public StudyProtocolStageServiceLocal getStudyProtocolStageService() {
         return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public GridAccountServiceRemote getGridAccountService() {
-        GridAccountServiceRemote svc = mock(GridAccountServiceRemote.class);
-        try {
-            when(svc.createGridAccount(any(RegistryUser.class), any(String.class), any(String.class))).thenReturn("Success");
-        } catch (PAException e) {
-            //Unreachable
-        }
-        when(svc.doesGridAccountExist(any(String.class))).thenReturn(false);
-        when(svc.isValidGridPassword(any(String.class))).thenReturn(true);
-
-        Map<String, String> results = new HashMap<String, String>();
-        results.put(SAMLToAttributeMapper.EMAIL, "test@test.com");
-        results.put(SAMLToAttributeMapper.FIRST_NAME, "firstName");
-        results.put(SAMLToAttributeMapper.LAST_NAME, "lastName");
-        when(svc.authenticateUser(any(String.class), any(String.class), any(String.class))).thenReturn(results);
-        when(svc.getFullyQualifiedUsername(any(String.class), any(String.class),
-                any(String.class))).thenAnswer(new Answer<String>() {
-                    @Override
-                    public String answer(InvocationOnMock invocation) throws Throwable {
-                        Object[] args = invocation.getArguments();
-                        String username = (String) args[0];
-                        return "/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=" + username;
-                    }
-                });
-        return svc;
     }
 
     @Override

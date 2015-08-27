@@ -133,7 +133,6 @@ import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.FlaggedTrialService;
-import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.I2EGrantsServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
@@ -337,10 +336,7 @@ public interface ServiceLocator {
      */
     RegistryUserServiceLocal getRegistryUserService();
 
-    /**
-     * @return GridAccountServiceRemote
-     */
-    GridAccountServiceRemote getGridAccountService();
+    
 
     /**
      * @return TSRReportGeneratorServiceRemote

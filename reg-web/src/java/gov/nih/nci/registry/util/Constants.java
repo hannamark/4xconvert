@@ -126,7 +126,7 @@ public class Constants {
     /**
      * Existing Grid account page.
      */
-    public static final String EXISTING_GRID_ACCOUNT = "existingGridAccount";
+    public static final String EXISTING_GRID_ACCOUNT = "existingLdapAccount";
 
     /** My Account Page. */
     public static final String MY_ACCOUNT = "myAccount";

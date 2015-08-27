@@ -4,34 +4,36 @@
     <li class="stdnav">
         <div><fmt:message key="pamenu.abstraction"/></div>
         <ul>
-            <li><a href="javascript:void(0);" class="fakelink"><fmt:message key="pamenu.abstraction.dashboard"/></a></li>
-            <li class="stdsub">
-                <ul>
-                <c:if test="${sessionScope.isAbstractor==true}">
-                    <c:set var="dashboardMenu"  value="pamenu.abstraction.dashboardAbs" />
-                </c:if>
-                <c:if test="${sessionScope.isAdminAbstractor==true}">
-                   <c:set var="dashboardMenu" value="pamenu.abstraction.dashboardAdmin" />
-                </c:if>
-                <c:if test="${sessionScope.isScientificAbstractor==true}">
-                   <c:set var="dashboardMenu" value="pamenu.abstraction.dashboardSci" />
-                </c:if>
-
-                <c:if test="${sessionScope.isAdminAbstractor==true && sessionScope.isScientificAbstractor==true}">
-                    <c:set var="dashboardMenu"  value="pamenu.abstraction.dashboardAbsSci" />
-                </c:if>
-                <c:if test="${sessionScope.isSuAbstractor==true}">
-                    <c:set var="dashboardMenu" value="pamenu.abstraction.dashboardSuAbs" />
-                </c:if>
-                   <c:if test="${sessionScope.isAbstractor || sessionScope.isSuAbstractor || sessionScope.isAdminAbstractor || sessionScope.isScientificAbstractor}">
-                       <pa:menuLink href="${pageContext.request.contextPath}/protected/dashboard.action" id="dashboardMenuOption" labelKey="${dashboardMenu}" selected="${requestScope.topic == 'dashboard'}"/>            
-                   </c:if>
-                   
-                   <c:if test="${sessionScope.isResultsAbstractor}">
-                       <pa:menuLink href="${pageContext.request.contextPath}/protected/resultsDashboard.action" id="resultsDashboardMenuOption" labelKey="pamenu.results.dashboard" selected="${requestScope.topic == 'resultsDashboard'}"/>
-                   </c:if>
-                </ul>
-            </li>
+            <c:if test="${sessionScope.isAnyAbstractor}">
+	            <li><a href="javascript:void(0);" class="fakelink"><fmt:message key="pamenu.abstraction.dashboard"/></a></li>
+	            <li class="stdsub">
+	                <ul>
+	                <c:if test="${sessionScope.isAbstractor==true}">
+	                    <c:set var="dashboardMenu"  value="pamenu.abstraction.dashboardAbs" />
+	                </c:if>
+	                <c:if test="${sessionScope.isAdminAbstractor==true}">
+	                   <c:set var="dashboardMenu" value="pamenu.abstraction.dashboardAdmin" />
+	                </c:if>
+	                <c:if test="${sessionScope.isScientificAbstractor==true}">
+	                   <c:set var="dashboardMenu" value="pamenu.abstraction.dashboardSci" />
+	                </c:if>
+	
+	                <c:if test="${sessionScope.isAdminAbstractor==true && sessionScope.isScientificAbstractor==true}">
+	                    <c:set var="dashboardMenu"  value="pamenu.abstraction.dashboardAbsSci" />
+	                </c:if>
+	                <c:if test="${sessionScope.isSuAbstractor==true}">
+	                    <c:set var="dashboardMenu" value="pamenu.abstraction.dashboardSuAbs" />
+	                </c:if>
+	                   <c:if test="${sessionScope.isAnyAbstractor}">
+	                       <pa:menuLink href="${pageContext.request.contextPath}/protected/dashboard.action" id="dashboardMenuOption" labelKey="${dashboardMenu}" selected="${requestScope.topic == 'dashboard'}"/>            
+	                   </c:if>
+	                   
+	                   <c:if test="${sessionScope.isResultsAbstractor}">
+	                       <pa:menuLink href="${pageContext.request.contextPath}/protected/resultsDashboard.action" id="resultsDashboardMenuOption" labelKey="pamenu.results.dashboard" selected="${requestScope.topic == 'resultsDashboard'}"/>
+	                   </c:if>
+	                </ul>
+	            </li>
+            </c:if>
             
             <li><a href="javascript:void(0);" class="fakelink"><fmt:message key="pamenu.abstraction.search"/></a></li>
             <li class="stdsub">
@@ -42,24 +44,29 @@
 	            </ul>            
             </li>
             <pa:menuLink href="${pageContext.request.contextPath}/protected/userAccountDetailsexecute.action" id="userAccountDetailsMenuOption" labelKey="pamenu.abstraction.useraccountdetails" selected="${requestScope.topic == 'accountdetails'}"/>
-            <pa:menuLink href="${pageContext.request.contextPath}/protected/registeredUserDetailsexecute.action" id="registeredUserDetailsMenuOption" labelKey="pamenu.abstraction.reguserdetails" selected="${requestScope.topic == 'userdetails'}"/>            
-            <pa:menuLink href="${pageContext.request.contextPath}/protected/inboxProcessingexecute.action" id="inboxProcessingMenuOption" labelKey="pamenu.abstraction.inbox" selected="${requestScope.topic == 'inboxaccess'}"/>
-            <pa:menuLink href="${pageContext.request.contextPath}/protected/manageSiteAdmins.action" id="manageSiteAdminsMenuOption" labelKey="pamenu.abstraction.manageSiteAdmins" selected="${requestScope.topic == 'siteadmins'}"/>
-            <pa:menuLink href="${pageContext.request.contextPath}/protected/bioMarkersexecute.action" id="newMarkerRequestMenuOption" labelKey="pamenu.new.marker.request" selected="${requestScope.topic == 'biomarkers'}"/>
-            <li><a href="javascript:void(0);" class="fakelink"><fmt:message key="pamenu.ctgov"/></a></li>
-            <li class="stdsub">
-                <ul>
-                    <pa:menuLink href="${pageContext.request.contextPath}/protected/importCtGovexecute.action" id="importCtGovMenuOption" labelKey="pamenu.importCtGov" selected="${requestScope.topic == 'ctimport'}"/>
-                    <pa:menuLink href="${pageContext.request.contextPath}/protected/ctGovImportLogexecute.action" id="ctGovImportLogMenuOption" labelKey="pamenu.ctGovImportLogs" selected="${requestScope.topic == 'ctimportlog'}"/>
-                </ul>            
-            </li>            
-            <pa:menuLink href="${pageContext.request.contextPath}/protected/pendingAccrualsexecute.action" id="pendingAccrualsMenuOption" labelKey="pamenu.pendingAccruals" selected="${requestScope.topic == 'pendingaccruals'}"/>
-            <pa:menuLink href="${pageContext.request.contextPath}/protected/outOfScopeAccruals.action" id="outOfScopeAccrualsMenuOption" labelKey="pamenu.outOfScopeAccruals" selected="${requestScope.topic == 'outofscopeaccruals'}"/>            
-            <pa:menuLink href="${pageContext.request.contextPath}/../registry/protected/submitProprietaryTrial.action?sum4FundingCatCode=Industrial" id="submitProprietaryTrialMenuOption" labelKey="pamenu.submitProprietaryTrial" newWindow="${true}"/>
-            <pa:menuLink href="${pageContext.request.contextPath}/protected/manageTerms.action" id="manageTermsMenuOption" labelKey="pamenu.manageTerms" selected="${requestScope.topic == 'manageterms'}"/>
-            <c:if test="${sessionScope.isSuAbstractor}">
-                <pa:menuLink href="${pageContext.request.contextPath}/protected/manageFlaggedTrials.action" id="manageFlaggedTrialsOption" 
-                    labelKey="pamenu.abstraction.manageFlaggedTrials" selected="${requestScope.topic == 'manageFlaggedTrials'}"/>            
+            <c:if test="${sessionScope.isSecurityAdmin}">
+                <pa:menuLink href="${pageContext.request.contextPath}/security/manageUserGroups.action" id="manageUserGroupsMenuOption" labelKey="pamenu.abstraction.manageUserGroups" selected="${requestScope.topic == 'manageUserGroups'}"/>
+            </c:if>
+            <c:if test="${sessionScope.isAnyAbstractor}">
+	            <pa:menuLink href="${pageContext.request.contextPath}/protected/registeredUserDetailsexecute.action" id="registeredUserDetailsMenuOption" labelKey="pamenu.abstraction.reguserdetails" selected="${requestScope.topic == 'userdetails'}"/>            
+	            <pa:menuLink href="${pageContext.request.contextPath}/protected/inboxProcessingexecute.action" id="inboxProcessingMenuOption" labelKey="pamenu.abstraction.inbox" selected="${requestScope.topic == 'inboxaccess'}"/>
+	            <pa:menuLink href="${pageContext.request.contextPath}/protected/manageSiteAdmins.action" id="manageSiteAdminsMenuOption" labelKey="pamenu.abstraction.manageSiteAdmins" selected="${requestScope.topic == 'siteadmins'}"/>
+	            <pa:menuLink href="${pageContext.request.contextPath}/protected/bioMarkersexecute.action" id="newMarkerRequestMenuOption" labelKey="pamenu.new.marker.request" selected="${requestScope.topic == 'biomarkers'}"/>
+	            <li><a href="javascript:void(0);" class="fakelink"><fmt:message key="pamenu.ctgov"/></a></li>
+	            <li class="stdsub">
+	                <ul>
+	                    <pa:menuLink href="${pageContext.request.contextPath}/protected/importCtGovexecute.action" id="importCtGovMenuOption" labelKey="pamenu.importCtGov" selected="${requestScope.topic == 'ctimport'}"/>
+	                    <pa:menuLink href="${pageContext.request.contextPath}/protected/ctGovImportLogexecute.action" id="ctGovImportLogMenuOption" labelKey="pamenu.ctGovImportLogs" selected="${requestScope.topic == 'ctimportlog'}"/>
+	                </ul>            
+	            </li>            
+	            <pa:menuLink href="${pageContext.request.contextPath}/protected/pendingAccrualsexecute.action" id="pendingAccrualsMenuOption" labelKey="pamenu.pendingAccruals" selected="${requestScope.topic == 'pendingaccruals'}"/>
+	            <pa:menuLink href="${pageContext.request.contextPath}/protected/outOfScopeAccruals.action" id="outOfScopeAccrualsMenuOption" labelKey="pamenu.outOfScopeAccruals" selected="${requestScope.topic == 'outofscopeaccruals'}"/>            
+	            <pa:menuLink href="${pageContext.request.contextPath}/../registry/protected/submitProprietaryTrial.action?sum4FundingCatCode=Industrial" id="submitProprietaryTrialMenuOption" labelKey="pamenu.submitProprietaryTrial" newWindow="${true}"/>
+	            <pa:menuLink href="${pageContext.request.contextPath}/protected/manageTerms.action" id="manageTermsMenuOption" labelKey="pamenu.manageTerms" selected="${requestScope.topic == 'manageterms'}"/>
+	            <c:if test="${sessionScope.isSuAbstractor}">
+	                <pa:menuLink href="${pageContext.request.contextPath}/protected/manageFlaggedTrials.action" id="manageFlaggedTrialsOption" 
+	                    labelKey="pamenu.abstraction.manageFlaggedTrials" selected="${requestScope.topic == 'manageFlaggedTrials'}"/>            
+	            </c:if>
             </c:if>             
             <c:if test="${pageContext.request.remoteUser != null}">
                 <pa:menuLink href="${pageContext.request.contextPath}/logout.action" id="logoutMenuOption" labelKey="pamenu.abstraction.logout"/>

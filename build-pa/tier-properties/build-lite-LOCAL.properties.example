@@ -12,34 +12,17 @@ po.credentials=pass
 po.topic.userName=subscriber
 po.topic.password=pass
 
-# PO REST-like Services Connection Info.
-po.ws.rest.protocol=http
-po.ws.rest.hostname=localhost
-po.ws.rest.port=39080
-po.ws.rest.apipath=/po-webservices/services
-po.ws.rest.username=jdoe01
-po.ws.rest.password=Aa_1111111
-
-
 db.server=localhost
 db.port=5432
 db.name=padb
 db.username=pauser
 db.password=pauser
 
-nci.ldap.prefix=/O=caBIG/OU=caGrid/OU=QA LOA1/OU=NCICB QA AuthnSvc IdP/CN=
-
-grid.target=nci_qa-2.x
 grid.security.jndi.principal=Gr1DU5er
 grid.security.jndi.credentials=ltHZmZ1rqYq8j2uyHEABIQ==
-grid.dorian.url=https\://cagrid2-dorian-qa.nci.nih.gov\:1521/dorian
-gridgrouper.url=https\://cagrid2-gridgrouper-qa.nci.nih.gov\:1521/gridgrouper
-gridgrouper.submitter.group=Organization\:CBIIT\:CTRP-COPPA\:PA\:Submitter
-gridgrouper.admin.user=ctrpgrouperdev
-gridgrouper.admin.password=
 
 ctgov.ftp.url=ftp://ctrppa:ctrppa@localhost/
-cteprss.user=/O=caBIG/OU=caGrid/OU=QA LOA1/OU=NCICB QA AuthnSvc IdP/CN=ctep-rss
+cteprss.user=ctep-rss
 log.level=INFO
 
 selenium.server.port=4444
@@ -58,3 +41,15 @@ pa.ssh.password=
 
 # Pa Keystore Password
 keystore.password=myKeystorePassword
+
+ldap.url=ldaps://cbioweb-ldap.nci.nih.gov:636
+ldap.user=cn=ncicb-dev-ldap,ou=nci,o=nih
+ldap.password=
+ldap.security.authentication=simple
+ldap.security.protocol=ssl
+ldap.timeouts.connect=60000
+ldap.timeouts.read=60000
+ldap.context=ou=nci,o=nih
+ldap.uid.attrname=uid
+ldap.migration.grouperToIdStringMap=cagrid2-gridgrouper-qa=/O=caBIG/OU=caGrid/OU=QA LOA1/OU=NCICB QA AuthnSvc IdP/CN=;cagrid-gridgrouper-stage=/O=caBIG/OU=caGrid/OU=Stage LOA1/OU=NCI STAGE/CN=;cagrid-gridgrouper-prod=/O=caBIG/OU=caGrid/OU=LOA1/OU=NCI/CN=;cagrid-gridgrouper.nci.nih.gov=/O=caBIG/OU=caGrid/OU=LOA1/OU=NCI/CN=
+ldap.migration.excludes=

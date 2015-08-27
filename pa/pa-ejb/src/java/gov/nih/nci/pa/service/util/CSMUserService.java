@@ -136,7 +136,7 @@ public class CSMUserService implements CSMUserUtil {
             + "where cg.group_name in (%s) "
             + "order by CASE WHEN cu.last_name is null or cu.last_name='' "
             + "THEN upper(ru.last_name) ELSE upper(cu.last_name) END,"
-            + "upper(substr(cu.login_name, position('CN=' in cu.login_name)+3))";
+            + "upper(regexp_replace(cu.login_name, '^.*?CN=', ''))";
 
     private static final String GET_ABSTRACTORS_QUERY = String
             .format(GET_USERS_BY_ROLES_TEMPLATE,

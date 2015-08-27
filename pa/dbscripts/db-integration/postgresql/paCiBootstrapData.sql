@@ -24,7 +24,7 @@ DELETE FROM csm_user where login_name='/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/
         
 DELETE FROM csm_remote_group;
 INSERT INTO CSM_GROUP (GROUP_NAME, GROUP_DESC, APPLICATION_ID, UPDATE_DATE) VALUES ('test', 'test', (select application_id from csm_application where application_name = 'pa'),current_date);
-INSERT INTO csm_remote_group (group_id,application_id,grid_grouper_url,grid_grouper_group_name) VALUES ((select group_id from csm_group where group_name='test'),(select application_id from csm_application where application_name='pa'),'https://cagrid-gridgrouper-qa.nci.nih.gov:8443/wsrf/services/cagrid/GridGrouper','Organization:CBIIT:CTRP-COPPA:PA:SuAbstractor');
+INSERT INTO csm_remote_group (group_id,application_id,grid_grouper_url,grid_grouper_group_name) VALUES ((select group_id from csm_group where group_name='test'),(select application_id from csm_application where application_name='pa'),'https://cagrid2-gridgrouper-qa:8443/wsrf/services/cagrid/GridGrouper','Organization:CBIIT:CTRP-COPPA:PA:SuAbstractor');
 
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'abstractor-ci'), (select group_id from csm_group where group_name = 'RegAdmin'));
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'abstractor-ci'), (select group_id from csm_group where group_name = 'Abstractor'));

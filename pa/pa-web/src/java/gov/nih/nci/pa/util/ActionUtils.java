@@ -47,7 +47,9 @@ public final class ActionUtils {
     public static boolean isUserRoleInSession(HttpSession session) {
         boolean isReportViewer = BooleanUtils.toBoolean((Boolean) session
                 .getAttribute(Constants.IS_REPORT_VIEWER));
-        return isAbstractor(session) || isReportViewer;
+        boolean isSecurityAdmin = BooleanUtils.toBoolean((Boolean) session
+                .getAttribute(Constants.IS_SECURITY_ADMIN));
+        return isAbstractor(session) || isReportViewer || isSecurityAdmin;
     }   
     
     /**
@@ -67,8 +69,11 @@ public final class ActionUtils {
         boolean isScientificAbstractor = BooleanUtils
                 .toBoolean((Boolean) session
                         .getAttribute(Constants.IS_SCIENTIFIC_ABSTRACTOR));
+        boolean isResultsAbstractor = BooleanUtils
+                .toBoolean((Boolean) session
+                        .getAttribute(Constants.IS_RESULTS_ABSTRACTOR));
         return isAbstractor || isSuAbstractor || isScientificAbstractor
-                || isAdminAbstractor;
+                || isAdminAbstractor || isResultsAbstractor;
     }  
     
     /**
@@ -105,14 +110,18 @@ public final class ActionUtils {
             request.isUserInRole(Constants.SCIENTIFIC_ABSTRACTOR);
         boolean isAdminAbstractor = request.isUserInRole(Constants.ADMIN_ABSTRACTOR);
         boolean isReportViewer = request.isUserInRole(Constants.REPORT_VIEWER);
-        request.getSession().setAttribute(Constants.IS_ABSTRACTOR, isAbstractor);
-        request.getSession().setAttribute(Constants.IS_SU_ABSTRACTOR, isSuAbstractor);
-        request.getSession().setAttribute(Constants.IS_ADMIN_ABSTRACTOR, isAdminAbstractor);
-        request.getSession().setAttribute(Constants.IS_SCIENTIFIC_ABSTRACTOR,
+        boolean isSecAdmin = request.isUserInRole(Constants.SECURITY_ADMIN);
+        final HttpSession session = request.getSession();
+        session.setAttribute(Constants.IS_ABSTRACTOR, isAbstractor);
+        session.setAttribute(Constants.IS_SU_ABSTRACTOR, isSuAbstractor);
+        session.setAttribute(Constants.IS_ADMIN_ABSTRACTOR, isAdminAbstractor);
+        session.setAttribute(Constants.IS_SCIENTIFIC_ABSTRACTOR,
                 isScientificAbstractor);
-        request.getSession().setAttribute(Constants.IS_REPORT_VIEWER, isReportViewer);
-        request.getSession().setAttribute(Constants.IS_RESULTS_ABSTRACTOR, request
+        session.setAttribute(Constants.IS_REPORT_VIEWER, isReportViewer);
+        session.setAttribute(Constants.IS_SECURITY_ADMIN, isSecAdmin);
+        session.setAttribute(Constants.IS_RESULTS_ABSTRACTOR, request
                 .isUserInRole(Constants.RESULTS_ABSTRACTOR));
+        session.setAttribute(Constants.IS_ANY_ABSTRACTOR, isAbstractor(session));
     }
     
     

@@ -198,6 +198,14 @@
             </result>
         </action>
     </package>
+    
+    <package name="security" namespace="/security" extends="default">        
+         <action name="manageUserGroups*" class="gov.nih.nci.pa.action.ManageUserGroupsAction" method="{1}">
+            <interceptor-ref name="paDefaultInterceptor" />          
+            <result name="input">/WEB-INF/jsp/security/managerGroups.jsp</result>
+            <result name="success">/WEB-INF/jsp/security/managerGroups.jsp</result>
+        </action>
+    </package>
 
     <package name="report" namespace="/report" extends="default">
         <action name="studyProtocol*" class="gov.nih.nci.pa.action.StudyProtocolQueryAction" method="{1}">

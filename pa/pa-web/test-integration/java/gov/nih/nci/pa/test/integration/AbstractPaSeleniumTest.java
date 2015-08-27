@@ -366,13 +366,22 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     }
 
     protected void login(String path, String username, String password) {
+        attemptLogin(path, username, password);
+        assertTrue(selenium.isElementPresent("link=Logout"));
+        verifyDisclaimerPage();
+    }
+
+    /**
+     * @param path
+     * @param username
+     * @param password
+     */
+    protected void attemptLogin(String path, String username, String password) {
         openAndWait(path);
         verifyLoginPage();
         selenium.type("j_username", username);
         selenium.type("j_password", password);
         clickAndWait("id=loginLink");
-        assertTrue(selenium.isElementPresent("link=Logout"));
-        verifyDisclaimerPage();
     }
 
     private void verifyLoginPage() {
@@ -895,93 +904,137 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                                 + ctgovEntryID);
     }
 
-    protected Number createCSMUser()throws SQLException {
-	
-	QueryRunner runner = new QueryRunner();
-	String idSql = "select max(user_id) + 1 from csm_user";
-	
-        Number id = (Number) runner
-                .query(connection,
-                        idSql,
-                        new ArrayHandler())[0];
-        
-        String loginName = "test"+id.intValue();
-        
-        String sql = "INSERT INTO csm_user VALUES ("+id.intValue()+", "
-        	+ "'"+loginName+"', '', '', NULL, NULL, NULL, NULL, 'BtM2GNbiAxg=', "
-        	+ "NULL, NULL, NULL, '2015-08-04', 0, NULL, NULL)";
-        
-        runner.update(connection, sql);
-        
-        return id;
-    }
-    
-    protected Number createRegistryUser(Number csmUserId)throws SQLException {
-	QueryRunner runner = new QueryRunner();
-	String idSql = "select max(identifier) + 1 from registry_user";
-	
-        
-        Number id = (Number) runner
-                .query(connection,
-                        idSql,
-                        new ArrayHandler())[0];
-        String firstName = "test"+id.intValue();
-        
-        String sql = "INSERT INTO registry_user VALUES ("+id.intValue()+", "
-        	+ "'"+firstName+"', NULL, 'CI', '2115 E. Jefferson St.', 'North Bethesda', 'Maryland', '20852', 'USA', '123-456-7890', "
-        	+ "'National Cancer Institute Division of Cancer Prevention'," 
-        	+csmUserId+", NULL, NULL, 'Test Org', NULL, NULL, 'testusersel@example.com', 3, "
-        	+ "'MEMBER', NULL, NULL, true, false, false, false, NULL)";
-        
-        runner.update(connection, sql);
-        
-        return id;
-    }
-    
-    protected boolean checkReportViewerColumnUpdated(Number id) throws SQLException {
-	boolean retVal = false;
-	
-	QueryRunner runner = new QueryRunner();
-        String sql = "select enable_reports, report_groups from registry_user where identifier = "+id.intValue();
+    protected Number createCSMUser() throws SQLException {
+        Number id = getNextIdForCsmUser();
 
-        Object[] queryResponse = runner.query(connection, sql, new ArrayHandler());
-	
-        if(queryResponse != null && queryResponse.length >=  2) {
-            
-          boolean enableReports = (boolean)queryResponse[0];
-          String reportGroups = (String)queryResponse[1];
-         
-          if(enableReports && reportGroups.equals("Data Table 4")){
-              retVal = true;
-          }
-	} 
-	
-	return retVal;
+        String loginName = "test" + id.intValue();
+
+        String sql = "INSERT INTO csm_user VALUES (" + id.intValue() + ", "
+                + "'" + loginName
+                + "', '', '', NULL, NULL, NULL, NULL, 'BtM2GNbiAxg=', "
+                + "NULL, NULL, NULL, '2015-08-04', 0, NULL, NULL)";
+
+        new QueryRunner().update(connection, sql);
+
+        return id;
     }
-    
+
+    /**
+     * @return
+     * @throws SQLException
+     */
+    protected Number getNextIdForCsmUser() throws SQLException {
+        String idSql = "select nextval('csm_user_user_id_seq')";
+        Number id = (Number) new QueryRunner().query(connection, idSql,
+                new ArrayHandler())[0];
+        return id;
+    }
+
+    protected Number createCSMUser(String loginName) throws SQLException {
+        Number id = getNextIdForCsmUser();
+
+        String sql = "INSERT INTO csm_user (user_id, login_name,first_name,last_name,update_date,migrated_flag) VALUES ("
+                + id.intValue()
+                + ", "
+                + "'"
+                + loginName
+                + "', '', '', now(),0)";
+
+        new QueryRunner().update(connection, sql);
+
+        return id;
+    }
+
+    protected void assignUserToGroup(Number userID, String group)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "insert into csm_user_group (user_id, group_id) values ("
+                + userID
+                + ", (select group_id from csm_group where group_name='"
+                + group + "')  )";
+        runner.update(connection, sql);
+    }
+
+    protected boolean isUserInGroup(Number userID, String group)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        final String sql = "select user_group_id from csm_user_group where user_id="
+                + userID
+                + " and group_id=(select group_id from csm_group where group_name='"
+                + group + "')";
+        final Object[] results = runner.query(connection, sql,
+                new ArrayHandler());
+        return results != null;
+    }
+
+    protected Number createRegistryUser(Number csmUserId) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String idSql = "select max(identifier) + 1 from registry_user";
+
+        Number id = (Number) runner
+                .query(connection, idSql, new ArrayHandler())[0];
+        String firstName = "test" + id.intValue();
+
+        String sql = "INSERT INTO registry_user VALUES ("
+                + id.intValue()
+                + ", "
+                + "'"
+                + firstName
+                + "', NULL, 'CI', '2115 E. Jefferson St.', 'North Bethesda', 'Maryland', '20852', 'USA', '123-456-7890', "
+                + "'National Cancer Institute Division of Cancer Prevention',"
+                + csmUserId
+                + ", NULL, NULL, 'Test Org', NULL, NULL, 'testusersel@example.com', 3, "
+                + "'MEMBER', NULL, NULL, true, false, false, false, NULL)";
+
+        runner.update(connection, sql);
+
+        return id;
+    }
+
+    protected boolean checkReportViewerColumnUpdated(Number id)
+            throws SQLException {
+        boolean retVal = false;
+
+        QueryRunner runner = new QueryRunner();
+        String sql = "select enable_reports, report_groups from registry_user where identifier = "
+                + id.intValue();
+
+        Object[] queryResponse = runner.query(connection, sql,
+                new ArrayHandler());
+
+        if (queryResponse != null && queryResponse.length >= 2) {
+
+            boolean enableReports = (boolean) queryResponse[0];
+            String reportGroups = (String) queryResponse[1];
+
+            if (enableReports && reportGroups.equals("Data Table 4")) {
+                retVal = true;
+            }
+        }
+
+        return retVal;
+    }
+
     protected int removeCSMUser(Number userId) throws SQLException {
-	QueryRunner runner = new QueryRunner();
-	
-        String sql = "delete from csm_user where user_id="+userId;
-        
-        
+        QueryRunner runner = new QueryRunner();
+
+        String sql = "delete from csm_user where user_id=" + userId;
+
         int count = runner.update(connection, sql);
-        
+
         return count;
     }
-    
+
     protected int removeRegistryUser(Number userId) throws SQLException {
-	QueryRunner runner = new QueryRunner();
-	
-        String sql = "delete from registry_user where identifier="+userId;
-        
-        
+        QueryRunner runner = new QueryRunner();
+
+        String sql = "delete from registry_user where identifier=" + userId;
+
         int count = runner.update(connection, sql);
-        
+
         return count;
     }
-    
-    
+
     protected Number createCtGovImportLogEntry(TrialInfo trial,
             Number studyInboxID) throws SQLException {
         QueryRunner runner = new QueryRunner();
@@ -1487,6 +1540,26 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         a.unencryptedPassword = account.getDecryptedPassword();
 
         return a;
+    }
+
+    /**
+     * @param sql
+     * @return
+     * @throws SQLException
+     */
+    protected RegistryUser getRegistryUserByEmail(final String email)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        final List<Object[]> results = runner
+                .query(connection,
+                        "select email_address, csm_user_id, token from registry_user where email_address ilike '"
+                                + email + "'", new ArrayListHandler());
+        Object[] row = results.get(0);
+        RegistryUser ru = new RegistryUser();
+        ru.email = (String) row[0];
+        ru.csmUserID = (Number) row[1];
+        ru.token = (String) row[2];
+        return ru;
     }
 
     /**
@@ -2026,6 +2099,17 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
             return HashCodeBuilder.reflectionHashCode(this);
         }
 
+    }
+
+    public static final class RegistryUser {
+        public Number csmUserID;
+        public String token;
+        public String email;
+
+        @Override
+        public String toString() {
+            return ToStringBuilder.reflectionToString(this);
+        }
     }
 
     public static final class Account {

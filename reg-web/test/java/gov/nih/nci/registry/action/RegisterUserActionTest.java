@@ -22,6 +22,7 @@ import gov.nih.nci.registry.dto.UserWebDTO;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,7 +49,7 @@ public class RegisterUserActionTest extends AbstractRegWebTest {
 
 
     @Before
-    public void setup() throws PAException {
+    public void setup() throws PAException, IOException {
         User csmUser = new User();
 
         when(csmSvc.getCSMUserById(anyLong())).thenReturn(csmUser);
@@ -62,7 +63,7 @@ public class RegisterUserActionTest extends AbstractRegWebTest {
 
         Map<String, String> idps = new HashMap<String, String>();
         idps.put("dorian", "/O=caBIG/OU=Dorian");
-        action.setIdentityProviders(idps);
+       
 
         regUser.setCsmUser(csmUser);
         regUser.setAffiliatedOrganizationId(1L);
@@ -148,23 +149,16 @@ public class RegisterUserActionTest extends AbstractRegWebTest {
     }
 
     @Test
-    public void testActivateMissingEmail() {
-        regDto.setEmailAddress("");
+    public void testActivateNoToken() {        
         assertEquals("activation", action.activate());
-        assertTrue(action.getActionMessages().contains("Invalid call of activate"));
+        assertTrue(action.getActionMessages().contains("Invalid URL."));
     }
 
-    @Test
-    public void testActivateMissingUsername() {
-        userDto.setUsername("");
-        assertEquals("activation", action.activate());
-        assertTrue(action.getActionMessages().contains("Invalid call of activate"));
-    }
+   
 
     @Test
     public void testActivate() {
-        assertEquals("activation", action.activate());
-        assertTrue(action.getActionMessages().contains("Your account was successfully activated"));
+        assertEquals("activation", action.activate());        
     }
 
     @Test
@@ -190,14 +184,14 @@ public class RegisterUserActionTest extends AbstractRegWebTest {
     }
 
     @Test
-    public void testCreateAccountGridAccountButNoCSM() throws PAException {
+    public void testCreateAccountLdapAccountButNoCSM() throws PAException {
         when(csmSvc.getCSMUser(anyString())).thenReturn(null);
         assertEquals("confirmation", action.createAccount());
         verify(csmSvc).createCSMUser((RegistryUser)anyObject(), anyString(), anyString());
     }
 
     @Test
-    public void testCreateAccountNoGridAccount() throws PAException {
+    public void testCreateAccountNoLdapAccount() throws PAException {
         userDto.setUsername("");
         assertEquals("confirmation", action.createAccount());
     }

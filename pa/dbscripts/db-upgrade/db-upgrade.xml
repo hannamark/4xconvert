@@ -1911,12 +1911,17 @@
        <comment>Insert new properties in PA_PROPERTIES and remove unused properties</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-7595-2.sql"/>       
     </changeSet>
-        <changeSet id="PO-9144" author="vpoluri">
+    <changeSet id="PO-9144" author="vpoluri">
+       <validCheckSum>ANY</validCheckSum>
        <comment>Insert new properties in PA_PROPERTIES</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9144.sql"/>       
     </changeSet>
     <changeSet id="PO-9161" author="vpoluri">
        <comment>Insert new properties in Accounts table and removed props from PA_PROPERTIES</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9161.sql"/>       
+    </changeSet>
+    <changeSet id="PO-9166" author="krylovd">       
+       <comment>Remove caGrid from PA web apps and REST services, migrate accounts to LDAP.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9166.sql"/>
     </changeSet>
 </databaseChangeLog>

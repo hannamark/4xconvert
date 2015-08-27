@@ -15,7 +15,7 @@
 	</div>	
 </div>
 
-<c:url value="/registerUserexistingGridAccount.action" var="regUrl" />
+<c:url value="/registerUserexistingLdapAccount.action" var="regUrl" />
 <div class="row">
     <div class="col-xs-8 col-xs-offset-2">
         <div class="alert alert-danger">

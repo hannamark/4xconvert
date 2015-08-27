@@ -236,11 +236,6 @@ function hidePopWin(callReturnFunc) {
  */
 function setPopTitle() {
     return;
-    if (window.frames["popupFrame"].document.title == null) {
-        window.setTimeout("setPopTitle();", 10);
-    } else {
-        document.getElementById("popupTitle").innerHTML = window.frames["popupFrame"].document.title;
-    }
 }
 
 // Tab key trap. iff popup is shown and key was [TAB], suppress it.

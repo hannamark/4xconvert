@@ -133,7 +133,6 @@ import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.FlaggedTrialService;
-import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.I2EGrantsServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
@@ -462,14 +461,7 @@ public class JndiServiceLocator implements ServiceLocator {
     public RegistryUserServiceLocal getRegistryUserService() {
         return lookup("RegistryUserBeanLocal!gov.nih.nci.pa.service.util.RegistryUserServiceLocal");
     }
-
-    /**
-     * @return GridAccountServiceRemote
-     */
-    @Override
-    public GridAccountServiceRemote getGridAccountService() {
-        return lookup("GridAccountServiceBean!gov.nih.nci.pa.service.util.GridAccountServiceRemote");
-    }
+    
 
     /**
      * {@inheritDoc}

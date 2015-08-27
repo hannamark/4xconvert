@@ -6,15 +6,17 @@
 			<module name="javax.persistence.api" />
 			<module name="javax.transaction.api" />
 			<module name="javax.validation.api" />
+			<module name="javax.mail.api" />
 			<module name="javax.wsdl4j.api" export="TRUE" />
+			<module name="org.apache.log4j"/>
+			<module name="org.slf4j"/>
 			<module name="org.jboss.as.web" export="TRUE" />
 			<module name="org.jboss.remote-naming" export="TRUE" />
 			<module name="org.jboss.resteasy.resteasy-jaxrs" export="TRUE" />
 			<module name="org.jboss.xnio" export="TRUE" />
 			<module name="org.hornetq" export="TRUE" />
 			<module name="org.postgresql" export="TRUE" />
-			<module name="org.slf4j.impl" export="TRUE" />
-			<module name="org.cagrid" export="TRUE" />
+			<module name="org.slf4j.impl" export="TRUE" />			
 			<module name="org.apache.santuario.xmlsec" export="TRUE" />
 		</dependencies>
 		<exclusions>

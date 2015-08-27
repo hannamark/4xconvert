@@ -125,6 +125,8 @@ public class Constants {
     public static final String EMAIL_MESSAGE = "Email Sent Successfully";
     /** Participating Organization Tab Data. */
     public static final String PARTICIPATING_ORGANIZATIONS_TAB = "participatingOrganizationsTabs";
+    /** Is user in ANY of the abstractor roles.**/
+    public static final String IS_ANY_ABSTRACTOR = "isAnyAbstractor";
     /** Is user in the abstractor role.**/
     public static final String IS_ABSTRACTOR = "isAbstractor";
     /** Is user in the su abstractor role.**/
@@ -135,8 +137,12 @@ public class Constants {
     public static final String IS_ADMIN_ABSTRACTOR = "isAdminAbstractor";
     /** Is user in the report viewer role.**/
     public static final String IS_REPORT_VIEWER = "isReportViewer";
+    /** Is user in the SecurityAdmin role.**/
+    public static final String IS_SECURITY_ADMIN = "isSecurityAdmin";
     /** CSM Group used to define reporting role. **/
     public static final String REPORT_VIEWER = "ReportViewer";
+    /** CSM Group used to define SECURITY_ADMIN role. **/
+    public static final String SECURITY_ADMIN = "SecurityAdmin";
     /** CSM Group used to define abstractor role. **/
     public static final String ABSTRACTOR = "Abstractor";
     /** CSM Group used to define suabstractor role. **/

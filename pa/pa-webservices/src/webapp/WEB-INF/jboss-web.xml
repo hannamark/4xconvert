@@ -2,6 +2,6 @@
 <jboss-web>
 	<security-domain>pa</security-domain>
 	<valve>
-		<class-name>gov.nih.nci.coppa.webservices.security.UsernameTokenGridAuthenticator</class-name>
+		<class-name>gov.nih.nci.coppa.webservices.security.UsernameTokenAuthenticator</class-name>
 	</valve>
 </jboss-web>

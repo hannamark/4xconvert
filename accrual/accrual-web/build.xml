@@ -124,7 +124,24 @@
         </javac>
         <copy todir="${web.build.outputDir}">
             <filterset>
-                <filter token="grid.target" value="${grid.target}"/>
+                <filter token="ldap.url" value="${ldap.url}"/>
+                <filter token="ldap.user" value="${ldap.user}"/>
+                <filter token="ldap.password" value="${ldap.password}"/>
+                <filter token="ldap.security.authentication" value="${ldap.security.authentication}"/>
+                <filter token="ldap.security.protocol" value="${ldap.security.protocol}"/>
+                <filter token="ldap.timeouts.connect" value="${ldap.timeouts.connect}"/>
+                <filter token="ldap.timeouts.read" value="${ldap.timeouts.read}"/>
+                <filter token="ldap.context" value="${ldap.context}"/>
+                <filter token="ldap.uid.attrname" value="${ldap.uid.attrname}"/>
+                <filter token="ldap.migration.grouperToIdStringMap" value="${ldap.migration.grouperToIdStringMap}"/>
+                <filter token="ldap.migration.excludes" value="${ldap.migration.excludes}"/>
+            	
+                <filter token="database.driver" value="${jdbc.driver}" />
+                <filter token="database.url" value="${jdbc.url}" />
+                <filter token="database.user" value="${db.username}" />
+                <filter token="database.password" value="${db.password}" />
+                <filter token="database.dialect" value="${hibernate.dialect}" />
+            	
             </filterset>
             <fileset dir="${web.build.resourceDir}"/>
         </copy>

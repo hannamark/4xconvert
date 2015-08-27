@@ -33,36 +33,8 @@
     <dependency conf="build->master" org="org.apache.maven" name="maven-ant-tasks" rev="2.1.3"/>
     <dependency conf="build->master" org="org.liquibase" name="liquibase-core" rev="3.0.8"/>
 
-    <dependency conf="compile->master" org="asm" name="asm" rev="3.3"/>
-    <dependency conf="compile->master" org="axis" name="axis-wsdl4j" rev="1.2"/>
-    <dependency conf="compile->master" org="caGrid" name="caGrid-authentication-service-client" rev="1.4"/>
-    <dependency conf="compile->master" org="caGrid" name="caGrid-authentication-service-stubs" rev="1.4"/>
-    <dependency conf="compile->master" org="caGrid" name="caGrid-dorian-client" rev="1.3"/>
-    <dependency conf="compile->master" org="caGrid" name="caGrid-dorian-common" rev="1.3"/>
-    <dependency conf="compile->master" org="caGrid" name="caGrid-dorian-service" rev="1.3"/>
-    <dependency conf="compile->master" org="caGrid" name="caGrid-dorian-stubs" rev="1.3"/>
-    <dependency conf="compile->master" org="caGrid" name="caGrid-ServiceSecurityProvider-client" rev="1.4"/>
-    <dependency conf="compile->master" org="caGrid" name="caGrid-ServiceSecurityProvider-common" rev="1.4"/>
-    <dependency conf="compile->master" org="caGrid" name="gridgrouper-client" rev="1.3"/>
-    <dependency conf="compile->master" org="caGrid" name="gridgrouper-common" rev="1.3"/>
-    <dependency conf="compile->master" org="caGrid" name="gridgrouper-stubs" rev="1.3"/>
-    <dependency conf="compile->master" org="cglib" name="cglib" rev="2.2"/>
-    <dependency conf="compile->master" org="csmapi" name="csmapi" rev="4.2"/>
-    <dependency conf="compile->master" org="globus" name="axis" rev="1.2RC2"/>
-    <dependency conf="compile->master" org="globus" name="jcog" rev="1.2"/>
-    <dependency conf="compile->master" org="globus" name="ws-addressing" rev="1.0"/>
-    <dependency conf="compile->master" org="globus" name="ws-core-client" rev="4.0.3"/>
-    <dependency conf="compile->master" org="gov.nih.nci.cagrid" name="cagrid-core" rev="1.3"/>
-    <dependency conf="compile->master" org="gov.nih.nci.cagrid" name="cagrid-opensaml" rev="1.3"/>
-    <dependency conf="compile->master" org="gov.nih.nci.coppa.pa" name="csm-service" rev="1.3"/>
-    <dependency conf="compile->master" org="gov.nih.nci.coppa.pa" name="csm-stubs" rev="1.3"/>
-    <dependency conf="compile->master" org="gov.nih.nci.security" name="clm" rev="3.2"/>
-    <dependency conf="compile->master" org="javassist" name="javassist" rev="3.10.0.GA"/>
+    
     <dependency conf="compile->master" org="javax.mail" name="mail" rev="1.4.5"/>
-    <dependency conf="compile->master" org="org.hibernate" name="hibernate" rev="3.2.0.ga"/>
-    <dependency conf="compile->master" org="org.hibernate" name="hibernate-annotations" rev="3.2.0.ga"/>
-    <dependency conf="compile->master" org="org.hibernate" name="hibernate-commons-annotations" rev="3.3.0.ga"/>
-    <dependency conf="compile->master" org="org.hibernate" name="hibernate-validator" rev="3.0.0.ga"/>
     <dependency conf="compile->master" org="org.hibernate.javax.persistence" name="hibernate-jpa-2.0-api" rev="1.0.1.Final"/>
     <dependency conf="compile->master" org="org.jboss.as" name="jboss-as-web" rev="7.2.0.Final"/>
     <dependency conf="compile->master" org="org.jboss.ejb3" name="jboss-ejb3-ext-api" rev="2.1.0"/>
@@ -91,6 +63,18 @@
     <dependency conf="compile->master" org="org.springframework" name="spring-web" rev="3.2.2.RELEASE"/>
     <dependency conf="compile->master" org="org.springframework.ws" name="spring-ws" rev="2.1.4.RELEASE"/>
     
+    <dependency conf="ear->master" org="javassist" name="javassist" rev="3.10.0.GA"/>
+    <dependency conf="ear->master" org="org.hibernate" name="hibernate" rev="3.2.0.ga"/>
+    <dependency conf="ear->master" org="org.hibernate" name="hibernate-annotations" rev="3.2.0.ga"/>
+    <dependency conf="ear->master" org="org.hibernate" name="hibernate-commons-annotations" rev="3.3.0.ga"/>
+    <dependency conf="ear->master" org="org.hibernate" name="hibernate-validator" rev="3.0.0.ga"/>    
+    <dependency conf="ear->master" org="asm" name="asm" rev="3.3"/>
+    <dependency conf="ear->master" org="asm" name="asm-commons" rev="3.3"/>
+    <dependency conf="ear->master" org="asm" name="asm-tree" rev="3.3"/>       
+    <dependency conf="ear->master" org="csmapi" name="csmapi" rev="4.2"/>
+    <dependency conf="ear->master" org="gov.nih.nci.security" name="clm" rev="3.2"/>    
+    <dependency conf="ear->master" org="cglib" name="cglib" rev="2.2"/>
+    <dependency conf="ear->master" org="c3p0" name="c3p0" rev="0.9.1.2"/>
     <dependency conf="ear->master" org="org.apache.poi" name="poi" rev="3.12"/>
     <dependency conf="ear->master" org="org.apache.poi" name="poi-ooxml" rev="3.12"/>
     <dependency conf="ear->master" org="org.apache.poi" name="poi-ooxml-schemas" rev="3.12"/>
@@ -110,8 +94,8 @@
     <dependency conf="ear->master" org="dom4j" name="dom4j" rev="1.6.1"/>
     <dependency conf="ear->master" org="org.freemarker" name="freemarker" rev="2.3.19"/>
     <dependency conf="ear->master" org="org.apache.commons" name="commons-exec" rev="1.3"/>
-    <dependency conf="ear->master" org="gov.nih.nci.coppa" name="coppa-commons" rev="1.3.13-SNAPSHOT"/>
-    <dependency conf="ear->master" org="gov.nih.nci.coppa" name="nci-commons-ctrp-core" rev="1.4.10.1"/>
+    <dependency conf="ear->master" org="gov.nih.nci.coppa" name="coppa-commons" rev="1.3.14-SNAPSHOT"/>
+    <dependency conf="ear->master" org="gov.nih.nci.coppa" name="nci-commons-ctrp-core" rev="1.4.11-SNAPSHOT"/>
     <dependency conf="ear->master" org="gov.nih.nci.coppa.po" name="po-services" rev="1.0.1.IR6">
           <artifact name="po-services" ext="jar" conf="*" m:classifier="client"/>
     </dependency>
@@ -144,14 +128,11 @@
     <dependency conf="ear->master" org="org.twitter4j" name="twitter4j-core" rev="4.0.4"/>
     <dependency conf="ear->master" org="com.google.code.gson" name="gson" rev="2.2.4"/>
 
-    <dependency conf="pa-web->master" org="aopalliance" name="aopalliance" rev="1.0"/> 
-    <dependency conf="pa-web->master" org="asm" name="asm" rev="3.3"/>
-    <dependency conf="pa-web->master" org="asm" name="asm-commons" rev="3.3"/>
-    <dependency conf="pa-web->master" org="asm" name="asm-tree" rev="3.3"/>    
+    <dependency conf="pa-web->master" org="aopalliance" name="aopalliance" rev="1.0"/>   
     <dependency conf="pa-web->master" org="commons-fileupload" name="commons-fileupload" rev="1.3"/>
     <dependency conf="pa-web->master" org="commons-io" name="commons-io" rev="2.0.1"/>
     <dependency conf="pa-web->master" org="displaytag" name="displaytag" rev="1.2"/>
-    <dependency conf="pa-web->master" org="gov.nih.nci.coppa" name="nci-commons-ctrp-struts2" rev="1.4.10.1"/>
+    <dependency conf="pa-web->master" org="gov.nih.nci.coppa" name="nci-commons-ctrp-struts2" rev="1.4.11-SNAPSHOT"/>
     <dependency conf="pa-web->master" org="javax.servlet" name="jstl" rev="1.1.2"/>
     <dependency conf="pa-web->master" org="net.htmlparser.jericho" name="jericho-html" rev="2.4"/>
     <dependency conf="pa-web->master" org="ognl" name="ognl" rev="3.0.6"/>
@@ -178,7 +159,7 @@
     <dependency conf="pa-webservices->master" org="commons-io" name="commons-io" rev="2.4"/>
     
     <dependency conf="reg-web->master" org="displaytag" name="displaytag" rev="1.2"/>
-    <dependency conf="reg-web->master" org="gov.nih.nci.coppa" name="nci-commons-ctrp-struts2" rev="1.4.10.1"/>
+    <dependency conf="reg-web->master" org="gov.nih.nci.coppa" name="nci-commons-ctrp-struts2" rev="1.4.11-SNAPSHOT"/>
     <dependency conf="reg-web->master" org="javax.servlet" name="jstl" rev="1.1.2"/>
     <dependency conf="reg-web->master" org="net.htmlparser.jericho" name="jericho-html" rev="2.4"/>
     <dependency conf="reg-web->master" org="ognl" name="ognl" rev="3.0.6"/>

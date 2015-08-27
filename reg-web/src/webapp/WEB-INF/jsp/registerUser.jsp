@@ -32,8 +32,8 @@ function handleAction(){
          <c:set var="topic" scope="request" value="createaccount"/>
          <s:form cssClass="form-horizontal" role="form" name="registerUser" validate="true" method="POST">
          	<s:hidden name="page" />
-         	<s:url id="existingGridAccountUrl" action="registerUserexistingGridAccount.action" />
-   			<p align="center" class="info">If you already have an NIH or NCI account, click <s:a href="%{existingGridAccountUrl}">here</s:a> to proceed.</p>
+         	<s:url id="existingLdapAccountUrl" action="registerUserexistingLdapAccount.action" />
+   			<p align="center" class="info"><i style="color:red;" class="fa fa-exclamation fa-lg fa-fw"></i>If you already have an NIH or NCI account, click <s:a href="%{existingLdapAccountUrl}">here</s:a> to proceed.</p>
             <p align="center" class="info">If you do not have an NIH or NCI account, enter the email address below and click Next.</p>
             
             <div class="form-group">

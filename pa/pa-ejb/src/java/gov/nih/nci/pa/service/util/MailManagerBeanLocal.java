@@ -2313,7 +2313,29 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
         
         sendMailWithHtmlBody(emailRecipient, mailSubject, mailBody);
     }
+    
+    @Override
+    public void sendAccountActivationEmail(RegistryUser user) {
+        try {
 
+            final Map<String, Object> root = new HashMap<String, Object>();
+            root.put("user", user);
+
+            StringWriter subject = new StringWriter();
+            StringWriter body = new StringWriter();
+            cfg.getTemplate("self.registration.activation.subject").process(
+                    root, subject);
+            cfg.getTemplate("self.registration.activation.body").process(root,
+                    body);
+
+            sendMailWithAttachment(user.getEmailAddress(), subject.toString(),
+                    body.toString(), null);
+
+        } catch (IOException | TemplateException e) {
+            LOG.error(e, e);
+        }
+
+    }
 
     @Override
     public void sendSiteCloseNotification(SiteStatusChangeNotificationData data) {
@@ -2506,11 +2528,11 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
 
 
     @Override
-    public Object findTemplateSource(String arg0) throws IOException {
+    public Object findTemplateSource(String key) throws IOException {
         try {
-            return lookUpTableService.getPropertyValue(arg0);
+            return lookUpTableService.getPropertyValue(key);
         } catch (PAException e) {
-            LOG.error(e, e);
+            LOG.warn(e.getMessage());
             return null;
         }
     }

@@ -15,7 +15,18 @@
             <http-only>true</http-only>
         </cookie-config>  
     </session-config>
+    
+    <listener>
+        <listener-class>gov.nih.nci.coppa.web.CSMInitializingListener
+        </listener-class>
+    </listener>
 
+    <!-- CSM. -->
+    <context-param>
+        <param-name>csmApplicationName</param-name>
+        <param-value>pa</param-value>
+    </context-param>
+    
     <!-- Define the basename for a resource bundle for I18N -->
     <context-param>
         <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
@@ -64,21 +75,11 @@
         <filter-name>ResponseOverrideFilter</filter-name>
         <filter-class>org.displaytag.filter.ResponseOverrideFilter</filter-class>
     </filter>
-    <filter>
-        <filter-name>cgmmAuthSrcMapHelper</filter-name>
-        <filter-class>gov.nih.nci.pa.filter.CGMMAuthSourceRequestFilter</filter-class>
-    </filter>
     
     
     <filter-mapping>
         <filter-name>usernameFilter</filter-name>
         <url-pattern>*.action</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>cgmmAuthSrcMapHelper</filter-name>
-        <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
@@ -112,13 +113,6 @@
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
-
-   
-
-    <!-- Listeners
-    <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>-->
 
     <!-- Servlets -->
     <servlet>
@@ -159,7 +153,7 @@
     </security-constraint>
 
     <login-config>
-        <auth-method>CAGRIDFORM</auth-method>
+        <auth-method>FORM</auth-method>
         <form-login-config>
            <form-login-page>/login.action</form-login-page>
            <form-error-page>/login.action?failedLogin=true</form-error-page>

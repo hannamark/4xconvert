@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.registry.action;
 
-import gov.nih.nci.coppa.services.grid.util.CaGridFormAuthenticatorValve;
+import gov.nih.nci.coppa.services.ldap.LDAPAuthenticator;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -92,31 +92,30 @@ import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.service.util.FamilyServiceLocal;
-import gov.nih.nci.pa.service.util.GridAccountServiceBean;
-import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerService;
 import gov.nih.nci.pa.service.util.RegistryUserService;
 import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
-import gov.nih.nci.pa.util.SAMLToAttributeMapper;
 import gov.nih.nci.registry.dto.RegistryUserWebDTO;
 import gov.nih.nci.registry.dto.UserWebDTO;
 import gov.nih.nci.registry.util.Constants;
-import gov.nih.nci.registry.util.EncoderDecoder;
 import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.net.URLEncoder;
+import java.security.Principal;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -138,11 +137,15 @@ import com.opensymphony.xwork2.Preparable;
                     "PMD.TooManyMethods", "PMD.TooManyFields", "PMD.ExcessiveMethodLength" })
 public class RegisterUserAction extends ActionSupport implements Preparable {
 
+    private static final String CONFIRMATION = "confirmation";
+
+    private static final String REGISTRY_USER_WEB_DTO_EMAIL_ADDRESS = "registryUserWebDTO.emailAddress";
+
     private static final long serialVersionUID = 1359534429821398453L;
 
     private static final Logger LOG  = Logger.getLogger(RegisterUserAction.class);
     
-    private GridAccountServiceRemote gridAccountService;
+   
     private OrganizationCorrelationServiceRemote organizationCorrelationService;
     private OrganizationEntityServiceRemote organizationEntityService;
     private RegistryUserService registryUserService;
@@ -151,42 +154,73 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
     
     private RegistryUserWebDTO registryUserWebDTO = new RegistryUserWebDTO();
     private UserWebDTO userWebDTO = new UserWebDTO();
-    private Map<String, String> identityProviders;
-    private String selectedIdentityProvider;
     private MailManagerService mailManagerService;
+    private LDAPAuthenticator ldapAuthenticator;
+    private String token;
+    private String ldapID;
     private static final Properties REG_PROPERTIES = PaEarPropertyReader.getProperties();
 
     /**
      * {@inheritDoc}
+     * 
+     * @throws IOException
+     *             IOException
      */
     @Override
-    public void prepare() {
-        gridAccountService = PaRegistry.getGridAccountService();
-        organizationCorrelationService = PaRegistry.getOrganizationCorrelationService();
+    public void prepare() throws IOException {
+        organizationCorrelationService = PaRegistry
+                .getOrganizationCorrelationService();
         organizationEntityService = PoRegistry.getOrganizationEntityService();
         registryUserService = PaRegistry.getRegistryUserService();
         familyService = PaRegistry.getFamilyService();
         mailManagerService = PaRegistry.getMailManagerService();
+        try {
+            ldapAuthenticator = new LDAPAuthenticator();
+        } catch (Exception e) {
+            LOG.error(e, e);
+        }
+    }
+    
+    /**
+     * Connects RegistryUser and CSM records.
+     * 
+     * @return string.
+     */
+    public String activate() {
+        if (StringUtils.isEmpty(token)) {
+            addActionMessage("Invalid URL.");
+            return "activation";
+        } else {
+            return "enterLdapID";
+        }
+
     }
 
     /**
      * Connects RegistryUser and CSM records.
+     * 
      * @return string.
+     * @throws PAException  PAException
      */
-    public String activate() {
-        if (StringUtils.isEmpty(registryUserWebDTO.getEmailAddress())
-                || StringUtils.isEmpty(userWebDTO.getUsername())) {
-            addActionMessage("Invalid call of activate");
+    public String completeActivation() throws PAException {
+        if (StringUtils.isEmpty(token)) {
+            addActionError("Invalid token.");
+        } else if (StringUtils.isEmpty(ldapID)) {
+            addActionError("Please provide LDAP ID.");
+        } else if (registryUserService.getUser(ldapID.trim().toLowerCase()) != null) {
+            addActionError("A user with the given LDAP ID already exists.");
         } else {
-            String email = new EncoderDecoder().decodeString(registryUserWebDTO.getEmailAddress());
             try {
-                registryUserService.activateAccount(email, userWebDTO.getUsername());
-                addActionMessage("Your account was successfully activated");
+                registryUserService.activateAccount(token, ldapID.trim()
+                        .toLowerCase());
+                addActionMessage("The account has been successfully activated. Please inform the user.");
+                return "activation";
             } catch (PAException e) {
+                LOG.error(e, e);
                 addActionError(e.getMessage());
             }
         }
-        return "activation";
+        return "enterLdapID";
     }
     
     
@@ -212,9 +246,9 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
             RegistryUser registryUser = getRegistryUser();
            
             if (StringUtils.isEmpty(userWebDTO.getUsername())) {
-                createUserWithNoGridAccount();
+                createUserWithNoLdapAccount(registryUser);
             } else {
-                createUserWithExistingGridAccount(registryUser);
+                createUserWithExistingLdapAccount(registryUser);
             }
 
             registryUserService.createUser(registryUser);
@@ -222,7 +256,7 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
             LOG.error("error while creating user info", e);
             return Constants.APPLICATION_ERROR;
         }
-        return "confirmation";
+        return CONFIRMATION;
     }
     
     private RegistryUser getRegistryUser() throws IllegalAccessException, InvocationTargetException {
@@ -232,6 +266,7 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
         registryUser.setCsmUser(null);
         registryUser.setSiteAccrualSubmitter(false);
         registryUser.setFamilyAccrualSubmitter(false);
+        registryUser.setToken(UUID.randomUUID().toString());
         Calendar curCalendar = Calendar.getInstance();
         registryUser.setDateLastCreated(curCalendar.getTime());
         if (registryUserWebDTO.isRequestAdminAccess()) {
@@ -242,26 +277,29 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
         return registryUser;
     }
     
-    private void createUserWithNoGridAccount() {
-       
-        EncoderDecoder encodeDecoder = new EncoderDecoder();
-
-        String[] params = {registryUserWebDTO.getFirstName(), registryUserWebDTO.getLastName(),
-                registryUserWebDTO.getAffiliateOrg(), registryUserWebDTO.getPhone(), 
+    @SuppressWarnings("deprecation")
+    private void createUserWithNoLdapAccount(RegistryUser registryUser) {
+        String[] params = {
+                registryUserWebDTO.getFirstName(),
+                registryUserWebDTO.getLastName(),
+                registryUserWebDTO.getAffiliateOrg(),
+                registryUserWebDTO.getPhone(),
                 registryUserWebDTO.getEmailAddress(),
-                REG_PROPERTIES.getProperty("register.mail.body.url") + "?registryUserWebDTO.emailAddress="
-                + encodeDecoder.encodeString(registryUserWebDTO.getEmailAddress())
-                + "&userWebDTO.username=INSERTUSERNAME"
+                REG_PROPERTIES.getProperty("register.mail.body.url")
+                        + "?token="
+                        + URLEncoder.encode(registryUser.getToken())
+
         };
-       mailManagerService.sendNewUserRequestEmail(params);
-       String mailTo = registryUserWebDTO.getEmailAddress();
-       String[] userParams = {registryUserWebDTO.getFirstName(), registryUserWebDTO.getLastName()};
+        mailManagerService.sendNewUserRequestEmail(params);
+        String mailTo = registryUserWebDTO.getEmailAddress();
+        String[] userParams = {registryUserWebDTO.getFirstName(),
+                registryUserWebDTO.getLastName() };
         LOG.info("Sending email to " + registryUserWebDTO.getEmailAddress());
         mailManagerService.sendPleaseWaitEmail(mailTo, userParams);
         addActionMessage(getText("login.message.waitForAppSupport"));
     }
 
-    private void createUserWithExistingGridAccount(RegistryUser registryUser) throws PAException {
+    private void createUserWithExistingLdapAccount(RegistryUser registryUser) throws PAException {
         CSMUserUtil csmUserService = CSMUserService.getInstance();
         User csmUser = csmUserService.getCSMUser(userWebDTO.getUsername());
         if (csmUser == null) {
@@ -271,20 +309,11 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
         }
         csmUserService.assignUserToGroup(csmUser.getLoginName(), PaEarPropertyReader.getCSMSubmitterGroup());
         registryUser.setCsmUser(csmUser);
-        gridAccountService.addGridUserToGroup(userWebDTO.getUsername(), 
-                                              GridAccountServiceBean.GRIDGROUPER_SUBMITTER_GROUP);
+        registryUser.setToken(null);       
         addActionMessage(getText("login.message.account.created"));
     }
     
-    /**
-     * Forward to existing account page.
-     * @return success
-     */
-    public String existingGridAccount() {
-        selectedIdentityProvider = getIdentityProviders().size() != 1 ? null
-                : getIdentityProviders().values().iterator().next();
-        return Constants.EXISTING_GRID_ACCOUNT;
-    }
+   
     
     /**
      * @return s
@@ -298,27 +327,39 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
     }
     
     /**
+     * Forward to existing account page.
+     * @return success
+     */
+    public String existingLdapAccount() {       
+        return Constants.EXISTING_GRID_ACCOUNT;
+    }
+    
+    
+    /**
      * creates an account from an existing grid account.
+     * 
      * @return the forward
      */
-    public String registerExistingGridAccount() {
-        Map<String, String> userInfo = gridAccountService.authenticateUser(userWebDTO.getUsername(),
-                    userWebDTO.getPassword(), getSelectedIdentityProvider());
-        String fullyQualifiedUsername = gridAccountService.getFullyQualifiedUsername(userWebDTO.getUsername(),
-                userWebDTO.getPassword(), getSelectedIdentityProvider());
-        if (userInfo.isEmpty()) {
+    public String registerExistingLdapAccount() {
+        Principal principal = ldapAuthenticator.authenticateAndCreateCsmUser(
+                userWebDTO.getUsername(), userWebDTO.getPassword());
+        if (principal == null) {
             addActionError(getText("errors.password.mismatch"));
             return Constants.EXISTING_GRID_ACCOUNT;
-        } else if (registryUserService.doesRegistryUserExist(fullyQualifiedUsername)) {
+        } else if (registryUserService.doesRegistryUserExist(principal
+                .getName())) {
             addActionMessage(getText("login.message.account.exists"));
-            return "confirmation";
+            return CONFIRMATION;
         }
-        ServletActionContext.getRequest().getSession().setAttribute("selectedIdentityProvider"
-              , getSelectedIdentityProvider());
-        registryUserWebDTO.setEmailAddress(userInfo.get(SAMLToAttributeMapper.EMAIL));
-        registryUserWebDTO.setFirstName(userInfo.get(SAMLToAttributeMapper.FIRST_NAME));
-        registryUserWebDTO.setLastName(userInfo.get(SAMLToAttributeMapper.LAST_NAME));
-        userWebDTO.setUsername(fullyQualifiedUsername);
+        Map<String, String> attrs = ldapAuthenticator
+                .getUserAttributes(principal.getName());
+        registryUserWebDTO.setEmailAddress(StringUtils.defaultString(attrs
+                .get(LDAPAuthenticator.EMAIL)));
+        registryUserWebDTO.setFirstName(StringUtils.defaultString(attrs
+                .get(LDAPAuthenticator.FIRST_NAME)));
+        registryUserWebDTO.setLastName(StringUtils.defaultString(attrs
+                .get(LDAPAuthenticator.LAST_NAME)));
+        userWebDTO.setUsername(principal.getName());
         return Constants.CREATE_ACCOUNT;
     }
     
@@ -468,7 +509,7 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
             redirectPage = "myAccount";
         } else {
             addActionMessage(getText("login.message.reset"));
-            redirectPage = "confirmation";
+            redirectPage = CONFIRMATION;
         }
         String userName = userWebDTO.getUsername();
         if (userName == null) {
@@ -520,23 +561,26 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
     private void validateEmailEntry() {
         String email = registryUserWebDTO.getEmailAddress();
         if (StringUtils.isEmpty(email)) {
-            addFieldError("registryUserWebDTO.emailAddress", getText("error.register.emailAddress"));
+            addFieldError(REGISTRY_USER_WEB_DTO_EMAIL_ADDRESS,
+                    getText("error.register.emailAddress"));
         } else {
             if (!RegistryUtil.isValidEmailAddress(email)) {
-                addFieldError("registryUserWebDTO.emailAddress", getText("error.register.invalidEmailAddress"));
+                addFieldError(REGISTRY_USER_WEB_DTO_EMAIL_ADDRESS,
+                        getText("error.register.invalidEmailAddress"));
             }
-
-            List<RegistryUser> result = new ArrayList<RegistryUser>();
             try {
                 RegistryUser registryUser = new RegistryUser();
                 registryUser.setEmailAddress(email);
-                result = registryUserService.search(registryUser);
+                if (!registryUserService.search(registryUser).isEmpty()) {
+                    addFieldError(REGISTRY_USER_WEB_DTO_EMAIL_ADDRESS,
+                            getText("error.register.emailAlreadyExists"));
+                }
             } catch (PAException e) {
-                LOG.error("Unable to retrieve user by email: " + email);
+                LOG.error("Unable to retrieve user by email: " + email, e);
+                addFieldError(REGISTRY_USER_WEB_DTO_EMAIL_ADDRESS,
+                        getText("errorPage.heading"));
             }
-            if (!result.isEmpty()) {
-                addFieldError("registryUserWebDTO.emailAddress", getText("error.register.emailAlreadyExists"));
-            }
+
         }
     }
 
@@ -612,45 +656,6 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
         this.userWebDTO = userWebDTO;
     }
 
-    /**
-     * @return the identity providers
-     */
-    public Map<String, String> getIdentityProviders() {
-        if (identityProviders == null) {
-            identityProviders = CaGridFormAuthenticatorValve.getAuthSourceMap();
-        }
-        return identityProviders;
-    }
-
-    /**
-     * @param identityProviders the identity providers to set
-     */
-    public void setIdentityProviders(Map<String, String> identityProviders) {
-        this.identityProviders = identityProviders;
-    }
-
-    /**
-     * @return the selected identity provider
-     */
-    public String getSelectedIdentityProvider() {
-        return selectedIdentityProvider;
-    }
-
-    /**
-     * @param selectedIdentityProvider the selected identity provider to set
-     */
-    public void setSelectedIdentityProvider(String selectedIdentityProvider) {
-        this.selectedIdentityProvider = selectedIdentityProvider;
-    }
-
-    /**
-     * @param gridAccountService the gridAccountService to set
-     */
-    public void setGridAccountService(GridAccountServiceRemote gridAccountService) {
-        this.gridAccountService = gridAccountService;
-    }
-
-
 
     /**
      * @param organizationCorrelationService the organizationCorrelationService to set
@@ -666,6 +671,34 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
      */
     public void setRegistryUserService(RegistryUserService registryUserService) {
         this.registryUserService = registryUserService;
+    }
+
+    /**
+     * @param token the token to set
+     */
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    /**
+     * @return the token
+     */
+    public String getToken() {
+        return token;
+    }
+
+    /**
+     * @return the ldapID
+     */
+    public String getLdapID() {
+        return ldapID;
+    }
+
+    /**
+     * @param ldapID the ldapID to set
+     */
+    public void setLdapID(String ldapID) {
+        this.ldapID = ldapID;
     }
 
 }

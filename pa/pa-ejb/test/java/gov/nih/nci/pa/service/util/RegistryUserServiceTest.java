@@ -82,9 +82,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
-import gov.nih.nci.logging.api.applicationservice.Query;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
@@ -142,6 +146,7 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
         when(csmSvc.getCSMUserById(anyLong())).thenReturn(csmUser);
         when(csmSvc.getCSMUser(anyString())).thenReturn(csmUser);
         when(csmSvc.createCSMUser((RegistryUser)anyObject(), anyString(), anyString())).thenReturn(csmUser);
+        when(csmSvc.isUserInGroup(any(String.class), any(String.class))).thenReturn(true);
 
         CSMUserService.setInstance(csmSvc);
 
@@ -149,6 +154,8 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
         
         bean.setMailManagerService(mock(MailManagerServiceLocal.class));
         remoteEjb.setMailManagerService(mock(MailManagerServiceLocal.class));
+        bean.setCsmUtil(csmSvc);
+        remoteEjb.setCsmUtil(csmSvc);
           
     }
 
@@ -183,19 +190,7 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
 
     }
 
-    @Test
-    public void testActivateAccountNotFound() throws PAException {
-        thrown.expect(PAException.class);
-        thrown.expectMessage("Unable to find user with email email@sample.com .Unable to activate account.");
-        bean.activateAccount("email@sample.com", "myusername");
-    }
-
-    @Test
-    public void testActivateAccountNoEmail() throws PAException {
-        thrown.expect(PAException.class);
-        thrown.expectMessage("Cannot activate account with empty email.");
-        bean.activateAccount("", "");
-    }
+   
     
     @Test
     public void testRemoveAll() throws PAException {

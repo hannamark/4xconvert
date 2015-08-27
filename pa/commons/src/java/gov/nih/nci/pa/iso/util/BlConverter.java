@@ -82,8 +82,8 @@ import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.pa.util.CommonsConstant;
 
-import org.apache.axis.utils.StringUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 
 
 /**

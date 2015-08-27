@@ -200,8 +200,18 @@
             </filterset>
         </copy>
         <copy todir="${pa-web.build.outputDir}">
-            <filterset>
-                <filter token="grid.target" value="${grid.target}"/>
+            <filterset>                
+            	<filter token="ldap.url" value="${ldap.url}"/>
+            	<filter token="ldap.user" value="${ldap.user}"/>
+            	<filter token="ldap.password" value="${ldap.password}"/>
+            	<filter token="ldap.security.authentication" value="${ldap.security.authentication}"/>
+            	<filter token="ldap.security.protocol" value="${ldap.security.protocol}"/>
+            	<filter token="ldap.timeouts.connect" value="${ldap.timeouts.connect}"/>
+            	<filter token="ldap.timeouts.read" value="${ldap.timeouts.read}"/>
+            	<filter token="ldap.context" value="${ldap.context}"/>
+            	<filter token="ldap.uid.attrname" value="${ldap.uid.attrname}"/>
+            	<filter token="ldap.migration.grouperToIdStringMap" value="${ldap.migration.grouperToIdStringMap}"/>
+            	<filter token="ldap.migration.excludes" value="${ldap.migration.excludes}"/>
             </filterset>
             <fileset dir="${pa-web.build.resourceDir.0}" />
         </copy>

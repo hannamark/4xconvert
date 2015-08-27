@@ -131,7 +131,6 @@ import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.FlaggedTrialService;
-import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.I2EGrantsServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
@@ -494,13 +493,7 @@ public final class PaRegistry { // NOPMD
         return getInstance().getServiceLocator().getRegistryUserService();
     }
 
-    /**
-     * @return GridAccountService
-     */
-    public static GridAccountServiceRemote getGridAccountService() {
-        return getInstance().getServiceLocator().getGridAccountService();
-    }
-
+    
     /**
      * @return TSRReportGeneratorServiceRemote
      */

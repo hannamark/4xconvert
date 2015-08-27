@@ -459,6 +459,13 @@ public interface MailManagerService {
      * @param params params
      */
     void sendPleaseWaitEmail(String mailTo, String [] params);
+    
+    /**
+     * @param user
+     *            RegistryUser
+     */
+    void sendAccountActivationEmail(RegistryUser user);
+    
     /**
      * 
      * @param userName userName
