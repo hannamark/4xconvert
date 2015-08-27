@@ -92,6 +92,7 @@ import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -300,7 +301,8 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     public boolean doesRegistryUserExist(String loginName) {
         RegistryUser registryUser = null;
         try {
-            registryUser = getUser(loginName);
+            registryUser = getUser(CsmUserUtil.getGridIdentityUsername(
+                    StringUtils.defaultString(loginName)).toLowerCase());
         } catch (PAException e) {
             LOG.error("Error retrieving user.", e);
         }
