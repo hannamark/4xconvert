@@ -17,6 +17,7 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 
@@ -87,15 +88,23 @@ abstract class AbstractLDAPAccessor {
         return environment;
     }
 
+    /**
+     * @return isLdapPasswordProvided
+     */
+    protected boolean isLdapPasswordProvided() {
+        return StringUtils
+                .isNotBlank(ldapProperties.getProperty(LDAP_PASSWORD));
+    }
+
     protected SearchResult searchForUserInLDAP(String loginName)
             throws NamingException {
-        Hashtable<String, String> environment = prepareLDAPEnvironmentProperties(); // NOPMD        
+        Hashtable<String, String> environment = prepareLDAPEnvironmentProperties(); // NOPMD
         String searchFilter = "("
                 + ldapProperties.getProperty(LDAP_UID_ATTRNAME) + "="
                 + loginName + ")";
 
         DirContext dirContext = null;
-        
+
         try {
             dirContext = new InitialDirContext(environment);
 

@@ -59,6 +59,10 @@ public final class GridToLDAPAccountMigrator extends AbstractLDAPAccessor
      */
     @Override
     public void contextInitialized(ServletContextEvent sce) {
+        if (!isLdapPasswordProvided()) {
+            LOG.warn("No LDAP password specified. Skipping migration altogether!");
+            return;
+        }
         LOG.info("GridToLDAPAccountMigrator started.");
         Connection c = null;
         try {
