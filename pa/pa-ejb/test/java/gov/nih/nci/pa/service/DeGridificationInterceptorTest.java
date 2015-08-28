@@ -48,7 +48,7 @@ public class DeGridificationInterceptorTest {
         when(invContext.getParameters()).thenReturn(new Object[] { spDTO });
         interceptor.deGridify(invContext);
         verify(invContext).proceed();
-        assertEquals("ctrpqatester2", spDTO.getUserLastCreated().getValue());
+        assertEquals("CTRPQATester2", spDTO.getUserLastCreated().getValue());
         reset(invContext);
 
         spDTO.setUserLastCreated(StConverter.convertToSt(null));

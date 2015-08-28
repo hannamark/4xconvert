@@ -35,11 +35,14 @@ public class DeGridificationInterceptor {
             if (obj instanceof StudyProtocolDTO) {
                 StudyProtocolDTO sp = (StudyProtocolDTO) obj;
                 if (!ISOUtil.isStNull(sp.getUserLastCreated())) {
-                    sp.setUserLastCreated(StConverter.convertToSt(CsmUserUtil
-                            .getGridIdentityUsername(
-                                    StConverter.convertToString(sp
-                                            .getUserLastCreated()))
-                            .toLowerCase()));
+                    final String userIDString = StConverter.convertToString(sp
+                            .getUserLastCreated());
+                    final String gridIdentityUsername = CsmUserUtil
+                            .getGridIdentityUsername(userIDString);
+                    if (!gridIdentityUsername.equals(userIDString)) {
+                        sp.setUserLastCreated(StConverter
+                                .convertToSt(gridIdentityUsername.toLowerCase()));
+                    }
                 }
             }
         }

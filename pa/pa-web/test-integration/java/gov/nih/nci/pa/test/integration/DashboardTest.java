@@ -267,20 +267,20 @@ public class DashboardTest extends AbstractTrialStatusTest {
         assertEquals("1",
                 s.getText("//table[@id='abstractors_work_table']//tr[1]/td[4]"));
 
-        assertEquals("scientific-ci (SC)",
+        assertEquals("admin-ci (AS)",
                 s.getText("//table[@id='abstractors_work_table']//tr[2]/td[1]"));
-        assertEquals("0",
-                s.getText("//table[@id='abstractors_work_table']//tr[2]/td[2]"));
         assertEquals("1",
+                s.getText("//table[@id='abstractors_work_table']//tr[2]/td[2]"));
+        assertEquals("0",
                 s.getText("//table[@id='abstractors_work_table']//tr[2]/td[3]"));
         assertEquals("0",
                 s.getText("//table[@id='abstractors_work_table']//tr[2]/td[4]"));
 
-        assertEquals("admin-ci (AS)",
+        assertEquals("scientific-ci (SC)",
                 s.getText("//table[@id='abstractors_work_table']//tr[3]/td[1]"));
-        assertEquals("1",
-                s.getText("//table[@id='abstractors_work_table']//tr[3]/td[2]"));
         assertEquals("0",
+                s.getText("//table[@id='abstractors_work_table']//tr[3]/td[2]"));
+        assertEquals("1",
                 s.getText("//table[@id='abstractors_work_table']//tr[3]/td[3]"));
         assertEquals("0",
                 s.getText("//table[@id='abstractors_work_table']//tr[3]/td[4]"));
@@ -293,14 +293,14 @@ public class DashboardTest extends AbstractTrialStatusTest {
         waitForElementToBecomeVisible(
                 By.xpath("//table[@id='abstractors_work_table']//tr[3]"), 20);
 
-        clickAndWait("//table[@id='abstractors_work_table']//tr[2]/td[1]/a");
+        clickAndWait("//table[@id='abstractors_work_table']//tr[3]/td[1]/a");
         verifyResultsTabActive();
         assertTrue(isTrialInResultsTab(scientific));
         clickAndWait("id=dashboardMenuOption");
         waitForElementToBecomeVisible(
                 By.xpath("//table[@id='abstractors_work_table']//tr[3]"), 20);
 
-        clickAndWait("//table[@id='abstractors_work_table']//tr[3]/td[1]/a");
+        clickAndWait("//table[@id='abstractors_work_table']//tr[2]/td[1]/a");
         verifyResultsTabActive();
         assertTrue(isTrialInResultsTab(admin));
 
@@ -1265,23 +1265,20 @@ public class DashboardTest extends AbstractTrialStatusTest {
         verifyDateRangeFilter(first, today, second, tomorrow, "Ready for TSR");
 
     }
-    
+
     @Test
     public void testEnterKeyForSearch() {
         loginAsSuperAbstractor();
         clickAndWait("id=dashboardMenuOption");
 
         s.click("searchid");
-        
-        //press enter on this page
+
+        // press enter on this page
         selenium.keyPressNative("10");
-       
-        //check if search is called
+
+        // check if search is called
         selenium.isTextPresent("At least one criteria is required");
-        
-       
-      
-       
+
     }
 
     private void verifyDateRangeFilter(TrialInfo first, String date1,
