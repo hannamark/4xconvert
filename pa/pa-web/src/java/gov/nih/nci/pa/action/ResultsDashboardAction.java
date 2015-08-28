@@ -13,8 +13,10 @@ import gov.nih.nci.pa.dto.StudyProcessingErrorDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProcessingErrorService;
 import gov.nih.nci.pa.service.StudyProtocolService;
@@ -23,6 +25,7 @@ import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.ActionUtils;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.ByteArrayInputStream;
@@ -202,6 +205,20 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
                                 SKIP_ALTERNATE_TITLES, SKIP_LAST_UPDATER_INFO,
                                 SKIP_OTHER_IDENTIFIERS);
                 
+                for (StudyProtocolQueryDTO resultQueryDTO: currentResults) {
+                    DocumentDTO documentDTO = getComparisonReviewForStudyProtocol(resultQueryDTO.getStudyProtocolId()); 
+                    if (documentDTO != null) {
+                        resultQueryDTO.setCcctUserCreatedDate(
+                                TsConverter.convertToTimestamp(documentDTO.getCcctUserReviewDateTime()));
+                        resultQueryDTO.setCtroUserCreatedDate(
+                                TsConverter.convertToTimestamp(documentDTO.getCtroUserReviewDateTime()));
+                        resultQueryDTO.setCcctUserName(
+                                PAUtil.getDocumentUserCtroOrCcctReviewerName(documentDTO, false));
+                        resultQueryDTO.setCtroUserName(
+                                PAUtil.getDocumentUserCtroOrCcctReviewerName(documentDTO, true));
+                    }
+                }
+                
                 results.addAll(currentResults);
             }
             loadResultsChartData(results);
@@ -212,6 +229,20 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
                     e.getLocalizedMessage());
         }
         return RESULT_ABSTRACTOR_LANDING;
+    }
+    
+    /**
+     * Returns a comparison document DTO for a given study protocol 
+     * @param studyProtocolId
+     * @return {@link DocumentDTO}
+     * @throws PAException
+     */
+    private DocumentDTO getComparisonReviewForStudyProtocol(Long studyProtocolId) throws PAException {
+        DocumentDTO docDTO =
+                 PaRegistry.getDocumentService()
+                     .getComparisonDocumentByStudyProtocol(IiConverter.convertToIi(studyProtocolId));
+         
+        return docDTO;
     }
 
 

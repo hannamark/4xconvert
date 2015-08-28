@@ -235,6 +235,49 @@ public class DocumentServiceBeanTest extends AbstractHibernateTestCase {
         assertEquals("TSR1.doc", list.get(1).getFileName().getValue());
         assertEquals("TSR2.doc", list.get(2).getFileName().getValue());
     }
+    
+    @Test
+    public void testGetComparisonDocumentByStudyProtocol() throws PAException, ParseException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        Query query = session.createQuery("delete Document");
+        query.executeUpdate();
+        session.flush();
+        
+        StudyProtocol sp = new StudyProtocol();
+        sp.setId(TestSchema.studyProtocolIds.get(0));
+        
+        StudyProtocol origSp = new StudyProtocol();
+        origSp.setId(TestSchema.inactiveProtocolId);
+        
+        Document doc1 = new Document();
+        doc1.setStudyProtocol(sp);
+        doc1.setTypeCode(DocumentTypeCode.COMPARISON);
+        doc1.setActiveIndicator(true);
+        doc1.setFileName("COMPARISON.doc");
+        doc1.setDateLastUpdated(DateUtils.parseDate("01/01/2012", new String[] {"MM/dd/yyyy"}));
+        doc1.setCcctUserCreatedDate(DateUtils.parseDate("01/01/2013", new String[] {"MM/dd/yyyy"}));
+        doc1.setCtroUserCreatedDate(DateUtils.parseDate("01/01/2013", new String[] {"MM/dd/yyyy"}));
+        TestSchema.addUpdObject(doc1);
+        
+        Document doc2 = new Document();
+        doc2.setStudyProtocol(origSp);
+        doc2.setTypeCode(DocumentTypeCode.TSR);
+        doc2.setActiveIndicator(true);
+        doc2.setFileName("TSR2.doc");
+        doc2.setDateLastUpdated(DateUtils.parseDate("12/31/2011", new String[] {"MM/dd/yyyy"}));
+        TestSchema.addUpdObject(doc2);
+        
+        Document doc3 = new Document();
+        doc3.setStudyProtocol(sp);
+        doc3.setTypeCode(DocumentTypeCode.TSR);
+        doc3.setActiveIndicator(true);
+        doc3.setFileName("TSR3.doc");
+        doc3.setDateLastUpdated(DateUtils.parseDate("02/01/2012", new String[] {"MM/dd/yyyy"}));
+        TestSchema.addUpdObject(doc3);      
+        
+        DocumentDTO document = remoteEjb.getComparisonDocumentByStudyProtocol(pid);        
+        assertEquals("COMPARISON.doc", document.getFileName().getValue());        
+    }
 
     @Test
     public void iiRootTest() throws Exception {

@@ -197,6 +197,43 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         return convertFromDomainToDTOs(results);
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public DocumentDTO getComparisonDocumentByStudyProtocol(Ii studyProtocolIi) throws PAException {
+        protocolIdCheck(studyProtocolIi);
+
+        Document criteria = new Document();
+        StudyProtocol sp = new StudyProtocol();
+        sp.setId(IiConverter.convertToLong(studyProtocolIi));
+        criteria.setStudyProtocol(sp);
+        criteria.setActiveIndicator(Boolean.TRUE);
+
+        PageSortParams<Document> params =
+            new PageSortParams<Document>(PAConstants.MAX_SEARCH_RESULTS, 0, DocumentSortCriterion.DOCUMENT_ID, false);
+
+        List<Document> inputDocumentsList = search(new AnnotatedBeanSearchCriteria<Document>(criteria), params);
+        
+        Document result =  filterComparisonDocument(inputDocumentsList);
+        
+        if (result != null) {
+            return convertFromDomainToDto(result);
+        }
+        
+        return null;
+    }
+    
+    private Document filterComparisonDocument(List<Document> inputDocumentsList) {     
+        
+        for (Document document : inputDocumentsList) {
+            if (document.getTypeCode() == DocumentTypeCode.COMPARISON) {
+                    return document;
+            }            
+        }        
+        return null;
+    }
+    
     private List<Document> filterDocuments(List<Document> inputDocumentsList , boolean isReportsOnly) {
         List<Document> results = new ArrayList<Document>();
         

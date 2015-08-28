@@ -80,8 +80,8 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO
     private List<OrganizationDTO> orgsThatCanBeAddedAsSite;
     private String accrualDiseaseCode;
     private List<StudyOnholdDTO> allHolds = new ArrayList<>();
-
-    /**
+    
+   /**
      * Whether this trial permits self-registration of participating sites.
      * 
      * @see https://tracker.nci.nih.gov/browse/PO-2034
@@ -141,7 +141,79 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO
     private Date resultsApprovedByPIODate;
     private Date prsReleaseDate;
     private Date qaCommentsReturnedDate;
-    private Date trialPublishedDate;
+    private Date trialPublishedDate;   
+    
+    private Date ctroUserCreatedDate; 
+    private Date ccctUserCreatedDate;
+    
+    private String ctroUserName;
+    private String ccctUserName;
+   
+    /**
+     * 
+     * @return ctro user name
+     */
+    public String getCtroUserName() {
+        return ctroUserName;
+    }
+    
+    /**      
+     * @param ctroUserName
+     *              sets user name for the ctro
+     */
+    public void setCtroUserName(String ctroUserName) {
+        this.ctroUserName = ctroUserName;
+    }
+
+    /**
+     * 
+     * @return ccct user name
+     */
+    public String getCcctUserName() {
+        return ccctUserName;
+    }
+
+    /**      
+     * @param ccctUserName
+     *              sets user name for the ccct 
+     */
+    public void setCcctUserName(String ccctUserName) {
+        this.ccctUserName = ccctUserName;
+    }
+
+    /**
+     * 
+     * @return ccctUserCreatedDate
+     */
+    public Date getCcctUserCreatedDate() {        
+        return ccctUserCreatedDate;
+    }
+    
+    /**
+     * 
+     * @param ccctUserCreatedDate
+     *             sets user reviewed date
+     */    
+    public void setCcctUserCreatedDate(Date ccctUserCreatedDate) {
+        this.ccctUserCreatedDate = ccctUserCreatedDate;
+    }
+    
+    /**
+     * 
+     * @return ctroUserCreatedDate
+     */
+    public Date getCtroUserCreatedDate() {        
+        return ctroUserCreatedDate; 
+    }
+
+    /**
+     * 
+     * @param ctroUserCreatedDate
+     *           sets ctro user reviewed date
+     */
+    public void setCtroUserCreatedDate(Date ctroUserCreatedDate) {
+        this.ctroUserCreatedDate = ctroUserCreatedDate;
+    }
     
     /**
      * @return link

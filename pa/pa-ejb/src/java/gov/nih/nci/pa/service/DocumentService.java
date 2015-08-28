@@ -115,6 +115,14 @@ public interface DocumentService extends StudyPaService <DocumentDTO> {
     List<DocumentDTO> getDocumentsAndAllTSRByStudyProtocol(Ii studyProtocolIi) throws PAException;
     
     /**
+     * Returns the document which is of type COMPARISON for a given study protocol.
+     * @param studyProtocolIi study ID
+     * @return DocumentDTO
+     * @throws PAException PAException
+     */
+    DocumentDTO getComparisonDocumentByStudyProtocol(Ii studyProtocolIi) throws PAException;
+    
+    /**
      * Forces delete of the given document thereby bypassing validation checks.
      * @param documentIi documentIi
      * @throws PAException PAException

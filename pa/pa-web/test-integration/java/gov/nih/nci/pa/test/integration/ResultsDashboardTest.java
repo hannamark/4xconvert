@@ -86,8 +86,12 @@ package gov.nih.nci.pa.test.integration;
 
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 
+import java.sql.Date;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.junit.After;
@@ -193,9 +197,16 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         selenium.type("id=pcdFrom", "01/01/2015");
         selenium.type("id=pcdTo", "12/31/2015");
         final Select selectBox = new Select(driver.findElement(By.id("pcdType")));
+        
+        DateFormat df = new SimpleDateFormat("MM/dd/yyyy");        
+        java.util.Date today = Calendar.getInstance().getTime();
+        String reportDate = df.format(today);
+        
         selectBox.selectByValue("Anticipated");
         clickAndWait("link=Search");
         assertTrue(selenium.isTextPresent("One item found.1"));
+        
+        assertTrue(selenium.isTextPresent("ClinicalTrials.gov Import " + reportDate));
         assertTrue(selenium.isTextPresent(testTrials.get(0).nciID));
         assertFalse(selenium.isTextPresent(testTrials.get(1).nciID));
         assertFalse(selenium.isTextPresent(testTrials.get(2).nciID));
@@ -309,6 +320,7 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         addSponsor(trial, "National Cancer Institute");
         addDWS(trial, "ABSTRACTION_VERIFIED_RESPONSE");
         setPCD(trial, "2015-01-01", ActualAnticipatedTypeCode.ANTICIPATED);
+        addDocument(trial, "COMPARISON", "Protocol.doc");
         setSeciont801Indicator(trial, true);
         testTrials.add(trial);
         trial = createSubmittedTrial();

@@ -418,8 +418,12 @@ function searchResults(url, studyNCIid){
                       <input id="resultsApprovedByPIODate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.resultsApprovedByPIODate}" pattern="MM/dd/yyyy"/>"/>
                  </display:column>
                  <display:column  title="CTRO Trial Comparison Review">
+                     <c:out value="${row.ctroUserName}"/>                 	
+                 	 <fmt:formatDate value="${row.ctroUserCreatedDate}" pattern="MM/dd/yyyy hh:mm aaa"/>
                  </display:column>
                  <display:column  title="CCCT Trial Comparison Review">
+                    <c:out value="${row.ccctUserName}"/>
+                 	<fmt:formatDate value="${row.ccctUserCreatedDate}" pattern="MM/dd/yyyy hh:mm aaa"/>
                  </display:column>
                  <display:column  title="Trial Comparison Approval">
                  </display:column>
