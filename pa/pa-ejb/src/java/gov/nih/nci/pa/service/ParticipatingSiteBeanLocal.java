@@ -152,6 +152,7 @@ import gov.nih.nci.pa.service.status.json.AppName;
 import gov.nih.nci.pa.service.status.json.TransitionFor;
 import gov.nih.nci.pa.service.status.json.TrialType;
 import gov.nih.nci.pa.service.util.FamilyHelper;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.SiteStatusChangeNotificationData;
 import gov.nih.nci.pa.service.util.SiteStatusChangeNotificationData.SiteData;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -170,7 +171,6 @@ import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
-import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -920,21 +920,10 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
     }
     
     @SuppressWarnings("unchecked")
-    private OrganizationDTO getPOOrganizationEntity(Ii entityIi) {
-        OrganizationDTO poOrg = null;
-        try {
-            poOrg = PoRegistry.getOrganizationEntityService()
-                              .getOrganization(IiConverter.convertToPoOrganizationIi(entityIi.getExtension()));
-        } catch (NullifiedEntityException e) {
-            poOrg = null;
-        }
-        return poOrg;
-    }
-    
-    @SuppressWarnings("unchecked")
     @Override
     public List<Organization> getListOfSitesUserCanAdd(RegistryUser user,
             Ii studyProtocolID) throws PAException, NullifiedRoleException {
+        PAServiceUtils paServiceUtil = new PAServiceUtils();
         Long userOrgPoId = user.getAffiliatedOrganizationId();
         List<Long> siblingsPoIds = FamilyHelper
                 .getAllRelatedOrgs(userOrgPoId);
@@ -948,10 +937,10 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
                                                 .getIdentifier()));
                     }
                 });
-        OrganizationDTO affiliation = getPOOrganizationEntity(IiConverter.convertToIi(userOrgPoId));
+        OrganizationDTO affiliation = paServiceUtil.getPOOrganizationEntity(IiConverter.convertToIi(userOrgPoId));
         allMembersList.add(affiliation);
         for (Long poID : siblingsPoIds) {
-            OrganizationDTO sibling = getPOOrganizationEntity(IiConverter.convertToIi(poID));
+            OrganizationDTO sibling = paServiceUtil.getPOOrganizationEntity(IiConverter.convertToIi(poID));
             if (sibling != null) {
                 allMembersList.add(sibling);
             }
@@ -965,10 +954,7 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
        
          List<Organization> orgsThatCanBeAddeddASite = new ArrayList<>(candidates.size());
          for (OrganizationDTO tempOrgDto : candidates) {
-             Organization org = new Organization();
-             org.setIdentifier(tempOrgDto.getIdentifier().getExtension());
-             org = PaRegistry.getPAOrganizationService().getOrganizationByIndetifers(org);
-             orgsThatCanBeAddeddASite.add(org);
+             orgsThatCanBeAddeddASite.add(paServiceUtil.getOrCreatePAOrganizationByIi(tempOrgDto.getIdentifier()));
           }
         return orgsThatCanBeAddeddASite;
     }
