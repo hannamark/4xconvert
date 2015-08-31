@@ -91,23 +91,48 @@ public class ReportViewerActionTest extends AbstractRegWebTest {
         assertNotNull(lst);
         assertEquals(2, lst.size());
 
-        List<RegistryUser> rlst = (List<RegistryUser>) sess.getAttribute("reportList");
+        List<String> rlst = (List<String>) sess.getAttribute("reportList");
         assertNotNull(rlst);
         assertEquals(2, rlst.size());
 
         try {
-
+            
             RegistryUser member = lst.get(0);
+            for (RegistryUser registryUser : lst) {
+                if(registryUser.getFirstName().equals("FirstName")){
+                    member = registryUser;
+                    break;
+                }
+            }
+
             Long UPDATED_USERID = member.getId();
             member.setEnableReports(true);
             lst.set(0, member);
             request.setRemoteUser("FirstName");
-            request.setupAddParameter("permittedReports", "DT4~" + lst.get(0).getId());
+            request.setupAddParameter("permittedReports", new String[]{"DT4~" + member.getId()});
             sess.setAttribute("regUsersList", lst);
             ServletActionContext.setRequest(request);
 
             action.save();
 
+            request.setupAddParameter("permittedReports", new String[]{"DT4~" + member.getId(),"DT3~" + member.getId()});
+            sess.setAttribute("regUsersList", lst);
+            ServletActionContext.setRequest(request);
+            
+            action.save();
+            
+            request.setupAddParameter("permittedReports", "");
+            sess.setAttribute("regUsersList", lst);
+            ServletActionContext.setRequest(request);
+            
+            action.save();
+            
+            request.setupAddParameter("permittedReports", new String[]{"DT3~" + member.getId()});
+            sess.setAttribute("regUsersList", lst);
+            ServletActionContext.setRequest(request);
+            
+            action.save();
+            
             assertEquals("viewResults", action.search());
             List<RegistryUser> updatedLst = (List<RegistryUser>) sess.getAttribute("regUsersList");
             assertNotNull(updatedLst);

@@ -105,6 +105,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         dto.setAffiliatedOrgUserType(UserOrgType.MEMBER);
         dto.setSiteAccrualSubmitter(false);
         dto.setFamilyAccrualSubmitter(false);
+        dto.setReportGroups("DT4");
         userList.add(dto);
     }
 
