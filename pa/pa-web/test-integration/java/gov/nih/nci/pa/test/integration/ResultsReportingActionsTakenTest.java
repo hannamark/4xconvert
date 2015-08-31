@@ -225,9 +225,9 @@ public class ResultsReportingActionsTakenTest extends AbstractPaSeleniumTest {
     }
     
     private void createStudyProcessingErrors(long studyid) throws Exception{
-        String sql = "Insert into study_processing_error values("+ ++speid+"," + studyid+",'2015-07-28 13:29:28','Study Errror1 "+studyid+"',TRUE,'','','','',NULL,'2015-07-28 13:30:24.422',NULL,NULL,NULL);"+ 
-                "Insert into study_processing_error values("+ ++speid+"," +studyid+",'2015-07-28 13:29:28','Study Errror1 "+studyid+"',TRUE,'','','','',NULL,'2015-07-28 13:30:24.356',NULL,NULL,NULL);"+
-                "Insert into study_processing_error values("+ ++speid+"," +studyid+",'2015-07-28 13:29:28','Study Errror2 "+studyid+"',TRUE,'','','','',NULL,'2015-07-28 13:30:24.288',NULL,NULL,NULL);" ;
+        String sql = "Insert into study_processing_error values("+ ++speid+"," + studyid+",'now()','Study Errror1 "+studyid+"',TRUE,'','','','',NULL,'2015-07-28 13:30:24.422',NULL,NULL,NULL);"+ 
+                "Insert into study_processing_error values("+ ++speid+"," +studyid+",'now()','Study Errror1 "+studyid+"',TRUE,'','','','',NULL,'2015-07-28 13:30:24.356',NULL,NULL,NULL);"+
+                "Insert into study_processing_error values("+ ++speid+"," +studyid+",'now()','Study Errror2 "+studyid+"',TRUE,'','','','',NULL,'2015-07-28 13:30:24.288',NULL,NULL,NULL);" ;
         QueryRunner runner = new QueryRunner();
         runner.update(connection, sql);
       }
