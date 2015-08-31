@@ -1,20 +1,30 @@
 package gov.nih.nci.registry.rest.jasper;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import java.io.File;
+import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
-import org.hibernate.Session;
+import javax.crypto.Cipher;
+
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import gov.nih.nci.pa.domain.Account;
+import gov.nih.nci.pa.domain.Keystore;
+import gov.nih.nci.pa.domain.KeystoreTest;
+import gov.nih.nci.pa.enums.ExternalSystemCode;
 import gov.nih.nci.pa.util.MockPaRegistryServiceLocator;
-import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.registry.rest.jasper.Users.User;
 import gov.nih.nci.registry.service.MockLookUpTableService;
 import gov.nih.nci.registry.service.MockRestClientNCITServer;
 
@@ -27,13 +37,28 @@ public class JasperServerRestClientTest {
 
     @Before
     public void setup() throws Exception {
+        
+        File keystoreFile = new File(SystemUtils.JAVA_IO_TMPDIR, UUID.randomUUID()
+                .toString());
+        keystoreFile.deleteOnExit();
+
+        KeystoreTest.setFinalStatic(
+                Keystore.class.getDeclaredField("KEYSTORE_FILE"), keystoreFile);
+        
         mockRestClientNCITServer.startServer(NCIT_API_MOCK_PORT);
         String baseURL = "http://localhost:" + NCIT_API_MOCK_PORT + "/reports/rest/user";
 
-        MockPaRegistryServiceLocator paReg = new MockPaRegistryServiceLocator();
-        PaRegistry.getInstance().setServiceLocator(paReg);
-
+        
+        MockPaRegistryServiceLocator mockPaReg = mock(MockPaRegistryServiceLocator.class);
+        MockLookUpTableService mockPaLookup = mock(MockLookUpTableService.class);
+        
+        when(mockPaLookup.getJasperCredentialsAccount()).thenReturn(getAccount());
+        when(mockPaReg.getLookUpTableService()).thenReturn(mockPaLookup);
+        
+        PaRegistry.getInstance().setServiceLocator(mockPaReg);
+        
         restClient = new JasperServerRestClient(baseURL, true);
+        restClient.setLookUpTableService(new MockLookUpTableService());
         
         reportGroupMap = new HashMap<String, String>();
         reportGroupMap.put("DT4", "ROLE_DT4");
@@ -41,39 +66,66 @@ public class JasperServerRestClientTest {
         
     }
 
-    @Test
-    public void testGetAllUserDetails() {
-
-        Users resp = restClient.getAllUserDetails();
-        assertNotNull(resp);
-
+    private Account getAccount() {
+        
+        Account account = new Account();
+        account.setAccountName("jasper.token");
+        account.setEncryptedPassword(getEncryptedPassword());
+        account.setExternalSystem(ExternalSystemCode.JASPER);
+        account.setUsername("jasperadmin");
+        
+        return account;
     }
-
-    @Test
-    public void testGetUserDetails() {
-        Users resp = restClient.getUserDetails("firstName");
-        assertNotNull(resp);
-        assertEquals("firstName", resp.getUser().get(0).getUsername());
+    
+    private String getEncryptedPassword() {
+        Keystore ks = new Keystore();
+        String password = RandomStringUtils.randomAscii(32);
+        byte[] encryptedBytes = encrypt(password, ks.getKeypair().getPublic());
+        String encryptedPasswordInHexUpper = Hex
+                .encodeHexString(encryptedBytes).toUpperCase();
+        
+        return encryptedPasswordInHexUpper;
     }
-
+    
+    public static byte[] encrypt(String text, PublicKey key) {
+        byte[] cipherText = null;
+        try {
+            // get an RSA cipher object and print the provider
+            final Cipher cipher = Cipher.getInstance("RSA");
+            // encrypt the plain text using the public key
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+            cipherText = cipher.doFinal(text.getBytes());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return cipherText;
+    }
+    
     @Test
     public void testUpdateRoles() {
-        Users users = restClient.getUserDetails("firstName");
-        User user = users.getUser().get(0);
+        String user = "firstName";
         String reportIds = "DT4";
-        String upResp = restClient.updateRoles(user, reportIds, reportGroupMap);
+        String upResp = restClient.checkAndUpdateUser(user, reportIds, reportGroupMap);
         assertNotNull(upResp);
     }
 
     @Test
     public void testUpdateRolesWithOrg() {
-        Users users = restClient.getUserDetails("firstName");
-        User user = users.getUser().get(0);
+        String user = "firstName";
         String reportIds = "DT3";
-        String upResp = restClient.updateRoles(user, reportIds, reportGroupMap);
+        String upResp = restClient.checkAndUpdateUser(user, reportIds, reportGroupMap);
         assertNotNull(upResp);
     }
-
+    
+    @Test
+    public void testCreateUserWithDefaultRolesBadRequest() {
+        String user = "badRequest";
+        String reportIds = "DT3";
+        String upResp = restClient.checkAndUpdateUser(user, reportIds, reportGroupMap);
+        
+        assert(upResp.contains("403"));
+    }
+    
     @After
     public void tearDown() throws Exception {
         mockRestClientNCITServer.stopServer();

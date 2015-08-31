@@ -1,9 +1,11 @@
 package gov.nih.nci.registry.action;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -21,8 +23,6 @@ import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.rest.jasper.JasperServerRestClient;
-import gov.nih.nci.registry.rest.jasper.Users;
-import gov.nih.nci.registry.rest.jasper.Users.User;
 import gov.nih.nci.registry.util.ReportViewerCriteria;
 
 /**
@@ -127,6 +127,19 @@ public class ReportViewerAction extends ActionSupport implements Preparable {
                 regUserCri.setEmailAddress(criteria.getEmailAddress());
 
                 List<RegistryUser> regUsers = getRegistryUserService().search(regUserCri);
+
+                /*
+                 * PO-9174: Remove registry user from list if doesn't have CSM
+                 * user
+                 */
+                Iterator<RegistryUser> regUserItr = regUsers.iterator();
+                while (regUserItr.hasNext()) {
+                    RegistryUser regUserLcl = regUserItr.next();
+                    if (regUserLcl.getCsmUser() == null) {
+                        regUserItr.remove();
+                    }
+                }
+
                 registryUsers.addAll(sortBasedOnFirstName(regUsers));
             }
 
@@ -205,7 +218,7 @@ public class ReportViewerAction extends ActionSupport implements Preparable {
                 String[] reportGroupArr = reportKeyValue.split("[:]");
 
                 if (reportGroupArr != null && reportGroupArr.length >= 2) {
-                   
+
                     reportGroupMap.put(reportGroupArr[0], reportGroupArr[1]);
                     reportList.add(reportGroupArr[0]);
 
@@ -222,7 +235,6 @@ public class ReportViewerAction extends ActionSupport implements Preparable {
                 reportGroupMap);
     }
 
-    
     /**
      * save.
      * 
@@ -241,94 +253,114 @@ public class ReportViewerAction extends ActionSupport implements Preparable {
             HashMap<String, String> reportGroupMap = (HashMap<String, String>) ServletActionContext.getRequest()
                     .getSession().getAttribute(ReportViewerAction.REPORT_ROLE_LIST);
 
-            String[] permittedReports = ServletActionContext.getRequest().getParameterValues("permittedReports");
-            HashMap<String, String> permittedReportsFromViewMap = new HashMap<>();
+            HashMap<String, String> permittedReportsFromViewMap = getPermittedReportMap();
 
-            if (permittedReports != null) {
-                for (String permittedReport : permittedReports) {
+            // pick updated users only.
 
-                    String[] reportTokens = permittedReport.split("[~]");
+            List<RegistryUser> dirtyUpdatedUsers = getDirtyUpdatedUsers(registryUsers, permittedReportsFromViewMap);
 
-                    if (reportTokens.length >= 2) {
-
-                        String reportId = reportTokens[0];
-                        String regId = reportTokens[1];
-                        String availableReportIds = permittedReportsFromViewMap.get(regId);
-
-                        if (availableReportIds != null) {
-
-                            permittedReportsFromViewMap.put(regId.trim(), availableReportIds + "," + reportId.trim());
-
-                        } else {
-                            permittedReportsFromViewMap.put(regId.trim(), reportId.trim());
-                        }
-
-                    }
-                }
-            }
-
-            HashMap<String, User> jasperUserMap = new HashMap<String, User>();
-            Users response = jasperRestClient.getAllUserDetails();
-            List<User> usersList = response.getUser();
-
-            for (User user : usersList) {
-                jasperUserMap.put(user.getUsername(), user);
-            }
-
-            for (RegistryUser regUser : registryUsers) {
+            for (RegistryUser regUser : dirtyUpdatedUsers) {
                 String reportIds = permittedReportsFromViewMap.get(regUser.getId().toString());
 
-                // does enable reports makes any sense after the requirement
-                // change?
                 boolean dbEnableReports = regUser.getEnableReports() == null ? false : regUser.getEnableReports();
 
                 if (!dbEnableReports && reportIds != null && reportIds.length() > 0) {
-
                     regUser.setEnableReports(true);
                 }
 
-                String jasperRoleUpdateResponse = "";
-                String loginName = gov.nih.nci.pa.util.CsmUserUtil
-                        .getGridIdentityUsername(regUser.getCsmUser().getLoginName());
-                User targetUser = jasperUserMap.get(loginName);
+                String csmUsername = regUser.getCsmUser().getLoginName();
+                String loginName = gov.nih.nci.pa.util.CsmUserUtil.getGridIdentityUsername(csmUsername);
 
-                if (targetUser != null) {
+                String jasperClientResponse = jasperRestClient.checkAndUpdateUser(loginName, reportIds, reportGroupMap);
 
-                    jasperRestClient.updateRoles(targetUser, reportIds, reportGroupMap);
-
-                } else {
-
-                    LOG.log(Priority.DEBUG,
-                            "User not available on the Jasper server - " + regUser.getCsmUser().getLoginName());
-                }
-
-                if (jasperRoleUpdateResponse != null && jasperRoleUpdateResponse.length() > 0) {
-                    // not updated
-
-                    failedToUpdateUsers += "Unable to update user " + regUser.getCsmUser().getLoginName()
-                            + " jasper role. Please contact Admin <br/>";
+                if (jasperClientResponse != null && jasperClientResponse.length() > 0
+                        && jasperClientResponse.startsWith("Error")) {
+                    failedToUpdateUsers += "Unable to update user " + regUser.getFullName()
+                            + " jasper role. Response from Jasper - (" + jasperClientResponse
+                            + ") . Please contact Admin";
 
                 } else {
-
                     regUser.setReportGroups(reportIds);
                     LOG.log(Priority.DEBUG, "save: reportIds: " + reportIds + " regId: " + regUser.getId());
-
                     getRegistryUserService().updateUser(regUser);
+                    ServletActionContext.getRequest().setAttribute("successMessage",
+                            getText("reportviewers.status.success"));
                 }
             }
 
         } catch (Exception e) {
-            ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
-            throw new PAException(e);
+            failedToUpdateUsers += "Unable to update user - " + e.getMessage();
         }
 
         if (failedToUpdateUsers.length() > 0) {
             ServletActionContext.getRequest().setAttribute("failureMessage", failedToUpdateUsers);
         }
-        ServletActionContext.getRequest().setAttribute("successMessage", getText("reportviewers.status.success"));
-        ServletActionContext.getRequest().setAttribute("noteMessage", getText("reportviewers.status.note"));
 
         return search();
+    }
+
+    private List<RegistryUser> getDirtyUpdatedUsers(List<RegistryUser> registryUsersParam,
+            HashMap<String, String> permittedReportsFromViewMap) {
+
+        List<RegistryUser> updatedUsers = new ArrayList<RegistryUser>();
+
+        for (RegistryUser regUser : registryUsersParam) {
+            String existingReportGrps = regUser.getReportGroups();
+            String permittedReportIds = permittedReportsFromViewMap.get(regUser.getId().toString());
+
+            if (existingReportGrps == null && permittedReportIds == null) {
+                continue;
+            } else if (existingReportGrps != null && permittedReportIds != null) {
+
+                List<String> exRepoList = Arrays.asList(existingReportGrps.split(","));
+                List<String> permitReports = Arrays.asList(permittedReportIds.split(","));
+
+                if (exRepoList.size() != permitReports.size()) {
+                    updatedUsers.add(regUser);
+
+                } else {
+                    if (exRepoList.size() > 0) {
+                        if (!exRepoList.containsAll(permitReports)) {
+                            updatedUsers.add(regUser);
+                        }
+                    }
+                }
+            } else {
+                updatedUsers.add(regUser);
+            }
+        }
+
+        LOG.debug(">>>>>Users to update: " + updatedUsers.size());
+        return updatedUsers;
+    }
+
+    /**
+     * @return
+     */
+    private HashMap<String, String> getPermittedReportMap() {
+        String[] permittedReports = ServletActionContext.getRequest().getParameterValues("permittedReports");
+        HashMap<String, String> permittedReportsFromViewMap = new HashMap<>();
+
+        if (permittedReports != null) {
+            for (String permittedReport : permittedReports) {
+
+                String[] reportTokens = permittedReport.split("[~]");
+
+                if (reportTokens.length >= 2) {
+
+                    String reportId = reportTokens[0];
+                    String regId = reportTokens[1];
+                    String availableReportIds = permittedReportsFromViewMap.get(regId);
+
+                    if (availableReportIds != null) {
+                        permittedReportsFromViewMap.put(regId.trim(), availableReportIds + "," + reportId.trim());
+                    } else {
+                        permittedReportsFromViewMap.put(regId.trim(), reportId.trim());
+                    }
+                }
+            }
+        }
+        return permittedReportsFromViewMap;
     }
 
     /**

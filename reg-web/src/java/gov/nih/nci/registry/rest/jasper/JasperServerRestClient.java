@@ -13,6 +13,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,8 @@ import gov.nih.nci.registry.rest.jasper.Users.User.Roles;
  */
 public class JasperServerRestClient {
 
+    private static final String PIPE_DELIMITER = "[|]";
+
     private static final Logger LOG = Logger.getLogger(JasperServerRestClient.class);
 
     private String baseUrl = "http://localhost:8080/jasperserver/rest/user";
@@ -52,19 +55,28 @@ public class JasperServerRestClient {
     private String password = "jasperadmin";
     private static final String GET = "GET";
     private static final String POST = "POST";
+    private static final String PUT = "PUT";
     private LookUpTableServiceRemote lookupTableService;
     private ObjectFactory objFact;
     private Marshaller userMarshaller;
     private Unmarshaller usersUnmarshaller;
     private int httpTimeout;
-    private static final Integer HTTP_SUCCESS_CODE = 200;
+    private Map<String, User> jasperUserMap;
+    private String defaultUserTenantId;
+
+    private String defaultRolesForDT4;
+
+    private String errorResponse;
+    private static final Integer HTTP_SUCCESS_CODE_200 = 200;
+    private static final Integer HTTP_SUCCESS_CODE_201 = 201;
 
     /**
      * 
      * @param baseURL
      *            - Jasper server base URL
-     *            
-     * @param allowTrustedSites - enables to allow all tursted sites
+     * 
+     * @param allowTrustedSites
+     *            - enables to allow all tursted sites
      */
 
     public JasperServerRestClient(String baseURL, boolean allowTrustedSites) {
@@ -72,16 +84,20 @@ public class JasperServerRestClient {
 
             baseUrl = baseURL;
             lookupTableService = PaRegistry.getLookUpTableService();
-            
+
             try {
-                Account account = lookupTableService.getJasperCredentialsAccount(); 
+                Account account = lookupTableService.getJasperCredentialsAccount();
                 username = account.getUsername();
                 password = account.getDecryptedPassword();
             } catch (PAException e1) {
+
                 LOG.error(e1.getMessage(), e1);
             }
-            
-            
+
+            defaultUserTenantId = getPropertyValue("jasper.rest.user.default.tenantid", "organization_1");
+            defaultRolesForDT4 = getPropertyValue("jasper.rest.role.default.dt4",
+                    "ROLE_ANONYMOUS,ROLE_USER,ROLE_DT4_VIEWERS|organization_1");
+
             JAXBContext usersJxContext = JAXBContext.newInstance(Users.class);
             usersUnmarshaller = usersJxContext.createUnmarshaller();
 
@@ -94,10 +110,8 @@ public class JasperServerRestClient {
             }
             objFact = new ObjectFactory();
             try {
-                httpTimeout = Integer.parseInt(getPropertyValue("jasper.rest.http.timeout.millis"));
+                httpTimeout = Integer.parseInt(getPropertyValue("jasper.rest.http.timeout.millis", "10000"));
             } catch (NumberFormatException e) {
-                LOG.error(e.getMessage(), e);
-            } catch (PAException e) {
                 LOG.error(e.getMessage(), e);
             }
 
@@ -107,15 +121,28 @@ public class JasperServerRestClient {
         }
     }
 
+    private void buildUserMap() {
+
+        jasperUserMap = new HashMap<String, User>();
+        Users response = getAllUserDetails();
+
+        if (response != null) {
+            List<User> usersList = response.getUser();
+            for (User user : usersList) {
+                jasperUserMap.put(user.getUsername(), user);
+            }
+        }
+    }
+
     /**
      * 
      * @param name
      *            get property value
+     * @param defaultValue
+     *            if property is null, returns the default value passed.
      * @return property value
-     * @throws PAException
-     *             throws PAException
      */
-    private String getPropertyValue(String name) throws PAException {
+    private String getPropertyValue(String name, String defaultValue) {
         String retString = "";
 
         try {
@@ -125,7 +152,10 @@ public class JasperServerRestClient {
 
         } catch (Exception ex) {
             LOG.log(Priority.ERROR, ex.getMessage());
-            throw new PAException(ex);
+        }
+
+        if (retString == null || retString.length() <= 0) {
+            retString = defaultValue;
         }
         return retString;
     }
@@ -138,12 +168,13 @@ public class JasperServerRestClient {
     }
 
     /**
-     * @param lookupTableService1 - lookupTableService
+     * @param lookupTableService1
+     *            - lookupTableService
      */
     public void setLookUpTableService(LookUpTableServiceRemote lookupTableService1) {
         this.lookupTableService = lookupTableService1;
     }
-    
+
     /**
      * 
      * @param users
@@ -193,31 +224,35 @@ public class JasperServerRestClient {
      * 
      * @return Users object
      */
-    public Users getAllUserDetails() {
+    private Users getAllUserDetails() {
         Users users = null;
         String xmlResponse = sendHTTPRequest(baseUrl, GET, null);
-        if (xmlResponse.length() > HTTP_SUCCESS_CODE.toString().length()) {
+
+        if (xmlResponse.length() > HTTP_SUCCESS_CODE_200.toString().length() && !xmlResponse.startsWith("Error")) {
             users = unmarshallXML(xmlResponse);
+        } else {
+            errorResponse = xmlResponse;
         }
         return users;
     }
 
-    /**
-     * Give perticular Jasper user details
-     * 
-     * @param userName
-     *            - Username
-     * @return - Users object
-     */
-    public Users getUserDetails(String userName) {
-        Users users = null;
-        String xmlResponse = sendHTTPRequest(baseUrl + "/" + userName, GET, null);
-        if (xmlResponse.length() > HTTP_SUCCESS_CODE.toString().length()) {
-            users = unmarshallXML(xmlResponse);
-        }
-
-        return users;
-    }
+    /*    *//**
+             * Give particular Jasper user details
+             * 
+             * @param userName
+             *            - Username
+             * @return - Users object
+             *//*
+               * public Users getUserDetails(String userName) { Users users =
+               * null; String xmlResponse = sendHTTPRequest(baseUrl + "/" +
+               * userName, GET, null); if (xmlResponse.length() >
+               * HTTP_SUCCESS_CODE_200.toString().length() &&
+               * !xmlResponse.startsWith("Error")) { users =
+               * unmarshallXML(xmlResponse); } else { errorResponse =
+               * xmlResponse; }
+               * 
+               * return users; }
+               */
 
     /**
      * Converts give user corresponding roles into list of Roles objects
@@ -235,8 +270,8 @@ public class JasperServerRestClient {
 
         for (String reportId : reportIdsArr) {
             String reportName = reportGroupMap.get(reportId);
-            if (reportName.contains("|")) {
-                String[] roleTenantArr = reportName.split("[|]");
+            if (reportName.contains(PIPE_DELIMITER)) {
+                String[] roleTenantArr = reportName.split(PIPE_DELIMITER);
                 updateRoles.add(getRole(roleTenantArr[0], roleTenantArr[1]));
             } else {
                 updateRoles.add(getRole(reportName));
@@ -261,7 +296,7 @@ public class JasperServerRestClient {
         for (String groupName : reportGroupMap.values()) {
 
             if (groupName.contains("|")) {
-                updateRoles.add(getRole(groupName.split("[|]")[0], groupName.split("[|]")[1]));
+                updateRoles.add(getRole(groupName.split(PIPE_DELIMITER)[0], groupName.split(PIPE_DELIMITER)[1]));
             } else {
                 updateRoles.add(getRole(groupName));
             }
@@ -304,6 +339,39 @@ public class JasperServerRestClient {
     }
 
     /**
+     * checks and updates or creates user if not exist.
+     * 
+     * @param userName
+     *            - username
+     * @param reportIds
+     *            - reportIds
+     * @param reportGroupMap
+     *            - report group map
+     * @return - status message
+     */
+    public String checkAndUpdateUser(String userName, String reportIds, Map<String, String> reportGroupMap) {
+
+        buildUserMap();
+
+        // check errorResponse
+
+        if (errorResponse != null && errorResponse.length() > 0) {
+            return errorResponse;
+        }
+
+        User user = jasperUserMap.get(userName);
+        String response = "";
+
+        if (user != null) {
+            response = updateRoles(user, reportIds, reportGroupMap);
+        } else {
+            response = createUserWithDefaultRoles(userName);
+        }
+
+        return response;
+    }
+
+    /**
      * Invokes the REST service to update user specific roles
      * 
      * @param user
@@ -314,7 +382,8 @@ public class JasperServerRestClient {
      *            - user-role group from pa_properties
      * @return - Response after update
      */
-    public String updateRoles(User user, String reportIds, Map<String, String> reportGroupMap) {
+    public String updateRoles(User user, 
+            String reportIds, Map<String, String> reportGroupMap) {
 
         String response = "";
         List<Roles> userRoles = user.getRoles();
@@ -322,10 +391,8 @@ public class JasperServerRestClient {
         List<Roles> allRegistryRolesList = getAllRolesFromGroups(reportGroupMap);
 
         // remove
-
         Iterator<Roles> rolesItr = userRoles.iterator();
         boolean roleUserFound = false;
-        Roles roleUserObjFound = null;
 
         while (rolesItr.hasNext()) {
             Roles itrRole = rolesItr.next();
@@ -333,7 +400,6 @@ public class JasperServerRestClient {
 
             if ("ROLE_USER".equals(roleName)) {
                 roleUserFound = true;
-                roleUserObjFound = itrRole;
             }
 
             for (Roles roles : allRegistryRolesList) {
@@ -400,6 +466,44 @@ public class JasperServerRestClient {
         }
     }
 
+    private String createUserWithDefaultRoles(String userName) {
+        User newUser = objFact.createUsersUser();
+
+        newUser.setUsername(userName);
+        newUser.setFullName(userName);
+        newUser.setExternallyDefined("true");
+        newUser.setTenantId(defaultUserTenantId);
+        newUser.setEnabled("true");
+        List<Roles> roles = newUser.getRoles();
+        roles = getAllDefautJasperDT4Roles(roles);
+
+        newUser.setRoles(roles);
+
+        String postBody = marshallXML(newUser);
+
+        String response = sendHTTPRequest(baseUrl + "/" + userName, PUT, postBody);
+        return response;
+    }
+
+    private List<Roles> getAllDefautJasperDT4Roles(List<Roles> roles) {
+
+        String[] defaultRolesArr = defaultRolesForDT4.split(",");
+
+        for (String roleToken : defaultRolesArr) {
+            String[] roleOrgArr = roleToken.split(PIPE_DELIMITER);
+
+            if (roleOrgArr != null) {
+                if (roleOrgArr.length >= 2) {
+                    roles.add(getRole(roleOrgArr[0], roleOrgArr[1]));
+                } else if (roleOrgArr.length == 1) {
+                    roles.add(getRole(roleOrgArr[0]));
+                }
+            }
+        }
+
+        return roles;
+    }
+
     /**
      * Invokes REST api to update the user on Jasper server
      * 
@@ -413,6 +517,7 @@ public class JasperServerRestClient {
      */
     private String sendHTTPRequest(String restUrl, String method, String postBody) {
         int httpResponseCode = -1;
+        String httpResponseMessage = "";
         LOG.debug("url: " + restUrl);
         StringBuilder httpResponse = new StringBuilder();
         BufferedReader reader = null;
@@ -430,9 +535,11 @@ public class JasperServerRestClient {
             }
 
             httpResponseCode = urlConnection.getResponseCode();
-
-            if (httpResponseCode != HTTP_SUCCESS_CODE) {
-                return httpResponse.append(httpResponseCode).toString();
+            httpResponseMessage = urlConnection.getResponseMessage();
+            if (httpResponseCode != HTTP_SUCCESS_CODE_200 && httpResponseCode != HTTP_SUCCESS_CODE_201) {
+                return httpResponse
+                        .append("Error: Jasper - http (" + httpResponseCode + ") message - " + httpResponseMessage)
+                        .toString();
             }
 
             reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
@@ -444,7 +551,8 @@ public class JasperServerRestClient {
 
             return httpResponse.toString();
         } catch (IOException e) {
-            throw new RuntimeException(e); // NOPMD
+            return httpResponse.append("Error: Unable to get response from Jasper server (" + httpResponseCode + ") - "
+                    + httpResponseMessage).toString();
         } finally {
             if (reader != null) {
                 try {
@@ -475,7 +583,7 @@ public class JasperServerRestClient {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         urlConnection.setConnectTimeout(httpTimeout);
         urlConnection.setReadTimeout(httpTimeout);
-        String authString = username + ":" + password;
+        String authString = username.trim() + ":" + password.trim();
         String authStringEnc = new String(Base64.encodeBase64(authString.getBytes()));
         urlConnection.setRequestProperty("Authorization", "Basic " + authStringEnc);
         return urlConnection;
@@ -497,7 +605,7 @@ public class JasperServerRestClient {
         outputStream.write(postBody.getBytes());
         outputStream.flush();
     }
-    
+
     /**
      * Get string as stream
      * 
