@@ -93,8 +93,11 @@ import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.Document;
+import gov.nih.nci.pa.domain.StudyDataDiscrepancy;
 import gov.nih.nci.pa.domain.StudyMilestone;
+import gov.nih.nci.pa.domain.StudyNotes;
 import gov.nih.nci.pa.dto.ResponsiblePartyDTO;
+import gov.nih.nci.pa.dto.StudyProcessingErrorDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ArmTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
@@ -140,6 +143,7 @@ import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.TestSchema;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -147,6 +151,7 @@ import gov.nih.nci.services.person.PersonDTO;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -1321,6 +1326,135 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
 
     }
 
+    @Test
+    public void amendTrialPreserveResultsReportingData() throws Exception {
+        
+        Ii ii = registerTrial();
+        
+      
+        
+
+        createMilestones(ii);
+        InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
+        studyProtocolDTO.setCtroOverride(BlConverter.convertToBl(true));
+        
+        //add results reporting dashboard dates
+        Date today = new Date();
+       
+        studyProtocolDTO.setPcdSentToPIODate( TsConverter.convertToTs(today));
+        studyProtocolDTO.setPcdConfirmedDate(TsConverter.convertToTs(today));
+        studyProtocolDTO.setDesgneeNotifiedDate(TsConverter.convertToTs(today));
+        studyProtocolDTO.setReportingInProcessDate(TsConverter.convertToTs(today));
+        studyProtocolDTO.setThreeMonthReminderDate(TsConverter.convertToTs(today));
+        studyProtocolDTO.setFiveMonthReminderDate(TsConverter.convertToTs(today));
+        studyProtocolDTO.setSevenMonthEscalationtoPIODate(TsConverter.convertToTs(today));
+        studyProtocolDTO.setResultsSentToPIODate(TsConverter.convertToTs(today));
+        studyProtocolDTO.setResultsApprovedByPIODate(TsConverter.convertToTs(today));
+        studyProtocolDTO.setPrsReleaseDate(TsConverter.convertToTs(today));
+        studyProtocolDTO.setQaCommentsReturnedDate(TsConverter.convertToTs(today));
+        studyProtocolDTO.setTrialPublishedDate(TsConverter.convertToTs(today));
+        
+        //add results reporting documents
+        DocumentDTO docDTO = new DocumentDTO();
+        docDTO.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
+        docDTO.setTypeCode(CdConverter.convertStringToCd("Comparison"));
+        docDTO.setFileName(StConverter.convertToSt("test.txt"));
+        docDTO.setText(EdConverter.convertToEd("test".getBytes()));
+        PaRegistry.getDocumentService().create(docDTO);
+        
+    
+       
+        
+        //add results reporting coversheet data
+        PaRegistry.getStudyNotesService().addStudyDataDiscrepancy(
+                "Something missing", "Added something", 
+                new SimpleDateFormat("MM/dd/yyyy").format(new Date()) , 
+                new Long(studyProtocolDTO.getIdentifier().getExtension()));
+        
+        //add results reporting errors
+        //there is no direct method to add erros so use sql query to add errors
+        StringBuffer sql  = new StringBuffer();
+        sql.append("insert into study_processing_error ( study_protocol_identifier, error_date, error_message, recurring_error,comment, error_type,cms_ticket_id,");
+        sql.append(" action_taken,resolution_date ) ");
+        sql.append("values ("+studyProtocolDTO.getIdentifier().getExtension()+",now(),'This is a test error' ,true, null,'A',null,'test', null)");
+        paServiceUtils.executeSql(sql.toString());
+        
+        
+        studyProtocolService.updateStudyProtocol(studyProtocolDTO);
+        PaHibernateUtil.getCurrentSession().flush();
+        
+        StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(ii);
+        overallStatusDTO.setIdentifier(null);
+        List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(ii);
+        List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(ii);
+        StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(ii);
+        studyProtocolDTO.setAmendmentDate(TsConverter.convertToTs(TestSchema.TODAY));
+
+        List<DocumentDTO> documents = getStudyDocuments();
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
+        StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
+        StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+
+
+        DocumentDTO changeDoc = new DocumentDTO();
+        changeDoc.setFileName(StConverter.convertToSt("ProtocolHighlightedDocument.doc"));
+        changeDoc.setText(EdConverter.convertToEd("ProtocolHighlightedDocument".getBytes()));
+        changeDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT));
+
+        Ii newSecondaryIdentifier = new Ii();
+        newSecondaryIdentifier.setExtension("Temp");
+        studyProtocolDTO.getSecondaryIdentifiers().getItem().add(newSecondaryIdentifier);
+        
+        Ii amendedSpIi = bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
+                Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
+                sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
+                summary4OrganizationDTO, summary4StudyResourcing.get(0), null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+        assertFalse(ISOUtil.isIiNull(amendedSpIi));
+        assertEquals(IiConverter.convertToLong(ii), IiConverter.convertToLong(amendedSpIi));
+        studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
+        
+       //check if results reporting date are preserved
+        assert (today.equals(new Date(TsConverter.convertToTimestamp(studyProtocolDTO.getPcdSentToPIODate()).getTime())));
+        assert (today.equals(new Date(TsConverter.convertToTimestamp(studyProtocolDTO.getPCDConfirmedDate()).getTime())));
+        assert (today.equals(new Date(TsConverter.convertToTimestamp(studyProtocolDTO.getDesgneeNotifiedDate()).getTime())));
+        assert (today.equals(new Date(TsConverter.convertToTimestamp(studyProtocolDTO.getReportingInProcessDate()).getTime())));
+        assert (today.equals(new Date(TsConverter.convertToTimestamp(studyProtocolDTO.getThreeMonthReminderDate()).getTime())));
+        assert (today.equals(new Date(TsConverter.convertToTimestamp(studyProtocolDTO.getFiveMonthReminderDate()).getTime())));
+        assert (today.equals(new Date(TsConverter.convertToTimestamp(studyProtocolDTO.getSevenMonthEscalationtoPIODate()).getTime())));
+        assert (today.equals(new Date(TsConverter.convertToTimestamp(studyProtocolDTO.getResultsSentToPIODate()).getTime())));
+        assert (today.equals(new Date(TsConverter.convertToTimestamp(studyProtocolDTO.getResultsApprovedByPIODate()).getTime())));
+        assert (today.equals(new Date(TsConverter.convertToTimestamp(studyProtocolDTO.getPrsReleaseDate()).getTime())));
+        assert (today.equals(new Date(TsConverter.convertToTimestamp(studyProtocolDTO.getQaCommentsReturnedDate()).getTime())));
+        assert (today.equals(new Date(TsConverter.convertToTimestamp(studyProtocolDTO.getTrialPublishedDate()).getTime())));
+        
+        //check if results reporting documents are preserved
+        List <DocumentDTO> reportingDocsList = PaRegistry.getDocumentService()
+                .getReportsDocumentsByStudyProtocol(studyProtocolDTO.getIdentifier());
+        
+        assert (reportingDocsList.size() == 1);
+        
+        //check if results coversheet data is preserved
+        List<? extends StudyNotes> studyDataDiscrepancyList = PaRegistry.getStudyNotesService().
+                getStudyNotesList(new Long(studyProtocolDTO.getIdentifier().getExtension()), StudyDataDiscrepancy.class);
+        
+        assert(studyDataDiscrepancyList.size() == 1);
+        
+        //check if errors data is preseved
+        List<StudyProcessingErrorDTO> studyProcessingErrors = studyProcessingErrorService.getStudyProcessingErrorByStudy
+                (new Long(studyProtocolDTO.getIdentifier().getExtension()));  
+        
+        assert(studyProcessingErrors.size() ==1);
+
+    }
     
     @Test
     public void amendTrialTestAmendingUser() throws Exception {
@@ -1968,6 +2102,133 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
         
         d = getLastDocument(session, 8L);
         assertEquals("IRB_Approval_Document.doc", d.get(0).getFileName());
+    }
+    
+    @Test
+    public void lateRejectAmendTrialPreserveReportingData() throws PAException, TooManyResultsException { 
+        // Before : Original Trial or source (spId 5) is saved as inactive and AmendTrial or Target (spID 6) is saved as active
+        String reasonComment = "Comment";
+        Ii sp = new Ii();
+        sp.setExtension("8");
+        sp.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
+        sp.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        Ii sp1 = new Ii();
+        sp1.setExtension("7");
+        sp1.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
+        sp1.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        Cd reasonCode= CdConverter.convertStringToCd(RejectionReasonCode.OUT_OF_SCOPE.getCode());
+        final Session session = PaHibernateUtil.getCurrentSession();
+        
+        StudyProtocolDTO dto = studyProtocolService.getStudyProtocol(sp1);
+        assertEquals("InActive", dto.getStatusCode().getCode());
+        assertEquals("Cancer8", StConverter.convertToString(dto.getOfficialTitle()));
+        assertEquals("Comments8", StConverter.convertToString(dto.getComments()));
+        
+        //add results reporting dashboard dates
+        Date today = new Date();
+        
+        StudyProtocolDTO  studyProtocolDTO = studyProtocolService.getStudyProtocol(sp);
+       
+        studyProtocolDTO.setPcdSentToPIODate( TsConverter.convertToTs(today));
+        studyProtocolDTO.setPcdConfirmedDate(TsConverter.convertToTs(today));
+        studyProtocolDTO.setDesgneeNotifiedDate(TsConverter.convertToTs(today));
+        studyProtocolDTO.setReportingInProcessDate(TsConverter.convertToTs(today));
+        studyProtocolDTO.setThreeMonthReminderDate(TsConverter.convertToTs(today));
+        studyProtocolDTO.setFiveMonthReminderDate(TsConverter.convertToTs(today));
+        studyProtocolDTO.setSevenMonthEscalationtoPIODate(TsConverter.convertToTs(today));
+        studyProtocolDTO.setResultsSentToPIODate(TsConverter.convertToTs(today));
+        studyProtocolDTO.setResultsApprovedByPIODate(TsConverter.convertToTs(today));
+        studyProtocolDTO.setPrsReleaseDate(TsConverter.convertToTs(today));
+        studyProtocolDTO.setQaCommentsReturnedDate(TsConverter.convertToTs(today));
+        studyProtocolDTO.setTrialPublishedDate(TsConverter.convertToTs(today));
+        
+        //add results reporting documents
+        DocumentDTO docDTO = new DocumentDTO();
+        docDTO.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
+        docDTO.setTypeCode(CdConverter.convertStringToCd("Comparison"));
+        docDTO.setFileName(StConverter.convertToSt("test.txt"));
+        docDTO.setText(EdConverter.convertToEd("test".getBytes()));
+        PaRegistry.getDocumentService().create(docDTO);
+        
+    
+       
+        
+        //add results reporting coversheet data
+        PaRegistry.getStudyNotesService().addStudyDataDiscrepancy(
+                "Something missing", "Added something", 
+                new SimpleDateFormat("MM/dd/yyyy").format(new Date()) , 
+                new Long(studyProtocolDTO.getIdentifier().getExtension()));
+        
+        //add results reporting errors
+        //there is no direct method to add erros so use sql query to add errors
+        StringBuffer sql  = new StringBuffer();
+        sql.append("insert into study_processing_error ( study_protocol_identifier, error_date, error_message, recurring_error,comment, error_type,cms_ticket_id,");
+        sql.append(" action_taken,resolution_date ) ");
+        sql.append("values ("+studyProtocolDTO.getIdentifier().getExtension()+",now(),'This is a test error' ,true, null,'A',null,'test', null)");
+        paServiceUtils.executeSql(sql.toString());
+        
+        
+        studyProtocolService.updateStudyProtocol(studyProtocolDTO);
+        
+        bean.reject(sp, StConverter.convertToSt(reasonComment), reasonCode, MilestoneCode.LATE_REJECTION_DATE);
+        // After : Amend trial (spId 5) is saved as inactive and original Trial 
+        //(spID 6) is saved as active with related data
+        //AmendTrial
+        session.flush();
+        session.clear();
+        List<StudyMilestone> smDto = getCurrentMileStone(session, 7L);
+        assertEquals(reasonComment, smDto.get(0).getCommentText());
+        assertEquals(MilestoneCode.LATE_REJECTION_DATE.getCode(), smDto.get(0).getMilestoneCode().getCode());
+        
+        dto = studyProtocolService.getStudyProtocol(sp1);
+        assertEquals("InActive", dto.getStatusCode().getCode());
+        assertEquals("Cancer9", StConverter.convertToString(dto.getOfficialTitle()));
+        assertEquals("Comments9", StConverter.convertToString(dto.getComments()));
+        
+      
+        //Original Trial
+        smDto = getCurrentMileStone(session, 8L);
+        assertEquals(MilestoneCode.INITIAL_ABSTRACTION_VERIFY.getCode(), smDto.get(0).getMilestoneCode().getCode());
+        
+        dto = studyProtocolService.getStudyProtocol(sp);
+        assertEquals("Active", dto.getStatusCode().getCode());
+        assertEquals("Cancer8",  StConverter.convertToString(dto.getOfficialTitle()));
+        assertEquals("Comments8", StConverter.convertToString(dto.getComments()));
+        
+        
+        
+        
+        //check if results reporting date are preserved
+         assert (today.equals(new Date(TsConverter.convertToTimestamp(dto.getPcdSentToPIODate()).getTime())));
+         assert (today.equals(new Date(TsConverter.convertToTimestamp(dto.getPCDConfirmedDate()).getTime())));
+         assert (today.equals(new Date(TsConverter.convertToTimestamp(dto.getDesgneeNotifiedDate()).getTime())));
+         assert (today.equals(new Date(TsConverter.convertToTimestamp(dto.getReportingInProcessDate()).getTime())));
+         assert (today.equals(new Date(TsConverter.convertToTimestamp(dto.getThreeMonthReminderDate()).getTime())));
+         assert (today.equals(new Date(TsConverter.convertToTimestamp(dto.getFiveMonthReminderDate()).getTime())));
+         assert (today.equals(new Date(TsConverter.convertToTimestamp(dto.getSevenMonthEscalationtoPIODate()).getTime())));
+         assert (today.equals(new Date(TsConverter.convertToTimestamp(dto.getResultsSentToPIODate()).getTime())));
+         assert (today.equals(new Date(TsConverter.convertToTimestamp(dto.getResultsApprovedByPIODate()).getTime())));
+         assert (today.equals(new Date(TsConverter.convertToTimestamp(dto.getPrsReleaseDate()).getTime())));
+         assert (today.equals(new Date(TsConverter.convertToTimestamp(dto.getQaCommentsReturnedDate()).getTime())));
+         assert (today.equals(new Date(TsConverter.convertToTimestamp(dto.getTrialPublishedDate()).getTime())));
+         
+         //check if results reporting documents are preserved
+         List <DocumentDTO> reportingDocsList = PaRegistry.getDocumentService()
+                 .getReportsDocumentsByStudyProtocol(dto.getIdentifier());
+         
+         assert (reportingDocsList.size() == 1);
+         
+         //check if results coversheet data is preserved
+         List<? extends StudyNotes> studyDataDiscrepancyList = PaRegistry.getStudyNotesService().
+                 getStudyNotesList(new Long(dto.getIdentifier().getExtension()), StudyDataDiscrepancy.class);
+         
+         assert(studyDataDiscrepancyList.size() == 1);
+         
+         //check if errors data is preseved
+         List<StudyProcessingErrorDTO> studyProcessingErrors = studyProcessingErrorService.getStudyProcessingErrorByStudy
+                 (new Long(dto.getIdentifier().getExtension()));  
+         
+         assert(studyProcessingErrors.size() ==1);
     }
     
     @Test

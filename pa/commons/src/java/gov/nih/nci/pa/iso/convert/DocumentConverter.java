@@ -160,6 +160,14 @@ public class DocumentConverter extends AbstractDocumentConverter<DocumentDTO, Do
             docDTO.setCcctUserName(StConverter.convertToSt(doc
                     .getCcctUser().getLoginName()));
         }
+        
+        if (doc.getCtroUser() != null) {
+        docDTO.setCtroUserId(doc.getCtroUser().getUserId());
+        }
+        
+        if (doc.getCcctUser() != null) {
+        docDTO.setCcctUserId(doc.getCcctUser().getUserId());
+        }
     }
 
     /**

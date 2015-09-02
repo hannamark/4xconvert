@@ -171,6 +171,7 @@ import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TrialRegistrationValidator;
 import gov.nih.nci.pa.util.TrialUpdatesRecorder;
@@ -491,6 +492,10 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             Ii spIi = studyProtocolDTO.getIdentifier();
             St amender = studyProtocolDTO.getUserLastCreated();
             
+            List<DocumentDTO> resultsReportingDocuments = new ArrayList<DocumentDTO>();
+            copyResultsReportingDocuments(resultsReportingDocuments, spIi);
+
+            
             // This will get us current protocol records with amendment applied on top of it.
             studyProtocolDTO = getStudyProtocolForCreateOrAmend(studyProtocolDTO, AMENDMENT);
             
@@ -557,9 +562,16 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                         statusHistory);
             }
             
+            
             List<DocumentDTO> savedDocs = saveDocuments(documentDTOs, spIi);
             documentService.markAsOriginalSubmission(savedDocs);
+            
+            //save results reporting documents
+            updateTrialIdForDocument(toStudyProtocolIi, spIi, resultsReportingDocuments);
+            
             saveAmenderInfo(studyProtocolDTO, amender, true);
+            
+            
             
             // PO-5806: date_last_created fields get reversed for amendment and original.
             // Need to fix this here.
@@ -2037,6 +2049,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         return createStudyProtocolDTO;
     }
 
+    // CHECKSTYLE:OFF
     /**
      * {@inheritDoc}
      */
@@ -2053,6 +2066,11 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                 createStudyMileStone(studyProtocolIi, rejectionReason, 
                         rejectionReasonCode);
             } else {
+                
+                //copy results reporting documents
+                List<DocumentDTO> resultsReportingDocuments = new ArrayList<DocumentDTO>();
+                copyResultsReportingDocuments(resultsReportingDocuments, studyProtocolIi);
+                
                 Ii targetSpIi = studyProtocolIi;
                 Ii sourceSpIi = null;
                 // search the StudyProtocol to get the latest accepted protocol.
@@ -2186,11 +2204,49 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                 studyProtocolDto.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
                 saveAmenderInfo(studyProtocolDto, targetLastUserCreated, false);
                 studyProtocolService.updateStudyProtocol(studyProtocolDto);
+                
+           
+                
+                //restore results reporting documents
+                updateTrialIdForDocument(sourceSpIi, targetSpIi, resultsReportingDocuments);
+                
+                
+                
+                StudyProtocolDTO studyProtocolDTO2 = studyProtocolService.getStudyProtocol(targetSpIi);
+                
+              //restore results reporting coversheet documents data
+                studyProtocolDTO2.setUseStandardLanguage(targetSpDto.getUseStandardLanguage());
+                studyProtocolDTO2.setDateEnteredInPrs(targetSpDto.getDateEnteredInPrs());
+                studyProtocolDTO2.setDesigneeAccessRevoked(targetSpDto.getDesigneeAccessRevoked());
+                studyProtocolDTO2.setDesigneeAccessRevokedDate(targetSpDto.getDesigneeAccessRevokedDate());
+                studyProtocolDTO2.setChangesInCtrpCtGov(targetSpDto.getChangesInCtrpCtGov());
+                studyProtocolDTO2.setChangesInCtrpCtGovDate(targetSpDto.getChangesInCtrpCtGovDate());
+                studyProtocolDTO2.setSendToCtGovUpdated(targetSpDto.getSendToCtGovUpdated());
+                
+                //restore results reporting dates
+                studyProtocolDTO2.setPcdSentToPIODate(targetSpDto.getPcdSentToPIODate());
+                studyProtocolDTO2.setPcdConfirmedDate(targetSpDto.getPCDConfirmedDate());
+                studyProtocolDTO2.setDesgneeNotifiedDate(targetSpDto.getDesgneeNotifiedDate());
+                studyProtocolDTO2.setReportingInProcessDate(targetSpDto.getReportingInProcessDate());
+                studyProtocolDTO2.setThreeMonthReminderDate(targetSpDto.getThreeMonthReminderDate());
+                studyProtocolDTO2.setFiveMonthReminderDate(targetSpDto.getFiveMonthReminderDate());
+                studyProtocolDTO2.setSevenMonthEscalationtoPIODate(targetSpDto.getSevenMonthEscalationtoPIODate());
+                studyProtocolDTO2.setResultsSentToPIODate(targetSpDto.getResultsSentToPIODate());
+                studyProtocolDTO2.setResultsApprovedByPIODate(targetSpDto.getResultsApprovedByPIODate());
+                studyProtocolDTO2.setPrsReleaseDate(targetSpDto.getPrsReleaseDate());
+                studyProtocolDTO2.setQaCommentsReturnedDate(targetSpDto.getQaCommentsReturnedDate());
+                studyProtocolDTO2.setTrialPublishedDate(targetSpDto.getTrialPublishedDate());
+                
+                studyProtocolService.updateStudyProtocol(studyProtocolDTO2);
+                
+           
             }
         } catch (Exception e) {
             throw new PAException(e.getMessage(), e);
         }
     }
+    
+    
     
     private void createStudyMileStone(Ii studyProtocolIi, St rejectionReason, 
             Cd rejectionReasonCode) throws PAException {
@@ -2909,6 +2965,34 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             throw new PAException(e);
         }
         return result;
+    }
+    
+    private void copyResultsReportingDocuments(List<DocumentDTO> resultsReportingDocuments , Ii spIi) throws Exception {
+        resultsReportingDocuments.addAll(PaRegistry.getDocumentService()
+                .getReportsDocumentsByStudyProtocol(spIi));
+     }
+    
+    
+    
+    private void updateTrialIdForDocument(Ii oldId, Ii newId , 
+            List<DocumentDTO> resultsReportingDocuments) throws Exception {
+       
+        
+        StudyProtocolDTO sp = studyProtocolService.getStudyProtocol(newId);
+        String assignedIdentifier = PAUtil.getAssignedIdentifierExtension(sp);
+        
+        getPAServiceUtils().moveDocumentContents(resultsReportingDocuments, assignedIdentifier);
+        
+        StringBuffer query = new 
+        StringBuffer("update document set study_protocol_identifier =" + newId.getExtension()); 
+        query.append(" where study_protocol_identifier =" + oldId.getExtension());
+        query.append(" and type_code in ('BEFORE_RESULTS','AFTER_RESULTS','COMPARISON')");
+        getPAServiceUtils().executeSql(query.toString());
+        
+        
+        
+        
+        
     }
     /**
      * @return ctGovUploadServiceLocal
