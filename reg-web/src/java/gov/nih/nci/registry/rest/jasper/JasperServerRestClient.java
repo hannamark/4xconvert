@@ -270,7 +270,7 @@ public class JasperServerRestClient {
 
         for (String reportId : reportIdsArr) {
             String reportName = reportGroupMap.get(reportId);
-            if (reportName.contains(PIPE_DELIMITER)) {
+            if (reportName.contains("|")) {
                 String[] roleTenantArr = reportName.split(PIPE_DELIMITER);
                 updateRoles.add(getRole(roleTenantArr[0], roleTenantArr[1]));
             } else {
@@ -296,7 +296,8 @@ public class JasperServerRestClient {
         for (String groupName : reportGroupMap.values()) {
 
             if (groupName.contains("|")) {
-                updateRoles.add(getRole(groupName.split(PIPE_DELIMITER)[0], groupName.split(PIPE_DELIMITER)[1]));
+                String[] roleTenantArr = groupName.split(PIPE_DELIMITER);
+                updateRoles.add(getRole(roleTenantArr[0], roleTenantArr[1]));
             } else {
                 updateRoles.add(getRole(groupName));
             }
