@@ -29,6 +29,7 @@ import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.family.FamilyDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
@@ -158,6 +159,29 @@ public class MockOrganizationEntityService implements
             org.setStatusCode(CdConverter
                     .convertToCd(EntityStatusCode.ACTIVE));
 
+            //create org with Family 2
+            org = new OrganizationDTO();
+            org.setName(EnOnConverter.convertToEnOn("Case Western Reserve University"));
+            createOrg(org);
+            FamilyDTO dto = new FamilyDTO();
+            dto.setName(EnOnConverter.convertToEnOn("Case Comprehensive Cancer Center"));
+            dto.setStatusCode(CdConverter.convertStringToCd("Active"));
+            FamilyDTO newFamily = new MockFamilyService().createFamily(dto);
+            
+            new MockFamilyService().relate(org,
+                    new MockFamilyService().getFamily(newFamily.getIdentifier()));
+            
+            org = new OrganizationDTO();
+            org.setName(EnOnConverter.convertToEnOn("Case Comprehensive Cancer Center"));
+            createOrg(org);
+            new MockFamilyService().relate(org,
+                    new MockFamilyService().getFamily(newFamily.getIdentifier()));
+            
+            org = new OrganizationDTO();
+            org.setName(EnOnConverter.convertToEnOn("Cleveland Clinic Foundation"));
+            createOrg(org);
+            new MockFamilyService().relate(org,
+                    new MockFamilyService().getFamily(newFamily.getIdentifier()));
         } catch (Exception e) {
             e.printStackTrace(); // NOPMD
         }

@@ -183,10 +183,15 @@ public class ManageAccrualAccessAction extends ActionSupport implements
             getAllTrialsForSiteAccrualSubmitter();
             assignAll(AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE);
             rUser.setSiteAccrualSubmitter(true);
-            msg = rUser.getFirstName() + " " + rUser.getLastName() + " can now submit accrual for "
+            msg = "As a Site Submitter, " + rUser.getFirstName() + " " + rUser.getLastName() 
+                + ", who is affiliated with "
                 + rUser.getAffiliateOrg() 
-                + " Institutional, Externally Peer Reviewed, and Industrial trials where "
-                + rUser.getAffiliateOrg() + " is a lead organization or participating site";
+                + ", will be able to submit accrual for "
+                + rUser.getAffiliateOrg() + " as it participates on any Institutional or Externally "
+                + "Peer Reviewed trial lead by an organization that belongs to the same family of "
+                + "organizations to which " + rUser.getAffiliateOrg() + " belongs to."
+                + "\n" + rUser.getFirstName() + " " + rUser.getLastName() + " can also submit accrual for "
+                + rUser.getAffiliateOrg() + " as it participates on any Industrial trial.";
         } else {
             if (!rUser.getFamilyAccrualSubmitter()) {
                 getAllTrialsForSiteAccrualSubmitter(); 
@@ -246,14 +251,19 @@ public class ManageAccrualAccessAction extends ActionSupport implements
                 ServletActionContext.getRequest().setAttribute(FAILURE_MSG, e.getMessage());
                 return SUCCESS;
             }
-            msg = (rUser.getFirstName() + " " + rUser.getLastName() + " will be able to submit accrual for "
-                  + getOrganization().getName() + " and any of " + famString.toString()
-                  + " family member org's Institutional, Externally Peer Reviewed, "
-                  + "and Industrial trials where the org is a lead organization or a participating site. "
-                  + "Please allow time for the assignments to be processed by the CTRP system. "
-                  + "If a large number of trials are being assigned, this operation may take up to 30 minutes "
-                  + "to complete. You can leave this page or exit the application if you want; the operation "
-                  + "will continue in the background");
+            msg = "As a family submitter, " + rUser.getFirstName() + " " + rUser.getLastName() 
+                  + ", who is affiliated with "
+                  + getOrganization().getName() + ", will be able to submit accruals for all organizations"
+                  + " participating on any Institutional or Externally Peer Reviewed trial lead by an organization"
+                  + " that belongs to the same family of  organizations to which "
+                  + getOrganization().getName() + " belongs to." + "\n" 
+                  + rUser.getFirstName() + " " + rUser.getLastName() + " can also submit accrual for any organization "
+                  + "participating on any Industrial trial as long as that organization belongs to the same family "
+                  + "of organizations to which " + getOrganization().getName() + " belongs to." + "\n" 
+                  + "Please allow time for the assignments to be processed by the CTRP system. If a large number of "
+                  + "trials are being assigned, this operation may take up to 30 minutes to complete. You may "
+                  + "leave this page or exit the application; the operation will continue to run in the background "
+                  + "until all assignments are made.";
         }
         populateFamilyDd();
         ServletActionContext.getRequest().setAttribute(SUCCESS_MSG, msg);

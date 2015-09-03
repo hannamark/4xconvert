@@ -271,6 +271,37 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
     	executeCreateStatements();
         search(0L, false);
     }
+    
+    @Test
+    public void searchUser2NullException() throws Exception {
+    	TestSchema.createStudyProtocol();
+    	executeCreateStatements();
+    	deleteDWFStatement();
+    	try {
+    		Ii ruIi = IiConverter.convertToIi(0L);
+            ServiceLocatorPaInterface svcLocal = mock(ServiceLocatorPaInterface.class);
+            RegistryUserServiceRemote registrySvr = mock(RegistryUserServiceRemote.class);
+            RegistryUser ru = TestSchema.registryUsers.get(1);
+            ru.setSiteAccrualSubmitter(true);
+            ru.setFamilyAccrualSubmitter(true);
+            when(registrySvr.getUserById(any(Long.class))).thenReturn(TestSchema.registryUsers.get(1));
+            when(svcLocal.getRegistryUserService()).thenReturn(registrySvr);
+            PaServiceLocator.getInstance().setServiceLocator(svcLocal);
+            AccrualDiseaseTerminologyServiceRemote accrualDiseaseSvr = mock(AccrualDiseaseTerminologyServiceRemote.class);
+            when(accrualDiseaseSvr.canChangeCodeSystemForSpIds(new ArrayList<Long>())).thenReturn(new HashMap<Long, Boolean>());
+            when(svcLocal.getAccrualDiseaseTerminologyService()).thenReturn(accrualDiseaseSvr);
+            PaServiceLocator.getInstance().setServiceLocator(svcLocal);
+            
+            // second study is inactive
+            List<SearchTrialResultDto> results = bean.search(new SearchTrialCriteriaDto(), ruIi);
+            assertEquals(0, results.size());
+          
+    	  } catch (PAException e) {	
+    	      
+	      }
+    	insertDWFStatment();
+    }
+    
 
     public void search(Long registryUserId, boolean shouldBeAuthorized) throws Exception {
     	
@@ -391,6 +422,19 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
          
         }
     	 return count++;
+    }
+    
+    private void deleteDWFStatement() {
+    	
+    	 Session session = PaHibernateUtil.getCurrentSession();
+    	session.createSQLQuery("delete from rv_dwf_current where study_protocol_identifier = "
+          		+ new BigInteger(TestSchema.studyProtocols.get(2).getId().toString()) + ";").executeUpdate();
+    }
+    
+    private void insertDWFStatment() {
+    	Session session = PaHibernateUtil.getCurrentSession();
+    	session.createSQLQuery("insert into rv_dwf_current values ('ABSTRACTION_VERIFIED_RESPONSE'," + "now(), "
+          		+ new BigInteger(TestSchema.studyProtocols.get(2).getId().toString()) + ");").executeUpdate();
     }
     @Test
     public void getTrialSummaryByStudyProtocolIi() throws Exception {

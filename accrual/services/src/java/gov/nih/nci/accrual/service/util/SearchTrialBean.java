@@ -186,28 +186,7 @@ public class SearchTrialBean implements SearchTrialService {
     + " = sp.identifier and local_sp_indentifier is not null) and not exists "
     + " (select study_protocol_identifier from rv_dcp_id where study_protocol_identifier "
     + " =sp.identifier and local_sp_indentifier is not null))";
-    
-//    /** The Constant NO_CTEP_DCP_TRIALID_SQRY_FAMILY. */
-//    public static final String NO_CTEP_DCP_TRIALID_SQRY_FAMILY =
-//    "select distinct(sp.identifier) from study_site_accrual_status ssas" 
-//    + " join study_site ss on ssas.study_site_identifier=ss.identifier"
-//    + " join study_protocol sp on ss.study_protocol_identifier=sp.identifier"
-//    + " join study_otheridentifiers so on sp.identifier=so.study_protocol_id"
-//    + " join study_resourcing sr on sr.study_protocol_identifier=sp.identifier"
-//    + " join healthcare_facility hcf on hcf.identifier=ss.healthcare_facility_identifier"
-//    + " join organization org on org.identifier= hcf.organization_identifier"
-//    + " where so.root='2.16.840.1.113883.3.26.4.3' and sp.status_code='ACTIVE'"
-//    + " and ss.functional_code = 'TREATING_SITE' and ssas.status_code <> 'IN_REVIEW' "
-//    + " and sr.summ_4_rept_indicator='true' and sr.type_code!='NATIONAL'"
-//    + " and ssas.identifier in (select identifier from study_site_accrual_status where "
-//    + " study_site_identifier  = ss.identifier and deleted=false"
-//    + " order by status_date desc, identifier desc limit 1)"
-//    + " and org.assigned_identifier IN (:orgIDS)"
-//    + " and( not exists (select study_protocol_identifier from rv_ctep_id where study_protocol_identifier"
-//    + " = sp.identifier and local_sp_indentifier is not null) and not exists "
-//    + " (select study_protocol_identifier from rv_dcp_id where study_protocol_identifier "
-//    + " =sp.identifier and local_sp_indentifier is not null))";
-    
+
     /**
      * The constant LEAD_ORG_TRIALID_LIST
      */
@@ -520,33 +499,7 @@ public class SearchTrialBean implements SearchTrialService {
                 Long studyProtocolId = obj.longValue();
                 finalTrialsWithoutCTEPOrDCPIdFamily.add(studyProtocolId);
             }
-            
-//            SQLQuery query = session.createSQLQuery(NO_CTEP_DCP_TRIALID_SQRY_FAMILY);
-//            query.setParameterList("orgIDS", AccrualUtil.convertPoOrgIdsToStrings(values));
-//            List<BigInteger> queryList = query.list();
-//            List<Long> noCtepDcpTrialIdsFamilyList = new ArrayList<Long>(); 
-//            for (BigInteger obj : queryList) {
-//                Long studyProtocolId = obj.longValue();
-//                noCtepDcpTrialIdsFamilyList.add(studyProtocolId);
-//            }
-//            Map<Long, String> trialsWorkFlowStatus1 = new HashMap<Long, String>();
-//            SQLQuery qr = session.createSQLQuery(DWF_QRY);
-//            if (!noCtepDcpTrialIdsFamilyList.isEmpty()) {
-//                qr.setParameterList(SPID, noCtepDcpTrialIdsFamilyList);   
-//            } else {
-//                qr.setParameter(SPID, null,  Hibernate.LONG);  
-//            }
-//            List<Object[]> trialsDWFS1 = qr.list();
-//            for (Object[] row : trialsDWFS1) {
-//                 Long studyId = ((BigInteger) row[0]).longValue();
-//                 String status = row[1].toString();
-//                 trialsWorkFlowStatus1.put(studyId, status);
-//            }
-//            for (Long trialId : noCtepDcpTrialIdsFamilyList) {
-//               if (isEligibleForAccrual(trialId, trialsWorkFlowStatus1)) {
-//                  finalTrialsWithoutCTEPOrDCPIdFamily.add(trialId);
-//               }
-//            }
+
            for (Long trialId : finalTrialsWithoutCTEPOrDCPIdFamily) {
                if (!finalTrialsWithoutCTEPOrDCPId.contains(trialId)) {
                  finalTrialsWithoutCTEPOrDCPId.add(trialId);
@@ -560,8 +513,10 @@ public class SearchTrialBean implements SearchTrialService {
     private boolean isEligibleForAccrual(Long trialId, Map<Long, String> trialsWorkFlowStatus)
           throws PAException {
         boolean result = false;
-        DocumentWorkflowStatusCode code = DocumentWorkflowStatusCode.valueOf(trialsWorkFlowStatus.get(trialId));
-        result = code.isEligibleForAccrual();
+        if (trialsWorkFlowStatus.get(trialId) != null) {
+             DocumentWorkflowStatusCode code = DocumentWorkflowStatusCode.valueOf(trialsWorkFlowStatus.get(trialId));
+             result = code.isEligibleForAccrual();
+        }
         return result;
     }
     
