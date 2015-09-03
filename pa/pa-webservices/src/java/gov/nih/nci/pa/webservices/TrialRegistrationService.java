@@ -26,6 +26,7 @@ import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.webservices.converters.DocumentDTOBuilder;
 import gov.nih.nci.pa.webservices.converters.OrganizationDTOBuilder;
@@ -121,9 +122,9 @@ public class TrialRegistrationService extends BaseRestService {
             studyIdentifierDTOs.add(new StudySiteDTOBuilder()
                     .buildClinicalTrialsGovIdAssigner(reg
                             .getClinicalTrialsDotGovTrialID()));
-            
+
             studyIdentifierDTOs.add(new StudySiteDTOBuilder()
-            .buildDcpIdAssigner(reg.getDcpIdentifier()));
+                    .buildDcpIdAssigner(reg.getDcpIdentifier()));
 
             List<OrganizationDTO> summary4orgDTO = new OrganizationDTOBuilder()
                     .build(reg.getSummary4FundingSponsor());
@@ -134,8 +135,6 @@ public class TrialRegistrationService extends BaseRestService {
                             .getCategory().value())));
             StudyRegulatoryAuthorityDTO studyRegAuthDTO = new StudyRegulatoryAuthorityDTOBuilder()
                     .build(reg);
-            
-            
 
             final DSet<Tel> owners = new DSet<>();
             owners.setItem(new LinkedHashSet<Tel>());
@@ -144,7 +143,7 @@ public class TrialRegistrationService extends BaseRestService {
                 telEmail.setValue(new URI("mailto:" + emailAddr));
                 owners.getItem().add(telEmail);
             }
-
+            PaHibernateUtil.getHibernateHelper().unbindAndCleanupSession();
             Ii studyProtocolIi = PaRegistry.getTrialRegistrationService()
                     .createCompleteInterventionalStudyProtocol(
                             studyProtocolDTO, overallStatusDTO,
@@ -155,6 +154,7 @@ public class TrialRegistrationService extends BaseRestService {
                             summary4studyResourcingDTO, studyRegAuthDTO,
                             BlConverter.convertToBl(Boolean.FALSE),
                             (owners.getItem().isEmpty() ? null : owners));
+            PaHibernateUtil.getHibernateHelper().openAndBindSession();
             long paTrialID = IiConverter.convertToLong(studyProtocolIi);
             return buildTrialRegConfirmationResponse(paTrialID);
         } catch (Exception e) {
@@ -201,11 +201,13 @@ public class TrialRegistrationService extends BaseRestService {
                     .build(spDTO, reg);
             List<DocumentDTO> documentDTOs = new DocumentDTOBuilder().build(
                     spDTO, reg);
+            PaHibernateUtil.getHibernateHelper().unbindAndCleanupSession();
             PaRegistry.getTrialRegistrationService().update(spDTO,
                     overallStatusDTO, studyIdentifierDTOs, null,
                     studyResourcingDTOs, documentDTOs, null, null, null, null,
                     null, null, null, null, null,
                     BlConverter.convertToBl(Boolean.FALSE));
+            PaHibernateUtil.getHibernateHelper().openAndBindSession();
             return buildTrialRegConfirmationResponse(paTrialID);
         } catch (Exception e) {
             return handleException(e);
@@ -330,7 +332,7 @@ public class TrialRegistrationService extends BaseRestService {
             StudyRegulatoryAuthorityDTO studyRegAuthDTO = reg
                     .isClinicalTrialsDotGovXmlRequired() ? new StudyRegulatoryAuthorityDTOBuilder()
                     .build(reg) : null;
-
+            PaHibernateUtil.getHibernateHelper().unbindAndCleanupSession();
             Ii amendId = PaRegistry.getTrialRegistrationService().amend(
                     studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                     studyResourcingDTOs, documentDTOs, leadOrgDTO,
@@ -339,6 +341,7 @@ public class TrialRegistrationService extends BaseRestService {
                     summary4studyResourcingDTO, studyRegAuthDTO,
                     BlConverter.convertToBl(Boolean.FALSE),
                     BlConverter.convertToBl(Boolean.TRUE));
+            PaHibernateUtil.getHibernateHelper().openAndBindSession();
             Long paTrialID = IiConverter.convertToLong(amendId);
             return buildTrialRegConfirmationResponse(paTrialID);
         } catch (Exception e) {

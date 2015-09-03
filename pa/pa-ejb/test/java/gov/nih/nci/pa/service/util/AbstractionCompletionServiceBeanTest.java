@@ -83,9 +83,10 @@
 package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.*;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doCallRealMethod;
@@ -101,6 +102,7 @@ import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.EntityStatusCode;
@@ -119,6 +121,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
@@ -145,6 +148,7 @@ import gov.nih.nci.pa.util.PADomainUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -178,6 +182,7 @@ public class AbstractionCompletionServiceBeanTest {
     private final StudySiteServiceLocal studySiteService = mock(StudySiteServiceLocal.class);
     private final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = mock(StudySiteAccrualStatusServiceLocal.class);
     private final StudySiteContactServiceLocal studySiteContactService = mock(StudySiteContactServiceLocal.class);
+    private final PAServiceUtils paServiceUtils = mock(PAServiceUtils.class);
 
     /**
      * Creates a real AbstractionCompletionServiceBean and inject the mock services in it.
@@ -251,6 +256,7 @@ public class AbstractionCompletionServiceBeanTest {
         service.setStudySiteService(studySiteService);
         service.setStudySiteAccrualStatusService(studySiteAccrualStatusService);
         service.setStudySiteContactService(studySiteContactService);
+        service.setPaServiceUtil(paServiceUtils);
     }
     
     @Test
@@ -453,6 +459,67 @@ public class AbstractionCompletionServiceBeanTest {
         sut.enforceBlindingSchemaRules(dto, errors);
         assertTrue(errors.hasError("At least two masking roles must be specified for \"Double Blind\" masking."));
         
+    }
+    
+    @Test
+    public void testDcpTrialsCanHaveNA_Pcd() throws PAException {
+        AbstractionCompletionServiceBean sut = createAbstractionCompletionServiceBean();
+        InterventionalStudyProtocolDTO dto = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
+        dto.setPrimaryCompletionDate(TsConverter.convertToTs(new Date()));
+        dto.setPrimaryCompletionDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.NA));
+        
+        when(
+                paServiceUtils.getCtepOrDcpId(
+                        eq(IiConverter.convertToLong(dto.getIdentifier())),
+                        eq(PAConstants.DCP_IDENTIFIER_TYPE))).thenReturn(
+                "DCPID");
+        
+        AbstractionMessageCollection errors = new AbstractionMessageCollection();
+        sut.enforceTrialStatus(dto, errors);
+        assertFalse(errors.hasError("Only a DCP trial can have a Primary Completion Date Type equals to 'N/A'."));
+        
+    }
+    
+    @Test
+    public void testOnlyDcpTrialsCanHaveNAPcd() throws PAException {
+        AbstractionCompletionServiceBean sut = createAbstractionCompletionServiceBean();        
+        InterventionalStudyProtocolDTO dto = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
+        dto.setPrimaryCompletionDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.NA));
+        AbstractionMessageCollection errors = new AbstractionMessageCollection();
+        sut.enforceTrialStatus(dto, errors);
+        assertTrue(errors.hasError("Only a DCP trial can have a Primary Completion Date Type equals to 'N/A'."));
+        
+    }
+    
+    @Test
+    public void testPcdMustBeNullIfNA() throws PAException {
+        AbstractionCompletionServiceBean sut = createAbstractionCompletionServiceBean();
+        InterventionalStudyProtocolDTO dto = StudyProtocolServiceBeanTest
+                .createInterventionalStudyProtocolDTOObj();
+        dto.setPrimaryCompletionDate(TsConverter.convertToTs(new Date()));
+        dto.setPrimaryCompletionDateTypeCode(CdConverter
+                .convertToCd(ActualAnticipatedTypeCode.NA));
+        AbstractionMessageCollection errors = new AbstractionMessageCollection();
+        sut.enforceTrialStatus(dto, errors);
+        assertTrue(errors
+                .hasError("When the Primary Completion Date Type is set to 'N/A', "
+                        + "the Primary Completion Date must be null."));
+
+    }
+    
+    @Test
+    public void testPcdMustBeProvided() throws PAException {
+        AbstractionCompletionServiceBean sut = createAbstractionCompletionServiceBean();
+        InterventionalStudyProtocolDTO dto = StudyProtocolServiceBeanTest
+                .createInterventionalStudyProtocolDTOObj();
+        dto.setPrimaryCompletionDate(TsConverter.convertToTs(null));
+        dto.setPrimaryCompletionDateTypeCode(CdConverter
+                .convertToCd(ActualAnticipatedTypeCode.ACTUAL));
+        AbstractionMessageCollection errors = new AbstractionMessageCollection();
+        sut.enforceTrialStatus(dto, errors);
+        assertTrue(errors
+                .hasError("PrimaryCompletionDate must be Entered."));
+
     }
     
     @Test

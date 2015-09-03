@@ -31,11 +31,14 @@ import gov.nih.nci.pa.webservices.types.CompleteTrialUpdate;
 import gov.nih.nci.pa.webservices.types.InterventionalTrialDesign;
 import gov.nih.nci.pa.webservices.types.NonInterventionalTrialDesign;
 import gov.nih.nci.pa.webservices.types.PrimaryPurpose;
+import gov.nih.nci.pa.webservices.types.TrialDateType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+
+import javax.xml.bind.JAXBElement;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -217,12 +220,19 @@ public final class StudyProtocolDTOBuilder {
         dto.setStartDateTypeCode(CdConverter
                 .convertToCd(ActualAnticipatedTypeCode.getByCode(reg
                         .getTrialStartDate().getType())));
-        dto.setPrimaryCompletionDate(TsConverter.convertToTs((reg
-                .getPrimaryCompletionDate().getValue().toGregorianCalendar()
-                .getTime())));
+
+        // DCP trials can have a NULL PCD.
+        if (reg.getPrimaryCompletionDate().getValue().getValue() != null) {
+            dto.setPrimaryCompletionDate(TsConverter.convertToTs((reg
+                    .getPrimaryCompletionDate().getValue().getValue()
+                    .toGregorianCalendar().getTime())));
+        } else {
+            dto.setPrimaryCompletionDate(null);
+        }
+
         dto.setPrimaryCompletionDateTypeCode(CdConverter
                 .convertToCd(ActualAnticipatedTypeCode.getByCode(reg
-                        .getPrimaryCompletionDate().getType())));
+                        .getPrimaryCompletionDate().getValue().getType())));
         if (reg.getCompletionDate() != null) {
             dto.setCompletionDate(TsConverter.convertToTs(reg
                     .getCompletionDate().getValue().toGregorianCalendar()
@@ -248,13 +258,17 @@ public final class StudyProtocolDTOBuilder {
                     .convertToCd(ActualAnticipatedTypeCode.getByCode(reg
                             .getTrialStartDate().getType())));
         }
-        if (reg.getPrimaryCompletionDate() != null) {
-            dto.setPrimaryCompletionDate(TsConverter.convertToTs((reg
-                    .getPrimaryCompletionDate().getValue()
-                    .toGregorianCalendar().getTime())));
+        final JAXBElement<TrialDateType> pcd = reg.getPrimaryCompletionDate();
+        if (pcd != null) {
+            if (!pcd.isNil()) {
+                dto.setPrimaryCompletionDate(TsConverter.convertToTs((pcd
+                        .getValue().getValue().toGregorianCalendar().getTime())));
+            } else {
+                dto.setPrimaryCompletionDate(null);
+            }
             dto.setPrimaryCompletionDateTypeCode(CdConverter
-                    .convertToCd(ActualAnticipatedTypeCode.getByCode(reg
-                            .getPrimaryCompletionDate().getType())));
+                    .convertToCd(ActualAnticipatedTypeCode.getByCode(pcd
+                            .getValue().getType())));
         }
         if (reg.getCompletionDate() != null) {
             dto.setCompletionDate(TsConverter.convertToTs(reg
@@ -353,8 +367,10 @@ public final class StudyProtocolDTOBuilder {
     }
 
     /**
-     * @param spDTO StudyProtocolDTO
-     * @param reg AbbreviatedTrialUpdate
+     * @param spDTO
+     *            StudyProtocolDTO
+     * @param reg
+     *            AbbreviatedTrialUpdate
      */
     public void build(StudyProtocolDTO spDTO, AbbreviatedTrialUpdate reg) {
         setUser(spDTO);

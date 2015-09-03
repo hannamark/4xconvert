@@ -85,7 +85,6 @@ import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.Arm;
@@ -478,9 +477,13 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
                 }
             }
         }
+
         if (dateRulesApply) {
             enForceDateRules(studyProtocolDTO);
+        } else {
+            enforceAllowedDateTypes(extractStudyProtocolDatesFromDTO(studyProtocolDTO));
         }
+        
         enForcePrimaryPurposeRules(studyProtocolDTO);
         if (isCorrelationRuleRequired(studyProtocolDTO) && page == null) {
             List<StudyIndldeDTO> list = getStudyIndldeService().getByStudyProtocol(studyProtocolDTO.getIdentifier());
@@ -505,17 +508,19 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     }
 
     private void enForceDateRules(StudyProtocolDTO studyProtocolDTO) throws PAException {
-        StudyProtocolDates dates = AbstractStudyProtocolConverter.convertDatesToDomain(studyProtocolDTO);
-        boolean unknownPrimaryCompletionDate =
-                studyProtocolDTO.getPrimaryCompletionDate() != null
-                        && studyProtocolDTO.getPrimaryCompletionDate().getNullFlavor() == NullFlavor.UNK;
+        StudyProtocolDates dates = extractStudyProtocolDatesFromDTO(studyProtocolDTO);
+        enforceAllowedDateTypes(dates);
+        boolean unknownPrimaryCompletionDate = ISOUtil
+                .isTsNull(studyProtocolDTO.getPrimaryCompletionDate());
         DateMidnight today = new DateMidnight();
         checkRequiredDates(dates, unknownPrimaryCompletionDate, studyProtocolDTO);
         DateMidnight startDate = new DateMidnight(dates.getStartDate());
         checkDateAndType(today, startDate, dates.getStartDateTypeCode(), "start date");
         if (unknownPrimaryCompletionDate) {
-            if (dates.getPrimaryCompletionDateTypeCode() != ActualAnticipatedTypeCode.ANTICIPATED) {
-                throw new PAException("Unknown primary completion dates must be marked as Anticipated. ");
+            if (dates.getPrimaryCompletionDateTypeCode() != ActualAnticipatedTypeCode.NA
+                    && dates.getPrimaryCompletionDateTypeCode() != ActualAnticipatedTypeCode.ANTICIPATED) {
+                throw new PAException(
+                        "Unknown primary completion dates must be marked as Anticipated or N/A. ");
             }
         } else {
             DateMidnight primaryCompletionDate = new DateMidnight(dates.getPrimaryCompletionDate());
@@ -532,7 +537,32 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             }
         }
     }
-    
+
+    /**
+     * @param studyProtocolDTO
+     * @return
+     */
+    private StudyProtocolDates extractStudyProtocolDatesFromDTO(
+            StudyProtocolDTO studyProtocolDTO) {
+        return AbstractStudyProtocolConverter
+                .convertDatesToDomain(studyProtocolDTO);
+    }
+
+    private void enforceAllowedDateTypes(StudyProtocolDates dates)
+            throws PAException {
+        if (dates.getPrimaryCompletionDateTypeCode() == ActualAnticipatedTypeCode.NA
+                && dates.getPrimaryCompletionDate() != null) {
+            throw new PAException(
+                    "If primary completion date is specified, its type cannot be 'N/A'");
+        }
+        if (dates.getCompletionDateTypeCode() == ActualAnticipatedTypeCode.NA) {
+            throw new PAException("Completion date cannot have type of 'N/A'");
+        }
+        if (dates.getStartDateTypeCode() == ActualAnticipatedTypeCode.NA) {
+            throw new PAException("Start date cannot have type of 'N/A'");
+        }
+    }
+
     private void checkRequiredDates(StudyProtocolDates dates, boolean unknownPrimaryCompletionDate, 
             StudyProtocolDTO studyProtocolDTO) throws PAException {
         if (dates.getStartDate() == null) {

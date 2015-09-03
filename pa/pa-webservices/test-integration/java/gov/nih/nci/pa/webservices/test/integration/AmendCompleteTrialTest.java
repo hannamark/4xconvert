@@ -2,9 +2,6 @@ package gov.nih.nci.pa.webservices.test.integration;
 
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
-import gov.nih.nci.pa.enums.StudySourceCode;
-import gov.nih.nci.pa.service.StudySourceInterceptor;
-import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 import gov.nih.nci.pa.webservices.types.BaseTrialInformation;
 import gov.nih.nci.pa.webservices.types.CompleteTrialAmendment;
 import gov.nih.nci.pa.webservices.types.CompleteTrialRegistration;
@@ -26,6 +23,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.http.HttpResponse;
@@ -48,6 +46,64 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
     public void setUp() throws Exception {
         super.setUp("/trials/complete");
         deactivateAllTrials();
+    }
+
+    @Test
+    public void testPrimaryCompletionDateAsNAForDcpTrials() throws Exception {
+        String uuid = RandomStringUtils.randomAlphabetic(12);
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_success_no_dcp.xml");
+        clickAndWait("link=General Trial Details");
+        selenium.select("id=otherIdentifierType", "label=" + "DCP Identifier");
+        selenium.type("id=otherIdentifierOrg", uuid);
+        clickAndWait("id=otherIdbtnid");
+        prepareTrialForAmendment(rConf);
+
+        CompleteTrialAmendment reg = readCompleteTrialAmendmentFromFile("/integration_amend_complete.xml");
+        reg.setDcpIdentifier(uuid);
+
+        // N/A date type cannot be used for Trial Start Date or Completion Date.
+        reg.getTrialStartDate().setType("N/A");
+        HttpResponse response = amendTrialFromJAXBElement("dcp", uuid, reg);
+        verifyResponseHasFailure(500, "Start date cannot have type of 'N/A'",
+                response);
+        reg.getTrialStartDate().setType("Actual");
+
+        reg.getCompletionDate().setType("N/A");
+        response = amendTrialFromJAXBElement("dcp", uuid, reg);
+        verifyResponseHasFailure(500,
+                "Completion date cannot have type of 'N/A'", response);
+        reg.getCompletionDate().setType("Anticipated");
+
+        // If PCD is specified, it cannot be N/A.
+        reg.getPrimaryCompletionDate().getValue().setType("N/A");
+        response = amendTrialFromJAXBElement("dcp", uuid, reg);
+        verifyResponseHasFailure(400,
+                "When the Primary Completion Date Type is set to 'N/A', "
+                        + "the Primary Completion Date must be null. ",
+                response);
+
+        // Only DCP trials can have N/A PCD.
+        reg.setDcpIdentifier(null);
+        reg.getPrimaryCompletionDate().getValue().setValue(null);
+        reg.getPrimaryCompletionDate().getValue().setType("N/A");
+        reg.getPrimaryCompletionDate().setNil(true);
+        response = amendTrialFromJAXBElement("dcp", uuid, reg);
+        verifyResponseHasFailure(
+                400,
+                "Only a DCP trial can have a Primary Completion Date Type equals to 'N/A'",
+                response);
+
+        // Finally, amend a DCP trial with N/A PCD.
+        reg.setDcpIdentifier(uuid);
+        reg.getPrimaryCompletionDate().getValue().setValue(null);
+        reg.getPrimaryCompletionDate().getValue().setType("N/A");
+        reg.getPrimaryCompletionDate().setNil(true);
+        response = amendTrialFromJAXBElement("dcp", uuid, reg);
+        TrialRegistrationConfirmation uConf = processTrialRegistrationResponseAndDoBasicVerification(response);
+        assertEquals(rConf.getPaTrialID(), uConf.getPaTrialID());
+        assertEquals(rConf.getNciTrialID(), uConf.getNciTrialID());
+        verifyAmendment(reg, uConf);
+
     }
 
     @Test
@@ -395,7 +451,6 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
         verifyAmendment(upd, uConf);
 
     }
-    
 
     @Test
     public void testAmendByDCPId() throws Exception {
@@ -544,8 +599,7 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
                 DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.name());
 
     }
-    
-    
+
     @Test
     public void testAmendDSPWarning() throws Exception {
         CompleteTrialRegistration reg = readCompleteTrialRegistrationFromFile("/integration_register_complete_success.xml");
@@ -563,61 +617,66 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
         assertEquals(rConf.getNciTrialID(), uConf.getNciTrialID());
         TrialInfo trial = new TrialInfo();
         trial.id = uConf.getPaTrialID();
-        assertEquals("false", getTrialField(trial, "DELAYED_POSTING_INDICATOR").toString());
+        assertEquals("false", getTrialField(trial, "DELAYED_POSTING_INDICATOR")
+                .toString());
         assertEquals(5, server.getReceivedEmailSize());
         Iterator<SmtpMessage> emailIter = server.getReceivedEmail();
-        for (int i=0 ; emailIter.hasNext(); i++) {
+        for (int i = 0; emailIter.hasNext(); i++) {
             SmtpMessage email = (SmtpMessage) emailIter.next();
             String body = email.getBody();
             System.out.println(body);
             switch (i) {
-            case 0 : verifyCreateBodyDSPWarning(body);
-                     break;
-            case 1 : verifyCreateBodyDSPCTRO(body);
-                     break;
-            case 3 : verifyAmendBodyDSPWarning(body);
-                     break;
-            case 4 : verifyAmendBodyDSPCTRO(body);
-                     break;
-            default : break;
+            case 0:
+                verifyCreateBodyDSPWarning(body);
+                break;
+            case 1:
+                verifyCreateBodyDSPCTRO(body);
+                break;
+            case 3:
+                verifyAmendBodyDSPWarning(body);
+                break;
+            case 4:
+                verifyAmendBodyDSPCTRO(body);
+                break;
+            default:
+                break;
             }
         }
 
     }
-    
+
     /**
      * @param body
      */
     private void verifyAmendBodyDSPCTRO(final String body) {
-        assertTrue(body.contains(
-                "Dear CTRO Staff,</p><p>An amendment for the trial below was submitted where the value of the Delayed Posting Indicator was changed:"));
-        assertTrue(body.contains(
-                        "The following warning message was sent to the submitter:</p>Submitter:"));
+        assertTrue(body
+                .contains("Dear CTRO Staff,</p><p>An amendment for the trial below was submitted where the value of the Delayed Posting Indicator was changed:"));
+        assertTrue(body
+                .contains("The following warning message was sent to the submitter:</p>Submitter:"));
     }
-    
+
     /**
      * @param body
      */
     private void verifyAmendBodyDSPWarning(final String body) {
-        assertTrue(body.contains(
-                "WARNING:</b>The amendment submitted has a Delayed Posting Indicator value different than that stored in CTRP."));
+        assertTrue(body
+                .contains("WARNING:</b>The amendment submitted has a Delayed Posting Indicator value different than that stored in CTRP."));
     }
-    
+
     /**
      * @param body
      */
     private void verifyCreateBodyDSPWarning(final String body) {
-        assertTrue(body.contains(
-                "WARNING:</b> The trial submitted has a Delayed Posting Indicator value of \"Yes\""));
+        assertTrue(body
+                .contains("WARNING:</b> The trial submitted has a Delayed Posting Indicator value of \"Yes\""));
     }
-    
+
     /**
      * @param body
      */
     private void verifyCreateBodyDSPCTRO(final String body) {
-        assertTrue(body.contains(
-                "Dear CTRO Staff,</p><p>The trial below was submitted with the value for the Delayed Posting Indicator set to \"Yes\":"));
+        assertTrue(body
+                .contains("Dear CTRO Staff,</p><p>The trial below was submitted with the value for the Delayed Posting Indicator set to \"Yes\":"));
     }
-    
 
 }

@@ -188,6 +188,15 @@
                 <path refid="common.package.classpath"/>
             </classpath>
         </javac>
+        <copy file="${pa.resourceDir}/csm.properties" todir="${pa-webservices.build.outputDir}" overwrite="true">
+            <filterset>
+                <filter token="database.driver" value="${jdbc.driver}" />
+                <filter token="database.url" value="${jdbc.url}" />
+                <filter token="database.user" value="${db.username}" />
+                <filter token="database.password" value="${db.password}" />
+                <filter token="database.dialect" value="${hibernate.dialect}" />
+            </filterset>
+        </copy>    	
         <copy todir="${pa-webservices.build.outputDir}">
             <filterset>
                 <filter token="ldap.url" value="${ldap.url}"/>

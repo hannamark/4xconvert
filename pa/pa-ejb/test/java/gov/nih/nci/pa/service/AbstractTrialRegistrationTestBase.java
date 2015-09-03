@@ -82,6 +82,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang.SystemUtils;
 import org.hibernate.Session;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
@@ -136,6 +137,14 @@ public abstract class AbstractTrialRegistrationTestBase extends
     
     public AbstractTrialRegistrationTestBase() {
         super();
+    }
+    
+    @After
+    public void shutdown() {
+        PaHibernateUtil.getCurrentSession()
+                .createSQLQuery("drop table if exists rv_dcp_id")
+                .executeUpdate();
+        PaHibernateUtil.getCurrentSession().flush();
     }
 
     /**
@@ -336,6 +345,16 @@ public abstract class AbstractTrialRegistrationTestBase extends
         bean.setCtGovUploadServiceLocal(ctGovUploadServiceLocal);
         
         setupPoSvc();
+        
+        PaHibernateUtil.getCurrentSession()
+                .createSQLQuery("drop table if exists rv_dcp_id")
+                .executeUpdate();
+        PaHibernateUtil
+                .getCurrentSession()
+                .createSQLQuery(
+                        "create table rv_dcp_id (local_sp_indentifier varchar, study_protocol_identifier int)")
+                .executeUpdate();
+        PaHibernateUtil.getCurrentSession().flush();
     }
 
     @SuppressWarnings("deprecation")

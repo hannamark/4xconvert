@@ -173,8 +173,6 @@ public class TrialRegistrationValidatorTest {
     private StudyIndldeServiceLocal studyIndldeService = mock(StudyIndldeServiceLocal.class);
     private StudyOverallStatusServiceLocal studyOverallStatusService = mock(StudyOverallStatusServiceLocal.class);
     private StudyProtocolServiceLocal studyProtocolService = mock(StudyProtocolServiceLocal.class);
-    private StudyRecruitmentStatusServiceLocal studyRecruitmentStatusServiceLocal = 
-            mock(StudyRecruitmentStatusServiceLocal.class);
     private StudyResourcingServiceLocal studyResourcingService = mock(StudyResourcingServiceLocal.class);
     private StudyProtocolDTO studyProtocolDTO = new StudyProtocolDTO();
     private StringBuilder errorMsg = new StringBuilder();
@@ -222,14 +220,21 @@ public class TrialRegistrationValidatorTest {
         studyProtocolDTO.setIdentifier(spIi);
         StudyOverallStatusDTO overallStatusDTO = new StudyOverallStatusDTO();
         List<StudyResourcingDTO> studyResourcingDTOs = new ArrayList<StudyResourcingDTO>();
-        List<DocumentDTO> documentDTOs = new ArrayList<DocumentDTO>();
+        List<DocumentDTO> documentDTOs = new ArrayList<DocumentDTO>();        
         List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs = new ArrayList<StudySiteAccrualStatusDTO>();
+        
+        PAServiceUtils paServiceUtilsMock = mock(PAServiceUtils.class);
+        when(paServiceUtilsMock.getCtepOrDcpId(any(Long.class), any(String.class))).thenReturn("DCPID");
+        when(validator.getPaServiceUtils()).thenReturn(paServiceUtilsMock);
+        
         doCallRealMethod().when(validator).validateUpdate(studyProtocolDTO, overallStatusDTO, null, studyResourcingDTOs,
                                                           documentDTOs, studySiteAccrualStatusDTOs);
         validator.validateUpdate(studyProtocolDTO, overallStatusDTO, null, studyResourcingDTOs, documentDTOs,
                                  studySiteAccrualStatusDTOs);
         verify(validator).validateUser(eq(studyProtocolDTO), eq("Update"), eq(true), (StringBuilder) any());
-        verify(validator).validateStatusAndDates(eq(studyProtocolDTO), eq(overallStatusDTO), eq((List)null), (StringBuilder) any());
+        verify(validator).validateStatusAndDates(eq(studyProtocolDTO),
+                eq(overallStatusDTO), eq((List) null), eq(true),
+                (StringBuilder) any());
         verify(validator).validateNihGrants(eq(studyProtocolDTO), eq((OrganizationDTO) null), eq(studyResourcingDTOs), (StringBuilder) any());
         verify(validator).validateDWFS(eq(spIi), eq(TrialRegistrationValidator.ERROR_DWFS_FOR_UPDATE),
                                        eq(TrialRegistrationValidator.ERROR_MESSAGE_DWFS_FOR_UPDATE),
@@ -318,6 +323,41 @@ public class TrialRegistrationValidatorTest {
         validator.validateUser(studyProtocolDTO, "Operation", true, errorMsg);
     }
     
+    @Test
+    public void testOnlyDcpTrialCanHavePcdAsNA() {
+        validator = new TrialRegistrationValidator(null);
+        studyProtocolDTO
+                .setPrimaryCompletionDate(TsConverter.convertToTs(null));
+        studyProtocolDTO.setPrimaryCompletionDateTypeCode(CdConverter
+                .convertToCd(ActualAnticipatedTypeCode.NA));
+
+        StringBuilder sb = new StringBuilder();
+        assertFalse(validator.validateStudyProtocolDates(studyProtocolDTO,
+                false, sb));
+        assertTrue(sb
+                .toString()
+                .contains(
+                        "Only a DCP trial can have a Primary Completion Date Type equals to 'N/A'. "));
+    }
+    
+    @Test
+    public void testPcdMustBeNullIfNA() {
+        validator = new TrialRegistrationValidator(null);
+        studyProtocolDTO
+                .setPrimaryCompletionDate(TsConverter.convertToTs(new Date()));
+        studyProtocolDTO.setPrimaryCompletionDateTypeCode(CdConverter
+                .convertToCd(ActualAnticipatedTypeCode.NA));
+
+        StringBuilder sb = new StringBuilder();
+        assertFalse(validator.validateStudyProtocolDates(studyProtocolDTO,
+                true, sb));
+        assertTrue(sb
+                .toString()
+                .contains(
+                        "When the Primary Completion Date Type is set to 'N/A', "
+                                + "the Primary Completion Date must be null. "));
+    }
+    
     /**
      * test the validateStatusAndDates method with invalid results from the other methods.
      */
@@ -325,8 +365,8 @@ public class TrialRegistrationValidatorTest {
     public void testValidateStatusAndDatesInvalid() {
         StudyOverallStatusDTO overallStatusDTO = new StudyOverallStatusDTO();
         validator = mock(TrialRegistrationValidator.class);
-        doCallRealMethod().when(validator).validateStatusAndDates(studyProtocolDTO, overallStatusDTO, null, errorMsg);
-        validator.validateStatusAndDates(studyProtocolDTO, overallStatusDTO, null, errorMsg);
+        doCallRealMethod().when(validator).validateStatusAndDates(studyProtocolDTO, overallStatusDTO, null, false, errorMsg);
+        validator.validateStatusAndDates(studyProtocolDTO, overallStatusDTO, null, false,errorMsg);
         verify(validator, never()).validateOverallStatus(studyProtocolDTO, overallStatusDTO, errorMsg);
     }
     
@@ -337,10 +377,10 @@ public class TrialRegistrationValidatorTest {
     public void testValidateStatusAndDatesValid() {
         StudyOverallStatusDTO overallStatusDTO = new StudyOverallStatusDTO();
         validator = mock(TrialRegistrationValidator.class);
-        doCallRealMethod().when(validator).validateStatusAndDates(studyProtocolDTO, overallStatusDTO, null, errorMsg);
-        when(validator.validateStudyProtocolDates(studyProtocolDTO, errorMsg)).thenReturn(true);
+        doCallRealMethod().when(validator).validateStatusAndDates(studyProtocolDTO, overallStatusDTO, null, false,errorMsg);
+        when(validator.validateStudyProtocolDates(studyProtocolDTO,false, errorMsg)).thenReturn(true);
         when(validator.validateOverallStatusFields(overallStatusDTO, null, errorMsg)).thenReturn(true);
-        validator.validateStatusAndDates(studyProtocolDTO, overallStatusDTO, null, errorMsg);
+        validator.validateStatusAndDates(studyProtocolDTO, overallStatusDTO, null, false, errorMsg);
         verify(validator).validateOverallStatus(studyProtocolDTO, overallStatusDTO, errorMsg);
     }
     
@@ -349,7 +389,7 @@ public class TrialRegistrationValidatorTest {
      */
     @Test
     public void testValidateStudyProtocolDatesNodata() {
-        boolean result = validator.validateStudyProtocolDates(studyProtocolDTO, errorMsg);
+        boolean result = validator.validateStudyProtocolDates(studyProtocolDTO, false, errorMsg);
         assertFalse("Validation should have failed", result);
         checkErrorMsg("Trial Start Date Type cannot be null. Primary Completion Date Type cannot be null. Primary Completion Date cannot be null. " 
                 + "Trial Start Date cannot be null. ");
@@ -364,7 +404,7 @@ public class TrialRegistrationValidatorTest {
         studyProtocolDTO.setStartDateTypeCode(CdConverter.convertToCd((Lov) null));
         studyProtocolDTO.setPrimaryCompletionDate(TsConverter.convertToTs(null));
         studyProtocolDTO.setPrimaryCompletionDateTypeCode(CdConverter.convertToCd((Lov) null));
-        boolean result = validator.validateStudyProtocolDates(studyProtocolDTO, errorMsg);
+        boolean result = validator.validateStudyProtocolDates(studyProtocolDTO, false, errorMsg);
         assertFalse("Validation should have failed", result);
         checkErrorMsg("Trial Start Date Type cannot be null. Primary Completion Date Type cannot be null. Primary Completion Date cannot be null. " 
                 + "Trial Start Date cannot be null. ");
@@ -379,7 +419,7 @@ public class TrialRegistrationValidatorTest {
         studyProtocolDTO.setStartDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.ACTUAL));
         studyProtocolDTO.setPrimaryCompletionDate(TsConverter.convertToTs(new Date()));
         studyProtocolDTO.setPrimaryCompletionDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.ACTUAL));
-        boolean result = validator.validateStudyProtocolDates(studyProtocolDTO, errorMsg);
+        boolean result = validator.validateStudyProtocolDates(studyProtocolDTO, false, errorMsg);
         assertTrue("Validation should have scucceeded", result);
         checkErrorMsg("");
     }
@@ -708,6 +748,7 @@ public class TrialRegistrationValidatorTest {
         List<DocumentDTO> documentDTOs = new ArrayList<DocumentDTO>();
         List<StudyIndldeDTO> studyIndldeDTOs = new ArrayList<StudyIndldeDTO>();
         StudySiteDTO nctIdentifierDTO = new StudySiteDTO();
+        StudySiteDTO dcpIdentifierDTO = new StudySiteDTO();
         final ResponsiblePartyDTO responsiblePartyDTO = getResponsiblePartyDTO(piPersonDTO, leadOrganizationDTO);
         doCallRealMethod().when(validator).validateAmendment(studyProtocolDTO,
                 overallStatusDTO, null, leadOrganizationDTO, sponsorOrganizationDTO,
@@ -715,13 +756,17 @@ public class TrialRegistrationValidatorTest {
                 piPersonDTO,
                 responsiblePartyDTO,
                 studyRegAuthDTO, studyResourcingDTOs, documentDTOs,
-                studyIndldeDTOs, nctIdentifierDTO);
-        validator.validateAmendment(studyProtocolDTO, overallStatusDTO, null, leadOrganizationDTO, sponsorOrganizationDTO,
-                                    summary4organizationDTO,
-                                    summary4StudyResourcingDTO, piPersonDTO,  responsiblePartyDTO,
-                                    studyRegAuthDTO, studyResourcingDTOs, documentDTOs, studyIndldeDTOs, nctIdentifierDTO);
+                studyIndldeDTOs, nctIdentifierDTO, dcpIdentifierDTO);
+        validator.validateAmendment(studyProtocolDTO, overallStatusDTO, null,
+                leadOrganizationDTO, sponsorOrganizationDTO,
+                summary4organizationDTO, summary4StudyResourcingDTO,
+                piPersonDTO, responsiblePartyDTO, studyRegAuthDTO,
+                studyResourcingDTOs, documentDTOs, studyIndldeDTOs,
+                nctIdentifierDTO, dcpIdentifierDTO);
         verify(validator).validateUser(eq(studyProtocolDTO), eq("Amendment"), eq(true), (StringBuilder) any());
-        verify(validator).validateStatusAndDates(eq(studyProtocolDTO), eq(overallStatusDTO), eq((List)null), (StringBuilder) any());
+        verify(validator).validateStatusAndDates(eq(studyProtocolDTO),
+                eq(overallStatusDTO), eq((List) null), eq(true),
+                (StringBuilder) any());
         verify(validator).validateNihGrants(eq(studyProtocolDTO), eq(leadOrganizationDTO), eq(studyResourcingDTOs), (StringBuilder) any());
         verify(validator).validateIndlde(eq(studyProtocolDTO), eq(studyIndldeDTOs), (StringBuilder) any());
         verify(validator).validateDWFS(eq(spIi), eq(TrialRegistrationValidator.ERROR_DWFS_FOR_AMEND),
@@ -1154,27 +1199,30 @@ public class TrialRegistrationValidatorTest {
         List<DocumentDTO> documentDTOs = new ArrayList<DocumentDTO>();
         List<StudyIndldeDTO> studyIndldeDTOs = new ArrayList<StudyIndldeDTO>();
         StudySiteDTO nctIdentifierDTO = new StudySiteDTO();
+        StudySiteDTO dcpIdentifierDTO = new StudySiteDTO();
         
         final ResponsiblePartyDTO responsiblePartyDTO = getResponsiblePartyDTO(principalInvestigatorDTO, leadOrganizationDTO);
-        doCallRealMethod().when(validator).validateCreation(studyProtocolDTO, overallStatusDTO, leadOrganizationDTO,
-                                                            sponsorOrganizationDTO, 
-                                                            responsiblePartyDTO,
-                                                            summary4OrganizationDTO,
-                                                            summary4StudyResourcingDTO, principalInvestigatorDTO,
-                                                            leadOrganizationSiteIdentifierDTO,
-                                                            studyRegAuthDTO,
-                                                            studyResourcingDTOs, documentDTOs, studyIndldeDTOs, nctIdentifierDTO);
-        validator.validateCreation(studyProtocolDTO, overallStatusDTO, leadOrganizationDTO, sponsorOrganizationDTO,
-                                   responsiblePartyDTO,
-                                   summary4OrganizationDTO,
-                                   summary4StudyResourcingDTO, principalInvestigatorDTO,
-                                   leadOrganizationSiteIdentifierDTO, studyRegAuthDTO,
-                                   studyResourcingDTOs, documentDTOs, studyIndldeDTOs, nctIdentifierDTO);
+        doCallRealMethod().when(validator).validateCreation(studyProtocolDTO,
+                overallStatusDTO, leadOrganizationDTO, sponsorOrganizationDTO,
+                responsiblePartyDTO, summary4OrganizationDTO,
+                summary4StudyResourcingDTO, principalInvestigatorDTO,
+                leadOrganizationSiteIdentifierDTO, studyRegAuthDTO,
+                studyResourcingDTOs, documentDTOs, studyIndldeDTOs,
+                nctIdentifierDTO, dcpIdentifierDTO);
+        validator.validateCreation(studyProtocolDTO, overallStatusDTO,
+                leadOrganizationDTO, sponsorOrganizationDTO,
+                responsiblePartyDTO, summary4OrganizationDTO,
+                summary4StudyResourcingDTO, principalInvestigatorDTO,
+                leadOrganizationSiteIdentifierDTO, studyRegAuthDTO,
+                studyResourcingDTOs, documentDTOs, studyIndldeDTOs,
+                nctIdentifierDTO, dcpIdentifierDTO);
         verify(validator).validateStudyProtocol(studyProtocolDTO);
         verify(validator).validateMandatoryFields(eq(studyProtocolDTO), eq(leadOrganizationSiteIdentifierDTO),
                                                   eq(documentDTOs), (StringBuilder) any());
         verify(validator).validateUser(eq(studyProtocolDTO), eq("Create"), eq(false), (StringBuilder) any());
-        verify(validator).validateStatusAndDates(eq(studyProtocolDTO), eq(overallStatusDTO), eq((List)null), (StringBuilder) any());
+        verify(validator).validateStatusAndDates(eq(studyProtocolDTO),
+                eq(overallStatusDTO), eq((List) null), eq(true),
+                (StringBuilder) any());
         verify(validator).validateNihGrants(eq(studyProtocolDTO), eq(leadOrganizationDTO), eq(studyResourcingDTOs), (StringBuilder) any());
         verify(validator).validateIndlde(eq(studyProtocolDTO), eq(studyIndldeDTOs), (StringBuilder) any());
         verify(validator).validateMandatoryDocuments(eq(documentDTOs), (StringBuilder) any());

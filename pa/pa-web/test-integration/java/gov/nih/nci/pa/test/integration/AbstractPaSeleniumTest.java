@@ -143,6 +143,7 @@ import com.dumbster.smtp.SimpleSmtpServer;
  * 
  * @author Abraham J. Evans-EL <aevanse@5amsolutions.com>
  */
+@SuppressWarnings("deprecation")
 @Ignore
 public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
 
@@ -235,7 +236,6 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     /**
      * @throws Exception
      */
-    @SuppressWarnings("deprecation")
     private void setUpSelenium() throws Exception {
         super.setServerHostname(TestProperties.getServerHostname());
         super.setServerPort(TestProperties.getServerPort());
@@ -798,9 +798,10 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                         + "inactive_comment_text,date_last_created,date_last_updated,user_last_created_id,user_last_updated_id,"
                         + "original,deleted,study_inbox_id,ctro_user_date_created,ccct_user_date_created,ctro_user_id,ccct_user_id) VALUES "
                         + "((SELECT NEXTVAL('HIBERNATE_SEQUENCE')),'%s',true,'%s',%s,'',"
-                        + "%s,%s,%s,%s,true,false,null,%s,%s,%s,%s);", type, filename,
-                        info.id, today(), today(), info.csmUserID,
-                        info.csmUserID, today(), today(), info.csmUserID, info.csmUserID);
+                        + "%s,%s,%s,%s,true,false,null,%s,%s,%s,%s);", type,
+                        filename, info.id, today(), today(), info.csmUserID,
+                        info.csmUserID, today(), today(), info.csmUserID,
+                        info.csmUserID);
         runner.update(connection, sql);
 
     }

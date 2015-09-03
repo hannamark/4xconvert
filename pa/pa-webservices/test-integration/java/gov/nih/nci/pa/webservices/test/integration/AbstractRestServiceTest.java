@@ -6,7 +6,6 @@ package gov.nih.nci.pa.webservices.test.integration;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest;
-import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 import gov.nih.nci.pa.test.integration.util.TestProperties;
 import gov.nih.nci.pa.util.pomock.MockOrganizationEntityService;
 import gov.nih.nci.pa.util.pomock.MockPersonEntityService;
@@ -41,6 +40,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 import javax.xml.transform.stream.StreamSource;
 
@@ -71,6 +71,7 @@ import com.dumbster.smtp.SmtpMessage;
  * @author dkrylov
  * 
  */
+@SuppressWarnings("deprecation")
 public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
     @SuppressWarnings("deprecation")
     protected DefaultHttpClient httpClient = null;
@@ -211,8 +212,26 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
     protected TrialRegistrationConfirmation registerTrialFromJAXBElement(
             CompleteTrialRegistration o) throws ClientProtocolException,
             IOException, ParseException, JAXBException, SQLException {
+        HttpResponse response = submitRegistrationAndReturnResponse(o);
+        return processTrialRegistrationResponseAndDoBasicVerification(response,
+                o.getLeadOrgTrialID());
+
+    }
+
+    /**
+     * @param o
+     * @return
+     * @throws JAXBException
+     * @throws UnsupportedEncodingException
+     * @throws IOException
+     * @throws ClientProtocolException
+     */
+    protected HttpResponse submitRegistrationAndReturnResponse(
+            CompleteTrialRegistration o) throws JAXBException,
+            UnsupportedEncodingException, IOException, ClientProtocolException {
         JAXBContext jc = JAXBContext.newInstance(ObjectFactory.class);
         Marshaller m = jc.createMarshaller();
+        m.setProperty("jaxb.formatted.output", true);
         StringWriter out = new StringWriter();
         m.marshal(new JAXBElement<CompleteTrialRegistration>(
                 new QName("gov.nih.nci.pa.webservices.types",
@@ -220,9 +239,9 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
                 CompleteTrialRegistration.class, o), out);
 
         StringEntity entity = new StringEntity(out.toString());
+        System.out.println(out.toString());
         HttpResponse response = submitRegistrationAndReturnResponse(entity);
-        return processTrialRegistrationResponseAndDoBasicVerification(response);
-
+        return response;
     }
 
     protected HttpResponse submitRegistrationAndReturnResponse(String file)
@@ -332,6 +351,7 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
     /**
      * @param conf
      */
+
     protected void logInFindAndAcceptTrial(TrialRegistrationConfirmation conf) {
 
         logoutUser();
@@ -401,13 +421,13 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
                 getTrialIdentificationTableCellValue("Trial Type"));
         assertEquals(conf.getNciTrialID(),
                 getTrialIdentificationTableCellValue("NCI Trial Identifier"));
-        
-        //get dcp value
-        if(reg.getDcpIdentifier()!=null) {
+
+        // get dcp value
+        if (reg.getDcpIdentifier() != null) {
             assertEquals(reg.getDcpIdentifier(),
                     getTrialIdentificationTableCellValue("DCP Identifier"));
         }
-        
+
         assertEquals(
                 reg.isClinicalTrialsDotGovXmlRequired() ? "Yes" : "No",
                 getTrialIdentificationTableCellValue("ClinicalTrials.gov XML required?"));
@@ -643,12 +663,18 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
             assertTrue(selenium.isChecked("id=startDateTypeAnticipated"));
         }
 
+        final XMLGregorianCalendar pcd = reg.getPrimaryCompletionDate()
+                .getValue().getValue();
         assertEquals(
-                DateFormatUtils.format(reg.getPrimaryCompletionDate()
-                        .getValue().toGregorianCalendar(), "MM/dd/yyyy"),
+                pcd != null ? DateFormatUtils.format(pcd.toGregorianCalendar(),
+                        "MM/dd/yyyy") : "",
                 selenium.getValue("id=primaryCompletionDate"));
-        if (reg.getPrimaryCompletionDate().getType().equals("Actual")) {
+        if (reg.getPrimaryCompletionDate().getValue().getType()
+                .equals("Actual")) {
             assertTrue(selenium.isChecked("id=primaryCompletionDateTypeActual"));
+        } else if (reg.getPrimaryCompletionDate().getValue().getType()
+                .equals("N/A")) {
+            assertTrue(selenium.isChecked("id=primaryCompletionDateTypeN/A"));
         } else {
             assertTrue(selenium
                     .isChecked("id=primaryCompletionDateTypeAnticipated"));
@@ -1011,6 +1037,22 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
         }
         fail("Email to " + to + " never received!");
         return null;
+    }
+
+    /**
+     * @param code
+     * @param expectedErrMsg
+     * @param response
+     * @throws IOException
+     * @throws ParseException
+     */
+    protected void verifyResponseHasFailure(int code, String expectedErrMsg,
+            HttpResponse response) throws IOException, ParseException {
+        assertEquals(code, getReponseCode(response));
+
+        String respBody = EntityUtils.toString(response.getEntity(), "utf-8");
+        LOG.info(respBody);
+        assertTrue(respBody.contains(expectedErrMsg));
     }
 
 }

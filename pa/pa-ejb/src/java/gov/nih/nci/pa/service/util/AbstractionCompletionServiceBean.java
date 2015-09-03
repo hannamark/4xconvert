@@ -90,6 +90,7 @@ import gov.nih.nci.pa.dto.AbstractionCompletionDTO.ErrorMessageTypeEnum;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.ArmTypeCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
@@ -841,7 +842,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         }
     }
 
-    private void enforceTrialStatus(StudyProtocolDTO studyProtocolDTO, AbstractionMessageCollection messages)
+    void enforceTrialStatus(StudyProtocolDTO studyProtocolDTO, AbstractionMessageCollection messages) // NOPMD
             throws PAException {
         StudyOverallStatusDTO sos = studyOverallStatusService.getCurrentByStudyProtocol(studyProtocolDTO
             .getIdentifier());
@@ -858,21 +859,48 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             messages.addError(SELECT_TRIAL_STATUS,
                               "StartDateType must be Entered.", ErrorMessageTypeEnum.ADMIN, 6);
         }
-        //don't validate primary completion date if it is non interventional trial 
-        //and CTGovXmlRequired is false.
+        // don't validate primary completion date if it is non interventional
+        // trial
+        // and CTGovXmlRequired is false.
         if (PAUtil.isPrimaryCompletionDateRequired(studyProtocolDTO)) {
-            if (studyProtocolDTO.getPrimaryCompletionDate() == null
-                    || studyProtocolDTO.getPrimaryCompletionDate().getValue() == null) {
+            if (ISOUtil.isTsNull(studyProtocolDTO.getPrimaryCompletionDate())
+                    && ActualAnticipatedTypeCode.NA != CdConverter
+                            .convertCdToEnum(ActualAnticipatedTypeCode.class,
+                                    studyProtocolDTO
+                                            .getPrimaryCompletionDateTypeCode())) {
                 messages.addError(SELECT_TRIAL_STATUS,
-                                  "PrimaryCompletionDate must be Entered.", ErrorMessageTypeEnum.ADMIN, 6);
+                        "PrimaryCompletionDate must be Entered.",
+                        ErrorMessageTypeEnum.ADMIN, 6);
             }
-            if (studyProtocolDTO.getPrimaryCompletionDateTypeCode() == null
-                    || studyProtocolDTO.getPrimaryCompletionDateTypeCode()
-                            .getCode() == null) {
+            if (ISOUtil.isCdNull(studyProtocolDTO
+                    .getPrimaryCompletionDateTypeCode())) {
                 messages.addError(SELECT_TRIAL_STATUS,
-                                  "PrimaryCompletionDateType must be Entered.", ErrorMessageTypeEnum.ADMIN, 6);
-            }        
-        }                    
+                        "PrimaryCompletionDateType must be Entered.",
+                        ErrorMessageTypeEnum.ADMIN, 6);
+            }
+        }     
+        if (ActualAnticipatedTypeCode.NA == CdConverter.convertCdToEnum(
+                ActualAnticipatedTypeCode.class,
+                studyProtocolDTO.getPrimaryCompletionDateTypeCode())
+                && StringUtils.isBlank(paServiceUtil.getCtepOrDcpId(
+                        IiConverter.convertToLong(studyProtocolDTO
+                                .getIdentifier()),
+                        PAConstants.DCP_IDENTIFIER_TYPE))) {
+            messages.addError(
+                    SELECT_TRIAL_STATUS,
+                    "Only a DCP trial can have a Primary Completion Date Type equals to 'N/A'.",
+                    ErrorMessageTypeEnum.ADMIN, 6);
+        }
+        if (ActualAnticipatedTypeCode.NA == CdConverter.convertCdToEnum(
+                ActualAnticipatedTypeCode.class,
+                studyProtocolDTO.getPrimaryCompletionDateTypeCode())
+                && !ISOUtil.isTsNull(studyProtocolDTO
+                        .getPrimaryCompletionDate())) {
+            messages.addError(SELECT_TRIAL_STATUS,
+                    "When the Primary Completion Date Type is set to 'N/A', "
+                            + "the Primary Completion Date must be null.",
+                    ErrorMessageTypeEnum.ADMIN, 6);
+        }
         if (sos != null) {
             for (String error : studyOverallStatusService
                     .validateTrialStatusAndDates(studyProtocolDTO, sos)) {

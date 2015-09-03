@@ -1,6 +1,5 @@
 package gov.nih.nci.pa.webservices.test.integration;
 
-import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 import gov.nih.nci.pa.webservices.types.CompleteTrialUpdate;
 import gov.nih.nci.pa.webservices.types.Grant;
 import gov.nih.nci.pa.webservices.types.ObjectFactory;
@@ -10,15 +9,16 @@ import gov.nih.nci.pa.webservices.types.TrialRegistrationConfirmation;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.sql.SQLException;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -217,7 +217,62 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
         verifyUpdate(upd, uConf);
 
     }
-    
+
+    @Test
+    public void testPrimaryCompletionDateAsNAForDcpTrials() throws Exception {
+        String uuid = RandomStringUtils.randomAlphabetic(12);
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
+
+        CompleteTrialUpdate reg = readCompleteTrialUpdateFromFile("/integration_update_complete.xml");
+
+        // N/A date type cannot be used for Trial Start Date or Completion Date.
+        reg.getTrialStartDate().setType("N/A");
+        HttpResponse response = updateTrialFromJAXBElement("nci",
+                rConf.getNciTrialID(), reg);
+        verifyResponseHasFailure(500, "Start date cannot have type of 'N/A'",
+                response);
+        reg.getTrialStartDate().setType("Actual");
+
+        reg.getCompletionDate().setType("N/A");
+        response = updateTrialFromJAXBElement("nci", rConf.getNciTrialID(), reg);
+        verifyResponseHasFailure(500,
+                "Completion date cannot have type of 'N/A'", response);
+        reg.getCompletionDate().setType("Anticipated");
+
+        // If PCD is specified, it cannot be N/A.
+        reg.getPrimaryCompletionDate().getValue().setType("N/A");
+        response = updateTrialFromJAXBElement("nci", rConf.getNciTrialID(), reg);
+        verifyResponseHasFailure(400,
+                "When the Primary Completion Date Type is set to 'N/A', "
+                        + "the Primary Completion Date must be null. ",
+                response);
+
+        // Only DCP trials can have N/A PCD.
+        reg.getPrimaryCompletionDate().getValue().setValue(null);
+        reg.getPrimaryCompletionDate().getValue().setType("N/A");
+        reg.getPrimaryCompletionDate().setNil(true);
+        response = updateTrialFromJAXBElement("nci", rConf.getNciTrialID(), reg);
+        verifyResponseHasFailure(
+                400,
+                "Only a DCP trial can have a Primary Completion Date Type equals to 'N/A'",
+                response);
+
+        // Finally, update a DCP trial with N/A PCD.
+        clickAndWait("link=General Trial Details");
+        selenium.select("id=otherIdentifierType", "label=" + "DCP Identifier");
+        selenium.type("id=otherIdentifierOrg", uuid);
+        clickAndWait("id=otherIdbtnid");
+        reg.getPrimaryCompletionDate().getValue().setValue(null);
+        reg.getPrimaryCompletionDate().getValue().setType("N/A");
+        reg.getPrimaryCompletionDate().setNil(true);
+        response = updateTrialFromJAXBElement("dcp", uuid, reg);
+        TrialRegistrationConfirmation uConf = processTrialRegistrationResponseAndDoBasicVerification(response);
+        assertEquals(rConf.getPaTrialID(), uConf.getPaTrialID());
+        assertEquals(rConf.getNciTrialID(), uConf.getNciTrialID());
+
+        verifyUpdate(reg, uConf);
+    }
+
     @Test
     public void testUpdateByDCPID() throws Exception {
         TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
@@ -447,12 +502,18 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
             assertTrue(selenium.isChecked("id=startDateTypeAnticipated"));
         }
 
+        final XMLGregorianCalendar pcd = reg.getPrimaryCompletionDate()
+                .getValue().getValue();
         assertEquals(
-                DateFormatUtils.format(reg.getPrimaryCompletionDate()
-                        .getValue().toGregorianCalendar(), "MM/dd/yyyy"),
+                pcd != null ? DateFormatUtils.format(pcd.toGregorianCalendar(),
+                        "MM/dd/yyyy") : "",
                 selenium.getValue("id=primaryCompletionDate"));
-        if (reg.getPrimaryCompletionDate().getType().equals("Actual")) {
+        if (reg.getPrimaryCompletionDate().getValue().getType()
+                .equals("Actual")) {
             assertTrue(selenium.isChecked("id=primaryCompletionDateTypeActual"));
+        } else if (reg.getPrimaryCompletionDate().getValue().getType()
+                .equals("N/A")) {
+            assertTrue(selenium.isChecked("id=primaryCompletionDateTypeN/A"));
         } else {
             assertTrue(selenium
                     .isChecked("id=primaryCompletionDateTypeAnticipated"));

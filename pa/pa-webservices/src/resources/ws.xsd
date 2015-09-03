@@ -408,9 +408,11 @@
 		</restriction>
 	</simpleType>
 
-	<complexType name="ActualOrAnticipatedDate">
+	<complexType name="TrialDateType">
 		<annotation>
-			<documentation>Defines a date that is either actual or anticipated.
+			<documentation>Defines a type of a trial date that is either actual
+				or anticipated. 'N/A' is only applicable to Primary Completion Date
+				and only on DCP trials.
 			</documentation>
 		</annotation>
 		<simpleContent>
@@ -420,6 +422,7 @@
 						<restriction base="string">
 							<enumeration value="Actual" />
 							<enumeration value="Anticipated" />
+							<enumeration value="N/A" />
 						</restriction>
 					</simpleType>
 				</attribute>
@@ -1046,12 +1049,31 @@
 				</simpleType>
 			</element>
 			<element name="trialStatusDate" type="date" minOccurs="0" />
-			<element name="trialStartDate" type="tns:ActualOrAnticipatedDate"
-				minOccurs="0" />
-			<element name="primaryCompletionDate" type="tns:ActualOrAnticipatedDate"
-				minOccurs="0" />
-			<element name="completionDate" type="tns:ActualOrAnticipatedDate"
-				minOccurs="0" />
+			<element name="trialStartDate" type="tns:TrialDateType"
+				minOccurs="0">
+				<annotation>
+					<documentation>If specified, its type can be either Anticipated or
+						Actual.
+					</documentation>
+				</annotation>
+			</element>
+			<element name="primaryCompletionDate" type="tns:TrialDateType"
+				nillable="true" minOccurs="0">
+				<annotation>
+					<documentation>Primary completion date is normally required for all
+						trial submissions. The only exception is the DCP trials: they can
+						have an empty Primary Completion Date of type 'N/A'.
+					</documentation>
+				</annotation>
+			</element>
+			<element name="completionDate" type="tns:TrialDateType"
+				minOccurs="0">
+				<annotation>
+					<documentation>If specified, its type can be either Anticipated or
+						Actual.
+					</documentation>
+				</annotation>
+			</element>
 			<element name="protocolDocument" type="tns:TrialDocument"
 				minOccurs="0">
 				<annotation>
@@ -1197,7 +1219,7 @@
 				</simpleType>
 			</element>
 			<element ref="tns:clinicalTrialsDotGovTrialID" minOccurs="0" />
-			 <element name="dcpIdentifier" type="string" minOccurs="0" />
+			<element name="dcpIdentifier" type="string" minOccurs="0" />
 			<element name="otherTrialID" minOccurs="0" maxOccurs="unbounded">
 				<annotation>
 					<documentation>Enter an additional trial identifier such as a
@@ -1296,10 +1318,33 @@
 				</simpleType>
 			</element>
 			<element name="trialStatusDate" type="date" />
-			<element name="trialStartDate" type="tns:ActualOrAnticipatedDate" />
-			<element name="primaryCompletionDate" type="tns:ActualOrAnticipatedDate" />
-			<element name="completionDate" type="tns:ActualOrAnticipatedDate"
-				minOccurs="0" />
+			<element name="trialStartDate" type="tns:TrialDateType">
+				<annotation>
+					<documentation>If specified, its type can be either Anticipated or
+						Actual.
+					</documentation>
+				</annotation>
+			</element>
+			<element name="primaryCompletionDate" type="tns:TrialDateType"
+				nillable="true">
+				<annotation>
+					<appinfo>
+						<jaxb:property generateElementProperty="true" />
+					</appinfo>
+					<documentation>Primary completion date is normally required for all
+						trial submissions. The only exception is the DCP trials: they can
+						have an empty Primary Completion Date of type 'N/A'.
+					</documentation>
+				</annotation>
+			</element>
+			<element name="completionDate" type="tns:TrialDateType"
+				minOccurs="0">
+				<annotation>
+					<documentation>If specified, its type can be either Anticipated or
+						Actual.
+					</documentation>
+				</annotation>
+			</element>
 			<element name="ind" type="tns:IND_IDE" minOccurs="0"
 				maxOccurs="unbounded" />
 			<element name="ide" type="tns:IND_IDE" minOccurs="0"
@@ -1394,7 +1439,7 @@
 		<sequence>
 			<element name="recruitmentStatus" type="tns:RecruitmentStatus" />
 			<element name="recruitmentStatusDate" type="date" />
-			<element name="localTrialIdentifier" type="string"/>
+			<element name="localTrialIdentifier" type="string" />
 			<element name="programCode" type="string" minOccurs="0" />
 			<element name="openedForAccrual" type="date" minOccurs="0">
 				<annotation>

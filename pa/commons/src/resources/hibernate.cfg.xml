@@ -8,7 +8,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <property name="hibernate.connection.datasource">java:/pa-ds</property>
         <property name="hibernate.current_session_context_class">managed</property>
         <property name="hibernate.transaction.factory_class">org.hibernate.transaction.CMTTransactionFactory</property>
-        <property name="hibernate.transaction.manager_lookup_class">org.hibernate.transaction.JBossTransactionManagerLookup</property>
+        <property name="hibernate.transaction.manager_lookup_class">com.fiveamsolutions.nci.commons.ejb.JBossAS7TransactionManagerLookup</property>
         <property name="hibernate.dialect">@hibernate.dialect@</property>
         <property name="hibernate.jdbc.batch_size">25</property>
         <property name="hibernate.jdbc.batch_versioned_data">true</property>

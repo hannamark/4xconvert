@@ -80,7 +80,6 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
@@ -642,7 +641,8 @@ public class StudyOverallStatusBeanLocal extends // NOPMD
         DateMidnight completionDate =
                 (dates.getCompletionDate() != null) ? new DateMidnight(dates.getCompletionDate()) : null;
         //If the null flavor is unknown we ignore primary completion date, thus making it option for PO-2429
-        boolean unknownPrimaryCompletionDate = dto.getPrimaryCompletionDate().getNullFlavor() == NullFlavor.UNK;
+        boolean unknownPrimaryCompletionDate = ISOUtil.isTsNull(dto
+                .getPrimaryCompletionDate());
 
         // Constraint/Rule: 22 Current Trial Status Date must be current or past.
         if (statusDate == null) {
@@ -663,7 +663,7 @@ public class StudyOverallStatusBeanLocal extends // NOPMD
         // is selected and must be future if 'anticipated'trial primary completion date type is selected.
         if (unknownPrimaryCompletionDate) {
             if (dates.getPrimaryCompletionDateTypeCode() == ActualAnticipatedTypeCode.ACTUAL) {
-                errors.add("Unknown Primary Completion date must be marked as Anticipated.\n");
+                errors.add("Unknown Primary Completion date must be marked as Anticipated or N/A.\n");
             }
         } else {
             if (dates.getPrimaryCompletionDateTypeCode() == ActualAnticipatedTypeCode.ACTUAL

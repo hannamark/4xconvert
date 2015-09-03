@@ -47,7 +47,7 @@
 	<classpathentry kind="var" path="PA_LIB/ear/joda-time-1.6.2.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/jollyday-0.4.5.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/mockito-all-1.9.5.jar"/>
-	<classpathentry kind="var" path="PA_LIB/ear/nci-commons-ctrp-core-1.4.11-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/nci-commons-ctrp-core-1.4.11-SNAPSHOT.jar" sourcepath="/NCI_COMMONS_CTRP_LOCATION"/>
 	<classpathentry kind="var" path="PA_LIB/ear/ognl-3.0.6.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/ojdbc6.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/po-services-1.0.1.IR6-client.jar"/>
@@ -100,7 +100,7 @@
 	<classpathentry kind="var" path="PA_LIB/compile/jboss-as-web-7.2.0.Final.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/jbossweb-7.2.2.Final.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/xercesImpl-2.9.1.jar"/>
-	<classpathentry kind="var" path="PA_LIB/ear/hibernate-3.2.0.ga.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/hibernate-3.2.0.ga.jar" sourcepath="/HIBERNATE_3.2.0"/>
 	<classpathentry kind="var" path="PA_LIB/ear/hibernate-validator-3.0.0.ga.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/jboss-jaxrs-api_1.1_spec-1.0.1.Final.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/resteasy-jaxb-provider-2.3.7.Final.jar"/>

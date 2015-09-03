@@ -179,7 +179,7 @@ public class TrialRegistrationServiceCompleteUpdateTest extends
         updateAndVerify("ctep", "CTEP0000000001", reg);
 
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
     public final void testUpdateTrialByDCPID() throws JAXBException,
@@ -468,10 +468,10 @@ public class TrialRegistrationServiceCompleteUpdateTest extends
                 .getTime(), dto.getStartDate().getValue());
         assertEquals(reg.getTrialStartDate().getType(), dto
                 .getStartDateTypeCode().getCode());
-        assertEquals(reg.getPrimaryCompletionDate().getValue()
+        assertEquals(reg.getPrimaryCompletionDate().getValue().getValue()
                 .toGregorianCalendar().getTime(), dto
                 .getPrimaryCompletionDate().getValue());
-        assertEquals(reg.getPrimaryCompletionDate().getType(), dto
+        assertEquals(reg.getPrimaryCompletionDate().getValue().getType(), dto
                 .getPrimaryCompletionDateTypeCode().getCode());
         assertEquals(reg.getCompletionDate().getValue().toGregorianCalendar()
                 .getTime(), dto.getCompletionDate().getValue());

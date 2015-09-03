@@ -6,7 +6,7 @@
 	<tns:clinicalTrialsDotGovXmlRequired>true</tns:clinicalTrialsDotGovXmlRequired>
 	<tns:leadOrgTrialID>UPCC 34890534</tns:leadOrgTrialID>
 	<tns:clinicalTrialsDotGovTrialID>NCT01994850</tns:clinicalTrialsDotGovTrialID>
-	 <tns:dcpIdentifier>DCP123</tns:dcpIdentifier>
+	<tns:dcpIdentifier>DCP123</tns:dcpIdentifier>
 	<tns:otherTrialID>818280234</tns:otherTrialID>
 	<tns:title>A Phase I/II Study Of Brentuximab Vedotin In Combination With Multi-Agent Chemotherapy</tns:title>
 	<tns:phase>I</tns:phase>

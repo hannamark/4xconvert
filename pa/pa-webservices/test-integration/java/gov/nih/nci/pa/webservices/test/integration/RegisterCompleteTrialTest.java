@@ -1,9 +1,6 @@
 package gov.nih.nci.pa.webservices.test.integration;
 
-import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
-import gov.nih.nci.pa.service.StudySourceInterceptor;
-import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 import gov.nih.nci.pa.webservices.types.AccrualDiseaseTerminology;
 import gov.nih.nci.pa.webservices.types.CompleteTrialRegistration;
 import gov.nih.nci.pa.webservices.types.ExpandedAccessType;
@@ -28,14 +25,12 @@ import java.util.Iterator;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeFactory;
 
-import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.handlers.ArrayHandler;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.xml.sax.SAXException;
 
 import com.dumbster.smtp.SmtpMessage;
@@ -49,6 +44,57 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
     public void setUp() throws Exception {
         super.setUp("/trials/complete");
         deactivateAllTrials();
+    }
+
+    @Test
+    public void testPrimaryCompletionDateAsNAForDcpTrials() throws Exception {
+        String uuid = RandomStringUtils.randomAlphabetic(12);
+        System.out.println(uuid);
+        CompleteTrialRegistration reg = readCompleteTrialRegistrationFromFile("/integration_register_complete_success.xml");
+        reg.setLeadOrgTrialID(uuid);
+        reg.setDcpIdentifier(uuid);
+
+        // N/A date type cannot be used for Trial Start Date or Completion Date.
+        reg.getTrialStartDate().setType("N/A");
+        HttpResponse response = submitRegistrationAndReturnResponse(reg);
+        verifyResponseHasFailure(500, "Start date cannot have type of 'N/A'",
+                response);
+        reg.getTrialStartDate().setType("Actual");
+
+        reg.getCompletionDate().setType("N/A");
+        response = submitRegistrationAndReturnResponse(reg);
+        verifyResponseHasFailure(500,
+                "Completion date cannot have type of 'N/A'", response);
+        reg.getCompletionDate().setType("Anticipated");
+
+        // If PCD is specified, it cannot be N/A.
+        reg.getPrimaryCompletionDate().getValue().setType("N/A");
+        response = submitRegistrationAndReturnResponse(reg);
+        verifyResponseHasFailure(400,
+                "When the Primary Completion Date Type is set to 'N/A', "
+                        + "the Primary Completion Date must be null. ",
+                response);
+
+        // Only DCP trials can have N/A PCD.
+        reg.setDcpIdentifier(null);
+        reg.getPrimaryCompletionDate().getValue().setValue(null);
+        reg.getPrimaryCompletionDate().getValue().setType("N/A");
+        reg.getPrimaryCompletionDate().setNil(true);
+        response = submitRegistrationAndReturnResponse(reg);
+        verifyResponseHasFailure(
+                400,
+                "Only a DCP trial can have a Primary Completion Date Type equals to 'N/A'",
+                response);
+
+        // Finally, register a DCP trial with N/A PCD.
+        reg.setDcpIdentifier(uuid);
+        reg.getPrimaryCompletionDate().getValue().setValue(null);
+        reg.getPrimaryCompletionDate().getValue().setType("N/A");
+        reg.getPrimaryCompletionDate().setNil(true);
+        TrialRegistrationConfirmation conf = registerTrialFromJAXBElement(reg);
+        logInFindAndAcceptTrial(conf);
+        verifyTrialStatus(reg, conf);
+
     }
 
     @Test
@@ -208,10 +254,13 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
                 reg.setWhyStopped("WhyStopped");
             }
             if (v.value().contains("Complete")) {
-                reg.getPrimaryCompletionDate().setValue(
-                        DatatypeFactory.newInstance().newXMLGregorianCalendar(
-                                new GregorianCalendar()));
-                reg.getPrimaryCompletionDate().setType("Actual");
+                reg.getPrimaryCompletionDate()
+                        .getValue()
+                        .setValue(
+                                DatatypeFactory.newInstance()
+                                        .newXMLGregorianCalendar(
+                                                new GregorianCalendar()));
+                reg.getPrimaryCompletionDate().getValue().setType("Actual");
                 reg.getCompletionDate().setValue(
                         DatatypeFactory.newInstance().newXMLGregorianCalendar(
                                 new GregorianCalendar()));
@@ -289,11 +338,7 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
             String expectedErrMsg) throws JAXBException, SAXException,
             UnsupportedEncodingException, ClientProtocolException, IOException {
         HttpResponse response = submitRegistrationAndReturnResponse(file);
-        assertEquals(code, getReponseCode(response));
-
-        String respBody = EntityUtils.toString(response.getEntity(), "utf-8");
-        LOG.info(respBody);
-        assertTrue(respBody.contains(expectedErrMsg));
+        verifyResponseHasFailure(code, expectedErrMsg, response);
     }
 
     private void registerAndVerify(String file) throws SQLException,

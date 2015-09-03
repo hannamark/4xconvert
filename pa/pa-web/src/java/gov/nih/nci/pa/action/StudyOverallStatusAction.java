@@ -101,6 +101,7 @@ import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.ActionUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
@@ -111,7 +112,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletRequestAware;
 
@@ -129,7 +129,6 @@ import com.opensymphony.xwork2.Preparable;
 public class StudyOverallStatusAction extends ActionSupport implements Preparable, ServletRequestAware {
 
     
-    private static final Logger LOG = Logger.getLogger(StudyOverallStatusAction.class);
     private static final long serialVersionUID = -3647758169522163514L;
 
     private Map<String, String> dateTypeList;
@@ -356,23 +355,57 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
             if (StringUtils.isBlank(startDateType)) {
                 sb.append("Trial Start Date type (Anticipated or Actual) is required. ");
             }   
-            //don't validate primary completion date if it is non interventional trial 
-            //and CTGovXmlRequired is false.
-            StudyProtocolDTO spDto = studyProtocolService.getStudyProtocol(spIdIi);
-            if (spDto != null && PAUtil.isPrimaryCompletionDateRequired(spDto)) {
-                if (StringUtils.isBlank(primaryCompletionDate)) {
-                    sb.append("Primary Completion Date is required. ");
-                }
-                if (StringUtils.isBlank(primaryCompletionDateType)) {
-                    sb.append("Primary Completion Date type (Anticipated or Actual) is required. ");
-                }
+            // don't validate primary completion date if it is non
+            // interventional trial
+            // and CTGovXmlRequired is false.
+            StudyProtocolDTO spDto = studyProtocolService
+                    .getStudyProtocol(spIdIi);
+            if (PAUtil.isPrimaryCompletionDateRequired(spDto)) {
+                runRequiredPcdChecks(sb);
             }
+            runNonApplicablePcdChecks(sb);
+           
         }
         if (sb.length() > 0) {
             throw new PAException(sb.toString());
         }
         studyOverallStatusService.validate(statusDto, studyProtocolDTO);
         
+    }
+
+    /**
+     * @param sb
+     * @throws PAException
+     */
+    private void runNonApplicablePcdChecks(StringBuilder sb) throws PAException {
+        if (ActualAnticipatedTypeCode.NA.getCode().equals(
+                primaryCompletionDateType)
+                && StringUtils.isBlank(paServiceUtils.getCtepOrDcpId(
+                        IiConverter.convertToLong(spIdIi),
+                        PAConstants.DCP_IDENTIFIER_TYPE))) {
+            sb.append("Only a DCP trial can have a Primary Completion Date Type equals to 'N/A'. ");
+        }
+        if (ActualAnticipatedTypeCode.NA.getCode().equals(
+                primaryCompletionDateType)
+                && StringUtils.isNotBlank(primaryCompletionDate)) {
+            sb.append("When the Primary Completion Date Type is set to 'N/A', "
+                    + "the Primary Completion Date must be null. ");
+        }
+    }
+
+    /**
+     * @param sb
+     */
+    private void runRequiredPcdChecks(StringBuilder sb) {
+        if (StringUtils.isBlank(primaryCompletionDate)
+                && !ActualAnticipatedTypeCode.NA.getCode().equals(
+                        primaryCompletionDateType)) {
+            sb.append("Primary Completion Date is required, unless this is a DCP trial "
+                    + "and the date type is set to N/A. ");
+        }
+        if (StringUtils.isBlank(primaryCompletionDateType)) {
+            sb.append("Primary Completion Date type is required. ");
+        }
     }
 
     /**

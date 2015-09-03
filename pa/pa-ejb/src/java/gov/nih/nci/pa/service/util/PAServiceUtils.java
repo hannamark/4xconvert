@@ -2247,6 +2247,20 @@ public class PAServiceUtils {
         }
         return duplicateNciId;
     }
+    
+    /**
+     * @param studyIdentifierDTOs
+     *            list of studyIdentifierDTOs
+     * @return StudySiteDTO
+     * @throws PAException
+     *             the exception
+     */
+    public StudySiteDTO extractDcpID(List<StudySiteDTO> studyIdentifierDTOs)
+            throws PAException {
+        final String identifierAssigner = PAConstants.DCP_IDENTIFIER_TYPE;
+        return extractIdentifierAssignerSite(studyIdentifierDTOs,
+                identifierAssigner);
+    }
 
     /**
      * @param studyIdentifierDTOs list of studyIdentifierDTOs
@@ -2254,22 +2268,35 @@ public class PAServiceUtils {
      * @throws PAException the exception
      */
     public StudySiteDTO extractNCTDto(List<StudySiteDTO> studyIdentifierDTOs) throws PAException {
-        StudySiteDTO nctIdentifierDTO = null;
-        Ii nctROIi = null;
-        if (CollectionUtils.isNotEmpty(studyIdentifierDTOs)) {
+        final String identifierAssigner = PAConstants.NCT_IDENTIFIER_TYPE;
+        return extractIdentifierAssignerSite(studyIdentifierDTOs,
+                identifierAssigner);
+    }
+    /**
+     * @param studyIdentifierDTOs
+     * @param identifierAssigner
+     * @return
+     * @throws PAException
+     */
+    private StudySiteDTO extractIdentifierAssignerSite(
+            final List<StudySiteDTO> studyIdentifierDTOs,
+            final String identifierAssigner) throws PAException {
+        StudySiteDTO assignerSite = null;
+        Ii roID = null;
+        if (CollectionUtils.isNotEmpty(studyIdentifierDTOs)) {            
             String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
-                   PAConstants.NCT_IDENTIFIER_TYPE);
-            nctROIi = PaRegistry.getOrganizationCorrelationService().getPoResearchOrganizationByEntityIdentifier(
+                   identifierAssigner);
+            roID = PaRegistry.getOrganizationCorrelationService().getPoResearchOrganizationByEntityIdentifier(
                     IiConverter.convertToPoOrganizationIi(String.valueOf(poOrgId)));
             for (StudySiteDTO dto : studyIdentifierDTOs) {
                 if (!ISOUtil.isIiNull(dto.getResearchOrganizationIi())
-                        && dto.getResearchOrganizationIi().equals(nctROIi)) {
-                    nctIdentifierDTO = dto;
+                        && dto.getResearchOrganizationIi().equals(roID)) {
+                    assignerSite = dto;
                     break;
                 }
             }
         }
-        return nctIdentifierDTO;
+        return assignerSite;
     }
     
     /**

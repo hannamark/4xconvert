@@ -1,20 +1,174 @@
 package gov.nih.nci.pa.test.integration;
 
-import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
-
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 
 /**
  * Tests for trial status transitions.
  * 
- * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
+ * @author dkrylov
  */
 public class TrialStatusTest extends AbstractTrialStatusTest {
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testPrimaryCompletionDateOfTypeN_A() throws SQLException,
+            InterruptedException, IOException {
+        String dcpID = RandomStringUtils.randomAlphabetic(10);
+        TrialInfo trial = createAcceptedTrial();
+        loginAsSuperAbstractor();
+        searchAndSelectTrial(trial.title);
+        clickAndWait("link=Trial Status");
+
+        // Non-empty PCD cannot be N/A
+        s.click("primaryCompletionDateTypeN/A");
+        clickAndWait("link=Save");
+        assertTrue(s
+                .isTextPresent("When the Primary Completion Date Type is set to 'N/A', the Primary Completion Date must be null."));
+        assertTrue(s
+                .isTextPresent("Only a DCP trial can have a Primary Completion Date Type equals to 'N/A'."));
+        clickAndWait("link=Trial Status");
+
+        // Only DCP trial can have empty PCD with the type of N/A.
+        s.click("primaryCompletionDateTypeN/A");
+        s.type("primaryCompletionDate", "");
+        clickAndWait("link=Save");
+        assertFalse(s
+                .isTextPresent("When the Primary Completion Date Type is set to 'N/A', the Primary Completion Date must be null."));
+        assertTrue(s
+                .isTextPresent("Only a DCP trial can have a Primary Completion Date Type equals to 'N/A'."));
+
+        // DCP trial is allowed to have N/A PCD.
+        clickAndWait("link=General Trial Details");
+        s.select("otherIdentifierType", "DCP Identifier");
+        s.type("otherIdentifierOrg", dcpID);
+        clickAndWait("id=otherIdbtnid");
+        waitForTextToAppear(By.className("confirm_msg"),
+                "Identifier added to the trial", 15);
+        clickAndWait("link=Trial Status");
+        s.click("primaryCompletionDateTypeN/A");
+        s.type("primaryCompletionDate", "");
+        clickAndWait("link=Save");
+        assertTrue(s.isTextPresent("Message. Record Updated."));
+        clickAndWait("link=Trial Status");
+        assertEquals("", s.getValue("primaryCompletionDate"));
+        assertTrue(driver.findElement(By.id("primaryCompletionDateTypeN/A"))
+                .isSelected());
+
+        // Attempting to set an empty PCD to Actual or Anticipated is an error.
+        ensureEmptyPcdNotAllowedForActualOrAnticipated();
+
+        // N/A PCD must not result in an abstraction validation error for a DCP
+        // trial.
+        ensureNoAbstractionValidationErrorsRelatedToPCD();
+
+        // Ensure TSR properly reflects the N/A PCD.
+        checkTsr();
+
+        // Now remove DCP ID and ensure validation errors start popping up.
+        clickAndWait("link=General Trial Details");
+        ((JavascriptExecutor) driver)
+                .executeScript("deleteOtherIdentifierRow('2');");
+        waitForTextToAppear(By.className("confirm_msg"),
+                "Identifier deleted from the trial", 15);
+
+        // Abstraction validation now must have an error.
+        clickAndWait("link=Abstraction Validation");
+        assertTrue(s
+                .isTextPresent("Only a DCP trial can have a Primary Completion Date Type equals to 'N/A'."));
+        assertTrue(s
+                .isTextPresent("Select Trial Status from Administrative Data menu."));
+
+        // Unable to save on Trial Status screen.
+        clickAndWait("link=Trial Status");
+        clickAndWait("link=Save");
+        assertTrue(s
+                .isTextPresent("Only a DCP trial can have a Primary Completion Date Type equals to 'N/A'."));
+        ensureEmptyPcdNotAllowedForActualOrAnticipated();
+
+        // Now switch to Non-interventional trial with CtGov=false. This is a
+        // prerequisite for having empty PCD.
+        clickAndWait("link=Design Details");
+        s.select("study", "Non-Interventional");
+        waitForPageToLoad();
+        clickAndWait("link=General Trial Details");
+        assertTrue(driver.findElement(By.id("xmlRequiredfalse")).isSelected());
+
+        // Now can save an empty PCD at all.
+        clickAndWait("link=Trial Status");
+        clickAndWait("link=Save");
+        assertTrue(s
+                .isTextPresent("Only a DCP trial can have a Primary Completion Date Type equals to 'N/A'."));
+        s.click("primaryCompletionDateTypeAnticipated");
+        clickAndWait("link=Save");
+        assertTrue(s.isTextPresent("Message. Record Updated."));
+        ensureNoAbstractionValidationErrorsRelatedToPCD();
+    }
+
+    /**
+     * 
+     */
+    @SuppressWarnings("deprecation")
+    private void ensureNoAbstractionValidationErrorsRelatedToPCD() {
+        clickAndWait("link=Abstraction Validation");
+        assertFalse(s.isTextPresent("PrimaryCompletionDate must be Entered"));
+        assertFalse(s
+                .isTextPresent("PrimaryCompletionDateType must be Entered"));
+        assertFalse(s
+                .isTextPresent("Only a DCP trial can have a Primary Completion Date Type equals to 'N/A'."));
+    }
+
+    /**
+     * 
+     */
+    @SuppressWarnings("deprecation")
+    private void ensureEmptyPcdNotAllowedForActualOrAnticipated() {
+        s.click("primaryCompletionDateTypeActual");
+        clickAndWait("link=Save");
+        assertTrue(s
+                .isTextPresent("Primary Completion Date is required, unless this is a DCP trial and the date type is set to N/A."));
+        s.click("primaryCompletionDateTypeAnticipated");
+        clickAndWait("link=Save");
+        assertTrue(s
+                .isTextPresent("Primary Completion Date is required, unless this is a DCP trial and the date type is set to N/A."));
+    }
+
+    /**
+     * @throws InterruptedException
+     * @throws IOException
+     */
+    @SuppressWarnings("deprecation")
+    private void checkTsr() throws InterruptedException, IOException {
+        if (!isPhantomJS()) {
+            s.click("link=View TSR");
+            File tsr = waitForTsrDownload();
+            assertTrue(tsr.exists());
+            tsr.deleteOnExit();
+            assertTrue(FileUtils.readFileToString(tsr).matches(
+                    "(?s)^.*?Primary Completion Date\\\\cell.*?N/A\\\\cell.+$"));
+            tsr.delete();
+        }
+    }
+
+    private File waitForTsrDownload() throws InterruptedException {
+        long stamp = System.currentTimeMillis();
+        while (FileUtils.listFiles(downloadDir, new String[] { "rtf" }, false)
+                .isEmpty() && System.currentTimeMillis() - stamp < 1000 * 30) {
+            Thread.sleep(1000);
+        }
+        return (File) FileUtils
+                .listFiles(downloadDir, new String[] { "rtf" }, false)
+                .iterator().next();
+    }
 
     @Test
     public void testAbstractionValidationWithErrors() throws SQLException {
@@ -166,7 +320,7 @@ public class TrialStatusTest extends AbstractTrialStatusTest {
     @SuppressWarnings("deprecation")
     @Test
     public void testTrialStatusHistoryBeforeCheckOut() throws SQLException {
-        TrialInfo trial = createSubmittedTrial();        
+        TrialInfo trial = createSubmittedTrial();
         loginAsAdminAbstractor();
         searchSelectAndAcceptTrial(trial.title, true, false);
         checkInTrialAsAdminAbstractor();
@@ -182,7 +336,7 @@ public class TrialStatusTest extends AbstractTrialStatusTest {
     @SuppressWarnings("deprecation")
     @Test
     public void testSuperAbstractorLogic() throws SQLException {
-        TrialInfo trial = createAcceptedTrial();       
+        TrialInfo trial = createAcceptedTrial();
         loginAsSuperAbstractor();
         searchAndSelectTrial(trial.title);
         clickAndWait("link=Trial Status");
@@ -195,7 +349,7 @@ public class TrialStatusTest extends AbstractTrialStatusTest {
         assertEquals("ACTIVE", getCurrentTrialStatus(trial).statusCode);
 
         // Move to Withdrawn produces an error: bad transition.
-        selenium.select("id=currentTrialStatus", "label=Approved");        
+        selenium.select("id=currentTrialStatus", "label=Approved");
         clickAndWait("link=Save");
         assertTrue(selenium.isTextPresent("Record Updated"));
         assertTrue(selenium

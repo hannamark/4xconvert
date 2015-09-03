@@ -251,7 +251,12 @@ public class TrialRegistrationValidator {
         Ii spIi = studyProtocolDTO.getIdentifier();
         StringBuilder errorMsg = new StringBuilder();
         validateUser(studyProtocolDTO, UPDATE, true, errorMsg);
-        validateStatusAndDates(studyProtocolDTO, overallStatusDTO, statusHistory, errorMsg);
+        validateStatusAndDates(studyProtocolDTO, overallStatusDTO,
+                statusHistory, StringUtils.isNotBlank(getPaServiceUtils()
+                        .getCtepOrDcpId(
+                                IiConverter.convertToLong(studyProtocolDTO
+                                        .getIdentifier()),
+                                PAConstants.DCP_IDENTIFIER_TYPE)), errorMsg);
         validateNihGrants(studyProtocolDTO, null, studyResourcingDTOs, errorMsg);
         validateDWFS(spIi, ERROR_DWFS_FOR_UPDATE, ERROR_MESSAGE_DWFS_FOR_UPDATE, errorMsg);
         validateExistingStatus(spIi, errorMsg);
@@ -301,14 +306,16 @@ public class TrialRegistrationValidator {
      * @param studyProtocolDTO The study protocol
      * @param overallStatusDTO The overall status
      * @param statusHistory 
+     * @param dcpIdentifierDTO 
      * @param errorMsg The StringBuilder collecting error messages
      * @throws PAException 
      */
     void validateStatusAndDates(StudyProtocolDTO studyProtocolDTO,
             StudyOverallStatusDTO overallStatusDTO,
-            List<StudyOverallStatusDTO> statusHistory, StringBuilder errorMsg) {
+            List<StudyOverallStatusDTO> statusHistory,
+            boolean isDcpTrial, StringBuilder errorMsg) {
         boolean datesValid = validateStudyProtocolDates(studyProtocolDTO,
-                errorMsg);
+                isDcpTrial, errorMsg);
         boolean statusFieldsValid = validateOverallStatusFields(
                 overallStatusDTO, statusHistory, errorMsg);
         if (datesValid && statusFieldsValid) {
@@ -322,11 +329,13 @@ public class TrialRegistrationValidator {
      * This method validates the mandatory date and date type fields of the study protocol.
      *
      * @param studyProtocolDTO The study protocol
+     * @param dcpIdentifierDTO 
      * @param errorMsg The StringBuilder collecting error messages
      * @return true if the dates are valid
      */
     @SuppressWarnings("PMD.CyclomaticComplexity")
-    boolean validateStudyProtocolDates(StudyProtocolDTO studyProtocolDTO, StringBuilder errorMsg) {
+    boolean validateStudyProtocolDates(StudyProtocolDTO studyProtocolDTO,
+            boolean isDcpTrial, StringBuilder errorMsg) {
         boolean valid = true;
         if (ISOUtil.isCdNull(studyProtocolDTO.getStartDateTypeCode())) {
             errorMsg.append("Trial Start Date Type cannot be null. ");
@@ -352,11 +361,35 @@ public class TrialRegistrationValidator {
                 valid = false;
             }
             Ts pcDate = studyProtocolDTO.getPrimaryCompletionDate();
-            if (pcDate == null || (ISOUtil.isTsNull(pcDate) && pcDate.getNullFlavor() != NullFlavor.UNK)) {
+            if ((pcDate == null || (ISOUtil.isTsNull(pcDate) && pcDate
+                    .getNullFlavor() != NullFlavor.UNK))
+                    && !(ActualAnticipatedTypeCode.NA == CdConverter
+                            .convertCdToEnum(ActualAnticipatedTypeCode.class,
+                                    studyProtocolDTO
+                                            .getPrimaryCompletionDateTypeCode()) && isDcpTrial)) {
                 errorMsg.append("Primary Completion Date cannot be null. ");
                 valid = false;
-            }       
-        }                
+            }
+        }         
+        
+        if (ActualAnticipatedTypeCode.NA == CdConverter.convertCdToEnum(
+                ActualAnticipatedTypeCode.class,
+                studyProtocolDTO.getPrimaryCompletionDateTypeCode())
+                && !isDcpTrial) {
+            errorMsg.append("Only a DCP trial can have a Primary Completion Date Type equals to 'N/A'. ");
+            valid = false;
+        }
+        if (ActualAnticipatedTypeCode.NA == CdConverter.convertCdToEnum(
+                ActualAnticipatedTypeCode.class,
+                studyProtocolDTO.getPrimaryCompletionDateTypeCode())
+                && !ISOUtil.isTsNull(studyProtocolDTO
+                        .getPrimaryCompletionDate())) {
+            errorMsg.append("When the Primary Completion Date Type is set to 'N/A', "
+                    + "the Primary Completion Date must be null. ");
+            valid = false;
+        }
+        
+        
         if (ISOUtil.isTsNull(studyProtocolDTO.getStartDate())) {
             errorMsg.append("Trial Start Date cannot be null. ");
             valid = false;
@@ -592,6 +625,7 @@ public class TrialRegistrationValidator {
      * @param documentDTOs List of documents IRB and Participating doc
      * @param studyIndldeDTOs The list of study Ind/ides
      * @param nctIdentifierDTO The NCT identifier
+     * @param dcpIdentifierDTO 
      * @throws PAException If any validation error happens
      */
     // CHECKSTYLE:OFF More than 7 Parameters
@@ -604,12 +638,13 @@ public class TrialRegistrationValidator {
             PersonDTO principalInvestigatorDTO, ResponsiblePartyDTO partyDTO,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, List<StudyResourcingDTO> studyResourcingDTOs,
             List<DocumentDTO> documentDTOs, List<StudyIndldeDTO> studyIndldeDTOs,
-            StudySiteDTO nctIdentifierDTO) throws PAException {
+            StudySiteDTO nctIdentifierDTO, StudySiteDTO dcpIdentifierDTO) throws PAException {
         // CHECKSTYLE:ON
         Ii spIi = studyProtocolDTO.getIdentifier();
         StringBuilder errorMsg = new StringBuilder();
         validateUser(studyProtocolDTO, AMENDMENT, true, errorMsg);
-        validateStatusAndDates(studyProtocolDTO, overallStatusDTO, statusHistory, errorMsg);
+        validateStatusAndDates(studyProtocolDTO, overallStatusDTO,
+                statusHistory, dcpIdentifierDTO != null, errorMsg);
         validateNihGrants(studyProtocolDTO, leadOrganizationDTO, studyResourcingDTOs, errorMsg);
         validateIndlde(studyProtocolDTO, studyIndldeDTOs, errorMsg);
         validateDWFS(spIi, ERROR_DWFS_FOR_AMEND, ERROR_MESSAGE_DWFS_FOR_AMEND, errorMsg);
@@ -913,23 +948,32 @@ public class TrialRegistrationValidator {
      * @param documentDTOs List of documents IRB and Participating doc
      * @param studyIndldeDTOs The list of study Ind/ides
      * @param nctIdentifierDTO The NCT identifier
+     * @param dcpIdentifierDTO 
      * @throws PAException If any validation error happens
      */
     // CHECKSTYLE:OFF More than 7 Parameters
-    public void validateCreation(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
-            OrganizationDTO leadOrganizationDTO, OrganizationDTO sponsorOrganizationDTO,
-            ResponsiblePartyDTO partyDTO, 
-            List<OrganizationDTO> summary4OrganizationDTO, StudyResourcingDTO summary4StudyResourcingDTO,
-            PersonDTO principalInvestigatorDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
+    public void validateCreation(StudyProtocolDTO studyProtocolDTO,
+            StudyOverallStatusDTO overallStatusDTO,
+            OrganizationDTO leadOrganizationDTO,
+            OrganizationDTO sponsorOrganizationDTO,
+            ResponsiblePartyDTO partyDTO,
+            List<OrganizationDTO> summary4OrganizationDTO,
+            StudyResourcingDTO summary4StudyResourcingDTO,
+            PersonDTO principalInvestigatorDTO,
+            StudySiteDTO leadOrganizationSiteIdentifierDTO,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO,
-            List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
-            List<StudyIndldeDTO> studyIndldeDTOs, StudySiteDTO nctIdentifierDTO) throws PAException {
+            List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs,
+            List<StudyIndldeDTO> studyIndldeDTOs,
+            StudySiteDTO nctIdentifierDTO, StudySiteDTO dcpIdentifierDTO)
+            throws PAException {
         // CHECKSTYLE:ON
         validateStudyProtocol(studyProtocolDTO);
         StringBuilder errorMsg = new StringBuilder();
         validateMandatoryFields(studyProtocolDTO, leadOrganizationSiteIdentifierDTO, documentDTOs, errorMsg);
         validateUser(studyProtocolDTO, CREATION, false, errorMsg);
-        validateStatusAndDates(studyProtocolDTO, overallStatusDTO, null, errorMsg);
+        validateStatusAndDates(studyProtocolDTO, overallStatusDTO, null,
+                dcpIdentifierDTO != null, errorMsg);
         validateNihGrants(studyProtocolDTO, leadOrganizationDTO, studyResourcingDTOs, errorMsg);
         validateIndlde(studyProtocolDTO, studyIndldeDTOs, errorMsg);
         validateMandatoryDocuments(documentDTOs, errorMsg);
@@ -1429,5 +1473,12 @@ public class TrialRegistrationValidator {
         validateLeadOrgForProprietary(leadOrgID, errorMsg);
         validateRegAuthorityExistence(regAuthDTO, errorMsg);
         validateAccrualDiseaseCodeSystem(studyProtocolDTO, errorMsg);
+    }
+
+    /**
+     * @return the paServiceUtils
+     */
+    public PAServiceUtils getPaServiceUtils() {
+        return paServiceUtils;
     }
 }

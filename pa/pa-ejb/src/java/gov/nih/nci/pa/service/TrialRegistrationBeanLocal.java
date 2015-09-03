@@ -529,12 +529,13 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             
             TrialRegistrationValidator validator = createValidator();
             StudySiteDTO nctIdentifierDTO = getPAServiceUtils().extractNCTDto(studyIdentifierDTOs);
+            StudySiteDTO dcpIdentifierDTO = getPAServiceUtils().extractDcpID(studyIdentifierDTOs);
             validator.validateAmendment(studyProtocolDTO, overallStatusDTO, statusHistory, leadOrganizationDTO,
                                         sponsorOrganizationDTO, 
                                         summary4OrganizationDTO, summary4StudyResourcingDTO, principalInvestigatorDTO,
                                         partyDTO,
                                         studyRegAuthDTO, studyResourcingDTOs, documentDTOs,
-                                        studyIndldeDTOs, nctIdentifierDTO);
+                                        studyIndldeDTOs, nctIdentifierDTO, dcpIdentifierDTO);
             PAServiceUtils paServiceUtils = getPAServiceUtils();
             Ii toStudyProtocolIi = paServiceUtils.copy(studyProtocolDTO.getIdentifier());
             updateStudyProtocol(studyProtocolDTO, toStudyProtocolIi);            
@@ -932,14 +933,15 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             copyStudyResourcing(studyResourcingDTOs);
             TrialRegistrationValidator validator = createValidator();
             StudySiteDTO nctIdentifierDTO = getPAServiceUtils().extractNCTDto(studyIdentifierDTOs);
+            StudySiteDTO dcpIdentifierDTO = getPAServiceUtils().extractDcpID(studyIdentifierDTOs);
             StudyOverallStatusDTO overallStatusDTO = statusHistory.isEmpty() ? null
                 : statusHistory.get(statusHistory.size() - 1);
-            validator.validateCreation(studyProtocolDTO, overallStatusDTO, leadOrganizationDTO, sponsorOrganizationDTO,
-                                       partyDTO,
-                                       summary4OrganizationDTO,
-                                       summary4StudyResourcingDTO, principalInvestigatorDTO,
-                                       leadOrganizationSiteIdentifierDTO, studyRegAuthDTO,
-                                       studyResourcingDTOs, documentDTOs, studyIndldeDTOs, nctIdentifierDTO);
+        validator.validateCreation(studyProtocolDTO, overallStatusDTO,
+                leadOrganizationDTO, sponsorOrganizationDTO, partyDTO,
+                summary4OrganizationDTO, summary4StudyResourcingDTO,
+                principalInvestigatorDTO, leadOrganizationSiteIdentifierDTO,
+                studyRegAuthDTO, studyResourcingDTOs, documentDTOs,
+                studyIndldeDTOs, nctIdentifierDTO, dcpIdentifierDTO);
             PAServiceUtils paServiceUtils = getPAServiceUtils();
             
            studyProtocolDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
