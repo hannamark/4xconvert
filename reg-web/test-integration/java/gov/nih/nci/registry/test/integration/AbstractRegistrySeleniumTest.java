@@ -344,6 +344,7 @@ public abstract class AbstractRegistrySeleniumTest extends
         selenium.type("trialDTO_primaryCompletionDate", oneYearFromToday);
         selenium.click("trialDTO_completionDateTypeAnticipated");
         selenium.type("trialDTO_completionDate", oneYearFromToday);
+        assertFalse(s.isElementPresent("xpath=//input[@type='radio' and @value='N/A']"));
 
         // IND/IDE
         moveElementIntoView(By.id("group3"));

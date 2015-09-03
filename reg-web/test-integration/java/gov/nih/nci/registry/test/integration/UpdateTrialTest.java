@@ -129,7 +129,6 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
         invokeUpdateTrial();
         verifyCalendarPopup();
     }
-   
 
     /**
      * @param info
@@ -195,6 +194,8 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
 
         assertEquals("1",
                 selenium.getValue("trialDTO.leadOrganizationIdentifier"));
+        assertFalse(s
+                .isElementPresent("xpath=//input[@type='radio' and @value='N/A']"));
     }
 
     private void verifyCalendarPopup() {

@@ -148,8 +148,10 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         populateAmendmentNumber();
         populateTrialDates();
         populateDocuments();
-        assertFalse(driver.findElement(By.id("trialDTO.delayedPostingIndicatorNo")).isEnabled());
-        assertTrue(driver.findElement(By.id("trialDTO.delayedPostingIndicatorNo")).isSelected());
+        assertFalse(driver.findElement(
+                By.id("trialDTO.delayedPostingIndicatorNo")).isEnabled());
+        assertTrue(driver.findElement(
+                By.id("trialDTO.delayedPostingIndicatorNo")).isSelected());
         // Try to submit and verify the dialog (see JIRA).
         submitTrialAndVerifyOpenSitesDialog(new String[] { "In Review",
                 "Active" }, "Review Trial");
@@ -453,6 +455,8 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         selenium.type("trialDTO_primaryCompletionDate", tommorrow);
         selenium.click("trialDTO_completionDateTypeAnticipated");
         selenium.type("trialDTO_completionDate", tommorrow);
+        assertFalse(s
+                .isElementPresent("xpath=//input[@type='radio' and @value='N/A']"));
     }
 
     @Test

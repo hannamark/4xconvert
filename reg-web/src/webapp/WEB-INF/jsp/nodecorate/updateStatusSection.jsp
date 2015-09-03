@@ -8,7 +8,7 @@
         <div class="container">       
              <div class="form-group">
                 <label for="trialDTO_startDate" class="col-xs-4 control-label"><fmt:message key="update.trial.trialStartDate"/><span class="required">*</span></label>
-                <s:set name="dateTypeList" value="@gov.nih.nci.pa.enums.ActualAnticipatedTypeCode@getDisplayNames()" />
+                <s:set name="dateTypeList" value="#{'Actual':'Actual','Anticipated':'Anticipated'}" />
                 <div class="col-xs-2">
                   <div id="datetimepicker" class="datetimepicker input-append">
                     <s:textfield id="trialDTO_startDate" name="trialDTO.startDate" data-format="MM/dd/yyyy" type="text" cssClass="form-control" placeholder="mm/dd/yyyy" />                    

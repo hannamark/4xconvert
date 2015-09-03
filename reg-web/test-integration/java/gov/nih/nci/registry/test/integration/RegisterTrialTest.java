@@ -136,8 +136,10 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                     selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier "
                             + nciID));
             verifyTrialConfirmaionPage(rand, nciID, cat);
-            if ("Interventional".equalsIgnoreCase(getTrialConfValue("Trial Type:"))) {
-                assertEquals("Yes", getTrialConfValue("Section 801 Indicator :"));
+            if ("Interventional"
+                    .equalsIgnoreCase(getTrialConfValue("Trial Type:"))) {
+                assertEquals("Yes",
+                        getTrialConfValue("Section 801 Indicator :"));
                 assertEquals("No",
                         getTrialConfValue("Delayed Posting Indicator :"));
             } else {
@@ -147,7 +149,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         }
 
     }
-    
+
     @SuppressWarnings("deprecation")
     @Test
     public void testOrgNameWithQuotes() {
@@ -156,8 +158,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         pause(500);
         clickAndWait("link=National");
         waitForElementById("trialDTO.leadOrgTrialIdentifier", 30);
-        
-     // Select Lead Organization
+
+        // Select Lead Organization
         moveElementIntoView(By.id("trialDTO.leadOrganizationNameField"));
         hover(By.id("trialDTO.leadOrganizationNameField"));
         clickAndWaitAjax("link=Search...");
@@ -171,7 +173,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         waitForPageToLoad();
         driver.switchTo().defaultContent();
         moveElementIntoView(By.id("trialDTO.leadOrganizationNameField"));
-        WebElement orgElement = driver.findElement(By.id("trialDTO.leadOrganizationNameField"));
+        WebElement orgElement = driver.findElement(By
+                .id("trialDTO.leadOrganizationNameField"));
         String text = orgElement.getText();
         assertEquals("Double \" quotes\"", text);
     }
@@ -610,6 +613,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assertEquals(oneYearFromToday,
                 selenium.getValue("trialDTO_completionDate"));
         assertTrue(selenium.isChecked("trialDTO_completionDateTypeAnticipated"));
+        assertFalse(s
+                .isElementPresent("xpath=//input[@type='radio' and @value='N/A']"));
 
         // INDs
         assertEquals("IND",
@@ -690,11 +695,11 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         pause(1500);
         assertFalse(selenium.isVisible("id=myModal"));
     }
-    
+
     @SuppressWarnings("deprecation")
     @Test
     public void testImportDisabledAfterClick() throws Exception {
-    
+
         loginAndAcceptDisclaimer();
         // Select register trial and choose trial type
         hoverLink("Register Trial");
@@ -713,23 +718,24 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 .getText("//table[@id='row']/tbody/tr/td[3]")
                 .contains(
                         "Phase II Study of Hyper-CVAD Plus Imatinib Mesylate (Gleevec, STI571) for Philadelphia-Positive Acute Lymphocytic Leukemia"));
-        
-        
+
         WebElement element = driver.findElement(By.id("importTrial"));
-        //Disable form submit otherwise form will be submitted and this button will not be visible in selenium
-        //if this button is not visible then button is disabled can not be tested
-       
+        // Disable form submit otherwise form will be submitted and this button
+        // will not be visible in selenium
+        // if this button is not visible then button is disabled can not be
+        // tested
+
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("window.handleAction =function(args){ return false;};");
         element.click();
-        
-        //test if button is disabled
+
+        // test if button is disabled
         assertFalse(element.isEnabled());
         String buttonText = element.getText();
-        
-        //test if button text changed to please wait
-        assertEquals("Please wait",buttonText);
-    }    
+
+        // test if button text changed to please wait
+        assertEquals("Please wait", buttonText);
+    }
 
     @SuppressWarnings("deprecation")
     @Test
@@ -789,7 +795,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         clickAndWait("xpath=//button[text()='Add My Site']");
         waitForElementById("popupFrame", 20);
         selenium.selectFrame("popupFrame");
-        
+
         String[] options = selenium.getSelectOptions("pickedSiteOrgPoId");
         assertEquals(3, options.length);
         selenium.select("pickedSiteOrgPoId",
@@ -814,9 +820,9 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         waitForPageToLoad();
         driver.switchTo().defaultContent();
         selenium.selectFrame("popupFrame");
-        
+
         useSelect2ToPickAnOption("programCodes", "PC-NM-1", "PC-NM-1");
-        
+
         selenium.select("siteDTO_recruitmentStatus", "label=In Review");
         selenium.type("siteDTO_recruitmentStatusDate", "09/25/2014");
         clickAndWaitAjax("id=addStatusBtn");
@@ -844,7 +850,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assertEquals("", selenium.getText("//table[@id='row']/tbody/tr/td[8]"));
 
     }
-    
+
     @SuppressWarnings("deprecation")
     @Test
     public void testReviewEditSubmit() throws Exception {
@@ -874,8 +880,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         verifyTrialConfirmaionPage(rand, nciID, category);
         if ("Interventional".equalsIgnoreCase(getTrialConfValue("Trial Type:"))) {
             assertEquals("Yes", getTrialConfValue("Section 801 Indicator :"));
-            assertEquals("No",
-                    getTrialConfValue("Delayed Posting Indicator :"));
+            assertEquals("No", getTrialConfValue("Delayed Posting Indicator :"));
         } else {
             assertEquals("No", getTrialConfValue("Section 801 Indicator :"));
         }
@@ -908,8 +913,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         verifyTrialConfirmaionPage(rand, "", category);
         if ("Interventional".equalsIgnoreCase(getTrialConfValue("Trial Type:"))) {
             assertEquals("Yes", getTrialConfValue("Section 801 Indicator :"));
-            assertEquals("",
-                    getTrialConfValue("Delayed Posting Indicator :"));
+            assertEquals("", getTrialConfValue("Delayed Posting Indicator :"));
         } else {
             assertEquals("No", getTrialConfValue("Section 801 Indicator :"));
         }
@@ -1112,8 +1116,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         verifyTrialConfirmaionPage(rand, nciID, category);
         if ("Interventional".equalsIgnoreCase(getTrialConfValue("Trial Type:"))) {
             assertEquals("Yes", getTrialConfValue("Section 801 Indicator :"));
-            assertEquals("No",
-                    getTrialConfValue("Delayed Posting Indicator :"));
+            assertEquals("No", getTrialConfValue("Delayed Posting Indicator :"));
         } else {
             assertEquals("No", getTrialConfValue("Section 801 Indicator :"));
         }
@@ -1277,8 +1280,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         verifyRegulatoryInfo();
         if ("Interventional".equalsIgnoreCase(getTrialConfValue("Trial Type:"))) {
             assertEquals("Yes", getTrialConfValue("Section 801 Indicator :"));
-            assertEquals("No",
-                    getTrialConfValue("Delayed Posting Indicator :"));
+            assertEquals("No", getTrialConfValue("Delayed Posting Indicator :"));
         } else {
             assertEquals("No", getTrialConfValue("Section 801 Indicator :"));
         }
@@ -1571,7 +1573,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assertEquals(14, nciId.length());
         return nciId;
     }
-    
+
     @SuppressWarnings("deprecation")
     private void useSelect2ToPickAnOption(String id, String sendKeys,
             String option) {
