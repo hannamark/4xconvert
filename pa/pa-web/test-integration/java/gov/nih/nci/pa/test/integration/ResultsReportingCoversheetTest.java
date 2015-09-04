@@ -9,7 +9,9 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayListHandler;
 import org.apache.commons.lang.SystemUtils;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
 
 import com.dumbster.smtp.SmtpMessage;
 
@@ -286,6 +288,11 @@ public class ResultsReportingCoversheetTest  extends AbstractPaSeleniumTest {
        selenium.select("changesInCtrpCtGov", "Yes");
        selenium.type("changesInCtrpCtGovDate", today);
        selenium.select("sendToCtGovUpdated", "Yes");
+       
+       //check if element is visible
+       WebElement element = driver.findElement(By.id("designeeAccessRevoked"));
+       assertTrue(element.isDisplayed());
+       
        
        selenium.click("id=saveFinal");
        waitForPageToLoad();

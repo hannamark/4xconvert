@@ -7,6 +7,7 @@ import gov.nih.nci.pa.util.Constants;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,8 @@ public class TrialViewActionTest extends TrialAbstractActionTest {
         
         
     }
+    
+    
     
     @Test
     public void testEditDocument() throws PAException, IOException {
@@ -107,7 +110,14 @@ public class TrialViewActionTest extends TrialAbstractActionTest {
     
     @Test
     public void testSaveFinalChanges() throws PAException {
-        
+      
+        List<String> designeeSelectedList = new ArrayList<String>();
+        designeeSelectedList.add("1");
+        trialViewAction.setDesigneeSelectedList(designeeSelectedList);
+        trialViewAction.setDesigneeAccessRevoked(false);
+        trialViewAction.setDesigneeAccessRevokedDate("09/03/2015");
+        trialViewAction.setChangesInCtrpCtGov(false);
+        trialViewAction.setChangesInCtrpCtGovDate("09/03/2015");
       String result =  trialViewAction.saveFinalChanges();
       assertEquals("success",result);
       
@@ -124,7 +134,7 @@ public class TrialViewActionTest extends TrialAbstractActionTest {
        assertTrue(errors.keySet().contains("trialDocumentWebDTO.typeCode"));
        
        
-       trialDocumentWebDTO.setTypeCode("After Results");
+       trialDocumentWebDTO.setTypeCode("Comparison");
        trialViewAction.setTrialDocumentWebDTO(trialDocumentWebDTO);
        trialViewAction.setUploadFileName("FileName");
        trialViewAction.clearFieldErrors();
@@ -152,6 +162,27 @@ public class TrialViewActionTest extends TrialAbstractActionTest {
       
         
         trialDocumentWebDTO.setTypeCode("After Results");
+        trialViewAction.setTrialDocumentWebDTO(trialDocumentWebDTO);
+        trialViewAction.setUploadFileName("FileName");
+        trialViewAction.clearFieldErrors();
+        trialViewAction.setUpload(new File(this.getClass().getResource("/test.properties").toURI()));
+        result = trialViewAction.update();
+        assertEquals("success",result);
+        assertTrue(ServletActionContext.getRequest().getAttribute(
+                Constants.SUCCESS_MESSAGE)!=null);
+    }
+    
+    @Test
+    public void testUpdateCompare() throws Exception {
+        String result = trialViewAction.update();
+        assertEquals("errorDocument",result);
+        assertTrue(trialViewAction.hasFieldErrors());
+        Map<String, List<String>> errors = trialViewAction.getFieldErrors();
+        assertTrue(errors.keySet().size() > 0);
+        assertTrue(errors.keySet().contains("trialDocumentWebDTO.typeCode"));
+      
+        
+        trialDocumentWebDTO.setTypeCode("Comparison");
         trialViewAction.setTrialDocumentWebDTO(trialDocumentWebDTO);
         trialViewAction.setUploadFileName("FileName");
         trialViewAction.clearFieldErrors();
@@ -215,6 +246,11 @@ public class TrialViewActionTest extends TrialAbstractActionTest {
         assertTrue(ServletActionContext.getRequest().getAttribute(
                 Constants.SUCCESS_MESSAGE)!=null);
         
+    }
+    
+    @Test
+    public void testCoverSheetEmail() throws PAException {
+        trialViewAction.sendConverSheetEmail();
     }
     
     

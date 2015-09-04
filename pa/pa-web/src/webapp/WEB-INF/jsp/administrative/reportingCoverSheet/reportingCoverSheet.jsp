@@ -90,8 +90,12 @@ jQuery(document).ready(function() {
 	setCoverSheetUrls("resultsReportingCoverSheetaddOrEdit.action" ,"resultsReportingCoverSheetsuccessfulAdd.action",
 	"resultsReportingCoverSheetaddOrEditRecordChange.action", "resultsReportingCoverSheetsuccessfulAddRecordChange.action",
 	"resultsReportingCoverSheetsaveFinalChanges.action", "resultsReportingCoverSheetsendConverSheetEmail.action");
+     
+	checkDesignee();
 
 });
+
+
 
 
 

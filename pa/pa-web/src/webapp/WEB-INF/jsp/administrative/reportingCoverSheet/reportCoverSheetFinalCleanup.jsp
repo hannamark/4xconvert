@@ -37,11 +37,14 @@
        </td>
        <td>
          <s:select id="designeeAccessRevoked" name="designeeAccessRevoked" list="#{'false':'No', 'true':'Yes'}" 
-                      cssClass="form-control"
+                      cssClass="form-control" style="vertical-align:top;" onchange="checkDesignee();"
                       />
+                      
+         <s:select style ="width:40%" multiple="true" name="designeeSelectedList" id="designeeContactList" 
+                                list="designeeContactList" listKey="id" listValue="contactPerson.fullName" />             
             
-          <s:textfield id="designeeAccessRevokedDate"  name="designeeAccessRevokedDate" maxlength="10" size="10" class="dateField" readonly="true" ></s:textfield>       
-                   <a href="javascript:showCal('Cal3')" align="right"> <img src="${pageContext.request.contextPath}/images/ico_calendar.gif" alt="select date" class="calendaricon" />
+          <s:textfield id="designeeAccessRevokedDate"  name="designeeAccessRevokedDate" maxlength="10" size="10" class="dateField" readonly="true" style="vertical-align:top;" ></s:textfield>       
+                   <a  href="javascript:showCal('Cal3')" align="right"> <img id ="designeeImg" src="${pageContext.request.contextPath}/images/ico_calendar.gif" alt="select date" class="calendaricon" style="vertical-align:top;" />
                                     </a>           
        </td>
      </tr>

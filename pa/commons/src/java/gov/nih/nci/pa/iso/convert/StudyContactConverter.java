@@ -155,6 +155,9 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
         telList.add(bo.getPhone());
         DSetConverter.convertListToDSet(telList, "PHONE", telAddresses);
         dto.setTelecomAddresses(telAddresses);
+        
+        dto.setPrsUserName(StConverter.convertToSt(bo.getPrsUserName()));
+        dto.setComments(StConverter.convertToSt(bo.getComments()));
         return dto;
     }
 
@@ -202,6 +205,9 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
         }
         bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         bo.setStatusDateRangeHigh(null);
+        
+        bo.setPrsUserName(StConverter.convertToString(dto.getPrsUserName()));
+        bo.setComments(StConverter.convertToString(dto.getComments()));
     }
 
     private void convertRoleIIsToDomain(StudyContactDTO dto, StudyContact bo) throws PAException {

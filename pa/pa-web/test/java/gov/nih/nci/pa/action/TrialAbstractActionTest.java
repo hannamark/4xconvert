@@ -2,9 +2,15 @@ package gov.nih.nci.pa.action;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.dto.StudyContactWebDTO;
 import gov.nih.nci.pa.dto.TrialDocumentWebDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -13,6 +19,8 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyContactService;
+import gov.nih.nci.pa.service.StudyContactServiceLocal;
 import gov.nih.nci.pa.service.StudyNotesServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.util.CSMUserService;
@@ -30,6 +38,11 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Ignore;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
 
 @Ignore
 public abstract class TrialAbstractActionTest extends AbstractPaActionTest {
@@ -54,6 +67,7 @@ public abstract class TrialAbstractActionTest extends AbstractPaActionTest {
          trialViewAction.setServletRequest(getRequest());
          
          StudyNotesServiceLocal notesService = mock(StudyNotesServiceLocal.class);
+         StudyContactService  studyContactService = mock(StudyContactServiceLocal.class);
          StudyProtocolServiceLocal studyProtocolService = mock(StudyProtocolServiceLocal.class);
          PAServiceUtils paServiceUtils = mock(PAServiceUtils.class);
          MailManagerService mailManagerService = mock(MailManagerBeanLocal.class);
@@ -61,11 +75,26 @@ public abstract class TrialAbstractActionTest extends AbstractPaActionTest {
          RegistryUserServiceLocal registryUserServiceLocal = mock(RegistryUserServiceLocal.class);
          paRegSvcLoc = mock(ServiceLocator.class);
          
+         List<StudyContactDTO> contactsList = new ArrayList<StudyContactDTO> ();
+         List<StudyContactWebDTO> desgineeContactList = new ArrayList<StudyContactWebDTO>();
+         StudyContactWebDTO studyContactWebDTO = new StudyContactWebDTO();
+         studyContactWebDTO.setId(1l);
+         Person contactPerson = new Person();
+         contactPerson.setFirstName("test");
+         contactPerson.setLastName("test");
+         studyContactWebDTO.setContactPerson(contactPerson);
+         desgineeContactList.add(studyContactWebDTO);
+         
+         reportingCoverSheetAction.setDesigneeContactList(desgineeContactList);
+         trialViewAction.setDesigneeContactList(desgineeContactList);
+        
+         
          reportingCoverSheetAction.setStudyProtocolId(1L);
          reportingCoverSheetAction.setStudyNotesService(notesService);
          reportingCoverSheetAction.setStudyProtocolService(studyProtocolService);
          reportingCoverSheetAction.setPaServiceUtil(paServiceUtils);
          reportingCoverSheetAction.setMailManagerService(mailManagerService);
+         reportingCoverSheetAction.setStudyContactService(studyContactService);
          
          List<DocumentDTO> isoList = new ArrayList<DocumentDTO>();
          DocumentDTO dto = new DocumentDTO();
@@ -82,6 +111,7 @@ public abstract class TrialAbstractActionTest extends AbstractPaActionTest {
          trialViewAction.setStudyProtocolService(studyProtocolService);
          trialViewAction.setPaServiceUtil(paServiceUtils);
          trialViewAction.setMailManagerService(mailManagerService);
+         trialViewAction.setStudyContactService(studyContactService);
          trialViewAction.setServletRequest(getRequest());
          
          trialDocumentWebDTO = new TrialDocumentWebDTO();
@@ -92,6 +122,7 @@ public abstract class TrialAbstractActionTest extends AbstractPaActionTest {
          when(docService.getReportsDocumentsByStudyProtocol(IiConverter.convertToStudyProtocolIi(1L))).thenReturn(isoList);
          when(paRegSvcLoc.getDocumentService()).thenReturn(docService);
          when(paRegSvcLoc.getRegistryUserService()).thenReturn(registryUserServiceLocal);
+        
          
          StudyProtocolDTO studyProtocolDTO = new StudyProtocolDTO();
          studyProtocolDTO.setUseStandardLanguage(BlConverter.convertToBl(false));
@@ -103,7 +134,12 @@ public abstract class TrialAbstractActionTest extends AbstractPaActionTest {
          studyProtocolDTO.setSendToCtGovUpdated(BlConverter.convertToBl(false));
          
          when(studyProtocolService.getStudyProtocol(IiConverter.convertToStudyProtocolIi(1L))).thenReturn(studyProtocolDTO);
-      
+         try {
+            when(studyContactService.search(any(StudyContactDTO.class), any(LimitOffset.class))).thenReturn(contactsList);
+        } catch (TooManyResultsException e) {
+           throw new PAException(e.getMessage());
+        }
+         when(studyContactService.get(any(Ii.class))).thenReturn(new StudyContactDTO());
     }
     
     public void beforeQuery() {

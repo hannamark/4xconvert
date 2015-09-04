@@ -5,6 +5,8 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
@@ -98,9 +100,22 @@ public class ResultsReportingCoverSheetActionTest  extends TrialAbstractActionTe
     
     @Test
     public void testSaveFinalChanges() throws PAException {
-        
+      
+        List<String> designeeSelectedList = new ArrayList<String>();
+        designeeSelectedList.add("1");
+       reportingCoverSheetAction.setDesigneeSelectedList(designeeSelectedList);
+       reportingCoverSheetAction.setDesigneeAccessRevoked(false);
+       reportingCoverSheetAction.setDesigneeAccessRevokedDate("09/03/2015");
+       reportingCoverSheetAction.setChangesInCtrpCtGov(false);
+       reportingCoverSheetAction.setChangesInCtrpCtGovDate("09/03/2015");
       String result =  reportingCoverSheetAction.saveFinalChanges();
       assertEquals("success",result);
       
+    }
+    
+    @Test
+    public void testCoverSheetEmail() throws Exception {
+        reportingCoverSheetAction.prepare();
+        reportingCoverSheetAction.sendConverSheetEmail();
     }
 }

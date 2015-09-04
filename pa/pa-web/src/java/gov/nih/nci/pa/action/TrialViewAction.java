@@ -78,13 +78,18 @@
 */
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyDataDiscrepancy;
 import gov.nih.nci.pa.domain.StudyNotes;
 import gov.nih.nci.pa.domain.StudyRecordChange;
+import gov.nih.nci.pa.dto.StudyContactWebDTO;
 import gov.nih.nci.pa.dto.TrialDocumentWebDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -93,6 +98,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyContactService;
 import gov.nih.nci.pa.service.StudyNotesService;
 import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.util.CSMUserService;
@@ -117,6 +123,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -176,6 +183,11 @@ ServletRequestAware , ServletResponseAware , Preparable {
     private Long ccctUserId;
     private static final String ERROR_DOCUMENT = "errorDocument";
     
+    private List<StudyContactWebDTO> designeeContactList = new ArrayList<StudyContactWebDTO>();
+    private List<String> designeeSelectedList = new ArrayList<String>();
+    private StudyContactService studyContactService;
+
+    
     
     private static final Logger LOG = Logger
             .getLogger(TrialViewAction.class);
@@ -185,6 +197,7 @@ ServletRequestAware , ServletResponseAware , Preparable {
         studyNotesService = PaRegistry.getStudyNotesService();
         studyProtocolService = PaRegistry.getStudyProtocolService();
         mailManagerService = PaRegistry.getMailManagerService();
+        studyContactService = PaRegistry.getStudyContactService();
         
     }
     
@@ -243,6 +256,22 @@ ServletRequestAware , ServletResponseAware , Preparable {
                 request.setAttribute(Constants.SUCCESS_MESSAGE,
                         getText("error.trialDocument.noRecords"));
             }
+            
+            //get study contacts list
+            LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+             StudyContactDTO searchCriteria = new StudyContactDTO();
+             searchCriteria.setStudyProtocolIdentifier(studyProtocolIi);
+             searchCriteria.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
+
+             searchCriteria.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.DESIGNEE_CONTACT));
+             List<StudyContactDTO>studyDesigneeContactDtos = studyContactService.search(searchCriteria, limit);
+          
+             if (CollectionUtils.isNotEmpty(studyDesigneeContactDtos)) {
+                 for (StudyContactDTO scDto : studyDesigneeContactDtos) {
+                     designeeContactList.add(new StudyContactWebDTO(scDto));
+                 }
+             }
+
            
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
@@ -384,6 +413,14 @@ ServletRequestAware , ServletResponseAware , Preparable {
         
         studyProtocolDTO.setSendToCtGovUpdated(BlConverter.convertToBl(sendToCtGovUpdated));
         studyProtocolService.updateStudyProtocol(studyProtocolDTO);
+        
+        //set specified contats to pending so that they don't show up
+        for (String contactId : designeeSelectedList) {
+            Ii ii = IiConverter.convertToStudyContactIi(Long.valueOf(contactId));
+            StudyContactDTO studyContactDTO = studyContactService.get(ii);   
+            studyContactDTO.setStatusCode(CdConverter.convertStringToCd("Pending"));
+            studyContactService.update(studyContactDTO);
+        }
         
         
         request.setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
@@ -1032,6 +1069,48 @@ ServletRequestAware , ServletResponseAware , Preparable {
      */
     public void setCcctUserId(Long ccctUserId) {
         this.ccctUserId = ccctUserId;
+    }
+
+    /**
+     * @return designeeContactList
+     */
+    public List<StudyContactWebDTO> getDesigneeContactList() {
+        return designeeContactList;
+    }
+
+    /**
+     * @param designeeContactList designeeContactList
+     */
+    public void setDesigneeContactList(List<StudyContactWebDTO> designeeContactList) {
+        this.designeeContactList = designeeContactList;
+    }
+
+    /**
+     * @return designeeSelectedList
+     */
+    public List<String> getDesigneeSelectedList() {
+        return designeeSelectedList;
+    }
+
+    /**
+     * @param designeeSelectedList designeeSelectedList
+     */
+    public void setDesigneeSelectedList(List<String> designeeSelectedList) {
+        this.designeeSelectedList = designeeSelectedList;
+    }
+
+    /**
+     * @return studyContactService
+     */
+    public StudyContactService getStudyContactService() {
+        return studyContactService;
+    }
+
+    /**
+     * @param studyContactService studyContactService
+     */
+    public void setStudyContactService(StudyContactService studyContactService) {
+        this.studyContactService = studyContactService;
     }
 
    

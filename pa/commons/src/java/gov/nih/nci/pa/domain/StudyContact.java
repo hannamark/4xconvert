@@ -122,6 +122,9 @@ public class StudyContact extends PersonFunctionalRole {
     private String email;
     private String title;
     private OrganizationalContact organizationalContact;
+    
+    private String prsUserName;
+    private String comments;
 
     /**
      * @return the phone
@@ -315,4 +318,31 @@ public class StudyContact extends PersonFunctionalRole {
     public void setTitle(String title) {
         this.title = title;
     }
+    /**
+     * @return the prsUserName
+     */
+    @Column(name = "PRS_USER_NAME")    
+    public String getPrsUserName() {
+        return prsUserName;
+    }
+    /**
+     * @param prsUserName the prsUserName to set
+     */
+    public void setPrsUserName(String prsUserName) {
+        this.prsUserName = prsUserName;
+    }
+    /**
+     * @return the comments
+     */
+    @Column(name = "COMMENTS")    
+    public String getComments() {
+        return comments;
+    }
+    /**
+     * @param comments the comments to set
+     */
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+    
 }

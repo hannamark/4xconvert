@@ -89,6 +89,7 @@ import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.OrganizationalStructuralRole;
 import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.Person;
@@ -1536,6 +1537,66 @@ public class PAServiceUtils {
 
         return sr;
     }
+    
+    /**
+     * @param poIdentifier poIdentifier
+     * @return OrganizationalContact
+     * @throws PAException PAException
+     */
+    public OrganizationalContact getOrganizationalContact(String poIdentifier) throws PAException {
+
+        Session session = null;
+
+        List<OrganizationalContact> queryList = 
+
+                new ArrayList<OrganizationalContact>();
+
+        session = PaHibernateUtil.getCurrentSession();
+
+        Query query = null;
+
+        // step 1: form the hql
+
+        String hql = "select alias "
+
+                   + "from OrganizationalContact alias "
+
+                   + "where alias.identifier = :identifier ";
+
+
+
+        // step 2: construct query object
+
+        query = session.createQuery(hql);
+
+        query.setParameter("identifier", poIdentifier);
+
+        
+
+        OrganizationalContact oc = null;
+
+        // step 3: query the result
+
+        queryList = query.list();
+
+        if (queryList.size() > 1) {
+
+            throw new PAException(" More than one Structural role found in OrganizationalContact"
+
+                    + " for identifier " + poIdentifier);
+
+        } else if (!queryList.isEmpty()) {
+
+            oc = queryList.get(0);
+
+        }
+
+        return oc;
+
+    }
+
+
+    
     /**
      *
      * @param correlationIi Ii

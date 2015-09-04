@@ -103,6 +103,9 @@ public class StudyContactDTO extends PersonFunctionalRoleDTO {
     private DSet<Tel> telecomAddresses;
     private Ii organizationalContactIi;
     private St title;
+    private St prsUserName;
+    private St comments;
+    
     /**
      * @return the postalAddress
      */
@@ -175,6 +178,29 @@ public class StudyContactDTO extends PersonFunctionalRoleDTO {
     public void setTitle(St title) {
         this.title = title;
     }
-
+    /**
+     * @return the prsUserName
+     */
+    public St getPrsUserName() {
+        return prsUserName;
+    }
+    /**
+     * @param prsUserName the prsUserName to set
+     */
+    public void setPrsUserName(St prsUserName) {
+        this.prsUserName = prsUserName;
+    }
+    /**
+     * @return the comments
+     */
+    public St getComments() {
+        return comments;
+    }
+    /**
+     * @param comments the comments to set
+     */
+    public void setComments(St comments) {
+        this.comments = comments;
+    }
 
 }

@@ -329,3 +329,16 @@ function sendCoverSheetEmail() {
 	jQuery('#coverSheetForm')[0].action =sendEmailUrl;
     jQuery('#coverSheetForm').submit();
 }
+
+function checkDesignee(){
+	var value = jQuery("#designeeAccessRevoked").val();
+	if (value=="false") {
+		jQuery("#designeeContactList").hide();
+		jQuery("#designeeAccessRevokedDate").hide();
+		jQuery("#designeeImg").hide();
+	} else {
+		jQuery("#designeeContactList").show();
+        jQuery("#designeeAccessRevokedDate").show();
+        jQuery("#designeeImg").show();
+	}
+}
