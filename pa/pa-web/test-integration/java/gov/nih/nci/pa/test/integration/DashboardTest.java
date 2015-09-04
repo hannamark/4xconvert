@@ -1466,6 +1466,22 @@ public class DashboardTest extends AbstractTrialStatusTest {
         assertFalse(s.isVisible("validationError"));
 
     }
+    
+    @Test
+    public void testWorkloadTab_OverlapBusinessDays() throws SQLException, ParseException {
+        deactivateAllTrials();
+        TrialInfo submittedTrial = createSubmittedTrial();
+        addOnHold(submittedTrial, "SUBMISSION_INCOM", date("07/03/2015"),
+                date("07/03/2015"), "Submitter");
+        addOnHold(submittedTrial, "SUBMISSION_INCOM", date("07/04/2015"),
+                date("07/06/2015"), "Submitter");
+        addOnHold(submittedTrial, "SUBMISSION_INCOM", date("07/01/2015"),
+                date("07/10/2015"), "Submitter");
+        
+        loginAsSuperAbstractor();
+        clickAndWait("id=dashboardMenuOption");
+        verifyColumnValue(1, "Business Days on Hold (Submitter)", "7");
+	}
 
     @Test
     public void testWorkloadTab() throws Exception {

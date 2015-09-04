@@ -9,12 +9,14 @@ import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
 import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -986,7 +988,7 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO
     }
 
     private int getBizDaysOnHold(String cat) {
-        int days = 0;
+        HashSet<String> holdDateSet = new HashSet<>();
         for (StudyOnholdDTO hold : getAllHolds()) {
             if (cat.equalsIgnoreCase(StConverter.convertToString(hold
                     .getOnHoldCategory()))) {
@@ -994,11 +996,20 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO
                         hold.getOnholdDate());
                 Date holdEnd = IvlConverter.convertTs().convertHigh(
                         hold.getOnholdDate());
-                days += PAUtil.getBusinessDaysBetween(holdStart,
-                        holdEnd == null ? new Date() : holdEnd);
-            }
+                
+                holdEnd = (holdEnd == null ? new Date() : holdEnd);
+                while (holdStart.compareTo(holdEnd) <= 0) {
+                    Date current = holdStart;
+                    int bDays = PAUtil.getBusinessDaysBetween(current,holdStart);
+                    if (bDays > 0){
+                        holdDateSet.add(PAUtil.convertTsToFormattedDate(TsConverter
+                                .convertToTs(current)));
+                    }
+                    holdStart = DateUtils.addDays(current, 1);
+                }
+           }
         }
-        return days;
+        return holdDateSet.size();
     }
 
     /**
