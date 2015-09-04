@@ -18,7 +18,6 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.RealConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.noniso.dto.OrgFamilyProgramCodeDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
@@ -32,7 +31,6 @@ import gov.nih.nci.pa.service.status.json.ErrorType;
 import gov.nih.nci.pa.service.status.json.TransitionFor;
 import gov.nih.nci.pa.service.status.json.TrialType;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
-import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.TrialDTO;
@@ -51,7 +49,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -63,7 +60,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import com.opensymphony.xwork2.Preparable;
@@ -85,10 +81,6 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     
     private static final String STATUS_CHANGE_ERR_MSG = "You are attempting to change this status from: "
             + "<br>Old Status: %1s <br>Old Status Date: %2s <br><strong>Error</strong>: %3s";
-
-    private static final String ORG_FAM_PRG_CDS_MAP_JSON_STR = "ORG_FAM_PRG_CDS_MAP_JSON_STR";
-
-    private static final String ORG_FAM_PRG_CDS_MAP = "ORG_FAM_PRG_CDS_MAP";
 
     private StudyProtocolServiceLocal studyProtocolService;
     private StudyResourcingServiceLocal studyResourcingService;
@@ -127,13 +119,8 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     @Element(value = gov.nih.nci.pa.dto.PaOrganizationDTO.class)
     private List<PaOrganizationDTO> participatingSitesList = new ArrayList<PaOrganizationDTO>();
     
-    private Map<Long, List<OrgFamilyProgramCodeDTO>> famPrgCdsMap = 
-            new HashMap<Long, List<OrgFamilyProgramCodeDTO>>();
-    
-    private String famPrgCdsMapJsonStr;
-    
     private List<TrialDocumentWebDTO> existingDocuments = new ArrayList<TrialDocumentWebDTO>();
-    
+
     private String programcodenciselectedvalue;
     private String programcodenihselectedvalue;
     private PaOrganizationDTO paOrganizationDTO;
@@ -203,16 +190,11 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         try {
             Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(Long.parseLong(studyProtocolId));
             trialUtil.getTrialDTOFromDb(studyProtocolIi, trialDTO);
-            initPaOrgFamilyInfo();
             synchActionWithDTO();
             TrialSessionUtil.addSessionAttributesForUpdate(trialDTO);
             setInitialStatusHistory(trialDTO.getStatusHistory());
             setIndIdeUpdateDtosLen(trialDTO.getIndIdeUpdateDtos().size());
             ServletActionContext.getRequest().getSession().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
-            ServletActionContext.getRequest().getSession()
-                    .setAttribute(ORG_FAM_PRG_CDS_MAP, famPrgCdsMap);
-            ServletActionContext.getRequest().getSession()
-                    .setAttribute(ORG_FAM_PRG_CDS_MAP_JSON_STR,  famPrgCdsMapJsonStr);
             
             existingDocuments = trialUtil.getTrialDocuments(trialDTO);
             
@@ -225,33 +207,11 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     }
 
     /**
-     * Populate participating sites with families info
-     * @throws PAException on error
-     */
-    private void initPaOrgFamilyInfo() throws PAException {
-        if (CollectionUtils.isNotEmpty(trialDTO.getParticipatingSites())) {
-            for (PaOrganizationDTO paOrgDto : trialDTO.getParticipatingSites()) {
-                String orgPoId = paOrgDto.getNciNumber();
-                Map<Long, String> familiesMap = PADomainUtils.populateFamilies(orgPoId);
-                paOrgDto.setFamilies(familiesMap);
-                PADomainUtils.populateOrgFamilyProgramCodes(
-                        familiesMap, famPrgCdsMap);
-                try {
-                    famPrgCdsMapJsonStr = new ObjectMapper().writeValueAsString(famPrgCdsMap);
-                } catch (Exception e) {
-                    throw new PAException("Error converting organization family program codes map into JSON string", e);
-                }
-            }
-        }
-    }
-
-    /**
      * 
      */
     private void clearSession() {
         TrialSessionUtil.removeSessionAttributes();
         clearGrantsAndIndsFromSession();
-        clearOrgFamilyProgramCodesFromSession();
         setInitialStatusHistory(new ArrayList<StatusDto>());
     }
 
@@ -309,10 +269,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     @SuppressWarnings("unchecked")
     public String reviewUpdate() {
         HttpSession session = ServletActionContext.getRequest().getSession();
-        
         try {
-            populateOrgFamilyProgramCodesFromSession();
-            populatePSFamilyInfoFromSession();
             trialDTO.setStatusHistory(getStatusHistoryFromSession());
             String failureMessage = validateTrial();
             if (failureMessage != null) {
@@ -438,7 +395,6 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     public String update() {
         trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession()
                 .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
-        populateOrgFamilyProgramCodesFromSession();
         if (trialDTO == null) {
             synchActionWithDTO();
             return ERROR;
@@ -525,42 +481,15 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         }
         setTrialAction("update");
         clearGrantsAndIndsFromSession();
-        clearOrgFamilyProgramCodesFromSession();
         return "redirect_to_search";
     }
 
-    
+    /**
+     * 
+     */
     private void clearGrantsAndIndsFromSession() {
         ServletActionContext.getRequest().getSession().removeAttribute("grantAddList");
         ServletActionContext.getRequest().getSession().removeAttribute("indIdeAddList");
-    }
-    
-    private void clearOrgFamilyProgramCodesFromSession() {
-        ServletActionContext.getRequest().getSession().removeAttribute(ORG_FAM_PRG_CDS_MAP);
-        ServletActionContext.getRequest().getSession().removeAttribute(ORG_FAM_PRG_CDS_MAP_JSON_STR);
-    }
-   
-    @SuppressWarnings("unchecked")
-    private void populateOrgFamilyProgramCodesFromSession() {
-        setFamPrgCdsMap((Map<Long, List<OrgFamilyProgramCodeDTO>>) 
-                ServletActionContext.getRequest().getSession().getAttribute(ORG_FAM_PRG_CDS_MAP));
-        setFamPrgCdsMapJsonStr((String) 
-                ServletActionContext.getRequest().getSession().getAttribute(ORG_FAM_PRG_CDS_MAP_JSON_STR));
-    }
-    
-    @SuppressWarnings("unchecked")
-    private void populatePSFamilyInfoFromSession() {
-        List<PaOrganizationDTO> sessionPSList = (List<PaOrganizationDTO>) 
-                ServletActionContext.getRequest().getSession().getAttribute("participatingSitesList");
-        if (CollectionUtils.isNotEmpty(sessionPSList)) {
-            for (int i = 0; i < sessionPSList.size(); i++) {
-                PaOrganizationDTO paOrgDto = sessionPSList.get(i);
-                PaOrganizationDTO localPaOrgDto = getParticipatingSitesList().get(i);
-                localPaOrgDto.setFamilies(paOrgDto.getFamilies());
-                localPaOrgDto.setFamilyName(paOrgDto.getFamilyName());
-                
-            }
-        }
     }
 
     /**
@@ -1128,36 +1057,6 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
      */
     public List<TrialDocumentWebDTO> getExistingDocuments() {
         return existingDocuments;
-    }
-    
-
-    /**
-     * @return the famPrgCdsMap
-     */
-    public Map<Long, List<OrgFamilyProgramCodeDTO>> getFamPrgCdsMap() {
-        return famPrgCdsMap;
-    }
-
-    /**
-     * @param famPrgCdsMap the famPrgCdsMap to set
-     */
-    public void setFamPrgCdsMap(
-            Map<Long, List<OrgFamilyProgramCodeDTO>> famPrgCdsMap) {
-        this.famPrgCdsMap = famPrgCdsMap;
-    }
-
-    /**
-     * @return the famPrgCdsMapJsonStr
-     */
-    public String getFamPrgCdsMapJsonStr() {
-        return famPrgCdsMapJsonStr;
-    }
-
-    /**
-     * @param famPrgCdsMapJsonStr the famPrgCdsMapJsonStr to set
-     */
-    public void setFamPrgCdsMapJsonStr(String famPrgCdsMapJsonStr) {
-        this.famPrgCdsMapJsonStr = famPrgCdsMapJsonStr;
     }
 
     @Override

@@ -400,17 +400,7 @@
         <action name="popupParticipatingOrganizations*" class="gov.nih.nci.pa.action.ParticipatingOrganizationsAction" method="{1}">
             <result>/WEB-INF/jsp/administrative/participatingSites/participatingOrganizationsDeletePopup.jsp</result>
             <result name="deleteStatus">/WEB-INF/jsp/administrative/participatingSites/participatingOrganizationsDeletePopup.jsp</result>
-        </action>     
-        <action name="orgFamilyProgramCodepopup*" class="gov.nih.nci.pa.action.OrgFamilyProgramCodeAction" method="{1}">
-            <interceptor-ref name="paDefaultInterceptor" />
-           <!--  <interceptor-ref name="tokenSession">
-                <param name="includeMethods">execute, create</param>
-            </interceptor-ref>  -->
-            <result>/WEB-INF/jsp/nodecorate/OrgFamilyProgramCodeCreate.jsp</result>
-            <result name="input">/WEB-INF/jsp/nodecorate/OrgFamilyProgramCodeCreate.jsp</result>
-            <result name="success">/WEB-INF/jsp/nodecorate/OrgFamilyProgramCodeCreate.jsp</result>
-            <result name="error">/WEB-INF/jsp/nodecorate/OrgFamilyProgramCodeCreate.jsp</result>
-        </action>  
+        </action>       
         <action name="checkOutHistory" class="gov.nih.nci.pa.action.CheckOutHistoryAction">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
             <result>/WEB-INF/jsp/checkOutHistory.jsp</result>

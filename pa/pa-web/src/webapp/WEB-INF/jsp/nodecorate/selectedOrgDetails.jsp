@@ -1,11 +1,10 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<s:hidden name="poOrgFamilyId" id="poOrgFamilyId"/>
-<s:hidden name="poOrgFamilyName" id="poOrgFamilyName"/>
-<s:hidden name="orgFamProgramCodesAsJson" id="orgFamProgramCodesAsJson"/>
 <table  class="form">
 		<tr>
 		    <td scope="row" class="label"><label for="editOrg.name">Organization Name:</label><span class="required">*</span>
+	    
+		    
 		    </td>
 			<td>
                 <s:textfield id="editOrg.name" name="orgFromPO.name" maxlength="80" size="80" cssStyle="width: 300px" readonly="true" cssClass="readonly"/>

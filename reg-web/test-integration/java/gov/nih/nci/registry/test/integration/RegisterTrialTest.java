@@ -99,7 +99,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 
 import com.thoughtworks.selenium.SeleniumException;
@@ -695,11 +694,11 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         pause(1500);
         assertFalse(selenium.isVisible("id=myModal"));
     }
-
+    
     @SuppressWarnings("deprecation")
     @Test
     public void testImportDisabledAfterClick() throws Exception {
-
+    
         loginAndAcceptDisclaimer();
         // Select register trial and choose trial type
         hoverLink("Register Trial");
@@ -718,24 +717,24 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 .getText("//table[@id='row']/tbody/tr/td[3]")
                 .contains(
                         "Phase II Study of Hyper-CVAD Plus Imatinib Mesylate (Gleevec, STI571) for Philadelphia-Positive Acute Lymphocytic Leukemia"));
-
+        
         WebElement element = driver.findElement(By.id("importTrial"));
         // Disable form submit otherwise form will be submitted and this button
         // will not be visible in selenium
         // if this button is not visible then button is disabled can not be
         // tested
-
+       
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("window.handleAction =function(args){ return false;};");
         element.click();
-
-        // test if button is disabled
+        
+        //test if button is disabled
         assertFalse(element.isEnabled());
         String buttonText = element.getText();
-
-        // test if button text changed to please wait
-        assertEquals("Please wait", buttonText);
-    }
+        
+        //test if button text changed to please wait
+        assertEquals("Please wait",buttonText);
+    }    
 
     @SuppressWarnings("deprecation")
     @Test
@@ -821,8 +820,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         driver.switchTo().defaultContent();
         selenium.selectFrame("popupFrame");
 
-        useSelect2ToPickAnOption("programCodes", "PC-NM-1", "PC-NM-1");
-
+        selenium.type("programCode", "PGCODE");
         selenium.select("siteDTO_recruitmentStatus", "label=In Review");
         selenium.type("siteDTO_recruitmentStatusDate", "09/25/2014");
         clickAndWaitAjax("id=addStatusBtn");
@@ -840,7 +838,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 selenium.getText("//table[@id='row']/tbody/tr/td[2]"));
         assertEquals("XYZ0000001",
                 selenium.getText("//table[@id='row']/tbody/tr/td[3]"));
-        assertEquals("PC-CD-1",
+        assertEquals("PGCODE",
                 selenium.getText("//table[@id='row']/tbody/tr/td[4]"));
         assertEquals("In Review",
                 selenium.getText("//table[@id='row']/tbody/tr/td[5]"));
@@ -1572,30 +1570,6 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assertTrue(nciId.contains("NCI"));
         assertEquals(14, nciId.length());
         return nciId;
-    }
-
-    @SuppressWarnings("deprecation")
-    private void useSelect2ToPickAnOption(String id, String sendKeys,
-            String option) {
-        WebElement sitesBox = driver.findElement(By
-                .xpath("//span[preceding-sibling::select[@id='" + id
-                        + "']]//input[@type='search']"));
-        sitesBox.click();
-        assertTrue(s.isElementPresent("select2-" + id + "-results"));
-        sitesBox.sendKeys(sendKeys);
-
-        By xpath = null;
-        try {
-            xpath = By.xpath("//li[@role='treeitem' and text()='" + option
-                    + "']");
-            waitForElementToBecomeAvailable(xpath, 3);
-        } catch (TimeoutException e) {
-            xpath = By.xpath("//li[@role='treeitem']//b[text()='" + option
-                    + "']");
-            waitForElementToBecomeAvailable(xpath, 15);
-        }
-
-        driver.findElement(xpath).click();
     }
 
 }

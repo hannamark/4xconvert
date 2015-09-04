@@ -4,8 +4,6 @@
 package gov.nih.nci.pa.util;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import gov.nih.nci.pa.domain.OrgFamilyProgramCode;
 import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
@@ -74,7 +72,6 @@ import gov.nih.nci.pa.service.util.I2EGrantsServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.MockLookUpTableServiceBean;
-import gov.nih.nci.pa.service.util.OrgFamilyProgramCodeService;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderLocal;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderServiceBean;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
@@ -100,9 +97,6 @@ import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemo
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.mockito.Mockito;
 
@@ -745,40 +739,12 @@ public RegulatoryInformationServiceLocal getRegulatoryInformationService() {
     public StatusTransitionService getStatusTransitionService() {
         return mock(StatusTransitionService.class);
     }
-    
-    /**
-     * {@inheritDoc}
-     * @throws PAException 
-     */
-    @Override
-    public OrgFamilyProgramCodeService getOrgFamilyProgramCodeService() {
-        OrgFamilyProgramCodeService orgFamPrgCdSvc 
-                =  mock(OrgFamilyProgramCodeService.class);
-        List<OrgFamilyProgramCode> results 
-            = new ArrayList<OrgFamilyProgramCode>();
-        for(int i=0; i<3; i++) {
-            OrgFamilyProgramCode pc = new OrgFamilyProgramCode();
-            pc.setId(1L);
-            pc.setFamilyPoId("1");
-            pc.setProgramCode("PrgCd" + i);
-            pc.setProgramName("PrgNm" + i);
-            
-            results.add(pc);
-        }
-        try {
-            when(orgFamPrgCdSvc.getProgramCodesByFamilyPOId("1")).thenReturn(results);
-        } catch (PAException e) {
-            e.printStackTrace();
-        }
-        return orgFamPrgCdSvc;
-    }
-
 
     @Override
     public StudyNotesService getStudyNotesService() {
         return mock(StudyNotesServiceLocal.class);
     }
-
+        
     @Override
     public StudyProcessingErrorService getStudyProcessingErrorService() {
         return mock(StudyProcessingErrorService.class);

@@ -12,8 +12,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebElement;
 
 /**
  * @author Denis G. Krylov
@@ -133,9 +131,8 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
 
     @Test
     public void testAddSite() throws SQLException {
-        
         TrialInfo trial = createTrialAndBeginAddingSites();
-        
+
         // Select Investigator
         searchAndSelectPerson(
                 By.id("trial_" + trial.id + "_site_0_pi_lookupBtn"), "John",
@@ -145,8 +142,7 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
                 selenium.getValue("id=trial_" + trial.id + "_site_0_pi_poid"));
 
         selenium.type("id=trial_" + trial.id + "_site_0_localID", "XYZ0001");
-        
-        useSelect2ToPickAnOption("trial_" + trial.id + "_site_0_pgcode", "PC-NM-1", "PC-NM-1");
+        selenium.type("id=trial_" + trial.id + "_site_0_pgcode", "PG0001");
 
         populateStatusHistory(trial);
 
@@ -390,7 +386,7 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
     @Test
     public void testAddSiteValidationMissingFields() throws SQLException {
         TrialInfo trial = createTrialAndBeginAddingSites();
-        useSelect2ToPickAnOption("trial_" + trial.id + "_site_0_pgcode", "PC-NM-1", "PC-NM-1");
+        selenium.type("id=trial_" + trial.id + "_site_0_pgcode", "PG0001");
         clickAndWait("id=saveBtn");
         waitForTextToAppear(By.className("alert-danger"),
                 "Local Trial Identifier is required", WAIT_FOR_ELEMENT_TIMEOUT);
@@ -419,29 +415,5 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
         selenium.click("//table[@id='row']/tbody/tr[1]/td[8]/button");
         waitForPageToLoad();
         driver.switchTo().defaultContent();
-    }
-    
-    @SuppressWarnings("deprecation")
-    private void useSelect2ToPickAnOption(String id, String sendKeys,
-            String option) {
-        WebElement sitesBox = driver.findElement(By
-                .xpath("//span[preceding-sibling::select[@id='" + id
-                        + "']]//input[@type='search']"));
-        sitesBox.click();
-        assertTrue(s.isElementPresent("select2-" + id + "-results"));
-        sitesBox.sendKeys(sendKeys);
-        
-        By xpath = null;
-        try {
-            xpath = By.xpath("//li[@role='treeitem' and text()='" + option
-                    + "']");
-            waitForElementToBecomeAvailable(xpath, 3);
-        } catch (TimeoutException e) {
-            xpath = By.xpath("//li[@role='treeitem']//b[text()='" + option
-                    + "']");
-            waitForElementToBecomeAvailable(xpath, 15);
-        }
-
-        driver.findElement(xpath).click();
     }
 }

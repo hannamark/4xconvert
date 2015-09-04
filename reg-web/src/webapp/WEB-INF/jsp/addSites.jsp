@@ -61,10 +61,6 @@ div.error,b.error {
     padding-top: 5px;
 }
 
-span.select2-container {
-    width: 200px !important;
-    max-width: 280px; 
-}
 </style>
 
 <script type="text/javascript" language="javascript"
@@ -100,7 +96,6 @@ span.select2-container {
 		prepareSiteEntryRow(spID);
 		prepareSiteInformationFormControls(spID);
 		showPopover(spID);
-		initProgramCodeSelect2();
 	}
 	
 	var popoverShownOnce = false;
@@ -168,6 +163,8 @@ span.select2-container {
 		}
 		
 		preSelectSiteOrgToBeDifferentFromPreviousRows(spID, index);
+		
+		
 	}
 	
 	function preSelectSiteOrgToBeDifferentFromPreviousRows(spID, index) {
@@ -517,53 +514,11 @@ span.select2-container {
 	    jQuery("#th1").unbind('click');		
 	    jQuery("#th2").unbind('click');
 	}
-
-	function initProgramCodeOptions() {
-        var pcJson = jQuery("#orgFamProgramCodesAsJson").val();
-        var pcs = [];
-        if(!pcJson) {
-            return pcs;
-            }
-        
-        var pcObj = jQuery.parseJSON( pcJson );
-
-        var k=0;
-        pcObj = pcObj.toArray();
-        for(var i=0; i< pcObj.size(); i++) {
-            k = k+ 1;
-            pcs[k] = {};
-            pcs[k]["id"] = pcObj[i].programCode;
-            pcs[k]["text"] = pcObj[i].programName;
-        }
-        
-        return pcs;
-     }
-
-    function initProgramCodeSelect2() {
-        var pcs = initProgramCodeOptions();
-        // Init Select2 boxes.
-        jQuery("[id$='pgcode']").select2({
-              placeholder: "All",
-              data: pcs
-        });
-        
-        // Prevent opening of the Select2 box upon unselect.
-        var ts = 0;
-        jQuery(".select2-hidden-accessible").on("select2:unselect", function (e) { 
-            ts = e.timeStamp;
-        }).on("select2:opening", function (e) { 
-            if (e.timeStamp - ts < 100) {                   
-                e.preventDefault();
-            }
-        });
-     }
 	
 	var dataTable;
 	
 	(function($) {
 		$(document).ready(function() {
-			//init program code as select2 boxes
-			initProgramCodeSelect2();
 			
 			$('[data-toggle="tooltip"]').tooltip({
 				'placement' : 'top'
@@ -602,7 +557,6 @@ span.select2-container {
 			<s:token />
 		    <s:hidden name="uuid" id="uuid" />
 		    <s:hidden name="runValidations" id="runValidations" />
-		    <s:hidden name="orgFamProgramCodesAsJson" id="orgFamProgramCodesAsJson"/>
 			<h3 class="heading">
 				<span>Search Trials</span>
 			</h3>
@@ -791,16 +745,11 @@ span.select2-container {
 										name="trial_${trial.studyProtocolId}_site_${stat.index}_localID"
 										placeholder="Enter Local Trial ID" maxlength="50"
 										class="form-control" /></td>
-									<%-- <td><input type="text"
+									<td><input type="text"
 										id="trial_${trial.studyProtocolId}_site_${stat.index}_pgcode"
 										name="trial_${trial.studyProtocolId}_site_${stat.index}_pgcode"
 										placeholder="Enter Program Code" maxlength="50"
-										class="form-control" /></td> --%>
-									<td><select multiple="true"
-                                        id="trial_${trial.studyProtocolId}_site_${stat.index}_pgcode"
-                                        name="trial_${trial.studyProtocolId}_site_${stat.index}_pgcode"
-                                        placeholder="Enter Program Code" 
-                                        class="form-control" /></td>
+										class="form-control" /></td>
 									<c:if test="${not stat.first}">
 										<td><div class="input-append" style="padding-left: 10px;"
 												onclick="copySiteDataFromRowAbove(${trial.studyProtocolId},${stat.index});"

@@ -146,8 +146,6 @@ public class MockOrganizationCorrelationService implements
             throws PAException {
         if(!poPaOrgMap.containsKey(orgPoIdentifier)) {
             createPaOrg(orgPoIdentifier);
-        } else {
-            seq++;
         }
         for(HealthCareFacility hcf : hcfList) {
             if (hcf.getOrganization().getIdentifier().equals(orgPoIdentifier)) {
@@ -156,7 +154,7 @@ public class MockOrganizationCorrelationService implements
             return hcf.getId();
         }
         HealthCareFacility hcf = new HealthCareFacility();
-        hcf.setId(seq);
+        hcf.setId(seq++);
         hcf.setIdentifier("po"+ seq);
         hcf.setOrganization(poPaOrgMap.get(orgPoIdentifier));
         hcf.setStatusCode(StructuralRoleStatusCode.ACTIVE);
@@ -174,8 +172,6 @@ public class MockOrganizationCorrelationService implements
             throws PAException {
         if(!poPaOrgMap.containsKey(orgPoIdentifier)) {
             createPaOrg(orgPoIdentifier);
-        } else {
-            seq++;
         }
         for(HealthCareFacility hcf : hcfList) {
             if (hcf.getOrganization().getIdentifier().equals(orgPoIdentifier)) {
@@ -184,7 +180,7 @@ public class MockOrganizationCorrelationService implements
             return hcf.getId();
         }
         OversightCommittee oc = new OversightCommittee();
-        oc.setId(seq);
+        oc.setId(seq++);
         oc.setIdentifier("po"+ seq);
         oc.setOrganization(poPaOrgMap.get(orgPoIdentifier));
         oc.setStatusCode(StructuralRoleStatusCode.ACTIVE);
@@ -221,8 +217,6 @@ public class MockOrganizationCorrelationService implements
     public Long createResearchOrganizationCorrelations(String orgPoIdentifier) {
         if(!poPaOrgMap.containsKey(orgPoIdentifier)) {
             createPaOrg(orgPoIdentifier);
-        } else {
-            seq++;
         }
         for(HealthCareFacility hcf : hcfList) {
             if (hcf.getOrganization().getIdentifier().equals(orgPoIdentifier)) {
@@ -231,7 +225,7 @@ public class MockOrganizationCorrelationService implements
             return hcf.getId();
         }
         ResearchOrganization ro = new ResearchOrganization();
-        ro.setId(seq);
+        ro.setId(seq++);
         ro.setIdentifier("po"+ seq);
         ro.setOrganization(poPaOrgMap.get(orgPoIdentifier));
         ro.setStatusCode(StructuralRoleStatusCode.ACTIVE);

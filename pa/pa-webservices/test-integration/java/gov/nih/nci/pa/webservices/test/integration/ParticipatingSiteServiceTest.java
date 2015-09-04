@@ -369,7 +369,7 @@ public final class ParticipatingSiteServiceTest extends AbstractRestServiceTest 
                 .toGregorianCalendar(), "MM/dd/yyyy"),
                 selenium.getValue("id=recStatusDate"));
         assertEquals(StringUtils.defaultString(ps.getProgramCode()),
-                selenium.getValue("id=programCodes"));
+                selenium.getValue("id=programCode"));
         assertEquals(ps.getTargetAccrualNumber() != null ? ps
                 .getTargetAccrualNumber().toString() : "",
                 selenium.getValue("id=targetAccrualNumber"));

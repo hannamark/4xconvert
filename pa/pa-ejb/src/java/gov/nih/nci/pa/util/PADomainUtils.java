@@ -99,7 +99,6 @@ import gov.nih.nci.iso21090.TelUrl;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
-import gov.nih.nci.pa.domain.OrgFamilyProgramCode;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.PlannedActivity;
@@ -121,8 +120,6 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.noniso.convert.OrgFamilyProgramCodeConverter;
-import gov.nih.nci.pa.noniso.dto.OrgFamilyProgramCodeDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.CacheUtils.Closure;
 import gov.nih.nci.services.CorrelationService;
@@ -772,69 +769,6 @@ public class PADomainUtils {
                     EnOnConverter.convertEnOnToString(dto.getName()));
         }
         return retMap;
-    }
-    
-    /**
-     * Populates the PaOrganizationDTO with families info
-     * 
-     * @param orgPoId String - org PO Id
-     * @return Map<Long, String> map of family id to family name
-     * @throws PAException on error
-     */
-    @SuppressWarnings("unchecked")
-    public static Map<Long, String> populateFamilies(String orgPoId) throws PAException {
-        OrganizationDTO criteria = new OrganizationDTO();
-        criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long
-                .valueOf(orgPoId)));
-        OrganizationDTO selectedOrgDTO = null;
-        LimitOffset limit = new LimitOffset(1, 0);
-        try {
-            selectedOrgDTO = PoRegistry.getOrganizationEntityService().search(criteria, limit).get(0);
-        } catch (TooManyResultsException e) {
-            throw new PAException(e);
-        }
-
-        // set family info
-        Set<Ii> famOrgRelIiList = new HashSet<Ii>();
-        if (CollectionUtils.isNotEmpty(selectedOrgDTO
-                .getFamilyOrganizationRelationships().getItem())) {
-            famOrgRelIiList.addAll(selectedOrgDTO
-                    .getFamilyOrganizationRelationships().getItem());
-            Map<Ii, FamilyDTO> familyMap = PoRegistry.getFamilyService()
-                    .getFamilies(famOrgRelIiList);
-            return PADomainUtils.getFamilies(
-                    selectedOrgDTO.getFamilyOrganizationRelationships(), familyMap);
-        }
-        return new HashMap<Long, String>();
-    }
-    
-    /**
-     * Populates the program codes info for families
-     * 
-     * @param familiesMap Map<Long, String> of poFamily id to name map
-     * @param famPrgCdsMap Map<Long, List<OrgFamilyProgramCodeDTO>> of poFamily id to program codes
-     * @throws PAException on error
-     */
-    public static void populateOrgFamilyProgramCodes(Map<Long, String> familiesMap, 
-            Map<Long, List<OrgFamilyProgramCodeDTO>> famPrgCdsMap) throws PAException {
-        if (familiesMap != null && !familiesMap.isEmpty()) {
-            for (Map.Entry<Long, String> entry : familiesMap.entrySet()) {
-                Long famId = entry.getKey();
-                if (famPrgCdsMap.containsKey(famId)) {
-                    continue;
-                }
-                List<OrgFamilyProgramCode> prgCodes = PaRegistry.getOrgFamilyProgramCodeService()
-                        .getProgramCodesByFamilyPOId(famId.toString());
-                
-                if (CollectionUtils.isEmpty(prgCodes)) {
-                    continue;
-                }
-                
-                List<OrgFamilyProgramCodeDTO> prgCdDtos = new OrgFamilyProgramCodeConverter()
-                .convertFromDomainToDtos(prgCodes);
-                famPrgCdsMap.put(famId, prgCdDtos);
-            }
-        }
     }
     
     /**

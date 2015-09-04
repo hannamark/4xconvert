@@ -37,9 +37,7 @@ import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
-import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.action.AddSitesAction.AddSiteResult;
-import gov.nih.nci.registry.test.util.RegistrationMockServiceLocator;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -53,7 +51,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.struts2.ServletActionContext;
 import org.json.JSONArray;
@@ -95,7 +92,6 @@ public class AddSitesActionTest extends AbstractRegWebTest {
     @SuppressWarnings({ "deprecation", "unchecked" })
     @Before
     public void before() throws PAException {
-        PaRegistry.getInstance().setServiceLocator(new RegistrationMockServiceLocator());
         paServiceUtils = mock(PAServiceUtils.class);
         registryUserServiceLocal = mock(RegistryUserServiceLocal.class);
         participatingSiteServiceLocal = mock(ParticipatingSiteServiceLocal.class);
@@ -379,7 +375,7 @@ public class AddSitesActionTest extends AbstractRegWebTest {
 
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings("unchecked")
     @Test
     public void testSearch() throws PAException {
         prepareAction();
@@ -388,24 +384,13 @@ public class AddSitesActionTest extends AbstractRegWebTest {
         action.getCriteria().setOfficialTitle("Title");
         String result = action.search();
         assertEquals(ActionSupport.SUCCESS, result);
-        
-        List orgFamPrgCdsList = (List<StudyProtocolQueryDTO>) ServletActionContext
-                .getRequest().getSession()
-                .getAttribute(AddSitesAction.ORG_FAM_PRG_CDS);
-        assertTrue(CollectionUtils.isNotEmpty(orgFamPrgCdsList));
-        assertEquals(3, orgFamPrgCdsList.size());
-        
-        String orgFamPrgCdJson = (String) ServletActionContext
-                .getRequest().getSession()
-                .getAttribute(AddSitesAction.ORG_FAM_PRG_CDS_JSON_STR);
-        assertTrue(StringUtils.isNotEmpty(orgFamPrgCdJson));
 
         List<StudyProtocolQueryDTO> list = (List<StudyProtocolQueryDTO>) ServletActionContext
                 .getRequest().getSession()
                 .getAttribute(AddSitesAction.RESULTS_SESSION_KEY);
         assertTrue(CollectionUtils.isNotEmpty(list));
         assertEquals(1, list.size());
-        
+
         StudyProtocolQueryDTO queryDTO = list.get(0);
         assertEquals(new Long(1), queryDTO.getStudyProtocolId());
         assertEquals("Title", queryDTO.getOfficialTitle());

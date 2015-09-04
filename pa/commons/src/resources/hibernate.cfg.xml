@@ -108,7 +108,6 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.StudyProtocolFlag" />
         <mapping class="gov.nih.nci.pa.domain.EmailAttachment" />
         <mapping class="gov.nih.nci.pa.domain.EmailLog" />
-        <mapping class="gov.nih.nci.pa.domain.OrgFamilyProgramCode" />
         <mapping class="gov.nih.nci.pa.domain.Account" />
         <mapping class="gov.nih.nci.pa.domain.Tweet" />
         <mapping class="gov.nih.nci.pa.domain.StudyDataDiscrepancy" />

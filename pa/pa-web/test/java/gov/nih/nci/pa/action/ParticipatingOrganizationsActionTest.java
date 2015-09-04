@@ -116,9 +116,6 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.StudySubjectServiceLocal;
-import gov.nih.nci.pa.service.correlation.CorrelationUtils;
-import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
-import gov.nih.nci.pa.service.util.OrgFamilyProgramCodeService;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -128,6 +125,7 @@ import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.service.MockCorrelationUtils;
 import gov.nih.nci.service.MockOrganizationCorrelationService;
+import gov.nih.nci.service.MockStudySiteService;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
@@ -137,8 +135,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
@@ -152,19 +148,12 @@ import com.opensymphony.xwork2.ActionSupport;
  */
 public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
     private static ParticipatingOrganizationsAction act;
-    
-    private MockOrganizationCorrelationService mockOrgCorrltnSrvc;
-    
-    private CorrelationUtilsRemote mockCorrelationUtils;
 
     @Before
     public void prepare() throws Exception {
         act = new ParticipatingOrganizationsAction();
         act.prepare();
-        mockCorrelationUtils  = new MockCorrelationUtils(); 
-        act.setCorrelationUtils(mockCorrelationUtils);
-        mockOrgCorrltnSrvc = new MockOrganizationCorrelationService();
-        act.setOrgFamilyProgramCodeService(mock(OrgFamilyProgramCodeService.class));
+        act.setCorrelationUtils(new MockCorrelationUtils());
     }
 
     @Test
@@ -299,10 +288,7 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
         StudySiteDTO dto = new StudySiteDTO();
         dto.setFunctionalCode(CdConverter.convertStringToCd("functionalCode"));
         dto.setStatusCode(CdConverter.convertStringToCd("statusCode"));
-        
-        Long hcfId = mockOrgCorrltnSrvc.createHealthCareFacilityCorrelations("2");
-        dto.setHealthcareFacilityIi(IiConverter.convertToPoHealthCareFacilityIi("po" + hcfId.toString()));
-        
+        dto.setHealthcareFacilityIi(IiConverter.convertToPoHealthCareFacilityIi("1"));
         StudySiteServiceLocal svc = mock(StudySiteServiceLocal.class);
         when(svc.get(any(Ii.class))).thenReturn(dto);
         act.setStudySiteService(svc);
@@ -311,8 +297,6 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
         act.deleteObject(1L);
         getRequest().setupAddParameter("orgId", "1");
         assertEquals("displayJsp",act.displayOrg());
-        CollectionUtils.isNotEmpty(act.getOrgFamProgramCodeDtos());
-        StringUtils.isNotEmpty(act.getOrgFamProgramCodesAsJson());
         assertEquals("display_StudyPartipants",act.getStudyParticipationContacts());
         assertEquals("error_prim_contacts", act.saveStudyParticipationContact());
         assertEquals("display_spContacts", act.deleteStudyPartContact());
@@ -328,7 +312,7 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
         when(rmtSvc.getPersonsByStudySiteId(any(Long.class), any(String.class))).thenReturn(new ArrayList<PaPersonDTO>());
         when(rmtSvc.getIdentifierBySPCId(any(Long.class))).thenReturn(new PaPersonDTO());
         when(paSvcLoc.getPAHealthCareProviderService()).thenReturn(rmtSvc);
-        when(paSvcLoc.getStudySiteService()).thenReturn(svc);
+        when(paSvcLoc.getStudySiteService()).thenReturn(new MockStudySiteService());
         StudySiteAccrualStatusServiceLocal ssas = mock(StudySiteAccrualStatusServiceLocal.class);
         StudySiteAccrualStatusDTO sasdto = new StudySiteAccrualStatusDTO();
         sasdto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ACTIVE));

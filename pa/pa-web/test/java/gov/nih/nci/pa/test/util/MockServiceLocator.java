@@ -186,8 +186,6 @@ import gov.nih.nci.pa.service.util.FlaggedTrialService;
 import gov.nih.nci.pa.service.util.I2EGrantsServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
-import gov.nih.nci.pa.service.util.OrgFamilyProgramCodeService;
-import gov.nih.nci.pa.service.util.OrgFamilyProgramCodeServiceLocal;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderLocal;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
@@ -1056,14 +1054,6 @@ public class MockServiceLocator implements ServiceLocator {
             //Nothing to do
         }
         return statusTransitionService;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public OrgFamilyProgramCodeService getOrgFamilyProgramCodeService() {
-        return Mockito.mock(OrgFamilyProgramCodeServiceLocal.class);
     }
 
     @Override

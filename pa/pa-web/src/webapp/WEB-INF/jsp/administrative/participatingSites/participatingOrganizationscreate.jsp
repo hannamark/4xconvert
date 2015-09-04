@@ -19,26 +19,7 @@
         <c:url value="/protected/popuplookupcontactpersons.action" var="lookupContactPersonsUrl"/>
         <c:url value="/protected/ajaxGenericContactlookupByTitle.action" var="lookupOrgGenericContactsUrl"/>
         <c:url value="/protected/siteStatusHistorypopupexecute.action" var="lookupUrlstatusHistory" scope="request" />
-        <c:url value="/protected/orgFamilyProgramCodepopupexecute.action" var="addProgramCodeUrl" scope="request" />
-    
-    <style type="text/css">
-            span.select2-container {
-                width: 200px !important;
-                max-width: 280px; 
-            }
-            div.error_msg {
-                white-space: pre-wrap;
-            }
-            span.warning {
-                color: blue;
-                white-space: pre-wrap;
-            }
-            span.error {
-                color: red;
-                white-space: pre-wrap;
-            }
-        </style>
-        
+
         <script language="javascript" type="text/javascript">
 
             addCalendar("Cal1", "Select Date", "recStatusDate", "facility");                 
@@ -58,10 +39,9 @@
             function facilityUpdate() {
                 var url = '/pa/protected/ajaxptpOrgfacilityUpdate.action';
                 var form = document.facility;
-                var selVals = jQuery("#programCodes").val();
                 var params = {
                     localProtocolIdenfier: form.siteLocalTrialIdentifier.value,
-                    programCode: selVals,
+                    programCode: form.programCode.value,
                     recStatus: form.recStatus.value,
                     recStatusDate: form.recStatusDate.value,
                     recStatusComments: form.recStatusComments.value,
@@ -69,15 +49,9 @@
                     dateOpenedForAccrual: form.dateOpenedForAccrual.value,
                     dateClosedForAccrual: form.dateClosedForAccrual.value
                 };
-                var options = {
-                        onComplete: function(transport) {
-                        	resetProgramCodeOptions();
-                            setProgramCodeValue(selVals);
-                       }      
-                    };
                 var div = $('loadOrgDetails');
                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
-                var aj = callAjaxPost(div, url, params, options);
+                var aj = callAjaxPost(div, url, params);
             }
 
             function lookup() {
@@ -104,13 +78,7 @@
                 var params = { orgId: orgid };
                 var div = $('orgDetailsDiv');
                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
-                var options = {
-                        onComplete: function(transport) {
-                        	resetProgramCodeOptions();
-                        	jQuery("#programCodes").val(null).trigger('change');
-                       }      
-                    };
-                var aj = callAjaxPost(div, url, params, options);
+                var aj = callAjaxPost(div, url, params);
                 return false;
             }
 
@@ -221,103 +189,21 @@
                 $("personContactWebDTO.title").value = selectedName;
                 $('personContactWebDTO.selectedPersId').value =  persid;
             }
-            
-            function createProgramCode() {
-            	var poOrgFamilyId = $('poOrgFamilyId').value;
-            	var poOrgFamilyName = $('poOrgFamilyName').value;
-            	if(poOrgFamilyId && poOrgFamilyName) {
-            		showPopWin('${addProgramCodeUrl}?poOrgFamilyId='+poOrgFamilyId+'&poOrgFamilyName='+poOrgFamilyName, 800, 350, null, 'Add Program Code');
-            	} else {
-            		alert("This organization is not a member of any family. Program code cannot be added.")
-                }
-            }
-            
-            function addNewProgramCode(newPCName, newPCCode) {
-                var selVals = jQuery("#programCodes").val();
-                resetProgramCodeOptions(newPCName, newPCCode);
-                setProgramCodeValue(selVals+','+newPCCode);
-            }
-
-            function resetProgramCodeOptions(newPCName, newPCCode) {
-            	jQuery("#programCodes").empty();
-                initProgramCodeSelect2(newPCName, newPCCode); 
-            }
-            
-            function initProgramCodeOptions(newPCName, newPCCode) {
-            	var pcJson = jQuery("#orgFamProgramCodesAsJson").val();
-            	var pcs = [];
-                if(!pcJson) {
-                    return pcs;
-                    }
-                
-                var pcObj = jQuery.parseJSON( pcJson );
-
-                var k=0;
-                var poOrgFamilyId = $('poOrgFamilyId').value;
-                var poOrgFamilyName = $('poOrgFamilyName').value;
-                if(poOrgFamilyId && poOrgFamilyName) {
-                   pcs.push({"id":"Add New", "text":"Add New ..."});
-                }
-                pcObj = pcObj.toArray();
-                for(var i=0; i< pcObj.size(); i++) {
-                    k = k+ 1;
-                    pcs[k] = {};
-                    pcs[k]["id"] = pcObj[i].programCode;
-                    pcs[k]["text"] = pcObj[i].programName;
-                }
-                k = k+1;
-                if(newPCCode && newPCName) {
-                	pcs[k] = {};
-                    pcs[k]["id"] = newPCCode;
-                    pcs[k]["text"] = newPCName;
-                }
-
-                return pcs;
-             }
-
-            function setProgramCodeValue(selVal) {
-                if(!jQuery.isArray(selVal)) {
-                    selVal = selVal.split(',');
-                  }
-                jQuery("#programCodes").val(selVal).trigger('change');
-           }
-            
-            function initProgramCodeSelect2(newPCName, newPCCode) {
-            	var pcs = initProgramCodeOptions(newPCName, newPCCode);
-                // Init Select2 boxes.
-                jQuery("#programCodes").select2({
-                      placeholder: "All",
-                      data: pcs
-                });
-
-                //handle Add New
-                jQuery("#programCodes").on("select2:selecting", function (e) {
-                     if(e.params.args.data.id == 'Add New')  {
-                         e.preventDefault();
-                         jQuery("#programCodes").select2('close');
-                         createProgramCode();
-                      }
-                });
-                
-                // Prevent opening of the Select2 box upon unselect.
-                var ts = 0;
-                jQuery(".select2-hidden-accessible").on("select2:unselect", function (e) { 
-                    ts = e.timeStamp;
-                }).on("select2:opening", function (e) { 
-                    if (e.timeStamp - ts < 100) {                   
-                        e.preventDefault();
-                    }
-                });
-             }
-
-            (function($) {    
-                $(function () {
-                	initProgramCodeSelect2();
-                	setProgramCodeValue('<c:out value="${programCode}"/>');                 
-                })
-            }(jQuery));
-            
         </script>
+        
+        <style type="text/css">
+            div.error_msg {
+			    white-space: pre-wrap;
+			}
+			span.warning {
+			    color: blue;
+			    white-space: pre-wrap;
+			}
+			span.error {
+			    color: red;
+			    white-space: pre-wrap;
+			}
+        </style>
     </head>
     <body>
         <h1><fmt:message key="participatingOrganizations.subtitle" /></h1>

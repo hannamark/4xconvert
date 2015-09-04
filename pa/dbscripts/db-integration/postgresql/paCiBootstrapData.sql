@@ -54,14 +54,6 @@ INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_
 
 UPDATE pa_properties SET value='example@example.com' WHERE value in ('@abstraction.script.mailTo@','@cde.request.to.email@','@ctrp.support.email@','@mail.from@');
 
---Adding test org family program codes
-insert into org_family_program_code (identifier, org_family_po_id,program_name, program_code) values ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')), '1', 'PC-NM-1', 'PC-CD-1');
-insert into org_family_program_code (identifier, org_family_po_id,program_name, program_code) values((SELECT NEXTVAL('HIBERNATE_SEQUENCE')), '3', 'PC-NM-1', 'PC-CD-1');
-insert into org_family_program_code (identifier, org_family_po_id,program_name, program_code) values((SELECT NEXTVAL('HIBERNATE_SEQUENCE')), '1', 'PG0000001', 'PG0000001');
-insert into org_family_program_code (identifier, org_family_po_id,program_name, program_code) values((SELECT NEXTVAL('HIBERNATE_SEQUENCE')), '1', 'PG0000002', 'PG0000002');
-insert into org_family_program_code (identifier, org_family_po_id,program_name, program_code) values((SELECT NEXTVAL('HIBERNATE_SEQUENCE')), '3', 'PG0000001', 'PG0000001');
-insert into org_family_program_code (identifier, org_family_po_id,program_name, program_code) values((SELECT NEXTVAL('HIBERNATE_SEQUENCE')), '3', 'PG0000002', 'PG0000002');
 
 
-
-
+        

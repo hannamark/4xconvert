@@ -75,12 +75,4 @@
          overflowToDisk="false"
     />
     
-    <cache
-         name="ORG_FAM_PRG_CD_CACHE_KEY"
-         maxElementsInMemory="30"
-         eternal="false"         
-         timeToIdleSeconds="120"
-         timeToLiveSeconds="120"
-         overflowToDisk="false"
-    /> 
 </ehcache>

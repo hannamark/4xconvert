@@ -80,12 +80,10 @@ package gov.nih.nci.pa.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
 /**
@@ -120,7 +118,7 @@ public class PaOrganizationDTO implements Serializable {
     private String primarycontact;
     private String status;
     private String statusDate;
-    private List<String> programCodes;
+    private String programCode;
     private String ctepId;
     private Map<Long, String> families;
     private List<String> organizationTypes = new ArrayList<String>();
@@ -131,31 +129,14 @@ public class PaOrganizationDTO implements Serializable {
      * @return the programCode
      */
     public String getProgramCode() {
-        return StringUtils.join(getProgramCodes(), ",");
+        return programCode;
     }
 
     /**
-     * @param programCode
-     *            the programCode to set
+     * @param programCode the programCode to set
      */
     public void setProgramCode(String programCode) {
-        String[] pcArr = StringUtils.split(programCode, ",");
-        setProgramCodes(pcArr == null ? null : Arrays.asList(pcArr));
-    }
-
-    /**
-     * @return the programCodes
-     */
-    public List<String> getProgramCodes() {
-        return programCodes;
-    }
-
-    /**
-     * @param programCodes
-     *            the programCodes to set
-     */
-    public void setProgramCodes(List<String> programCodes) {
-        this.programCodes = programCodes;
+        this.programCode = programCode;
     }
 
     /**

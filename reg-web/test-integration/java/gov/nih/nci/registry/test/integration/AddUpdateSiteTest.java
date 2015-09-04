@@ -94,8 +94,6 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebElement;
 
 /**
  * Tests trial search in Registry, as well as search-related functionality.
@@ -155,6 +153,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         waitForElementToBecomeVisible(
                 By.xpath("//table[@id='siteStatusHistoryTable']/tbody/tr[2]/td[4]"),
                 15);
+        pause(5000);
         assertEquals(
                 "Interim status [APPROVED] is missing",
                 selenium.getText("//table[@id='siteStatusHistoryTable']/tbody/tr[2]/td[4]"));
@@ -163,16 +162,21 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testAddMySite_PO9100PickASiteFromMultipleOrgs() throws URISyntaxException, SQLException {
-    	// User can add more than 1 org as site, in this case the Pick Site selection screen appears first
+    public void testAddMySite_PO9100PickASiteFromMultipleOrgs()
+            throws URISyntaxException, SQLException {
+        // User can add more than 1 org as site, in this case the Pick Site
+        // selection screen appears first
         TrialInfo info = createAndSelectTrial();
         addMySiteAndVerify(info);
+
     }
-    
+
     @SuppressWarnings("deprecation")
     @Test
-    public void testPO9100_AddSiteSingleOrganization() throws URISyntaxException, SQLException {
-    	// User can only add 1 org as site, as other orgs(CTEP,NCI) are associated with a site.
+    public void testPO9100_AddSiteSingleOrganization()
+            throws URISyntaxException, SQLException {
+        // User can only add 1 org as site, as other orgs(CTEP,NCI) are
+        // associated with a site.
         TrialInfo info = createAndSelectTrial();
         addSiteToTrial(info, "CTEP", "In Review");
         addSiteToTrial(info, "NCI", "In Review");
@@ -193,6 +197,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         // Populate fields.
         s.type("localIdentifier", "DCP_SITE_U");
         pickInvestigator();
+        s.type("programCode", "DCP_PROGRAM_U");
 
         deleteStatus(info, 2);
         deleteStatus(info, 1);
@@ -225,7 +230,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[2]"));
         assertEquals("DCP_SITE_U",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[3]"));
-        assertEquals("PC-CD-1",
+        assertEquals("DCP_PROGRAM_U",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[4]"));
         assertEquals("Approved",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[5]"));
@@ -279,9 +284,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
 
         // Investigator.
         pickInvestigator();
-
-        useSelect2ToPickAnOption("programCodes", "PC-NM-1", "PC-NM-1");
-
+        s.type("programCode", "DCP_PROGRAM");
         populateStatusHistory(info);
 
         s.click("xpath=//button/i[@class='fa-floppy-o']");
@@ -297,7 +300,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[2]"));
         assertEquals(localID,
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[3]"));
-        assertEquals("PC-CD-1",
+        assertEquals("DCP_PROGRAM",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[4]"));
         assertEquals("Approved",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[5]"));
@@ -307,14 +310,15 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         verifySiteStatusHistory(info, localID);
     }
 
-    private void addMySiteAndVerify_SingleOrganization(TrialInfo info) throws SQLException {
+    private void addMySiteAndVerify_SingleOrganization(TrialInfo info)
+            throws SQLException {
         assignTrialOwner("submitter-ci", info.id);
         findInMyTrials();
         invokeAction("Add My Site");
 
         assertEquals("National Cancer Institute Division of Cancer Prevention",
                 selenium.getValue("organizationName"));
-        
+
         verifyTrialData(info);
 
         // Check validation.
@@ -337,7 +341,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         // Investigator.
         pickInvestigator();
 
-        useSelect2ToPickAnOption("programCodes", "PC-NM-1", "PC-NM-1");
+        s.type("programCode", "DCP_PROGRAM");
 
         populateStatusHistory(info);
 
@@ -354,7 +358,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[2]"));
         assertEquals(localID,
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[3]"));
-        assertEquals("PC-CD-1",
+        assertEquals("DCP_PROGRAM",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[4]"));
         assertEquals("Approved",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[5]"));
@@ -364,7 +368,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         verifySiteStatusHistory(info, localID);
 
     }
-    
+
     /**
      * @param info
      * @param localID
@@ -610,6 +614,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
     @Test
     public void testPO8268_AllSitesFromFamilyAndAffiliatedWithCancerCenter()
             throws URISyntaxException, SQLException {
+
         changeUserAffiliation("submitter-ci@example.com", "4",
                 "National Cancer Institute");
 
@@ -664,7 +669,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         clickAndWait("pickSiteBtn");
         assertEquals("Cancer Therapy Evaluation Program",
                 selenium.getValue("organizationName"));
-        useSelect2ToPickAnOption("programCodes", "PC-NM-1", "PC-NM-1");
+        selenium.type("programCode", "CTEP_PGCODE");
         driver.findElement(By.xpath("//button[normalize-space(text())='Save']"))
                 .click();
         driver.switchTo().defaultContent();
@@ -679,6 +684,8 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
             assertEquals("PC-CD-1",
                     selenium.getText("//table[@id='row']/tbody/tr[2]/td[4]"));
         }
+        assertEquals("CTEP_PGCODE",
+                selenium.getText("//table[@id='row']/tbody/tr[2]/td[4]"));
     }
 
     /**
@@ -703,30 +710,6 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 By.xpath("//li/a[normalize-space(text())='" + action + "']"))
                 .click();
         selenium.selectFrame("popupFrame");
-    }
-
-    @SuppressWarnings("deprecation")
-    private void useSelect2ToPickAnOption(String id, String sendKeys,
-            String option) {
-        WebElement sitesBox = driver.findElement(By
-                .xpath("//span[preceding-sibling::select[@id='" + id
-                        + "']]//input[@type='search']"));
-        sitesBox.click();
-        assertTrue(s.isElementPresent("select2-" + id + "-results"));
-        sitesBox.sendKeys(sendKeys);
-
-        By xpath = null;
-        try {
-            xpath = By.xpath("//li[@role='treeitem' and text()='" + option
-                    + "']");
-            waitForElementToBecomeAvailable(xpath, 3);
-        } catch (TimeoutException e) {
-            xpath = By.xpath("//li[@role='treeitem']//b[text()='" + option
-                    + "']");
-            waitForElementToBecomeAvailable(xpath, 15);
-        }
-
-        driver.findElement(xpath).click();
     }
 
 }

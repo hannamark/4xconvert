@@ -8,7 +8,6 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.noniso.dto.OrgFamilyProgramCodeDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
@@ -21,7 +20,6 @@ import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.CacheUtils;
-import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.SearchProtocolCriteria;
 import gov.nih.nci.registry.dto.SubmittedOrganizationDTO;
@@ -30,13 +28,10 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,8 +40,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.struts2.ServletActionContext;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -67,9 +60,6 @@ public class AddSitesAction extends StatusHistoryManagementAction {
     private static final String FAILURE_MESSAGE = "failureMessage";
     private static final int LIMIT = 100;
     static final String RESULTS_SESSION_KEY = "AddSitesAction.records";
-    
-    static final String ORG_FAM_PRG_CDS_JSON_STR = "ORG_FAM_PRG_CDS_JSON_STR";
-    static final String ORG_FAM_PRG_CDS = "ORG_FAM_PRG_CDS";
 
     private SearchProtocolCriteria criteria = new SearchProtocolCriteria();
 
@@ -90,9 +80,6 @@ public class AddSitesAction extends StatusHistoryManagementAction {
     private final List<AddSiteResult> summary = new ArrayList<AddSiteResult>();
     
     private List<StudyProtocolQueryDTO> records;
-    
-    private List<OrgFamilyProgramCodeDTO> orgFamProgramCodeDtos = new ArrayList<OrgFamilyProgramCodeDTO>();
-    private String orgFamProgramCodesAsJson;
     
     @SuppressWarnings("rawtypes")
     @Override
@@ -178,7 +165,7 @@ public class AddSitesAction extends StatusHistoryManagementAction {
      */
     @SuppressWarnings("unchecked")
     public String save() throws PAException {
-        populateOrgFamilyProgramCodesFromSession();
+
         List<StudyProtocolQueryDTO> trials = (List<StudyProtocolQueryDTO>) getServletRequest()
                 .getSession().getAttribute(RESULTS_SESSION_KEY);
         if (CollectionUtils.isEmpty(trials)) {
@@ -189,7 +176,7 @@ public class AddSitesAction extends StatusHistoryManagementAction {
         for (StudyProtocolQueryDTO trial : trials) {
             saveSitesData(trial);
         }
-        
+
         clearErrorsAndMessages();
         reset();
         return CONFIRMATION;
@@ -303,12 +290,10 @@ public class AddSitesAction extends StatusHistoryManagementAction {
                         index))).trim();
         site.setInvestigatorId(investigatorID.isEmpty() ? null : Long
                 .parseLong(investigatorID));
-        
-        String[] prgCds = r.getParameterValues(String.format("trial_%s_site_%s_pgcode", spID,
-                        index));
-        if (prgCds != null && prgCds.length > 0) {
-            site.setProgramCodes(Arrays.asList(StringUtils.stripAll(prgCds)));
-        }
+
+        site.setProgramCode(StringUtils.defaultString(
+                r.getParameter(String.format("trial_%s_site_%s_pgcode", spID,
+                        index))).trim());
         
         super.setDiscriminator(String.format("trial_%s_site_%s.statusHistory.", spID, index));
         site.setStatusHistory(getStatusHistoryFromSession());
@@ -322,7 +307,6 @@ public class AddSitesAction extends StatusHistoryManagementAction {
      */
     public String search() throws PAException {
         try {
-            clearOrgFamilyProgramCodesFromSession();
             validateForm();
             final StudyProtocolQueryCriteria spQueryCriteria = convertToStudyProtocolQueryCriteria();
             searchAndSort(spQueryCriteria);
@@ -331,9 +315,7 @@ public class AddSitesAction extends StatusHistoryManagementAction {
             checkForNoResults();
             getServletRequest().getSession().setAttribute(RESULTS_SESSION_KEY,
                     getRecords());
-            initOrgFamilyInfo(getUserAffiliationPoOrgId());
             clearSessionLeftOvers();
-            
             return SUCCESS;
         } catch (PAException e) {
             LOG.error(e, e);
@@ -506,19 +488,6 @@ public class AddSitesAction extends StatusHistoryManagementAction {
             }
         });
     }
-    
-    /**
-     * @return UserAffiliationPoOrgId
-     * @throws PAException PAException
-     */
-    public String getUserAffiliationPoOrgId() throws PAException {
-        RegistryUser loggedInUser = getRegistryUser();
-        final Long orgId = loggedInUser.getAffiliatedOrganizationId();
-        if (orgId == null) {
-            return null;
-        }
-        return orgId.toString();
-    }
 
     /**
      * @return OrganizationDTO
@@ -536,48 +505,6 @@ public class AddSitesAction extends StatusHistoryManagementAction {
             }
         }
         return null;
-    }
-    
-    /**
-     * Populate participating sites with families info
-     * @param poOrgId
-     * @throws PAException on error
-     */
-    private void initOrgFamilyInfo(String poOrgId) throws PAException {
-        if (StringUtils.isEmpty(poOrgId)) {
-            return;
-        }
-        Map<Long, String> familiesMap = PADomainUtils.populateFamilies(poOrgId);
-        Map<Long, List<OrgFamilyProgramCodeDTO>> famPrgCdsMap = 
-                new HashMap<Long, List<OrgFamilyProgramCodeDTO>>();
-        PADomainUtils.populateOrgFamilyProgramCodes(
-                familiesMap, famPrgCdsMap);
-        if (!famPrgCdsMap.isEmpty()) {
-            orgFamProgramCodeDtos = famPrgCdsMap.values().iterator().next();
-        }
-        try {
-            orgFamProgramCodesAsJson = new ObjectMapper().writeValueAsString(orgFamProgramCodeDtos);
-            
-            ServletActionContext.getRequest()
-            .getSession().setAttribute(ORG_FAM_PRG_CDS, orgFamProgramCodeDtos);
-            ServletActionContext.getRequest()
-            .getSession().setAttribute(ORG_FAM_PRG_CDS_JSON_STR, orgFamProgramCodesAsJson);
-        } catch (Exception e) {
-            throw new PAException("Error converting organization family program codes map into JSON string", e);
-        }
-    }
-    
-    private void clearOrgFamilyProgramCodesFromSession() {
-        ServletActionContext.getRequest().getSession().removeAttribute(ORG_FAM_PRG_CDS);
-        ServletActionContext.getRequest().getSession().removeAttribute(ORG_FAM_PRG_CDS_JSON_STR);
-    }
-   
-    @SuppressWarnings("unchecked")
-    private void populateOrgFamilyProgramCodesFromSession() {
-        setOrgFamProgramCodeDtos((List<OrgFamilyProgramCodeDTO>) 
-                ServletActionContext.getRequest().getSession().getAttribute(ORG_FAM_PRG_CDS));
-        setOrgFamProgramCodesAsJson((String) 
-                ServletActionContext.getRequest().getSession().getAttribute(ORG_FAM_PRG_CDS_JSON_STR));
     }
 
     private RegistryUser getRegistryUser() throws PAException {
@@ -764,35 +691,6 @@ public class AddSitesAction extends StatusHistoryManagementAction {
     public void setProtocolQueryService(
             ProtocolQueryServiceLocal protocolQueryService) {
         this.protocolQueryService = protocolQueryService;
-    }
-
-    /**
-     * @return the orgFamProgramCodeDtos
-     */
-    public List<OrgFamilyProgramCodeDTO> getOrgFamProgramCodeDtos() {
-        return orgFamProgramCodeDtos;
-    }
-
-    /**
-     * @param orgFamProgramCodeDtos the orgFamProgramCodeDtos to set
-     */
-    public void setOrgFamProgramCodeDtos(
-            List<OrgFamilyProgramCodeDTO> orgFamProgramCodeDtos) {
-        this.orgFamProgramCodeDtos = orgFamProgramCodeDtos;
-    }
-
-    /**
-     * @return the orgFamProgramCodesAsJson
-     */
-    public String getOrgFamProgramCodesAsJson() {
-        return orgFamProgramCodesAsJson;
-    }
-
-    /**
-     * @param orgFamProgramCodesAsJson the orgFamProgramCodesAsJson to set
-     */
-    public void setOrgFamProgramCodesAsJson(String orgFamProgramCodesAsJson) {
-        this.orgFamProgramCodesAsJson = orgFamProgramCodesAsJson;
     }
 
   
