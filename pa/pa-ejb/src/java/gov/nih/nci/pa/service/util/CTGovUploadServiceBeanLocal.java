@@ -6,6 +6,7 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -45,7 +46,8 @@ import org.hibernate.Session;
  */
 
 @Stateless
-@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
+@Interceptors({ RemoteAuthorizationInterceptor.class,
+        PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 @SuppressWarnings({ "PMD.CyclomaticComplexity" })
 public class CTGovUploadServiceBeanLocal implements CTGovUploadServiceLocal {
@@ -70,13 +72,9 @@ public class CTGovUploadServiceBeanLocal implements CTGovUploadServiceLocal {
 
     @EJB
     private LookUpTableServiceRemote lookUpTableService;
-    
+
     @EJB
     private CTGovSyncServiceLocal ctGovSyncService;
-    
-   
-    
-   
 
     private List<String> getAbstractedStatusCodes() {
         List<String> list = new ArrayList<String>();
@@ -91,66 +89,78 @@ public class CTGovUploadServiceBeanLocal implements CTGovUploadServiceLocal {
 
     /**
      * @return List<Ii>
-     * @throws PAException EXCEPTION
+     * @throws PAException
+     *             EXCEPTION
      */
-  public List<Ii> getTrialIdsForUpload() throws PAException {
+    public List<Ii> getTrialIdsForUpload() throws PAException {
         StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
-        List<Ii> ids = new ArrayList<Ii>();
+        final List<Ii> ids = new ArrayList<Ii>();
         try {
-        
-        criteria.setNciSponsored(true);
-        criteria.setDocumentWorkflowStatusCodes(getAbstractedStatusCodes());
-        criteria.setTrialCategory("n");
-        criteria.setCtroOverride(false);
-        criteria.setStudyProtocolType("InterventionalStudyProtocol");
-       
-        List<String> ccrLeadIDs = getCCRTrialLeadOrgIds();
-        boolean isExcludeLeadCCR = false;
-        
-        for (StudyProtocolQueryDTO dto : queryServiceLocal
-                .getStudyProtocolByCriteria(criteria)) {
+
+            criteria.setNciSponsored(true);
+            criteria.setDocumentWorkflowStatusCodes(getAbstractedStatusCodes());
+            criteria.setTrialCategory("n");
+            criteria.setCtroOverride(false);
+            criteria.setStudyProtocolType("InterventionalStudyProtocol");
+
+            List<String> ccrLeadIDs = getCCRTrialLeadOrgIds();
+            boolean isExcludeLeadCCR = false;
+
+            for (StudyProtocolQueryDTO dto : queryServiceLocal
+                    .getStudyProtocolByCriteria(criteria)) {
                 isExcludeLeadCCR = false;
                 String nctIdentifier = dto.getNctIdentifier();
                 String trialStatus = dto.getStudyStatusCode().getCode();
-                
+
                 StudyProtocolQueryDTO studyProtocolQueryDTOSummary = queryServiceLocal
-                        .getTrialSummaryByStudyProtocolId(dto.getStudyProtocolId());
-                
+                        .getTrialSummaryByStudyProtocolId(dto
+                                .getStudyProtocolId());
+
                 String orgCtepID = null;
-                
-                PaOrganizationDTO paOrganizationDTO = PADomainUtils.getOrgDetailsPopup(
-                        studyProtocolQueryDTOSummary.getLeadOrganizationPOId() + "");
-                
-                if (paOrganizationDTO != null && paOrganizationDTO.getCtepId() != null) {
+
+                PaOrganizationDTO paOrganizationDTO = PADomainUtils
+                        .getOrgDetailsPopup(studyProtocolQueryDTOSummary
+                                .getLeadOrganizationPOId() + "");
+
+                if (paOrganizationDTO != null
+                        && paOrganizationDTO.getCtepId() != null) {
                     orgCtepID = paOrganizationDTO.getCtepId();
                 }
-                //check if lead or is one of ccr if yes then exclude this trial and update flag
+                // check if lead or is one of ccr if yes then exclude this trial
+                // and update flag
                 List<String> exludeOrgIds = getExcludeLeadOrgIds();
-                
+
                 if (orgCtepID != null && exludeOrgIds.contains(orgCtepID)) {
                     isExcludeLeadCCR = true;
                     updateCtroOverride(dto.getStudyProtocolId());
                 }
-                
-               
-                   
-                if (!ccrLeadIDs.contains(dto.getLocalStudyProtocolIdentifier()) && !isExcludeLeadCCR) {
-                     boolean isExcludeTrial = checkIfTrialExcludeAndUpdateCtroOverride(dto.getStudyProtocolId(), 
-                             trialStatus, nctIdentifier
-                       );
-               
-                       if (!isExcludeTrial) {
-                                  ids.add(IiConverter.convertToStudyProtocolIi(dto
-                                       .getStudyProtocolId()));
-                            
-                        }
-                }              
-          }
-        
+
+                if (!ccrLeadIDs.contains(dto.getLocalStudyProtocolIdentifier())
+                        && !isExcludeLeadCCR) {
+                    boolean isExcludeTrial = checkIfTrialExcludeAndUpdateCtroOverride(
+                            dto.getStudyProtocolId(), trialStatus,
+                            nctIdentifier);
+
+                    if (!isExcludeTrial && !isNonApplicablePcd(dto)) {
+                        ids.add(IiConverter.convertToStudyProtocolIi(dto
+                                .getStudyProtocolId()));
+
+                    }
+                }
+            }
+
         } catch (Exception e) {
             throw new PAException(e);
         }
         return ids;
+    }
+
+    private boolean isNonApplicablePcd(StudyProtocolQueryDTO dto) {
+        Session session = PaHibernateUtil.getCurrentSession();
+        StudyProtocol studyProtocol = (StudyProtocol) session.get(
+                StudyProtocol.class, dto.getStudyProtocolId());
+        return ActualAnticipatedTypeCode.NA == studyProtocol.getDates()
+                .getPrimaryCompletionDateTypeCode();
     }
 
     private List<String> getCCRTrialLeadOrgIds() throws PAException {
@@ -158,8 +168,8 @@ public class CTGovUploadServiceBeanLocal implements CTGovUploadServiceLocal {
                 .getPropertyValue("ctep.ccr.trials");
         return Arrays.asList(ccrTrialList.replaceAll("\\s+", "").split(","));
     }
-    
-    private List<String> getExcludeLeadOrgIds()  throws PAException {
+
+    private List<String> getExcludeLeadOrgIds() throws PAException {
         String ccrTrialList = lookUpTableService
                 .getPropertyValue("ctep.ccr.learOrgIds");
         return Arrays.asList(ccrTrialList.replaceAll("\\s+", "").split(","));
@@ -246,94 +256,97 @@ public class CTGovUploadServiceBeanLocal implements CTGovUploadServiceLocal {
             try {
                 final URL ftpURL = new URL(PaEarPropertyReader.getCTGovFtpURL());
                 List<Ii> trialIDs = getTrialIdsForUpload();
-                LOG.info("Got " + trialIDs.size() + " trials to upload.");                
+                LOG.info("Got " + trialIDs.size() + " trials to upload.");
                 LOG.info("CT.Gov FTP is " + hidePassword(ftpURL));
                 if (CollectionUtils.isNotEmpty(trialIDs)) {
                     uploadToCTGov(trialIDs, ftpURL);
                 }
-               LOG.info("Done.");
+                LOG.info("Done.");
             } catch (Exception e) {
                 LOG.error("CT.Gov FTP Upload has failed due to " + e);
                 LOG.error(e, e);
             }
         }
     }
+
     @Override
-    public boolean checkIfTrialExcludeAndUpdateCtroOverride(Long id, 
+    public boolean checkIfTrialExcludeAndUpdateCtroOverride(Long id,
             String trialStatus, String ncitIdentifier) throws PAException {
         boolean result = false;
-        
-        //first check if trail is not from excluded study ccr organisation 
-       
-        
-       
-       
-            //if trial is sent to ct gov check trial status if terminal status
-            if (checkIfTerminalStats(trialStatus)) {
-                CTGovStudyAdapter ctGovStudyAdapter  = ctGovSyncService.getAdaptedCtGovStudyByNctId(ncitIdentifier); 
-                //if trial status is terminal status check if this matches with clinical trials gov
-                if (ctGovStudyAdapter != null) {
-                    String ctGovStatus = ctGovStudyAdapter.getStatus();
-                    if (checkIfStatusMatch(trialStatus , ctGovStatus)) {
-                        //if status match then set ctro override flag to false so that next time trial will be skipped
-                        updateCtroOverride(id);
-                        result = true;
-                    }
+
+        // first check if trail is not from excluded study ccr organisation
+
+        // if trial is sent to ct gov check trial status if terminal status
+        if (checkIfTerminalStats(trialStatus)) {
+            CTGovStudyAdapter ctGovStudyAdapter = ctGovSyncService
+                    .getAdaptedCtGovStudyByNctId(ncitIdentifier);
+            // if trial status is terminal status check if this matches with
+            // clinical trials gov
+            if (ctGovStudyAdapter != null) {
+                String ctGovStatus = ctGovStudyAdapter.getStatus();
+                if (checkIfStatusMatch(trialStatus, ctGovStatus)) {
+                    // if status match then set ctro override flag to false so
+                    // that next time trial will be skipped
+                    updateCtroOverride(id);
+                    result = true;
                 }
-             
-            } else {
-            result = false;
             }
-       
+
+        } else {
+            result = false;
+        }
+
         return result;
     }
-    
-     private boolean checkIfStatusMatch(String trialStatus, String ctGovStatus) {
+
+    private boolean checkIfStatusMatch(String trialStatus, String ctGovStatus) {
         boolean isStatusMatch = false;
         if (trialStatus.equalsIgnoreCase(StudyStatusCode.COMPLETE.getCode())) {
             if (ctGovStatus.equalsIgnoreCase("Completed")) {
                 isStatusMatch = true;
             }
-        } else if (trialStatus.equalsIgnoreCase(StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode())) {
+        } else if (trialStatus
+                .equalsIgnoreCase(StudyStatusCode.ADMINISTRATIVELY_COMPLETE
+                        .getCode())) {
             if (ctGovStatus.equalsIgnoreCase("Terminated")) {
                 isStatusMatch = true;
             }
-        } else if (trialStatus.equalsIgnoreCase(StudyStatusCode.WITHDRAWN.getCode())) {
-            if (ctGovStatus.equalsIgnoreCase("Withdrawn") || ctGovStatus.equalsIgnoreCase("Withheld")) {
+        } else if (trialStatus.equalsIgnoreCase(StudyStatusCode.WITHDRAWN
+                .getCode())) {
+            if (ctGovStatus.equalsIgnoreCase("Withdrawn")
+                    || ctGovStatus.equalsIgnoreCase("Withheld")) {
                 isStatusMatch = true;
             }
         }
         return isStatusMatch;
     }
-     
-      
-     private void updateCtroOverride(Long id) {
-         Session session = PaHibernateUtil.getCurrentSession();
-         StudyProtocol studyProtocol = 
-                 (StudyProtocol) session.get(StudyProtocol.class, id);
-         studyProtocol.setCtroOverride(true);
-         session.update(studyProtocol);
-         session.flush();
-     }
-     
-     private boolean checkIfTerminalStats(String trialStatus) {
-         boolean result = false;
-         if (trialStatus.equalsIgnoreCase(StudyStatusCode.COMPLETE.getCode()) 
-            || trialStatus.equalsIgnoreCase(StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode())
-          || trialStatus.equalsIgnoreCase(StudyStatusCode.WITHDRAWN.getCode())) {
-             result = true;
-         }
-         return result;
-     }
-    
+
+    private void updateCtroOverride(Long id) {
+        Session session = PaHibernateUtil.getCurrentSession();
+        StudyProtocol studyProtocol = (StudyProtocol) session.get(
+                StudyProtocol.class, id);
+        studyProtocol.setCtroOverride(true);
+        session.update(studyProtocol);
+        session.flush();
+    }
+
+    private boolean checkIfTerminalStats(String trialStatus) {
+        boolean result = false;
+        if (trialStatus.equalsIgnoreCase(StudyStatusCode.COMPLETE.getCode())
+                || trialStatus
+                        .equalsIgnoreCase(StudyStatusCode.ADMINISTRATIVELY_COMPLETE
+                                .getCode())
+                || trialStatus.equalsIgnoreCase(StudyStatusCode.WITHDRAWN
+                        .getCode())) {
+            result = true;
+        }
+        return result;
+    }
+
     private boolean isUploadEnabled() throws PAException {
         return Boolean.valueOf(lookUpTableService
                 .getPropertyValue("ctgov.ftp.enabled"));
     }
-    
-    
-    
-   
 
     private void uploadToCTGov(List<Ii> trialIDs, URL ftpURL)
             throws PAException {
@@ -354,7 +367,8 @@ public class CTGovUploadServiceBeanLocal implements CTGovUploadServiceLocal {
     }
 
     /**
-     * @param ctGovSyncService ctGovSyncService
+     * @param ctGovSyncService
+     *            ctGovSyncService
      */
     public void setCtGovSyncService(CTGovSyncServiceLocal ctGovSyncService) {
         this.ctGovSyncService = ctGovSyncService;

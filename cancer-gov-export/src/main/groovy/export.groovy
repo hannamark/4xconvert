@@ -243,6 +243,7 @@ def getTrialsSQL = """
 	 left outer join rv_organization_responsible_party rp_sponsor on rp_sponsor.study_protocol_identifier=sp.identifier
      where sp.status_code = 'ACTIVE' and (sp.delayed_posting_indicator is null or sp.delayed_posting_indicator!= true) and rv_trial_id_nct.local_sp_indentifier is not null
 		and char_length(trim(both ' ' from rv_trial_id_nct.local_sp_indentifier))>0 
+		and sp.pri_compl_date_type_code <> 'NA'
      
 """
 

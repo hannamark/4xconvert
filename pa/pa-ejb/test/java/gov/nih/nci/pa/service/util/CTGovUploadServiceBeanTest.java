@@ -6,6 +6,8 @@ package gov.nih.nci.pa.service.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.AbstractMockitoTest;
@@ -49,13 +51,15 @@ public class CTGovUploadServiceBeanTest extends AbstractHibernateTestCase {
      */
     @Before
     public void setUp() throws Exception {
-                
+
         AbstractMockitoTest mockitoTest = new AbstractMockitoTest();
         mockitoTest.setUp();
-        
+
         serviceBean = new CTGovUploadServiceBeanLocal();
-        serviceBean.setQueryServiceLocal(mockitoTest.getProtocolQueryServiceLocal());
-        serviceBean.setGeneratorServiceLocal(mockitoTest.getCtGovXmlGeneratorServiceLocal());
+        serviceBean.setQueryServiceLocal(mockitoTest
+                .getProtocolQueryServiceLocal());
+        serviceBean.setGeneratorServiceLocal(mockitoTest
+                .getCtGovXmlGeneratorServiceLocal());
         serviceBean.setLookUpTableService(mockitoTest.getLookupSvc());
         serviceBean.setCtGovSyncService(mockitoTest.getCtGovSyncServiceLocal());
 
@@ -72,8 +76,9 @@ public class CTGovUploadServiceBeanTest extends AbstractHibernateTestCase {
         fakeFtpServer.addUserAccount(userAccount);
 
         fakeFtpServer.start();
-        
-        final Field propsField = PaEarPropertyReader.class.getDeclaredField("PROPS");
+
+        final Field propsField = PaEarPropertyReader.class
+                .getDeclaredField("PROPS");
         propsField.setAccessible(true);
         Properties props = (Properties) propsField.get(null);
         props.put("ctgov.ftp.url", "ftp://ctrppa:ctrppa@localhost:51239/");
@@ -99,8 +104,8 @@ public class CTGovUploadServiceBeanTest extends AbstractHibernateTestCase {
      * .
      * 
      * @throws PAException
-     * @throws IOException 
-     * @throws HibernateException 
+     * @throws IOException
+     * @throws HibernateException
      */
     @Test
     public final void testUploadToCTGov() throws PAException,
@@ -114,7 +119,7 @@ public class CTGovUploadServiceBeanTest extends AbstractHibernateTestCase {
         query.setTimestamp("date", DateUtils.addDays(new Date(), -31));
         query.executeUpdate();
         s.flush();
-        
+
         serviceBean.uploadToCTGov();
         assertTrue(fileSystem.exists("/clinical.txt"));
 
@@ -124,17 +129,33 @@ public class CTGovUploadServiceBeanTest extends AbstractHibernateTestCase {
                         .uniqueResult());
 
     }
-    
+
+    @Test
+    public void testNonApplicablePcdIsExcluded() throws PAException {
+
+        Session session = PaHibernateUtil.getCurrentSession();
+        StudyProtocol studyProtocol = (StudyProtocol) session.get(
+                StudyProtocol.class, 2L);
+        studyProtocol.getDates().setPrimaryCompletionDateTypeCode(
+                ActualAnticipatedTypeCode.NA);
+        studyProtocol.getDates().setPrimaryCompletionDate(null);
+        session.update(studyProtocol);
+        session.flush();
+
+        List<Ii> idsList = serviceBean.getTrialIdsForUpload();
+
+        assertTrue(idsList.size() == 0);
+
+    }
+
     @Test
     public void checkTerminalStatusAndCCRExcluded() throws PAException {
-        List<Ii> idsList =serviceBean.getTrialIdsForUpload();
-        
-        assertTrue(idsList.size()==1);
-        
+        List<Ii> idsList = serviceBean.getTrialIdsForUpload();
+
+        assertTrue(idsList.size() == 1);
+
         Ii ii = idsList.get(0);
         assertTrue(ii.getExtension().equals("2"));
     }
-    
-   
 
 }
