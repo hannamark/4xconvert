@@ -60,11 +60,11 @@
 	      <input type="checkbox" onclick="toggledisplay('filters', this)" id="filtercheckbox" name="checkbox">
 	      <label for="filtercheckbox">Hide Search Criteria</label>
 	    </div>
-        <c:set var="topic" scope="request" value="siteadmin"/>
+        <c:set var="topic" scope="request" value="managereports"/>
         	<h1 class="heading"><span><fmt:message key="reportviewers.page.header"/></span></h1>
             <reg-web:failureMessage/>
             <reg-web:sucessMessage/>
-            <s:form name="formSiteAdministration" action="viewReportViewersview.action" cssClass="form-horizontal" role="form">
+            <s:form name="formReportViewer" action="viewReportViewersview.action" cssClass="form-horizontal" role="form">
                 <s:token/>
                 <div  id="filters">
                  <div class="form-group">

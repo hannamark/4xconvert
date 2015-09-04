@@ -1936,6 +1936,9 @@
        <comment>Implement Add/Update Designee or PIO Contact screen</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9008-1.sql"/>
     </changeSet>   
-    
+    <changeSet id="PO-9142" author="vpoluri">       
+       <comment>Added pa_properties entry to update tenantId</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9142.sql"/>
+    </changeSet>    
     
 </databaseChangeLog>

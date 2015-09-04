@@ -69,7 +69,7 @@
 	              </li>
 	              <!-- Added for PO-7595 #Start -->
                   <c:if test='${sessionScope.isReportsAllowed.equals("true") }'>
-                  <li class="dropdown-submenu">
+                  <li>
                     <a id="viewReportViewersMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('${pageContext.request.contextPath}/siteadmin/viewReportViewerssearch.action');">Report Viewers</a>
                   </li>
                   </c:if>
