@@ -84,7 +84,10 @@ package gov.nih.nci.pa.util;
 
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -231,4 +234,28 @@ public abstract class AbstractHibernateTestCase {
     public void clearUser() {
         TestSchema.clearUser();
     }
+    
+    static {
+        new Timer(true).schedule(new TimerTask() {
+            @SuppressWarnings("rawtypes")
+            @Override
+            public void run() {
+                Map allThreads = Thread.getAllStackTraces();
+                Iterator iterator = allThreads.keySet().iterator();
+                StringBuffer stringBuffer = new StringBuffer();
+                while (iterator.hasNext()) {
+                    Thread key = (Thread) iterator.next();
+                    StackTraceElement[] trace = (StackTraceElement[]) allThreads
+                            .get(key);
+                    stringBuffer.append(key + "\r\n");
+                    for (int i = 0; i < trace.length; i++) {
+                        stringBuffer.append(" " + trace[i] + "\r\n");
+                    }
+                    stringBuffer.append("\r\n");
+                }
+                System.out.println(stringBuffer);
+            }
+        }, 60000, 60000);
+    }
+
 }
