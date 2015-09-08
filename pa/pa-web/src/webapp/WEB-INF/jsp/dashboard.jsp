@@ -142,6 +142,10 @@ a.count {
     cursor: pointer;
 }
 
+li.select2-selection__choice {
+    white-space: normal;
+}
+
 </style>
 
 <script type="text/javascript"

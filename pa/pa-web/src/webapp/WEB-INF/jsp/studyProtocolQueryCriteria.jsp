@@ -15,6 +15,9 @@
                  text-align: right;
                  padding-right: 5px;
             }
+            li.select2-selection__choice {
+                white-space: normal;
+            }
             
         </style>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>        
