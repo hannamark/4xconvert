@@ -1466,9 +1466,10 @@ public class DashboardTest extends AbstractTrialStatusTest {
         assertFalse(s.isVisible("validationError"));
 
     }
-    
+
     @Test
-    public void testWorkloadTab_OverlapBusinessDays() throws SQLException, ParseException {
+    public void testWorkloadTab_OverlapBusinessDays() throws SQLException,
+            ParseException {
         deactivateAllTrials();
         TrialInfo submittedTrial = createSubmittedTrial();
         addOnHold(submittedTrial, "SUBMISSION_INCOM", date("07/03/2015"),
@@ -1477,11 +1478,46 @@ public class DashboardTest extends AbstractTrialStatusTest {
                 date("07/06/2015"), "Submitter");
         addOnHold(submittedTrial, "SUBMISSION_INCOM", date("07/01/2015"),
                 date("07/10/2015"), "Submitter");
-        
+
         loginAsSuperAbstractor();
         clickAndWait("id=dashboardMenuOption");
         verifyColumnValue(1, "Business Days on Hold (Submitter)", "7");
-	}
+    }
+
+    @Test
+    public void testProperSubmissionTypeCalculationAndSearch() throws Exception {
+        // Verify submission type.
+        deactivateAllTrials();
+        TrialInfo acceptedTrial = createAcceptedTrial();
+        loginAsSuperAbstractor();
+        findAndSelectTrialInDashboard(acceptedTrial);
+        assertTrue(s
+                .isElementPresent("xpath=//td[text()='Complete']/preceding-sibling::td[text()='Submission Type']"));
+        s.click("resultsid");
+        assertEquals("Complete",
+                s.getText("//table[@id='results']/tbody/tr[1]/td[2]"));
+
+        new QueryRunner().update(connection,
+                "update study_protocol set proprietary_trial_indicator=true where identifier="
+                        + acceptedTrial.id);
+        findAndSelectTrialInDashboard(acceptedTrial);
+        assertTrue(s
+                .isElementPresent("xpath=//td[text()='Abbreviated']/preceding-sibling::td[text()='Submission Type']"));
+        s.click("resultsid");
+        assertEquals("Abbreviated",
+                s.getText("//table[@id='results']/tbody/tr[1]/td[2]"));
+
+        new QueryRunner()
+                .update(connection,
+                        "update study_protocol set proprietary_trial_indicator=false, amendment_date=now(), submission_number=2"
+                                + " where identifier=" + acceptedTrial.id);
+        findAndSelectTrialInDashboard(acceptedTrial);
+        assertTrue(s
+                .isElementPresent("xpath=//td[text()='Amendment']/preceding-sibling::td[text()='Submission Type']"));
+        s.click("resultsid");
+        assertEquals("Amendment",
+                s.getText("//table[@id='results']/tbody/tr[1]/td[2]"));
+    }
 
     @Test
     public void testWorkloadTab() throws Exception {
@@ -1553,7 +1589,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         verifyColumnValue(1, "Submission Type", "Abbreviated");
         new QueryRunner()
                 .update(connection,
-                        "update study_protocol set proprietary_trial_indicator=false, amendment_date=now() where identifier="
+                        "update study_protocol set proprietary_trial_indicator=false, amendment_date=now(), submission_number=2 where identifier="
                                 + acceptedTrial.id);
         clickAndWait("id=dashboardMenuOption");
         assertTrue(isTrialInWorkloadTab(acceptedTrial));

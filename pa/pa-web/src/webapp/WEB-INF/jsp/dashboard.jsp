@@ -1415,7 +1415,7 @@ li.select2-selection__choice {
 
 									<display:column escapeXml="true" sortable="true"
 										titleKey="studyProtocol.submissionType"
-										property="submissionTypeCode.code" headerClass="sortable" />
+										property="submissionType" headerClass="sortable" />
 									<display:column title="CTEP/DCP" property="ctepOrDcp"
 										sortable="true" headerClass="sortable" />
 									<display:column title="Submitting Organization"
@@ -1518,7 +1518,7 @@ reason: ${not empty results.onHoldReasons?results.onHoldReasons:'N/A'}
 									</tr>
 									<tr>
 										<td scope="row" class="label">Submission Type</td>
-										<td>${queryDTO.submissionTypeCode.code}</td>
+										<td>${queryDTO.submissionType}</td>
 										<td scope="row" class="label">Processing Status</td>
 										<td>${queryDTO.documentWorkflowStatusCode.code}</td>
 									</tr>
