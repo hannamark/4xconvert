@@ -169,6 +169,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 import javax.mail.Address;
+import javax.mail.Authenticator;
 import javax.mail.BodyPart;
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -265,7 +266,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
     private static final String FAILURES = "${failures}";
     private static final String N_VALUE = "${n_value}";
     private static final String YES_VAL = "YES";
-    private static final String NO_VAL = "NO";
+    private static final String NO_VAL = "NO";   
     
     @EJB
     private ProtocolQueryServiceLocal protocolQueryService;
@@ -1864,8 +1865,18 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
         props.put("mail.smtp.port", lookUpTableService.getPropertyValue("smtp.port"));
         props.put("mail.smtp.timeout", SMTP_TIMEOUT);
         props.put("mail.smtp.connectiontimeout", SMTP_TIMEOUT);
-        // Get session
-        session = Session.getDefaultInstance(props, null);
+        
+        if (StringUtils.isNotBlank(lookUpTableService.getPropertyValue("smtp.auth.username"))) {
+            props.put("mail.smtp.auth", "true");
+            Authenticator auth = new SMTPAuthenticator(lookUpTableService.getPropertyValue("smtp.auth.username"), 
+                    lookUpTableService.getPropertyValue("smtp.auth.password"));
+            // Get session
+            session = Session.getDefaultInstance(props, auth);
+        } else {
+            // Get session
+            session = Session.getDefaultInstance(props, null);
+        }        
+        
         MimeMessage result = new MimeMessage(session);
         try {
             result.addRecipient(Message.RecipientType.TO, new InternetAddress(mailTo));
@@ -2838,5 +2849,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
         mm.setSubject(m.getSubject());
         return mm;
     }
+    
+    
+    
    
 }

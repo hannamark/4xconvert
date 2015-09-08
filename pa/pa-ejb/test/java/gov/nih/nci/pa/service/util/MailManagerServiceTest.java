@@ -436,6 +436,11 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         prop.setValue("ncictro@example.com");
         TestSchema.addUpdObject(prop);
         
+        prop = new PAProperties();
+        prop.setName("smtp.auth.username");
+        prop.setValue("");
+        TestSchema.addUpdObject(prop);
+        
 
     }
 

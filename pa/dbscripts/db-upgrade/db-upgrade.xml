@@ -1931,6 +1931,10 @@
     <changeSet id="PO-9178" author="krylovd">       
        <comment>Added pa_properties entry to hold CTEP-RSS LDAP ID.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9178.sql"/>
+    </changeSet>
+    <changeSet id="PO-7751" author="lagarwal">       
+       <comment>Added pa_properties entries to hold email auth information.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-7751.sql"/>
     </changeSet>   
     <changeSet id="PO-9008-1" author="vindoh">       
        <comment>Implement Add/Update Designee or PIO Contact screen</comment>
