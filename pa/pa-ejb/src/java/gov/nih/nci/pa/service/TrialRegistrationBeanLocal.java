@@ -535,7 +535,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                                         summary4OrganizationDTO, summary4StudyResourcingDTO, principalInvestigatorDTO,
                                         partyDTO,
                                         studyRegAuthDTO, studyResourcingDTOs, documentDTOs,
-                                        studyIndldeDTOs, nctIdentifierDTO, dcpIdentifierDTO);
+                                        studyIndldeDTOs, nctIdentifierDTO, 
+                                        dcpIdentifierDTO, leadOrganizationSiteIdentifierDTO);
             PAServiceUtils paServiceUtils = getPAServiceUtils();
             Ii toStudyProtocolIi = paServiceUtils.copy(studyProtocolDTO.getIdentifier());
             updateStudyProtocol(studyProtocolDTO, toStudyProtocolIi);            

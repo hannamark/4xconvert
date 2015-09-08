@@ -329,7 +329,45 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
                 summary4OrganizationDTO, srDto, BlConverter.convertToBl(Boolean.FALSE), owners);
         assertFalse(ISOUtil.isIiNull(ii));
     }
-
+    
+    
+    @Test(expected = PAException.class)
+    public void testcreateAISPMoreThanLimitChars() throws Exception {     
+        StudySiteDTO nctID = new StudySiteDTO();
+        nctID.setLocalStudyProtocolIdentifier(StConverter.convertToSt("NCT12345"));        
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        StudySiteDTO leadOrganizationSiteIdentifierDTO = new StudySiteDTO();
+        leadOrganizationSiteIdentifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt("LeadOrganizationWhichismorethan30characters"));
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();        
+        PersonDTO principalInvestigatorDTO  = getPI();        
+        List<DocumentDTO> documents = getStudyDocuments(); 
+        DSet<Tel> owners = new DSet<Tel>();
+        owners.setItem(new HashSet<Tel>());
+        Tel tel = new Tel();
+        tel.setValue(new URI("mailto:username@nci.nih.gov"));
+        owners.getItem().add(tel);
+        
+        leadOrganizationSiteIdentifierDTO.setProgramCodeText(StConverter.convertToSt("PC"));
+        leadOrganizationSiteIdentifierDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()
+                - Long.valueOf("300000000")), new Timestamp(new Date().getTime() - Long.valueOf("200000000"))));
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        StudyResourcingDTO srDto = summary4StudyResourcing.get(0);
+        srDto.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode.INDUSTRIAL));
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(sponsorOrganizationDTO);
+        
+        StudySiteAccrualStatusDTO accessDto = new StudySiteAccrualStatusDTO();
+        accessDto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ACTIVE));
+        accessDto.setStatusDate(TsConverter.convertToTs(new Date()));
+        
+        StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(spIi);
+        spDTO.setIdentifier(null);
+        Ii ii = bean.createAbbreviatedInterventionalStudyProtocol(spDTO, accessDto, documents,
+                leadOrganizationDTO, principalInvestigatorDTO, leadOrganizationSiteIdentifierDTO,
+                sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, nctID, 
+                summary4OrganizationDTO, srDto, BlConverter.convertToBl(Boolean.FALSE), owners);
+        assertFalse(ISOUtil.isIiNull(ii));
+    }
 
     @Test
     public void nullSiteIdentifiers() throws Exception {

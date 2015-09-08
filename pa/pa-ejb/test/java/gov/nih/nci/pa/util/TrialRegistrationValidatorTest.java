@@ -1176,6 +1176,29 @@ public class TrialRegistrationValidatorTest {
    
     
     /**
+     * test the validateLeadOrgTrailIdLength exception.
+     * @throws PAException if an error occurs
+     */
+    @Test(expected = PAException.class)
+    public void testvalidateLeadOrgTrailIdLength() throws PAException {
+        StudySiteDTO leadOrganizationSiteIdentifierDTO = new StudySiteDTO();
+        leadOrganizationSiteIdentifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt("LeadOrganizationWhichismorethan30characters"));
+        
+        validator.validateLeadOrgTrialIdLength(leadOrganizationSiteIdentifierDTO);
+    }
+   
+    /**
+     * test the validateLeadOrgTrailIdLength.
+     */
+    @Test
+    public void testvalidateLeadOrgTrailIdLengthNoEx() throws PAException {
+        StudySiteDTO leadOrganizationSiteIdentifierDTO = new StudySiteDTO();
+        leadOrganizationSiteIdentifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt("LeadOrganization"));
+        
+        validator.validateLeadOrgTrialIdLength(leadOrganizationSiteIdentifierDTO);
+    } 
+    
+    /**
      * Test the validateCreation method.
      * @throws PAException if an error occurs
      */

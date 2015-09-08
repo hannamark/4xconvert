@@ -154,6 +154,7 @@ import org.apache.commons.lang.StringUtils;
         "PMD.CyclomaticComplexity" })
 public class TrialRegistrationValidator {
 
+    private static final int STUDY_PROTOCOL_ID_LENGTH = 30;
     private static final String SUMMARY_4_ORGANIZATION = "Data Table 4 Organization";
     /**
      * FDA Regulated Intervention Indicator must be Yes since it has Trial IND/IDE records.
@@ -625,6 +626,46 @@ public class TrialRegistrationValidator {
      * @param documentDTOs List of documents IRB and Participating doc
      * @param studyIndldeDTOs The list of study Ind/ides
      * @param nctIdentifierDTO The NCT identifier
+     * @param dcpIdentifierDTO dcpIdentifierDTO
+     * @param leadOrganizationSiteIdentifierDTO lead org site identifier 
+     * @throws PAException If any validation error happens
+     */
+    // CHECKSTYLE:OFF More than 7 Parameters
+    public void validateAmendment(StudyProtocolDTO studyProtocolDTO,
+            StudyOverallStatusDTO overallStatusDTO,
+            List<StudyOverallStatusDTO> statusHistory,
+            OrganizationDTO leadOrganizationDTO,
+            OrganizationDTO sponsorOrganizationDTO,          
+            List<OrganizationDTO> summary4OrganizationDTO, StudyResourcingDTO summary4StudyResourcingDTO,
+            PersonDTO principalInvestigatorDTO, ResponsiblePartyDTO partyDTO,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs, List<StudyIndldeDTO> studyIndldeDTOs,
+            StudySiteDTO nctIdentifierDTO, StudySiteDTO dcpIdentifierDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO) throws PAException {
+        
+        validateLeadOrgTrialIdLength(leadOrganizationSiteIdentifierDTO);
+        validateAmendment(studyProtocolDTO, overallStatusDTO, 
+                statusHistory, leadOrganizationDTO, 
+                sponsorOrganizationDTO, summary4OrganizationDTO, 
+                summary4StudyResourcingDTO, principalInvestigatorDTO, 
+                partyDTO, studyRegAuthDTO, studyResourcingDTOs, 
+                documentDTOs, studyIndldeDTOs, 
+                nctIdentifierDTO, dcpIdentifierDTO);
+        
+    }
+    /**
+     * Validates the input for a trial amendment.
+     * @param studyProtocolDTO The study protocol
+     * @param overallStatusDTO The overall status
+     * @param leadOrganizationDTO The lead organization
+     * @param sponsorOrganizationDTO The sponsor organization    
+     * @param summary4OrganizationDTO The summary4 organization
+     * @param summary4StudyResourcingDTO The Data Table 4 category code
+     * @param principalInvestigatorDTO The principal investigator
+     * @param studyRegAuthDTO The regulatory authority
+     * @param studyResourcingDTOs The list of nih grants
+     * @param documentDTOs List of documents IRB and Participating doc
+     * @param studyIndldeDTOs The list of study Ind/ides
+     * @param nctIdentifierDTO The NCT identifier
      * @param dcpIdentifierDTO 
      * @throws PAException If any validation error happens
      */
@@ -985,6 +1026,7 @@ public class TrialRegistrationValidator {
         validateRegulatoryInfo(studyProtocolDTO, studyRegAuthDTO, studyIndldeDTOs, errorMsg, CREATION);
         validateSummary4Resourcing(studyProtocolDTO, summary4StudyResourcingDTO, errorMsg);
         validateAccrualDiseaseCodeSystem(studyProtocolDTO, errorMsg);
+        validateLeadOrgTrialIdLength(leadOrganizationSiteIdentifierDTO);
         if (nctIdentifierDTO != null && !ISOUtil.isStNull(nctIdentifierDTO.getLocalStudyProtocolIdentifier())) {
             String nctValidationResultString = paServiceUtils.validateNCTIdentifier(
                    nctIdentifierDTO.getLocalStudyProtocolIdentifier().getValue(), null);
@@ -1115,6 +1157,7 @@ public class TrialRegistrationValidator {
         validateMandatoryFieldsForProprietary(studyProtocolDTO, studySiteAccrualStatusDTO,
                                               leadOrganizationStudySiteDTO, studySiteDTO, summary4StudyResourcingDTO,
                                               errorMsg);
+        validateLeadOrgTrialIdLength(leadOrganizationStudySiteDTO);
         validateUser(studyProtocolDTO, CREATION, false, errorMsg);
         if (nctIdentifierDTO != null && !ISOUtil.isStNull(nctIdentifierDTO.getLocalStudyProtocolIdentifier())) {
             String nctValidationResultString = paServiceUtils.validateNCTIdentifier(
@@ -1179,6 +1222,29 @@ public class TrialRegistrationValidator {
             check(ISOUtil.isStNull(leadOrganizationStudySiteDTO.getLocalStudyProtocolIdentifier()),
                   "Lead Organization Trial Identifier cannot be null, ", errorMsg);
 
+        }
+    }
+    
+    /**
+     * Validates length of study site name not greater than 30 
+     * @param leadOrganizationStudySiteDTO
+     * @param errorMsg
+     * @throws PAException 
+     */
+    void validateLeadOrgTrialIdLength(StudySiteDTO leadOrganizationStudySiteDTO) throws PAException {
+        if (leadOrganizationStudySiteDTO != null) {
+        StringBuilder errorMsg = new StringBuilder();
+        boolean isLeadOrgLocalStudyProtocolIdNotNull = ISOUtil
+                .isStNull(leadOrganizationStudySiteDTO.getLocalStudyProtocolIdentifier());
+        
+        if (!isLeadOrgLocalStudyProtocolIdNotNull) {
+            check(leadOrganizationStudySiteDTO.getLocalStudyProtocolIdentifier()
+                    .getValue().length() > STUDY_PROTOCOL_ID_LENGTH,
+                "Lead Organization Trial Identifier length is greater than 30 characters", errorMsg);
+            if (errorMsg.length() > 0) {
+                throw new PAException(VALIDATION_EXCEPTION + errorMsg);
+            }
+        }
         }
     }
 
@@ -1388,6 +1454,7 @@ public class TrialRegistrationValidator {
         StringBuilder errorMsg = new StringBuilder();
         validateProprietaryCreateOrUpdate(studyProtocolDTO, nctID, leadOrgDTO,
                 leadOrgID, regAuthDTO, errorMsg);
+        validateLeadOrgTrialIdLength(leadOrgID);
         String nctValidationResultString = paServiceUtils
                 .validateNCTIdentifier(nctID.getLocalStudyProtocolIdentifier()
                         .getValue(), null);
@@ -1441,6 +1508,7 @@ public class TrialRegistrationValidator {
             List<OrganizationDTO> collaborators) throws PAException {
 
         StringBuilder errorMsg = new StringBuilder();
+        validateLeadOrgTrialIdLength(leadOrgID);
         validatePhasePurposeAndTemplateDocument(studyProtocolDTO,
                 new ArrayList<DocumentDTO>(), nctID, errorMsg);
         validateRegAuthorityExistence(regAuthDTO, errorMsg);
