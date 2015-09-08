@@ -18,6 +18,7 @@
 
 <%@ include file="/WEB-INF/jsp/nodecorate/selectedOrgDetails.jsp" %>
 </div>
+<s:hidden name="programCode" id="programCode" />
 <table class="form">
 				    <tr>
 				        <td scope="row" class="label"><label for="siteLocalTrialIdentifier"><fmt:message key="proprietary.siteidentifier"/>:</label>
@@ -74,17 +75,6 @@
                     <td scope="row" class="label"><label for="recStatusComments">Site Recruitment Status Comments:</label></td>
                     <td class="value" colspan="2">
                         <s:textarea name="recStatusComments" id="recStatusComments" rows="3" cssStyle="width:240px;" maxlength="160"  cssClass="charcounter"/>
-                        <span class="formErrorMsg"> 
-                              <s:fielderror>
-                              <s:param>programCode</s:param>
-                              </s:fielderror>                            
-                        </span>                            
-                    </td>               
-                </tr>
-				<tr>
-                    <td class="label"><label for="programCode">Program Code:</label></td>
-                    <td class="value" colspan="2">
-                        <s:textfield name="programCode" id="programCode" maxlength="10" size="10" cssStyle="text-align:left;width:70px;float:left"/>
                         <span class="formErrorMsg"> 
                               <s:fielderror>
                               <s:param>programCode</s:param>
