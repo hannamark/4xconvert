@@ -681,7 +681,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
             // Make sure the right site got updated.
             assertEquals("Cancer Therapy Evaluation Program",
                     selenium.getText("//table[@id='row']/tbody/tr[2]/td[1]"));
-            assertEquals("PC-CD-1",
+            assertEquals("CTEP_PGCODE",
                     selenium.getText("//table[@id='row']/tbody/tr[2]/td[4]"));
         }
         assertEquals("CTEP_PGCODE",
