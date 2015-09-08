@@ -1597,6 +1597,7 @@ public class PAUtil {
             String name = ctx.getCallerPrincipal().getName();
             result = name.contains(gridSeparator);
         }
+        LOG.info("Is Grid call? "+result);
         return result;
     }
     /**
