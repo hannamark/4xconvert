@@ -13,7 +13,7 @@
     <property name="ivy.settings.file" value="cbiit-ivy-bda-settings.xml"/>
     <property name="ivy.bda.file" value="ivy-bda-2.0.0.xml"/>
 
-    <property name="ivy.src.url" value="https://ncimvn.nci.nih.gov/nexus/content/groups/public/org/apache/ivy/ivy/2.0.0/${ivy.jar.file}"/>
+    <property name="ivy.src.url" value="http://central.maven.org/maven2/org/apache/ivy/ivy/2.0.0/${ivy.jar.file}"/>
     <property name="ivy-bda.src.url.base" value="file://${software.dir}/commons/bda-download"/>
 
     <property name="ivy.dest.file" value="${lib.dir}/${ivy.jar.file}"/>
@@ -65,7 +65,7 @@
     </target>
 
     <target description="Downloads ivy jars if not present" name="download-ivy" unless="ivy.available">
-        <get dest="${ivy.dest.file}" src="${ivy.src.url}"/>
+        <get  dest="${ivy.dest.file}" src="${ivy.src.url}"/>
     </target>
 
     <target description="Downloads ivy settings file if not present" name="download-ivy-settings" unless="ivy.settings.available">
