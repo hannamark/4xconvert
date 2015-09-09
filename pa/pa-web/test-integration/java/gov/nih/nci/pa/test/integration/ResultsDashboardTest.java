@@ -133,7 +133,7 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
      * Test the results reporting home page
      */
     @Test       
-    public void testResultDashboardHomePage(){
+    public void testResultDashboardHomePage() throws Exception{
         assertTrue(selenium.isTextPresent("Section 801 Indicator:"));
         assertTrue(selenium.isTextPresent("Primary Completion Date:"));
         assertTrue(selenium.isTextPresent("From:"));
@@ -148,12 +148,14 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isTextPresent(testTrials.get(2).nciID));
         assertFalse(selenium.isTextPresent(testTrials.get(3).nciID));
         assertFalse(selenium.isTextPresent(testTrials.get(4).nciID));
+        assertTrue(selenium.isTextPresent("Doe, John"));
         assertTrue(selenium.isTextPresent("Results Reporting Progress"));
         assertTrue(selenium.isTextPresent("Add/Update Designee or PIO Contact"));
         assertTrue(selenium.isTextPresent("View/Upload Trial Comparison Documents"));
         assertTrue(selenium.isTextPresent("Results Cover Sheet"));
         assertTrue(selenium.isTextPresent("XML Upload Errors & Actions Taken"));
         assertTrue(selenium.isTextPresent("Enter Trial ID:"));
+        deleteContact();
     }
     
     @Test       
@@ -321,6 +323,7 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         addDWS(trial, "ABSTRACTION_VERIFIED_RESPONSE");
         setPCD(trial, "2015-01-01", ActualAnticipatedTypeCode.ANTICIPATED);
         addDocument(trial, "COMPARISON", "Protocol.doc");
+        addDesginee(trial);
         setSeciont801Indicator(trial, true);
         testTrials.add(trial);
         trial = createSubmittedTrial();

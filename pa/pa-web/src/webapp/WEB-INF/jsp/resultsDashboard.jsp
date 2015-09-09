@@ -389,7 +389,7 @@ function searchResults(url, studyNCIid){
                  <display:column  title="CTEP/DCP ID" property="ctepOrDcp"/>
                  <display:column  title="Lead Org PO ID" property="leadOrganizationPOId"/>          
                  <display:column  title="Lead Organization" property="leadOrganizationName"/>
-                 <display:column  title="Results Designee" />                                  
+                 <display:column  title="Results Designee" property="designeeNamesList"/>                                  
                  <display:column title="PCD Sent to PIO">
                     <input id="pcdSentToPIODate_${row.studyProtocolId}" class="datePicker" size="8" value="<fmt:formatDate value="${row.pcdSentToPIODate}" pattern="MM/dd/yyyy"/>"/>
                  </display:column>
@@ -462,7 +462,7 @@ function searchResults(url, studyNCIid){
                  <label for="designeeTrialId" > <fmt:message key="resultsdashboard.trialId"/></label> <input type="text" id="designeeTrialId" name="designeeTrialId" size="20"/>
                  </td>
                  <td >
-                 <!--<s:a href="javascript:void(0)" cssClass="btn" onclick="searchResults('', jQuery('#designeeTrialId').val())"><span class="btn_img"><span class="search">Search</span></span></s:a>-->
+               <s:a href="javascript:void(0)" cssClass="btn" onclick="searchResults('test.action', jQuery('#designeeTrialId').val())"><span class="btn_img"><span class="search">Search</span></span></s:a>
                 </td>
               </tr>
               <tr height="10%" style="border-top: 2px solid black;border-right: 2px solid black;">

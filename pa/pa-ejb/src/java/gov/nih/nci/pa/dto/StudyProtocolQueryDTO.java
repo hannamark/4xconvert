@@ -82,6 +82,7 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO
     private List<OrganizationDTO> orgsThatCanBeAddedAsSite;
     private String accrualDiseaseCode;
     private List<StudyOnholdDTO> allHolds = new ArrayList<>();
+    private String designeeNamesList;
     
    /**
      * Whether this trial permits self-registration of participating sites.
@@ -1353,6 +1354,20 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO
      */
     public void setActiveHoldReasonCategory(String activeHoldReasonCategory) {
         this.activeHoldReasonCategory = activeHoldReasonCategory;
+    }
+
+    /**
+     * @return designeeNamesList
+     */
+    public String getDesigneeNamesList() {
+        return designeeNamesList;
+    }
+
+    /**
+     * @param designeeNamesList designeeNamesList
+     */
+    public void setDesigneeNamesList(String designeeNamesList) {
+        this.designeeNamesList = designeeNamesList;
     }
     
 }

@@ -805,12 +805,48 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         runner.update(connection, sql);
 
     }
+    
+    protected void addDesginee(TrialInfo info)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        //insert organizational contact
+        String sql = String
+                .format("insert into organizational_contact(assigned_identifier ,person_identifier, organization_identifier, status_code) values"
+                    +" (99, (select identifier from person where first_name='John'), "
+                    +" (select identifier  from organization where name ='ClinicalTrials.gov'),'ACTIVE' )");
+        runner.update(connection, sql);
+        
+        //insert study_contact
+        sql = null;
+         sql = String
+                .format("INSERT INTO study_contact("
+            +" identifier, role_code, primary_indicator, address_line, delivery_address_line," 
+            +" city, state, postal_code, country_identifier, telephone, email," 
+            +" healthcare_provider_identifier, clinical_research_staff_identifier," 
+            +" study_protocol_identifier, status_code, status_date_range_low," 
+            +" date_last_created, date_last_updated, status_date_range_high," 
+            +" organizational_contact_identifier, user_last_created_id, user_last_updated_id," 
+            +" title, prs_user_name, comments)"
+            +" VALUES ("
+            +" 19000090, 'DESIGNEE_CONTACT', true , null, null, null, null,null,null,  '866-319-4357' ,'sample@example.com',"
+            +" null, null, "+info.id+", 'ACTIVE', '2014-11-15 15:41:44.529', null, null, null,"
+            +" (select identifier from organizational_contact)"
+            +",   null, null, null, 'D PRS', 'designee contact comments'    )  ");
+        runner.update(connection, sql);
+
+    }
 
     protected void deleteTrialDocuments(TrialInfo info) throws SQLException {
         QueryRunner runner = new QueryRunner();
         runner.update(connection,
                 "delete from document where study_protocol_identifier="
                         + info.id);
+    }
+    
+    protected  void deleteContact () throws SQLException{
+        QueryRunner runner = new QueryRunner();
+        runner.update(connection, "delete from organizational_contact");
+        runner.update(connection, "delete from study_contact where identifier =19000090");
     }
 
     /**

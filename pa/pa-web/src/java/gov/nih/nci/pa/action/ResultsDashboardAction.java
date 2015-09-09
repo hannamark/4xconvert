@@ -7,17 +7,25 @@ import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_ALT
 import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_LAST_UPDATER_INFO;
 import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_OTHER_IDENTIFIERS;
 import static gov.nih.nci.pa.util.Constants.IS_RESULTS_ABSTRACTOR;
+import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.dto.StudyContactWebDTO;
 import gov.nih.nci.pa.dto.StudyProcessingErrorDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyContactService;
 import gov.nih.nci.pa.service.StudyProcessingErrorService;
 import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
@@ -25,6 +33,7 @@ import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.ActionUtils;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
@@ -38,6 +47,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.ServletRequestAware;
 
@@ -90,6 +100,7 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
     private int issuesCnt = 0;
     
     private String studyNCIId;
+    private StudyContactService studyContactService;
     
     
     
@@ -176,6 +187,7 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
        protocolQueryService = PaRegistry.getProtocolQueryService();
        studyProtocolService = PaRegistry.getStudyProtocolService();
        speService = PaRegistry.getStudyProcessingErrorService();
+       studyContactService = PaRegistry.getStudyContactService();
    }
    
     private void clearFilters() {
@@ -217,13 +229,39 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
                         resultQueryDTO.setCtroUserName(
                                 PAUtil.getDocumentUserCtroOrCcctReviewerName(documentDTO, true));
                     }
+                    StringBuffer studyContactNamesList = new StringBuffer();
+                    
+                    //get study contacts list
+                    LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+                     StudyContactDTO searchCriteria = new StudyContactDTO();
+                     searchCriteria.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(
+                             resultQueryDTO.getStudyProtocolId()));
+                     searchCriteria.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
+
+                     searchCriteria.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.DESIGNEE_CONTACT));
+                     List<StudyContactDTO>studyDesigneeContactDtos = studyContactService.search(searchCriteria, limit);
+                  
+                     if (CollectionUtils.isNotEmpty(studyDesigneeContactDtos)) {
+                         for (StudyContactDTO scDto : studyDesigneeContactDtos) {
+                             StudyContactWebDTO studyContactWebDTO = new StudyContactWebDTO(scDto); 
+                             Person person = studyContactWebDTO.getContactPerson();
+                             if (person != null) {
+                                 if (studyContactNamesList.length() > 0) {
+                                     studyContactNamesList.append("<br>");
+                                 }
+                                 studyContactNamesList.append(person.getFullName());
+                             }
+                           
+                         }
+                     }
+                    resultQueryDTO.setDesigneeNamesList(studyContactNamesList.toString());
                 }
                 
                 results.addAll(currentResults);
             }
             loadResultsChartData(results);
             
-        } catch (PAException e) {
+        } catch (Exception e) {
             LOG.error(e, e);
             request.setAttribute(Constants.FAILURE_MESSAGE,
                     e.getLocalizedMessage());
@@ -570,6 +608,22 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
      */
     public void setStudyNCIId(String studyNCIId) {
         this.studyNCIId = studyNCIId;
+    }
+
+
+    /**
+     * @return studyContactService
+     */
+    public StudyContactService getStudyContactService() {
+        return studyContactService;
+    }
+
+
+    /**
+     * @param studyContactService studyContactService
+     */
+    public void setStudyContactService(StudyContactService studyContactService) {
+        this.studyContactService = studyContactService;
     }
 
 
