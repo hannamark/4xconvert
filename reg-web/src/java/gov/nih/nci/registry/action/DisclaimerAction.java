@@ -110,6 +110,7 @@ public class DisclaimerAction extends ActionSupport {
 
         RegistryUser registryUser = PaRegistry.getRegistryUserService().getUser(request.getRemoteUser());
         if (registryUser == null) {
+            request.getSession().invalidate();
             return "missing_account";
         } else {
             return "redirect_to";

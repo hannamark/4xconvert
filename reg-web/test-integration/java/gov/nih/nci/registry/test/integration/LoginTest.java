@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.registry.test.integration;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -117,5 +118,44 @@ public class LoginTest extends AbstractRegistrySeleniumTest {
         System.out.println(cookie.getValue());
         assertTrue(cookie.getValue().matches("JSESSIONID=\\p{Graph}+?; Path=/registry; HttpOnly"));
     }
-    
+
+    @Test
+    public void testLoginWithIncompleteAccount() throws Exception {
+
+        //Given a valid user with submitter role
+        String loginName = "incomplete" + RandomStringUtils.randomAlphanumeric(9);
+        Number userId = createCSMUser(loginName);
+        assignUserToGroup(userId, "Submitter");
+
+        //when I try to login
+        login(loginName, "pass");
+
+
+        //I must be logged-in and must see the disclaimer page.
+        isLoggedIn();
+        verifyDisclaimerPage();
+
+
+        //And when I accept the disclaimer
+        clickAndWait("id=acceptDisclaimer");
+
+        //Then I should see "incomplete account message" without nav bar having "Sign Out" link on top
+        String message = selenium.getText("xpath=//div[@class='alert alert-danger']");
+        assertTrue(selenium.isTextPresent("It appears you have a valid account in NCI network; " +
+                "however, your account setup in NCI CTRP Registration Site does not appear to have been completed. " +
+                "It is required in order to use NCI CTRP Registration Site successfully"));
+        assertFalse(selenium.isTextPresent("Sign Out"));
+
+
+        //And when I click the register link
+        clickLinkAndWait("this link");
+
+        //Then I should be in sign up page, without SignOut & other Nav bar links
+        assertTrue(selenium.isTextPresent("Sign Up"));
+        assertFalse(selenium.isTextPresent("Sign Out"));
+        assertFalse(selenium.isTextPresent("Register Trial"));
+
+    }
+
+
 }
