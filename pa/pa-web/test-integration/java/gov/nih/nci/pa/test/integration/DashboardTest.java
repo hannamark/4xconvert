@@ -2191,7 +2191,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
             final String expected = trial.nciID.replaceFirst("NCI-", "")
                     + ",ClinicalTrials.gov,1,,,,,,,,,,,Interventional,No,Accepted,"
                     + today
-                    + ",,,,,Original,,ClinicalTrials.gov,04/16/2014,Submission Acceptance Date,"
+                    + ",,,,,Complete,,ClinicalTrials.gov,04/16/2014,Submission Acceptance Date,"
                     + today
                     + ",Other,2,,\"Ready for Admin Processing Ready for Scientific Processing\","
                     + today + ",," + today + "," + today + ",," + today
