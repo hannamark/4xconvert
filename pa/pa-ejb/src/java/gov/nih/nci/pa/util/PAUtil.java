@@ -98,6 +98,7 @@ import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
+import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.enums.UnitsCode;
 import gov.nih.nci.pa.iso.convert.StudyMilestoneConverter;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
@@ -116,6 +117,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PAExceptionConstants;
+import gov.nih.nci.pa.service.StudySourceInterceptor;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.ISOUtil.ValidDateFormat;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -1591,13 +1593,16 @@ public class PAUtil {
      */
     public static boolean isGridCall(SessionContext ctx) {
         boolean result = false;
-        String gridSeparator = CommonsGridLoginModule.getGridServicePrincipalSeparator();
-        if (ctx != null && ctx.getCallerPrincipal() != null && ctx.getCallerPrincipal().getName() != null
-                &&  gridSeparator != null) {
+        String gridSeparator = CommonsGridLoginModule
+                .getGridServicePrincipalSeparator();
+        if (ctx != null && ctx.getCallerPrincipal() != null
+                && ctx.getCallerPrincipal().getName() != null
+                && gridSeparator != null) {
             String name = ctx.getCallerPrincipal().getName();
-            result = name.contains(gridSeparator);
+            result = name.contains(gridSeparator)
+                    || StudySourceInterceptor.STUDY_SOURCE_CONTEXT.get() == StudySourceCode.GRID_SERVICE;
         }
-        LOG.info("Is Grid call? "+result);
+        LOG.info("Is Grid call? " + result);
         return result;
     }
     /**
