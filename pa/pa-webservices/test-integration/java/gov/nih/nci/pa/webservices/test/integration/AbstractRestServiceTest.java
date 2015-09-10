@@ -354,6 +354,15 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
 
     protected void logInFindAndAcceptTrial(TrialRegistrationConfirmation conf) {
 
+        findAndSelectTrial(conf);
+        acceptTrial();
+        verifyTrialAccepted();
+    }
+
+    /**
+     * @param conf
+     */
+    protected void findAndSelectTrial(TrialRegistrationConfirmation conf) {
         logoutUser();
         loginAsSuperAbstractor();
 
@@ -365,8 +374,6 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isTextPresent("One item found"));
 
         clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
-        acceptTrial();
-        verifyTrialAccepted();
     }
 
     protected String getTrialIdentificationTableCellValue(String label) {

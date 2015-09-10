@@ -982,6 +982,16 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         return id;
     }
 
+    protected void assignUserToGroup(String loginName, String group)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "insert into csm_user_group (user_id, group_id) values ((select user_id from csm_user where login_name='"
+                + loginName
+                + "'), (select group_id from csm_group where group_name='"
+                + group + "')  )";
+        runner.update(connection, sql);
+    }
+
     protected void assignUserToGroup(Number userID, String group)
             throws SQLException {
         QueryRunner runner = new QueryRunner();
