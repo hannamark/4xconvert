@@ -462,7 +462,7 @@ function searchResults(url, studyNCIid){
                  <label for="designeeTrialId" > <fmt:message key="resultsdashboard.trialId"/></label> <input type="text" id="designeeTrialId" name="designeeTrialId" size="20"/>
                  </td>
                  <td >
-               <s:a href="javascript:void(0)" cssClass="btn" onclick="searchResults('test.action', jQuery('#designeeTrialId').val())"><span class="btn_img"><span class="search">Search</span></span></s:a>
+               <s:a href="javascript:void(0)" cssClass="btn" onclick="searchResults('resultsReportingContactquery.action', jQuery('#designeeTrialId').val())"><span class="btn_img"><span class="search">Search</span></span></s:a>
                 </td>
               </tr>
               <tr height="10%" style="border-top: 2px solid black;border-right: 2px solid black;">
