@@ -183,6 +183,18 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
         testSiteIi = IiConverter.convertToStudySiteIi(testSite.getId());
         testAccess = TestSchema.studySiteAccrualAccess.get(6);
         TestSchema.addUpdObject(getSssa(10));
+        
+        try {
+            PaHibernateUtil.getCurrentSession()
+                    .createSQLQuery("delete from rv_dcp_id").executeUpdate();
+            PaHibernateUtil.getCurrentSession().flush();
+
+            PaHibernateUtil.getCurrentSession()
+                    .createSQLQuery("delete from rv_ctep_id").executeUpdate();
+            PaHibernateUtil.getCurrentSession().flush();
+        } catch (Exception e) {           
+            e.printStackTrace();
+        }
     }
 
     @Test

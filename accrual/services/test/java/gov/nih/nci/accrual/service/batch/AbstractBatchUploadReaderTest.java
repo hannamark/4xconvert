@@ -151,6 +151,7 @@ import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
@@ -181,6 +182,7 @@ import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -519,7 +521,38 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         readerService.setCdusBatchFilePreProcessorLocal(cdusBatchFilePreProcessorLocal);
         
         CSMUserService.setInstance(new gov.nih.nci.pa.util.MockCSMUserService());
+        
+        PaHibernateUtil.getCurrentSession()
+                .createSQLQuery("drop table if exists rv_dcp_id")
+                .executeUpdate();
+        PaHibernateUtil
+                .getCurrentSession()
+                .createSQLQuery(
+                        "create table rv_dcp_id (local_sp_indentifier varchar, study_protocol_identifier int)")
+                .executeUpdate();
+        PaHibernateUtil.getCurrentSession()
+                .createSQLQuery("drop table if exists rv_ctep_id")
+                .executeUpdate();
+        PaHibernateUtil
+                .getCurrentSession()
+                .createSQLQuery(
+                        "create table rv_ctep_id (local_sp_indentifier varchar, study_protocol_identifier int)")
+                .executeUpdate();
+        PaHibernateUtil.getCurrentSession().flush();
+
     }
+    
+    @After
+    public void shutdown() {
+        PaHibernateUtil.getCurrentSession()
+                .createSQLQuery("drop table if exists rv_dcp_id")
+                .executeUpdate();
+        PaHibernateUtil.getCurrentSession()
+                .createSQLQuery("drop table if exists rv_ctep_id")
+                .executeUpdate();
+        PaHibernateUtil.getCurrentSession().flush();
+    }
+
     
     /**
      * @throws PAException

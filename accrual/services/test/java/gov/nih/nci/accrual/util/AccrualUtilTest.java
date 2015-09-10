@@ -112,6 +112,7 @@ import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.pa.util.pomock.MockFamilyService;
@@ -156,6 +157,44 @@ public class AccrualUtilTest extends AbstractAccrualHibernateTestCase {
         when(studySiteSvc.get(any(Ii.class))).thenReturn(studySiteDto);
         when(svcLocal.getStudySiteService()).thenReturn(studySiteSvc);
         PaServiceLocator.getInstance().setServiceLocator(svcLocal);
+        
+        try {
+            PaHibernateUtil
+                    .getCurrentSession()
+                    .createSQLQuery(
+                            "create table rv_dcp_id (local_sp_indentifier varchar, study_protocol_identifier int)")
+                    .executeUpdate();
+
+            PaHibernateUtil
+                    .getCurrentSession()
+                    .createSQLQuery(
+                            "create table rv_ctep_id (local_sp_indentifier varchar, study_protocol_identifier int)")
+                    .executeUpdate();
+            PaHibernateUtil.getCurrentSession().flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            PaHibernateUtil.getCurrentSession()
+                    .createSQLQuery("delete from rv_dcp_id").executeUpdate();
+            PaHibernateUtil.getCurrentSession().flush();
+
+            PaHibernateUtil.getCurrentSession()
+                    .createSQLQuery("delete from rv_ctep_id").executeUpdate();
+            PaHibernateUtil.getCurrentSession().flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        
+    }
+    
+    @Test
+    public void testIsSuperAbstractor() throws PAException {
+        //assertFalse(AccrualUtil.isSuAbstractor(TestSchema.registryUsers.get(0)));
+        assertFalse(AccrualUtil.isSuAbstractor(null));        
+        assertFalse(AccrualUtil.isSuAbstractor(new RegistryUser()));
     }
     
     @Test

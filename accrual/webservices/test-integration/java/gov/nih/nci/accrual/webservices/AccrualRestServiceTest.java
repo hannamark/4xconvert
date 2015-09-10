@@ -45,10 +45,13 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.dbutils.handlers.ArrayListHandler;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPost;
@@ -279,7 +282,7 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
 
     private void verifyAccrualCount(TrialRegistrationConfirmation rConf,
             String accrualCount) throws SQLException {
-        removeDcpIdFromTrial(rConf);
+        removeDcpAndCtepIdFromTrial(rConf);
         login();
         clickAndWait("link=Trial Search");
         clickAndWait("link=" + rConf.getNciTrialID());
@@ -694,6 +697,109 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
         assertEquals(404, getReponseCode(response));
     }
 
+    @SuppressWarnings("deprecation")
+    @Test
+    public final void testSuperAbstractorHasAccrualAccessToDcpTrials()
+            throws ClientProtocolException, ParseException, JAXBException,
+            SAXException, SQLException, IOException,
+            DatatypeConfigurationException, java.text.ParseException {
+
+        testSuperAbstractorHasAccrualAccessToTrialsWithID("DCP Identifier");
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public final void testSuperAbstractorHasAccrualAccessToCtepTrials()
+            throws ClientProtocolException, ParseException, JAXBException,
+            SAXException, SQLException, IOException,
+            DatatypeConfigurationException, java.text.ParseException {
+
+        testSuperAbstractorHasAccrualAccessToTrialsWithID("CTEP Identifier");
+
+    }
+
+    /**
+     * @param trialIdType
+     * @throws JAXBException
+     * @throws SAXException
+     * @throws SQLException
+     * @throws ClientProtocolException
+     * @throws ParseException
+     * @throws IOException
+     * @throws NumberFormatException
+     * @throws DatatypeConfigurationException
+     * @throws ParseException
+     * @throws UnsupportedEncodingException
+     */
+    private void testSuperAbstractorHasAccrualAccessToTrialsWithID(
+            final String trialIdType) throws JAXBException, SAXException,
+            SQLException, ClientProtocolException, ParseException, IOException,
+            NumberFormatException, DatatypeConfigurationException,
+            java.text.ParseException, UnsupportedEncodingException {
+        baseURL = "http://" + TestProperties.getServerHostname() + ":"
+                + TestProperties.getServerPort() + "/services";
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
+        ParticipatingSite upd = readParticipatingSiteFromFile("/integration_ps_accruing_add.xml");
+        HttpResponse response = addSite("pa", rConf.getPaTrialID() + "", upd);
+        assertEquals(200, getReponseCode(response));
+        long siteID = Long.parseLong(EntityUtils.toString(response.getEntity(),
+                "utf-8"));
+        grantAccrualAccess("submitter-ci", siteID);
+
+        StudySubjects subjects = new ObjectFactory().createStudySubjects();
+        StudySubject subject = createSubject("SU001");
+        subjects.getStudySubject().add(subject);
+
+        baseURL = "http://" + TestProperties.getServerHostname() + ":"
+                + TestProperties.getServerPort() + "/accrual-services";
+        String xml = marshall(subjects);
+        StringEntity entity = new StringEntity(xml);
+        String url = baseURL + "/sites/" + siteID;
+
+        HttpPut req = new HttpPut(url);
+        req.addHeader("Accept", TEXT_PLAIN);
+        req.addHeader("Content-Type", APPLICATION_XML);
+        req.setEntity(entity);
+
+        // Create new Submitter
+        String loginName = RandomStringUtils.randomAlphabetic(12).toLowerCase();
+        Number userID = createCSMUser(loginName);
+        createRegistryUser(userID);
+        assignUserToGroup(userID, "Submitter");
+
+        // All calls must authenticate as the newly created user.
+        Credentials credentials = new UsernamePasswordCredentials(loginName,
+                "pass");
+        httpClient.getCredentialsProvider().setCredentials(authScope,
+                credentials);
+
+        // Bare submitter can't access this site.
+        response = httpClient.execute(req);
+        assertEquals(500, getReponseCode(response));
+        assertTrue(EntityUtils.toString(response.getEntity(), "utf-8")
+                .contains("User does not have accrual access to site"));
+
+        // Merely making the user Super Abstractor is not enough, either.
+        assignUserToGroup(userID, "SuAbstractor");
+        response = httpClient.execute(req);
+        assertEquals(500, getReponseCode(response));
+        assertTrue(EntityUtils.toString(response.getEntity(), "utf-8")
+                .contains("User does not have accrual access to site"));
+
+        // Adding a DCP ID to the trial must let Super Abstractor submit
+        // accruals on its sites.
+        String identifier = RandomStringUtils.randomAlphabetic(12);
+        findAndSelectTrial(rConf);
+        clickAndWait("link=General Trial Details");
+        s.select("otherIdentifierType", trialIdType);
+        s.type("otherIdentifierOrg", identifier);
+        clickAndWait("id=otherIdbtnid");
+        waitForTextToAppear(By.className("confirm_msg"),
+                "Identifier added to the trial", 15);
+        submitAndVerify(rConf, siteID, subjects, "/sites/" + siteID);
+    }
+
     @Test
     public final void testSubmitStudySubjectsNoAccrualAccess()
             throws ClientProtocolException, ParseException, JAXBException,
@@ -844,8 +950,6 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
                         "Disease code does not exist for given Disease code System."));
     }
 
-    
-
     public final void testSubmitEmptyBatchFile() throws Exception {
 
         baseURL = "http://" + TestProperties.getServerHostname() + ":"
@@ -993,7 +1097,7 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
         assert count == 2;
 
     }
-    
+
     @Test
     public final void testSubmitStudySubjectsDcpId()
             throws ClientProtocolException, ParseException, JAXBException,
@@ -1156,15 +1260,22 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
         verifySubjectsOnTrial(rConf, siteID, subjects);
     }
 
-    private void removeDcpIdFromTrial(TrialRegistrationConfirmation rConf)
+    private void removeDcpAndCtepIdFromTrial(TrialRegistrationConfirmation rConf)
             throws SQLException {
-        String orgName = "National Cancer Institute Division of Cancer Prevention";
         QueryRunner runner = new QueryRunner();
         runner.update(
                 connection,
                 "delete from study_site where functional_code::text = 'IDENTIFIER_ASSIGNER'::text AND "
                         + "(research_organization_identifier = "
-                        + getOrgIdByName(orgName)
+                        + getOrgIdByName("National Cancer Institute Division of Cancer Prevention")
+                        + " ) "
+                        + "AND study_protocol_identifier = "
+                        + rConf.getPaTrialID());
+        runner.update(
+                connection,
+                "delete from study_site where functional_code::text = 'IDENTIFIER_ASSIGNER'::text AND "
+                        + "(research_organization_identifier = "
+                        + getOrgIdByName("Cancer Therapy Evaluation Program")
                         + " ) "
                         + "AND study_protocol_identifier = "
                         + rConf.getPaTrialID());
@@ -1173,7 +1284,7 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
 
     private void verifySubjectsOnTrial(TrialRegistrationConfirmation rConf,
             long siteID, StudySubjects subjects) throws SQLException {
-        removeDcpIdFromTrial(rConf);
+        removeDcpAndCtepIdFromTrial(rConf);
         login();
         for (StudySubject ss : subjects.getStudySubject()) {
             clickAndWait("link=Trial Search");

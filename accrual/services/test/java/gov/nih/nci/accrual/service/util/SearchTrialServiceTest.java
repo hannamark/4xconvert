@@ -258,6 +258,9 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
         when(acu.getAllFamilyOrgs(any(Long.class))).thenReturn(values);
 
     }
+    
+   
+
     @Test
     public void searchUser1() throws Exception {
     	TestSchema.createStudyProtocol();

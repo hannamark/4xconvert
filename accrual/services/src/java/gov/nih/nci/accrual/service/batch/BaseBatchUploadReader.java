@@ -94,17 +94,13 @@ import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.util.AccrualUtil;
-import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.util.CSMUserService;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -113,20 +109,17 @@ import java.util.Map;
 
 import javax.ejb.EJB;
 
-import org.apache.log4j.Logger;
-
 /**
  * Base Batch reader.
  * 
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class BaseBatchUploadReader {
-    private static final Logger LOG = Logger.getLogger(BaseBatchUploadReader.class); 
+public class BaseBatchUploadReader {     
     private static final int COLLECTION_ELEMENT_SIZE = 10;
     private static final int PATIENTS_ELEMENT_SIZE = 23;
     private static final int PATIENT_RACES_ELEMENT_SIZE = 3;
     private static final int ACCRUAL_COUNT_ELEMENT_SIZE = 3; 
-    private static final String SUABSTRACTOR = "SuAbstractor";   
+     
     /**
      * List of elements.
      */
@@ -305,20 +298,7 @@ public class BaseBatchUploadReader {
         }
     }
     
-    /**
-     * Check to see if the user is a SuAbstractor.
-     * @param ru the registry user
-     * @return if the user is Suabstractor
-     */
-    protected boolean isSuAbstractor(RegistryUser ru) {
-        CSMUserUtil userService = CSMUserService.getInstance();
-        try {     
-            return userService.isUserInGroup(ru.getCsmUser().getLoginName(), SUABSTRACTOR);
-        } catch (Exception e) {
-            LOG.error("Error determining user role for " + ru.getCsmUser().getLoginName() + ".", e);
-            return false;
-        }
-    }  
+    
 
     /**
      * 

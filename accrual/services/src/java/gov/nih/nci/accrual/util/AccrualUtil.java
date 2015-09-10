@@ -83,6 +83,7 @@ import gov.nih.nci.iso21090.EdText;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.CodedEnum;
@@ -94,8 +95,11 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.FamilyHelper;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
@@ -115,8 +119,10 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
@@ -149,6 +155,8 @@ public class AccrualUtil {
     public static final String SECURITY_DOMAIN = "accrual";
     /** Submitter Role name. */
     public static final String SUBMITTER_ROLE = "Submitter";
+    
+    private static final String SUABSTRACTOR = "SuAbstractor";  
 
     /**
      * Static ordered list of valid date format patterns.
@@ -302,8 +310,28 @@ public class AccrualUtil {
      */
     public static boolean isUserAllowedAccrualAccess(Ii studySiteIi, RegistryUser regUser)
         throws PAException {
+        
+        final Session session = PaHibernateUtil.getCurrentSession();
+
+        // PO-9213: Super abstractors must have accrual access to sites on CTEP
+        // or DCP trials.
+        if (isSuAbstractor(regUser)) {
+            StudySite ss = (StudySite) session.get(StudySite.class,
+                    Long.parseLong(studySiteIi.getExtension()));
+            if (ss != null
+                    && ss.getStudyProtocol() != null
+                    && (StringUtils.isNotBlank(new PAServiceUtils()
+                            .getCtepOrDcpId(ss.getStudyProtocol().getId(),
+                                    PAConstants.DCP_IDENTIFIER_TYPE)) || StringUtils
+                            .isNotBlank(new PAServiceUtils().getCtepOrDcpId(ss
+                                    .getStudyProtocol().getId(),
+                                    PAConstants.CTEP_IDENTIFIER_TYPE)))) {
+                return true;
+            }
+        }
+       
         Integer result = 
-            (Integer) PaHibernateUtil.getCurrentSession().createCriteria(StudySiteAccrualAccess.class)
+            (Integer) session.createCriteria(StudySiteAccrualAccess.class)
             .add(Restrictions.eq("studySite.id", Long.parseLong(studySiteIi.getExtension())))
             .add(Restrictions.eq("registryUser", regUser))
             .add(Restrictions.eq("statusCode", ActiveInactiveCode.ACTIVE))
@@ -313,6 +341,27 @@ public class AccrualUtil {
             return false;
         }
         return true;
+    }
+    
+    /**
+     * Check to see if the user is a SuAbstractor.
+     * 
+     * @param ru
+     *            the registry user
+     * @return if the user is Suabstractor
+     */
+    public static boolean isSuAbstractor(RegistryUser ru) {
+        try {
+            return ru != null
+                    && CSMUserService.getInstance().isUserInGroup(
+                            ru.getCsmUser().getLoginName(), SUABSTRACTOR);
+        } catch (Exception e) {
+            LOG.error(
+                    "Error determining user role for "
+                            + ToStringBuilder.reflectionToString(ru
+                                    .getCsmUser()) + ".", e);
+            return false;
+        }
     }
     
     /**

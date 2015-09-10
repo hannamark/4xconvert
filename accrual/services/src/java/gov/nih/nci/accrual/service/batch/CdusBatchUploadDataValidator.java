@@ -438,7 +438,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     }
 
     void initializeOrganizationLists() {
-        superAbstractor = isSuAbstractor(ru);
+        superAbstractor = AccrualUtil.isSuAbstractor(ru);
         listOfPoIds = new HashMap<String, Long>();
         listOfCtepIds = new HashMap<String, String>();
         listOfOrgIds = new HashMap<String, Ii>();

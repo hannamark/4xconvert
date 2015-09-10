@@ -354,7 +354,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         collection.setNciNumber(validationResult.getNciIdentifier());
         collection.setPassedValidation(validationResult.isPassedValidation());
         batchFileSvc.update(batchFile, collection);
-        boolean suAbstractor = isSuAbstractor(batchFile.getSubmitter());
+        boolean suAbstractor = AccrualUtil.isSuAbstractor(batchFile.getSubmitter());
         if (!validationResult.isPassedValidation() && (validationResult.isHasNonSiteErrors() || !suAbstractor)) {
             if (validationResult.getErrors() != null) {
                 collection.setResults(StringUtils.left(
@@ -467,7 +467,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         importResult.setSiteNames(siteNameWithID);
         if (CollectionUtils.isNotEmpty(partiSiteList)) {
             Map<String, Integer> studySiteCounts = BatchUploadUtils.getStudySiteCounts(lines);
-            if (isSuAbstractor(user)) {
+            if (AccrualUtil.isSuAbstractor(user)) {
                 for (String orgId : studySiteCounts.keySet()) {
                     Ii partSiteIi = BatchUploadUtils.getOrganizationIi(orgId);
                     if (partSiteIi != null) {
@@ -637,7 +637,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     private void parseSubjectDisease(String[] line, SubjectAccrualDTO saDTO, RegistryUser ru,  
           Ii spId, String diseaseCodeSystem) throws PAException {
         String diseaseCode = line[BatchFileIndex.PATIENT_DISEASE_INDEX];
-        if (StringUtils.isEmpty(diseaseCode) && isSuAbstractor(ru) 
+        if (StringUtils.isEmpty(diseaseCode) && AccrualUtil.isSuAbstractor(ru) 
               && !getSearchStudySiteService().isStudyHasDCPId(spId)) {
             String codeSystemDB = PaServiceLocator.getInstance().getAccrualDiseaseTerminologyService()
                     .getCodeSystem(IiConverter.convertToLong(spId));
