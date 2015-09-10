@@ -1944,5 +1944,8 @@
        <comment>Added pa_properties entry to update tenantId</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9142.sql"/>
     </changeSet>    
-    
+    <changeSet id="PO-9209" author="gunnikrishnan">       
+       <comment>Update mail server pa_properties</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9209.sql"/>
+    </changeSet>
 </databaseChangeLog>
