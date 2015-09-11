@@ -2048,9 +2048,9 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
                 StringBuffer innerTable = new StringBuffer();
                 for (StudyProtocolQueryDTO dto : list) {
                     if (new Date().after(effectiveDate) && dto.getVerificationDueDate().after(effectiveDate)) {
-                        innerTable.append("<tr><td style=\"width:50%\">" + dto.getNciIdentifier() + "</td>"
-                                + "<td style=\"width:50%\">" + dto.getLocalStudyProtocolIdentifier() + "</td>"
-                                + "<td style=\"width:50%\">" + getFormatedDate(dto.getVerificationDueDate()) 
+                        innerTable.append("<tr><td align=\"left\" style=\"width:30%\">" + dto.getNciIdentifier() + "</td>"
+                                + "<td align=\"left\" style=\"width:30%\">" + dto.getLocalStudyProtocolIdentifier() + "</td>"
+                                + "<td align=\"left\" style=\"width:30%\">" + getFormatedDate(dto.getVerificationDueDate()) 
                                 + "</td></tr>");
                     }
                 }
@@ -2101,9 +2101,9 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
             for (StudyProtocolQueryDTO dto : list) {                
                 mailBody = mailBody.replace(DUE_DATE, getFormatedDate(dto.getVerificationDueDate()));
                 if (new Date().after(effectiveDate) && dto.getVerificationDueDate().after(effectiveDate)) {
-                    innerTable.append("<tr><td style=\"width:50%\">" + dto.getNciIdentifier() + "</td>"
-                            + "<td style=\"width:50%\">" + dto.getLeadOrganizationName() + "</td>"
-                            + "<td style=\"width:50%\">" + dto.getLocalStudyProtocolIdentifier() 
+                    innerTable.append("<tr><td align=\"left\" style=\"width:50%\">" + dto.getNciIdentifier() + "</td>"
+                            + "<td align=\"left\" style=\"width:50%\">" + dto.getLeadOrganizationName() + "</td>"
+                            + "<td align=\"left\" style=\"width:50%\">" + dto.getLocalStudyProtocolIdentifier() 
                             + "</td></tr>");
                 }
             }

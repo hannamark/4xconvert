@@ -1948,4 +1948,12 @@
        <comment>Update mail server pa_properties</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9209.sql"/>
     </changeSet>
+    <changeSet id="PO-6694" author="vpoluri">       
+       <comment>Updated pa_properties for verification email header and footer</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-6694.sql"/>
+    </changeSet>
+    <changeSet id="PO-6693" author="vpoluri">       
+       <comment>Updated pa_properties for CTRO email template alignment change</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-6693.sql"/>
+    </changeSet>    
 </databaseChangeLog>
