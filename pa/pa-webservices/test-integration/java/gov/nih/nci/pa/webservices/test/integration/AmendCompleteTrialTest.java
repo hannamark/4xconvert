@@ -22,6 +22,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -46,6 +48,65 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
     public void setUp() throws Exception {
         super.setUp("/trials/complete");
         deactivateAllTrials();
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testAmendIsAlwaysTransactional() throws Exception {
+        final QueryRunner runner = new QueryRunner();
+        String uuid = RandomStringUtils.randomAlphabetic(12);
+
+        // Register and accept a complete trial.
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_success_no_dcp.xml");
+        clickAndWait("link=General Trial Details");
+        selenium.select("id=otherIdentifierType", "label=" + "DCP Identifier");
+        selenium.type("id=otherIdentifierOrg", uuid);
+        clickAndWait("id=otherIdbtnid");
+
+        // Prepare it for amendment.
+        prepareTrialForAmendment(rConf);
+
+        CompleteTrialAmendment reg = readCompleteTrialAmendmentFromFile("/integration_amend_complete.xml");
+        reg.setDcpIdentifier(uuid);
+
+        // N/A date type cannot be used for Trial Start Date or Completion Date.
+        // This will cause the amendment to fail due to a validation error.
+        // Since TrialRegistrationBeanLocal.amend is transactional, we must see
+        // NO changes to the database.
+        reg.getTrialStartDate().setType("N/A");
+        int countBefore = ((Number) runner.query(connection,
+                "select count(*) from study_protocol", new ArrayHandler())[0])
+                .intValue();
+        HttpResponse response = amendTrialFromJAXBElement("dcp", uuid, reg);
+        // Amendment MUST have failed.
+        verifyResponseHasFailure(500, "Start date cannot have type of 'N/A'",
+                response);
+        int countAfter = ((Number) runner.query(connection,
+                "select count(*) from study_protocol", new ArrayHandler())[0])
+                .intValue();
+        // Number of records in study_protocol table should have remained the
+        // same, because transaction rollback should have reverted any changes.
+        assertEquals(
+                "Amendment ran non-transactionally and left junk in the database!!!",
+                countBefore, countAfter);
+
+        reg.getTrialStartDate().setType("Actual");
+        reg.getCompletionDate().setType("N/A");
+        countBefore = ((Number) runner.query(connection,
+                "select count(*) from study_protocol", new ArrayHandler())[0])
+                .intValue();
+        response = amendTrialFromJAXBElement("dcp", uuid, reg);
+        verifyResponseHasFailure(500,
+                "Completion date cannot have type of 'N/A'", response);
+        countAfter = ((Number) runner.query(connection,
+                "select count(*) from study_protocol", new ArrayHandler())[0])
+                .intValue();
+        // Number of records in study_protocol table should have remained the
+        // same, because transaction rollback should have reverted any changes.
+        assertEquals(
+                "Amendment ran non-transactionally and left junk in the database!!!",
+                countBefore, countAfter);
+
     }
 
     @Test
