@@ -437,6 +437,8 @@ div.error,b.error {
 				<s:token />
 				<s:hidden name="studyProtocolId" />
 				<s:hidden name="siteDTO.id" />
+				<s:hidden name="pickedSiteOrgPoId" />
+				<s:hidden name="addSitesMultiple" />
 				<div class="container-fluid">
 					<div class="form-group row">
 						<label class="col-xs-4  control-label"> <fmt:message

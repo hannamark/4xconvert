@@ -794,13 +794,14 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         clickAndWait("xpath=//button[text()='Add My Site']");
         waitForElementById("popupFrame", 20);
         selenium.selectFrame("popupFrame");
-
+        assertEquals("true",selenium.getValue("//input[@name='addSitesMultiple']"));
         String[] options = selenium.getSelectOptions("pickedSiteOrgPoId");
         assertEquals(3, options.length);
         selenium.select("pickedSiteOrgPoId",
-                "label=National Cancer Institute Division of Cancer Prevention");
+                "label=National Cancer Institute");
         clickAndWait("pickSiteBtn");
-        assertEquals("National Cancer Institute Division of Cancer Prevention",
+        assertEquals("true",selenium.getValue("//input[@name='addSitesMultiple']"));
+        assertEquals("National Cancer Institute",
                 selenium.getValue("organizationName"));
 
         selenium.type("localIdentifier", "XYZ0000001");
@@ -832,7 +833,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assertTrue(
                 "No success message found",
                 selenium.isTextPresent("Your site has been added to the trial."));
-        assertEquals("National Cancer Institute Division of Cancer Prevention",
+        assertEquals("National Cancer Institute",
                 selenium.getText("//table[@id='row']/tbody/tr/td[1]"));
         assertEquals("Doe,John",
                 selenium.getText("//table[@id='row']/tbody/tr/td[2]"));

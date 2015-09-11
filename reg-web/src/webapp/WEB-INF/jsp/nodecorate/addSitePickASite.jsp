@@ -19,6 +19,7 @@
 			action="addSitepopuppickSite" cssClass="form-horizontal" role="form">
 			<s:token />
 			<s:hidden name="studyProtocolId" />
+			<s:hidden name="addSitesMultiple" />
 			<div class="form-group">
 				<label class="col-xs-4  control-label"> <fmt:message
 						key="add.site.trial.nciIdentifier" /></label>

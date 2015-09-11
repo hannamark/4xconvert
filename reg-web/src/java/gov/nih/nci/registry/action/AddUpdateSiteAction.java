@@ -435,12 +435,13 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction
             new ParticipatingSiteValidator(siteDTO, this, this, paServiceUtil,
                     statusTransitionService).validate();
             if (!(hasActionErrors() || hasFieldErrors())) {
+              String poOrgId  = isAddSitesMultiple()   ? getPickedSiteOrgPoId() 
+                      : getRegistryUser().getAffiliatedOrganizationId().toString();
                 final AddUpdateSiteHelper helper = new AddUpdateSiteHelper(
                         paServiceUtil, siteDTO, participatingSiteService,
                         studyProtocolService, getRegistryUser(),
                         registryUserService, studySiteContactService, this,
-                        getStudyProtocolId(), getRegistryUser()
-                                .getAffiliatedOrganizationId().toString());
+                        getStudyProtocolId(), poOrgId);
                 if (StringUtils.isNotBlank(siteDTO.getId())) {
                     // User might have deleted some of the existing site status
                     // records.

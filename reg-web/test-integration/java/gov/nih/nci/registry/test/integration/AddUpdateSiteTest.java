@@ -120,6 +120,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         // to updating it.
         assertEquals("National Cancer Institute Division of Cancer Prevention",
                 selenium.getValue("organizationName"));
+        assertEquals("false",selenium.getValue("//input[@name='addSitesMultiple']"));
         driver.findElement(By.xpath("//button[normalize-space(text())='Save']"))
                 .click();
         driver.switchTo().defaultContent();
@@ -147,7 +148,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
 
         findInMyTrials();
         invokeAction("Update My Site");
-
+        assertEquals("false",selenium.getValue("//input[@name='addSitesMultiple']"));
         assertEquals("National Cancer Institute Division of Cancer Prevention",
                 selenium.getValue("organizationName"));
         waitForElementToBecomeVisible(
@@ -254,12 +255,13 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         assignTrialOwner("submitter-ci", info.id);
         findInMyTrials();
         invokeAction("Add My Site");
-
+        assertEquals("true",selenium.getValue("//input[@name='addSitesMultiple']"));
         String[] options = selenium.getSelectOptions("pickedSiteOrgPoId");
         assertEquals(3, options.length);
         selenium.select("pickedSiteOrgPoId",
                 "label=National Cancer Institute Division of Cancer Prevention");
         clickAndWait("pickSiteBtn");
+        assertEquals("true",selenium.getValue("//input[@name='addSitesMultiple']"));
         assertEquals("National Cancer Institute Division of Cancer Prevention",
                 selenium.getValue("organizationName"));
 
@@ -315,7 +317,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         assignTrialOwner("submitter-ci", info.id);
         findInMyTrials();
         invokeAction("Add My Site");
-
+        assertEquals("false",selenium.getValue("//input[@name='addSitesMultiple']"));
         assertEquals("National Cancer Institute Division of Cancer Prevention",
                 selenium.getValue("organizationName"));
 
@@ -667,6 +669,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         selenium.select("pickedSiteOrgPoId",
                 "label=Cancer Therapy Evaluation Program");
         clickAndWait("pickSiteBtn");
+        assertEquals("false",selenium.getValue("//input[@name='addSitesMultiple']"));
         assertEquals("Cancer Therapy Evaluation Program",
                 selenium.getValue("organizationName"));
         selenium.type("programCode", "CTEP_PGCODE");
