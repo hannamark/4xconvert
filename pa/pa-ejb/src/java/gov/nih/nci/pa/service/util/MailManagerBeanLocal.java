@@ -2048,10 +2048,17 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
                 StringBuffer innerTable = new StringBuffer();
                 for (StudyProtocolQueryDTO dto : list) {
                     if (new Date().after(effectiveDate) && dto.getVerificationDueDate().after(effectiveDate)) {
-                        innerTable.append("<tr><td align=\"left\" style=\"width:30%\">" + dto.getNciIdentifier() + "</td>"
-                                + "<td align=\"left\" style=\"width:30%\">" + dto.getLocalStudyProtocolIdentifier() + "</td>"
-                                + "<td align=\"left\" style=\"width:30%\">" + getFormatedDate(dto.getVerificationDueDate()) 
-                                + "</td></tr>");
+                        innerTable
+                                .append("<tr><td align=\"left\" style=\"width:30%\">"
+                                        + dto.getNciIdentifier()
+                                        + "</td>"
+                                        + "<td align=\"left\" style=\"width:30%\">"
+                                        + dto.getLocalStudyProtocolIdentifier()
+                                        + "</td>"
+                                        + "<td align=\"left\" style=\"width:30%\">"
+                                        + getFormatedDate(dto
+                                                .getVerificationDueDate())
+                                        + "</td></tr>");
                     }
                 }
                 
