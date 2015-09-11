@@ -134,6 +134,7 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
      */
     @Test       
     public void testResultDashboardHomePage() throws Exception{
+      
         assertTrue(selenium.isTextPresent("Section 801 Indicator:"));
         assertTrue(selenium.isTextPresent("Primary Completion Date:"));
         assertTrue(selenium.isTextPresent("From:"));
@@ -323,10 +324,11 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         addDWS(trial, "ABSTRACTION_VERIFIED_RESPONSE");
         setPCD(trial, "2015-01-01", ActualAnticipatedTypeCode.ANTICIPATED);
         addDocument(trial, "COMPARISON", "Protocol.doc");
-        addDesginee(trial);
         setSeciont801Indicator(trial, true);
         testTrials.add(trial);
         trial = createSubmittedTrial();
+        deleteContact();
+        addDesginee(trial);
         addSponsor(trial, "National Cancer Institute");
         addDWS(trial, "ABSTRACTION_VERIFIED_NORESPONSE");
         setPCD(trial, "2015-12-31", ActualAnticipatedTypeCode.ACTUAL);
