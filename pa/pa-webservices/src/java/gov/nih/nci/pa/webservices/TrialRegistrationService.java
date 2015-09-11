@@ -332,7 +332,7 @@ public class TrialRegistrationService extends BaseRestService {
             StudyRegulatoryAuthorityDTO studyRegAuthDTO = reg
                     .isClinicalTrialsDotGovXmlRequired() ? new StudyRegulatoryAuthorityDTOBuilder()
                     .build(reg) : null;
-            //PaHibernateUtil.getHibernateHelper().unbindAndCleanupSession();
+            PaHibernateUtil.getHibernateHelper().unbindAndCleanupSession();
             Ii amendId = PaRegistry.getTrialRegistrationService().amend(
                     studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                     studyResourcingDTOs, documentDTOs, leadOrgDTO,
@@ -341,7 +341,7 @@ public class TrialRegistrationService extends BaseRestService {
                     summary4studyResourcingDTO, studyRegAuthDTO,
                     BlConverter.convertToBl(Boolean.FALSE),
                     BlConverter.convertToBl(Boolean.TRUE));
-            //PaHibernateUtil.getHibernateHelper().openAndBindSession();
+            PaHibernateUtil.getHibernateHelper().openAndBindSession();
             Long paTrialID = IiConverter.convertToLong(amendId);
             return buildTrialRegConfirmationResponse(paTrialID);
         } catch (Exception e) {
