@@ -19,6 +19,7 @@ import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.dto.MilestonesDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.iso.dto.StudyCheckoutDTO;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -29,6 +30,7 @@ import gov.nih.nci.pa.iso.util.IvlConverter.JavaPq;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudySourceInterceptor;
 
 import java.math.BigDecimal;
 import java.net.URI;
@@ -1008,6 +1010,7 @@ public class PAUtilTest {
 
     @Test
     public void isGridCall() {
+        StudySourceInterceptor.STUDY_SOURCE_CONTEXT.remove();
         assertFalse(PAUtil.isGridCall(null));
 
         SessionContext ctx = mock(SessionContext.class);
@@ -1026,6 +1029,11 @@ public class PAUtilTest {
 
         when(princ.getName()).thenReturn("User");
         assertFalse(PAUtil.isGridCall(ctx));
+        
+        StudySourceInterceptor.STUDY_SOURCE_CONTEXT.set(StudySourceCode.GRID_SERVICE);
+        assertTrue(PAUtil.isGridCall(ctx));
+        StudySourceInterceptor.STUDY_SOURCE_CONTEXT.remove();
+        
     }
 
     @Test
