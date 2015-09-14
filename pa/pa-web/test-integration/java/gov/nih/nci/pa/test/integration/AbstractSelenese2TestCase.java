@@ -83,6 +83,7 @@
 package gov.nih.nci.pa.test.integration;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import junit.framework.TestCase;
 
@@ -143,6 +144,8 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
         driver.manage().window().setSize(new Dimension(1500, 900));
         selenium = new WebDriverBackedSelenium(driver, url);
         selenium.setTimeout(toMillisecondsString(PAGE_TIMEOUT_SECONDS));
+        driver.manage().timeouts().pageLoadTimeout(PAGE_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        driver.manage().timeouts().setScriptTimeout(PAGE_TIMEOUT_SECONDS, TimeUnit.SECONDS);
         s = selenium;
        
     }
