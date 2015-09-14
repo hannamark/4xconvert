@@ -244,6 +244,7 @@ def getTrialsSQL = """
      where sp.status_code = 'ACTIVE' and (sp.delayed_posting_indicator is null or sp.delayed_posting_indicator!= true) and rv_trial_id_nct.local_sp_indentifier is not null
 		and char_length(trim(both ' ' from rv_trial_id_nct.local_sp_indentifier))>0 
 		and sp.pri_compl_date_type_code <> 'NA'
+		and (sp.expd_access_indidicator<>true or sp.expd_access_indidicator is null)
      
 """
 
