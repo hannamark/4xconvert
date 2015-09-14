@@ -380,7 +380,7 @@ function searchResults(url, studyNCIid){
          <div id="results" class="box">
              <c:set var="requestURI" value="resultsDashboardsearch.action"
                  scope="request" />
-             <display:table class="data" sort="list" pagesize="10"
+             <display:table class="data" sort="list" pagesize="100"
                  decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator"
                  name="results" requestURI="${requestURI}"
                  export="false" uid="row">
