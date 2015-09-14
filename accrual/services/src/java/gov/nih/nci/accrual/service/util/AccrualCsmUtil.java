@@ -85,8 +85,6 @@ import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.UserProvisioningManager;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
-import gov.nih.nci.security.exceptions.CSTransactionException;
-
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -139,8 +137,7 @@ public class AccrualCsmUtil implements CsmUtil {
             csmUser.setPhoneNumber(user.getPhone());
             ///create new user in CSM table
             UserProvisioningManager upManager = SecurityServiceProvider.getUserProvisioningManager("pa");
-            upManager.createUser(csmUser);
-            assignUserToGroups(userName, upManager);
+            upManager.createUser(csmUser);           
             createdCSMUser = upManager.getUser(userName);
         } catch (CSException cse) {
             throw new PAException("CSM exception while creating CSM user :" + userName, cse);
@@ -149,10 +146,7 @@ public class AccrualCsmUtil implements CsmUtil {
         return createdCSMUser;
     }
 
-    private void assignUserToGroups(String loginName, UserProvisioningManager upManager) throws CSTransactionException {
-        upManager.assignUserToGroup(loginName, "Outcomes");
-    }
-
+   
     /**
      * {@inheritDoc}
      */
@@ -174,8 +168,7 @@ public class AccrualCsmUtil implements CsmUtil {
             upManager.modifyUser(csmUser);
             // assign the updated user to the appropriate group
             // read the CSM group name from the properties
-            //String submitterGroup = PaEarPropertyReader.getCSMSubmitterGroup();
-            assignUserToGroups(userName, upManager);
+            //String submitterGroup = PaEarPropertyReader.getCSMSubmitterGroup();           
             createdCSMUser = upManager.getUser(userName);
         } catch (CSException cse) {
             throw new PAException("CSM exception while updating CSM user :" + userName, cse);

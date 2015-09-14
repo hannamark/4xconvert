@@ -1955,5 +1955,9 @@
     <changeSet id="PO-6693" author="vpoluri">       
        <comment>Updated pa_properties for CTRO email template alignment change</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-6693.sql"/>
+    </changeSet>
+    <changeSet id="PO-9236" author="krylovd">       
+       <comment>Removing Outcomes security group.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9236.sql"/>
     </changeSet>    
 </databaseChangeLog>
