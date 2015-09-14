@@ -104,7 +104,7 @@ import com.thoughtworks.selenium.webdriven.WebDriverBackedSelenium;
  * @author Denis G. Krylov
  */
 public abstract class AbstractSelenese2TestCase extends TestCase {
-    private static final int PAGE_TIMEOUT_SECONDS = 120;
+    private static final int PAGE_TIMEOUT_SECONDS = 180;
     private static final int MILLISECONDS_PER_SECOND = 1000;
     private int serverPort = 39480;
     private String serverHostname = "localhost";
