@@ -341,9 +341,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         CTGOV_TO_CTRP_MAP.put("Enrolling by invitation",
                 StudyStatusCode.ENROLLING_BY_INVITATION.getCode());
         CTGOV_TO_CTRP_MAP.put("Active, not recruiting",
-                StudyStatusCode.CLOSED_TO_ACCRUAL.getCode());
-        CTGOV_TO_CTRP_MAP.put("Active, not recruiting",
-                StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION.getCode());
+                StudyStatusCode.CLOSED_TO_ACCRUAL.getCode());        
         CTGOV_TO_CTRP_MAP.put("No longer available",
                 StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION.getCode());
         CTGOV_TO_CTRP_MAP.put("Suspended",
