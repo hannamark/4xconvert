@@ -385,7 +385,7 @@ function searchResults(url, studyNCIid){
                  name="results" requestURI="${requestURI}"
                  export="false" uid="row">
                  <display:column  class="title" titleKey="studyProtocol.nciIdentifier" sortable="true" headerScope="col" scope="row" property="nciIdentifier"/>
-                 <display:column  title="NCT ID" property="nctNumber"/>
+                 <display:column  title="NCT ID" property="nctIdentifier"/>
                  <display:column  title="CTEP/DCP ID" property="ctepOrDcp"/>
                  <display:column  title="Lead Org PO ID" property="leadOrganizationPOId"/>          
                  <display:column  title="Lead Organization" property="leadOrganizationName"/>
