@@ -15,6 +15,7 @@ import gov.nih.nci.pa.dto.StudyContactWebDTO;
 import gov.nih.nci.pa.dto.StudyProcessingErrorDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
@@ -44,10 +45,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.ServletRequestAware;
 
@@ -55,6 +58,7 @@ import com.opensymphony.xwork2.Preparable;
 
 /**
  * @author Gopal Unnikrishnan (unnikrishnang)
+ * @author Biju Joseph (josephb2)
  * 
  */
 @SuppressWarnings({ "PMD.TooManyMethods" })
@@ -216,9 +220,21 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
                         .getStudyProtocolByCriteria(criteria,
                                 SKIP_ALTERNATE_TITLES, SKIP_LAST_UPDATER_INFO,
                                 SKIP_OTHER_IDENTIFIERS);
-                
+
+
+                //collecting protocol-ids.
+                List<Long> protocolIds = new ArrayList<Long>();
+                for (StudyProtocolQueryDTO studyProtocolQueryDTO : currentResults) {
+                    protocolIds.add(studyProtocolQueryDTO.getStudyProtocolId());
+                }
+                //load comparison document associated with protocols
+                Map<Long, DocumentDTO> comparisonDocumentMap =  PaRegistry.getDocumentService()
+                            .getDocumentByIDListAndType(protocolIds, DocumentTypeCode.COMPARISON);
+
                 for (StudyProtocolQueryDTO resultQueryDTO: currentResults) {
-                    DocumentDTO documentDTO = getComparisonReviewForStudyProtocol(resultQueryDTO.getStudyProtocolId()); 
+                    //fetch the documents from in-memory map.
+                    DocumentDTO documentDTO = (DocumentDTO) MapUtils.getObject(comparisonDocumentMap,
+                            resultQueryDTO.getStudyProtocolId());
                     if (documentDTO != null) {
                         resultQueryDTO.setCcctUserCreatedDate(
                                 TsConverter.convertToTimestamp(documentDTO.getCcctUserReviewDateTime()));
@@ -229,8 +245,10 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
                         resultQueryDTO.setCtroUserName(
                                 PAUtil.getDocumentUserCtroOrCcctReviewerName(documentDTO, true));
                     }
+
+                    //BJ - the following approach may need refactoring.
                     StringBuffer studyContactNamesList = new StringBuffer();
-                    
+
                     //get study contacts list
                     LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
                      StudyContactDTO searchCriteria = new StudyContactDTO();
@@ -240,10 +258,10 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
 
                      searchCriteria.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.DESIGNEE_CONTACT));
                      List<StudyContactDTO>studyDesigneeContactDtos = studyContactService.search(searchCriteria, limit);
-                  
+
                      if (CollectionUtils.isNotEmpty(studyDesigneeContactDtos)) {
                          for (StudyContactDTO scDto : studyDesigneeContactDtos) {
-                             StudyContactWebDTO studyContactWebDTO = new StudyContactWebDTO(scDto); 
+                             StudyContactWebDTO studyContactWebDTO = new StudyContactWebDTO(scDto);
                              Person person = studyContactWebDTO.getContactPerson();
                              if (person != null) {
                                  if (studyContactNamesList.length() > 0) {
@@ -251,7 +269,7 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
                                  }
                                  studyContactNamesList.append(person.getFullName());
                              }
-                           
+
                          }
                      }
                     resultQueryDTO.setDesigneeNamesList(studyContactNamesList.toString());
@@ -268,20 +286,7 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         }
         return RESULT_ABSTRACTOR_LANDING;
     }
-    
-    /**
-     * Returns a comparison document DTO for a given study protocol 
-     * @param studyProtocolId
-     * @return {@link DocumentDTO}
-     * @throws PAException
-     */
-    private DocumentDTO getComparisonReviewForStudyProtocol(Long studyProtocolId) throws PAException {
-        DocumentDTO docDTO =
-                 PaRegistry.getDocumentService()
-                     .getComparisonDocumentByStudyProtocol(IiConverter.convertToIi(studyProtocolId));
-         
-        return docDTO;
-    }
+
 
 
     private List<String> getResultsDashboadStatusCodeFilter() {
