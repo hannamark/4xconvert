@@ -1959,5 +1959,9 @@
     <changeSet id="PO-9236" author="krylovd">       
        <comment>Removing Outcomes security group.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9236.sql"/>
-    </changeSet>    
+    </changeSet>
+    <changeSet id="PO-9185" author="krylovd">       
+       <comment>Removing Abstractor security group.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9185.sql"/>
+    </changeSet>
 </databaseChangeLog>

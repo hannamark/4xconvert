@@ -56,7 +56,7 @@ connect
             "module-options" => [ \
                 ("password-stacking"=>"useFirstPass"), \
                 ("dsJndiName"=>"java:/pa-ds"), \
-                ("rolesQuery" => "select group_name, 'Roles' FROM (SELECT cu.login_name,cg.group_name, 'Roles' FROM csm_group cg, csm_user_group cug, csm_user cu WHERE cg.group_id = cug.group_id AND cug.user_id = cu.user_id UNION SELECT cu.login_name,'SiteAdmin', 'Roles' FROM csm_user cu, registry_user ru WHERE cu.user_id = ru.csm_user_id AND ru.affiliated_org_user_type = 'ADMIN') AS Roles WHERE login_name = ?") \
+                ("rolesQuery" => "select group_name, 'Roles' FROM (SELECT cu.login_name,cg.group_name, 'Roles' FROM csm_group cg, csm_user_group cug, csm_user cu WHERE cg.group_id = cug.group_id AND cug.user_id = cu.user_id UNION SELECT cu.login_name,'SiteAdmin', 'Roles' FROM csm_user cu, registry_user ru WHERE cu.user_id = ru.csm_user_id AND ru.affiliated_org_user_type = 'ADMIN' UNION SELECT cu.login_name, 'Abstractor', 'Roles' FROM csm_group cg, csm_user_group cug, csm_user cu WHERE cg.group_id = cug.group_id AND cug.user_id = cu.user_id AND cg.group_name in ('SuAbstractor','AdminAbstractor','ScientificAbstractor','ResultsAbstractor')) AS Roles WHERE login_name = ?") \
             ] \
         } \     
     ] \
@@ -102,7 +102,7 @@ connect
             "module-options" => [ \
                 ("password-stacking"=>"useFirstPass"), \
                 ("dsJndiName"=>"java:/pa-ds"), \
-                ("rolesQuery" => "SELECT cg.group_name, 'Roles' FROM csm_group cg, csm_user_group cug, csm_user cu WHERE cg.group_id = cug.group_id AND cug.user_id = cu.user_id AND cu.login_name = ?") \
+                ("rolesQuery" => "select group_name, 'Roles' FROM (SELECT cu.login_name,cg.group_name, 'Roles' FROM csm_group cg, csm_user_group cug, csm_user cu WHERE cg.group_id = cug.group_id AND cug.user_id = cu.user_id UNION SELECT cu.login_name,'SiteAdmin', 'Roles' FROM csm_user cu, registry_user ru WHERE cu.user_id = ru.csm_user_id AND ru.affiliated_org_user_type = 'ADMIN' UNION SELECT cu.login_name, 'Abstractor', 'Roles' FROM csm_group cg, csm_user_group cug, csm_user cu WHERE cg.group_id = cug.group_id AND cug.user_id = cu.user_id AND cg.group_name in ('SuAbstractor','AdminAbstractor','ScientificAbstractor','ResultsAbstractor')) AS Roles WHERE login_name = ?") \
             ] \
         } \     
     ] \

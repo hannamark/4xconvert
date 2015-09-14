@@ -27,7 +27,6 @@ INSERT INTO CSM_GROUP (GROUP_NAME, GROUP_DESC, APPLICATION_ID, UPDATE_DATE) VALU
 INSERT INTO csm_remote_group (group_id,application_id,grid_grouper_url,grid_grouper_group_name) VALUES ((select group_id from csm_group where group_name='test'),(select application_id from csm_application where application_name='pa'),'https://cagrid2-gridgrouper-qa:8443/wsrf/services/cagrid/GridGrouper','Organization:CBIIT:CTRP-COPPA:PA:SuAbstractor');
 
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'abstractor-ci'), (select group_id from csm_group where group_name = 'RegAdmin'));
-INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'abstractor-ci'), (select group_id from csm_group where group_name = 'Abstractor'));
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'abstractor-ci'), (select group_id from csm_group where group_name = 'Submitter'));
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'abstractor-ci'), (select group_id from csm_group where group_name = 'AdminAbstractor'));
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'abstractor-ci'), (select group_id from csm_group where group_name = 'ScientificAbstractor'));
@@ -35,22 +34,21 @@ INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'submitter-ci'), (select group_id from csm_group where group_name = 'Submitter'));
 
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'ctrpsubstractor'), (select group_id from csm_group where group_name = 'SuAbstractor'));
-INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'ctrpsubstractor'), (select group_id from csm_group where group_name = 'Abstractor'));
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'ctrpsubstractor'), (select group_id from csm_group where group_name = 'Submitter'));
 
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'admin-ci'), (select group_id from csm_group where group_name = 'Submitter'));
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'admin-ci'), (select group_id from csm_group where group_name = 'AdminAbstractor'));
-INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'admin-ci'), (select group_id from csm_group where group_name = 'Abstractor'));
+
 
 
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'scientific-ci'), (select group_id from csm_group where group_name = 'Submitter'));
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'scientific-ci'), (select group_id from csm_group where group_name = 'ScientificAbstractor'));
-INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'scientific-ci'), (select group_id from csm_group where group_name = 'Abstractor'));
+
 
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'curator'), (select group_id from csm_group where group_name = 'test'));
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'curator'), (select group_id from csm_group where group_name = 'client'));
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'results-abstractor'), (select group_id from csm_group where group_name = 'ResultsAbstractor'));
-INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'results-abstractor'), (select group_id from csm_group where group_name = 'Abstractor'));
+
 
 UPDATE pa_properties SET value='example@example.com' WHERE value in ('@abstraction.script.mailTo@','@cde.request.to.email@','@ctrp.support.email@','@mail.from@');
 

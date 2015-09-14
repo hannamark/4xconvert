@@ -54,9 +54,9 @@ public class ManageUserGroupsAction extends ActionSupport implements
 
     private HttpServletResponse response;
     private static final String[] GROUPS = new String[] { "Submitter",
-            "Abstractor", "RegAdmin", "ReportViewer", "SuAbstractor",
-            "gridClient", "AdminAbstractor", "ScientificAbstractor",
-            "ResultsAbstractor", "SecurityAdmin" };
+            "RegAdmin", "ReportViewer", "SuAbstractor", "gridClient",
+            "AdminAbstractor", "ScientificAbstractor", "ResultsAbstractor",
+            "SecurityAdmin" };
     private static final List<String> SYSTEM_USERS = Arrays
             .asList(new String[] { "ejbclient", "firebird", "pauser",
                     "subscriber", "csmadmin", "publisher",
@@ -122,8 +122,8 @@ public class ManageUserGroupsAction extends ActionSupport implements
                     .addOrder(Order.asc("loginName"))
                     .add(Restrictions.not(Restrictions.in("loginName",
                             SYSTEM_USERS)))
-                    .add(Restrictions.not(Restrictions.ilike("loginName",
-                            "/O", MatchMode.ANYWHERE))).list()));
+                    .add(Restrictions.not(Restrictions.ilike("loginName", "/O",
+                            MatchMode.ANYWHERE))).list()));
             for (User user : users) {
                 user.getGroups().isEmpty();
             }

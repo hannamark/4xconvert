@@ -140,7 +140,7 @@ public class CSMUserService implements CSMUserUtil {
 
     private static final String GET_ABSTRACTORS_QUERY = String
             .format(GET_USERS_BY_ROLES_TEMPLATE,
-                    "'Abstractor', 'AdminAbstractor', 'ScientificAbstractor', 'SuAbstractor'");
+                    "'AdminAbstractor', 'ScientificAbstractor', 'SuAbstractor'");
     
     private static final String GET_SUPER_ABSTRACTORS_QUERY = String
             .format(GET_USERS_BY_ROLES_TEMPLATE,
