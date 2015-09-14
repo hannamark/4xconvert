@@ -58,7 +58,7 @@ import com.sun.net.httpserver.HttpServer;
  */
 public class AbstractEjbTestCase extends AbstractHibernateTestCase {
 
-    public static final int CTGOV_API_MOCK_PORT = (int) (51235 + Math.random() * 1000);
+    public static final int CTGOV_API_MOCK_PORT = (int) (51235 + Math.random() * 10000);
     public static final int SMTP_PORT = (int) (51235 + Math.random() * 10000);
     public static final int TWITTER_MOCK_PORT = (int) (40000 + Math.random() * 10000);
     public static final int GO_USA_GOV_MOCK_PORT = (int) (40000 + Math.random() * 10000);
