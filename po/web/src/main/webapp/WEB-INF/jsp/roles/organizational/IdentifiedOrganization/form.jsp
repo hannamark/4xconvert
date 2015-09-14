@@ -5,6 +5,7 @@
 <s:set name="isCreate" value="role.id == null" />
 <s:set name="isNotCreate" value="role.id != null" />
 <s:if test="%{isCreate}">
+    <c:set var="topic" scope="request" value="createio"/>
     <title>Create <s:text name="identifiedOrganization"/></title>
 </s:if>
 <s:else>

@@ -8,6 +8,7 @@
     <title>Create <s:text name="healthCareFacility"/></title>
 </s:if>
 <s:else>
+    <c:set var="topic" scope="request" value="edithcf"/>
    <c:if test="${fn:length(role.changeRequests) > 0}">
       <title>Edit <s:text name="healthCareFacility"/> - Comparison</title>
    </c:if>

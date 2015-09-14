@@ -8,6 +8,7 @@
     <title>Create <s:text name="clinicalResearchStaff"/></title>
 </s:if>
 <s:else>
+    <c:set var="topic" scope="request" value="editstaff"/>
    <c:if test="${fn:length(role.changeRequests) > 0}">
       <title>Edit <s:text name="clinicalResearchStaff"/> - Comparison</title>
    </c:if>

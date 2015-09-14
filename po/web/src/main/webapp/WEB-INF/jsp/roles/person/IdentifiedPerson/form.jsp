@@ -4,9 +4,11 @@
 <s:set name="isCreate" value="role.id == null" />
 <s:set name="isNotCreate" value="role.id != null" />
 <s:if test="%{isCreate}">
+    <c:set var="topic" scope="request" value="createopi"/>
     <title>Create <s:text name="identifiedPerson"/></title>
 </s:if>
 <s:else>
+    <c:set var="topic" scope="request" value="editopi"/>
    <c:if test="${fn:length(role.changeRequests) > 0}">
       <title>Edit <s:text name="identifiedPerson"/> - Comparison</title>
    </c:if>

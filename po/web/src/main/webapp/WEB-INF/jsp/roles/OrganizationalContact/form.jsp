@@ -10,6 +10,7 @@
     <title>Create <s:text name="organizationalContact"/></title>
 </s:if>
 <s:else>
+    <c:set var="topic" scope="request" value="editcontact"/>
    <c:if test="${fn:length(role.changeRequests) > 0}">
       <title>Edit <s:text name="organizationalContact"/> - Comparison</title>
    </c:if>
