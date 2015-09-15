@@ -43,8 +43,7 @@ public class TrialSearchPerformanceTest extends AbstractRegistrySeleniumTest {
                 "Wake Forest University Health Sciences", 10);
         testSearchByParticipatingSitePerformance(
                 "OHSU Knight Cancer Institute", 8);
-        testSearchByParticipatingSitePerformance("Mayo Clinic Cancer Center",
-                5);
+        testSearchByParticipatingSitePerformance("Mayo Clinic Cancer Center", 5);
         testSearchByParticipatingSitePerformance("Mayo Clinic", 15);
         testSearchByParticipatingSitePerformance("Mayo Clinic in Arizona", 8);
         testSearchByParticipatingSitePerformance(
@@ -87,8 +86,9 @@ public class TrialSearchPerformanceTest extends AbstractRegistrySeleniumTest {
                 .toUpperCase());
         if (!"true".equalsIgnoreCase(System
                 .getProperty("no.duration.assertions")))
-            assertTrue("Average wait time exceeded the given timeout of "
-                    + timeoutSecond, average <= timeoutSecond);
+            assertTrue("Average wait time " + average
+                    + " exceeded the given timeout of " + timeoutSecond,
+                    average <= timeoutSecond);
     }
 
     @SuppressWarnings("deprecation")

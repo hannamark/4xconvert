@@ -52,8 +52,9 @@ public class TrialMilestonePerformanceTest extends AbstractPaSeleniumTest {
                 .toUpperCase());
         if (!"true".equalsIgnoreCase(System
                 .getProperty("no.duration.assertions")))
-            assertTrue("Average wait time exceeded the given timeout of "
-                    + timeoutSecond, average <= timeoutSecond);
+            assertTrue("Average wait time " + average
+                    + " exceeded the given timeout of " + timeoutSecond,
+                    average <= timeoutSecond);
     }
 
     @SuppressWarnings("deprecation")
