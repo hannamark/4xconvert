@@ -61,7 +61,7 @@ import com.opensymphony.xwork2.Preparable;
  * @author Biju Joseph (josephb2)
  * 
  */
-@SuppressWarnings({ "PMD.TooManyMethods" })
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.CyclomaticComplexity" })
 public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         Preparable, ServletRequestAware {
     private static final String NON_RESULT_ABSTRACTOR_LANDING = "nonResultAbstractorLanding";
@@ -254,15 +254,22 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
                      StudyContactDTO searchCriteria = new StudyContactDTO();
                      searchCriteria.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(
                              resultQueryDTO.getStudyProtocolId()));
-                     searchCriteria.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
 
                      searchCriteria.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.DESIGNEE_CONTACT));
                      List<StudyContactDTO>studyDesigneeContactDtos = studyContactService.search(searchCriteria, limit);
 
                      if (CollectionUtils.isNotEmpty(studyDesigneeContactDtos)) {
                          for (StudyContactDTO scDto : studyDesigneeContactDtos) {
+                             FunctionalRoleStatusCode stsCd = CdConverter.convertCdToEnum(
+                                     FunctionalRoleStatusCode.class, scDto.getStatusCode());
+                             if (!FunctionalRoleStatusCode.ACTIVE.equals(stsCd)
+                                     && !FunctionalRoleStatusCode.PENDING.equals(stsCd)) {
+                                 continue;
+                             }
+                             
                              StudyContactWebDTO studyContactWebDTO = new StudyContactWebDTO(scDto);
                              Person person = studyContactWebDTO.getContactPerson();
+                             
                              if (person != null) {
                                  if (studyContactNamesList.length() > 0) {
                                      studyContactNamesList.append("<br>");

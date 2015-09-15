@@ -217,13 +217,18 @@ ServletRequestAware , ServletResponseAware , Preparable {
            LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
             StudyContactDTO searchCriteria = new StudyContactDTO();
             searchCriteria.setStudyProtocolIdentifier(studyProtocolIi);
-            searchCriteria.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
-
+            
             searchCriteria.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.DESIGNEE_CONTACT));
             List<StudyContactDTO>studyDesigneeContactDtos = studyContactService.search(searchCriteria, limit);
          
             if (CollectionUtils.isNotEmpty(studyDesigneeContactDtos)) {
                 for (StudyContactDTO scDto : studyDesigneeContactDtos) {
+                    FunctionalRoleStatusCode stsCd = CdConverter.convertCdToEnum(FunctionalRoleStatusCode.class, 
+                            scDto.getStatusCode());
+                    if (!FunctionalRoleStatusCode.ACTIVE.equals(stsCd)
+                            && !FunctionalRoleStatusCode.PENDING.equals(stsCd)) {
+                        continue;
+                    }
                     designeeContactList.add(new StudyContactWebDTO(scDto));
                 }
             }

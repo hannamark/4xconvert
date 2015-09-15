@@ -60,6 +60,7 @@ fieldset>input[id="actionCompletionDateChangeType"] {
 <script type="text/javascript" charset="utf8"
     src="${scriptPath}/js/DataTables-1.10.4/media/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
+<script type="text/javascript" language="javascript" src="${scriptPath}/js/ajaxHelper.js"></script>
 </head>
 
 <SCRIPT LANGUAGE="JavaScript">
@@ -95,11 +96,8 @@ jQuery(document).ready(function() {
 	
     checkDesignee();
 
+    submitStudyContact('reportStudyContactsForm', 'ajaxResultsReportingContactquery.action');
 });
-
-
-
-
 
 
 addCalendar("Cal1", "Select Date", "actionCompletionDate", "addDiscrepancyForm");
@@ -113,6 +111,7 @@ setDocumentPageUrl("resultsReportingDocumentinput.action?parentPage=trialView",
 		"resultsReportingDocumentedit.action?parentPage=trialView","trialViewdelete.action",
 				"trialViewreviewCtro.action","trialViewreviewCcct.action");
 
+
 </SCRIPT>
 </head>
  <body>
@@ -125,6 +124,10 @@ setDocumentPageUrl("resultsReportingDocumentinput.action?parentPage=trialView",
    
         <s:actionerror/>
         <pa:studyUniqueToken/>
+        <!-- jsp for designee & PIO study contacts -->
+        <div id="studycontacts">
+	       <jsp:include page="/WEB-INF/jsp/administrative/reportingContacts/reportingStudyContactsContent.jsp"/>
+	    </div>
         
          <!-- jsp for trial comparision document -->
         <s:set name="requestUrl" value="trialViewquery.action" />
@@ -137,12 +140,11 @@ setDocumentPageUrl("resultsReportingDocumentinput.action?parentPage=trialView",
          <jsp:include page="/WEB-INF/jsp/administrative/reportingCoverSheet/reportCoverSheetFinalCleanup.jsp"/>             
          
 	</s:form>
-	
 	<!-- jsp for cover sheet -->
 	<jsp:include page="/WEB-INF/jsp/administrative/reportingCoverSheet/reportCoverSheetDisTypeDialog.jsp"/>
-      <jsp:include page="/WEB-INF/jsp/administrative/reportingCoverSheet/reportCoverSheetStudyRecordDialog.jsp"/> 
-         
-          <s:hidden name="parentPage" id="parentPage" value="trialView" />     
+    <jsp:include page="/WEB-INF/jsp/administrative/reportingCoverSheet/reportCoverSheetStudyRecordDialog.jsp"/>
+    
+    <s:hidden name="parentPage" id="parentPage" value="trialView" />     
     
 </div>
 	 

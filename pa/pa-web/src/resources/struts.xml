@@ -825,7 +825,6 @@
          <action name="resultsReportingDocument*" class="gov.nih.nci.pa.action.ResultsReportingDocumentAction" method="{1}">
         
             <result name="success">/WEB-INF/jsp/administrative/reportingTrialDocuments/reportingTrialDocuments.jsp</result>
-            <result name="input">/WEB-INF/jsp/administrative/reportingTrialDocuments/reportingTrialDocumentAdd.jsp</result>
             <result name="error">/WEB-INF/jsp/administrative/reportingTrialDocuments/reportingTrialDocuments.jsp</result>
             <result name="errorDocument">/WEB-INF/jsp/administrative/reportingTrialDocuments/reportingTrialDocumentAdd.jsp</result>
             
@@ -838,6 +837,18 @@
              <result name="error">/WEB-INF/jsp/administrative/reportingCoverSheet/reportingCoverSheet.jsp</result>
              <result name="input">/WEB-INF/jsp/administrative/reportingCoverSheet/reportingCoverSheet.jsp</result>
             
+        </action>
+        
+        <action name="resultsReportingContact*" class="gov.nih.nci.pa.action.ResultsReportingContactsAction" method="{1}">
+            <result name="input">/WEB-INF/jsp/administrative/reportingContacts/reportingStudyContacts.jsp</result>
+            <result name="success">/WEB-INF/jsp/administrative/reportingContacts/reportingStudyContactsContent.jsp</result>
+            <result name="error">/WEB-INF/jsp/administrative/reportingContacts/reportingStudyContactsContent.jsp</result>
+        </action>
+        
+        <action name="ajaxResultsReportingContact*" class="gov.nih.nci.pa.action.ResultsReportingContactsAction" method="{1}">
+            <result name="input">/WEB-INF/jsp/administrative/reportingContacts/reportingStudyContacts.jsp</result>
+            <result name="success">/WEB-INF/jsp/administrative/reportingContacts/reportingStudyContactsContent.jsp</result>
+            <result name="error">/WEB-INF/jsp/administrative/reportingContacts/reportingStudyContactsContent.jsp</result>
         </action>
         
          <!--  PO-9015 Add Data Discrepancies, Record Changes, and Final Record Clean-up sections to the Results Reporting & Tracking – Trial View -->

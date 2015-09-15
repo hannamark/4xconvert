@@ -83,7 +83,6 @@
 package gov.nih.nci.pa.iso.convert;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.domain.StudyContact;
@@ -109,6 +108,8 @@ public class StudyContactConverterTest extends
         bo.setRoleCode(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR);
         bo.setStatusCode(FunctionalRoleStatusCode.PENDING);
         bo.setTitle("title");
+        bo.setPrsUserName("prsName");
+        bo.setComments("comments");
         return bo;
     }
 
@@ -121,6 +122,8 @@ public class StudyContactConverterTest extends
         dto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
         dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
         dto.setTitle(StConverter.convertToSt("title"));
+        dto.setPrsUserName(StConverter.convertToSt("prsName"));
+        dto.setComments(StConverter.convertToSt("comments"));
         return dto;
     }
 
@@ -134,6 +137,8 @@ public class StudyContactConverterTest extends
         assertEquals(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR, bo.getRoleCode());
         assertEquals(FunctionalRoleStatusCode.ACTIVE, bo.getStatusCode());
         assertEquals("title", bo.getTitle());
+        assertEquals("prsName", bo.getPrsUserName());
+        assertEquals("comments", bo.getComments());
     }
 
     @Override
@@ -157,6 +162,8 @@ public class StudyContactConverterTest extends
         assertEquals(FunctionalRoleStatusCode.PENDING.getCode(), dto.getStatusCode().getCode());
         assertEquals("2.16.840.1.113883.3.26.4.5.1", dto.getIdentifier().getRoot());
         assertEquals("title", dto.getTitle().getValue());
+        assertEquals("prsName", dto.getPrsUserName().getValue());
+        assertEquals("comments", dto.getComments().getValue());
     }
 
 }

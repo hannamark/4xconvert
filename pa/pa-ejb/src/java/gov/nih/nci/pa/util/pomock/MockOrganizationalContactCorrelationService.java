@@ -106,7 +106,12 @@ public class MockOrganizationalContactCorrelationService extends
      */
     @Override
     public List<OrganizationalContactDTO> search(OrganizationalContactDTO arg0) {
-        throw new UnsupportedOperationException();
+        try {
+            return search(arg0, new LimitOffset(1, 0));
+        } catch (TooManyResultsException e) {
+            //nothing to do
+        }
+        return null;
     }
 
     /*
@@ -119,7 +124,16 @@ public class MockOrganizationalContactCorrelationService extends
     @Override
     public List<OrganizationalContactDTO> search(OrganizationalContactDTO arg0,
             LimitOffset arg1) throws TooManyResultsException {
-        throw new UnsupportedOperationException();
+        List<OrganizationalContactDTO> list = new ArrayList<OrganizationalContactDTO>();
+        for (OrganizationalContactDTO dto : getRolesInStore(OrganizationalContactDTO.class)) {
+            if (arg0.getPlayerIdentifier().getExtension().equalsIgnoreCase(
+                    dto.getPlayerIdentifier().getExtension())
+                 && arg0.getScoperIdentifier().getExtension().equalsIgnoreCase(
+                         dto.getScoperIdentifier().getExtension())) {
+                list.add(dto);
+            }
+        }
+        return list;
     }
 
     /*

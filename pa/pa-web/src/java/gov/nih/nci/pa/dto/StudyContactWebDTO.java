@@ -101,6 +101,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
  * DTO class for displaying study contacts as a list.
@@ -110,15 +113,20 @@ import org.apache.commons.collections.CollectionUtils;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
-@SuppressWarnings({ "PMD.TooManyFields", "PMD.TooManyMethods", "PMD.ExcessiveMethodLength"
+ @SuppressWarnings({ "PMD.TooManyFields", "PMD.TooManyMethods", "PMD.ExcessiveMethodLength"
     , "PMD.SignatureDeclareThrowsException" , "PMD.SimpleDateFormatNeedsLocale" , "PMD.ExcessiveClassLength"
     , "PMD.CyclomaticComplexity" })
 public class StudyContactWebDTO implements Serializable {
    
+    /**
+     * 
+     */
+    private static final String PO_ORG_CNTCT_TYPE_SITE = "Site";
+
     private static final long serialVersionUID = 399744343915434679L;
     
     private Long id;
-    private Long orgContactId;
+    private String orgContactId;
     private String prsUserName;
     private String email;
     private String phone;
@@ -129,15 +137,25 @@ public class StudyContactWebDTO implements Serializable {
     
     private String selPoOrgId;
     private String selPoPrsnId;
+    
+    private String editedPoOrgId;
+    private String editedPoPrsnId;
+    
+    private String editedOrgNm;
+    private String editedPrsnNm;
 
-    private Organization contactOrg;
-    private Person contactPerson;
+    private Organization contactOrg = new Organization();
+    private Person contactPerson = new Person();
     
     private boolean updated = false;
     private boolean deleted = false;
- 
     
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
+    
+    private PABaseCorrelation<PAOrganizationalContactDTO , OrganizationalContactDTO , OrganizationalContact ,
+    OrganizationalContactConverter> paBaseCorrltn = new PABaseCorrelation<PAOrganizationalContactDTO ,
+    OrganizationalContactDTO , OrganizationalContact , OrganizationalContactConverter>(
+       PAOrganizationalContactDTO.class, OrganizationalContact.class, OrganizationalContactConverter.class);
 
     /**
      * default constructor
@@ -151,46 +169,59 @@ public class StudyContactWebDTO implements Serializable {
      * @throws PAException  PAException
      */
     public StudyContactWebDTO(StudyContactDTO dto) throws PAException {
+        populateFrom(dto);       
+    }
+
+    /**
+     * Populates attributes with values from StudyContactDTO
+     * @param dto StudyContactDTO
+     * @throws PAException if any error
+     */
+    public void populateFrom(StudyContactDTO dto) throws PAException {
         this.id = IiConverter.convertToLong(dto.getIdentifier());
-        this.orgContactId = IiConverter.convertToLong(dto.getOrganizationalContactIi());
+        this.orgContactId = IiConverter.convertToString(dto.getOrganizationalContactIi());
         this.prsUserName = StConverter.convertToString(dto.getPrsUserName());
-        this.comments = StConverter.convertToString(dto.getPrsUserName());
+        this.comments = StConverter.convertToString(dto.getComments());
         this.roleCode = CdConverter.convertCdToString(dto.getRoleCode());
         this.studyProtocolId = IiConverter.convertToLong(dto.getStudyProtocolIdentifier());
-        OrganizationalContact oc = null;
         
+        OrganizationalContact oc = paServiceUtils.getOrganizationalContact(orgContactId.toString());
         
-        oc = paServiceUtils.getOrganizationalContact(
-                orgContactId.toString());
-        
-        
-        if (oc != null) {
+        if (oc.getOrganization() != null) {
             contactOrg = oc.getOrganization();
-            contactPerson = oc.getPerson();    
+            editedPoOrgId = contactOrg.getIdentifier();
+            selPoOrgId = contactOrg.getIdentifier();
+            editedOrgNm = contactOrg.getName();
+        } else {
+            contactOrg = new Organization();
         }
         
+        if (oc.getPerson() != null) {
+            contactPerson = oc.getPerson();
+            editedPoPrsnId = contactPerson.getIdentifier();
+            selPoPrsnId = contactPerson.getIdentifier();
+            editedPrsnNm = contactPerson.getFullName();
+        } else {
+            contactPerson = new Person();
+        }
         
-        List<String> emailsLst = DSetConverter.getTelByType(
+        List<String> emailsLst = DSetConverter.convertDSetToList(
                 dto.getTelecomAddresses(), DSetConverter.TYPE_EMAIL);
         if (CollectionUtils.isNotEmpty(emailsLst)) {
             this.email = emailsLst.get(0);
         }
         
-        List<String> phoneLst = DSetConverter.getTelByType(
+        List<String> phoneLst = DSetConverter.convertDSetToList(
                 dto.getTelecomAddresses(), DSetConverter.TYPE_PHONE);
         if (CollectionUtils.isNotEmpty(phoneLst)) {
-            String[] phoneArr = phoneLst.get(0).split("X");
-            this.phone = phoneArr[0];
-            if (phoneArr.length > 1) {
-                this.ext = phoneArr[1];
-            }
-        }       
+            setPhoneWithExt(phoneLst.get(0));
+        }
     }
     
     /**
      * converts the study contact web dto to StudyContactDTO
-     * @param studyContactDTO studyContactDTO
-     * @return StudyContactDTO the iso object
+     * @param studyContactDTO - StudyContactDTO the iso object 
+     * @return StudyContactDTO - StudyContactDTO the iso object 
      * @throws PAException error if any
      */
     public StudyContactDTO convertToStudyContactDto(StudyContactDTO studyContactDTO) throws PAException {
@@ -203,18 +234,17 @@ public class StudyContactWebDTO implements Serializable {
         scDTO.setPrsUserName(StConverter.convertToSt(this.prsUserName));
         scDTO.setComments(StConverter.convertToSt(this.comments));
         StudyContactRoleCode scRoleCode = StudyContactRoleCode.getByCode(this.roleCode);
-        scDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
+        scDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
         scDTO.setRoleCode(CdConverter.convertToCd(scRoleCode));
         
-        PABaseCorrelation<PAOrganizationalContactDTO , OrganizationalContactDTO , OrganizationalContact ,
-        OrganizationalContactConverter> oc = new PABaseCorrelation<PAOrganizationalContactDTO ,
-        OrganizationalContactDTO , OrganizationalContact , OrganizationalContactConverter>(
-           PAOrganizationalContactDTO.class, OrganizationalContact.class, OrganizationalContactConverter.class);
         
         PAOrganizationalContactDTO orgContacPaDto = new PAOrganizationalContactDTO();
         //Leaving it default(prg-M, Pers-Not M) for others
         if (StudyContactRoleCode.PIO_CONTACT.equals(scRoleCode)) {
             orgContacPaDto.setOrganizationMandatory(false);
+            orgContacPaDto.setPersonMandatory(true);
+        } else {
+            orgContacPaDto.setOrganizationMandatory(true);
             orgContacPaDto.setPersonMandatory(true);
         }
         
@@ -228,23 +258,57 @@ public class StudyContactWebDTO implements Serializable {
             orgContacPaDto.setIdentifier(IiConverter.convertToIi(orgContactId));
         }
         
-        Long ocId = oc.create(orgContacPaDto);
+        orgContacPaDto.setTypeCode(PO_ORG_CNTCT_TYPE_SITE);
+        Long ocId = paBaseCorrltn.create(orgContacPaDto);
         
         scDTO.setOrganizationalContactIi(IiConverter.convertToIi(ocId));
         scDTO.setClinicalResearchStaffIi(IiConverter.convertToIi(""));
         
         scDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(studyProtocolId));
         List<String> phones = new ArrayList<String>();
-        phones.add(this.phone);
+        String phExtStr = getPhoneWithExt();
+        phones.add(phExtStr);
+            
         List<String> emails = new ArrayList<String>();
         emails.add(this.email);
         DSet<Tel> dsetList = null;
-        dsetList =  DSetConverter.convertListToDSet(phones, "PHONE", dsetList);
-        dsetList =  DSetConverter.convertListToDSet(emails, "EMAIL", dsetList);
+        dsetList =  DSetConverter.convertListToDSet(phones, DSetConverter.TYPE_PHONE, dsetList);
+        dsetList =  DSetConverter.convertListToDSet(emails, DSetConverter.TYPE_EMAIL, dsetList);
         scDTO.setTelecomAddresses(dsetList);
         
         return scDTO;
     }
+    
+    
+    @Override
+    public int hashCode() {
+        HashCodeBuilder hcb = new HashCodeBuilder();
+        hcb.append(id)
+        .append(studyProtocolId)
+        .append(selPoOrgId)
+        .append(selPoPrsnId)
+        .append(email)
+        .append(phone);
+        return hcb.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || !(obj instanceof StudyContactWebDTO)) {
+            return false;
+        }
+        StudyContactWebDTO scWebDto = (StudyContactWebDTO) obj;
+        EqualsBuilder eb = new EqualsBuilder();
+        eb
+        .append(studyProtocolId, scWebDto.getStudyProtocolId())
+        .append(selPoOrgId, scWebDto.getSelPoOrgId())
+        .append(selPoPrsnId, scWebDto.getSelPoPrsnId())
+        .append(email, scWebDto.getEmail())
+        .append(phone, scWebDto.getPhone());
+       
+        return eb.isEquals();
+    }
+    
 
     /**
      * @return the id
@@ -263,14 +327,14 @@ public class StudyContactWebDTO implements Serializable {
     /**
      * @return the orgContactId
      */
-    public Long getOrgContactId() {
+    public String getOrgContactId() {
         return orgContactId;
     }
 
     /**
      * @param orgContactId the orgContactId to set
      */
-    public void setOrgContactId(Long orgContactId) {
+    public void setOrgContactId(String orgContactId) {
         this.orgContactId = orgContactId;
     }
 
@@ -373,6 +437,62 @@ public class StudyContactWebDTO implements Serializable {
     }
 
     /**
+     * @return the editedPoOrgId
+     */
+    public String getEditedPoOrgId() {
+        return editedPoOrgId;
+    }
+
+    /**
+     * @param editedPoOrgId the editedPoOrgId to set
+     */
+    public void setEditedPoOrgId(String editedPoOrgId) {
+        this.editedPoOrgId = editedPoOrgId;
+    }
+
+    /**
+     * @return the editedPoPrsnId
+     */
+    public String getEditedPoPrsnId() {
+        return editedPoPrsnId;
+    }
+
+    /**
+     * @param editedPoPrsnId the editedPoPrsnId to set
+     */
+    public void setEditedPoPrsnId(String editedPoPrsnId) {
+        this.editedPoPrsnId = editedPoPrsnId;
+    }
+
+    /**
+     * @return the editedOrgNm
+     */
+    public String getEditedOrgNm() {
+        return editedOrgNm;
+    }
+
+    /**
+     * @param editedOrgNm the editedOrgNm to set
+     */
+    public void setEditedOrgNm(String editedOrgNm) {
+        this.editedOrgNm = editedOrgNm;
+    }
+
+    /**
+     * @return the editedPrsnNm
+     */
+    public String getEditedPrsnNm() {
+        return editedPrsnNm;
+    }
+
+    /**
+     * @param editedPrsnNm the editedPrsnNm to set
+     */
+    public void setEditedPrsnNm(String editedPrsnNm) {
+        this.editedPrsnNm = editedPrsnNm;
+    }
+
+    /**
      * @return the contactOrg
      */
     public Organization getContactOrg() {
@@ -455,20 +575,45 @@ public class StudyContactWebDTO implements Serializable {
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
-
+    
     /**
-     * @return paServiceUtils
+     * @return the phoneWithExt
      */
-    public PAServiceUtils getPaServiceUtils() {
-        return paServiceUtils;
+    public String getPhoneWithExt() {
+        return StringUtils.isNotEmpty(this.ext) ? this.phone + "X" + this.ext : this.phone;
     }
 
     /**
-     * @param paServiceUtils paServiceUtils
+     * @param phoneWithExt the phoneWithExt to set
+     */
+    public void setPhoneWithExt(String phoneWithExt) {
+       if (StringUtils.isNotEmpty(phoneWithExt)) {
+           String[] phoneArr = phoneWithExt.split("X");
+           this.phone = phoneArr[0];
+           if (phoneArr.length > 1) {
+               this.ext = phoneArr[1];
+           }
+       }
+    }
+
+    /**
+     * @param paServiceUtils the paServiceUtils to set
      */
     public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
         this.paServiceUtils = paServiceUtils;
     }
+
+    /**
+     * @param paBaseCorrltn the paBaseCorrltn to set
+     */
+    public void setPaBaseCorrltn(
+            PABaseCorrelation<PAOrganizationalContactDTO,
+            OrganizationalContactDTO, OrganizationalContact,
+            OrganizationalContactConverter> paBaseCorrltn) {
+        this.paBaseCorrltn = paBaseCorrltn;
+    }
+    
+
 }
 
 
