@@ -38,7 +38,10 @@
         <copy file="${basedir}/../reg-web/src/resources/RegWebTooltips.properties" todir="${pa.target.dir}/dist"/>
 		<copy file="${accrual.dir}/ear/target/accrual.ear" todir="${accrual.target.dir}/dist"/>
         <copy file="${accrual.dir}/accrual-web/src/resources/AccrualWebTooltips.properties" todir="${accrual.target.dir}/dist"/>
-        <copy file="./server-config/jboss_conf_batch.cli" todir="${pa.target.dir}/dist" overwrite="true">
+        <copy todir="${pa.target.dir}/dist" overwrite="true">
+            <fileset dir="./server-config">
+            	   <exclude name="**/*.zip"/>
+        	</fileset>
             <filterset>
                 <filter token="grid.security.jndi.principal" value="${grid.security.jndi.principal}"/>
                 <filter token="grid.security.jndi.credentials" value="${grid.security.jndi.credentials}"/>
@@ -49,6 +52,7 @@
                 <filter token="db.username" value="${db.username}"/>
                 <filter token="db.password" value="${db.password}"/>
                 <filter token="log.level" value="${log.level}"/>
+            	<filter token="jboss.port" value="${jboss.port}"/>
             </filterset>
         </copy>
     </target>
