@@ -134,7 +134,6 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
      */
     @Test       
     public void testResultDashboardHomePage() throws Exception{
-      
         assertTrue(selenium.isTextPresent("Section 801 Indicator:"));
         assertTrue(selenium.isTextPresent("Primary Completion Date:"));
         assertTrue(selenium.isTextPresent("From:"));
@@ -149,6 +148,11 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isTextPresent(testTrials.get(2).nciID));
         assertFalse(selenium.isTextPresent(testTrials.get(3).nciID));
         assertFalse(selenium.isTextPresent(testTrials.get(4).nciID));
+        assertTrue(selenium.isTextPresent(testTrials.get(0).nctID));
+        assertTrue(selenium.isTextPresent(testTrials.get(1).nctID));
+        assertTrue(selenium.isTextPresent(testTrials.get(2).nctID));
+        assertFalse(selenium.isTextPresent(testTrials.get(3).nctID));
+        assertFalse(selenium.isTextPresent(testTrials.get(4).nctID));
         assertTrue(selenium.isTextPresent("Doe, John"));
         assertTrue(selenium.isTextPresent("Results Reporting Progress"));
         assertTrue(selenium.isTextPresent("Add/Update Designee or PIO Contact"));
@@ -180,6 +184,11 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isTextPresent(testTrials.get(2).nciID));
         assertFalse(selenium.isTextPresent(testTrials.get(3).nciID));
         assertFalse(selenium.isTextPresent(testTrials.get(4).nciID));
+        assertTrue(selenium.isTextPresent(testTrials.get(0).nctID));
+        assertTrue(selenium.isTextPresent(testTrials.get(1).nctID));
+        assertTrue(selenium.isTextPresent(testTrials.get(2).nctID));
+        assertFalse(selenium.isTextPresent(testTrials.get(3).nctID));
+        assertFalse(selenium.isTextPresent(testTrials.get(4).nctID));
     }
     
     @Test       
@@ -316,7 +325,7 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         clickAndWaitAjax("//*[@id='"+searchBtnId+"']");
     }
     
-    private void registerTestTrials()
+     private void registerTestTrials()
             throws SQLException {
         testTrials = new ArrayList<AbstractPaSeleniumTest.TrialInfo>();
         TrialInfo trial = createSubmittedTrial();
@@ -325,7 +334,10 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         setPCD(trial, "2015-01-01", ActualAnticipatedTypeCode.ANTICIPATED);
         addDocument(trial, "COMPARISON", "Protocol.doc");
         setSeciont801Indicator(trial, true);
+        trial.nctID="NCT00001";
+        addNctIdentifier(trial, trial.nctID);
         testTrials.add(trial);
+        
         trial = createSubmittedTrial();
         deleteContact();
         addDesginee(trial);
@@ -333,22 +345,30 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         addDWS(trial, "ABSTRACTION_VERIFIED_NORESPONSE");
         setPCD(trial, "2015-12-31", ActualAnticipatedTypeCode.ACTUAL);
         setSeciont801Indicator(trial, true);
+        trial.nctID="NCT00002";
+        addNctIdentifier(trial, trial.nctID);
         testTrials.add(trial);
+        
         trial = createSubmittedTrial();
         addSponsor(trial, "National Cancer Institute");
         addDWS(trial, "VERIFICATION_PENDING");
         setPCD(trial, "2016-01-01", ActualAnticipatedTypeCode.ACTUAL);
         setSeciont801Indicator(trial, false);
+        trial.nctID="NCT00003";
+        addNctIdentifier(trial, trial.nctID);
         testTrials.add(trial);        
         
         trial = createSubmittedTrial();
         addSponsor(trial, "National Cancer Institute");
+        trial.nctID="NCT00004";
+        addNctIdentifier(trial, trial.nctID);
         testTrials.add(trial);
         
         trial = createSubmittedTrial();
         addSponsor(trial, "Cancer Therapy Evaluation Program");
         addDWS(trial, "VERIFICATION_PENDING");
+        trial.nctID="NCT00005";
+        addNctIdentifier(trial, trial.nctID);
         testTrials.add(trial);
     }
-    
 }
