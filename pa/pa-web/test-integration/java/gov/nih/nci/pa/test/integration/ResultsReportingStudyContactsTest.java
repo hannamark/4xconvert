@@ -58,10 +58,13 @@ public class ResultsReportingStudyContactsTest  extends AbstractPaSeleniumTest {
         waitForPageToLoad();
         waitForTextToAppear(By.xpath("//table[@id='dscWeb']/tbody/tr[2]/td[4]"), "newjdoe02@some.com", 5);
         
+        selenium.click("//table[@id='dscWeb']/tbody/tr[1]/td[7]//input[@type='checkbox']");
+        
         selenium.click("//a[@id='saveSC']");
         waitForPageToLoad();
         pause(1000);
         assertTrue(selenium.isTextPresent("Saved final changes to study contacts successfully"));
+        assertFalse(selenium.isElementPresent("//table[@id='pscWeb']/tbody/tr[1]"));
     }
     
     @SuppressWarnings("deprecation")
@@ -97,11 +100,14 @@ public class ResultsReportingStudyContactsTest  extends AbstractPaSeleniumTest {
         waitForPageToLoad();
         waitForTextToAppear(By.xpath("//table[@id='pscWeb']/tbody/tr[2]/td[2]"), "newjdoe02@some.com", 5);
         
+        selenium.click("//table[@id='pscWeb']/tbody/tr[1]/td[5]//input[@type='checkbox']");
+        
         selenium.click("//a[@id='saveSC']");
         pause(1000);
         waitForPageToLoad();
         pause(1000);
         assertTrue(selenium.isTextPresent("Saved final changes to study contacts successfully"));
+        assertFalse(selenium.isElementPresent("//table[@id='pscWeb']/tbody/tr[1]"));
     }
     
     

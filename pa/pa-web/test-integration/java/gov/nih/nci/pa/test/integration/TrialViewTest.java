@@ -10,13 +10,14 @@ import org.apache.commons.lang.SystemUtils;
 import org.junit.Test;
 
 
-public class TrialViewTest extends AbstractPaSeleniumTest {
+public class TrialViewTest extends ResultsReportingStudyContactsTest /* AbstractPaSeleniumTest */ {
 
     protected static final int OP_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 15000
             : 2000;
-    String baseUrl=null;
+    //String baseUrl=null;
     
   public TrialViewTest() {
+      super();
       baseUrl ="/pa/protected/trialViewquery.action?studyProtocolId=";
   }
    

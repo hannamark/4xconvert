@@ -105,7 +105,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TrialOnHoldTest.class, ResultsReportingDocumentTest.class,
         UnRejectTrialTest.class, ResultsReportingCoversheetTest.class,
         ResultsDashboardTest.class, TrialViewTest.class,
-        NCISpecificInformationTest.class,
+        ResultsReportingStudyContactsTest.class, NCISpecificInformationTest.class,
         ResultsReportingActionsTakenTest.class, TwitterTest.class,
         DashboardMenuTest.class, RssOwnershipTest.class,
         ManageUserGroupsTest.class
