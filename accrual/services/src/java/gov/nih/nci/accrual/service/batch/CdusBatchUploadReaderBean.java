@@ -828,7 +828,14 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         }
         
         body = body.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
-        body = body.replace("${trialIdentifiers}", PaServiceLocator.getInstance().getMailManagerService().getStudyIdentifiersHTMLTable(result.getNciIdentifier()));
+        body = body
+                .replace(
+                        "${trialIdentifiers}",
+                        StringUtils.defaultString(PaServiceLocator
+                                .getInstance()
+                                .getMailManagerService()
+                                .getStudyIdentifiersHTMLTable(
+                                        result.getNciIdentifier())));
         subject = subject.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
         sendEmail(batchFile.getSubmitter().getEmailAddress(), subject, body);
     }
