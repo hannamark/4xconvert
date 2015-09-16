@@ -654,6 +654,9 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
            , DocumentTypeCode type) throws PAException {
         Session session = PaHibernateUtil.getCurrentSession();
         Map<Long, DocumentDTO> resultSet = new HashMap<Long, DocumentDTO>();
+        if (CollectionUtils.isEmpty(listOfTrialIDs)) {
+            return resultSet;    //PO-9245
+        }
 
         String hql = "from Document as doc where doc.studyProtocol.id in (:ids) "
                + "and doc.activeIndicator=true and doc.typeCode=:type";

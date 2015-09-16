@@ -323,15 +323,37 @@ public class DocumentServiceBeanTest extends AbstractHibernateTestCase {
     
     @Test
     public void testGetDocumentByIDListAndType() throws PAException {
+        //Given 2 protocol-ids
         List<Long> listOfTrialIDs = new ArrayList<Long>();
         listOfTrialIDs.add(1L);
         listOfTrialIDs.add(2L);
+
+        //when I ask for protocol-document
         Map<Long, DocumentDTO> map = remoteEjb.getDocumentByIDListAndType(listOfTrialIDs,
              DocumentTypeCode.PROTOCOL_DOCUMENT);
+
+        //I get a valid index having protocols
         assertTrue(map.size() > 0);
-        assertEquals(DocumentTypeCode.PROTOCOL_DOCUMENT.getCode(), 
+        assertEquals(DocumentTypeCode.PROTOCOL_DOCUMENT.getCode(),
              map.get(1L).getTypeCode().getCode());
         assertEquals("1", IiConverter.convertToLong(map.get(1L).getStudyProtocolIdentifier()).toString());
+
+        //And when I supply empty protocol-ids
+        Map<Long, DocumentDTO> map2 = remoteEjb.getDocumentByIDListAndType( new ArrayList<Long>(),
+                DocumentTypeCode.PROTOCOL_DOCUMENT);
+
+        //I must get empty index map
+        assertTrue(map2.isEmpty());
+
+
+        //And when I supply null protocol-ids
+        listOfTrialIDs.clear();
+        Map<Long, DocumentDTO> map3 = remoteEjb.getDocumentByIDListAndType(null,
+                DocumentTypeCode.PROTOCOL_DOCUMENT);
+
+        //I must get empty index map
+        assertTrue(map3.isEmpty());
+
     }
     
     @Test
