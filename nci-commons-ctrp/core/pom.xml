@@ -4,12 +4,12 @@
     <parent>
         <groupId>gov.nih.nci.coppa</groupId>
         <artifactId>nci-commons-ctrp</artifactId>
-        <version>1.4.14-SNAPSHOT</version>
+        <version>1.4.13</version>
     </parent>
 
     <artifactId>nci-commons-ctrp-core</artifactId>
     <packaging>jar</packaging>
-    <version>1.4.14-SNAPSHOT</version>
+    <version>1.4.13</version>
     <name>nci-commons-ctrp-core</name>
     <url>../../core/target/site/</url>
 
