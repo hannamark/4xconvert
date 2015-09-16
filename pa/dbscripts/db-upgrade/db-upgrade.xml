@@ -1964,4 +1964,12 @@
        <comment>Removing Abstractor security group.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9185.sql"/>
     </changeSet>
+    <changeSet id="PO-7751-1" author="lagarwal">       
+       <comment>Added pa_properties entries to hold email template.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-7751-1.sql"/>
+    </changeSet>
+    <changeSet id="PO-7751-2" author="lagarwal">       
+       <comment>Updated pa_properties email templates.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-7751-2.sql"/>
+    </changeSet>
 </databaseChangeLog>

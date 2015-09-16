@@ -530,6 +530,14 @@ public interface MailManagerService {
             throws PAException;
     
     /**
+     * Gets all the identifiers as HTML string for a given study protocol ID
+     * @param nciID nci identifier
+     * @return String HTML template for the replaced identifiers
+     * @throws PAException when there are error 
+     */
+    String getStudyIdentifiersHTMLTable(String nciID) throws PAException;
+    
+    /**
      * An email message
      * @author gunnikrishnan
      */

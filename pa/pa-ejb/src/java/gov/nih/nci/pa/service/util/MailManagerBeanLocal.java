@@ -99,6 +99,7 @@ import gov.nih.nci.pa.domain.StudyNotes;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRecordChange;
+import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.OpOutcomeCode;
@@ -121,6 +122,7 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.io.BufferedOutputStream;
@@ -266,7 +268,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
     private static final String FAILURES = "${failures}";
     private static final String N_VALUE = "${n_value}";
     private static final String YES_VAL = "YES";
-    private static final String NO_VAL = "NO";   
+    private static final String NO_VAL = "NO";
+    private static final String TRIAL_IDENTIFIERS = "${trialIdentifiers}";
     
     @EJB
     private ProtocolQueryServiceLocal protocolQueryService;
@@ -281,7 +284,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
     @EJB
     private DocumentWorkflowStatusServiceLocal docWrkflStatusSrv;
     @EJB
-    private StudySiteServiceLocal studySiteService;
+    private StudySiteServiceLocal studySiteService;    
     
     private final ExecutorService mailDeliveryExecutor = Executors
             .newSingleThreadExecutor();
@@ -743,18 +746,43 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
                                                     "\r\n")));
         } else {
             mailBody = mailBody.replace(ERRORS, "");
-        }
+        }        
         sendMailWithHtmlBody(user.getEmailAddress(), mailSubject, mailBody);
         List<String> trialList = new ArrayList<String>();
         trialList.add(spDTO.getNciIdentifier());
         sendCTROWarningEmail(spDTO.getLastCreated().getUserLastCreated(), spDTO.getSubmitterOrgName(),
              "CreateServiceWarning", trialList);
     }
+    
+    /**
+     * Returns a identifier header as per the FTL defined 
+     * @param spDTO
+     * @return String identifiers
+     * @throws PAException
+     */
+    String getStudyIdentifiers(StudyProtocolQueryDTO spDTO) throws PAException {
+        String headerIdentifiers = "";
+        try {
+            Template bodyFtl = cfg
+                    .getTemplate("trial.identifiers.header");
+        
+            Map<String, Object> root = new HashMap<String, Object>();
+            root.put("spDTO", spDTO);        
+        
+            StringWriter body = new StringWriter();
+            bodyFtl.process(root, body);
+            headerIdentifiers = body.toString();
+        } catch (IOException | TemplateException e) {
+            LOG.error(e, e);
+        }
+        return headerIdentifiers;
+    }
+    
     /**
      * Common Mail Body replacements.
      * @param sp
      * @param mailBody
-     * @return
+     * @return    
      */
     String commonMailBodyReplacements(StudyProtocolQueryDTO spDTO, String mailBody) throws PAException {
         if (mailBody == null || spDTO == null) {
@@ -762,6 +790,10 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
             throw new PAException("Can't send email with blank data.");
         }
         String body = mailBody;
+        String identifiers = getStudyIdentifiers(spDTO); 
+        if (StringUtils.isNotBlank(identifiers)) {
+            body = body.replace(TRIAL_IDENTIFIERS, identifiers);
+        }                
         body = body.replace(TRIAL_TITLE, spDTO.getOfficialTitle());
         body = body.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
         if (spDTO.getLeadOrganizationPOId() != null) {
@@ -879,7 +911,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
         mailBody = mailBody.replace(AMENDMENT_DATE, getFormatedDate(spDTO.getAmendmentDate()));
         String mailSubject = lookUpTableService.getPropertyValue("trial.amend.accept.subject");
         mailSubject = commonMailSubjectReplacements(spDTO, mailSubject);
-        sendEmailToAllTrialOwners(spDTO, mailSubject, mailBody, false);
+        sendEmailToAllTrialOwners(spDTO, mailSubject, mailBody, false);    
+
     }
 
     /**
@@ -936,7 +969,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
         
         String mailSubject = lookUpTableService.getPropertyValue("trial.onhold.reminder.subject");
         mailSubject = commonMailSubjectReplacements(spDTO, mailSubject);
-        String mailBody = prepareOnHoldMailBody(onhold, deadline, spDTO, true);
+        String mailBody = prepareOnHoldMailBody(onhold, deadline, spDTO, true);        
         return sendEmailToAllTrialOwners(spDTO, mailSubject, mailBody, true);
     }
     
@@ -1015,7 +1048,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
     private String prepareOnHoldMailBody(StudyOnhold onhold, Date deadline,
             StudyProtocolQueryDTO spDTO, boolean reminderMail)
             throws PAException {
-        String mailBody = "";
+        String mailBody = "";        
         if (reminderMail) {
             mailBody = lookUpTableService
                     .getPropertyValue("trial.onhold.reminder.body");
@@ -1184,6 +1217,10 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
             RegistryUser registryUser = registryUserService.getUser(csmUser.getLoginName());
 
             String body = lookUpTableService.getPropertyValue("CDE_MARKER_REQUEST_BODY");
+            String identifiers = getStudyIdentifiers(spDTO); 
+            if (StringUtils.isNotBlank(identifiers)) {
+                body = body.replace(TRIAL_IDENTIFIERS, identifiers);
+            }
             body = body.replace(CURRENT_DATE, getFormatedCurrentDate());
             body = body.replace("${trialIdentifier}", spDTO.getNciIdentifier());
             body = body.replace("${markerName}", StConverter.convertToString(marker.getName()));
@@ -1911,6 +1948,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
                 .getPropertyValue("trial.ownership.add.email.subject");
 
         sendTrialOwnershipChangeEmail(userID, trialID, mailBody, mailSubject);
+        
+        
     }
 
     /**
@@ -2365,7 +2404,10 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
 
             StudyProtocolQueryDTO trial = protocolQueryService
                     .getTrialSummaryByStudyProtocolId(IiConverter
-                            .convertToLong(data.getStudyProtocolID()));
+                            .convertToLong(data.getStudyProtocolID()));            
+            
+            String identifiers = getStudyIdentifiers(trial); 
+            
             String date = getFormatedDate(new Date());
             Collection<RegistryUser> recipients = buildTrialOwnerAndSubmitterList(
                     trial, true);
@@ -2376,6 +2418,10 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
                 root.put("date", date);
                 root.put("data", data);
                 root.put("recipient", recipient);
+                
+                if (StringUtils.isNotBlank(identifiers)) {
+                    root.put("trialIdentifiers", identifiers);
+                }
 
                 StringWriter subject = new StringWriter();
                 StringWriter body = new StringWriter();
@@ -2855,6 +2901,38 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
         mm.setSendDate(m.getSentDate());
         mm.setSubject(m.getSubject());
         return mm;
+    }
+
+
+    /**
+     * Takes a study protocol id and returns the HTML template of all the identifiers
+     * @param nciId nci identifier     
+     * @return String HTML template of identifiers
+     * @throws PAException ex  
+     */
+    @Override
+    public String getStudyIdentifiersHTMLTable(String nciId) throws PAException {
+        if (StringUtils.isBlank(nciId)) {
+            return "";
+        }
+        StudyProtocolQueryCriteria spqCriteria = new StudyProtocolQueryCriteria();
+        spqCriteria.setNciIdentifier(nciId);        
+        List<StudyProtocolQueryDTO> list;
+        try {
+            list = PaRegistry.getCachingProtocolQueryService().getStudyProtocolByCriteria(spqCriteria);            
+        } catch (PAException e) {
+            LOG.error(e, e);
+            return "";
+        }
+        
+        StudyProtocolQueryDTO spDTO = null;
+        
+        if (list.size() > 0) {
+            spDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(list.get(0).getStudyProtocolId());    
+        } else {
+            return "";
+        }                
+        return getStudyIdentifiers(spDTO);
     }
     
     

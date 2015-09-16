@@ -82,6 +82,40 @@
  */
 package gov.nih.nci.accrual.service.batch;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
+import javax.ejb.EJB;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.log4j.Logger;
+import org.hibernate.Session;
+
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
@@ -123,45 +157,10 @@ import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
-import javax.ejb.EJB;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.Status;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateFormatUtils;
-import org.apache.log4j.Logger;
-import org.hibernate.Session;
 
 /**
  * This class read CSV file and validates the input.
@@ -207,8 +206,8 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     private static CacheManager cacheManager;
     private static final String DISEASE_CACHE_KEY = "BATCH_DISEASE_CACHE_KEY";
     private static final int CACHE_MAX_ELEMENTS = 500;
-    private static final long CACHE_TIME = 43200;
-
+    private static final long CACHE_TIME = 43200;    
+    
     private Cache getDiseaseCache() {
         if (cacheManager == null || cacheManager.getStatus() != Status.STATUS_ALIVE) {
             cacheManager = CacheManager.create();
@@ -682,7 +681,8 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
           saDTO.setDiseaseIdentifier((Ii) element.getValue());
       }
       return element;
-   }
+   }  
+   
 
     /**
      * {@inheritDoc}
@@ -698,12 +698,12 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         body = body.replace("${CurrentDate}", getFormatedCurrentDate());
         
         if (!result.isPassedValidation()) {           
-            StringBuffer numberedErrors = setErrorsInEmail(result);
+            StringBuffer numberedErrors = setErrorsInEmail(result);            
             body = body.replace(FILE_NAME, result.getFileName());
             body = body.replace("${errors}", numberedErrors.toString().replace("\n", "<br/>"));
             if (result.getNciIdentifier() == null) {
-                result.setNciIdentifier("");
-            }
+                result.setNciIdentifier("");                
+            } 
             body = body.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
             subj = subj.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
         }
@@ -828,6 +828,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         }
         
         body = body.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
+        body = body.replace("${trialIdentifiers}", PaServiceLocator.getInstance().getMailManagerService().getStudyIdentifiersHTMLTable(result.getNciIdentifier()));
         subject = subject.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
         sendEmail(batchFile.getSubmitter().getEmailAddress(), subject, body);
     }

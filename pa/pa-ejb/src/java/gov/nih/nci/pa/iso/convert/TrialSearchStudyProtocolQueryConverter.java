@@ -181,6 +181,16 @@ public class TrialSearchStudyProtocolQueryConverter extends BaseStudyProtocolQue
         String nctNumber = getPaServiceUtils().getStudyIdentifier(IiConverter
                 .convertToStudyProtocolIi(studyProtocol.getId()), PAConstants.NCT_IDENTIFIER_TYPE);
         studyProtocolDto.setNctNumber(nctNumber);
+        
+        String ctepIdentifier = getPaServiceUtils().getStudyIdentifier(IiConverter
+                .convertToStudyProtocolIi(studyProtocol.getId()), PAConstants.CTEP_IDENTIFIER_TYPE);
+        studyProtocolDto.setCtepId(ctepIdentifier);
+        
+        String dcpIdentifier = getPaServiceUtils().getStudyIdentifier(IiConverter
+                .convertToStudyProtocolIi(studyProtocol.getId()), PAConstants.DCP_IDENTIFIER_TYPE);
+        studyProtocolDto.setDcpId(dcpIdentifier);
+        
+        
         studyProtocolDto.setStudySource(studyProtocol.getStudySource());
         if (studyProtocol.getSubmitingOrganization() != null) {
             studyProtocolDto.setSubmitterOrgId(Long.valueOf(studyProtocol.getSubmitingOrganization().getIdentifier()));

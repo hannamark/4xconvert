@@ -441,7 +441,16 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         prop.setValue("");
         TestSchema.addUpdObject(prop);
         
-
+        prop = new PAProperties();
+        prop.setName("trial.identifiers.header");
+        prop.setValue("<table border='0'> <tr> <td><b>NCI Trial ID:</b></td> <td>${spDTO.nciIdentifier}</td> </tr> " + 
+        		"<tr> <td><b>Lead Organization Trial ID:</b></td> <td>${spDTO.localStudyProtocolIdentifier}</td> </tr> " +
+        		"<tr> <td><b>Lead Organization:</b></td> <td>${spDTO.leadOrganizationName}</td> </tr> <tr> " +
+        		"<td><b>CTRP-assigned Lead Organization ID:</b></td> <td>${spDTO.leadOrganizationPOId?c}</td> </tr> " +
+        		"<#if spDTO.ctepId??> <tr> <td><b>CTEP ID:</b></td> <td>${spDTO.ctepId}</td> </tr> </#if> " +
+                "<#if spDTO.dcpId??> <tr> <td><b>DCP ID:</b></td> <td>${spDTO.dcpId}</td> </tr> </#if> " +
+                "<#if spDTO.nctNumber??><tr><td><b>ClinicalTrials.gov ID:</b></td><td>${spDTO.nctNumber}</td></tr></#if></table>");
+        TestSchema.addUpdObject(prop);
     }
 
     private User createUser(String loginName, String firstName, String lastName) {
@@ -532,6 +541,41 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         } else {
             bean.sendAdminRejectionEmail(user.getId(), reason);
         }
+    }
+    
+    @Test
+    public void testEmailHeaders() throws PAException {    	        
+        
+        StudyProtocolQueryDTO spDTO = protocolQrySrv.getTrialSummaryByStudyProtocolId(
+                IiConverter.convertToLong(nonProprietaryTrialIi));
+        
+        // Asserting without CTEP / DCP ids set.
+        assertEquals("<table border='0'> "
+        		+ "<tr> <td><b>NCI Trial ID:</b></td> <td>NCI-2009-00001</td> </tr> "
+        		+ "<tr> <td><b>Lead Organization Trial ID:</b></td> <td>Ecog1</td> </tr> "
+        		+ "<tr> <td><b>Lead Organization:</b></td> <td>Mayo University</td> </tr> "
+        		+ "<tr> <td><b>CTRP-assigned Lead Organization ID:</b></td> <td>1</td> </tr>   "
+        		+ "</table>", 
+        		bean.getStudyIdentifiers(spDTO));
+        
+        spDTO.setCtepId("CTEP");
+        spDTO.setDcpId("DCP");
+        spDTO.setLocalStudyProtocolIdentifier("LOCAL");
+        spDTO.setNciIdentifier("NCI");
+        spDTO.setLeadOrganizationName("LEADORG");
+        spDTO.setNctNumber("12345");
+        
+        // Asserting with all the values
+        assertEquals("<table border='0'> "
+        		+ "<tr> <td><b>NCI Trial ID:</b></td> <td>NCI</td> </tr> "
+        		+ "<tr> <td><b>Lead Organization Trial ID:</b></td> <td>LOCAL</td> </tr> "
+        		+ "<tr> <td><b>Lead Organization:</b></td> <td>LEADORG</td> </tr> "
+        		+ "<tr> <td><b>CTRP-assigned Lead Organization ID:</b></td> <td>1</td> </tr>  "
+        		+ "<tr> <td><b>CTEP ID:</b></td> <td>CTEP</td> </tr>   "
+        		+ "<tr> <td><b>DCP ID:</b></td> <td>DCP</td> </tr>  "
+        		+ "<tr><td><b>ClinicalTrials.gov ID:</b></td><td>12345</td></tr>"
+        		+ "</table>", 
+        		bean.getStudyIdentifiers(spDTO));        
     }
 
     @Test
