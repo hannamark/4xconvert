@@ -795,6 +795,10 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         waitForElementById("popupFrame", 20);
         selenium.selectFrame("popupFrame");
         assertEquals("true",selenium.getValue("//input[@name='addSitesMultiple']"));
+        assertTrue(selenium
+                .isTextPresent("Because your organization belongs to a family, you can add to this trial any "
+                        + "site within that family. Please select the site you would like to add below:"));
+        
         String[] options = selenium.getSelectOptions("pickedSiteOrgPoId");
         assertEquals(3, options.length);
         selenium.select("pickedSiteOrgPoId",

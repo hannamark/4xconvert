@@ -256,6 +256,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         findInMyTrials();
         invokeAction("Add My Site");
         assertEquals("true",selenium.getValue("//input[@name='addSitesMultiple']"));
+        assertWeAreOnPickASiteSelectionScreen();
         String[] options = selenium.getSelectOptions("pickedSiteOrgPoId");
         assertEquals(3, options.length);
         selenium.select("pickedSiteOrgPoId",
@@ -265,6 +266,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         assertEquals("National Cancer Institute Division of Cancer Prevention",
                 selenium.getValue("organizationName"));
 
+        
         verifyTrialData(info);
 
         // Check validation.
@@ -700,6 +702,13 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                         + "site on this trial. Please select the site you would like to update below:"));
         assertEquals(orgName, selenium.getSelectedLabel("pickedSiteOrgPoId"));
     }
+    
+    private void assertWeAreOnPickASiteSelectionScreen() {
+        assertTrue(selenium
+                .isTextPresent("Because your organization belongs to a family, you can add to this trial any "
+                        + "site within that family. Please select the site you would like to add below:"));
+    }
+
 
     /**
      * 

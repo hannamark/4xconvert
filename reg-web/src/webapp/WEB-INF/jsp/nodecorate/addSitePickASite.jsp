@@ -49,10 +49,16 @@
 			<div class="form-group"></div>
 			<div class="form-group">
 				<div class="col-xs-3"></div>
-				<div class="col-xs-5">Based on the fact that your organization
+				<s:if test="%{addSitesMultiple}">
+				    <div class="col-xs-5">Because your organization belongs to a family, 
+               		you can add to this trial any site within that family. 
+               		Please select the site you would like to add below:</div>
+               </s:if>
+               <s:else>
+               		<div class="col-xs-5">Based on the fact that your organization
 					belongs to a family, you can update more than one site on this
 					trial. Please select the site you would like to update below:</div>
-
+               </s:else>
 			</div>
 			<div class="form-group">
 				<label class="col-xs-4 control-label" for="pickedSiteOrgPoId">
@@ -77,7 +83,7 @@
 			<div class="align-center button-row">
 				<button id="pickSiteBtn" type="submit"
 					class="btn btn-icon btn-primary">
-					<i class="fa-floppy-o"></i>Submit
+					<i class="fa-chevron-circle-right"></i>Next
 				</button>
 				<button type="button" class="btn btn-icon btn-default"
 					onkeypress="window.top.hidePopWin();"
