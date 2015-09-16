@@ -531,15 +531,15 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 By.xpath("//table[@id='siteStatusHistoryTable']/tbody/tr["
                         + row + "]/td[position()=1 and text()='"
                         + (StringUtils.isNotBlank(date) ? date : today) + "']"),
-                10);
+                20);
         waitForElementToBecomeAvailable(
                 By.xpath("//table[@id='siteStatusHistoryTable']/tbody/tr["
                         + row + "]/td[position()=2 and text()='" + newStatus
-                        + "']"), 10);
+                        + "']"), 20);
         waitForElementToBecomeAvailable(
                 By.xpath("//table[@id='siteStatusHistoryTable']/tbody/tr["
                         + row + "]/td[position()=3 and text()='" + comment
-                        + "']"), 10);
+                        + "']"), 20);
 
     }
 
