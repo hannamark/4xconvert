@@ -360,19 +360,31 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
             for (int i = 0; emailIter.hasNext(); i++) {
                 SmtpMessage email = (SmtpMessage) emailIter.next();
                 String body = email.getBody();
+                String subject = email.getHeaderValue("Subject");
                 System.out.println(body);
                 switch (i) {
                 case 0:
                     verifyCreateBodyDSPWarning(body);
+                    verifyCreateSubjectDSPWarning(subject);
                     break;
                 case 1:
                     verifyCreateBodyDSPCTRO(body);
+                    verifyCreateSubjectDSPCTRO(subject);
                     break;
                 default:
                     break;
                 }
             }
         }
+    }
+    
+    /**
+     * @param subject
+     */
+    private void verifyCreateSubjectDSPWarning(final String subject) {
+        assertFalse(subject
+                .contains("<table>"));    	
+        assertTrue(subject.contains("NCI CTRP: Trial RECORD CREATED for"));        
     }
 
     /**
@@ -381,6 +393,16 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
     private void verifyCreateBodyDSPWarning(final String body) {
         assertTrue(body
                 .contains("WARNING:</b> The trial submitted has a Delayed Posting Indicator value of \"Yes\""));
+    }
+    
+    /**
+     * @param subject
+     */
+    private void verifyCreateSubjectDSPCTRO(final String subject) {
+        assertFalse(subject
+                .contains("<table>"));        
+        assertTrue(subject
+                .contains("Delayed Posting Indicator set to \"Yes\""));       
     }
 
     /**

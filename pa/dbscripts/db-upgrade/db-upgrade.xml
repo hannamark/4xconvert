@@ -1972,4 +1972,8 @@
        <comment>Updated pa_properties email templates.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-7751-2.sql"/>
     </changeSet>
+    <changeSet id="PO-9251" author="lagarwal">       
+       <comment>Updated pa_properties to fix subject table template bug.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9251.sql"/>
+    </changeSet>
 </databaseChangeLog>
