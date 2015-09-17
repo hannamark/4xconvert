@@ -318,17 +318,19 @@ function searchResults(url, studyNCIid){
                  <tr >
                      <td  scope="row" class="label middle">
                          <label><fmt:message key="resultsdashboard.section801Indicator"/></label>
-                     </td>
-                     <td  class="label middle">
                            <label for="section801IndicatorYes">Yes</label>
                            <s:checkbox id="section801IndicatorYes" name="section801IndicatorYes"  onclick="jQuery('#section801IndicatorNo').prop('checked', false);" />
                            <label for="section801IndicatorNo">No</label>
                            <s:checkbox id="section801IndicatorNo" name="section801IndicatorNo" onclick="jQuery('#section801IndicatorYes').prop('checked', false);" />
                      </td>
+                     
+                    <td  scope="row" class="label middle" >
+					<table >
+                       <tr >
                      <td  scope="row" class="label middle">
                          <label> <fmt:message key="resultsdashboard.primaryCompletionDate"/></label>
                      </td>
-                     <td  class="middle">
+                     <td class="middle">
                          <table>
                             <tr>
 		                       <td  scope="row" class="label middle" align="right" >
@@ -355,6 +357,8 @@ function searchResults(url, studyNCIid){
 		                    </tr>
                          </table>
                      </td>
+                     </tr>
+                     </table>
                  </tr>
                  </table>
                 <div class="actionsrow">
