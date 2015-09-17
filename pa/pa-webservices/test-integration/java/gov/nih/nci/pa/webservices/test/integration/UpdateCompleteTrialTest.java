@@ -131,9 +131,13 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
                 + " AS A RESULT", subject);
         assertEquals(
 
-                "<hr><table border=\"0\"><tr><td><b>Trial Title:</b></td><td>A Phase I/II Study Of Brentuximab Vedotin"
-                        + " In Combination With Multi-Agent Chemotherapy</td></tr><tr><td><b>Lead Organization:"
-                        + "</b></td><td>ClinicalTrials.gov</td></tr><tr><td><b>Previous Trial Status:</b></td><td>"
+                "<hr><table border=\"0\"><tr><td><b>NCI Trial ID:</b></td><td>"
+                        + info.nciID
+                        + "</td></tr><tr><td><b>Lead Organization Trial ID:</b></td><td>UPCC 34890534</td></tr><tr><td><b>Lead Organization:</b></td><td>ClinicalTrials.gov</td></tr><tr><td><b>CTRP-assigned Lead Organization ID:</b></td><td>"
+                        + getOrgPoIdByName("ClinicalTrials.gov")
+                        + "</td></tr></table>"
+                        + "<hr><table border=\"0\"><tr><td><b>Trial Title:</b></td><td>A Phase I/II Study Of Brentuximab Vedotin"
+                        + " In Combination With Multi-Agent Chemotherapy</td></tr><tr><td><b>Previous Trial Status:</b></td><td>"
                         + "In Review</td></tr><tr><td><b>New Trial Status:</b></td><td>Closed to Accrual</td></tr></table>"
                         + "<hr><p>Date: "
                         + today

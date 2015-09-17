@@ -240,9 +240,15 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
                 + " AS A RESULT", subject);
         assertEquals(
 
-                "<hr><table border=\"0\"><tr><td><b>Trial Title:</b></td><td>A Phase I/II Study Of Brentuximab Vedotin"
-                        + " In Combination With Multi-Agent Chemotherapy Amended</td></tr><tr><td><b>Lead Organization:"
-                        + "</b></td><td>Mayo Clinic in Arizona</td></tr><tr><td><b>Previous Trial Status:</b></td><td>"
+                "<hr><table border=\"0\"><tr><td><b>NCI Trial ID:</b></td><td>"
+                        + info.nciID
+                        + "</td></tr><tr><td><b>Lead Organization Trial ID:</b></td><td>"
+                        + info.leadOrgID
+                        + "</td></tr><tr><td><b>Lead Organization:</b></td><td>Mayo Clinic in Arizona</td></tr><tr><td><b>CTRP-assigned Lead Organization ID:</b></td><td>"
+                        + getOrgPoIdByName("Mayo Clinic in Arizona")
+                        + "</td></tr><tr><td><b>CTEP ID:</b></td><td>CTEP99999999999999</td></tr><tr><td><b>DCP ID:</b></td><td>DCP9999999999999999</td></tr><tr><td><b>ClinicalTrials.gov ID:</b></td><td>NCT34905834785</td></tr></table>"
+                        + "<hr><table border=\"0\"><tr><td><b>Trial Title:</b></td><td>A Phase I/II Study Of Brentuximab Vedotin"
+                        + " In Combination With Multi-Agent Chemotherapy Amended</td></tr><tr><td><b>Previous Trial Status:</b></td><td>"
                         + "In Review</td></tr><tr><td><b>New Trial Status:</b></td><td>Closed to Accrual</td></tr></table>"
                         + "<hr><p>Date: "
                         + today
