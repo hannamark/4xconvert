@@ -64,7 +64,7 @@ public class ResultsReportingStudyContactsTest  extends AbstractPaSeleniumTest {
         waitForPageToLoad();
         pause(1000);
         assertTrue(selenium.isTextPresent("Saved final changes to study contacts successfully"));
-        assertFalse(selenium.isElementPresent("//table[@id='pscWeb']/tbody/tr[1]"));
+        assertFalse(selenium.isElementPresent("//table[@id='dscWeb']/tbody/tr[2]"));
     }
     
     @SuppressWarnings("deprecation")
@@ -107,7 +107,7 @@ public class ResultsReportingStudyContactsTest  extends AbstractPaSeleniumTest {
         waitForPageToLoad();
         pause(1000);
         assertTrue(selenium.isTextPresent("Saved final changes to study contacts successfully"));
-        assertFalse(selenium.isElementPresent("//table[@id='pscWeb']/tbody/tr[1]"));
+        assertFalse(selenium.isElementPresent("//table[@id='pscWeb']/tbody/tr[2]"));
     }
     
     
