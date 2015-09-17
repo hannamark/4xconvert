@@ -4,12 +4,12 @@
     <parent>
         <groupId>gov.nih.nci.coppa</groupId>
         <artifactId>nci-commons-ctrp</artifactId>
-        <version>1.4.14</version>
+        <version>1.4.13-SNAPSHOT</version>
     </parent>
 
     <artifactId>nci-commons-ctrp-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.4.14</version>
+    <version>1.4.13-SNAPSHOT</version>
     <name>nci-commons-ctrp-maven-plugin</name>
     <url>../../plugin/target/site/</url>
 
