@@ -3,7 +3,7 @@
     <groupId>gov.nih.nci.coppa</groupId>
     <artifactId>nci-commons-ctrp</artifactId>
     <packaging>pom</packaging>
-    <version>1.4.13-SNAPSHOT</version>
+    <version>1.4.13</version>
     <name>nci-commons-ctrp</name>
 
     <inceptionYear>2008</inceptionYear>
