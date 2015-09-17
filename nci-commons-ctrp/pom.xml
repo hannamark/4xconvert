@@ -3,7 +3,7 @@
     <groupId>gov.nih.nci.coppa</groupId>
     <artifactId>nci-commons-ctrp</artifactId>
     <packaging>pom</packaging>
-    <version>1.4.14-SNAPSHOT</version>
+    <version>1.4.14</version>
     <name>nci-commons-ctrp</name>
 
     <inceptionYear>2008</inceptionYear>
@@ -21,9 +21,9 @@
     </properties>
 
     <scm>
-        <connection>scm:svn:https://ncisvn.nci.nih.gov/svn/coppa/tags/nci-commons-ctrp-releases/1.4.13</connection>
-        <developerConnection>scm:svn:https://ncisvn.nci.nih.gov/svn/coppa/tags/nci-commons-ctrp-releases/1.4.13</developerConnection>
-        <url>https://ncisvn.nci.nih.gov/svn/coppa/tags/nci-commons-ctrp-releases/1.4.13</url>
+        <connection>scm:svn:https://ncisvn.nci.nih.gov/svn/coppa/tags/nci-commons-ctrp-releases/1.4.14</connection>
+        <developerConnection>scm:svn:https://ncisvn.nci.nih.gov/svn/coppa/tags/nci-commons-ctrp-releases/1.4.14</developerConnection>
+        <url>https://ncisvn.nci.nih.gov/svn/coppa/tags/nci-commons-ctrp-releases/1.4.14</url>
     </scm>
 
     <issueManagement>
