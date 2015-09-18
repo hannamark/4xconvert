@@ -140,6 +140,11 @@ table.results {
     padding: 5px;
 }
 
+.flash {
+ display:none; 
+ color:#00CC00;
+}
+
 </style>
 
 <script type="text/javascript"
@@ -200,6 +205,10 @@ jQuery(function() {
                  onSuccess: function(response) {
                      if (response.responseText != 'success'){
                     	 reportDateUpdateError(studyId, attr);
+                     } else {
+                    	 jQuery('#'+id+'_flash').delay(100).fadeIn('normal', function() {
+                    	      jQuery(this).delay(2500).fadeOut();
+                    	 });
                      }
                  },
                  onFailure: function(response) {
@@ -405,30 +414,39 @@ function searchResults(url, studyNCIid){
                  <display:column  title="Results Designee" property="designeeNamesList"/>                                  
                  <display:column title="PCD Sent to PIO">
                     <input id="pcdSentToPIODate_${row.studyProtocolId}" class="datePicker" size="8" value="<fmt:formatDate value="${row.pcdSentToPIODate}" pattern="MM/dd/yyyy"/>"/>
+                    <div id="pcdSentToPIODate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
                  <display:column  title="PCD Confirmed">
                      <input id="pcdConfirmedDate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.pcdConfirmedDate}" pattern="MM/dd/yyyy"/>"/>
+                     <div id="pcdConfirmedDate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>                      
                  <display:column  title="Designee Notified">
                       <input id="desgneeNotifiedDate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.desgneeNotifiedDate}" pattern="MM/dd/yyyy"/>"/>
+                      <div id="desgneeNotifiedDate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
                  <display:column  title="Reporting in Process">
                       <input id="reportingInProcessDate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.reportingInProcessDate}" pattern="MM/dd/yyyy"/>"/>
+                      <div id="reportingInProcessDate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
                  <display:column  title="3 Month Reminder">
                      <input id="threeMonthReminderDate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.threeMonthReminderDate}" pattern="MM/dd/yyyy"/>"/>
+                     <div id="threeMonthReminderDate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>                             
                  <display:column  title="5 Month Reminder">
                       <input id="fiveMonthReminderDate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.fiveMonthReminderDate}" pattern="MM/dd/yyyy"/>"/>
+                      <div id="fiveMonthReminderDate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
                  <display:column  title="7 Month Escalation">
                      <input id="sevenMonthEscalationtoPIODate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.sevenMonthEscalationtoPIODate}" pattern="MM/dd/yyyy"/>"/>
+                     <div id="sevenMonthEscalationtoPIODate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
                  <display:column  title="Results Sent to PIO">
                      <input id="resultsSentToPIODate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.resultsSentToPIODate}" pattern="MM/dd/yyyy"/>"/>
+                     <div id="resultsSentToPIODate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
                  <display:column  title="Results Approved by PIO">
                       <input id="resultsApprovedByPIODate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.resultsApprovedByPIODate}" pattern="MM/dd/yyyy"/>"/>
+                      <div id="resultsApprovedByPIODate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
                  <display:column  title="CTRO Trial Comparison Review">
                      <c:out value="${row.ctroUserName}"/>                 	
@@ -444,12 +462,15 @@ function searchResults(url, studyNCIid){
                  </display:column>
                  <display:column  title="PRS Release Date">
                       <input id="prsReleaseDate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.prsReleaseDate}" pattern="MM/dd/yyyy"/>"/>
+                      <div id="prsReleaseDate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
                  <display:column  title="QA Comments Returned Date">
                       <input id="qaCommentsReturnedDate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.qaCommentsReturnedDate}" pattern="MM/dd/yyyy"/>"/>
+                      <div id="qaCommentsReturnedDate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
                  <display:column  title="Trial Results Published Date">
                       <input id="trialPublishedDate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.trialPublishedDate}" pattern="MM/dd/yyyy"/>"/>
+                      <div id="trialPublishedDate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
              </display:table>
          </div>

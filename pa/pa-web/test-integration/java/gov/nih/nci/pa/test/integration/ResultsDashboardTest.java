@@ -255,17 +255,54 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         long trialId = testTrials.get(0).id;
         selenium.type("id=pcdSentToPIODate_"+trialId, "01/01/2015");
         selenium.type("id=pcdConfirmedDate_"+testTrials.get(0).id, "01/02/2015");
+        pause(1000);
+        assertTrue(selenium.isVisible("id=pcdSentToPIODate_"+trialId+"_flash"));
+        waitForElementToBecomeInvisible(By.id("pcdSentToPIODate_"+trialId+"_flash"), 3);
         selenium.type("id=desgneeNotifiedDate_"+trialId, "01/03/2015");
-        selenium.type("id=reportingInProcessDate_"+trialId, "01/04/2015");
+        pause(1000);
+        assertTrue(selenium.isVisible("id=pcdConfirmedDate_"+trialId+"_flash"));
+        waitForElementToBecomeInvisible(By.id("pcdConfirmedDate_"+trialId+"_flash"), 3);
+        selenium.type("id=reportingInProcessDate_"+trialId, "01/04/2015");        
+        pause(1000);
+        assertTrue(selenium.isVisible("id=desgneeNotifiedDate_"+trialId+"_flash"));
+        waitForElementToBecomeInvisible(By.id("desgneeNotifiedDate_"+trialId+"_flash"), 3);
         selenium.type("id=threeMonthReminderDate_"+trialId, "01/05/2015");
+        pause(1000);
+        assertTrue(selenium.isVisible("id=reportingInProcessDate_"+trialId+"_flash"));
+        waitForElementToBecomeInvisible(By.id("reportingInProcessDate_"+trialId+"_flash"), 3);
         selenium.type("id=fiveMonthReminderDate_"+trialId, "01/06/2015");
+        pause(1000);
+        assertTrue(selenium.isVisible("id=threeMonthReminderDate_"+trialId+"_flash"));
+        waitForElementToBecomeInvisible(By.id("threeMonthReminderDate_"+trialId+"_flash"), 3);
         selenium.type("id=sevenMonthEscalationtoPIODate_"+trialId, "01/07/2015");
+        pause(1000);
+        assertTrue(selenium.isVisible("id=fiveMonthReminderDate_"+trialId+"_flash"));
+        waitForElementToBecomeInvisible(By.id("fiveMonthReminderDate_"+trialId+"_flash"), 3);
         selenium.type("id=resultsSentToPIODate_"+trialId, "01/08/2015");
+        pause(1000);
+        assertTrue(selenium.isVisible("id=sevenMonthEscalationtoPIODate_"+trialId+"_flash"));
+        waitForElementToBecomeInvisible(By.id("sevenMonthEscalationtoPIODate_"+trialId+"_flash"), 3);
         selenium.type("id=resultsApprovedByPIODate_"+trialId, "01/09/2015");
+        pause(1000);
+        assertTrue(selenium.isVisible("id=resultsSentToPIODate_"+trialId+"_flash"));
+        waitForElementToBecomeInvisible(By.id("resultsSentToPIODate_"+trialId+"_flash"), 3);
         selenium.type("id=prsReleaseDate_"+trialId, "01/10/2015");
+        pause(1000);
+        assertTrue(selenium.isVisible("id=resultsApprovedByPIODate_"+trialId+"_flash"));
+        waitForElementToBecomeInvisible(By.id("resultsApprovedByPIODate_"+trialId+"_flash"), 3);
         selenium.type("id=qaCommentsReturnedDate_"+trialId, "01/11/2015");
+        pause(1000);
+        assertTrue(selenium.isVisible("id=prsReleaseDate_"+trialId+"_flash"));
+        waitForElementToBecomeInvisible(By.id("prsReleaseDate_"+trialId+"_flash"), 3);
         selenium.type("id=trialPublishedDate_"+trialId, "01/12/2015");
+        pause(1000);
+        assertTrue(selenium.isVisible("id=qaCommentsReturnedDate_"+trialId+"_flash"));
+        waitForElementToBecomeInvisible(By.id("qaCommentsReturnedDate_"+trialId+"_flash"), 3);
         driver.findElement(By.id("trialPublishedDate_"+trialId)).sendKeys("\t");
+        pause(1000);
+        assertTrue(selenium.isVisible("id=trialPublishedDate_"+trialId+"_flash"));
+        waitForElementToBecomeInvisible(By.id("trialPublishedDate_"+trialId+"_flash"), 3);
+        
         pause(1000);
         clickAndWait("link=Search");
         pause(1000);
@@ -296,6 +333,7 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
     public void testSearchTrialComparison(){
         selenium.type("id=trialCompDocsTrialId", testTrials.get(0).nciID);
         clickSearchForResultsReportingData("trialCompDocsTrialSearch");
+        pause(2000);
         assertTrue(selenium.isTextPresent("Results Reporting & Tracking - View/Upload Trial Comparison Documents"));
         assertTrue(selenium.isTextPresent(testTrials.get(0).nciID+": "+testTrials.get(0).title));
     }
@@ -303,6 +341,7 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
     public void testSearchResultsCoverSheet(){
         selenium.type("id=coverSheetTrialId", testTrials.get(0).nciID);
         clickSearchForResultsReportingData("coverSheetTrialSearch");
+        pause(2000);
         assertTrue(selenium.isTextPresent("Results Reporting & Tracking & Cover Sheet"));
         assertTrue(selenium.isTextPresent(testTrials.get(0).nciID+": "+testTrials.get(0).title));
     }
@@ -310,7 +349,7 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
     public void testSearchUploadErrors(){
         selenium.type("id=uploadErrorsTrialId", testTrials.get(0).nciID);
         clickSearchForResultsReportingData("uploadErrorsTrialSearch");
-        pause(1000);
+        pause(2000);
         assertTrue(selenium.isTextPresent("Summary Of XML Upload Errors & Actions Taken"));
         assertTrue(selenium.isTextPresent(testTrials.get(0).nciID+": "+testTrials.get(0).title));
     }
