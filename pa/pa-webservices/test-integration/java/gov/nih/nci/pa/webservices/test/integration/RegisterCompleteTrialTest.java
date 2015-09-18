@@ -25,6 +25,8 @@ import java.util.Iterator;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeFactory;
 
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
@@ -165,6 +167,26 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
     @Test
     public void testRegisterMinimalData() throws Exception {
         registerAndVerify("/integration_register_complete_minimal_dataset.xml");
+    }
+    @Test
+    public void testInvalidRegistrationTransactionRollback() throws Exception {
+        final QueryRunner runner = new QueryRunner();
+        runner.update(connection, "update pa_properties set name = '_trial.register.body' where name = 'trial.register.body'");
+        for (int i =0; i <=3; i++) {
+            int countBefore = ((Number) runner.query(connection,
+                    "select count(*) from study_protocol", new ArrayHandler())[0])
+                    .intValue();
+            verifyFailureToRegister("/integration_register_complete_invalid_startdate_dataset.xml",  500,
+                    "PA_PROPERTIES does not have entry for  trial.register.body");
+            int countAfter = ((Number) runner.query(connection,
+                    "select count(*) from study_protocol", new ArrayHandler())[0])
+                    .intValue();
+            assertEquals( i
+                    + ") Trial registration ran non-transactionally and left junk in the database!!!",
+                    countBefore, countAfter);
+        }
+
+        runner.update(connection, "update pa_properties set name = 'trial.register.body' where name = '_trial.register.body'");
     }
 
     @Test
