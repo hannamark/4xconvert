@@ -132,7 +132,7 @@ public class ResultsReportingActionsTakenAction extends
             } else {
                 setStudyProcessingErrors(studyProcessingErrorService.getStudyProcessingErrorByStudy(studyProtocolId));
             }
-            if(studyProcessingErrors.size() == 0) {
+            if (studyProcessingErrors.size() == 0) {
                 ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
                         getText("actionsTaken.noErrors"));
             }
