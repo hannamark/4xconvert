@@ -11,8 +11,8 @@ import org.junit.runners.Suite.SuiteClasses;
  * @author dkrylov
  */
 @RunWith(Suite.class)
-@SuiteClasses(value = { TrialSearchPerformanceTest.class,
-        UpdateAndAmendPerformanceTest.class })
+@SuiteClasses(value = { UpdateAndAmendPerformanceTest.class,
+        TrialSearchPerformanceTest.class })
 public class AllPerformanceTests {
 
 }
