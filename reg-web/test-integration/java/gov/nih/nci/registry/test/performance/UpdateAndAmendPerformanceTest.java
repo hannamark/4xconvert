@@ -121,13 +121,16 @@ public class UpdateAndAmendPerformanceTest extends AbstractRegistrySeleniumTest 
                 + " seconds or " + (diff / 1000D / 60D) + " minutes.";
         System.out.println(durationString);
 
-        assertTrue(
-                ""
-                        + op
-                        + " operation for "
-                        + nciID
-                        + " did not complete within 5 minutes, which is the timeout hard-coded in JBoss. "
-                        + durationString, diff <= 1000 * 60 * 5L);
+        // We don't need assert the duration was <= 5 minutes, I think. We have
+        // ensured the operation has succeeded by
+        // checking the user message (see above). 5 minute timeout is hard-coded
+        // in JBoss, so if update/amendment fails
+        // because of that, the above check will fail.
+        /*
+         * assertTrue( "" + op + " operation for " + nciID +
+         * " did not complete within 5 minutes, which is the timeout hard-coded in JBoss. "
+         * + durationString, diff <= 1000 * 60 * 5L);
+         */
     }
 
     /**
