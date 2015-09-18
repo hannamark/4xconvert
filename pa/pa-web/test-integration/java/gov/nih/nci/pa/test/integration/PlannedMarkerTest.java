@@ -95,7 +95,7 @@ import org.openqa.selenium.JavascriptExecutor;
  */
 public class PlannedMarkerTest extends AbstractPaSeleniumTest {
 
-    private static final int CADSR_SEARCH_WAIT_TIME = 60;
+    private static final int CADSR_SEARCH_WAIT_TIME = 90;
 
     /**
      * Tests add/edit/deleting planned markers.
