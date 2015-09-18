@@ -287,16 +287,25 @@ function initChart() {
 function searchResults(url, studyNCIid){
 	var studyIdentifier; 
 	if(studyNCIid != ''){
+		 displayWaitPanel();
 		 var ajaxReq = new Ajax.Request('resultsDashboardajaxGetStudyStudyProtocolIdByNCIId.action?', {
              method: 'post',
              parameters: 'studyNCIId='+studyNCIid.trim(),
              onSuccess: function(response) {
+            	 hideWaitPanel();
             	 if(response.responseText != ''){
             		 window.location.href = url+'?studyProtocolId='+response.responseText;
             	 } else {
             		 alert("No trial with NCI ID '"+studyNCIid+"' found in PA!");
             	 }
-             }
+             },
+			 onFailure: function(transport) {
+				 hideWaitPanel();   
+				 alert("Error loading study details, please try again");
+	         },
+	         onException: function(requesterObj, exceptionObj) {
+	             ajaxReq.options.onFailure(null);
+	         }
            });
 		 
 	} else if (url == 'resultsReportingActionsTakenview.action') {
@@ -311,7 +320,7 @@ function searchResults(url, studyNCIid){
 		<fmt:message key="resultsdashboard.title" />
 	</h1>
 	<c:set var="topic" scope="request" value="resultsDashboard"/>
-    <div class="box" id="filters">
+	<div class="box" id="filters">
          <s:form>
              <pa:failureMessage/>
              <table class="form" >
@@ -446,7 +455,7 @@ function searchResults(url, studyNCIid){
          </div>
        </s:if>
        <div id="chart" class="box">
-          <h2>.</h2>
+          <h2><fmt:message key="resultsdashboard.moreinfo"/></h2>
          <table class="results">
           <tr>
            <td align="center" width="40%" style="border-bottom: 2px solid black;border-left:  2px solid black;" >
@@ -463,7 +472,7 @@ function searchResults(url, studyNCIid){
               </tr>
               <tr height="15%" style="border-right: 2px solid black;">
                 <td style="padding: 10px;">
-                 <label for="designeeTrialId" > <fmt:message key="resultsdashboard.trialId"/></label> <input type="text" id="designeeTrialId" name="designeeTrialId" size="20"/>
+                 <label for="designeeTrialId" > <fmt:message key="resultsdashboard.trialId"/></label><span class="required">*</span> <input type="text" id="designeeTrialId" name="designeeTrialId" size="20"/>
                  </td>
                  <td >
                <s:a href="javascript:void(0)" cssClass="btn" onclick="searchResults('resultsReportingContactexecute.action', jQuery('#designeeTrialId').val())"><span class="btn_img"><span class="search">Search</span></span></s:a>
@@ -474,7 +483,7 @@ function searchResults(url, studyNCIid){
               </tr>
               <tr  height="15%" style="border-right: 2px solid black;">
                 <td style="padding: 10px;">
-                 <label for="trialCompDocsTrialId" > <fmt:message key="resultsdashboard.trialId"/></label> <input type="text" id="trialCompDocsTrialId" name="trialCompDocsTrialId" size="20"/>
+                 <label for="trialCompDocsTrialId" > <fmt:message key="resultsdashboard.trialId"/></label><span class="required">*</span> <input type="text" id="trialCompDocsTrialId" name="trialCompDocsTrialId" size="20"/>
                  </td>
                  <td>
                  <s:a id="trialCompDocsTrialSearch" href="javascript:void(0)" cssClass="btn" onclick="searchResults('resultsReportingDocumentquery.action', jQuery('#trialCompDocsTrialId').val())"><span class="btn_img"><span class="search">Search</span></span></s:a>
@@ -485,7 +494,7 @@ function searchResults(url, studyNCIid){
               </tr>
               <tr height="15%" style="border-right: 2px solid black;">
                 <td style="padding: 10px;">
-                 <label for="coverSheetTrialId" > <fmt:message key="resultsdashboard.trialId"/></label> <input type="text" id="coverSheetTrialId" name="coverSheetTrialId" size="20"/>
+                 <label for="coverSheetTrialId" > <fmt:message key="resultsdashboard.trialId"/></label><span class="required">*</span> <input type="text" id="coverSheetTrialId" name="coverSheetTrialId" size="20"/>
                  </td>
                  <td>
                  <s:a id="coverSheetTrialSearch" href="javascript:void(0)" cssClass="btn" onclick="searchResults('resultsReportingCoverSheetquery.action', jQuery('#coverSheetTrialId').val())"><span class="btn_img"><span class="search">Search</span></span></s:a>

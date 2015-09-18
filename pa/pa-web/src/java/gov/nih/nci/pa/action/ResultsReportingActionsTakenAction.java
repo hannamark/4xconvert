@@ -80,6 +80,7 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.pa.dto.StudyProcessingErrorDTO;
 import gov.nih.nci.pa.service.StudyProcessingErrorService;
+import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.ByteArrayInputStream;
@@ -88,6 +89,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.Preparable;
 
@@ -129,6 +131,10 @@ public class ResultsReportingActionsTakenAction extends
                     .getLatestStudyProcessingErrors());
             } else {
                 setStudyProcessingErrors(studyProcessingErrorService.getStudyProcessingErrorByStudy(studyProtocolId));
+            }
+            if(studyProcessingErrors.size() == 0) {
+                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
+                        getText("actionsTaken.noErrors"));
             }
             return SUCCESS;
         } catch (Exception e) {

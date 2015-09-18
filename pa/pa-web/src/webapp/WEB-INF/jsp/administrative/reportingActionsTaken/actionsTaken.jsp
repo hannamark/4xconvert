@@ -96,16 +96,17 @@ function editActionTaken(id, cell) {
 
 </SCRIPT>
  <body>
+ <h1><fmt:message key="actionsTaken.title" /></h1>
  <div class="box">
-   <pa:sucessMessage/>
-   <pa:failureMessage/>
     <s:actionerror/>
     <pa:studyUniqueToken/>
-    <h2><fmt:message key="actionsTaken.title" /></h2>
     <s:if test="studyProtocolId != ''">
     <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
     </s:if>
-    <s:if test="studyProcessingErrors != null">
+    
+   <pa:sucessMessage/>
+   <pa:failureMessage/>
+    <s:if test="studyProcessingErrors.size() > 0">
        <s:set name="studyProcessingErrors" value="studyProcessingErrors" scope="request"/>
        <div>
 	   <display:table name="${studyProcessingErrors}" id="spe" class="data" sort="list"  pagesize="9999999"

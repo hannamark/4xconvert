@@ -167,10 +167,12 @@ function displayWaitPanel() {
 	// retrieve required dimensions	
 	var eltDims     = $('progress_indicator_panel').getDimensions();
 	var browserDims = $(document).viewport.getDimensions();
-	 
+	// To adjust the window to the center of the viewport, when the page is scrolled down/right
+	var scrollTop = $(document).viewport.getScrollOffsets()['top']
+	var scrollLeft = $(document).viewport.getScrollOffsets()['left']
 	// calculate the center of the page using the browser and element dimensions
-	var y  = (browserDims.height - eltDims.height) / 2;
-	var x = (browserDims.width - eltDims.width) / 2;	
+	var y  = scrollTop + (browserDims.height - eltDims.height) / 2;
+	var x = scrollLeft + (browserDims.width - eltDims.width) / 2;	
 	
 	$('progress_indicator_panel').absolutize();	
 	$('progress_indicator_panel').style.left = x + 'px';
