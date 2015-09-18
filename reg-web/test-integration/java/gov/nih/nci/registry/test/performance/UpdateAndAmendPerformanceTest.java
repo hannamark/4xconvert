@@ -32,10 +32,11 @@ public class UpdateAndAmendPerformanceTest extends AbstractRegistrySeleniumTest 
         System.out.println(System.getProperties());
         if (!"true".equalsIgnoreCase(System.getProperty("server.readonly"))) {
             amendAndCheckPerformance("NCI-2011-01123");
-            amendAndCheckPerformance("NCI-2009-00702");
 
             updateAndCheckPerformance("NCI-2011-02050");
             amendAndCheckPerformance("NCI-2011-02050");
+
+            amendAndCheckPerformance("NCI-2009-00702");
         }
     }
 
