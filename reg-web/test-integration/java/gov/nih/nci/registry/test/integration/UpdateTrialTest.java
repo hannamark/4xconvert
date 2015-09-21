@@ -83,6 +83,7 @@
 package gov.nih.nci.registry.test.integration;
 
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 
 import java.net.URISyntaxException;
 import java.sql.SQLException;
@@ -90,6 +91,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.lang.SystemUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -112,9 +114,9 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
             return;
         }
 
-        final String nciID = getLastNciId();
         TrialInfo info = createAcceptedTrial(true);
-
+        final String nciID = getLastNciId();
+        
         loginToPAAndAddSite(info);
 
         acceptTrialByNciIdWithGivenDWS(nciID, info.leadOrgID,
@@ -128,6 +130,89 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
         runSearchAndVerifySingleTrialResult("officialTitle", rand, info);
         invokeUpdateTrial();
         verifyCalendarPopup();
+    }
+
+    private void updateNciGrant(TrialInfo info, boolean nciGrant) throws SQLException {
+        
+        String protocolUpdateSql = "update study_protocol set nci_grant = '"+nciGrant+"' where official_title = '"+info.title+"'";
+        
+        QueryRunner runner = new QueryRunner();
+        runner.update(connection, protocolUpdateSql);
+        
+    }
+    
+    @Test
+    public void testReviewUpdateTrial() throws SQLException, URISyntaxException {
+
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+
+        TrialInfo info = createAcceptedTrial(false);
+        final String nciID = getLastNciId();
+        
+        updateNciGrant(info, true);
+        addSummaryFour(info.id, "abstractor-ci");
+        
+        loginToPAAndAddSite(info);
+
+        acceptTrialByNciIdWithGivenDWS(nciID, info.leadOrgID,
+                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
+                        .toString());
+        assignTrialOwner("abstractor-ci", info.id);
+
+        loginAndAcceptDisclaimer();
+
+        String rand = info.leadOrgID;
+        runSearchAndVerifySingleTrialResult("officialTitle", rand, info);
+        invokeUpdateTrial(); 
+        waitForPageToLoad();
+       
+        //Trial Abstraction Error
+        clickAndWait("xpath=//button[text()='Review Trial']");
+        assertEquals("Trial Abstraction Error:", driver.findElement(By.cssSelector("#general_trial_errors > div.alert.alert-danger > strong")).getText());
+        
+        // Add grants and submit for review
+        addGrantsWhileReviewAndValidate();
+        
+        // validate page for grants 
+        validateGrant();
+       
+    }
+    
+    private void validateGrant() {
+        
+        List<WebElement> tr_collection = driver.findElements(By.xpath("id('row')/tbody/tr"));
+
+        boolean recordFound = false;
+        for(WebElement trElement : tr_collection)
+        {
+            List<WebElement> td_collection=trElement.findElements(By.xpath("td"));
+            assertEquals(4, td_collection.size());
+            for (WebElement webElement : td_collection) {
+                if(webElement.getText().equals("P30")) {
+                    assertEquals("P30", td_collection.get(0).getText());
+                    recordFound = true;
+                }
+            }
+        }
+        
+        assert recordFound;
+    }
+    
+    private void addGrantsWhileReviewAndValidate() {
+        
+        selenium.select("id=fundingMechanismCode", "label=P30");
+        selenium.select("id=nihInstitutionCode", "label=CA");
+        selenium.type("id=serialNumber", "12197");
+        selenium.select("id=nciDivisionProgramCode", "label=OD");
+        selenium.click("id=grantbtnid");
+        assertEquals("P30", selenium.getText("css=tr.odd > td"));
+        clickAndWait("xpath=//button[text()='Review Trial']");
+        assertEquals("Review Trial Details", selenium.getText("css=span"));
+        
     }
 
     /**

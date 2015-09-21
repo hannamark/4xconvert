@@ -271,24 +271,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         HttpSession session = ServletActionContext.getRequest().getSession();
         try {
             trialDTO.setStatusHistory(getStatusHistoryFromSession());
-            String failureMessage = validateTrial();
-            if (failureMessage != null) {
-                ServletActionContext.getRequest().setAttribute("failureMessage", failureMessage);
-
-                TrialSessionUtil.addSessionAttributes(trialDTO);
-                //trialUtil.populateRegulatoryList(trialDTO);
-                trialUtil.populateRegulatoryListStartWithUSA(trialDTO);
-                synchActionWithDTO();
-                this.fieldErrors.clearTrackedKeys();
-                return ERROR;
-            }
-            if (hasActionErrors()) {
-                TrialSessionUtil.addSessionAttributes(trialDTO);
-                synchActionWithDTO();
-                //trialUtil.populateRegulatoryList(trialDTO);
-                trialUtil.populateRegulatoryListStartWithUSA(trialDTO);
-                return ERROR;
-            }
+            
             trialDTO.setDocDtos(getTrialDocuments());
 
             // add the IndIde,FundingList
@@ -303,14 +286,35 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
                 trialDTO.setFundingAddDtos(grantAddList);
                 setFundingAddDtos(grantAddList);
             }
-            if (trialDTO.isXmlRequired()) {
-                trialUtil.setOversgtInfo(trialDTO);
-            }
+            
             List<Ii> otherIdsList = (List<Ii>) session.getAttribute(Constants.SECONDARY_IDENTIFIERS_LIST);
             if (otherIdsList != null) {
                 trialDTO.setSecondaryIdentifierAddList(otherIdsList);
             }
             synchDTOWithAction();
+            
+            String failureMessage = validateTrial();
+            if (failureMessage != null) {
+                ServletActionContext.getRequest().setAttribute("failureMessage", failureMessage);
+
+                TrialSessionUtil.addSessionAttributes(trialDTO);
+                //trialUtil.populateRegulatoryList(trialDTO);
+                trialUtil.populateRegulatoryListStartWithUSA(trialDTO);
+                synchActionWithDTO();
+                this.fieldErrors.clearTrackedKeys();
+                return ERROR;
+            }
+            if (trialDTO.isXmlRequired()) {
+                trialUtil.setOversgtInfo(trialDTO);
+            }
+            if (hasActionErrors()) {
+                TrialSessionUtil.addSessionAttributes(trialDTO);
+                synchActionWithDTO();
+                //trialUtil.populateRegulatoryList(trialDTO);
+                trialUtil.populateRegulatoryListStartWithUSA(trialDTO);
+                return ERROR;
+            }
+            
         } catch (IOException e) {
             LOG.error(e.getMessage());
             synchActionWithDTO();

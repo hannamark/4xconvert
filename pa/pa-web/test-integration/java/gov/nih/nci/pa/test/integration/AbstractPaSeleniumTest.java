@@ -120,6 +120,7 @@ import org.apache.commons.dbutils.handlers.ArrayListHandler;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -729,7 +730,11 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     protected TrialInfo createSubmittedTrial(boolean isAbbr,
             boolean skipDocuments) throws SQLException {
         TrialInfo info = new TrialInfo();
-        info.uuid = UUID.randomUUID().toString();
+        
+        // trimming uuid if length greater than 30 characters as this is used 
+        // for leadOrgId, which throws a validation error if its length is greater than 30 chars
+        info.uuid = StringUtils.left(UUID.randomUUID().toString(), 30);
+        
         info.title = "Title " + info.uuid;
 
         pickUsers(info);
@@ -788,6 +793,34 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         LOG.info("Registered a new trial: " + info);
         return info;
 
+    }
+    
+    
+    
+    protected void addSummaryFour(long spId, String csmUserName) throws SQLException {
+        Number orgId = getResearchOrgId("ClinicalTrials.gov");
+        long userId = getCsmUserByLoginName(csmUserName);
+        
+        String sql = "insert into study_resourcing values "
+                    + "( (SELECT NEXTVAL('HIBERNATE_SEQUENCE')),"
+                    + "'NATIONAL', 'TRUE','"+orgId.intValue()+"',"+spId+",'P30','CA',"
+                    + "'CTEP','12197','TRUE','',null,null,"+userId+","+userId+",0)";
+        QueryRunner runner = new QueryRunner();
+        runner.update(connection, sql);
+        
+        LOG.info("Added summary four info to db");
+    }
+    
+    protected long getCsmUserByLoginName(String loginName) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        Number regUserID = (Number) runner
+                .query(connection,
+                        "select user_id from csm_user cu "
+                        + "where cu.login_name like '%"
+                                + loginName + "%'", new ArrayHandler())[0];
+        
+        return regUserID.longValue();
+        
     }
 
     protected void addDocument(TrialInfo info, String type, String filename)
@@ -1061,6 +1094,8 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
 
         return retVal;
     }
+    
+    
 
     protected int removeCSMUser(Number userId) throws SQLException {
         QueryRunner runner = new QueryRunner();
