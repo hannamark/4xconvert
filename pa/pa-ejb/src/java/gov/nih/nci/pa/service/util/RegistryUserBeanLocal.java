@@ -354,7 +354,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
             trialOwnershipInfo, List<Long> siblings) throws PAException {
         List<DisplayTrialOwnershipInformation> lst = new ArrayList<DisplayTrialOwnershipInformation>();
         // added below if for PO-9225
-        if(siblings == null || siblings.isEmpty()) {
+        if (siblings == null || siblings.isEmpty()) {
             return lst;
         }
         StringBuffer hql = new StringBuffer(STRING_SIZE);
