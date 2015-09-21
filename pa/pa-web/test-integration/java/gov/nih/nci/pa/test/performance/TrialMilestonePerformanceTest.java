@@ -41,7 +41,7 @@ public class TrialMilestonePerformanceTest extends AbstractPaSeleniumTest {
     private void checkAddMilestonePerformance(String milestone,
             int timeoutSecond) {
         double totalTime = 0;
-        int tries = 3;
+        int tries = 5;
 
         for (int i = 0; i < tries; i++) {
             totalTime += addMilestone(milestone);
