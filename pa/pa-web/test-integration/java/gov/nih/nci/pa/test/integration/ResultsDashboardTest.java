@@ -127,7 +127,13 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         super.tearDown();
     }
     
-    
+    @Test       
+    public void testUnauthorizedAccess(){
+        logoutUser();
+        loginAsScientificAbstractor();
+        openAndWait("/pa/protected/resultsDashboard.action");
+        assertTrue(selenium.isTextPresent("Access Denied"));
+    }
     
     /**
      * Test the results reporting home page
@@ -162,6 +168,7 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isTextPresent("Enter Trial ID:"));
         deleteContact();
     }
+    
     
     @Test       
     public void testOnlyOneOfsection801CheckboxIsChecked(){
@@ -333,7 +340,7 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
     public void testSearchTrialComparison(){
         selenium.type("id=trialCompDocsTrialId", testTrials.get(0).nciID);
         clickSearchForResultsReportingData("trialCompDocsTrialSearch");
-        pause(2000);
+        pause(3000);
         assertTrue(selenium.isTextPresent("Results Reporting & Tracking - View/Upload Trial Comparison Documents"));
         assertTrue(selenium.isTextPresent(testTrials.get(0).nciID+": "+testTrials.get(0).title));
     }
@@ -341,7 +348,7 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
     public void testSearchResultsCoverSheet(){
         selenium.type("id=coverSheetTrialId", testTrials.get(0).nciID);
         clickSearchForResultsReportingData("coverSheetTrialSearch");
-        pause(2000);
+        pause(3000);
         assertTrue(selenium.isTextPresent("Results Reporting & Tracking & Cover Sheet"));
         assertTrue(selenium.isTextPresent(testTrials.get(0).nciID+": "+testTrials.get(0).title));
     }
@@ -349,7 +356,7 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
     public void testSearchUploadErrors(){
         selenium.type("id=uploadErrorsTrialId", testTrials.get(0).nciID);
         clickSearchForResultsReportingData("uploadErrorsTrialSearch");
-        pause(2000);
+        pause(3000);
         assertTrue(selenium.isTextPresent("Summary Of XML Upload Errors & Actions Taken"));
         assertTrue(selenium.isTextPresent(testTrials.get(0).nciID+": "+testTrials.get(0).title));
     }

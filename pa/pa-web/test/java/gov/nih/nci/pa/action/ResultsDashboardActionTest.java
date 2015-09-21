@@ -46,7 +46,7 @@ public class ResultsDashboardActionTest extends AbstractPaActionTest {
     @Test
     public void testNoResultsDashboardAccess() throws PAException {
         ResultsDashboardAction action = getAction();
-        assertEquals("nonResultAbstractorLanding", action.execute());
+        assertEquals(null, action.execute());
     }
 
     @Test
@@ -81,7 +81,7 @@ public class ResultsDashboardActionTest extends AbstractPaActionTest {
     public void testSearchNoAccess() throws PAException {
         getRequest().setUserInRole(Constants.SCIENTIFIC_ABSTRACTOR, true);
         ResultsDashboardAction action = getAction();
-        assertEquals("nonResultAbstractorLanding", action.search());
+        assertEquals(null, action.search());
         final List trials = action.getResults();
         assertNull(trials);
     }
@@ -89,7 +89,7 @@ public class ResultsDashboardActionTest extends AbstractPaActionTest {
     @Test
     public void testAjaxChangeDateNoAccess() throws PAException {
         ResultsDashboardAction action = getAction();
-        assertEquals("nonResultAbstractorLanding", action.ajaxChangeDate());
+        assertEquals(null, action.ajaxChangeDate());
     }
     
     @Test
@@ -124,6 +124,7 @@ public class ResultsDashboardActionTest extends AbstractPaActionTest {
     private ResultsDashboardAction getAction() throws PAException {
         ResultsDashboardAction action = new ResultsDashboardAction();
         action.setServletRequest(getRequest());
+        action.setServletResponse(getResponse());
         action.prepare();
         action.setProtocolQueryService(getProtocolQueryMock());
         action.setStudyProtocolService(getStudyProtocolService());

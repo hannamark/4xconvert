@@ -39,6 +39,7 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -48,11 +49,13 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.ServletRequestAware;
+import org.apache.struts2.interceptor.ServletResponseAware;
 
 import com.opensymphony.xwork2.Preparable;
 
@@ -63,8 +66,7 @@ import com.opensymphony.xwork2.Preparable;
  */
 @SuppressWarnings({ "PMD.TooManyMethods", "PMD.CyclomaticComplexity" })
 public class ResultsDashboardAction extends AbstractCheckInOutAction implements
-        Preparable, ServletRequestAware {
-    private static final String NON_RESULT_ABSTRACTOR_LANDING = "nonResultAbstractorLanding";
+        Preparable, ServletRequestAware, ServletResponseAware {
     private static final String RESULT_ABSTRACTOR_LANDING = "resultAbstractorLanding";
     private static final String AJAX_RESPONSE = "ajaxResponse";
     
@@ -106,7 +108,7 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
     private String studyNCIId;
     private StudyContactService studyContactService;
     
-    
+    private HttpServletResponse response;
     
     @Override
     public String execute() throws PAException {
@@ -123,9 +125,9 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
      */
     public String search() throws PAException {
         if (!canAccessDashboard()) {
-            return NON_RESULT_ABSTRACTOR_LANDING;
+            sendUnauthorizedResponse();
+            return null;
         }
-
         try {
             StudyProtocolQueryCriteria criteria = buildCriteria();
             return search(criteria);
@@ -137,13 +139,15 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         return RESULT_ABSTRACTOR_LANDING;
     }
 
+
     /**
      * Update results date of a study protocol
      * @return String
      */
     public String ajaxChangeDate() {
         if (!canAccessDashboard()) {
-            return NON_RESULT_ABSTRACTOR_LANDING;
+            sendUnauthorizedResponse();
+            return null;
         }
         
         if (studyProtocolService.updateStudyProtocolResultsDate(studyId, dateAttr, 
@@ -193,6 +197,16 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
        speService = PaRegistry.getStudyProcessingErrorService();
        studyContactService = PaRegistry.getStudyContactService();
    }
+
+
+    private void sendUnauthorizedResponse() {
+        try {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN,
+               "Page accessible only for Results Abstractors role");
+        } catch (IOException ioe) {
+            LOG.error("Error sending unauthorized response", ioe);  
+        }
+    }
    
     private void clearFilters() {
         pcdFrom = null;
@@ -636,6 +650,12 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
      */
     public void setStudyContactService(StudyContactService studyContactService) {
         this.studyContactService = studyContactService;
+    }
+
+
+    @Override
+    public void setServletResponse(HttpServletResponse resp) {
+        this.response = resp;
     }
 
 
