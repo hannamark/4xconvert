@@ -109,10 +109,21 @@ public class DisclaimerAction extends ActionSupport {
         request.getSession().setAttribute("isReportsAllowed", isReportsAllowed);
 
         RegistryUser registryUser = PaRegistry.getRegistryUserService().getUser(request.getRemoteUser());
+        
+        
         if (registryUser == null) {
             request.getSession().invalidate();
             return "missing_account";
         } else {
+            String reportGroups = registryUser.getReportGroups();
+            boolean showExtReportLink = (reportGroups != null && reportGroups.length() > 1);
+            
+            request.getSession().setAttribute("showExtReportLink", showExtReportLink);
+            request.getSession().setAttribute("reportExtLinkName", 
+                    getProperty("reg.web.report.ext.link.name"));
+            request.getSession().setAttribute("reportExtLinkUrl", 
+                    getProperty("reg.web.report.ext.link.url"));
+            
             return "redirect_to";
         }
     }
@@ -132,6 +143,17 @@ public class DisclaimerAction extends ActionSupport {
         }
 
         return isReportsAllowed;
+    }
+    
+    private String getProperty(String name) {
+        String retValue = "";
+        try { 
+            retValue = getLookupTableService().getPropertyValue(name);
+        } catch (PAException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        
+        return retValue;
     }
 
     /**

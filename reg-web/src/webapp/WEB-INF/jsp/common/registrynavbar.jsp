@@ -85,6 +85,11 @@
               <li><a target="_blank" href="/accrual/home.action">NCI CTRP Accrual Application</a></li>
               <li><a target="_blank" href="http://www.cancer.gov/">National Cancer Institute (NCI)</a></li>
               <li><a target="_blank" href="http://cbiit.nci.nih.gov/">NCI Center for Biomedical Informatics and Information Technology (CBIIT)</a></li>
+              <c:if test='${sessionScope.showExtReportLink}'>
+                  <li>
+                    <a target="_blank" href="${sessionScope.reportExtLinkUrl}">${sessionScope.reportExtLinkName}</a>
+                  </li>
+              </c:if>
             </ul>
           </li>
           <li><a href="#" data-toggle="modal" data-target="#contactUs">Contact Us</a></li>

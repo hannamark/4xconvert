@@ -1976,4 +1976,8 @@
        <comment>Updated pa_properties to fix subject table template bug.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9251.sql"/>
     </changeSet>
+    <changeSet id="PO-9259" author="vpoluri">       
+       <comment>Inserted new properties into pa_properties to add report link to Quick Links</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9259.sql"/>
+    </changeSet>
 </databaseChangeLog>

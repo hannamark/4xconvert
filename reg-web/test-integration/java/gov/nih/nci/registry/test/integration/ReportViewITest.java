@@ -4,10 +4,12 @@ import gov.nih.nci.registry.service.MockRestClientNCITServer;
 
 import java.sql.SQLException;
 
+import org.apache.commons.dbutils.QueryRunner;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
@@ -121,13 +123,6 @@ public class ReportViewITest extends AbstractRegistrySeleniumTest {
 
     }
 
-    /*
-     * driver.get(
-     * "http://localhost:39480/registry/siteadmin/viewReportViewerssearch.action"
-     * ); assertEquals(
-     * "You do not have access to this page. Please contact System Admin.",
-     * driver.findElement(By.cssSelector("h2")).getText());
-     */
 
     @Test
     public void testInterceptorNoAccess() throws Exception {
@@ -136,7 +131,6 @@ public class ReportViewITest extends AbstractRegistrySeleniumTest {
         loginAndAcceptDisclaimer();
 
         openAndWait("/registry/siteadmin/viewReportViewerssearch.action");
-        // driver.get("http://localhost:39480/registry/siteadmin/viewReportViewerssearch.action");
         assertEquals(
                 "You do not have access to this page. Please contact System Admin.",
                 driver.findElement(By.cssSelector("h2")).getText());
@@ -150,6 +144,81 @@ public class ReportViewITest extends AbstractRegistrySeleniumTest {
                 driver.findElement(By.cssSelector("h1.heading")).getText());
     }
 
+    @Test
+    public void testExternalLinkForReports() throws Exception {
+
+        setPaProperty("reg.web.admin.showReportsMenu", "true");
+        setPaProperty("reg.web.report.ext.link.name", "View Data Table 4 Report");
+        setPaProperty("reg.web.report.ext.link.url", "https://trials.nci.nih.gov/reports/login.html");
+        
+        insertDataInRegistryReportColumns("abstractor-ci");
+        
+        loginAndAcceptDisclaimer();
+        hoverLink("Quick Links");
+        pause(1500);
+
+        assertEquals("View Data Table 4 Report", driver.findElement(By.linkText("View Data Table 4 Report")).getText());
+
+    }
+    
+    @Test
+    public void testNoExternalLinkForReports() throws Exception {
+
+        setPaProperty("reg.web.admin.showReportsMenu", "true");
+
+        removeDataInRegistryReportColumns("abstractor-ci");
+        loginAndAcceptDisclaimer();
+        hoverLink("Quick Links");
+        pause(1500);
+        WebElement webElement = null; 
+        
+        try { 
+            webElement = driver.findElement(By.linkText("View Data Table 4 Report"));
+        } catch (NoSuchElementException e) { }
+        
+        assertNull(webElement);
+    }
+    
+    private boolean insertDataInRegistryReportColumns(String name)
+            throws SQLException {
+        boolean retVal = false;
+
+        long user = getCsmUserByLoginName(name);
+        QueryRunner runner = new QueryRunner();
+        String sql = "update registry_user set enable_reports = 'TRUE', "
+                + "report_groups = 'Data Table 4' where csm_user_id = "
+                + user;
+
+        int queryResponse = runner.update(connection,sql);
+
+        if(queryResponse > 0) {
+            System.out.println("record updated");
+            retVal = true;
+        }
+
+        return retVal;
+    }
+    
+    private boolean removeDataInRegistryReportColumns(String name)
+            throws SQLException {
+        boolean retVal = false;
+
+        long user = getCsmUserByLoginName(name);
+        QueryRunner runner = new QueryRunner();
+        String sql = "update registry_user set enable_reports = 'FALSE', "
+                + "report_groups = '' where csm_user_id = "
+                + user;
+
+        int queryResponse = runner.update(connection, sql);
+
+        if(queryResponse > 0) {
+            System.out.println("record updated");
+            retVal = true;
+        }
+
+        return retVal;
+    }
+    
     @After
     public void tearDown() throws Exception {
         super.tearDown();
