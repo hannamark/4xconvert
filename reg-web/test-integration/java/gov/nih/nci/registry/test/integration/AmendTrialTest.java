@@ -189,10 +189,10 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         amendTrial();
     }
 
-
     @SuppressWarnings("deprecation")
     @Test
-    public void testServerSideErrorDuringAmendAndTransactionRollback() throws Exception {
+    public void testServerSideErrorDuringAmendAndTransactionRollback()
+            throws Exception {
         if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
             // PhantomJS keeps crashing on Linux CI box. No idea why at the
             // moment.
@@ -203,43 +203,49 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         String rand = RandomStringUtils.randomNumeric(10);
         TrialInfo info = registerAndAcceptTrial(rand);
         final String nciID = info.nciID;
-        addDWS(info,  DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
+        addDWS(info,
+                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
                         .toString());
         searchForTrialByNciID(nciID);
         selectAction("Amend");
         populateAmendTrialPage(info);
+        try {
+            runner.update(connection,
+                    "update pa_properties set name = '_trial.amend.body' "
+                            + " where name = 'trial.amend.body'");
+            for (int i = 1; i <= 3; i++) {
 
-        runner.update(connection, "update pa_properties set name = '_trial.amend.body' "
-                + " where name = 'trial.amend.body'");
-        for (int i = 1; i <= 3; i++ ){
+                int countBefore = ((Number) runner.query(connection,
+                        "select count(*) from study_protocol",
+                        new ArrayHandler())[0]).intValue();
 
-            int countBefore = ((Number) runner.query(connection,
-                    "select count(*) from study_protocol", new ArrayHandler())[0])
-                    .intValue();
+                clickAndWait("xpath=//button[text()='Review Trial']");
+                waitForElementById("reviewTrialForm", 10);
+                clickAndWait("xpath=//button[text()='Submit']");
+                waitForPageToLoad();
+                assertFalse(selenium
+                        .isTextPresent("The amendment to trial with the NCI Identifier "
+                                + nciID + " was successfully submitted."));
 
-            clickAndWait("xpath=//button[text()='Review Trial']");
-            waitForElementById("reviewTrialForm", 10);
-            clickAndWait("xpath=//button[text()='Submit']");
-            waitForPageToLoad();
-            assertFalse(selenium
-                    .isTextPresent("The amendment to trial with the NCI Identifier "
-                            + nciID + " was successfully submitted."));
+                assertTrue(selenium
+                        .isTextPresent("PA_PROPERTIES does not have entry for trial.amend.body"));
 
-            assertTrue(selenium.isTextPresent("PA_PROPERTIES does not have entry for trial.amend.body"));
+                int countAfter = ((Number) runner.query(connection,
+                        "select count(*) from study_protocol",
+                        new ArrayHandler())[0]).intValue();
 
-            int countAfter = ((Number) runner.query(connection,
-                    "select count(*) from study_protocol", new ArrayHandler())[0])
-                    .intValue();
+                assertEquals(
+                        i
+                                + ") Test ran non transactionally and left junk!! in database",
+                        countBefore, countAfter);
 
-            assertEquals(i + ") Test ran non transactionally and left junk!! in database", countBefore, countAfter);
-
+            }
+        } finally {
+            runner.update(connection,
+                    "update pa_properties set name = 'trial.amend.body' "
+                            + " where name = '_trial.amend.body'");
         }
-
-        runner.update(connection, "update pa_properties set name = 'trial.amend.body' "
-                + " where name = '_trial.amend.body'");
-
     }
-
 
     @SuppressWarnings({ "deprecation", "rawtypes" })
     @Test
