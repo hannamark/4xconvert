@@ -32,6 +32,7 @@ setDocumentPageUrl("resultsReportingDocumentinput.action?parentPage=coverSheet",
  <body>
 
  <h1><fmt:message key="reportTrialDocument.title"/></h1>
+  <c:set var="topic" scope="request" value="resultscompare"/>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
  <div class="box">
    <pa:sucessMessage/>

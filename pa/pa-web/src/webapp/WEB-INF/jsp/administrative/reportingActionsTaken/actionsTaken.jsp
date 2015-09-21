@@ -97,6 +97,7 @@ function editActionTaken(id, cell) {
 </SCRIPT>
  <body>
  <h1><fmt:message key="actionsTaken.title" /></h1>
+    <c:set var="topic" scope="request" value="resultsxml"/>
  <div class="box">
     <s:actionerror/>
     <pa:studyUniqueToken/>

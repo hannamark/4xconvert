@@ -1030,11 +1030,27 @@ li.select2-selection__choice {
 	                    }
 	                }
 		} 
-		if(tabType =='workload') {           
-                document.getElementById('pageHelpid').onclick = function() {
-                    Help.popHelp('dashboardworkload');
-                }
-           
+		if(tabType =='workload') {
+			      if("${sessionScope.isAdminAbstractor}" == "true") {
+		    	   document.getElementById('pageHelpid').onclick = function() {
+                    Help.popHelp('dashboardworkloadadmin');
+                   } 
+	             }
+	              if("${sessionScope.isScientificAbstractor}"  == "true") {
+	                    document.getElementById('pageHelpid').onclick = function() {
+	                        Help.popHelp('dashboardworkloadsci');
+	                    }
+	                }
+	              if("${sessionScope.isAdminAbstractor}"  == "true" && "${sessionScope.isScientificAbstractor}" == "true") {
+	                    document.getElementById('pageHelpid').onclick = function() {
+	                        Help.popHelp('dashboardworkloadadminsci');
+	                    }
+	                }
+	              if("${sessionScope.isSuAbstractor}" == "true") {
+	                    document.getElementById('pageHelpid').onclick = function() {
+	                        Help.popHelp('dashboardworkloadsuper');
+	                    }
+	                }
         }		
 		if(tabType =='search') {
 			if("${sessionScope.isSuAbstractor}" == "true") {

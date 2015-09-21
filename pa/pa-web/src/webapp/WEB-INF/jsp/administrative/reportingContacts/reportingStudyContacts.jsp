@@ -30,6 +30,7 @@
 <body>
 
  <h1><fmt:message key="reportStudyContacts.title"/></h1>
+ <c:set var="topic" scope="request" value="resultscontact"/>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
  <div id="studycontacts">
     <jsp:include page="reportingStudyContactsContent.jsp"/>

@@ -113,6 +113,7 @@ setFormat("mm/dd/yyyy");
  <body>
 
  <h1><fmt:message key="reportCoverSheet.title"/></h1>
+   <c:set var="topic" scope="request" value="resultscover"/>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
  <div class="box">
     <pa:sucessMessage/>

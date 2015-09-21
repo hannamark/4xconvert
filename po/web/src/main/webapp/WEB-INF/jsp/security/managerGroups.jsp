@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>Manage User Groups</title>
-<c:set var="topic" scope="request" value="manageUserGroups" />
+<c:set var="topic" scope="request" value="managegroups" />
 <style type="text/css">
 #page {
 	margin-bottom: 10px;

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
-<c:set var="topic" scope="request" value="manageUserGroups" />
+<c:set var="topic" scope="request" value="managegroupspa" />
 <c:set scope="request" var="disableDefaultJQuery" value="${true}" />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
