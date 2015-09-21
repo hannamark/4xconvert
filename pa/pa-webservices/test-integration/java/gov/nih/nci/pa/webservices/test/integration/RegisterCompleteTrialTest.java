@@ -31,7 +31,6 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -168,25 +167,35 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
     public void testRegisterMinimalData() throws Exception {
         registerAndVerify("/integration_register_complete_minimal_dataset.xml");
     }
+
     @Test
     public void testInvalidRegistrationTransactionRollback() throws Exception {
         final QueryRunner runner = new QueryRunner();
-        runner.update(connection, "update pa_properties set name = '_trial.register.body' where name = 'trial.register.body'");
-        for (int i =0; i <=3; i++) {
-            int countBefore = ((Number) runner.query(connection,
-                    "select count(*) from study_protocol", new ArrayHandler())[0])
-                    .intValue();
-            verifyFailureToRegister("/integration_register_complete_invalid_startdate_dataset.xml",  500,
-                    "PA_PROPERTIES does not have entry for  trial.register.body");
-            int countAfter = ((Number) runner.query(connection,
-                    "select count(*) from study_protocol", new ArrayHandler())[0])
-                    .intValue();
-            assertEquals( i
-                    + ") Trial registration ran non-transactionally and left junk in the database!!!",
-                    countBefore, countAfter);
+        try {
+            runner.update(
+                    connection,
+                    "update pa_properties set name = '_trial.register.body' where name = 'trial.register.body'");
+            for (int i = 0; i <= 3; i++) {
+                int countBefore = ((Number) runner.query(connection,
+                        "select count(*) from study_protocol",
+                        new ArrayHandler())[0]).intValue();
+                verifyFailureToRegister(
+                        "/integration_register_complete_invalid_startdate_dataset.xml",
+                        500,
+                        "PA_PROPERTIES does not have entry for  trial.register.body");
+                int countAfter = ((Number) runner.query(connection,
+                        "select count(*) from study_protocol",
+                        new ArrayHandler())[0]).intValue();
+                assertEquals(
+                        i
+                                + ") Trial registration ran non-transactionally and left junk in the database!!!",
+                        countBefore, countAfter);
+            }
+        } finally {
+            runner.update(
+                    connection,
+                    "update pa_properties set name = 'trial.register.body' where name = '_trial.register.body'");
         }
-
-        runner.update(connection, "update pa_properties set name = 'trial.register.body' where name = '_trial.register.body'");
     }
 
     @Test
@@ -399,14 +408,13 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
             }
         }
     }
-    
+
     /**
      * @param subject
      */
     private void verifyCreateSubjectDSPWarning(final String subject) {
-        assertFalse(subject
-                .contains("<table>"));    	
-        assertTrue(subject.contains("NCI CTRP: Trial RECORD CREATED for"));        
+        assertFalse(subject.contains("<table>"));
+        assertTrue(subject.contains("NCI CTRP: Trial RECORD CREATED for"));
     }
 
     /**
@@ -416,15 +424,13 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
         assertTrue(body
                 .contains("WARNING:</b> The trial submitted has a Delayed Posting Indicator value of \"Yes\""));
     }
-    
+
     /**
      * @param subject
      */
     private void verifyCreateSubjectDSPCTRO(final String subject) {
-        assertFalse(subject
-                .contains("<table>"));        
-        assertTrue(subject
-                .contains("Delayed Posting Indicator set to \"Yes\""));       
+        assertFalse(subject.contains("<table>"));
+        assertTrue(subject.contains("Delayed Posting Indicator set to \"Yes\""));
     }
 
     /**
