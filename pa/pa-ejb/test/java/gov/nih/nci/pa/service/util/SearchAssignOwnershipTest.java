@@ -130,4 +130,25 @@ public class SearchAssignOwnershipTest extends AbstractHibernateTestCase {
         assertEquals("1", usrLst.get(0).getTrialId());
 
     }
+    
+    @Test
+    public void searchTrialOwnershipInformationNoSiblings() throws PAException{
+        DisplayTrialOwnershipInformation criteria = new DisplayTrialOwnershipInformation();
+
+        Long spId = TestRegistryUserSchema.studyProtocolId;
+        Long userId = TestRegistryUserSchema.trialOwnerUserId;
+        remoteEjb.assignOwnership(userId, spId);
+        PaHibernateUtil.getCurrentSession().clear();
+        assertTrue(remoteEjb.isTrialOwner(userId, spId));
+        List<Long> orgs = new ArrayList<Long>();
+        
+        List<DisplayTrialOwnershipInformation> usrLst = remoteEjb.searchTrialOwnership(criteria, orgs);
+        assertNotNull(usrLst);
+        assertEquals(0, usrLst.size());
+        
+        usrLst = remoteEjb.searchTrialOwnership(criteria, null);
+        assertNotNull(usrLst);
+        assertEquals(0, usrLst.size());
+
+    }
 }
