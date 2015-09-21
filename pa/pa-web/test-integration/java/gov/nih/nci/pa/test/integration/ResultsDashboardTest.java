@@ -336,6 +336,21 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isTextPresent("Issues"));
         assertNotNull(driver.findElement(By.id("resultsChart")));
     }
+    
+    public void testTrialView(){
+        clickAndWait("id=trialview_" + testTrials.get(0).id);
+        pause(3000);
+        assertTrue(selenium.isTextPresent("Results Reporting & Tracking - Trial View"));
+        assertTrue(selenium.isTextPresent(testTrials.get(0).nciID+": "+testTrials.get(0).title));
+    }
+    
+    public void testSearchDesigneeOrPIOContacts(){
+        selenium.type("id=designeeTrialId", testTrials.get(0).nciID);
+        clickSearchForResultsReportingData("designeeTrialIdSearch");
+        pause(3000);
+        assertTrue(selenium.isTextPresent("Results Reporting & Tracking - Add/Update Contact Information"));
+        assertTrue(selenium.isTextPresent(testTrials.get(0).nciID+": "+testTrials.get(0).title));
+    }
 
     public void testSearchTrialComparison(){
         selenium.type("id=trialCompDocsTrialId", testTrials.get(0).nciID);

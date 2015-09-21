@@ -111,8 +111,10 @@ function submitStudyContact(scFormName, scUrl) {
                 url : scUrl,
                 data : jQuery('#reportStudyContactsForm').serialize(),
                 success : function(data) {
-                    jQuery('#studycontacts').html(data);
-                    }
+                    var scdiv = jQuery('#studycontacts');
+                    scdiv.html(data);
+                    jQuery('html, body').animate({ scrollTop: 0 }, 0);
+                 }
             });
 }
 
@@ -135,6 +137,7 @@ function submitStudyContact(scFormName, scUrl) {
         <s:hidden id="studyProtocolId" name="studyProtocolId"/>
         
         <jsp:include page="reportAddEditDesigneeStudyContact.jsp"/>
+        <hr style="border-top: dotted 1px #aeaeae;" /><br>
         <jsp:include page="reportAddEditPioStudyContact.jsp"/>
         
         <div class="actionsrow">

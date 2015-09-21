@@ -289,7 +289,6 @@ public class ResultsReportingContactsActionTest extends AbstractHibernateTestCas
         assertTrue(allerrors.contains("Organization is required"));
         assertTrue(allerrors.contains("Name is required"));
         assertTrue(allerrors.contains("Email is required"));
-        assertTrue(allerrors.contains("Phone is required"));
         
         action.setEditedDesigneeSCWebDTO(new StudyContactWebDTO(createSCDto(1L)));
         result = action.addOrEditDesigneeContact();
@@ -333,7 +332,6 @@ public class ResultsReportingContactsActionTest extends AbstractHibernateTestCas
         
         assertTrue(allerrors.contains("Name is required"));
         assertTrue(allerrors.contains("Email is required"));
-        assertTrue(allerrors.contains("Phone is required"));
         
         action.setEditedPioSCWebDTO(new StudyContactWebDTO(createSCDto(1L)));
         result = action.addOrEditPIOContact();

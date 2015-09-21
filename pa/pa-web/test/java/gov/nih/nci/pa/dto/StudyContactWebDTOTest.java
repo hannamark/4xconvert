@@ -5,14 +5,12 @@ package gov.nih.nci.pa.dto;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import gov.nih.nci.iso21090.DSet;
-import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
@@ -27,9 +25,6 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.PABaseCorrelation;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;

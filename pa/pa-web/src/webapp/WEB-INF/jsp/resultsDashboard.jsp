@@ -406,7 +406,9 @@ function searchResults(url, studyNCIid){
                  decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator"
                  name="results" requestURI="${requestURI}"
                  export="false" uid="row">
-                 <display:column  class="title" titleKey="studyProtocol.nciIdentifier" sortable="true" headerScope="col" scope="row" property="nciIdentifier"/>
+                 <display:column  class="title" titleKey="studyProtocol.nciIdentifier" sortable="true" headerScope="col" scope="row" >
+                    <a id="trialview_${row.studyProtocolId}" href="javascript:void(0)" onclick="searchResults('trialViewquery.action', '${row.studyProtocolId}')"><c:out value="${row.nciIdentifier}"/></a>
+                 </display:column>
                  <display:column  title="NCT ID" property="nctIdentifier"/>
                  <display:column  title="CTEP/DCP ID" property="ctepOrDcp"/>
                  <display:column  title="Lead Org PO ID" property="leadOrganizationPOId"/>          
@@ -496,7 +498,7 @@ function searchResults(url, studyNCIid){
                  <label for="designeeTrialId" > <fmt:message key="resultsdashboard.trialId"/></label><span class="required">*</span> <input type="text" id="designeeTrialId" name="designeeTrialId" size="20"/>
                  </td>
                  <td >
-               <s:a href="javascript:void(0)" cssClass="btn" onclick="searchResults('resultsReportingContactexecute.action', jQuery('#designeeTrialId').val())"><span class="btn_img"><span class="search">Search</span></span></s:a>
+               <s:a id="designeeTrialIdSearch" href="javascript:void(0)" cssClass="btn" onclick="searchResults('resultsReportingContactexecute.action', jQuery('#designeeTrialId').val())"><span class="btn_img"><span class="search">Search</span></span></s:a>
                 </td>
               </tr>
               <tr height="10%" style="border-top: 2px solid black;border-right: 2px solid black;">

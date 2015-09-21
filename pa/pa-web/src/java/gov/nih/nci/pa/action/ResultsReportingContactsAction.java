@@ -398,7 +398,8 @@ ServletRequestAware , Preparable {
             setProcess(ADD_STR);
             
             request.setAttribute(Constants.SUCCESS_MESSAGE,
-                    "Designee contact has been added/updated successfully");
+                    "Designee contact has been added/updated in the list. "
+                    + "However, please remember to click the Save button to save your changes.");
         } catch (PAException e) {
             LOG.error(ERROR_DC_MSG, e);
             request.setAttribute(Constants.FAILURE_MESSAGE,
@@ -440,7 +441,8 @@ ServletRequestAware , Preparable {
             setProcess(ADD_STR);
             
             request.setAttribute(Constants.SUCCESS_MESSAGE,
-                    "PIO contact has been added/updated successfully");
+                    "PIO contact has been added/updated in the list. "
+                    + "However, please remember to click the Save button to save your changes.");
         } catch (PAException e) {
             LOG.error(ERROR_PC_MSG, e);
             request.setAttribute(Constants.FAILURE_MESSAGE,
@@ -568,10 +570,6 @@ ServletRequestAware , Preparable {
             addFieldError(pfx + "email", "Email is required");
         }
         
-        if (StringUtils.isEmpty(scWebDto.getPhone())) {
-            addFieldError(pfx + "phone", "Phone is required");
-        }
-        
         return !hasFieldErrors();
     }
     
@@ -628,10 +626,12 @@ ServletRequestAware , Preparable {
         }
         for (StudyContactWebDTO scWebDto : scWebDtos) {
             scWebDto.setDeleted(delLst.contains(scWebDto.getId().toString()));
-            if (scWebDto.isDeleted() && scWebDto.getId() > 0) {
-                StudyContactDTO scDto = scMap.get(scWebDto.getId());
-                scDto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.NULLIFIED));
-                studyContactService.update(scDto);
+            if (scWebDto.isDeleted()) {
+                if (scWebDto.getId() > 0) {
+                    StudyContactDTO scDto = scMap.get(scWebDto.getId());
+                    scDto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.NULLIFIED));
+                    studyContactService.update(scDto);
+                }
             } else if (scWebDto.isUpdated() && scWebDto.getId() > 0) {
                 studyContactService.update(
                         scWebDto.convertToStudyContactDto(scMap.get(scWebDto.getId())));

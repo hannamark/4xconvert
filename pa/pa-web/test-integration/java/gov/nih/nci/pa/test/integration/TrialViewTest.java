@@ -10,7 +10,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.junit.Test;
 
 
-public class TrialViewTest extends ResultsReportingStudyContactsTest /* AbstractPaSeleniumTest */ {
+public class TrialViewTest extends ResultsReportingStudyContactsTest {
 
     protected static final int OP_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 15000
             : 2000;

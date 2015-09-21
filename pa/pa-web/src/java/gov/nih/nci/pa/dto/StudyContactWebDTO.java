@@ -282,13 +282,12 @@ public class StudyContactWebDTO implements Serializable {
     
     @Override
     public int hashCode() {
-        HashCodeBuilder hcb = new HashCodeBuilder();
-        hcb.append(id)
+        HashCodeBuilder hcb = new HashCodeBuilder()
+        .append(id)
         .append(studyProtocolId)
         .append(selPoOrgId)
         .append(selPoPrsnId)
-        .append(email)
-        .append(phone);
+        .append(email);
         return hcb.hashCode();
     }
 
@@ -298,13 +297,11 @@ public class StudyContactWebDTO implements Serializable {
             return false;
         }
         StudyContactWebDTO scWebDto = (StudyContactWebDTO) obj;
-        EqualsBuilder eb = new EqualsBuilder();
-        eb
+        EqualsBuilder eb = new EqualsBuilder()
         .append(studyProtocolId, scWebDto.getStudyProtocolId())
         .append(selPoOrgId, scWebDto.getSelPoOrgId())
         .append(selPoPrsnId, scWebDto.getSelPoPrsnId())
-        .append(email, scWebDto.getEmail())
-        .append(phone, scWebDto.getPhone());
+        .append(email, scWebDto.getEmail());
        
         return eb.isEquals();
     }
