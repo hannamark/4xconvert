@@ -129,7 +129,7 @@ public class JasperServerRestClient {
         if (response != null) {
             List<User> usersList = response.getUser();
             for (User user : usersList) {
-                jasperUserMap.put(user.getUsername(), user);
+                jasperUserMap.put(user.getUsername().toLowerCase(), user); // put by lowercase
             }
         }
     }
@@ -235,24 +235,6 @@ public class JasperServerRestClient {
         }
         return users;
     }
-
-    /*    *//**
-             * Give particular Jasper user details
-             * 
-             * @param userName
-             *            - Username
-             * @return - Users object
-             *//*
-               * public Users getUserDetails(String userName) { Users users =
-               * null; String xmlResponse = sendHTTPRequest(baseUrl + "/" +
-               * userName, GET, null); if (xmlResponse.length() >
-               * HTTP_SUCCESS_CODE_200.toString().length() &&
-               * !xmlResponse.startsWith("Error")) { users =
-               * unmarshallXML(xmlResponse); } else { errorResponse =
-               * xmlResponse; }
-               * 
-               * return users; }
-               */
 
     /**
      * Converts give user corresponding roles into list of Roles objects
@@ -360,7 +342,7 @@ public class JasperServerRestClient {
             return errorResponse;
         }
 
-        User user = jasperUserMap.get(userName);
+        User user = jasperUserMap.get(userName.toLowerCase()); // get by lowercase
         String response = "";
 
         if (user != null) {
