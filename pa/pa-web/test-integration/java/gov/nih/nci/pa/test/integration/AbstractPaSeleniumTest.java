@@ -825,6 +825,20 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         LOG.info("Added summary four info to db");
     }
 
+    protected void addNonCASummaryFour(long spId, String csmUserName) throws SQLException {
+        Number orgId = getResearchOrgId("ClinicalTrials.gov");
+        long userId = getCsmUserByLoginName(csmUserName);
+        
+        String sql = "insert into study_resourcing values "
+                    + "( (SELECT NEXTVAL('HIBERNATE_SEQUENCE')),"
+                    + "'NATIONAL', 'TRUE','"+orgId.intValue()+"',"+spId+",'B09','AA',"
+                    + "'CTEP','12197','TRUE','',null,null,"+userId+","+userId+",0)";
+        QueryRunner runner = new QueryRunner();
+        runner.update(connection, sql);
+        
+        LOG.info("Added summary four info to db");
+    }
+    
     protected long getCsmUserByLoginName(String loginName) throws SQLException {
         QueryRunner runner = new QueryRunner();
         Number regUserID = (Number) runner.query(connection,

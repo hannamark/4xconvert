@@ -83,12 +83,12 @@
 package gov.nih.nci.registry.test.integration;
 
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
-import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.dbutils.QueryRunner;
@@ -97,6 +97,8 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import com.dumbster.smtp.SmtpMessage;
+
 /**
  * Searches, adds participating site and Updates trial in Registry.
  * 
@@ -104,7 +106,7 @@ import org.openqa.selenium.WebElement;
  */
 @SuppressWarnings("deprecation")
 public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
-
+    
     @Test
     public void testUpdateTrial() throws SQLException, URISyntaxException {
 
@@ -142,7 +144,7 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
     }
     
     @Test
-    public void testReviewUpdateTrial() throws SQLException, URISyntaxException {
+    public void testReviewUpdateTrial() throws SQLException, URISyntaxException, InterruptedException {
 
         if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
             // PhantomJS keeps crashing on Linux CI box. No idea why at the
@@ -167,6 +169,7 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
 
         String rand = info.leadOrgID;
         runSearchAndVerifySingleTrialResult("officialTitle", rand, info);
+        
         invokeUpdateTrial(); 
         waitForPageToLoad();
        
@@ -179,7 +182,68 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
         
         // validate page for grants 
         validateGrant();
+      
+    }
+    
+    @Test
+    public void testUpdateTrialEmailNotification() throws SQLException, URISyntaxException, InterruptedException {
+
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+
+        TrialInfo info = createAcceptedTrial(false);
+        final String nciID = getLastNciId();
+        
+        addNonCASummaryFour(info.id, "abstractor-ci");
+        
+        loginToPAAndAddSite(info);
+
+        acceptTrialByNciIdWithGivenDWS(nciID, info.leadOrgID,
+                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
+                        .toString());
+        assignTrialOwner("abstractor-ci", info.id);
+
+        loginAndAcceptDisclaimer();
+
+        String rand = info.leadOrgID;
+        runSearchAndVerifySingleTrialResult("officialTitle", rand, info);
+        
+        restartEmailServer();
+        invokeUpdateTrial(); 
+        waitForPageToLoad();
        
+        //Trial Abstraction Error
+        clickAndWait("xpath=//button[text()='Review Trial']");
+        
+        clickAndWait("xpath=//button[text()='Submit']");
+        pause(2000);
+        
+        waitForEmailsToArrive(0);
+        
+        runSearchAndVerifySingleTrialResult("officialTitle", rand, info);
+        
+        invokeUpdateTrial(); 
+        waitForPageToLoad();
+        
+        selenium.click("id=trialDTO_startDateTypeAnticipated");
+        
+        selenium.type("trialDTO_startDate", MONTH_DAY_YEAR_FMT.format(new Date()));
+        
+        clickAndWait("xpath=//button[text()='Review Trial']");
+        
+        clickAndWait("xpath=//button[text()='Submit']");
+        
+        pause(2000);
+        
+        waitForEmailsToArrive(1);
+        
+        Iterator emailIter = server.getReceivedEmail();
+        SmtpMessage email = (SmtpMessage) emailIter.next();
+        String body = email.getBody();
+        assertTrue(body.contains("<p><b>Update Information:</b><br>Trial Start Date Type was updated.Trial Start Date was updated.</p>"));
     }
     
     private void validateGrant() {

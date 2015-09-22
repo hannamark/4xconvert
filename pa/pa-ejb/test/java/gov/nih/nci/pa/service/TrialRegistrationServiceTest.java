@@ -162,6 +162,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 
 /**
@@ -1008,11 +1009,13 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
         isoDto.setResearchOrganizationIi(IiConverter.convertToPoResearchOrganizationIi("abc"));
         siteIdentifiers.add(isoDto);
         
+        Mockito.reset(mailSvc);
         bean.update(studyProtocolDTO, overallStatusDTO, siteIdentifiers, null, studyResourcingDTOs, 
         		documentDTOs, null, null, null, null, null, null, null, 
         		null, null, BlConverter.convertToBl(Boolean.FALSE));
         studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
         assertTrue(studyProtocolDTO.getCtroOverride().getValue().booleanValue());
+        Mockito.verify(mailSvc).sendUpdateNotificationMail(any(Ii.class), any(String.class));
     }
 
     
@@ -1065,6 +1068,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
         studyResourcingDTOs = studyResourcingService.getStudyResourcingByStudyProtocol(ii);
         List<DocumentDTO> documentDTOs = new ArrayList<DocumentDTO>();
         
+        Mockito.reset(mailSvc);
         bean.update(studyProtocolDTO, overallStatusDTO, siteIdentifiers, null, studyResourcingDTOs, 
         		documentDTOs, null, null, null, null, null, null, null, 
         		null, null, BlConverter.convertToBl(Boolean.FALSE));
@@ -1072,6 +1076,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
         assertTrue(studyProtocolDTO.getCtroOverride().getValue().booleanValue());
         StudyMilestoneDTO smDto = studyMilestoneSvc.getCurrentByStudyProtocol(ii);
         assertTrue(CdConverter.convertCdToEnum(MilestoneCode.class,smDto.getMilestoneCode()).equals(MilestoneCode.SUBMISSION_ACCEPTED));
+        Mockito.verifyZeroInteractions(mailSvc);
     }
     @Test
     public void amendTrialTestWithChangeMemoDoc() throws Exception {

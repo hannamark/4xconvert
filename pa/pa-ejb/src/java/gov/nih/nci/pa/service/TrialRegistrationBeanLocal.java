@@ -2309,7 +2309,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         if (ISOUtil.isBlNull(isBatchMode) || !BlConverter.convertToBool(isBatchMode)) {
             if (AMENDMENT.equalsIgnoreCase(operation)) {
                 mailManagerSerivceLocal.sendAmendNotificationMail(studyProtocolIi);
-            } else if (UPDATE.equalsIgnoreCase(operation)) {
+            } else if (UPDATE.equalsIgnoreCase(operation)
+                    && StringUtils.isNotEmpty(updatesList)) {
                 mailManagerSerivceLocal.sendUpdateNotificationMail(studyProtocolIi, updatesList);
             } else if (CREATE.equalsIgnoreCase(operation)) {
                 mailManagerSerivceLocal.sendNotificationMail(studyProtocolIi, unmatchedEmails);
@@ -2602,16 +2603,25 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         TrialUpdatesRecorder.recordUpdate(originalSecondaryIDs,
                 updatedStudyOtherIdentifiers.getItem(), TrialUpdatesRecorder.IDENTIFIERS_ADDED);
         
+        TrialUpdatesRecorder.recordUpdate(spDTO.getStartDateTypeCode(),
+                studyProtocolDTO.getStartDateTypeCode(), TrialUpdatesRecorder.START_DATE_TYPE_CHANGED);
         TrialUpdatesRecorder.recordUpdate(spDTO.getStartDate(),
                 studyProtocolDTO.getStartDate(), TrialUpdatesRecorder.START_DATE_CHANGED);
         spDTO.setStartDate(studyProtocolDTO.getStartDate());            
         spDTO.setStartDateTypeCode(studyProtocolDTO.getStartDateTypeCode());
         
+        TrialUpdatesRecorder.recordUpdate(spDTO.getPrimaryCompletionDateTypeCode(),
+                studyProtocolDTO.getPrimaryCompletionDateTypeCode(), 
+                TrialUpdatesRecorder.PRIMARY_COMPLETION_DATE_TYPE_CHANGED);
         TrialUpdatesRecorder.recordUpdate(spDTO.getPrimaryCompletionDate(),
-                studyProtocolDTO.getPrimaryCompletionDate(), TrialUpdatesRecorder.PRIMARY_COMPLETION_DATE_CHANGED);
+                studyProtocolDTO.getPrimaryCompletionDate(), 
+                TrialUpdatesRecorder.PRIMARY_COMPLETION_DATE_CHANGED);
         spDTO.setPrimaryCompletionDate(studyProtocolDTO.getPrimaryCompletionDate());
         spDTO.setPrimaryCompletionDateTypeCode(studyProtocolDTO.getPrimaryCompletionDateTypeCode());
         
+        TrialUpdatesRecorder.recordUpdate(spDTO.getCompletionDateTypeCode(),
+                studyProtocolDTO.getCompletionDateTypeCode(), 
+                TrialUpdatesRecorder.COMPLETION_DATE_TYPE_CHANGED);
         TrialUpdatesRecorder.recordUpdate(spDTO.getCompletionDate(),
                 studyProtocolDTO.getCompletionDate(), TrialUpdatesRecorder.COMPLETION_DATE_CHANGED);
         spDTO.setCompletionDate(studyProtocolDTO.getCompletionDate());

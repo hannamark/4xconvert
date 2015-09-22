@@ -228,8 +228,10 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
             studyProtocolService
                 .updatePendingTrialAssociationsToActive(IiConverter
                     .convertToLong(studyProtocolIi));
-            mailManagerSerivceLocal.sendUpdateNotificationMail(studyProtocolIi,
-                    updatesList);
+            if (StringUtils.isNotEmpty(updatesList)) {
+                mailManagerSerivceLocal.sendUpdateNotificationMail(studyProtocolIi,
+                        updatesList);
+            }
             StudyMilestoneDTO smDto = studyMilestoneService.getCurrentByStudyProtocol(studyProtocolIi);
             List<StudyInboxDTO> inbox = studyInboxServiceLocal.getByStudyProtocol(studyProtocolIi);
             if (StringUtils.isNotEmpty(updatesList)) {

@@ -7,11 +7,13 @@ import static org.apache.commons.lang.StringUtils.defaultString;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.join;
 import static org.apache.commons.lang.StringUtils.trim;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.RealConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -91,6 +93,22 @@ public final class TrialUpdatesRecorder {
      * 
      */
     public static final String COMPLETION_DATE_CHANGED = "Trial Completion Date was updated.";
+    
+    /**
+     * 
+     */
+    public static final String START_DATE_TYPE_CHANGED = "Trial Start Date Type was updated.";
+
+    /**
+     * 
+     */
+    public static final String PRIMARY_COMPLETION_DATE_TYPE_CHANGED = "Trial Primary Completion Date Type was updated.";
+
+    /**
+     * 
+     */
+    public static final String COMPLETION_DATE_TYPE_CHANGED = "Trial Completion Date Type was updated.";
+
 
     /**
      * 
@@ -164,6 +182,19 @@ public final class TrialUpdatesRecorder {
     public static void recordUpdate(St st1, St st2, String msg) {
         String str1 = StConverter.convertToString(st1);
         String str2 = StConverter.convertToString(st2);
+        if (!StringUtils.equals(str1, str2)) {
+            add(msg);
+        }
+    }
+    
+    /**
+     * @param cd1 first iso code
+     * @param cd2 second iso code
+     * @param msg message
+     */
+    public static void recordUpdate(Cd cd1, Cd cd2, String msg) {
+        String str1 = CdConverter.convertCdToString(cd1);
+        String str2 = CdConverter.convertCdToString(cd2);
         if (!StringUtils.equals(str1, str2)) {
             add(msg);
         }

@@ -15,6 +15,7 @@ import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -143,6 +144,26 @@ public class TrialUpdatesRecorderTest {
         Ts ts2 = TsConverter.convertToTs(new Date());
         TrialUpdatesRecorder.recordUpdate(ts1, ts2, "TEST");
         assertTrue(TrialUpdatesRecorder.getRecordedUpdates().isEmpty());
+
+    }
+    
+    /**
+     * Test method for
+     * {@link gov.nih.nci.pa.util.TrialUpdatesRecorder#recordUpdate(gov.nih.nci.iso21090.Cd, gov.nih.nci.iso21090.Cd, java.lang.String)}
+     * .
+     */
+    @Test
+    public final void testRecordUpdateCdCdString() {
+        TrialUpdatesRecorder.reset();
+        TrialUpdatesRecorder.recordUpdate((Cd) null, (Cd) null, "TEST");
+        assertTrue(TrialUpdatesRecorder.getRecordedUpdates().isEmpty());
+
+        Cd cd1 = CdConverter.convertStringToCd("cd1");
+        Cd cd2 = CdConverter.convertStringToCd("cd2");
+        TrialUpdatesRecorder.recordUpdate(cd1, cd1, "TEST");
+        assertTrue(TrialUpdatesRecorder.getRecordedUpdates().isEmpty());
+        TrialUpdatesRecorder.recordUpdate(cd1, cd2, "TEST");
+        assertEquals("TEST", TrialUpdatesRecorder.getRecordedUpdates());
 
     }
 

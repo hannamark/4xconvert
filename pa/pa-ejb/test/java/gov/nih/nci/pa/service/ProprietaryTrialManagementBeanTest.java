@@ -170,6 +170,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mockito;
 
 
 /**
@@ -202,6 +203,7 @@ public class ProprietaryTrialManagementBeanTest extends
     private final StudySiteServiceLocal studySiteService = new StudySiteBeanLocal();
     private final ProtocolQueryServiceLocal protocolQueryServiceLocal = new MockProtocolQueryService();
     private final StudySiteAccrualAccessServiceLocal studySiteAccrualAccessServiceLocal = mock(StudySiteAccrualAccessServiceLocal.class);
+    private final MailManagerServiceLocal mailSvc = mock(MailManagerServiceLocal.class);
 
     private Ii spIi;
     private RegistryUser studyOwner;
@@ -299,8 +301,6 @@ public class ProprietaryTrialManagementBeanTest extends
         OrganizationCorrelationServiceRemote ocsr = new MockOrganizationCorrelationService();
         when(paSvcLoc.getOrganizationCorrelationService()).thenReturn(ocsr);
 
-        MailManagerServiceLocal mailSvc = mock(MailManagerServiceLocal.class);
-
         StudyInboxServiceBean studyInboxSvc = new StudyInboxServiceBean();
         studyInboxSvc.setDocWrkFlowStatusService(documentWrkService);
         studyInboxSvc.setProtocolQueryServiceLocal(protocolQueryServiceLocal);
@@ -346,6 +346,7 @@ public class ProprietaryTrialManagementBeanTest extends
                 studyOutcomeMeasureService);
         when(paSvcLoc.getPlannedMarkerService()).thenReturn(
                 new PlannedMarkerServiceBean());
+        when(paSvcLoc.getMailManagerService()).thenReturn(mailSvc);
 
         bean.setMailManagerSerivceLocal(mailSvc);
         bean.setStudyMilestoneService(studyMilestoneSvc);
@@ -466,7 +467,8 @@ public class ProprietaryTrialManagementBeanTest extends
         studySiteAccrualDTOs.get(0).setStatusDate(
                 TsConverter.convertToTs(ISOUtil
                         .dateStringToTimestamp("1/1/2012")));
-
+        
+        Mockito.reset(mailSvc);
         bean.update(studyProtocolDTO, leadOrganizationDTO, summary4Org,
                 leadOrganizationIdentifier, nctIdentifier, summary4TypeCode,
                 documents, studySiteDTOs, studySiteAccrualDTOs);
@@ -514,6 +516,9 @@ public class ProprietaryTrialManagementBeanTest extends
                         + protocol.getId() + " order by d.fileName").list();
         assertEquals("Updated_Other.doc", updatedDocs.get(0).getFileName());
         assertEquals("Updated_Protocol.doc", updatedDocs.get(1).getFileName());
+        
+        Mockito.verify(mailSvc).sendUpdateNotificationMail(any(Ii.class), any(String.class));
+        
     }
     
     
