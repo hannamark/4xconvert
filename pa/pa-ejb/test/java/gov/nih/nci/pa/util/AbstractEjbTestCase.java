@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
 import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.HashSet;
@@ -58,11 +59,11 @@ import com.sun.net.httpserver.HttpServer;
  */
 public class AbstractEjbTestCase extends AbstractHibernateTestCase {
 
-    public static final int CTGOV_API_MOCK_PORT = (int) (51235 + Math.random() * 10000);
-    public static final int SMTP_PORT = (int) (51235 + Math.random() * 10000);
-    public static final int TWITTER_MOCK_PORT = (int) (40000 + Math.random() * 10000);
-    public static final int GO_USA_GOV_MOCK_PORT = (int) (40000 + Math.random() * 10000);
-    public static final int CANCER_GOV_MOCK_PORT = (int) (40000 + Math.random() * 10000);
+    public static final int CTGOV_API_MOCK_PORT = randomPort();
+    public static final int SMTP_PORT = randomPort();
+    public static final int TWITTER_MOCK_PORT = randomPort();
+    public static final int GO_USA_GOV_MOCK_PORT = randomPort();
+    public static final int CANCER_GOV_MOCK_PORT = randomPort();
 
     private EjbFactory ejbFactory;
 
@@ -416,4 +417,23 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
                         + ejbClass);
     }
 
+    /**
+     * @return
+     */
+    private static int randomPort() {
+        int port;
+        while (isPortInUse((port = (int) (32768 + Math.random() * 32766)))) {
+            System.out.println("Port " + port + " in use; trying another...");
+        }
+        return port;
+    }
+
+    private static boolean isPortInUse(final int port) {
+        try {
+            new ServerSocket(port).close();
+        } catch (IOException e) {
+            return true;
+        }
+        return false;
+    }
 }
