@@ -325,7 +325,33 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         assertEquals("01/10/2015",driver.findElement(By.id("prsReleaseDate_"+trialId)).getAttribute("value"));
         assertEquals("01/11/2015",driver.findElement(By.id("qaCommentsReturnedDate_"+trialId)).getAttribute("value"));
         assertEquals("01/12/2015",driver.findElement(By.id("trialPublishedDate_"+trialId)).getAttribute("value"));
-    } 
+    }
+    
+    @Test       
+    public void testUpdateDateToBlank(){
+    	
+        long trialId = testTrials.get(0).id;
+        
+        // Setting dates to 2 columns
+        selenium.type("id=pcdSentToPIODate_"+trialId, "01/01/2015");
+        selenium.type("id=pcdConfirmedDate_"+testTrials.get(0).id, "01/02/2015");
+        driver.findElement(By.id("trialPublishedDate_"+trialId)).sendKeys("\t");
+        pause(5000);
+        clickAndWait("link=Search");
+        //pause(1000);
+        assertEquals("01/01/2015",driver.findElement(By.id("pcdSentToPIODate_"+trialId)).getAttribute("value"));
+        assertEquals("01/02/2015",driver.findElement(By.id("pcdConfirmedDate_"+trialId)).getAttribute("value"));
+        
+        // Re-setting dates to blank
+        selenium.type("id=pcdSentToPIODate_"+trialId, "");
+        selenium.type("id=pcdConfirmedDate_"+testTrials.get(0).id, "");                
+        driver.findElement(By.id("trialPublishedDate_"+trialId)).sendKeys("\t");
+        pause(5000);
+        clickAndWait("link=Search");
+        //pause(5000);
+        assertEquals("",driver.findElement(By.id("pcdSentToPIODate_"+trialId)).getAttribute("value"));
+        assertEquals("",driver.findElement(By.id("pcdConfirmedDate_"+trialId)).getAttribute("value"));        
+    }
     
     @Test
     public void testPiechart(){

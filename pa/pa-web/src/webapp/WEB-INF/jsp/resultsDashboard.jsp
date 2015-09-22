@@ -198,30 +198,29 @@ jQuery(function() {
 			var id = inp.id;
 			var attr = id.split('_')[0];
 			var studyId = id.split('_')[1];
-			if(date != ''){
-			  var ajaxReq = new Ajax.Request('resultsDashboardajaxChangeDate.action', {
-                 method: 'post',
-                 parameters: 'studyId='+studyId+'&dateAttr='+attr+'&dateValue='+date,
-                 onSuccess: function(response) {
-                     if (response.responseText != 'success'){
-                    	 reportDateUpdateError(studyId, attr);
-                     } else {
-                    	 jQuery('#'+id+'_flash').delay(100).fadeIn('normal', function() {
-                    	      jQuery(this).delay(2500).fadeOut();
-                    	 });
-                     }
-                 },
-                 onFailure: function(response) {
+			
+			var ajaxReq = new Ajax.Request('resultsDashboardajaxChangeDate.action', {
+            method: 'post',
+            parameters: 'studyId='+studyId+'&dateAttr='+attr+'&dateValue='+date,
+            onSuccess: function(response) {
+                if (response.responseText != 'success'){
+                   	    reportDateUpdateError(studyId, attr);
+                    } else {
+                   	    jQuery('#'+id+'_flash').delay(100).fadeIn('normal', function() {
+                        jQuery(this).delay(2500).fadeOut();
+                 	});
+                }
+            },
+            onFailure: function(response) {
                 	 reportDateUpdateError(studyId, attr);
-                 },
-                 onException: function(requesterObj, exceptionObj) {
-                     ajaxReq.options.onFailure(null);
-                 },
-                 on0: function(response) {
-                     ajaxReq.options.onFailure(response);
-                 }
-               });
-			}
+            },
+            onException: function(requesterObj, exceptionObj) {
+                 ajaxReq.options.onFailure(null);
+            },
+            on0: function(response) {
+                  ajaxReq.options.onFailure(response);
+            }
+          });			
 		}
 	});
   });

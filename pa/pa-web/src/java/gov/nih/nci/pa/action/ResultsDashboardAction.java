@@ -149,9 +149,15 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
             sendUnauthorizedResponse();
             return null;
         }
+       
+        Timestamp updateDate = null;
+        
+        if (dateValue != null) {
+            updateDate = new Timestamp(dateValue.getTime());
+        }
         
         if (studyProtocolService.updateStudyProtocolResultsDate(studyId, dateAttr, 
-                new Timestamp(dateValue.getTime()))) {
+                updateDate)) {
             ajaxResponseStream = new ByteArrayInputStream(SUCCESS.getBytes());    
         } else {
             ajaxResponseStream = new ByteArrayInputStream(ERROR.getBytes());
