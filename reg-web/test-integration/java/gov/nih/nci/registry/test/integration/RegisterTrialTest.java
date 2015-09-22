@@ -86,6 +86,7 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.dbutils.QueryRunner;
@@ -101,6 +102,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 
+import com.dumbster.smtp.SmtpMessage;
 import com.thoughtworks.selenium.SeleniumException;
 
 /**
@@ -909,6 +911,19 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 category);
         clickAndWait("xpath=//button[text()='Save as Draft']");
         final Number draftID = getLastDraftId();
+        
+        waitForEmailsToArrive(1);
+        Iterator<SmtpMessage> emailIter = server.getReceivedEmail();        
+        SmtpMessage email = (SmtpMessage) emailIter.next();
+        String body = email.getBody();
+        String subject = email.getHeaderValue("Subject");
+            
+        System.out.println(body);
+        System.out.println(subject);
+        verifySaveDraftMailBody(body);
+        verifySaveDraftMailSubject(subject);        
+        
+        
         assertTrue(
                 "No success message found",
                 selenium.isTextPresent("The trial draft has been successfully saved and assigned the Identifier "
@@ -946,6 +961,37 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                         + nciID));
         verifyTrialConfirmaionPage(rand, nciID, category);
 
+    }
+    
+    /**
+     * @param body
+     */
+    private void verifySaveDraftMailBody(final String body) {
+        assertTrue(body
+                .contains("<hr><p><b>Title: </b>An Open-Label Study of Ruxolitinib "));
+        assertTrue(body
+                .contains("Lead Organization Trial ID:"));
+        assertTrue(body
+                .contains("Lead Organization:"));
+        assertTrue(body
+                .contains("Submission Date:"));
+        assertTrue(body
+                .contains("<p>Dear Abstractor User,</p><p>You have saved a draft of the trial identified above for submission to the NCI Clinical Trials Reporting Program (CTRP).</p>"
+                		+ "<p>The CTRP has assigned your draft a unique temporary identifier for tracking purposes.</p> "
+                		+ "<p><b>NEXT STEPS:</b><br>To retrieve and complete your submission, use the \"Search Saved Drafts\" feature on "
+                		+ "the \"Search Trials\" page in the CTRP Registration application.</p>"
+                		+ "<p>Clinical Trials Reporting Office (CTRO) staff will not access or process your trial until you have completed the submission.</p>"
+                		+ "<p><b>Important!</b> You can save your draft  for a maximum of 30 days.</p>"
+                		+ "<p>If you have questions about this or other CTRP topics, please contact us at ncictro@mail.nih.gov.</p>"
+                		+ "<p>Thank you for submitting your trial for registration in the Clinical Trials Reporting Program.</p>"));
+    }
+    
+    /**
+     * @param subject
+     */
+    private void verifySaveDraftMailSubject(final String subject) {
+    	assertTrue(subject
+                .contains("NCI CTRP: Trial RECORD SAVED as DRAFT for"));
     }
 
     private Number getLastDraftId() throws SQLException {

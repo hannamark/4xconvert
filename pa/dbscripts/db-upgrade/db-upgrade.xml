@@ -1980,4 +1980,8 @@
        <comment>Inserted new properties into pa_properties to add report link to Quick Links</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9259.sql"/>
     </changeSet>
+    <changeSet id="PO-9270" author="lagarwal">       
+       <comment>Reverting the mail template for partial registration</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9270.sql"/>
+    </changeSet>
 </databaseChangeLog>
