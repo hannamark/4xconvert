@@ -29,6 +29,13 @@ function handleAction(){
     	editSubmitUrl="trialViewupdate.action";
     }
     if (page == "Edit"){
+    	var typeCode = jQuery("#typeCode").val();
+    	if(typeCode=="Before results" || typeCode== "After results") {
+    		var isProceed =  confirm("If \"Before results\" or \"After results\" document is changed the \"Comparison document\" will be removed. Do you wish to proceed?");
+    		if(!isProceed) {
+    			return false;
+    		}
+    	}
     	document.forms[0].action=editSubmitUrl;
     	document.forms[0].submit();  	
     } else {

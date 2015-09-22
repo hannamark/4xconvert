@@ -79,7 +79,7 @@ public class ResultsReportingDocumentTest extends AbstractPaSeleniumTest {
             clickAndWait("link=Add");
 
             System.out.println("trialDocPath: "+trialDocPath);
-            selenium.select("id=typeCode", "label=Before results");
+            selenium.select("id=typeCode", "label=Comparison");
             selenium.type("id=fileUpload", trialDocPath);
             clickAndWait("link=Save");
          
@@ -88,7 +88,7 @@ public class ResultsReportingDocumentTest extends AbstractPaSeleniumTest {
             clickAndWait("link=Save");
             assertTrue(selenium.isTextPresent("Record Updated"));
            
-            long recordCount = getRecordCount(trial.id,DocumentTypeCode.BEFORE_RESULTS.getName(), false);
+            long recordCount = getRecordCount(trial.id,DocumentTypeCode.COMPARISON.getName(), false);
             
             assertTrue(recordCount>0);
          
