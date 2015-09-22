@@ -231,7 +231,20 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     private void startSMTP() throws SQLException {
         new QueryRunner().update(connection, "update pa_properties set value='"
                 + PORT + "' where name='smtp.port'");
-        server = SimpleSmtpServer.start(PORT);
+
+        server = new SimpleSmtpServer(PORT);
+        Thread t = new Thread(server);
+        t.start();
+
+        // Block until the server socket is created
+        synchronized (server) {
+            try {
+                server.wait(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     /**
@@ -730,11 +743,12 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     protected TrialInfo createSubmittedTrial(boolean isAbbr,
             boolean skipDocuments) throws SQLException {
         TrialInfo info = new TrialInfo();
-        
-        // trimming uuid if length greater than 30 characters as this is used 
-        // for leadOrgId, which throws a validation error if its length is greater than 30 chars
+
+        // trimming uuid if length greater than 30 characters as this is used
+        // for leadOrgId, which throws a validation error if its length is
+        // greater than 30 chars
         info.uuid = StringUtils.left(UUID.randomUUID().toString(), 30);
-        
+
         info.title = "Title " + info.uuid;
 
         pickUsers(info);
@@ -794,33 +808,32 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         return info;
 
     }
-    
-    
-    
-    protected void addSummaryFour(long spId, String csmUserName) throws SQLException {
+
+    protected void addSummaryFour(long spId, String csmUserName)
+            throws SQLException {
         Number orgId = getResearchOrgId("ClinicalTrials.gov");
         long userId = getCsmUserByLoginName(csmUserName);
-        
+
         String sql = "insert into study_resourcing values "
-                    + "( (SELECT NEXTVAL('HIBERNATE_SEQUENCE')),"
-                    + "'NATIONAL', 'TRUE','"+orgId.intValue()+"',"+spId+",'P30','CA',"
-                    + "'CTEP','12197','TRUE','',null,null,"+userId+","+userId+",0)";
+                + "( (SELECT NEXTVAL('HIBERNATE_SEQUENCE')),"
+                + "'NATIONAL', 'TRUE','" + orgId.intValue() + "'," + spId
+                + ",'P30','CA'," + "'CTEP','12197','TRUE','',null,null,"
+                + userId + "," + userId + ",0)";
         QueryRunner runner = new QueryRunner();
         runner.update(connection, sql);
-        
+
         LOG.info("Added summary four info to db");
     }
-    
+
     protected long getCsmUserByLoginName(String loginName) throws SQLException {
         QueryRunner runner = new QueryRunner();
-        Number regUserID = (Number) runner
-                .query(connection,
-                        "select user_id from csm_user cu "
-                        + "where cu.login_name like '%"
-                                + loginName + "%'", new ArrayHandler())[0];
-        
+        Number regUserID = (Number) runner.query(connection,
+                "select user_id from csm_user cu "
+                        + "where cu.login_name like '%" + loginName + "%'",
+                new ArrayHandler())[0];
+
         return regUserID.longValue();
-        
+
     }
 
     protected void addDocument(TrialInfo info, String type, String filename)
@@ -838,33 +851,34 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         runner.update(connection, sql);
 
     }
-    
-    protected void addDesginee(TrialInfo info)
-            throws SQLException {
+
+    protected void addDesginee(TrialInfo info) throws SQLException {
         QueryRunner runner = new QueryRunner();
-        //insert organizational contact
+        // insert organizational contact
         String sql = String
                 .format("insert into organizational_contact(assigned_identifier ,person_identifier, organization_identifier, status_code) values"
-                    +" (99, (select identifier from person where first_name='John'), "
-                    +" (select identifier  from organization where name ='ClinicalTrials.gov'),'ACTIVE' )");
+                        + " (99, (select identifier from person where first_name='John'), "
+                        + " (select identifier  from organization where name ='ClinicalTrials.gov'),'ACTIVE' )");
         runner.update(connection, sql);
-        
-        //insert study_contact
+
+        // insert study_contact
         sql = null;
-         sql = String
+        sql = String
                 .format("INSERT INTO study_contact("
-            +" identifier, role_code, primary_indicator, address_line, delivery_address_line," 
-            +" city, state, postal_code, country_identifier, telephone, email," 
-            +" healthcare_provider_identifier, clinical_research_staff_identifier," 
-            +" study_protocol_identifier, status_code, status_date_range_low," 
-            +" date_last_created, date_last_updated, status_date_range_high," 
-            +" organizational_contact_identifier, user_last_created_id, user_last_updated_id," 
-            +" title, prs_user_name, comments)"
-            +" VALUES ("
-            +" 19000090, 'DESIGNEE_CONTACT', true , null, null, null, null,null,null,  '866-319-4357' ,'sample@example.com',"
-            +" null, null, "+info.id+", 'ACTIVE', '2014-11-15 15:41:44.529', null, null, null,"
-            +" (select identifier from organizational_contact)"
-            +",   null, null, null, 'D PRS', 'designee contact comments'    )  ");
+                        + " identifier, role_code, primary_indicator, address_line, delivery_address_line,"
+                        + " city, state, postal_code, country_identifier, telephone, email,"
+                        + " healthcare_provider_identifier, clinical_research_staff_identifier,"
+                        + " study_protocol_identifier, status_code, status_date_range_low,"
+                        + " date_last_created, date_last_updated, status_date_range_high,"
+                        + " organizational_contact_identifier, user_last_created_id, user_last_updated_id,"
+                        + " title, prs_user_name, comments)"
+                        + " VALUES ("
+                        + " 19000090, 'DESIGNEE_CONTACT', true , null, null, null, null,null,null,  '866-319-4357' ,'sample@example.com',"
+                        + " null, null, "
+                        + info.id
+                        + ", 'ACTIVE', '2014-11-15 15:41:44.529', null, null, null,"
+                        + " (select identifier from organizational_contact)"
+                        + ",   null, null, null, 'D PRS', 'designee contact comments'    )  ");
         runner.update(connection, sql);
 
     }
@@ -875,11 +889,12 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 "delete from document where study_protocol_identifier="
                         + info.id);
     }
-    
-    protected  void deleteContact () throws SQLException{
+
+    protected void deleteContact() throws SQLException {
         QueryRunner runner = new QueryRunner();
         runner.update(connection, "delete from organizational_contact");
-        runner.update(connection, "delete from study_contact where identifier =19000090");
+        runner.update(connection,
+                "delete from study_contact where identifier =19000090");
     }
 
     /**
@@ -1094,8 +1109,6 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
 
         return retVal;
     }
-    
-    
 
     protected int removeCSMUser(Number userId) throws SQLException {
         QueryRunner runner = new QueryRunner();
