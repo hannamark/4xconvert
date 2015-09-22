@@ -96,7 +96,19 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
     }
 
     private void startSMTP() {
-        smtp = SimpleSmtpServer.start(SMTP_PORT);
+        SimpleSmtpServer server = new SimpleSmtpServer(SMTP_PORT);
+        Thread t = new Thread(server);
+        t.start();
+
+        // Block until the server socket is created
+        synchronized (server) {
+            try {
+                server.wait(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        smtp = server;
 
     }
 
