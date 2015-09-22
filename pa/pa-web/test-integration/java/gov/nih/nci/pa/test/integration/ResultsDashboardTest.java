@@ -86,7 +86,6 @@ package gov.nih.nci.pa.test.integration;
 
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 
-import java.sql.Date;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -116,9 +115,8 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         logoutUser();
         deactivateAllTrials();
         registerTestTrials();
-        loginAsResultsAbstractor();
-        clickAndWait("link=Results Reporting");
-        assertTrue(selenium.isTextPresent("Results Reporting & Tracking Dashboard"));
+        loginPA("results-abstractor", "pass");
+        clickAndWait("id=acceptDisclaimer");
     }
     
     @After
@@ -128,13 +126,36 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
     }
     
     @Test       
+    public void testResultsReportingLandingPage(){        
+        assertTrue(selenium.isTextPresent("Results Reporting & Tracking Dashboard"));
+    }
+    
+    @Test       
     public void testUnauthorizedAccess(){
         logoutUser();
         loginAsScientificAbstractor();
         openAndWait("/pa/protected/resultsDashboard.action");
         assertTrue(selenium.isTextPresent("Access Denied"));
     }
+      
+    @Test       
+    public void testLandingPageForSuAbstractorRoles(){
+        logoutUser();
+        loginPA("ctrpsubstractor", "pass");
+        clickAndWait("id=acceptDisclaimer");
+        assertTrue(selenium.isTextPresent("My Dashboard"));
+    }
     
+    @Test       
+    public void testLandingPageForSuandResultAbstractorRoles() throws Exception{
+        logoutUser();
+        loginPA("multiroleuser", "pass");
+        clickAndWait("id=acceptDisclaimer");
+        assertTrue(selenium.isTextPresent("My Dashboard"));
+        assertTrue(selenium.isTextPresent("Super Abstractor"));
+        assertTrue(selenium.isTextPresent("Results Reporting"));
+        
+    }
     /**
      * Test the results reporting home page
      */

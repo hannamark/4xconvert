@@ -17,14 +17,14 @@
 	                <c:if test="${sessionScope.isScientificAbstractor==true}">
 	                   <c:set var="dashboardMenu" value="pamenu.abstraction.dashboardSci" />
 	                </c:if>
-	
 	                <c:if test="${sessionScope.isAdminAbstractor==true && sessionScope.isScientificAbstractor==true}">
 	                    <c:set var="dashboardMenu"  value="pamenu.abstraction.dashboardAbsSci" />
 	                </c:if>
 	                <c:if test="${sessionScope.isSuAbstractor==true}">
 	                    <c:set var="dashboardMenu" value="pamenu.abstraction.dashboardSuAbs" />
 	                </c:if>
-	                   <c:if test="${sessionScope.isAnyAbstractor}">
+	                   <c:if test="${sessionScope.isAdminAbstractor==true
+	                                ||sessionScope.isScientificAbstractor==true ||sessionScope.isSuAbstractor==true}">
 	                       <pa:menuLink href="${pageContext.request.contextPath}/protected/dashboard.action" id="dashboardMenuOption" labelKey="${dashboardMenu}" selected="${requestScope.topic == 'dashboard'}"/>            
 	                   </c:if>
 	                   

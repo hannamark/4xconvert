@@ -79,7 +79,12 @@
 package gov.nih.nci.pa.action;
 
 
+import gov.nih.nci.pa.util.Constants;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.interceptor.ServletRequestAware;
 
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -88,15 +93,29 @@ import com.opensymphony.xwork2.ActionSupport;
  *
  * @author moweis
  */
-public class DisclaimerAction extends ActionSupport {
+public class DisclaimerAction extends ActionSupport 
+        implements ServletRequestAware {
 
     private static final long serialVersionUID = 1L;
+    private HttpServletRequest request;
 
     /**
      * {@inheritDoc}
      */
     public String accept() {
         ServletActionContext.getRequest().getSession().setAttribute("disclaimerAccepted", true);
-        return "acceptView";
+        if (request.isUserInRole(Constants.RESULTS_ABSTRACTOR) 
+            && !(request.isUserInRole(Constants.SUABSTRACTOR) 
+              || request.isUserInRole(Constants.SCIENTIFIC_ABSTRACTOR)
+              || request.isUserInRole(Constants.ADMIN_ABSTRACTOR))) {
+            return "resultsDashboardView";
+        } else {
+            return "dashboardView";
+        }
+    }
+
+    @Override
+    public void setServletRequest(HttpServletRequest req) {
+        request = req;
     }
 }

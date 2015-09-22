@@ -145,6 +145,10 @@ table.results {
  color:#00CC00;
 }
 
+#results_table_container {
+    max-width: 1000px;   
+
+
 </style>
 
 <script type="text/javascript"
@@ -154,6 +158,7 @@ table.results {
 <script type="text/javascript" src="${scriptPath}/js/select2.min.js"></script>
 <script type="text/javascript" charset="utf8"
 	src="${scriptPath}/js/DataTables-1.10.4/media/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="${scriptPath}/js/jquery.doubleScroll.js"></script>
 <script type="text/javascript" language="javascript"
 	src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
 <script type="text/javascript" language="javascript"
@@ -186,6 +191,10 @@ jQuery(function() {
 	jQuery("#pcdFrom").datepicker();
 	jQuery("#pcdTo").datepicker();
 	initChart();
+	jQuery('#results_table_container').doubleScroll({
+        contentElement: jQuery('#results')
+    });
+	
 	if ('${pcdFrom}' != '') {
       jQuery("#pcdFrom").val(jQuery.datepicker.formatDate('mm/dd/yy', new Date('${pcdFrom}')));
 	}
@@ -398,7 +407,8 @@ function searchResults(url, studyNCIid){
         <s:if test="results != null">
          <div class="line"></div>
          <h2>Search Results</h2>
-         <div id="results" class="box">
+         <div id="results_table_container">
+         <div id="results">
              <c:set var="requestURI" value="resultsDashboardsearch.action"
                  scope="request" />
              <display:table class="data" sort="list" pagesize="10"
@@ -406,7 +416,7 @@ function searchResults(url, studyNCIid){
                  name="results" requestURI="${requestURI}"
                  export="false" uid="row">
                  <display:column  class="title" titleKey="studyProtocol.nciIdentifier" sortable="true" headerScope="col" scope="row" >
-                    <a id="trialview_${row.studyProtocolId}" href="javascript:void(0)" onclick="searchResults('trialViewquery.action', '${row.studyProtocolId}')"><c:out value="${row.nciIdentifier}"/></a>
+                    <!-- <c:out value="${row.nciIdentifier}"/> --><a id="trialview_${row.studyProtocolId}" href="javascript:void(0)" onclick="searchResults('trialViewquery.action', '${row.studyProtocolId}')"><c:out value="${row.nciIdentifier}"/></a>
                  </display:column>
                  <display:column  title="NCT ID" property="nctIdentifier"/>
                  <display:column  title="CTEP/DCP ID" property="ctepOrDcp"/>
@@ -474,6 +484,7 @@ function searchResults(url, studyNCIid){
                       <div id="trialPublishedDate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
              </display:table>
+         </div>
          </div>
        </s:if>
        <div id="chart" class="box">

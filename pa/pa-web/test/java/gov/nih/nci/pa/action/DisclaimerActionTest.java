@@ -85,9 +85,15 @@ package gov.nih.nci.pa.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import javax.servlet.http.HttpServletRequest;
+
+import gov.nih.nci.pa.util.Constants;
+
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.mockrunner.mock.web.MockHttpServletRequest;
 
 /**
  * @author moweis
@@ -95,17 +101,37 @@ import org.junit.Test;
  */
 public class DisclaimerActionTest extends AbstractPaActionTest {
     DisclaimerAction action;
+    MockHttpServletRequest request;
 
     @Before
     public void initAction() {
         action = new DisclaimerAction();
+        request = getRequest();
+        action.setServletRequest(request);
     }
 
     @Test
-    public void acceptTest(){
-        assertEquals("acceptView", action.accept());
+    public void acceptTestSuAbstractorRoleOnly(){
+        request.setUserInRole(Constants.SUABSTRACTOR,true);
+        assertEquals("dashboardView", action.accept());
         assertTrue((Boolean)ServletActionContext.getRequest().getSession().
                 getAttribute("disclaimerAccepted"));
      }
 
+    public void acceptTestResultsAbstractorRoleOnly(){
+        request.setUserInRole(Constants.SUABSTRACTOR,false);
+        request.setUserInRole(Constants.RESULTS_ABSTRACTOR,true);
+        assertEquals("resultsDashboardView", action.accept());
+        assertTrue((Boolean)ServletActionContext.getRequest().getSession().
+                getAttribute("disclaimerAccepted"));
+     }
+    
+    public void acceptTestResultsAbstractorRoleAndSuAbstractor(){
+        request.setUserInRole(Constants.SUABSTRACTOR,true);
+        request.setUserInRole(Constants.RESULTS_ABSTRACTOR,true);
+        assertEquals("dashboardView", action.accept());
+        assertTrue((Boolean)ServletActionContext.getRequest().getSession().
+                getAttribute("disclaimerAccepted"));
+     }
+    
 }

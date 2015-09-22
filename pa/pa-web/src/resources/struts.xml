@@ -161,10 +161,14 @@
         <action name="disClaimerAction*" class="gov.nih.nci.pa.action.DisclaimerAction" method="{1}">
             <interceptor-ref name="paNoDisclaimerDefaultInterceptor" />
             <result>/WEB-INF/jsp/disclaimer.jsp</result>            
-            <result name="acceptView" type="redirectAction">
+            <result name="dashboardView" type="redirectAction">
                 <param name="namespace">../protected</param>
                 <param name="actionName">dashboard</param>                
             </result>             
+            <result name="resultsDashboardView" type="redirectAction">
+                <param name="namespace">../protected</param>
+                <param name="actionName">resultsDashboard</param>                
+            </result>
         </action>
         <action name="systemStatusDump" class="gov.nih.nci.coppa.web.ComprehensiveApplicationStatusLogger">
             <interceptor-ref name="paNoDisclaimerDefaultInterceptor"/>  
