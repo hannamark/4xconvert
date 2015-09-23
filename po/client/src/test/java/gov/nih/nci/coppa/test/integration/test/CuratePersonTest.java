@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.coppa.test.integration.test;
 
+import gov.nih.nci.coppa.test.DataGeneratorUtil;
 import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
@@ -89,45 +90,31 @@ import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.iso21090.TelUrl;
-import gov.nih.nci.coppa.test.DataGeneratorUtil;
-import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.TestConvertHelper;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonDTO;
-import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-public class CuratePersonTest extends AbstractPoWebTest {
+public class CuratePersonTest extends AbstractCurateTest {
     private static final int DEFAULT_TEXT_COL_LENGTH = 50;
-
-    private final Map<Ii, PersonDTO> catalogPersons = new HashMap<Ii, PersonDTO>();
-    private PersonEntityServiceRemote personService;
-
-    protected PersonEntityServiceRemote getPersonService() {
-        return personService;
-    }
+    
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-
-        if (personService == null) {
-            personService = RemoteServiceHelper.getPersonEntityService();
-        }
     }
 
     public void testCurateNewPerson() throws Exception {
         /* create a new person via remote API. */
         String firstName = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'Y', 10);
         String lastName = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'Z', 10);
-        Ii id = remoteCreateAndCatalog(create(firstName, lastName));
+        Ii id = remoteCreateAndCatalog(createPerson(firstName, lastName));
 
         loginAsCurator();
 
@@ -169,7 +156,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
         /* create a new person via remote API. */
         String firstName = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'Y', 10);
         String lastName = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'Z', 10);
-        Ii id = remoteCreateAndCatalog(create(firstName, lastName));
+        Ii id = remoteCreateAndCatalog(createPerson(firstName, lastName));
 
         PersonDTO orgDTO = getPersonService().getPerson(id);
         TelEmail email = new TelEmail();
@@ -273,7 +260,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
         /* create a new person via remote API. */
         String firstName = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'Y', 10);
         String lastName = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'Z', 10);
-        Ii id = remoteCreateAndCatalog(create(firstName, lastName));
+        Ii id = remoteCreateAndCatalog(createPerson(firstName, lastName));
 
         if (!isLoggedIn()) {
             loginAsCurator();
@@ -337,36 +324,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
         assertEquals("PO: Persons and Organizations - Person Details", selenium.getTitle());
         assertFalse(selenium.isElementPresent("//a[@id='person_id_" + id.getExtension() + "']/span/span"));
     }
-
-    private Ii remoteCreateAndCatalog(PersonDTO org) throws EntityValidationException, CurationException {
-        Ii id = getPersonService().createPerson(org);
-        org.setIdentifier(id);
-        catalogPersons.put(id, org);
-        return id;
-    }
-
-    private PersonDTO create(String firstName, String lastName) throws URISyntaxException {
-        return create(firstName, null, lastName, null, null, TestConvertHelper.createAd("123 abc ave.", null, "mycity", "VA", "12345", "USA"));
-    }
-
-    private PersonDTO create(String firstName, String middleName, String lastName, String prefix, String suffix, Ad postalAddress) throws URISyntaxException {
-        PersonDTO person = new PersonDTO();
-        person.setName(TestConvertHelper.convertToEnPn(firstName, middleName, lastName, prefix, suffix));
-
-        person.setPostalAddress(postalAddress);
-        DSet<Tel> telco = new DSet<Tel>();
-        telco.setItem(new HashSet<Tel>());
-        person.setTelecomAddress(telco);
-
-        TelEmail email = new TelEmail();
-        email.setValue(new URI("mailto:" + DEFAULT_EMAIL));
-        person.getTelecomAddress().getItem().add(email);
-
-        TelUrl url = new TelUrl();
-        url.setValue(new URI(DEFAULT_URL));
-        person.getTelecomAddress().getItem().add(url);
-        return person;
-    }
+   
 
     private PersonDTO remoteGetPerson(Ii id) throws NullifiedEntityException {
         return getPersonService().getPerson(id);

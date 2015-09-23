@@ -15,6 +15,9 @@ This can also indicate that auto-merging correlations results in an incompatible
 the selected duplicate is <i>Pending</i> and one or more scoped roles being merged are <i>Active.</i>  
 </p>
 
+<po:successMessages/>
+<s:actionerror/>
+
 <div id="page" style="margin-top:10px;">
     <div class="boxouter_nobottom">
     <h2><s:text name="organization"/> Information (${organization.id})</h2>

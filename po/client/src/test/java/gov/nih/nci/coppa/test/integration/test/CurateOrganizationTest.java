@@ -99,6 +99,7 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.TestConvertHelper;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
+import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
@@ -109,10 +110,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.collections.set.ListOrderedSet;
+import org.apache.commons.dbutils.QueryRunner;
+import org.openqa.selenium.By;
 
-public class CurateOrganizationTest extends AbstractPoWebTest {
+public class CurateOrganizationTest extends AbstractCurateTest {
 
     private static final String CTEP_ORG_ROOT = "2.16.840.1.113883.3.26.6.2";
 
@@ -140,6 +144,177 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         if (hcfService == null) {
             hcfService = RemoteServiceHelper.getHealthCareFacilityCorrelationService();
         }
+    }
+    
+    @SuppressWarnings("deprecation")
+    public void testNullifyOrgAndSeeNoEmailOrPhoneError() throws Exception {
+        final QueryRunner r = new QueryRunner();
+
+        // Create orgs & roles.
+        String nullifyIntoName = "Nullify Into " + UUID.randomUUID().toString();
+        Ii nullifyIntoID = remoteCreateAndCatalog(create(nullifyIntoName));
+        r.update(conn, "update organization set status='ACTIVE' where id="
+                + nullifyIntoID.getExtension());
+
+        String beingNullifiedName = "Being Nullified "
+                + UUID.randomUUID().toString();
+        Ii beingNullifiedID = remoteCreateAndCatalog(create(beingNullifiedName));
+        Ii hcfID = remoteCreateHcfWithCtepId(beingNullifiedID);
+        r.update(conn, "update organization set status='ACTIVE' where id="
+                + beingNullifiedID.getExtension());
+        r.update(conn,
+                "update healthcarefacility set status='ACTIVE' where id="
+                        + hcfID.getExtension());
+
+        // Create Person.
+        String firstName = UUID.randomUUID().toString();
+        String lastName = UUID.randomUUID().toString();
+        Ii personID = remoteCreateAndCatalog(createPerson(firstName, lastName));
+        r.update(conn, "update person set status='ACTIVE' where id="
+                + personID.getExtension());
+        
+        // Link Person and Org via HCP
+        HealthCareProviderDTO hcpDTO = makeHcp(beingNullifiedID, personID);
+        Ii hcpID = RemoteServiceHelper.getHealthCareProviderCorrelationService().createActiveCorrelation(hcpDTO);
+        r.update(conn,
+                "update healthcareprovider set status='ACTIVE' where id="
+                        + hcpID.getExtension());
+        
+        // now remove email and phone number from HCP record. This should prevent
+        // nullification.
+        r.update(conn,
+                "delete from hcp_email where hcp_id="+hcpID.getExtension());
+        r.update(conn,
+                "delete from hcp_phone where hcp_id="+hcpID.getExtension());
+        
+        System.out.println("Nullifying "+beingNullifiedName+" into "+nullifyIntoName);
+        
+        // Finally, try to nullify.
+        loginAsCurator();
+        searchForOrgByPoId(beingNullifiedID);
+        clickAndWait("org_id_" + beingNullifiedID.getExtension());
+        waitForTelecomFormsToLoad();
+        waitForAliasFormsToLoad();
+        
+        s.select("curateEntityForm.organization.statusCode", "NULLIFIED");
+        s.click("select_duplicate");
+        waitForElementToBecomeAvailable(By.id("popupFrame"), 10);
+        s.selectFrame("popupFrame");
+        waitForElementToBecomeAvailable(By.id("submitDuplicateOrganizationForm"), 10);
+        s.type("duplicateOrganizationForm_criteria_id", nullifyIntoID.getExtension());
+        clickAndWait("submitDuplicateOrganizationForm");
+        waitForElementToBecomeVisible(By.id("mark_as_dup_"+nullifyIntoID.getExtension()), 30);
+        clickAndWait("mark_as_dup_"+nullifyIntoID.getExtension());
+        driver.switchTo().defaultContent();
+        clickAndWait("save_button");
+        
+        // We now should be on Curate Error page.
+        assertEquals(
+                "PO: Persons and Organizations - Organization Details : Error",
+                s.getTitle());
+        assertTrue(s
+                .isTextPresent("Message: Either a phone number or an email address is required., "
+                        + "Entity/Role: HealthCareProvider, Entity/Role ID: "
+                        + hcpID.getExtension()
+                        + ", Scoper Organization ID: "
+                        + nullifyIntoID.getExtension()
+                        + ", "
+                        + "Player ID: "+personID.getExtension()+", "
+                        + "Value with error: gov.nih.nci.po.data.bo.HealthCareProvider"));
+
+    }
+    
+    @SuppressWarnings("deprecation")
+    public void testNullifyOrgAndSeeBadEmailError() throws Exception {
+        final QueryRunner r = new QueryRunner();
+
+        // Create orgs & roles.
+        String nullifyIntoName = "Nullify Into " + UUID.randomUUID().toString();
+        Ii nullifyIntoID = remoteCreateAndCatalog(create(nullifyIntoName));
+        r.update(conn, "update organization set status='ACTIVE' where id="
+                + nullifyIntoID.getExtension());
+
+        String beingNullifiedName = "Being Nullified "
+                + UUID.randomUUID().toString();
+        Ii beingNullifiedID = remoteCreateAndCatalog(create(beingNullifiedName));
+        Ii hcfID = remoteCreateHcfWithCtepId(beingNullifiedID);
+        r.update(conn, "update organization set status='ACTIVE' where id="
+                + beingNullifiedID.getExtension());
+        r.update(conn,
+                "update healthcarefacility set status='ACTIVE' where id="
+                        + hcfID.getExtension());
+
+        // Create Person.
+        String firstName = UUID.randomUUID().toString();
+        String lastName = UUID.randomUUID().toString();
+        Ii personID = remoteCreateAndCatalog(createPerson(firstName, lastName));
+        r.update(conn, "update person set status='ACTIVE' where id="
+                + personID.getExtension());
+        
+        // Link Person and Org via HCP
+        HealthCareProviderDTO hcpDTO = makeHcp(beingNullifiedID, personID);
+        Ii hcpID = RemoteServiceHelper.getHealthCareProviderCorrelationService().createActiveCorrelation(hcpDTO);
+        r.update(conn,
+                "update healthcareprovider set status='ACTIVE' where id="
+                        + hcpID.getExtension());
+        
+        // now mess up email address.
+        r.update(conn,
+                "update email set value='bademailaddr@' where id=(select max(id) from email)");
+               
+        System.out.println("Nullifying "+beingNullifiedName+" into "+nullifyIntoName);
+        
+        // Finally, try to nullify.
+        loginAsCurator();
+        searchForOrgByPoId(beingNullifiedID);
+        clickAndWait("org_id_" + beingNullifiedID.getExtension());
+        waitForTelecomFormsToLoad();
+        waitForAliasFormsToLoad();
+        
+        s.select("curateEntityForm.organization.statusCode", "NULLIFIED");
+        s.click("select_duplicate");
+        waitForElementToBecomeAvailable(By.id("popupFrame"), 10);
+        s.selectFrame("popupFrame");
+        waitForElementToBecomeAvailable(By.id("submitDuplicateOrganizationForm"), 10);
+        s.type("duplicateOrganizationForm_criteria_id", nullifyIntoID.getExtension());
+        clickAndWait("submitDuplicateOrganizationForm");
+        waitForElementToBecomeVisible(By.id("mark_as_dup_"+nullifyIntoID.getExtension()), 30);
+        clickAndWait("mark_as_dup_"+nullifyIntoID.getExtension());
+        driver.switchTo().defaultContent();
+        clickAndWait("save_button");
+        
+        // We now should be on Curate Error page.
+        assertEquals(
+                "PO: Persons and Organizations - Organization Details : Error",
+                s.getTitle());
+        assertTrue(s
+                .isTextPresent("Message: (fieldName) is not a well-formed email address, Entity/Role: HealthCareProvider, Entity/Role ID: "
+                        + hcpID.getExtension()
+                        + ", Scoper Organization ID: "
+                        + nullifyIntoID.getExtension()
+                        + ", "
+                        + "Player ID: "+personID.getExtension()+", "
+                        + "Value with error: bademailaddr@."));
+
+    }
+
+    
+    
+    protected HealthCareProviderDTO makeHcp(Ii orgID, Ii personID) throws Exception {
+        HealthCareProviderDTO dto = new HealthCareProviderDTO();
+        dto.setScoperIdentifier(orgID);
+        dto.setPlayerIdentifier(personID);
+        dto.setTelecomAddress(new DSet<Tel>());
+        dto.getTelecomAddress().setItem(new HashSet<Tel>());
+        
+        TelPhone ph1 = new TelPhone();
+        ph1.setValue(new URI(TelPhone.SCHEME_TEL + ":123-123-654"));
+        dto.getTelecomAddress().getItem().add(ph1);
+        
+        TelEmail email = new TelEmail();
+        email.setValue(new URI(TelEmail.SCHEME_MAILTO+ ":hcpemail@example.com"));
+        dto.getTelecomAddress().getItem().add(email);
+        return dto;
     }
 
     public void testCurateNewOrg() throws Exception {        
@@ -677,6 +852,11 @@ public void testCurateNewOrgThenCurateAfterRemoteUpdateToNullifyWithDuplicateId(
         TelPhone ph1 = new TelPhone();
         ph1.setValue(new URI(TelPhone.SCHEME_TEL + ":123-123-6543"));
         hcf.getTelecomAddress().getItem().add(ph1);
+        
+        //TelEmail email = new TelEmail();
+        //email.setValue(new URI(TelEmail.SCHEME_MAILTO + ":hcfemail@example.com"));
+        //hcf.getTelecomAddress().getItem().add(email);
+        
         return hcf;
     }
 

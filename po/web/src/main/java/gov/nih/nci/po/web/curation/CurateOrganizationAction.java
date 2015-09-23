@@ -3,6 +3,8 @@ package gov.nih.nci.po.web.curation;
 import gov.nih.nci.po.data.bo.Comment;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
+import gov.nih.nci.po.data.bo.PlayedRole;
+import gov.nih.nci.po.data.bo.ScopedRole;
 import gov.nih.nci.po.service.CurateEntityValidationException;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
@@ -18,6 +20,7 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -27,10 +30,14 @@ import javax.jms.JMSException;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.struts2.ServletActionContext;
-import org.hibernate.exception.ExceptionUtils;
+import org.hibernate.validator.InvalidStateException;
+import org.hibernate.validator.InvalidValue;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.validator.annotations.CustomValidator;
@@ -40,7 +47,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
  * Action class to handle curation of Organization entities.
  * @author Rohit Gupta
  */
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.CyclomaticComplexity" })
 public class CurateOrganizationAction extends AbstractPoAction implements Addressable, Preparable {
     private static final long serialVersionUID = 1L;
     /**
@@ -125,6 +132,7 @@ public class CurateOrganizationAction extends AbstractPoAction implements Addres
      * @throws CSException
      *             CSException
      */
+    @SuppressWarnings("PMD.CyclomaticComplexity")
     @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "organization"),
             @CustomValidator(type = "duplicateOfNullifiedOrg", fieldName = "duplicateOf",
                     message = "A duplicate Organization must be provided."),
@@ -153,6 +161,7 @@ public class CurateOrganizationAction extends AbstractPoAction implements Addres
             }
             
         } catch (EJBException e) {
+            LOG.error(ExceptionUtils.getFullStackTrace(e));
             /*
              * we are catching the EJBException and then interrogating it for the root cause and if the root cause is
              * what we expect then we'll throw the root cause. Next, our custom result exception-mapping within our
@@ -163,16 +172,54 @@ public class CurateOrganizationAction extends AbstractPoAction implements Addres
              * because the Organization was being NULLIFIED.
              */
             Throwable rootCause = ExceptionUtils.getRootCause(e);            
-            if (rootCause instanceof CurateEntityValidationException) {
-                final CurateEntityValidationException ex = (CurateEntityValidationException) rootCause;
+            if (rootCause instanceof CurateEntityValidationException) {                
+                final CurateEntityValidationException ex = (CurateEntityValidationException) rootCause;                
+                LOG.error(ToStringBuilder.reflectionToString(ex.getErrors()));
                 storeAsActionMessages(ex);
                 throw ex;
+            } else if (rootCause instanceof InvalidStateException) {
+                final InvalidStateException ex = (InvalidStateException) rootCause;                
+                LOG.error(ToStringBuilder.reflectionToString(ex.getInvalidValues()));
+                storeAsActionMessages(ex);
+                throw new CurateEntityValidationException(new HashMap<String, String[]>()); // NOPMD
             }
             throw e;
         }
 
         ActionHelper.saveMessage(getText("organization.curate.success"));
         return SUCCESS;
+    }
+
+    @SuppressWarnings("rawtypes")
+    private void storeAsActionMessages(InvalidStateException ex) {
+        for (InvalidValue iv : ex.getInvalidValues()) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Message: " + iv.getMessage());
+            sb.append(", ");
+            sb.append("Entity/Role: "
+                    + (iv.getRootBean() != null ? iv.getRootBean().getClass()
+                            .getSimpleName() : "N/A"));
+            sb.append(", ");
+            if (iv.getRootBean() instanceof PersistentObject) {
+                sb.append("Entity/Role ID: "
+                        + ((PersistentObject) iv.getRootBean()).getId());
+                sb.append(", ");
+            }
+            if (iv.getRootBean() instanceof ScopedRole) {
+                sb.append("Scoper Organization ID: "
+                        + ((ScopedRole) iv.getRootBean()).getScoper().getId());
+                sb.append(", ");
+            }
+            if (iv.getRootBean() instanceof PlayedRole) {
+                sb.append("Player ID: "
+                        + ((PlayedRole) iv.getRootBean()).getPlayer().getId());
+                sb.append(", ");
+            }
+            sb.append("Value with error: " + iv.getValue());
+            sb.append(". ");
+            addActionError(sb.toString());
+            ActionHelper.saveMessage(sb.toString());
+        }
     }
 
     /**
@@ -196,6 +243,7 @@ public class CurateOrganizationAction extends AbstractPoAction implements Addres
                 if (errArray != null) {
                     for (String msg : errArray) {
                         addActionError(msg);
+                        ActionHelper.saveMessage(msg);
                     }
                 }
             }

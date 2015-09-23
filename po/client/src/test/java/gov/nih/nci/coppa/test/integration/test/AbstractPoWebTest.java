@@ -147,7 +147,7 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
 
     protected static final String ALIAS_STRING = "test_alias_123";
 
-    private Connection conn = null;
+    protected Connection conn = null;
     private ResultSetHandler<Object[]> h = null;
 
     static {
