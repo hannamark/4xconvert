@@ -479,6 +479,7 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
                 registryUserService.removeAllOwnership(registryUser, 
                         FamilyHelper.getAllRelatedOrgs(registryUser.getAffiliatedOrganizationId()));
                 ServletActionContext.getRequest().getSession().removeAttribute("isSiteAdmin");
+                registryUser.setReportGroups(null);
             } catch (PAException e) {
                 LOG.error("ERROR REMOVING ACCRUAL ACCESS.", e);
             }

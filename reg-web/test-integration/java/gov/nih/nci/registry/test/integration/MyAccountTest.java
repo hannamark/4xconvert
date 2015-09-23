@@ -82,8 +82,11 @@
  */
 package gov.nih.nci.registry.test.integration;
 
+import java.sql.SQLException;
 import java.util.List;
 
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.ArrayListHandler;
 import org.apache.commons.lang.SystemUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -140,9 +143,11 @@ public class MyAccountTest extends AbstractRegistrySeleniumTest {
     
     /**
      * Testing logout when there is a change in org affiliation
+     * @throws SQLException error if any
      */
     @Test
-    public void testOrgChangeLogout() {
+    public void testOrgChangeLogout() throws SQLException {
+        addReportGroupToRegUser("abstractor-ci");
     	loginAndAcceptDisclaimer();    	
         clickAndWait("css=a.nav-user");
         clickAndWait("css=a.account");
@@ -171,10 +176,41 @@ public class MyAccountTest extends AbstractRegistrySeleniumTest {
         waitForElementToBecomeAvailable(By.xpath("//button[normalize-space(text())='Save']"), 20);
         WebElement save = driver.findElement(By.xpath("//button[normalize-space(text())='Save']"));
         JavascriptExecutor saveExecutor = (JavascriptExecutor)driver;
+        
+        assertNotNull(queryReportGroupToRegUser("abstractor-ci"));
         saveExecutor.executeScript("arguments[0].click();", save);
         
         // Checking for logout to occur
         pause(OP_WAIT_TIME);
         verifyLoginPage();
+        assertNull(queryReportGroupToRegUser("abstractor-ci"));
+    }
+    
+    protected void addReportGroupToRegUser(String csmUserName)
+            throws SQLException {
+        long userId = getCsmUserByLoginName(csmUserName);
+        String sql = "update registry_user set report_groups='DataTable4'"
+                + " where csm_user_id=" + userId;
+        QueryRunner runner = new QueryRunner();
+        runner.update(connection, sql);
+
+        LOG.info("Added report group to the registry user");
+    }
+    
+    protected String queryReportGroupToRegUser(String csmUserName)
+            throws SQLException {
+        long userId = getCsmUserByLoginName(csmUserName);
+        String sql = "select report_groups from registry_user "
+                + " where csm_user_id=" + userId;
+        QueryRunner runner = new QueryRunner();
+        String repGrp = null;
+        final List<Object[]> results = runner.query(connection, sql,
+                new ArrayListHandler());
+        for (Object[] row : results) {
+            repGrp = (String) row[0];
+           
+        }
+
+        return repGrp;
     }
 }

@@ -25,7 +25,7 @@
           originalorgid = $('registryUserWebDTO.affiliatedOrganizationId').value;
         }
         if (originalorgid) {
-          var r = confirm("Warning: You will lose any existing Site Admin and Accrual Submission privileges if you change your organizaiton affiliation.\n\nSystem will automatically log you out and you will have to re-login.");
+          var r = confirm("Warning: You will lose any existing Site Admin, report viewing access and Accrual Submission privileges if you change your organizaiton affiliation.\n\nSystem will automatically log you out and you will have to re-login.");
           if (r == false) {
             return;
           }

@@ -4,6 +4,7 @@
 package gov.nih.nci.registry.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyLong;
@@ -67,6 +68,7 @@ public class RegisterUserActionTest extends AbstractRegWebTest {
 
         regUser.setCsmUser(csmUser);
         regUser.setAffiliatedOrganizationId(1L);
+        regUser.setReportGroups("DataTable4");
 
         when(regUserSvc.getUser(anyString())).thenReturn(regUser);
         when(regUserSvc.getUserById(anyLong())).thenReturn(regUser);
@@ -229,8 +231,10 @@ public class RegisterUserActionTest extends AbstractRegWebTest {
         MockHttpServletRequest req = (MockHttpServletRequest) ServletActionContext.getRequest();
         req.setRemoteUser("RegUser");
         assertNull(req.getSession().getAttribute("regUserWebDto"));
+        assertNotNull(regUserSvc.getUserById(1L).getReportGroups());
         action.getRegistryUserWebDTO().setAffiliatedOrganizationId(2L);
         assertEquals("logout", action.updateAccount());
+        assertNull(regUserSvc.getUserById(1L).getReportGroups());
     }
 
     @Test
