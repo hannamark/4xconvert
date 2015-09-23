@@ -190,8 +190,11 @@ public class CurateOrganizationAction extends AbstractPoAction implements Addres
         return SUCCESS;
     }
 
+    /**
+     * @param ex InvalidStateException
+     */
     @SuppressWarnings("rawtypes")
-    private void storeAsActionMessages(InvalidStateException ex) {
+    void storeAsActionMessages(InvalidStateException ex) {
         for (InvalidValue iv : ex.getInvalidValues()) {
             StringBuilder sb = new StringBuilder();
             sb.append("Message: " + iv.getMessage());

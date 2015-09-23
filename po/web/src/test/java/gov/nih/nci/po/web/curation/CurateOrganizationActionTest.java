@@ -90,15 +90,21 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
+import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
+import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.web.AbstractPoTest;
 import gov.nih.nci.security.exceptions.CSException;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.jms.JMSException;
 
+import org.apache.struts2.ServletActionContext;
+import org.hibernate.validator.InvalidStateException;
+import org.hibernate.validator.InvalidValue;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -123,7 +129,8 @@ public class CurateOrganizationActionTest extends AbstractPoTest {
     @Test
     public void testPrepareWithRootKeyButNoObjectInSession() throws Exception {
         // can only set root key to the key of an object in the session,
-        // so after setting the root key, we have to clear out the session manually to test this case
+        // so after setting the root key, we have to clear out the session
+        // manually to test this case
         action.setRootKey("abc-123");
         getSession().clearAttributes();
 
@@ -142,7 +149,7 @@ public class CurateOrganizationActionTest extends AbstractPoTest {
     }
 
     @Test
-    public void testStart() {        
+    public void testStart() {
         action.getOrganization().setId(1L);
         assertEquals(CurateOrganizationAction.CURATE_RESULT, action.start());
         assertEquals(1L, action.getOrganization().getId().longValue());
@@ -169,15 +176,20 @@ public class CurateOrganizationActionTest extends AbstractPoTest {
         o.setId(1L);
         action.setDuplicateOf(o);
         assertEquals(Action.SUCCESS, action.curate());
-        assertEquals(1, action.getOrganization().getDuplicateOf().getId().longValue());
+        assertEquals(1, action.getOrganization().getDuplicateOf().getId()
+                .longValue());
     }
 
     @Test
     public void changeCurrentChangeRequest() {
-        assertEquals(CurateOrganizationAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action.changeCurrentChangeRequest());
+        assertEquals(
+                CurateOrganizationAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT,
+                action.changeCurrentChangeRequest());
 
         action.getCr().setId(1L);
-        assertEquals(CurateOrganizationAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action.changeCurrentChangeRequest());
+        assertEquals(
+                CurateOrganizationAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT,
+                action.changeCurrentChangeRequest());
     }
 
     @Test
@@ -203,7 +215,8 @@ public class CurateOrganizationActionTest extends AbstractPoTest {
         OrganizationCR cr2 = new OrganizationCR();
         cr2.setId(2L);
         action.getOrganization().getChangeRequests().add(cr2);
-        Map<String, String> selectChangeRequests = action.getSelectChangeRequests();
+        Map<String, String> selectChangeRequests = action
+                .getSelectChangeRequests();
         assertEquals(2, selectChangeRequests.size());
         selectChangeRequests.values();
         int i = 1;
@@ -216,12 +229,14 @@ public class CurateOrganizationActionTest extends AbstractPoTest {
     @Test
     public void testUsFormat() {
         assertFalse(action.isUsOrCanadaFormat());
-        Address addr1 = new Address("defaultStreetAddress", "cityOrMunicipality", "defaultState", "12345",
-                new Country("United States", "840", "US", "USA"));
+        Address addr1 = new Address("defaultStreetAddress",
+                "cityOrMunicipality", "defaultState", "12345", new Country(
+                        "United States", "840", "US", "USA"));
         action.getOrganization().setPostalAddress(addr1);
         assertTrue(action.isUsOrCanadaFormat());
-        Address addr2 = new Address("defaultStreetAddress", "cityOrMunicipality", "defaultState", "12345",
-                new Country("Tazmania", "999", "TZ", "TAZ"));
+        Address addr2 = new Address("defaultStreetAddress",
+                "cityOrMunicipality", "defaultState", "12345", new Country(
+                        "Tazmania", "999", "TZ", "TAZ"));
         action.getOrganization().setPostalAddress(addr2);
         assertFalse(action.isUsOrCanadaFormat());
     }
@@ -251,4 +266,34 @@ public class CurateOrganizationActionTest extends AbstractPoTest {
         action.getDuplicateOf().setId(1L);
         assertEquals("1", action.getDuplicateOfId());
     }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void storeAsActionMessages() {
+        final HealthCareProvider hcp = new HealthCareProvider();
+        hcp.setId(999L);
+
+        Organization org = new Organization();
+        org.setId(12345L);
+        hcp.setScoper(org);
+
+        Person p = new Person();
+        p.setId(567L);
+        hcp.setPlayer(p);
+
+        InvalidValue iv = new InvalidValue("Invalid email address",
+                HealthCareProvider.class, "email", "bademail", hcp);
+        InvalidStateException ex = new InvalidStateException(
+                new InvalidValue[] { iv });
+        action.storeAsActionMessages(ex);
+
+        final List<String> messages = (List<String>) ServletActionContext
+                .getRequest().getSession().getAttribute("messages");
+        assertEquals(1, messages.size());
+        assertEquals(
+                "Message: Invalid email address, Entity/Role: HealthCareProvider, Entity/Role ID: 999, Scoper Organization ID: 12345, Player ID: 567, Value with error: bademail. ",
+                messages.get(0));
+
+    }
+
 }
