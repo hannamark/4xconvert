@@ -18,6 +18,7 @@ insert into csm_user(login_name, first_name, last_name, PASSWORD) values ('scien
 insert into csm_user(login_name, first_name, last_name, PASSWORD) values ('admin-ci', '', '', 'BtM2GNbiAxg=');
 insert into csm_user(login_name, first_name, last_name, PASSWORD) values ('curator', '', '', 'BtM2GNbiAxg=');
 insert into csm_user(login_name, first_name, last_name, PASSWORD) values ('results-abstractor', '', '', 'BtM2GNbiAxg=');
+insert into csm_user(login_name, first_name, last_name, PASSWORD) values ('multiroleuser', '', '', 'BtM2GNbiAxg=');
         
 DELETE FROM csm_user where login_name='/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=abstractor';
 DELETE FROM csm_user where login_name='/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=submitter';
@@ -48,6 +49,11 @@ INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'curator'), (select group_id from csm_group where group_name = 'test'));
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'curator'), (select group_id from csm_group where group_name = 'client'));
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'results-abstractor'), (select group_id from csm_group where group_name = 'ResultsAbstractor'));
+
+INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'multiroleuser'), (select group_id from csm_group where group_name = 'ResultsAbstractor'));
+INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'multiroleuser'), (select group_id from csm_group where group_name = 'SuAbstractor'));
+INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'multiroleuser'), (select group_id from csm_group where group_name = 'AdminAbstractor'));
+INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'multiroleuser'), (select group_id from csm_group where group_name = 'ScientificAbstractor'));
 
 
 UPDATE pa_properties SET value='example@example.com' WHERE value in ('@abstraction.script.mailTo@','@cde.request.to.email@','@ctrp.support.email@','@mail.from@');
