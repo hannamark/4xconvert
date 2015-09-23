@@ -83,5 +83,13 @@
          timeToLiveSeconds="180"
          overflowToDisk="false"
     />
+    <cache
+         name="REPORTING_RESULTS_CACHE_KEY"
+         maxElementsInMemory="10"
+         eternal="false"
+         timeToIdleSeconds="120"
+         timeToLiveSeconds="180"
+         overflowToDisk="false"
+    />
     
 </ehcache>

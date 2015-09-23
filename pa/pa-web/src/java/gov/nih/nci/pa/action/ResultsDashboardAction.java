@@ -8,6 +8,7 @@ import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_LAS
 import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_OTHER_IDENTIFIERS;
 import static gov.nih.nci.pa.util.Constants.IS_RESULTS_ABSTRACTOR;
 import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Person;
@@ -32,11 +33,7 @@ import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
-import gov.nih.nci.pa.util.ActionUtils;
-import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.pa.util.PAConstants;
-import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -232,77 +229,106 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         try {
             
             results = new ArrayList<StudyProtocolQueryDTO>();
-            for (StudyProtocolQueryCriteria criteria : criteriaList) {
+            for (final StudyProtocolQueryCriteria criteria : criteriaList) {
                 criteria.setNciSponsored(true);
                 criteria.setStudyProtocolType(InterventionalStudyProtocol.class.getSimpleName());
                 criteria.setDocumentWorkflowStatusCodes(getResultsDashboadStatusCodeFilter());
-                List<StudyProtocolQueryDTO> currentResults = protocolQueryService
-                        .getStudyProtocolByCriteria(criteria,
-                                SKIP_ALTERNATE_TITLES, SKIP_LAST_UPDATER_INFO,
-                                SKIP_OTHER_IDENTIFIERS);
 
 
-                //collecting protocol-ids.
-                List<Long> protocolIds = new ArrayList<Long>();
-                for (StudyProtocolQueryDTO studyProtocolQueryDTO : currentResults) {
-                    protocolIds.add(studyProtocolQueryDTO.getStudyProtocolId());
+                if (!"GET".equalsIgnoreCase(request.getMethod())) {
+                    CacheUtils.removeItemFromCache(
+                            CacheUtils.getReportingResultsCache(),
+                            criteria.getUniqueCriteriaKey());
                 }
-                //load comparison document associated with protocols
-                Map<Long, DocumentDTO> comparisonDocumentMap =  PaRegistry.getDocumentService()
-                            .getDocumentByIDListAndType(protocolIds, DocumentTypeCode.COMPARISON);
 
-                for (StudyProtocolQueryDTO resultQueryDTO: currentResults) {
-                    //fetch the documents from in-memory map.
-                    DocumentDTO documentDTO = (DocumentDTO) MapUtils.getObject(comparisonDocumentMap,
-                            resultQueryDTO.getStudyProtocolId());
-                    if (documentDTO != null) {
-                        resultQueryDTO.setCcctUserCreatedDate(
-                                TsConverter.convertToTimestamp(documentDTO.getCcctUserReviewDateTime()));
-                        resultQueryDTO.setCtroUserCreatedDate(
-                                TsConverter.convertToTimestamp(documentDTO.getCtroUserReviewDateTime()));
-                        resultQueryDTO.setCcctUserName(
-                                PAUtil.getDocumentUserCtroOrCcctReviewerName(documentDTO, false));
-                        resultQueryDTO.setCtroUserName(
-                                PAUtil.getDocumentUserCtroOrCcctReviewerName(documentDTO, true));
-                    }
+                List<StudyProtocolQueryDTO> studyProtocolQueryResults =
+                        (List<StudyProtocolQueryDTO>) CacheUtils.getFromCacheOrBackend(
+                                CacheUtils.getReportingResultsCache(),
+                                criteria.getUniqueCriteriaKey(),
+                                new CacheUtils.Closure(){
+                                    @Override
+                                    public Object execute() throws PAException {
 
-                    //BJ - the following approach may need refactoring.
-                    StringBuffer studyContactNamesList = new StringBuffer();
+                                        List<StudyProtocolQueryDTO> currentResults = protocolQueryService
+                                                .getStudyProtocolByCriteria(criteria,
+                                                        SKIP_ALTERNATE_TITLES, SKIP_LAST_UPDATER_INFO,
+                                                        SKIP_OTHER_IDENTIFIERS);
 
-                    //get study contacts list
-                    LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
-                     StudyContactDTO searchCriteria = new StudyContactDTO();
-                     searchCriteria.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(
-                             resultQueryDTO.getStudyProtocolId()));
 
-                     searchCriteria.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.DESIGNEE_CONTACT));
-                     List<StudyContactDTO>studyDesigneeContactDtos = studyContactService.search(searchCriteria, limit);
+                                        //collecting protocol-ids.
+                                        List<Long> protocolIds = new ArrayList<Long>();
+                                        for (StudyProtocolQueryDTO studyProtocolQueryDTO : currentResults) {
+                                            protocolIds.add(studyProtocolQueryDTO.getStudyProtocolId());
+                                        }
+                                        //load comparison document associated with protocols
+                                        Map<Long, DocumentDTO> comparisonDocumentMap =  PaRegistry.getDocumentService()
+                                                .getDocumentByIDListAndType(protocolIds, DocumentTypeCode.COMPARISON);
 
-                     if (CollectionUtils.isNotEmpty(studyDesigneeContactDtos)) {
-                         for (StudyContactDTO scDto : studyDesigneeContactDtos) {
-                             FunctionalRoleStatusCode stsCd = CdConverter.convertCdToEnum(
-                                     FunctionalRoleStatusCode.class, scDto.getStatusCode());
-                             if (!FunctionalRoleStatusCode.ACTIVE.equals(stsCd)
-                                     && !FunctionalRoleStatusCode.PENDING.equals(stsCd)) {
-                                 continue;
-                             }
-                             
-                             StudyContactWebDTO studyContactWebDTO = new StudyContactWebDTO(scDto);
-                             Person person = studyContactWebDTO.getContactPerson();
-                             
-                             if (person != null) {
-                                 if (studyContactNamesList.length() > 0) {
-                                     studyContactNamesList.append("<br>");
-                                 }
-                                 studyContactNamesList.append(person.getFullName());
-                             }
+                                        for (StudyProtocolQueryDTO resultQueryDTO: currentResults) {
+                                            //fetch the documents from in-memory map.
+                                            DocumentDTO documentDTO = (DocumentDTO) MapUtils.getObject(comparisonDocumentMap,
+                                                    resultQueryDTO.getStudyProtocolId());
+                                            if (documentDTO != null) {
+                                                resultQueryDTO.setCcctUserCreatedDate(
+                                                        TsConverter.convertToTimestamp(documentDTO.getCcctUserReviewDateTime()));
+                                                resultQueryDTO.setCtroUserCreatedDate(
+                                                        TsConverter.convertToTimestamp(documentDTO.getCtroUserReviewDateTime()));
+                                                resultQueryDTO.setCcctUserName(
+                                                        PAUtil.getDocumentUserCtroOrCcctReviewerName(documentDTO, false));
+                                                resultQueryDTO.setCtroUserName(
+                                                        PAUtil.getDocumentUserCtroOrCcctReviewerName(documentDTO, true));
+                                            }
 
-                         }
-                     }
-                    resultQueryDTO.setDesigneeNamesList(studyContactNamesList.toString());
-                }
-                
-                results.addAll(currentResults);
+                                            //BJ - the following approach may need refactoring.
+                                            StringBuffer studyContactNamesList = new StringBuffer();
+
+                                            //get study contacts list
+                                            LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+                                            StudyContactDTO searchCriteria = new StudyContactDTO();
+                                            searchCriteria.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(
+                                                    resultQueryDTO.getStudyProtocolId()));
+
+                                            searchCriteria.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.DESIGNEE_CONTACT));
+                                            try {
+
+                                                List<StudyContactDTO> studyDesigneeContactDtos = studyContactService.search(searchCriteria, limit);
+
+                                                if (CollectionUtils.isNotEmpty(studyDesigneeContactDtos)) {
+                                                    for (StudyContactDTO scDto : studyDesigneeContactDtos) {
+                                                        FunctionalRoleStatusCode stsCd = CdConverter.convertCdToEnum(
+                                                                FunctionalRoleStatusCode.class, scDto.getStatusCode());
+                                                        if (!FunctionalRoleStatusCode.ACTIVE.equals(stsCd)
+                                                                && !FunctionalRoleStatusCode.PENDING.equals(stsCd)) {
+                                                            continue;
+                                                        }
+
+                                                        StudyContactWebDTO studyContactWebDTO = new StudyContactWebDTO(scDto);
+                                                        Person person = studyContactWebDTO.getContactPerson();
+
+                                                        if (person != null) {
+                                                            if (studyContactNamesList.length() > 0) {
+                                                                studyContactNamesList.append("<br>");
+                                                            }
+                                                            studyContactNamesList.append(person.getFullName());
+                                                        }
+
+                                                    }
+                                                }
+                                            }catch (TooManyResultsException e) {
+                                                LOG.error("Error while searching study contacts", e);
+                                                throw new PAException(e);
+                                            }
+                                            resultQueryDTO.setDesigneeNamesList(studyContactNamesList.toString());
+                                        }
+
+                                        return currentResults;
+
+                                    }
+                                }
+                        );
+
+
+                results.addAll(studyProtocolQueryResults);
             }
             loadResultsChartData(results);
             

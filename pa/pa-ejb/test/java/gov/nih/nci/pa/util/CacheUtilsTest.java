@@ -33,6 +33,7 @@ public class CacheUtilsTest {
         CacheUtils.getSearchResultsCache().removeAll();
         CacheUtils.getSubmittersCache().removeAll();
         CacheUtils.getCaDSRClassificationSchemesCache().removeAll();
+        CacheUtils.getReportingResultsCache().removeAll();
     }
 
     /**
@@ -44,6 +45,7 @@ public class CacheUtilsTest {
         CacheUtils.getSearchResultsCache().removeAll();
         CacheUtils.getSubmittersCache().removeAll();
         CacheUtils.getCaDSRClassificationSchemesCache().removeAll();
+        CacheUtils.getReportingResultsCache().removeAll();
     }
 
     /**
@@ -75,6 +77,11 @@ public class CacheUtilsTest {
     @Test
     public final void testGetCaDSRClassificationSchemesCache() {
         assertEquals("CADSR_CLASSIFICATION_SCHEMES", CacheUtils.getCaDSRClassificationSchemesCache()
+                .getName());
+    }
+    @Test
+    public final void testGetReportingResultsCache() {
+        assertEquals("REPORTING_RESULTS_CACHE_KEY", CacheUtils.getReportingResultsCache()
                 .getName());
     }
 

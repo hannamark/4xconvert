@@ -31,7 +31,8 @@ public final class CacheUtils {
     private static final String TSR_SITES_CACHE_KEY = "TSR_SITES_CACHE";    
     private static final String TSR_CACHE_KEY = "TSR_CACHE";
     private static final String STUDY_SITE_CONTACTS_CACHE_KEY = "STUDY_SITE_CONTACTS_CACHE";
-    
+    private static final String REPORTING_RESULTS_CACHE_KEY = "REPORTING_RESULTS_CACHE_KEY";
+
     /**
      * @return TSR_CACHE
      */
@@ -150,6 +151,15 @@ public final class CacheUtils {
      */
     public static Cache getStatusRulesCache() {
         return CACHE_MANAGER.getCache(STATUS_RULES_CACHE_KEY);
+    }
+
+    /**
+     * Cache used for storing the study reporting results
+     *
+     * @return Cache
+     */
+    public static Cache getReportingResultsCache() {
+        return CACHE_MANAGER.getCache(REPORTING_RESULTS_CACHE_KEY);
     }
 
     /**
