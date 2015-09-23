@@ -6,11 +6,12 @@ package gov.nih.nci.pa.test.integration;
  */
 public class DashboardMenuTest extends AbstractPaSeleniumTest {
      
+    @SuppressWarnings("deprecation")
     public void testMenu() {
         loginAsResultsAbstractor();
         assertTrue(selenium.isElementPresent("link=Dashboards"));
         assertTrue(selenium.isElementPresent("link=Results Reporting"));
-        assertTrue(selenium.isElementPresent("link=Abstractor"));
+        assertFalse(selenium.isElementPresent("link=Abstractor"));
         
         logoutUser();
         loginAsSuperAbstractor();
