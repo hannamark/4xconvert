@@ -97,6 +97,7 @@ import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -112,6 +113,7 @@ import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
+import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
@@ -121,6 +123,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
@@ -448,6 +451,50 @@ public class AbstractionCompletionServiceBeanTest {
         assertTrue(errors.hasError(" Study Population Description is required "));
         
     }
+    
+    @Test
+    public void testEnforceArmGroup_InterventionalArmType() throws PAException {
+        Ii spIi = IiConverter.convertToIi(1L);
+        InterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
+        ispDTO.setStudyProtocolType(StConverter.convertToSt(InterventionalStudyProtocol.class.getSimpleName()));
+        AbstractionCompletionServiceBean sut = createAbstractionCompletionServiceBean();        
+        AbstractionMessageCollection errors = new AbstractionMessageCollection();
+        
+        ArmDTO dto = new ArmDTO();
+        dto.setStudyProtocolIdentifier(spIi);
+        dto.setDescriptionText(StConverter.convertToSt("description of arm"));
+        dto.setIdentifier(new Ii());
+        dto.setName(StConverter.convertToSt("name"));
+        List<ArmDTO> armDtos = new ArrayList<>();
+        armDtos.add(dto);
+        
+        when(armService.getByStudyProtocol(eq(spIi))).thenReturn(armDtos);
+        sut.enforceArmGroup(spIi, ispDTO, errors);
+        assertTrue(errors.hasError("Arm Type is required: "+dto.getName().getValue()));
+    }
+    
+    @Test
+    public void testEnforceArmGroup_NonInterventionalArmType() throws PAException {
+        Ii spIi = IiConverter.convertToIi(1L);
+        NonInterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest.createNonInterventionalStudyProtocolDTOObj();
+        ispDTO.setStudyProtocolType(StConverter.convertToSt(NonInterventionalStudyProtocolDTO.class.getSimpleName()));
+        AbstractionCompletionServiceBean sut = createAbstractionCompletionServiceBean();        
+        AbstractionMessageCollection errors = new AbstractionMessageCollection();
+        
+        ArmDTO dto = new ArmDTO();
+        dto.setStudyProtocolIdentifier(spIi);
+        dto.setDescriptionText(StConverter.convertToSt("description of arm"));
+        dto.setIdentifier(new Ii());
+        dto.setName(StConverter.convertToSt("name"));
+        List<ArmDTO> armDtos = new ArrayList<>();
+        armDtos.add(dto);
+        
+        when(armService.getByStudyProtocol(eq(spIi))).thenReturn(armDtos);
+        sut.enforceArmGroup(spIi, ispDTO, errors);
+        assertFalse(errors.hasError("Arm Type is required: "+dto.getName().getValue()));
+    }
+
+
     
     @Test
     public void testDoubleBlindingSchema() throws PAException {

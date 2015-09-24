@@ -108,7 +108,7 @@ import org.junit.runners.Suite.SuiteClasses;
         ResultsReportingStudyContactsTest.class, NCISpecificInformationTest.class,
         ResultsReportingActionsTakenTest.class, TwitterTest.class,
         DashboardMenuTest.class, RssOwnershipTest.class,
-        ManageUserGroupsTest.class
+        ManageUserGroupsTest.class, AbstractionValidationTest.class
 
 })
 public class AllSeleniumTests {

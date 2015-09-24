@@ -189,6 +189,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             + "Non-Interventional Trial Design "
             + "under Scientific Data menu.";
     private static final String NO_ARM_EXISTS_FOR_THE_TRIAL = "No Arm exists for the trial.";
+    private static final String ARM_TYPE_REQUIRED = "Arm Type is required: ";
     private static final String SELECT_ARM_UNDER_SCIENTIFIC_DATA_MENU = "Select Arm under Scientific Data menu.";
     private static final String SELECT = "Select ";
     private static final String INTERVENTIONAL_STUDY_PROTOCOL = "InterventionalStudyProtocol";
@@ -781,7 +782,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
        
     }
 
-    private void enforceArmGroup(Ii studyProtocolIi, StudyProtocolDTO studyProtocolDTO,
+    void enforceArmGroup(Ii studyProtocolIi, StudyProtocolDTO studyProtocolDTO,
             AbstractionMessageCollection messages) throws PAException {
         List<ArmDTO> dtos = armService.getByStudyProtocol(studyProtocolIi);        
         if (dtos.isEmpty()) {
@@ -818,9 +819,15 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             }
         } else {
             for (ArmDTO dto : dtos) {
+                if (studyProtocolDTO.getStudyProtocolType().getValue().equalsIgnoreCase(INTERVENTIONAL_STUDY_PROTOCOL)
+                        && (dto.getTypeCode() == null || StringUtils.isEmpty(dto.getTypeCode().getCode()))) {
+                    messages.addError("Select Arms from the Scientific Data menu and specify an Arm Type.",
+                            ARM_TYPE_REQUIRED + dto.getName().getValue(), ErrorMessageTypeEnum.SCIENTIFIC, 19);
+                }
                 if (PAUtil.isGreaterThan(dto.getName(), PAAttributeMaxLen.ARM_NAME)) {
-                    messages.addError("Select Arm/Group under Scientific Data menu.", dto.getName().getValue()
-                            + "  must not be more than 62 characters  ", ErrorMessageTypeEnum.SCIENTIFIC, 19);
+                    messages.addError("Select Arm/Group under Scientific Data menu.",
+                            dto.getName().getValue() + "  must not be more than 62 characters  ",
+                            ErrorMessageTypeEnum.SCIENTIFIC, 19);
                 }
             }
         }
