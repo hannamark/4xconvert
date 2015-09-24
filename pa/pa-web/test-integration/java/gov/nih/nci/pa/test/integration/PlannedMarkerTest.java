@@ -127,13 +127,13 @@ public class PlannedMarkerTest extends AbstractPaSeleniumTest {
        assertTrue(selenium.isTextPresent("Specimen Type is required."));
 
        selenium.check("id=plannedMarker.evaluationType-10");
-       waitForElementToBecomeVisible(By.id("evaluationTypeOtherText"), 5);
+       waitForElementToBecomeAvailable(By.id("evaluationTypeOtherText"), 5);
           
        selenium.check("id=plannedMarker.assayType-16");
-       waitForElementToBecomeVisible(By.id("assayTypeOtherText"), 5);
+       waitForElementToBecomeAvailable(By.id("assayTypeOtherText"), 5);
        
        selenium.check("id=plannedMarker.tissueSpecimenType-11");
-       waitForElementToBecomeVisible(By.id("specimenTypeOtherText"), 5);
+       waitForElementToBecomeAvailable(By.id("specimenTypeOtherText"), 5);
           
        clickAndWait("link=Save");
        assertTrue(selenium.isTextPresent("Name is required"));
