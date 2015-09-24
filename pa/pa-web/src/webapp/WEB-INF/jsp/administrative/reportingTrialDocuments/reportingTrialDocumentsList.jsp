@@ -18,7 +18,7 @@
             <s:if test="#attr.row.typeCode.equals('Comparison')">
                 <s:if test="#attr.row.ctroUserReviewDateTime!=null">
                   <c:out value="${attr.row.ctroUserName}"/>
-                  <fmt:formatDate value="${attr.row.ctroUserReviewDateTime}" pattern="MM/dd/yyyy hh:mm aaa" />
+                  <fmt:formatDate value="${attr.row.ctroUserReviewDateTime}" pattern="MM/dd/yyyy" />
                </s:if>
                <s:else>
                  <s:a href="#" cssClass="btn" onclick="javascript:showreviewCtroDialog('%{#attr.row.id}');"><span class="btn_img">Yes</span></s:a></li>
@@ -32,7 +32,7 @@
           <s:if test="#attr.row.typeCode.equals('Comparison')">
             <s:if test="#attr.row.ccctUserReviewDateTime!=null">
                    <c:out value="${attr.row.ccctUserName}"/>
-                  <fmt:formatDate value="${attr.row.ccctUserReviewDateTime}" pattern="MM/dd/yyyy hh:mm aaa" />
+                  <fmt:formatDate value="${attr.row.ccctUserReviewDateTime}" pattern="MM/dd/yyyy" />
                </s:if>
                <s:else>
                <s:a href="#" cssClass="btn" onclick="javascript:showreviewCCCTDialog('%{#attr.row.id}');"><span class="btn_img">Yes</span></s:a></li>
