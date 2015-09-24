@@ -5,8 +5,8 @@
 	</description>
 
 	<property environment="env" />
-	<property file="tier-properties/${tier}.properties" />
-	<property file="local.properties" />
+    <property name="tier" value="local"/>
+	<property file="tier-properties/${tier}.properties" />	
 	<property file="project.properties" />
 	<property file="install.properties" />
 
@@ -110,6 +110,10 @@
 		<mkdir dir="${temp.dir}" />
 		<mkdir dir="${download.dir}" />
 		<mkdir dir="${jboss-conf.dist.dir}" />
+		
+        <echoproperties destfile="${properties.snapshot}" failonerror="true" />
+	    <filter filtersfile="${properties.snapshot}" />
+
 	</target>
 
 	<!-- First Maven Target -->
@@ -120,8 +124,6 @@
 			</fileset>
 		</delete>
 
-		<echoproperties destfile="${properties.snapshot}" failonerror="true" />
-		<filter filtersfile="${properties.snapshot}" />
 		<copy todir="${po-client.base.dir}" file="${common.dir}/maven/profiles.xml" filtering="true" overwrite="true" />
 		<copy todir="${po-ear.base.dir}" file="${common.dir}/maven/profiles.xml" filtering="true" overwrite="true" />
 		<copy todir="${po-services.base.dir}" file="${common.dir}/maven/profiles.xml" filtering="true" overwrite="true" />
@@ -145,7 +147,26 @@
         	filtering="true" overwrite="true" failonerror="false" verbose="true" />
     </target>	
 
-	<target name="dist" depends="build:po, generate:cli, generate:full-config, generate:baseline-config">
+	<target name="dist" depends="build:po, generate:cli, generate:full-config, generate:baseline-config"/>
+	
+	
+	<target name="install" depends="dist,install-jboss"></target>
+	
+	<target name="install-jboss">
+		  <delete dir="${project.installation.path}" failonerror="true"/>
+		  <mkdir dir="${project.installation.path}"/>
+		  <unzip dest="${project.installation.path}" src="${jboss.eap.file}"/>
+		  <unzip dest="${project.installation.path}/modules" src="${jboss.eap.jdbc.module}"/>
+		  <replaceregexp file="${project.installation.path}/bin/standalone.conf.bat"
+               match="$" flags="s"
+               replace="${line.separator}set &quot;JAVA_OPTS=%JAVA_OPTS% -Dctrp.env.ci=true -Dorg.apache.catalina.connector.URI_ENCODING=UTF-8&quot;"/>
+          <replaceregexp file="${project.installation.path}/bin/standalone.conf"
+               match="$" flags="s"
+               replace="${line.separator}JAVA_OPTS=&quot;$JAVA_OPTS -Dctrp.env.ci=true -Dorg.apache.catalina.connector.URI_ENCODING=UTF-8&quot;"/>
+		  <copy tofile="${project.installation.path}/standalone/configuration/standalone.xml" file="${jboss-conf.dist.dir}/standalone.xml" 
+		            overwrite="true" failonerror="true" verbose="true" />
+          <copy todir="${project.installation.path}/standalone/deployments" file="${po-ear.dist.dir}/po.ear" 
+                    overwrite="true" failonerror="true" verbose="true" />
 	</target>
 
 </project>

@@ -206,6 +206,7 @@ public class CurateOrganizationTest extends AbstractCurateTest {
         waitForElementToBecomeVisible(By.id("mark_as_dup_"+nullifyIntoID.getExtension()), 30);
         clickAndWait("mark_as_dup_"+nullifyIntoID.getExtension());
         driver.switchTo().defaultContent();
+        s.chooseOkOnNextConfirmation();
         clickAndWait("save_button");
         
         // We now should be on Curate Error page.
@@ -281,6 +282,7 @@ public class CurateOrganizationTest extends AbstractCurateTest {
         waitForElementToBecomeVisible(By.id("mark_as_dup_"+nullifyIntoID.getExtension()), 30);
         clickAndWait("mark_as_dup_"+nullifyIntoID.getExtension());
         driver.switchTo().defaultContent();
+        s.chooseOkOnNextConfirmation();
         clickAndWait("save_button");
         
         // We now should be on Curate Error page.

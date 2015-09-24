@@ -202,6 +202,24 @@
                 <suffix value=".yyyy-MM-dd"/>
                 <append value="true"/>
             </periodic-rotating-file-handler>
+            <periodic-rotating-file-handler name="HORNETQ" autoflush="true">
+                <level name="@app.log.level@"/>
+                <formatter>
+                    <pattern-formatter pattern="%d{HH:mm:ss,SSS} %s%E%n"/>
+                </formatter>
+                <file relative-to="jboss.server.log.dir" path="hornetq.log"/>
+                <suffix value=".yyyy-MM-dd"/>
+                <append value="true"/>
+            </periodic-rotating-file-handler>
+            <periodic-rotating-file-handler name="LDAP" autoflush="true">
+                <level name="@app.log.level@"/>
+                <formatter>
+                    <pattern-formatter pattern="%d{HH:mm:ss,SSS} %s%E%n"/>
+                </formatter>
+                <file relative-to="jboss.server.log.dir" path="ldap.log"/>
+                <suffix value=".yyyy-MM-dd"/>
+                <append value="true"/>
+            </periodic-rotating-file-handler>
             <logger category="com.arjuna">
                 <level name="WARN"/>
             </logger>
@@ -220,8 +238,20 @@
             <logger category="jacorb.config">
                 <level name="ERROR"/>
             </logger>
+            <logger category="org.hornetq.core.server" use-parent-handlers="false">
+                <level name="DEBUG"/>
+                <handlers>
+                    <handler name="HORNETQ"/>
+                </handlers>
+            </logger>
+            <logger category="gov.nih.nci.coppa.services.ldap" use-parent-handlers="false">
+                <level name="@app.log.level@"/>
+                <handlers>
+                    <handler name="LDAP"/>
+                </handlers>
+            </logger>
             <logger category="stdout">
-                <level name="WARN"/>
+                <level name="@app.log.level@"/>
             </logger>
             <root-logger>
                 <level name="@app.log.level@"/>
@@ -348,6 +378,11 @@
                     <eviction strategy="NONE"/>
                 </local-cache>
             </cache-container>
+            <cache-container name="security" default-cache="auth-cache">
+                <local-cache name="auth-cache" batching="true">
+                    <expiration lifespan="60000"/>
+                </local-cache>
+            </cache-container>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:jaxrs:1.0"/>
         <subsystem xmlns="urn:jboss:domain:jca:1.1">
@@ -395,12 +430,9 @@
         <subsystem xmlns="urn:jboss:domain:sar:1.0"/>
         <subsystem xmlns="urn:jboss:domain:security:1.2">
             <security-domains>
-                <security-domain name="po" cache-type="default">
-                    <authentication>
-						<!-- <login-module code="com.fiveamsolutions.nci.commons.authentication.SessionFixationProtectionLoginModule"
-			               flag="required" />  -->
-			            <login-module code="gov.nih.nci.coppa.util.NullPasswordStackingLoginModule"
-			                flag="optional" module="deployment.po.ear">
+                <security-domain name="po" cache-type="infinispan">
+                    <authentication>				
+                        <login-module code="gov.nih.nci.coppa.util.NullPasswordStackingLoginModule" flag="optional" module="deployment.po.ear">
                             <module-option name="password-stacking" value="useFirstPass"/>
                         </login-module>
 			            <!--
@@ -468,9 +500,13 @@
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:web:1.5" default-virtual-server="default-host" native="false">
             <connector name="http" protocol="HTTP/1.1" scheme="http" socket-binding="http"/>
+            <connector name="ajp" protocol="AJP/1.3" scheme="http" socket-binding="ajp"/>
             <virtual-server name="default-host" enable-welcome-root="true">
                 <alias name="localhost"/>
                 <alias name="example.com"/>
+                <access-log pattern="%h %l %u %t &quot;%r&quot; %q %s %B %S %T">
+                    <directory path="./"/>
+                </access-log>
             </virtual-server>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:webservices:1.2">
