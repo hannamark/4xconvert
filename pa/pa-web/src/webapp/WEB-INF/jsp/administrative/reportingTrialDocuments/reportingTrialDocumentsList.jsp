@@ -78,7 +78,7 @@
                 </tr>
                 <tr>
                 
-                    <td scope="row" class="label">Ctro User</td>
+                    <td scope="row" class="label">CTRO User</td>
                     <td class="value">  <s:select name="ctroUserId" id="ctroUserId"
                     list="usersMap"  />
                 </td>
