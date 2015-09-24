@@ -33,7 +33,12 @@ import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
-import gov.nih.nci.pa.util.*;
+import gov.nih.nci.pa.util.ActionUtils;
+import gov.nih.nci.pa.util.CacheUtils;
+import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -66,8 +71,7 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         Preparable, ServletRequestAware, ServletResponseAware {
     private static final String RESULT_ABSTRACTOR_LANDING = "resultAbstractorLanding";
     private static final String AJAX_RESPONSE = "ajaxResponse";
-    
-    
+
     private static final Logger LOG = Logger.getLogger(DashboardAction.class);
 
     private static final long serialVersionUID = 8458441253215157815L;
@@ -80,42 +84,42 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
     private StudyProtocolService studyProtocolService;
     private StudyProcessingErrorService speService;
     // fields that capture search criteria
-    private Boolean section801IndicatorYes; 
+    private Boolean section801IndicatorYes;
     private Boolean section801IndicatorNo;
     private Date pcdFrom;
     private Date pcdTo;
-    private String pcdType;    
-    
-    //Results
+    private String pcdType;
+
+    // Results
     private List<StudyProtocolQueryDTO> results;
-  
-    //Change date parameters
+
+    // Change date parameters
     private Long studyId;
     private Date dateValue;
     private String dateAttr;
-    
+
     private InputStream ajaxResponseStream;
- 
+
     // Chart Data
     private int inProcessCnt = 0;
     private int completedCnt = 0;
     private int notStartedCnt = 0;
     private int issuesCnt = 0;
-    
+
     private String studyNCIId;
     private StudyContactService studyContactService;
-    
+
     private HttpServletResponse response;
-    
+
     @Override
     public String execute() throws PAException {
         clearFilters();
         return search();
     }
 
-  
     /**
      * Search study results
+     * 
      * @return String
      * @throws PAException
      *             PAException
@@ -136,9 +140,9 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         return RESULT_ABSTRACTOR_LANDING;
     }
 
-
     /**
      * Update results date of a study protocol
+     * 
      * @return String
      */
     public String ajaxChangeDate() {
@@ -146,27 +150,28 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
             sendUnauthorizedResponse();
             return null;
         }
-       
+
         Timestamp updateDate = null;
-        
+
         if (dateValue != null) {
             updateDate = new Timestamp(dateValue.getTime());
         }
-        
-        if (studyProtocolService.updateStudyProtocolResultsDate(studyId, dateAttr, 
-                updateDate)) {
-            ajaxResponseStream = new ByteArrayInputStream(SUCCESS.getBytes());    
+
+        if (studyProtocolService.updateStudyProtocolResultsDate(studyId,
+                dateAttr, updateDate)) {
+            ajaxResponseStream = new ByteArrayInputStream(SUCCESS.getBytes());
         } else {
             ajaxResponseStream = new ByteArrayInputStream(ERROR.getBytes());
         }
         return AJAX_RESPONSE;
     }
-    
 
     /**
      * Get the study protocol id for the given trails NCI id
+     * 
      * @return result view
-     * @throws PAException 
+     * @throws PAException
+     *             PAException
      */
     public String ajaxGetStudyStudyProtocolIdByNCIId() throws PAException {
         Ii nciIi = new Ii();
@@ -175,42 +180,44 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         StudyProtocolDTO sp = studyProtocolService.getStudyProtocol(nciIi);
         if (sp != null) {
             long spId = IiConverter.convertToLong(sp.getIdentifier());
-            ajaxResponseStream = new ByteArrayInputStream(String.valueOf(spId).getBytes());
+            ajaxResponseStream = new ByteArrayInputStream(String.valueOf(spId)
+                    .getBytes());
             StudyProtocolQueryDTO studyProtocolQueryDTO = protocolQueryService
                     .getTrialSummaryByStudyProtocolId(spId);
-            ActionUtils.loadProtocolDataInSession(studyProtocolQueryDTO, correlationUtils, paServiceUtils);
+            ActionUtils.loadProtocolDataInSession(studyProtocolQueryDTO,
+                    correlationUtils, paServiceUtils);
         } else {
             ajaxResponseStream = new ByteArrayInputStream("".getBytes());
         }
         return AJAX_RESPONSE;
     }
-    
-   /** @param servletRequest
-    *            the servletRequest to set
-    */
-   public void setServletRequest(HttpServletRequest servletRequest) {
-       this.request = servletRequest;
-   }
 
-   @Override
-   public void prepare() {
-       ActionUtils.setUserRolesInSession(request);
-       protocolQueryService = PaRegistry.getProtocolQueryService();
-       studyProtocolService = PaRegistry.getStudyProtocolService();
-       speService = PaRegistry.getStudyProcessingErrorService();
-       studyContactService = PaRegistry.getStudyContactService();
-   }
+    /**
+     * @param servletRequest
+     *            the servletRequest to set
+     */
+    public void setServletRequest(HttpServletRequest servletRequest) {
+        this.request = servletRequest;
+    }
 
+    @Override
+    public void prepare() {
+        ActionUtils.setUserRolesInSession(request);
+        protocolQueryService = PaRegistry.getProtocolQueryService();
+        studyProtocolService = PaRegistry.getStudyProtocolService();
+        speService = PaRegistry.getStudyProcessingErrorService();
+        studyContactService = PaRegistry.getStudyContactService();
+    }
 
     private void sendUnauthorizedResponse() {
         try {
             response.sendError(HttpServletResponse.SC_FORBIDDEN,
-               "Page accessible only for Results Abstractors role");
+                    "Page accessible only for Results Abstractors role");
         } catch (IOException ioe) {
-            LOG.error("Error sending unauthorized response", ioe);  
+            LOG.error("Error sending unauthorized response", ioe);
         }
     }
-   
+
     private void clearFilters() {
         pcdFrom = null;
         pcdTo = null;
@@ -224,16 +231,17 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
     private boolean isInRole(String roleFlag) {
         return Boolean.TRUE.equals(request.getSession().getAttribute(roleFlag));
     }
-    
+
+    @SuppressWarnings("unchecked")
     private String search(StudyProtocolQueryCriteria... criteriaList) {
         try {
-            
+
             results = new ArrayList<StudyProtocolQueryDTO>();
             for (final StudyProtocolQueryCriteria criteria : criteriaList) {
                 criteria.setNciSponsored(true);
-                criteria.setStudyProtocolType(InterventionalStudyProtocol.class.getSimpleName());
+                criteria.setStudyProtocolType(InterventionalStudyProtocol.class
+                        .getSimpleName());
                 criteria.setDocumentWorkflowStatusCodes(getResultsDashboadStatusCodeFilter());
-
 
                 if (!"GET".equalsIgnoreCase(request.getMethod())) {
                     CacheUtils.removeItemFromCache(
@@ -241,97 +249,136 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
                             criteria.getUniqueCriteriaKey());
                 }
 
-                List<StudyProtocolQueryDTO> studyProtocolQueryResults =
-                        (List<StudyProtocolQueryDTO>) CacheUtils.getFromCacheOrBackend(
+                List<StudyProtocolQueryDTO> studyProtocolQueryResults = (List<StudyProtocolQueryDTO>) CacheUtils
+                        .getFromCacheOrBackend(
                                 CacheUtils.getReportingResultsCache(),
                                 criteria.getUniqueCriteriaKey(),
-                                new CacheUtils.Closure(){
+                                new CacheUtils.Closure() {
                                     @Override
                                     public Object execute() throws PAException {
 
                                         List<StudyProtocolQueryDTO> currentResults = protocolQueryService
-                                                .getStudyProtocolByCriteria(criteria,
-                                                        SKIP_ALTERNATE_TITLES, SKIP_LAST_UPDATER_INFO,
+                                                .getStudyProtocolByCriteria(
+                                                        criteria,
+                                                        SKIP_ALTERNATE_TITLES,
+                                                        SKIP_LAST_UPDATER_INFO,
                                                         SKIP_OTHER_IDENTIFIERS);
 
-
-                                        //collecting protocol-ids.
+                                        // collecting protocol-ids.
                                         List<Long> protocolIds = new ArrayList<Long>();
                                         for (StudyProtocolQueryDTO studyProtocolQueryDTO : currentResults) {
-                                            protocolIds.add(studyProtocolQueryDTO.getStudyProtocolId());
+                                            protocolIds.add(studyProtocolQueryDTO
+                                                    .getStudyProtocolId());
                                         }
-                                        //load comparison document associated with protocols
-                                        Map<Long, DocumentDTO> comparisonDocumentMap =  PaRegistry.getDocumentService()
-                                                .getDocumentByIDListAndType(protocolIds, DocumentTypeCode.COMPARISON);
+                                        // load comparison document associated
+                                        // with protocols
+                                        Map<Long, DocumentDTO> comparisonDocumentMap = PaRegistry
+                                                .getDocumentService()
+                                                .getDocumentByIDListAndType(
+                                                        protocolIds,
+                                                        DocumentTypeCode.COMPARISON);
 
-                                        for (StudyProtocolQueryDTO resultQueryDTO: currentResults) {
-                                            //fetch the documents from in-memory map.
-                                            DocumentDTO documentDTO = (DocumentDTO) MapUtils.getObject(comparisonDocumentMap,
-                                                    resultQueryDTO.getStudyProtocolId());
+                                        for (StudyProtocolQueryDTO resultQueryDTO : currentResults) {
+                                            // fetch the documents from
+                                            // in-memory map.
+                                            DocumentDTO documentDTO = (DocumentDTO) MapUtils
+                                                    .getObject(
+                                                            comparisonDocumentMap,
+                                                            resultQueryDTO
+                                                                    .getStudyProtocolId());
                                             if (documentDTO != null) {
-                                                resultQueryDTO.setCcctUserCreatedDate(
-                                                        TsConverter.convertToTimestamp(documentDTO.getCcctUserReviewDateTime()));
-                                                resultQueryDTO.setCtroUserCreatedDate(
-                                                        TsConverter.convertToTimestamp(documentDTO.getCtroUserReviewDateTime()));
-                                                resultQueryDTO.setCcctUserName(
-                                                        PAUtil.getDocumentUserCtroOrCcctReviewerName(documentDTO, false));
-                                                resultQueryDTO.setCtroUserName(
-                                                        PAUtil.getDocumentUserCtroOrCcctReviewerName(documentDTO, true));
+                                                resultQueryDTO
+                                                        .setCcctUserCreatedDate(TsConverter
+                                                                .convertToTimestamp(documentDTO
+                                                                        .getCcctUserReviewDateTime()));
+                                                resultQueryDTO
+                                                        .setCtroUserCreatedDate(TsConverter
+                                                                .convertToTimestamp(documentDTO
+                                                                        .getCtroUserReviewDateTime()));
+                                                resultQueryDTO.setCcctUserName(PAUtil
+                                                        .getDocumentUserCtroOrCcctReviewerName(
+                                                                documentDTO,
+                                                                false));
+                                                resultQueryDTO.setCtroUserName(PAUtil
+                                                        .getDocumentUserCtroOrCcctReviewerName(
+                                                                documentDTO,
+                                                                true));
                                             }
 
-                                            //BJ - the following approach may need refactoring.
+                                            // BJ - the following approach may
+                                            // need refactoring.
                                             StringBuffer studyContactNamesList = new StringBuffer();
 
-                                            //get study contacts list
-                                            LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+                                            // get study contacts list
+                                            LimitOffset limit = new LimitOffset(
+                                                    PAConstants.MAX_SEARCH_RESULTS,
+                                                    0);
                                             StudyContactDTO searchCriteria = new StudyContactDTO();
-                                            searchCriteria.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(
-                                                    resultQueryDTO.getStudyProtocolId()));
+                                            searchCriteria
+                                                    .setStudyProtocolIdentifier(IiConverter
+                                                            .convertToStudyProtocolIi(resultQueryDTO
+                                                                    .getStudyProtocolId()));
 
-                                            searchCriteria.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.DESIGNEE_CONTACT));
+                                            searchCriteria.setRoleCode(CdConverter
+                                                    .convertToCd(StudyContactRoleCode.DESIGNEE_CONTACT));
                                             try {
 
-                                                List<StudyContactDTO> studyDesigneeContactDtos = studyContactService.search(searchCriteria, limit);
+                                                List<StudyContactDTO> studyDesigneeContactDtos = studyContactService
+                                                        .search(searchCriteria,
+                                                                limit);
 
-                                                if (CollectionUtils.isNotEmpty(studyDesigneeContactDtos)) {
+                                                if (CollectionUtils
+                                                        .isNotEmpty(studyDesigneeContactDtos)) {
                                                     for (StudyContactDTO scDto : studyDesigneeContactDtos) {
-                                                        FunctionalRoleStatusCode stsCd = CdConverter.convertCdToEnum(
-                                                                FunctionalRoleStatusCode.class, scDto.getStatusCode());
-                                                        if (!FunctionalRoleStatusCode.ACTIVE.equals(stsCd)
-                                                                && !FunctionalRoleStatusCode.PENDING.equals(stsCd)) {
+                                                        FunctionalRoleStatusCode stsCd = CdConverter
+                                                                .convertCdToEnum(
+                                                                        FunctionalRoleStatusCode.class,
+                                                                        scDto.getStatusCode());
+                                                        if (!FunctionalRoleStatusCode.ACTIVE
+                                                                .equals(stsCd)
+                                                                && !FunctionalRoleStatusCode.PENDING
+                                                                        .equals(stsCd)) {
                                                             continue;
                                                         }
 
-                                                        StudyContactWebDTO studyContactWebDTO = new StudyContactWebDTO(scDto);
-                                                        Person person = studyContactWebDTO.getContactPerson();
+                                                        StudyContactWebDTO studyContactWebDTO = new StudyContactWebDTO(
+                                                                scDto);
+                                                        Person person = studyContactWebDTO
+                                                                .getContactPerson();
 
                                                         if (person != null) {
-                                                            if (studyContactNamesList.length() > 0) {
-                                                                studyContactNamesList.append("<br>");
+                                                            if (studyContactNamesList
+                                                                    .length() > 0) {
+                                                                studyContactNamesList
+                                                                        .append("<br>");
                                                             }
-                                                            studyContactNamesList.append(person.getFullName());
+                                                            studyContactNamesList
+                                                                    .append(person
+                                                                            .getFullName());
                                                         }
 
                                                     }
                                                 }
-                                            }catch (TooManyResultsException e) {
-                                                LOG.error("Error while searching study contacts", e);
+                                            } catch (TooManyResultsException e) {
+                                                LOG.error(
+                                                        "Error while searching study contacts",
+                                                        e);
                                                 throw new PAException(e);
                                             }
-                                            resultQueryDTO.setDesigneeNamesList(studyContactNamesList.toString());
+                                            resultQueryDTO
+                                                    .setDesigneeNamesList(studyContactNamesList
+                                                            .toString());
                                         }
 
                                         return currentResults;
 
                                     }
-                                }
-                        );
-
+                                });
 
                 results.addAll(studyProtocolQueryResults);
             }
             loadResultsChartData(results);
-            
+
         } catch (Exception e) {
             LOG.error(e, e);
             request.setAttribute(Constants.FAILURE_MESSAGE,
@@ -340,23 +387,23 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         return RESULT_ABSTRACTOR_LANDING;
     }
 
-
-
     private List<String> getResultsDashboadStatusCodeFilter() {
         List<String> list = new ArrayList<String>();
-        list.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getCode());        
-        list.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getCode());
+        list.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE
+                .getCode());
+        list.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
+                .getCode());
         list.add(DocumentWorkflowStatusCode.VERIFICATION_PENDING.getCode());
         return list;
     }
-     
+
     private StudyProtocolQueryCriteria buildCriteria() throws PAException {
         StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
         List<Boolean> section801Indicators = new ArrayList<Boolean>();
         if (section801IndicatorYes != null && section801IndicatorYes) {
             section801Indicators.add(true);
         }
-        
+
         if (section801IndicatorNo != null && section801IndicatorNo) {
             section801Indicators.add(false);
         }
@@ -366,16 +413,16 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         criteria.setPcdType(pcdType);
         return criteria;
     }
-    
+
     /**
-     * Load counts of trials in various results reporting stages, the result  reporting stage status is determined
-     * as follows 
+     * Load counts of trials in various results reporting stages, the result
+     * reporting stage status is determined as follows
      * 
-     * Completed: protocol.trialPublishedDate != null
-     * In Process: protocol.reportingInProcessDate != null && protocol.trialPublishedDate == null
-     * Not Started: protocol.reportingInProcessDate == null
-     * Issues: unique ( protocol.trialPublishedDate == null && 
-     *       count (protocol.studyProcessingError.resolution date == null) > 0)
+     * Completed: protocol.trialPublishedDate != null In Process:
+     * protocol.reportingInProcessDate != null && protocol.trialPublishedDate ==
+     * null Not Started: protocol.reportingInProcessDate == null Issues: unique
+     * ( protocol.trialPublishedDate == null && count
+     * (protocol.studyProcessingError.resolution date == null) > 0)
      * 
      */
     private void loadResultsChartData(List<StudyProtocolQueryDTO> studyProtocols) {
@@ -389,10 +436,11 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
             } else {
                 notStartedCnt++;
             }
-            
+
             if (studyProtocolQueryDTO.getTrialPublishedDate() == null) {
-                List<StudyProcessingErrorDTO> errors  = speService.getStudyProcessingErrorByStudy(studyProtocolQueryDTO
-                                    .getStudyProtocolId());
+                List<StudyProcessingErrorDTO> errors = speService
+                        .getStudyProcessingErrorByStudy(studyProtocolQueryDTO
+                                .getStudyProtocolId());
                 for (Iterator iterator2 = errors.iterator(); iterator2
                         .hasNext();) {
                     StudyProcessingErrorDTO studyProcessingErrorDTO = (StudyProcessingErrorDTO) iterator2
@@ -406,7 +454,6 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         }
     }
 
-    
     /**
      * @return the protocolQueryService
      */
@@ -414,14 +461,13 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         return protocolQueryService;
     }
 
-
     /**
-     * @param protocolQueryService the protocolQueryService to set
+     * @param protocolQueryService
+     *            the protocolQueryService to set
      */
     void setProtocolQueryService(ProtocolQueryServiceLocal protocolQueryService) {
         this.protocolQueryService = protocolQueryService;
     }
-
 
     /**
      * @return the studyProtocolService
@@ -430,14 +476,13 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         return studyProtocolService;
     }
 
-
     /**
-     * @param studyProtocolService the studyProtocolService to set
+     * @param studyProtocolService
+     *            the studyProtocolService to set
      */
     void setStudyProtocolService(StudyProtocolService studyProtocolService) {
         this.studyProtocolService = studyProtocolService;
     }
-
 
     /**
      * @return the section801IndicatorYes
@@ -446,14 +491,13 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         return section801IndicatorYes;
     }
 
-
     /**
-     * @param section801IndicatorYes the section801IndicatorYes to set
+     * @param section801IndicatorYes
+     *            the section801IndicatorYes to set
      */
     public void setSection801IndicatorYes(Boolean section801IndicatorYes) {
         this.section801IndicatorYes = section801IndicatorYes;
     }
-
 
     /**
      * @return the section801IndicatorNo
@@ -462,14 +506,13 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         return section801IndicatorNo;
     }
 
-
     /**
-     * @param section801IndicatorNo the section801IndicatorNo to set
+     * @param section801IndicatorNo
+     *            the section801IndicatorNo to set
      */
     public void setSection801IndicatorNo(Boolean section801IndicatorNo) {
         this.section801IndicatorNo = section801IndicatorNo;
     }
-
 
     /**
      * @return the pcdFrom
@@ -478,14 +521,13 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         return pcdFrom;
     }
 
-
     /**
-     * @param pcdFrom the pcdFrom to set
+     * @param pcdFrom
+     *            the pcdFrom to set
      */
     public void setPcdFrom(Date pcdFrom) {
         this.pcdFrom = pcdFrom;
     }
-
 
     /**
      * @return the pcdTo
@@ -494,14 +536,13 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         return pcdTo;
     }
 
-
     /**
-     * @param pcdTo the pcdTo to set
+     * @param pcdTo
+     *            the pcdTo to set
      */
     public void setPcdTo(Date pcdTo) {
         this.pcdTo = pcdTo;
     }
-
 
     /**
      * @return the pcdType
@@ -510,14 +551,13 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         return pcdType;
     }
 
-
     /**
-     * @param pcdType the pcdType to set
+     * @param pcdType
+     *            the pcdType to set
      */
     public void setPcdType(String pcdType) {
         this.pcdType = pcdType;
     }
-
 
     /**
      * @return the results
@@ -526,7 +566,6 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         return results;
     }
 
-
     /**
      * @return the studyId
      */
@@ -534,14 +573,13 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         return studyId;
     }
 
-
     /**
-     * @param studyId the studyId to set
+     * @param studyId
+     *            the studyId to set
      */
     public void setStudyId(Long studyId) {
         this.studyId = studyId;
     }
-
 
     /**
      * @return the dateAttr
@@ -550,14 +588,13 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         return dateAttr;
     }
 
-
     /**
-     * @param dateAttr the dateAttr to set
+     * @param dateAttr
+     *            the dateAttr to set
      */
     public void setDateAttr(String dateAttr) {
         this.dateAttr = dateAttr;
     }
-
 
     /**
      * @return the dateValue
@@ -566,14 +603,13 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         return dateValue;
     }
 
-
     /**
-     * @param dateValue the dateValue to set
+     * @param dateValue
+     *            the dateValue to set
      */
     public void setDateValue(Date dateValue) {
         this.dateValue = dateValue;
     }
-
 
     /**
      * @return the ajaxResponseStream
@@ -582,12 +618,10 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         return ajaxResponseStream;
     }
 
-
     @Override
     public String view() throws PAException {
         return null;
     }
-
 
     /**
      * @return the inProcessCnt
@@ -596,14 +630,13 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         return inProcessCnt;
     }
 
-
     /**
-     * @param inProcessCnt the inProcessCnt to set
+     * @param inProcessCnt
+     *            the inProcessCnt to set
      */
     public void setInProcessCnt(int inProcessCnt) {
         this.inProcessCnt = inProcessCnt;
     }
-
 
     /**
      * @return the completedCnt
@@ -612,14 +645,13 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         return completedCnt;
     }
 
-
     /**
-     * @param completedCnt the completedCnt to set
+     * @param completedCnt
+     *            the completedCnt to set
      */
     public void setCompletedCnt(int completedCnt) {
         this.completedCnt = completedCnt;
     }
-
 
     /**
      * @return the notStartedCnt
@@ -628,14 +660,13 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         return notStartedCnt;
     }
 
-
     /**
-     * @param notStartedCnt the notStartedCnt to set
+     * @param notStartedCnt
+     *            the notStartedCnt to set
      */
     public void setNotStartedCnt(int notStartedCnt) {
         this.notStartedCnt = notStartedCnt;
     }
-
 
     /**
      * @return the issuesCnt
@@ -644,14 +675,13 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         return issuesCnt;
     }
 
-
     /**
-     * @param issuesCnt the issuesCnt to set
+     * @param issuesCnt
+     *            the issuesCnt to set
      */
     public void setIssuesCnt(int issuesCnt) {
         this.issuesCnt = issuesCnt;
     }
-
 
     /**
      * @return the studyNCIId
@@ -660,14 +690,13 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         return studyNCIId;
     }
 
-
     /**
-     * @param studyNCIId the studyNCIId to set
+     * @param studyNCIId
+     *            the studyNCIId to set
      */
     public void setStudyNCIId(String studyNCIId) {
         this.studyNCIId = studyNCIId;
     }
-
 
     /**
      * @return studyContactService
@@ -676,19 +705,17 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         return studyContactService;
     }
 
-
     /**
-     * @param studyContactService studyContactService
+     * @param studyContactService
+     *            studyContactService
      */
     public void setStudyContactService(StudyContactService studyContactService) {
         this.studyContactService = studyContactService;
     }
 
-
     @Override
     public void setServletResponse(HttpServletResponse resp) {
         this.response = resp;
     }
-
 
 }
