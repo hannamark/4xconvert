@@ -179,7 +179,8 @@
             <env key="NOPAUSE" value="true" />
             <env key="JBOSS_HOME" value=""/>            
             <arg line="-d -i -w ${project.installation.path}/bin ${project.installation.path}/bin/standalone.bat" />
-        </exec>            
+        </exec>   
+    	<sleep seconds="300" />  
     </target>
 
 </project>
