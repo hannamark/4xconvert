@@ -170,7 +170,7 @@
 	</target>
 	
     <target name="run" depends="install">
-        <exec executable="chmod" osfamily="unix" dir="${project.installation.path}/bin">            
+        <exec executable="chmod" osfamily="unix" dir="${project.installation.path}/bin" spawn="true">            
             <arg line="u=rwx standalone.sh" />
         </exec>
         <exec executable="nohup" osfamily="unix" dir="${project.installation.path}/bin" spawn="true">
