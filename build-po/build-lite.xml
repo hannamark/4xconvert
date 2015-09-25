@@ -169,7 +169,7 @@
                     overwrite="true" failonerror="true" verbose="true" />
 	</target>
 	
-    <target name="run">
+    <target name="run" depends="install">
         <exec executable="chmod" osfamily="unix" dir="${project.installation.path}/bin" spawn="true">            
             <arg line="u=rwx standalone.sh" />
         </exec>
