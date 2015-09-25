@@ -541,11 +541,11 @@
     </interfaces>
 
     <socket-binding-group name="standard-sockets" default-interface="public" port-offset="${jboss.socket.binding.port-offset:0}">
-        <socket-binding name="management-native" interface="management" port="${jboss.management.native.port:9999}"/>
-        <socket-binding name="management-http" interface="management" port="${jboss.management.http.port:9990}"/>
-        <socket-binding name="management-https" interface="management" port="${jboss.management.https.port:9443}"/>
+        <socket-binding name="management-native" interface="management" port="${jboss.management.native.port:@jboss.management.native.port@}"/>
+        <socket-binding name="management-http" interface="management" port="${jboss.management.http.port:@jboss.management.http.port@}"/>
+        <socket-binding name="management-https" interface="management" port="${jboss.management.https.port:@jboss.management.https.port@}"/>
         <socket-binding name="ajp" port="8009"/>
-        <socket-binding name="http" port="39080"/>
+        <socket-binding name="http" port="@jboss.eap.http.port@"/>
         <socket-binding name="https" port="8443"/>
         <socket-binding name="remoting" port="31099"/>
         <socket-binding name="txn-recovery-environment" port="4712"/>
