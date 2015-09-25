@@ -169,7 +169,10 @@
                     overwrite="true" failonerror="true" verbose="true" />
 	</target>
 	
-    <target name="run" depends="install">            
+    <target name="run" depends="install">
+        <exec executable="chmod" osfamily="unix" dir="${project.installation.path}/bin">            
+            <arg line="u=rwx standalone.sh" />
+        </exec>
         <exec executable="nohup" osfamily="unix" dir="${project.installation.path}/bin" spawn="true">
             <env key="NOPAUSE" value="true" />
             <env key="JBOSS_HOME" value=""/>
