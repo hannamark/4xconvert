@@ -117,6 +117,7 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         registerTestTrials();
         loginPA("results-abstractor", "pass");
         clickAndWait("id=acceptDisclaimer");
+        clickAndWait("link=Results Reporting");
     }
     
     @After
