@@ -3,7 +3,7 @@
    <table class="form" style="width:100%">                
      <tr>
         <td scope="row" class="label">
-          <label ><fmt:message key="reportCoverSheet.finalRecordCleanup.standardlanguage.label"/></label>
+          <label ><fmt:message key="reportCoverSheet.finalRecordCleanup.standardlanguage.label"/></label>*
        </td>
        <td>
          <div class="col-xs-4">
@@ -29,6 +29,22 @@
                       cssClass="form-control"
                       />
                   
+       </td>
+     </tr>
+      <tr>
+        <td scope="row" class="label">
+          <label ><fmt:message key="reportCoverSheet.finalRecordCleanup.results.trialinfo.ToCtGov.label"/></label>
+       </td>
+       <td>
+       <s:select id="sendToCtGovUpdated" name="sendToCtGovUpdated"
+                      list="#{'false':'No', 'true':'Yes'}" 
+                      cssClass="form-control"
+                      />
+                    <span class="alert-danger">
+                       <s:fielderror>
+                       <s:param>studyProtocolDTO.sendToCtGovUpdated</s:param>
+                      </s:fielderror>
+                    </span>
        </td>
      </tr>
      <tr>
@@ -62,22 +78,7 @@
                                     </a>                       
        </td>
      </tr>
-     <tr>
-        <td scope="row" class="label">
-          <label ><fmt:message key="reportCoverSheet.finalRecordCleanup.results.trialinfo.ToCtGov.label"/></label>
-       </td>
-       <td>
-       <s:select id="sendToCtGovUpdated" name="sendToCtGovUpdated"
-                      list="#{'false':'No', 'true':'Yes'}" 
-                      cssClass="form-control"
-                      />
-                    <span class="alert-danger">
-                       <s:fielderror>
-                       <s:param>studyProtocolDTO.sendToCtGovUpdated</s:param>
-                      </s:fielderror>
-                    </span>
-       </td>
-     </tr>
+    
      </table>
      
          <div class="actionsrow">
@@ -96,7 +97,7 @@
          </div>
             <del class="btnwrapper">
                 <ul class="btnrow">
-                      <li> <s:a href="javascript:void(0)" cssClass="btn" id="sendCoverSheetEmail" onclick="sendCoverSheetEmail()" ><span class="btn_img">Send Email</span></s:a>
+                      <li> <s:a href="javascript:void(0)" cssClass="btn" id="sendCoverSheetEmail" onclick="sendCoverSheetEmail()" ><span class="btn_img">Email Trial Cover Sheet</span></s:a>
                     </li>                
                 </ul>  
             </del>

@@ -208,7 +208,7 @@ function openDiscDialog() {
 	                jQuery("#discrepancyFormDiv").dialog("close");
 	            }
 	        }   ,
-	        title :"Add/Edit Data Discrepancies"
+	        title :"Add/Edit Data Discrepancy"
 	       
 	     }); 
 	    jQuery("#discrepancyFormDiv").dialog("open");
@@ -303,7 +303,7 @@ function openStudyRecordChangeDialog() {
                    jQuery("#studyRecordChangesFormDiv").dialog("close");
                }
            }   ,
-           title :"Add/Edit Study Record Changes"
+           title :"Add/Edit Study Record Change"
           
         }); 
        jQuery("#studyRecordChangesFormDiv").dialog("open");
