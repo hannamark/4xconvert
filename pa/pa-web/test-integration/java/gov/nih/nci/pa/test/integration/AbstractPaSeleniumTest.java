@@ -2160,6 +2160,12 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         new QueryRunner().update(connection, "update pa_properties set value='"
                 + value + "' where name='" + name + "'");
     }
+    
+    protected void topWindow() {
+        driver.switchTo().defaultContent();
+        if (!isPhantomJS())
+            driver.switchTo().parentFrame();
+    }
 
     public static final class TrialInfo implements Comparable<TrialInfo> {
 

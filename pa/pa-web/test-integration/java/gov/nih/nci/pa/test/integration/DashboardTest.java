@@ -2506,9 +2506,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         clickAndWait("//span[@class='breadcrumbHighlight' and text()='"
                 + disease + "']");
         clickAndWait("//span[@class='add' and text()='Add']");
-        driver.switchTo().defaultContent();
-        if (!isPhantomJS())
-            driver.switchTo().parentFrame();
+        topWindow();
 
     }
 

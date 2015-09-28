@@ -203,7 +203,7 @@ public class TrialStatusHistoryTest extends AbstractTrialStatusTest {
                 .isVisible("id=displaySuAbstractorAutoCheckoutMessage"));
         // Close History
         clickAndWait("xpath=//span[normalize-space(text())='Cancel']");
-        driver.switchTo().defaultContent();
+        topWindow();
 
         clickAndWait("link=Check-Out History");
         assertEquals("Administrative",
@@ -245,7 +245,7 @@ public class TrialStatusHistoryTest extends AbstractTrialStatusTest {
 
         // Close History
         clickAndWait("xpath=//span[normalize-space(text())='Cancel']");
-        driver.switchTo().defaultContent();
+        topWindow();
 
         // Verify check out
         clickAndWait("link=Check-Out History");
