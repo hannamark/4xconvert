@@ -8,6 +8,13 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
@@ -22,12 +29,6 @@ import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.TestSchema;
-
-import java.util.Arrays;
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
 
 public class AccrualDiseaseServiceTest  extends AbstractHibernateTestCase {
 
@@ -74,6 +75,11 @@ public class AccrualDiseaseServiceTest  extends AbstractHibernateTestCase {
         ii.setIdentifierName("SDC");
         ii.setExtension("SDC01");
         assertNotNull(bean.get(ii));
+    }
+    
+    @Test
+    public void getIiNullTest() {
+        assertNull(bean.get((Ii)null));
     }
 
     @Test

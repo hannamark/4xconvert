@@ -76,10 +76,14 @@
 */
 
 package gov.nih.nci.accrual.accweb.action;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.service.PAException;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.ServletActionContext;
+
+import gov.nih.nci.accrual.util.PaServiceLocator;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.service.PAException;
 
 /**
  * @author Rajani Kumar
@@ -97,9 +101,22 @@ public class DisclaimerAction extends AbstractAccrualAction {
     
     /**
      * {@inheritDoc}
+     * @throws PAException 
      */
-    public String accept() {
-        ServletActionContext.getRequest().getSession().setAttribute("disclaimerAccepted", true);
-        return "acceptView";
+    public String accept() throws PAException {
+        
+        HttpServletRequest request = ServletActionContext.getRequest();
+        RegistryUser registryUser = PaServiceLocator.getInstance()
+                .getRegistryUserService().getUser(request.getRemoteUser());
+        
+        
+        if (registryUser == null) {
+            request.getSession().invalidate();
+            return "missing_account";
+        } else {
+            ServletActionContext.getRequest().getSession()
+                .setAttribute("disclaimerAccepted", true);
+            return "acceptView";
+        }
     }
 }

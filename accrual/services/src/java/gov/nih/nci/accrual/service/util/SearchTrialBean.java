@@ -79,6 +79,29 @@
 package gov.nih.nci.accrual.service.util;
 
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+
 import gov.nih.nci.accrual.dto.util.AccrualCountsDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
@@ -114,29 +137,6 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
-
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
-import org.hibernate.Hibernate;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
 
 /**
  * @author Hugh Reinhart
@@ -238,6 +238,7 @@ public class SearchTrialBean implements SearchTrialService {
                 Session session = PaHibernateUtil.getCurrentSession();
                 String hql = generateStudyProtocolQuery(criteria);
                 Query query = session.createQuery(hql);
+                
                 List<Long> queryList = query.list();
                 Set<Long> authIds = getAuthorizedTrials(IiConverter.convertToLong(authorizedUser));
                 Set<Long> siteSubmitterIds = getSiteAccrualSumbitterTrials(
@@ -422,6 +423,8 @@ public class SearchTrialBean implements SearchTrialService {
             // trialsWithoutCTEPOrDCPId contains user his/her affiliated organization*** participating on any trial 
             // Now check if these trial's lead organization is a member of his/her affiliated organization family.
             List<Long> values = accrualUtil.getAllFamilyOrgs(ru.getAffiliatedOrganizationId());
+            
+            if (values != null && !values.isEmpty()) { // PO-9267
             query = session.createSQLQuery(LEAD_ORG_QRY_FAMILY_ORGS);
             query.setParameterList("orgIDS", AccrualUtil.convertPoOrgIdsToStrings(values));
             if (!noCtepDcpTrialIdsList.isEmpty()) {
@@ -434,6 +437,7 @@ public class SearchTrialBean implements SearchTrialService {
                 Long studyProtocolId = obj.longValue();
                 finalTrialsWithoutCTEPOrDCPId.add(studyProtocolId);
             }
+          }
         }
         if (ru.getFamilyAccrualSubmitter()) {
             List<Long> values = accrualUtil.getAllFamilyOrgs(ru.getAffiliatedOrganizationId()); // step1

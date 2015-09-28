@@ -92,6 +92,7 @@
             <interceptor-ref name="defaultStack" />
             <result>/WEB-INF/jsp/disclaimer.jsp</result>
             <result name="acceptView" type="redirectAction">viewTrials.action</result>
+            <result name="missing_account">/WEB-INF/jsp/nodecorate/missingAccount.jsp</result>
         </action>
 
         <action name="viewTrials*" class="gov.nih.nci.accrual.accweb.action.ViewTrialsAction" method="{1}">
