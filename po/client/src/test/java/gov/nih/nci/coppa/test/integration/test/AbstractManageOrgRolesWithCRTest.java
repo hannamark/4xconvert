@@ -300,7 +300,9 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
     @SuppressWarnings("deprecation")
     protected void checkOrgRoleContactInfomation() {
         //Pause to allow for section to load completely.
-        waitForElementById("postalAddresses.div", 5);
+        waitForElementById("postalAddresses.div", 15);        
+        waitForElementById("wwctrl_address.country1", 15);
+        
         // Check the address info.
         assertEquals("Address One", StringUtils.trim(selenium.getText("wwctrl_address.streetAddressLine1")));
         assertEquals("suite xyz", StringUtils.trim(selenium.getText("wwctrl_address.deliveryAddressLine1")));
