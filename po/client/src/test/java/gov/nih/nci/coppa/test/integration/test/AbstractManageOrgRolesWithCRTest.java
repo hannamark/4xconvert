@@ -83,6 +83,7 @@
 package gov.nih.nci.coppa.test.integration.test;
 
 import org.apache.commons.lang.StringUtils;
+import org.openqa.selenium.By;
 
 
 /**
@@ -159,7 +160,8 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
         assertEquals("Thailand", selenium.getText("wwctrl_address.country1"));
     }
 
-    protected void removePostalAddress() {
+    protected void removePostalAddress() {        
+        waitForElementToBecomeAvailable(By.id("address-remove-0"), 10);
         clickAndWaitAjax("address-remove-0");
         waitForElementById("add_address", 10);
     }

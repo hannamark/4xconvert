@@ -220,7 +220,7 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         super.tearDown();
     }
 
-    private void takeScreenShot() {
+    protected void takeScreenShot() {
         try {
             final String screenShotFileName = getClass().getSimpleName()
                     + "_ScreenShot_"
