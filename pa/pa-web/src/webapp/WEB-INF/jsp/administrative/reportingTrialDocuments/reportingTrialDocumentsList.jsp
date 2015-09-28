@@ -42,16 +42,12 @@
               
        
         <display:column escapeXml="true" titleKey="trialDocument.userLastUpdated" property="userLastUpdated" sortable="true" headerClass="sortable" style="width:10%" />
-       <display:column title="Edit" class="action" style="width:5%" >
+       <display:column title="Action" class="action" style="width:5%" >
              
               <s:a href="#" onclick="submitEditDocument('%{#attr.row.id}')"><img src="<c:url value='/images/ico_edit.gif'/>" alt="Edit" width="16" height="16"/></s:a>
+                <s:a href="#"  id="deleteLink_%{#attr.row.id}_%{#attr.row.typeCode}" onclick="deleteSelectedDocument('%{#attr.row.id}_%{#attr.row.typeCode}')"><img src="<c:url value='/images/ico_delete.gif'/>" alt="Edit" width="16" height="16"/></s:a>  
            </display:column>
-       <display:column title="Delete" class="action" style="width:5%">
-                 
-                 <s:checkbox name="objectsToDelete" id="objectsToDelete_%{#attr.row.id}_%{#attr.row.typeCode}" fieldValue="%{#attr.row.id}" value="%{#attr.row.id in objectsToDelete}"/>
-                 <label style="display: none;" for="objectsToDelete_${row.id}">Check this box to mark row for deletion.</label>
-                  <s:set name="hasDeletableDocs" value="%{true}" scope="request"/>
-     </display:column>
+     
      </display:table>
   </s:if>
         <div class="actionsrow">
@@ -60,9 +56,6 @@
                     <li>
                         
                        <s:a href="#" cssClass="btn" onclick="submitAddDocument();"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
-                        <s:if test="%{trialDocumentList != null && !trialDocumentList.isEmpty() && #request.hasDeletableDocs}">
-                            <li><s:a href="javascript:void(0);" onclick="handleMultiDeleteResultReporting('Click OK to remove selected document(s) from the study. Cancel to abort.');" onkeypress="handleMultiDeleteResultReporting('Click OK to remove selected document(s) from the study. Cancel to abort.', 'resultsReportingDocumentdelete.action?studyProtocolId=%{studyProtocolId}');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
-                        </s:if>                    
                  </ul>
             </del>
         </div>
@@ -127,5 +120,7 @@
         </table>
         </div>
           <s:hidden name="studyProtocolId" id="studyProtocolId" />    
-           <s:hidden name="id" id="docId" />    
+           <s:hidden name="id" id="docId" /> 
+            <s:hidden name="objectsToDelete" id="objectsToDelete" />    
+              
     </s:form>

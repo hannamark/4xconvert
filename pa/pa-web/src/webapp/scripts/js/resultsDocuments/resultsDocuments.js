@@ -13,92 +13,31 @@ function setDocumentPageUrl(addAction , editAction , deleteAction, submitCtroAct
 	summitCcctUrl = submitCcctAction;
 }
 
-function handleMultiDeleteResultReporting(confirmationMessage ) {
-	   
-    var atLeastOne = false;
-    var input_box = false;
-    
-  var isResultDeleted = false;
-  var isComparisonPresent = false;
-    
-    $(document.forms[0]).getInputs().each(function(el) {
-        if (el.name=='objectsToDelete' && el.checked) {
-            atLeastOne = true;
-            var elementIdString =el.id;
-            var tokens = elementIdString.split("_");
-            if(tokens.length==3) {
-            	var type =tokens[2];
-            	//check if one of the result documents is deleted
-            	if(type=="Before results" || type== "After results") {
-            		isResultDeleted = true;
-            	}
-            	
-            	//check if comparison document is also delete
-            	if(type=="Comparison") {
-            		isComparisonPresent = true;
-                }
-            	
-            }
-           
-        }
-    });
-    
 
-    if (atLeastOne) {
-        input_box = confirmationMessage!=''?confirm(confirmationMessage):true;
-    }
-    
-    if (input_box || !atLeastOne) {
-        if (document.forms[0].page!=undefined) {     
-            document.forms[0].page.value = "Delete";
-        }
-        
-        //display alert indicating comparison will be deleted if 
-        //user is not already deleting comparison document
-        if(isResultDeleted ) {
-         
-        	if(!isComparisonPresent) {
-        		var isProceed =  confirm("If \"Before results\" or \"After results\" documents is removed the \"Comparison document\" will also be removed. Do you wish to proceed?");
-        		if (!isProceed) {
-        			return;
-        		}
-        		//select comparison document to delete 
-                selectComparisonForDelete();
-        	}
-        }
-        if(jQuery("#deleteType")) {
-        	deleteUrl = deleteUrl+"?deleteType=trialDocument";
-        }
-        document.forms[0].action = deleteUrl;
-        document.forms[0].submit();
-    } else {
-        $(document.forms[0]).getInputs().each(function(el) {
-            if (el.name=='objectsToDelete') {
-                el.checked = false;
-            }
-        });
-    }
-    
-}
 
 function selectComparisonForDelete() {
 	
-	  $(document.forms[0]).getInputs().each(function(el) {
-	        if (el.name=='objectsToDelete') {
-	            var elementIdString =el.id;
+var compareId;	
+	  jQuery("[id*='deleteLink']").each(function(index) {
+		  
+	            var el =jQuery("[id*='deleteLink']")[index];
+	            var elementIdString = el.id;
+	            
 	            var tokens = elementIdString.split("_");
 	            if(tokens.length==3) {
 	                var type =tokens[2];
 	                
-	                //select comparion document for deletion
+	                //select comparision document for deletion
 	                if(type=="Comparison") {
-	                	el.checked = true;
+	                	compareId = tokens[1];
 	                }
 	                
 	            }
 	           
-	        }
+	      
 	    });
+	  
+return compareId;	  
 }
 
 function showreviewCtroDialog(id) {
@@ -168,4 +107,48 @@ function submitEditDocument(id) {
 	editUrl = editUrl+"&studyProtocolId="+studyProtocolId+"&page=Edit&id="+id;
 	jQuery(location).attr("href",editUrl);
 
+}
+
+function deleteSelectedDocument(id) {
+	var objectIdToDelete;
+	var isResultDeleted = false;
+	 if (confirm("Click OK to remove selected records. Cancel to abort")) {
+		 
+		 var tokens = id.split("_");
+	     if(tokens.length==2) {
+		 var type =tokens[1];
+		 objectIdToDelete = tokens[0];
+		 
+		 //check if one of the result documents is deleted
+		  	if(type=="Before results" || type== "After results") {
+		            		isResultDeleted = true;
+		            	}
+		            }
+		           
+		 //display alert indicating comparison will be deleted if 
+		 //user is not already deleting comparison document
+		  if(isResultDeleted ) {
+		   		var isProceed =  confirm("If \"Before results\" or \"After results\" documents is removed the \"Comparison document\" will also be removed. Do you wish to proceed?");
+		   		if (!isProceed) {
+		       			return false;
+		       		}
+		   		var compareObjId =selectComparisonForDelete();
+		   		if(compareObjId!=undefined) {
+		   			objectIdToDelete = objectIdToDelete +","+compareObjId;
+		   		}
+		   		
+        	}
+		       
+    	 jQuery("#objectsToDelete").val(objectIdToDelete);
+		 
+		  if (document.forms[0].page!=undefined) {     
+		            document.forms[0].page.value = "Delete";
+		   }
+		  
+		   if(jQuery("#deleteType")) {
+		      	deleteUrl = deleteUrl+"?deleteType=trialDocument";
+		   }
+		    document.forms[0].action = deleteUrl;
+		    document.forms[0].submit();
+	 }
 }

@@ -112,7 +112,17 @@ public class ResultsReportingDocumentTest extends AbstractPaSeleniumTest {
             selenium.select("id=typeCode", "label=Before results");
             selenium.type("id=fileUpload", trialDocPath);
             clickAndWait("link=Save");
-            selenium.click("xpath=//table[@id='row']/tbody/tr[1]/td[8]//input");
+            WebElement element = driver.findElement(By.xpath("//table[@id='row']/tbody/tr[1]/td[7]//a[2]"));
+            String id =element.getAttribute("id");
+            if (id!=null){
+                String[] tokens = id.split("_");
+                if (tokens.length ==3) {
+                    String scriptString = " document.getElementById('objectsToDelete').value="+tokens[1]+";";
+                    ((JavascriptExecutor) driver).executeScript(scriptString);
+                  }
+                
+            }
+           
             ((JavascriptExecutor) driver).executeScript(" document.forms[0].action = 'resultsReportingDocumentdelete.action'; document.forms[0].submit();");
              waitForPageToLoad();
             
