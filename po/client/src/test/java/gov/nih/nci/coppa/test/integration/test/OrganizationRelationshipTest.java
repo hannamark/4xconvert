@@ -256,23 +256,15 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
     private void removeRelationship(int row, boolean accept) {
         if (accept) {
             selenium.chooseOkOnNextConfirmation();            
-            clickAndWait("xpath=//table[@id='row']//tr[" + row + "]//td[1]/a[2]");  
-            try {
-                driver.switchTo().alert().accept();
-            } catch (Exception e) {               
-                e.printStackTrace();
-            }
+            clickAndWait("xpath=//table[@id='row']//tr[" + row + "]//td[1]/a[2]");
+            pause(10000);
             waitForElementById("row", 10);
             assertTrue(selenium.isTextPresent("Organization relationship successfully removed."));
             clickAndWait("return_to_button");
         } else {
             selenium.chooseCancelOnNextConfirmation();
-            selenium.click("xpath=//table[@id='row']//tr[" + row + "]//td[1]/a[2]");   
-            try {
-                driver.switchTo().alert().dismiss();
-            } catch (Exception e) {               
-                e.printStackTrace();
-            }
+            selenium.click("xpath=//table[@id='row']//tr[" + row + "]//td[1]/a[2]");
+            pause(10000);
             assertFalse(selenium.isTextPresent("Organization relationship successfully removed."));
         }
     }
