@@ -84,22 +84,16 @@ package gov.nih.nci.coppa.test.integration.test;
 
 import gov.nih.nci.coppa.test.DataGeneratorUtil;
 import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
-import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.iso21090.TelUrl;
-import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.data.convert.IdConverter;
-import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.po.util.PoConstants;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
-import org.apache.commons.dbutils.DbUtils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -109,6 +103,8 @@ import java.sql.SQLException;
 import java.util.HashSet;
 
 import javax.naming.NamingException;
+
+import org.apache.commons.dbutils.DbUtils;
 
 /**
  * @author kkanchinadam

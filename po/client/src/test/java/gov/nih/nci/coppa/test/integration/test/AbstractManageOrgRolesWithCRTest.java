@@ -235,6 +235,7 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
         // Add a non US Postal address, check tel format
         addNonUSPostalAddress();
         inputNonUSFormatTel(value, type);
+        waitForElementById(entryId, 10);
         assertEquals(entryText + " | Remove", selenium.getText("id=" + entryId));
         clickAndWaitAjax(anchorRemoveId);
         removePostalAddress();
@@ -242,6 +243,7 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
         // Add a US postal address, check tel format, also check Tel entry/removal.
         addUSPostalAddress();
         inputNonUSFormatTel(value, type);
+        waitForElementById(entryId, 10);
         assertEquals(entryText + " | Remove", selenium.getText("id=" + entryId));
         clickAndWaitAjax(anchorRemoveId);
         removePostalAddress();
@@ -295,32 +297,33 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
         assertTrue(selenium.isTextPresent("exact:" +  orgRoleSearchResultsMessage));
     }
 
+    @SuppressWarnings("deprecation")
     protected void checkOrgRoleContactInfomation() {
         //Pause to allow for section to load completely.
         waitForElementById("postalAddresses.div", 5);
         // Check the address info.
-        assertEquals("Address One", selenium.getText("wwctrl_address.streetAddressLine1"));
-        assertEquals("suite xyz", selenium.getText("wwctrl_address.deliveryAddressLine1"));
-        assertEquals("phoenix", selenium.getText("wwctrl_address.cityOrMunicipality1"));
-        assertEquals("AZ", selenium.getText("wwctrl_address.stateOrProvince1"));
-        assertEquals("67890", selenium.getText("wwctrl_address.postalCode1"));
-        assertEquals("United States", selenium.getText("wwctrl_address.country1"));
+        assertEquals("Address One", StringUtils.trim(selenium.getText("wwctrl_address.streetAddressLine1")));
+        assertEquals("suite xyz", StringUtils.trim(selenium.getText("wwctrl_address.deliveryAddressLine1")));
+        assertEquals("phoenix", StringUtils.trim(selenium.getText("wwctrl_address.cityOrMunicipality1")));
+        assertEquals("AZ", StringUtils.trim(selenium.getText("wwctrl_address.stateOrProvince1")));
+        assertEquals("67890", StringUtils.trim(selenium.getText("wwctrl_address.postalCode1")));
+        assertEquals("United States", StringUtils.trim(selenium.getText("wwctrl_address.country1")));
 
         // email, phone, fax, tty, url
         waitForElementById("email-remove-0", 5);
-        assertEquals("abc@example.com | Remove", selenium.getText("id=email-entry-0"));
+        assertEquals("abc@example.com | Remove", StringUtils.trim(selenium.getText("id=email-entry-0")));
 
         waitForElementById("phone-remove-0", 5);
-        assertEquals("123-456-7890 | Remove", selenium.getText("id=phone-entry-0"));
+        assertEquals("123-456-7890 | Remove", StringUtils.trim(selenium.getText("id=phone-entry-0")));
 
         waitForElementById("fax-remove-0", 5);
-        assertEquals("234-567-8901 | Remove", selenium.getText("id=fax-entry-0"));
+        assertEquals("234-567-8901 | Remove", StringUtils.trim(selenium.getText("id=fax-entry-0")));
 
         waitForElementById("tty-remove-0", 5);
-        assertEquals("345-678-9012 | Remove", selenium.getText("id=tty-entry-0"));
+        assertEquals("345-678-9012 | Remove", StringUtils.trim(selenium.getText("id=tty-entry-0")));
 
         waitForElementById("url-remove-0", 5);
-        assertEquals("http://www.example.com | Remove", selenium.getText("id=url-entry-0"));
+        assertEquals("http://www.example.com | Remove", StringUtils.trim(selenium.getText("id=url-entry-0")));
     }
 
     protected void copyCRInfo(String crValueId, String expectedValue, String entryId) {

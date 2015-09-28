@@ -1118,6 +1118,7 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
                 confirmationMessagePattern));
         assertEquals("VRF", selenium.getValue(elementId).trim());
     }
+    
 
     protected void setCreatedByInOrg(Long orgId) {
         long curatorDbId = 0;
