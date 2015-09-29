@@ -93,9 +93,7 @@ import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.Document;
-import gov.nih.nci.pa.domain.StudyDataDiscrepancy;
 import gov.nih.nci.pa.domain.StudyMilestone;
-import gov.nih.nci.pa.domain.StudyNotes;
 import gov.nih.nci.pa.dto.ResponsiblePartyDTO;
 import gov.nih.nci.pa.dto.StudyProcessingErrorDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
@@ -151,7 +149,6 @@ import gov.nih.nci.services.person.PersonDTO;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -1408,12 +1405,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
     
        
         
-        //add results reporting coversheet data
-        PaRegistry.getStudyNotesService().addStudyDataDiscrepancy(
-                "Something missing", "Added something", 
-                new SimpleDateFormat("MM/dd/yyyy").format(new Date()) , 
-                new Long(studyProtocolDTO.getIdentifier().getExtension()));
-        
+       
         //add results reporting errors
         //there is no direct method to add erros so use sql query to add errors
         StringBuffer sql  = new StringBuffer();
@@ -1485,11 +1477,8 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
         
         assert (reportingDocsList.size() == 1);
         
-        //check if results coversheet data is preserved
-        List<? extends StudyNotes> studyDataDiscrepancyList = PaRegistry.getStudyNotesService().
-                getStudyNotesList(new Long(studyProtocolDTO.getIdentifier().getExtension()), StudyDataDiscrepancy.class);
-        
-        assert(studyDataDiscrepancyList.size() == 1);
+      
+       
         
         //check if errors data is preseved
         List<StudyProcessingErrorDTO> studyProcessingErrors = studyProcessingErrorService.getStudyProcessingErrorByStudy
@@ -2196,11 +2185,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
     
        
         
-        //add results reporting coversheet data
-        PaRegistry.getStudyNotesService().addStudyDataDiscrepancy(
-                "Something missing", "Added something", 
-                new SimpleDateFormat("MM/dd/yyyy").format(new Date()) , 
-                new Long(studyProtocolDTO.getIdentifier().getExtension()));
+       
         
         //add results reporting errors
         //there is no direct method to add erros so use sql query to add errors
@@ -2261,11 +2246,9 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
          
          assert (reportingDocsList.size() == 1);
          
-         //check if results coversheet data is preserved
-         List<? extends StudyNotes> studyDataDiscrepancyList = PaRegistry.getStudyNotesService().
-                 getStudyNotesList(new Long(dto.getIdentifier().getExtension()), StudyDataDiscrepancy.class);
+     
          
-         assert(studyDataDiscrepancyList.size() == 1);
+       
          
          //check if errors data is preseved
          List<StudyProcessingErrorDTO> studyProcessingErrors = studyProcessingErrorService.getStudyProcessingErrorByStudy

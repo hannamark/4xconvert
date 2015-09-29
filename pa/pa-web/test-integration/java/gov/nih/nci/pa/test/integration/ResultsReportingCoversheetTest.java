@@ -28,37 +28,7 @@ public class ResultsReportingCoversheetTest  extends AbstractPaSeleniumTest {
   }
    
 
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testAddStudyDisc() throws SQLException, ParseException {
-        TrialInfo trial = createAcceptedTrial();
-        loginAsSuperAbstractor();
-        searchAndSelectTrial(trial.title);
-        openAndWait(baseUrl+trial.id);
-        
-        long count = getRecordCount(trial.id,"DATA");
-        assertTrue(count ==0);
-        
-        assertTrue(selenium.isTextPresent("No Data Discrepancies found."));
-        
-        assertTrue(selenium.isElementPresent("id=addDisc"));
-        selenium.click("id=addDisc");
-        
-        pause(1000);
-        waitForElementById("discrepancyType", 5);
-        
-        selenium.type("discrepancyType", "discrepancyType");
-        selenium.type("actionTaken", "actionTaken");
-        selenium.type("actionCompletionDate", today);
-        pause(1000);
-        
-        selenium.click("xpath=//button/span[normalize-space(text())='Save']");
-        pause(OP_WAIT_TIME);
-        waitForPageToLoad();
-        assertTrue(selenium.isTextPresent("Data Discrepancy has been added successfully."));
-        count = getRecordCount(trial.id,"DATA");
-        assertTrue(count>0);
-    }
+   
     
     @SuppressWarnings("deprecation")
     @Test
@@ -68,7 +38,7 @@ public class ResultsReportingCoversheetTest  extends AbstractPaSeleniumTest {
         searchAndSelectTrial(trial.title);
         openAndWait(baseUrl+trial.id);
         
-        long count = getRecordCount(trial.id,"RECORD");
+        long count = getRecordCount(trial.id);
         assertTrue(count==0);
         
         assertTrue(selenium.isTextPresent("No study record changes found."));
@@ -90,62 +60,10 @@ public class ResultsReportingCoversheetTest  extends AbstractPaSeleniumTest {
         pause(OP_WAIT_TIME);
         waitForPageToLoad();
         assertTrue(selenium.isTextPresent("Record Change has been added successfully."));
-        count = getRecordCount(trial.id,"RECORD");
+        count = getRecordCount(trial.id);
         assertTrue(count>0);
     }
     
-   @SuppressWarnings("deprecation")
-   @Test
-    public void testEditStudyDisc() throws SQLException, ParseException {
-       TrialInfo trial = createAcceptedTrial();
-       loginAsSuperAbstractor();
-       searchAndSelectTrial(trial.title);
-       openAndWait(baseUrl+trial.id);
-       
-       long count = getRecordCount(trial.id,"DATA");
-       assertTrue(count == 0);
-       
-       assertTrue(selenium.isTextPresent("No Data Discrepancies found."));
-       
-       assertTrue(selenium.isElementPresent("id=addDisc"));
-       selenium.click("id=addDisc");
-       
-       pause(1000);
-       waitForElementById("discrepancyType", 5);
-       
-       selenium.type("discrepancyType", "discrepancyType");
-       selenium.type("actionTaken", "actionTaken");
-       selenium.type("actionCompletionDate", today);
-       pause(1000);
-       
-       selenium.click("xpath=//button/span[normalize-space(text())='Save']");
-       pause(OP_WAIT_TIME);
-       waitForPageToLoad();
-       assertTrue(selenium.isTextPresent("Data Discrepancy has been added successfully."));
-       
-       selenium.click("xpath=//table[@id='dataDisc']/tbody/tr[1]/td[4]");
-       
-       pause(1000);
-       waitForElementById("discrepancyType", 5);
-       
-       selenium.type("discrepancyType", "discrepancyType123");
-       selenium.type("actionTaken", "actionTaken123");
-       selenium.type("actionCompletionDate", today);
-       
-       selenium.click("xpath=//button/span[normalize-space(text())='Save']");
-       pause(OP_WAIT_TIME);
-       
-       assertEquals(
-               "discrepancyType123",
-               selenium.getText("xpath=//table[@id='dataDisc']/tbody/tr[1]/td[1]"));
-
-       assertEquals(
-               "actionTaken123",
-               selenium.getText("xpath=//table[@id='dataDisc']/tbody/tr[1]/td[2]"));
-       
-       count = getRecordCount(trial.id,"DATA");
-       assertTrue(count>0);
-    }
    
    @SuppressWarnings("deprecation")
    @Test
@@ -155,7 +73,7 @@ public class ResultsReportingCoversheetTest  extends AbstractPaSeleniumTest {
        searchAndSelectTrial(trial.title);
        openAndWait(baseUrl+trial.id);
        
-       long count = getRecordCount(trial.id,"RECORD");
+       long count = getRecordCount(trial.id);
        assertTrue(count==0);
        
        assertTrue(selenium.isTextPresent("No study record changes found."));
@@ -195,46 +113,11 @@ public class ResultsReportingCoversheetTest  extends AbstractPaSeleniumTest {
                "actionTakenChangeType123",
                selenium.getText("xpath=//table[@id='recordChanges']/tbody/tr[1]/td[2]"));
        
-       count = getRecordCount(trial.id,"RECORD");
+       count = getRecordCount(trial.id);
        assertTrue(count>0);
    }
    
-   @SuppressWarnings("deprecation")
-   @Test
-    public void testDeleteStudyDisc() throws SQLException, ParseException {
-       TrialInfo trial = createAcceptedTrial();
-       loginAsSuperAbstractor();
-       searchAndSelectTrial(trial.title);
-       openAndWait(baseUrl+trial.id);
-       assertTrue(selenium.isTextPresent("No Data Discrepancies found."));
-       
-       assertTrue(selenium.isElementPresent("id=addDisc"));
-       selenium.click("id=addDisc");
-       
-       pause(1000);
-       waitForElementById("discrepancyType", 5);
-       
-       selenium.type("discrepancyType", "discrepancyType");
-       selenium.type("actionTaken", "actionTaken");
-       selenium.type("actionCompletionDate", today);
-       pause(1000);
-       
-       selenium.click("xpath=//button/span[normalize-space(text())='Save']");
-       pause(OP_WAIT_TIME);
-       waitForPageToLoad();
-       assertTrue(selenium.isTextPresent("Data Discrepancy has been added successfully."));
-       
-       selenium.click("xpath=//table[@id='dataDisc']/tbody/tr[1]/td[5]//input");
-       
-       ((JavascriptExecutor) driver).executeScript("jQuery('#deleteType').val('disc'); jQuery('#coverSheetForm')[0].action = 'resultsReportingCoverSheetdelete.action'; jQuery('#coverSheetForm').submit();");
-       waitForPageToLoad();
-       
-       assertTrue(selenium.isTextPresent("No Data Discrepancies found."));
-       assertTrue(selenium.isTextPresent("Record(s) Deleted."));
-       
-       long count = getRecordCount(trial.id,"DATA");
-       assertTrue(count==0);
-    }
+  
    
    @SuppressWarnings("deprecation")
    @Test
@@ -268,7 +151,7 @@ public class ResultsReportingCoversheetTest  extends AbstractPaSeleniumTest {
        assertTrue(selenium.isTextPresent("No study record changes found."));
        assertTrue(selenium.isTextPresent("Record(s) Deleted."));
        
-       long count = getRecordCount(trial.id,"RECORD");
+       long count = getRecordCount(trial.id);
        assertTrue(count==0);
    
    }
@@ -333,11 +216,11 @@ public class ResultsReportingCoversheetTest  extends AbstractPaSeleniumTest {
        assertTrue(body.contains("<td>Results Designee Access Revoked?</td><td>YES "+today));
    }
    
-   private long getRecordCount(long trialId, String typeCode)
+   private long getRecordCount(long trialId)
            throws SQLException {
        String sql;
        
-           sql = "select count(*) from study_notes where study_protocol_identifier ="+trialId+" and study_note_type='"+typeCode+"'";
+           sql = "select count(*) from study_record_change where study_protocol_identifier ="+trialId;
       
        long trialCount =0;
        QueryRunner runner = new QueryRunner();

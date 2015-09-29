@@ -30,18 +30,18 @@ public class TrialViewTest extends ResultsReportingStudyContactsTest {
         searchAndSelectTrial(trial.title);
         openAndWait(baseUrl+trial.id);
         
-        long count = getRecordCount(trial.id,"DATA");
+        long count = getRecordCount(trial.id);
         assertTrue(count ==0);
         
-        assertTrue(selenium.isTextPresent("No Data Discrepancies found."));
+        assertTrue(selenium.isTextPresent("No study record changes found."));
         assertTrue(selenium.isTextPresent("No Trial Documents exist on the trial."));
     }
     
-    private long getRecordCount(long trialId, String typeCode)
+    private long getRecordCount(long trialId)
             throws SQLException {
         String sql;
         
-            sql = "select count(*) from study_notes where study_protocol_identifier ="+trialId+" and study_note_type='"+typeCode+"'";
+            sql = "select count(*) from study_record_change where study_protocol_identifier ="+trialId;
        
         long trialCount =0;
         QueryRunner runner = new QueryRunner();

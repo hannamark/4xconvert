@@ -132,7 +132,7 @@ public abstract class AbstractTrialRegistrationTestBase extends
     protected HealthCareFacilityCorrelationServiceRemote poHcfSvc;
     protected CTGovUploadServiceLocal ctGovUploadServiceLocal;
 
-    protected StudyNotesServiceLocal studyNotesService = new StudyNotesServiceLocal();
+    protected StudyRecordServiceLocal studyNotesService = new StudyRecordServiceLocal();
     protected StudyProcessingErrorService studyProcessingErrorService = new StudyProcessingErrorBeanLocal();
     
     public AbstractTrialRegistrationTestBase() {
@@ -331,7 +331,7 @@ public abstract class AbstractTrialRegistrationTestBase extends
         when(paSvcLoc.getPlannedMarkerService()).thenReturn(new PlannedMarkerServiceBean());
         when(paSvcLoc.getAbstractionCompletionService()).thenReturn(abstractionCompletionSvc);
         when(paSvcLoc.getMailManagerService()).thenReturn(mailSvc);
-        when(paSvcLoc.getStudyNotesService()).thenReturn(studyNotesService);
+        when(paSvcLoc.getStudyRecordService()).thenReturn(studyNotesService);
         when(paSvcLoc.getStudyProcessingErrorService()).thenReturn(studyProcessingErrorService);
        
         

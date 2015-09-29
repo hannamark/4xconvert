@@ -1,6 +1,9 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
   <h2><fmt:message key="reportCoverSheet.recordChanges.title" /></h2>
-      <s:set name="studyRecordChagesList" value="studyRecordChagesList" scope="request"/>       
+      <s:set name="studyRecordChagesList" value="studyRecordChagesList" scope="request"/>  
+       <div id="msg" class="confirm_msg" style="display: none;">
+                    <strong>Changes saved!</strong>
+                </div>     
         <display:table name="${studyRecordChangeList}" id="recordChanges"
                     defaultsort="1" sort="list" pagesize="9999999"
                     requestURI="resultsReportingCoverSheetquery.action" export="false"  >
@@ -36,7 +39,7 @@
                                 to mark row for deletion.</label>
                         </div>
                     </display:column>
-                  <display:column escapeXml="false" media="html" property="id"
+                  <display:column escapeXml="false" media="html" property="id" 
                         class="id_holder" />
                 </display:table>        
           

@@ -68,22 +68,15 @@ function callOnloadFunctions(){
     // leave this function to prevent 'error on page'
 }
 
-var table;
-var editFunction;
+
+
 var editFunctionChangeType;
 var studyRecordChangeTable;
 jQuery(document).ready(function() {
     
-	
-	
-	
-	table =initSectionDataTable('dataDisc');
-	studyRecordChangeTable = initSectionDataTable('recordChanges');
-	
-	editFunction =initTableEditFunction('dataDisc' ,'disc' , table) ;
+	studyRecordChangeTable = initCoverSheetSectionDataTable('recordChanges');
 	editFunctionChangeType = initTableEditFunction('recordChanges' ,'studyRecord' , studyRecordChangeTable) ;
 	
-	initDeleteFunction("deleteBtn" , "dataDisc","recordChanges" , "resultsReportingCoverSheetdelete.action","disc");
 	initDeleteFunction("deleteBtnChangeType" , "recordChanges" ,"dataDisc" , "resultsReportingCoverSheetdelete.action","studyrecord");
 	
      //set url to be submitted in case of add/edit
@@ -121,7 +114,6 @@ setFormat("mm/dd/yyyy");
     <s:form name="coverSheetForm" id ="coverSheetForm" action="">
         <s:actionerror/>
         <pa:studyUniqueToken/>
-        <jsp:include page="reportCoverSheetDiscType.jsp"/>
         <jsp:include page="reportCoverSheetStudyRecord.jsp"/>
          <jsp:include page="reportCoverSheetFinalCleanup.jsp"/>             
          

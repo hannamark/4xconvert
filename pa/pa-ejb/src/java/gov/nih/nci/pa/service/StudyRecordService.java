@@ -2,7 +2,7 @@
 
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.pa.domain.StudyNotes;
+import gov.nih.nci.pa.domain.StudyRecordChange;
 
 import java.util.List;
 
@@ -16,42 +16,22 @@ import javax.ejb.Local;
  * copyright holder, NCI.
  */
 @Local
-public interface StudyNotesService   {
+public interface StudyRecordService   {
    
     /**
      * @param studyProtocolId studyProtocolId
-     * @param object object
-     * @return StudyNotesList
+     * @return StudyRecordsList
      * @throws PAException PAException
      */
-    List<? extends StudyNotes> getStudyNotesList(Long studyProtocolId , Class object) throws PAException;
+    List<StudyRecordChange> getStudyRecordsList(Long studyProtocolId) throws PAException;
     
-    /**
-     * @param discrepancyType discrepancyType
-     * @param actionTaken actionTaken
-     * @param actionCompletionDate actionCompletionDate
-     * @param studyProtocolId studyProtocolId
-     * @throws PAException PAException
-     */
-    void addStudyDataDiscrepancy(String discrepancyType, String actionTaken, String actionCompletionDate ,
-            long studyProtocolId) throws PAException;
-    
-    /**
-     * @param discrepancyType discrepancyType
-     * @param actionTaken actionTaken
-     * @param actionCompletionDate actionCompletionDate
-     * @param studyDataDiscrepancyId studyDataDiscrepancyId
-     * @throws PAException PAException
-     */
-    void editStudyDataDiscrepancy(String discrepancyType, String actionTaken, String actionCompletionDate ,
-            long studyDataDiscrepancyId) throws PAException;
+  
     
     /**
      * @param id id
-     * @param type type
      * @throws PAException PAException
      */
-    void deleteStudyNotes(Long id , String type) throws PAException;
+    void deleteStudyRecord(Long id) throws PAException;
     
    
     /**

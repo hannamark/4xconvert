@@ -18,7 +18,7 @@ function setCoverSheetUrls (addDiscAction, addDiscSucessAction, addChangeAction,
 	saveFinalChangesUrl = saveFinalChangesAction;
 	sendEmailUrl = sendEmailAction;
 }
-function initSectionDataTable(tableId) {
+function initCoverSheetSectionDataTable(tableId) {
 	var table = jQuery('#'+tableId).DataTable({
         "paging":   true,
         "ordering": false,

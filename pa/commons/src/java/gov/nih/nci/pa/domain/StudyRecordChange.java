@@ -1,15 +1,11 @@
 package gov.nih.nci.pa.domain;
 
+import java.sql.Timestamp;
+
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.ForceDiscriminator;
 import org.hibernate.validator.Length;
 
 /**
@@ -17,14 +13,17 @@ import org.hibernate.validator.Length;
  *
  */
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "study_note_type", discriminatorType = DiscriminatorType.STRING)
-@DiscriminatorValue("RECORD")
-@ForceDiscriminator
-@Table(name = "STUDY_NOTES")
-public class StudyRecordChange extends StudyNotes {
+@Table(name = "STUDY_RECORD_CHANGE")
+public class StudyRecordChange extends AbstractStudyEntity {
     
     private String changeType;
+    /**
+     * MAX_LENGTH
+     */
+    protected static final int MAX_LENGTH = 2000;
+
+    private String actionTaken;
+    private Timestamp actionCompletionDate;
 
     /**
      * @return changeType
@@ -43,6 +42,36 @@ public class StudyRecordChange extends StudyNotes {
     }
 
     
-   
+    /**
+     * @return actionTaken actionTaken
+     */
+    @Column(name = "ACTION_TAKEN")
+    @Length(max = MAX_LENGTH)
+    public String getActionTaken() {
+        return actionTaken;
+    }
+
+    /**
+     * @param actionTaken actionTaken
+     */
+    public void setActionTaken(String actionTaken) {
+        this.actionTaken = actionTaken;
+    }
+
+    /**
+     * @return actionCompletionDate
+     */
+    @Column(name = "ACTION_COMPLETION_DATE")
+    public Timestamp getActionCompletionDate() {
+        return actionCompletionDate;
+    }
+
+    /**
+     * @param actionCompletionDate actionCompletionDate
+     */
+    public void setActionCompletionDate(Timestamp actionCompletionDate) {
+        this.actionCompletionDate = actionCompletionDate;
+    }
+
 
 }

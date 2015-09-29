@@ -29,27 +29,12 @@ public class ResultsReportingCoverSheetActionTest  extends TrialAbstractActionTe
         String result = reportingCoverSheetAction.query();
         
         assertEquals("success",result);
-        assert(reportingCoverSheetAction.getStudyDataDiscrepancyList().size() ==0);
+        assert(reportingCoverSheetAction.getStudyRecordChangeList().size() ==0);
         
      
     }
     
-    @Test
-    public void testAdd() throws PAException, IOException {
-      
-        String result= reportingCoverSheetAction.addOrEdit();
-        assertEquals(null,result);
-        
-    }
-    
-    @Test
-    public void testEdit() throws PAException, IOException {
-       
-        reportingCoverSheetAction.setId(1L);
-        String result= reportingCoverSheetAction.addOrEdit();
-        assertEquals(null,result);
-        
-    }
+   
     
     @Test
     public void testAddRecordChange() throws PAException, IOException {
@@ -68,14 +53,7 @@ public class ResultsReportingCoverSheetActionTest  extends TrialAbstractActionTe
         
     }
     
-    @Test
-    public void testSuccessfulAdd() throws PAException, IOException {
-        reportingCoverSheetAction.successfulAdd();
-        
-        assertEquals("Data Discrepancy has been added successfully", ServletActionContext.getRequest().getAttribute(
-                Constants.SUCCESS_MESSAGE));
-        
-    }
+   
     
     @Test
     public void testSuccessfulAddRecordChange() throws PAException, IOException {

@@ -80,8 +80,8 @@ jQuery(document).ready(function() {
     
 	
 	
-	table =initSectionDataTable('dataDisc');
-	studyRecordChangeTable = initSectionDataTable('recordChanges');
+	table =initCoverSheetSectionDataTable('dataDisc');
+	studyRecordChangeTable = initCoverSheetSectionDataTable('recordChanges');
 	
 	editFunction =initTableEditFunction('dataDisc' ,'disc' , table) ;
 	editFunctionChangeType = initTableEditFunction('recordChanges' ,'studyRecord' , studyRecordChangeTable) ;
@@ -135,7 +135,6 @@ setDocumentPageUrl("resultsReportingDocumentinput.action?parentPage=trialView",
          
      <s:form name="coverSheetForm" id ="coverSheetForm" action="">
         <!-- jsp for cover sheet do not include anything in this form please create separate form for another views-->
-        <jsp:include page="/WEB-INF/jsp/administrative/reportingCoverSheet/reportCoverSheetDiscType.jsp"/>
         <jsp:include page="/WEB-INF/jsp/administrative/reportingCoverSheet/reportCoverSheetStudyRecord.jsp"/>
          <jsp:include page="/WEB-INF/jsp/administrative/reportingCoverSheet/reportCoverSheetFinalCleanup.jsp"/>             
          

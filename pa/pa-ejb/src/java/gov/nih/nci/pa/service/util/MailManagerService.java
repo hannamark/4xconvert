@@ -81,8 +81,8 @@ package gov.nih.nci.pa.service.util;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.CTGovImportLog;
 import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.domain.StudyNotes;
 import gov.nih.nci.pa.domain.StudyOnhold;
+import gov.nih.nci.pa.domain.StudyRecordChange;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -507,13 +507,11 @@ public interface MailManagerService {
     /**
      * @param nciId nciId
      * @param studyProtocolDTO studyProtocolDTO
-     * @param studyDataDiscrepancyList studyDataDiscrepancyList
      * @param studyRecordChangeList studyRecordChangeList
      * @throws PAException exception
      */
     void sendCoverSheetEmail(String nciId, StudyProtocolDTO studyProtocolDTO ,
-            List<? extends StudyNotes> studyDataDiscrepancyList ,
-            List<? extends StudyNotes> studyRecordChangeList) throws PAException;
+             List<StudyRecordChange> studyRecordChangeList) throws PAException;
     
     
     /**

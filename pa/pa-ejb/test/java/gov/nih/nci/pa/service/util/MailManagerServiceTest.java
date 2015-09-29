@@ -109,7 +109,7 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyContact;
-import gov.nih.nci.pa.domain.StudyDataDiscrepancy;
+
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.domain.StudyRecordChange;
@@ -1646,13 +1646,10 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         
         StudyProtocolDTO studyProtocolDTO = new StudyProtocolDTO();
         
-        List<StudyDataDiscrepancy> studyDataDiscrepancyList = new ArrayList<StudyDataDiscrepancy>();
+       
         List<StudyRecordChange> studyRecordChangeList = new ArrayList<StudyRecordChange>();
-        StudyDataDiscrepancy  studyDataDiscrepancy = new StudyDataDiscrepancy();
-        studyDataDiscrepancy.setDiscrepancyType("DiscType");
-        studyDataDiscrepancy.setActionTaken("action taken");
-        studyDataDiscrepancy.setActionCompletionDate(new Timestamp(new Date().getTime()));
-        studyDataDiscrepancyList.add(studyDataDiscrepancy);
+       
+       
         
         StudyRecordChange studyRecordChange = new StudyRecordChange();
         studyRecordChange.setChangeType("change Type");
@@ -1661,7 +1658,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         studyRecordChangeList.add(studyRecordChange);
       
 
-        bean.sendCoverSheetEmail("123", studyProtocolDTO, studyDataDiscrepancyList, studyRecordChangeList);
+        bean.sendCoverSheetEmail("123", studyProtocolDTO,  studyRecordChangeList);
         String mailSubject= bean.commonMailSubjectReplacementsForNCI(prop.getValue(), "123");
         assert(mailSubject.contains("123"));  
      

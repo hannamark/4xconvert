@@ -1,7 +1,5 @@
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.pa.domain.StudyDataDiscrepancy;
-import gov.nih.nci.pa.domain.StudyNotes;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRecordChange;
 import gov.nih.nci.pa.service.util.CSMUserService;
@@ -32,95 +30,32 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 
-public class StudyNotesServiceLocal implements StudyNotesService {
+public class StudyRecordServiceLocal implements StudyRecordService {
 
     @Override
-    public List<? extends StudyNotes> getStudyNotesList(
-            Long studyProtocolId , Class object) throws PAException {
+ public List<StudyRecordChange> getStudyRecordsList(
+            Long studyProtocolId) throws PAException {
         
-        List<? extends StudyNotes>  studyNotesList = null;
+        List<StudyRecordChange>  studyRecordsList = null;
         Criteria criteria = null;
         Session session = PaHibernateUtil.getCurrentSession();
-        criteria = session.createCriteria(object);
+        criteria = session.createCriteria(StudyRecordChange.class);
         
         StudyProtocol studyProtocol = new StudyProtocol();
         studyProtocol.setId(studyProtocolId);
         criteria.add(Restrictions.eq("studyProtocol", studyProtocol));
-        studyNotesList = criteria.list();
+        studyRecordsList = criteria.list();
         
-        return studyNotesList;
+        return studyRecordsList;
     }
 
+  
     @Override
-    public void addStudyDataDiscrepancy(String discrepancyType,
-            String actionTaken, String actionCompletionDate , long studyProtocolId) throws PAException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(PAUtil.DATE_FORMAT);
-        Date parsedDate;
-        try {
-            parsedDate = simpleDateFormat.parse(actionCompletionDate);
-       
-        Session session = PaHibernateUtil.getCurrentSession();
-        StudyDataDiscrepancy studyDataDiscrepancy = new StudyDataDiscrepancy();
-        studyDataDiscrepancy.setDiscrepancyType(discrepancyType);
-        studyDataDiscrepancy.setActionTaken(actionTaken);
-        studyDataDiscrepancy.setActionCompletionDate(new Timestamp(parsedDate.getTime()));
-        StudyProtocol studyProtocol = new StudyProtocol();
-        studyProtocol.setId(studyProtocolId);
-        studyDataDiscrepancy.setStudyProtocol(studyProtocol);
-        
-        Date today = new Date();
-        User user = CSMUserService.getInstance().getCSMUserFromCache(
-                UsernameHolder.getUser()); 
-        studyDataDiscrepancy.setDateLastCreated(today);
-        studyDataDiscrepancy.setUserLastCreated(user);
-        
-        session.save(studyDataDiscrepancy);
-        
-        } catch (Exception e) {
-          throw new PAException(e.getMessage());
-        }
-    }
-
-    @Override
-    public void editStudyDataDiscrepancy(String discrepancyType,
-            String actionTaken, String actionCompletionDate,
-            long studyDataDiscrepancyId) throws PAException {
-        
-        
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(PAUtil.DATE_FORMAT);
-        Date parsedDate;
-        try {
-        
-        Date today = new Date();
-        User user = CSMUserService.getInstance().getCSMUserFromCache(
-                    UsernameHolder.getUser());     
-        parsedDate = simpleDateFormat.parse(actionCompletionDate);
-        Session session = PaHibernateUtil.getCurrentSession();
-        StudyDataDiscrepancy studyDataDiscrepancy = (StudyDataDiscrepancy) 
-                session.get(StudyDataDiscrepancy.class, studyDataDiscrepancyId);
-        studyDataDiscrepancy.setDiscrepancyType(discrepancyType);
-        studyDataDiscrepancy.setActionTaken(actionTaken);
-        studyDataDiscrepancy.setActionCompletionDate(new Timestamp(parsedDate.getTime()));
-        studyDataDiscrepancy.setDateLastUpdated(today);
-        studyDataDiscrepancy.setUserLastUpdated(user);
-        session.update(studyDataDiscrepancy);
-        } catch (Exception e) {
-            throw new PAException(e.getMessage());
-          }
-    }
-
-    @Override
-    public void deleteStudyNotes(Long id , String type) throws PAException {
+    public void deleteStudyRecord(Long id) throws PAException {
         try {
             Session session = PaHibernateUtil.getCurrentSession();
-            StudyNotes studyNotes = null;
             String queryString = null;
-            if (type.equals("disc")) {
-                queryString = "delete from StudyDataDiscrepancy where id=" + id;
-            } else {
-                queryString = "delete from StudyRecordChange where id=" + id;
-               
-            }
+             queryString = "delete from StudyRecordChange where id=" + id;
             Query query = session.createQuery(queryString);
             query.executeUpdate();
             

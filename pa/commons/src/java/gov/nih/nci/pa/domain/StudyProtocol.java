@@ -235,7 +235,7 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
    
     private String ctroOverRideFlagComments;
     
-    private Set<StudyDataDiscrepancy> studyDataDiscrepancy = new HashSet<StudyDataDiscrepancy>();
+   
     private Set<StudyRecordChange> studyRecordChange = new HashSet<StudyRecordChange>();
     
     private Boolean useStandardLanguage;
@@ -1370,22 +1370,7 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
         this.trialPublishedDate = trialPublishedDate;
     }
 
-    /**
-     * @return studyDataDiscrepancy
-     */ 
-    @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING , fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    public Set<StudyDataDiscrepancy> getStudyDataDiscrepancy() {
-        return studyDataDiscrepancy;
-    }
-
-    /**
-     * @param studyDataDiscrepancy studyDataDiscrepancy
-     */
-    public void setStudyDataDiscrepancy(
-            Set<StudyDataDiscrepancy> studyDataDiscrepancy) {
-        this.studyDataDiscrepancy = studyDataDiscrepancy;
-    }
+   
 
     /**
      * @return studyDataDiscrepancy

@@ -32,32 +32,13 @@ public class TrialViewActionTest extends TrialAbstractActionTest {
         String result = trialViewAction.query();
         
         assertEquals("success",result);
-        assert(trialViewAction.getStudyDataDiscrepancyList().size() ==0);
+        assert(trialViewAction.getStudyRecordChangeList().size() ==0);
         
      
     }
+
     
-    @Test
-    public void testAdd() throws PAException, IOException {
-      
-        String result= trialViewAction.addOrEdit();
-        assertEquals(null,result);
-        assertEquals(null,trialViewAction.getStudyDataDiscrepancyList());
-        
-        
-    }
-    
-    
-    
-    @Test
-    public void testEditDocument() throws PAException, IOException {
-       
-        trialViewAction.setId(1L);
-        String result= trialViewAction.addOrEdit();
-        assertEquals(null,result);
-        assertEquals(null,trialViewAction.getStudyDataDiscrepancyList());
-        
-    }
+  
     
     @Test
     public void testAddRecordChange() throws PAException, IOException {

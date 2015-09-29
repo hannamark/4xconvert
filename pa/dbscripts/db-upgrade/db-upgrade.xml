@@ -1984,10 +1984,13 @@
        <comment>Reverting the mail template for partial registration</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9270.sql"/>
     </changeSet>
-    <changeSet id="PO-9011-CTRO_Feedback-Update.sql" author="khandalkara">       
+    <changeSet id="PO-9011-CTRO_Feedback-Update" author="khandalkara">       
        <comment>Database changes after CTRO users feedback</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9011-CTRO_Feedback-Update.sql"/>
     </changeSet>
-    
+    <changeSet id="PO-9014-update" author="khandalkara">       
+       <comment>Remove data disc section from coversheet</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9014-update.sql"/>
+    </changeSet>
     
 </databaseChangeLog>

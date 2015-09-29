@@ -94,8 +94,6 @@ import gov.nih.nci.pa.domain.CTGovImportLog;
 import gov.nih.nci.pa.domain.EmailAttachment;
 import gov.nih.nci.pa.domain.EmailLog;
 import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.domain.StudyDataDiscrepancy;
-import gov.nih.nci.pa.domain.StudyNotes;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRecordChange;
@@ -2687,8 +2685,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
     @Override
     public void sendCoverSheetEmail(String nciId,
             StudyProtocolDTO studyProtocolDTO,
-            List<? extends StudyNotes> studyDataDiscrepancyList,
-            List<? extends StudyNotes> studyRecordChangeList) throws PAException {
+            List<StudyRecordChange> studyRecordChangeList) throws PAException {
        
         String mailTo = lookUpTableService
                 .getPropertyValue("ccct.comparision.email.tolist");
@@ -2772,29 +2769,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
         
         //data disc and records changes size changes hence they can not be store in db as template that needs to be
        //appended to body dynamically
-        notesData.append("<h2>Data Discrepancies (Status, Status Dates, Accrual)</h2>");
-        notesData.append("<table border=\"1\" style=\"width:100%\">");
-        notesData.append("<thead><tr>");
-        notesData.append("<th>Discrepancy Type</th>");
-        notesData.append("<th>Action Taken</th>");
-        notesData.append("<th>Action Completion Date</th>");
-        notesData.append("</thead></tr>");
-        notesData.append("<tbody>");
-        StudyDataDiscrepancy studyDataDiscrepancy = null;
-        for (StudyNotes studyNote : studyDataDiscrepancyList) {
-            
-            studyDataDiscrepancy = (StudyDataDiscrepancy) studyNote;
-            notesData.append("<tr>");
-            notesData.append("<td>" + studyDataDiscrepancy.getDiscrepancyType() + "</td>");
-            notesData.append("<td>" + studyDataDiscrepancy.getActionTaken() + " </td>");
-            notesData.append("<td>" + simpleDateFormat.format(
-                    studyDataDiscrepancy.getActionCompletionDate()) + "</td>");
-            notesData.append("</tr>");
-        }
-        notesData.append("</tbody>");
-        notesData.append("</table>");
-        
-        notesData.append("<h2>Record Changes (e.g. Eligibility Criteria, Addition of Arm)</h2>");
+       notesData.append("<h2>Record Changes </h2>");
         notesData.append("<table border=\"1\" style=\"width:100%\">");
         notesData.append("<thead><tr>");
         notesData.append("<th>Change Type</th>");
@@ -2804,7 +2779,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
         notesData.append("<tbody>");
         StudyRecordChange studyRecordChange = null;
         
-        for (StudyNotes studyNote : studyRecordChangeList) {
+        for (StudyRecordChange studyNote : studyRecordChangeList) {
             studyRecordChange = new StudyRecordChange();
             studyRecordChange = (StudyRecordChange) studyNote;
             notesData.append("<tr>");

@@ -31,8 +31,6 @@ import gov.nih.nci.pa.service.StudyIdentifiersService;
 import gov.nih.nci.pa.service.StudyInboxServiceLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
-import gov.nih.nci.pa.service.StudyNotesService;
-import gov.nih.nci.pa.service.StudyNotesServiceLocal;
 import gov.nih.nci.pa.service.StudyObjectiveServiceLocal;
 import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
@@ -41,6 +39,8 @@ import gov.nih.nci.pa.service.StudyProcessingErrorService;
 import gov.nih.nci.pa.service.StudyProtocolBeanLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolStageServiceLocal;
+import gov.nih.nci.pa.service.StudyRecordService;
+import gov.nih.nci.pa.service.StudyRecordServiceLocal;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.StudyRelationshipServiceLocal;
@@ -741,8 +741,8 @@ public RegulatoryInformationServiceLocal getRegulatoryInformationService() {
     }
 
     @Override
-    public StudyNotesService getStudyNotesService() {
-        return mock(StudyNotesServiceLocal.class);
+    public StudyRecordService getStudyRecordService() {
+        return mock(StudyRecordServiceLocal.class);
     }
         
     @Override

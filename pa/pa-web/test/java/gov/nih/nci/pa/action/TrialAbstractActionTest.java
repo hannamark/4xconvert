@@ -21,7 +21,7 @@ import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyContactService;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
-import gov.nih.nci.pa.service.StudyNotesServiceLocal;
+import gov.nih.nci.pa.service.StudyRecordServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.MailManagerBeanLocal;
@@ -66,7 +66,7 @@ public abstract class TrialAbstractActionTest extends AbstractPaActionTest {
          reportingCoverSheetAction.setServletRequest(getRequest());
          trialViewAction.setServletRequest(getRequest());
          
-         StudyNotesServiceLocal notesService = mock(StudyNotesServiceLocal.class);
+         StudyRecordServiceLocal notesService = mock(StudyRecordServiceLocal.class);
          StudyContactService  studyContactService = mock(StudyContactServiceLocal.class);
          StudyProtocolServiceLocal studyProtocolService = mock(StudyProtocolServiceLocal.class);
          PAServiceUtils paServiceUtils = mock(PAServiceUtils.class);

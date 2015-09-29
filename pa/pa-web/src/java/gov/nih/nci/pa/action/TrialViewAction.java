@@ -80,8 +80,6 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.StudyDataDiscrepancy;
-import gov.nih.nci.pa.domain.StudyNotes;
 import gov.nih.nci.pa.domain.StudyRecordChange;
 import gov.nih.nci.pa.dto.StudyContactWebDTO;
 import gov.nih.nci.pa.dto.TrialDocumentWebDTO;
@@ -99,8 +97,8 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyContactService;
-import gov.nih.nci.pa.service.StudyNotesService;
 import gov.nih.nci.pa.service.StudyProtocolService;
+import gov.nih.nci.pa.service.StudyRecordService;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.MailManagerService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
@@ -150,14 +148,14 @@ ServletRequestAware , ServletResponseAware , Preparable {
     
     private HttpServletRequest request;
     private HttpServletResponse response;
-    private StudyNotesService studyNotesService;
+    private StudyRecordService studyRecordService;
     private Long studyProtocolId;
-    private List<? extends StudyNotes> studyDataDiscrepancyList;
+  
     private Long id;
     private String discrepancyType;
     private String actionTaken;
     private String actionCompletionDate;
-    private List<? extends StudyNotes> studyRecordChangeList;
+    private List<StudyRecordChange> studyRecordChangeList;
     private String changeType;
     private String deleteType;
     private StudyProtocolDTO studyProtocolDTO;
@@ -194,7 +192,7 @@ ServletRequestAware , ServletResponseAware , Preparable {
     
     @Override
     public void prepare() throws Exception {
-        studyNotesService = PaRegistry.getStudyNotesService();
+        studyRecordService = PaRegistry.getStudyRecordService();
         studyProtocolService = PaRegistry.getStudyProtocolService();
         mailManagerService = PaRegistry.getMailManagerService();
         studyContactService = PaRegistry.getStudyContactService();
@@ -214,11 +212,10 @@ ServletRequestAware , ServletResponseAware , Preparable {
             SimpleDateFormat dateFormat = new SimpleDateFormat(PAUtil.DATE_FORMAT);
             Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(getStudyProtocolId());
             
-            //data needed for cover sheet page
-            studyDataDiscrepancyList = studyNotesService.getStudyNotesList(studyProtocolId, StudyDataDiscrepancy.class);
+        
                    
-            studyRecordChangeList = studyNotesService.
-                    getStudyNotesList(studyProtocolId, StudyRecordChange.class);
+            studyRecordChangeList = studyRecordService.
+                    getStudyRecordsList(studyProtocolId);
             
             studyProtocolDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
             useStandardLanguage = BlConverter.convertToBoolean(studyProtocolDTO.getUseStandardLanguage());
@@ -286,27 +283,7 @@ ServletRequestAware , ServletResponseAware , Preparable {
     }   
     
    
-    /**
-     * @return Action result.
-     * @throws IOException
-     *             IOException
-     */
-    public String addOrEdit() throws IOException {
-        try {
-            if (getId() != null) {
-                edit();
-            } else {
-                add();
-            }
-        } catch (PAException e) {
-            LOG.error(e, e);
-            response.addHeader("msg", e.getMessage());
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                    e.getMessage());
-        }
-        return null;
-    }
-    
+   
     /**
      * @return Action result.
      * @throws IOException
@@ -352,25 +329,15 @@ ServletRequestAware , ServletResponseAware , Preparable {
         return query();
     }
     
-    private void add() throws PAException {
-        studyNotesService.addStudyDataDiscrepancy(
-                discrepancyType, actionTaken, actionCompletionDate , studyProtocolId);
-            
-    }
-
-    private void edit() throws PAException {
-        studyNotesService.editStudyDataDiscrepancy(discrepancyType, actionTaken, actionCompletionDate,
-                id);
-    }
-    
+  
     private void addRecordChange() throws PAException {
-        studyNotesService.
+        studyRecordService.
         addStudyRecordChange(changeType, actionTaken, actionCompletionDate, studyProtocolId);
             
     }
 
     private void editRecordChange() throws PAException {
-        studyNotesService.editStudyRecordChange(changeType, actionTaken, actionCompletionDate, id);
+        studyRecordService.editStudyRecordChange(changeType, actionTaken, actionCompletionDate, id);
     }
     
     /**
@@ -452,14 +419,13 @@ ServletRequestAware , ServletResponseAware , Preparable {
         
         Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(getStudyProtocolId());
         studyProtocolDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);    
-        studyDataDiscrepancyList = studyNotesService.
-                getStudyNotesList(studyProtocolId , StudyDataDiscrepancy.class);
-        studyRecordChangeList = studyNotesService.
-                getStudyNotesList(studyProtocolId, StudyRecordChange.class);
+        
+        studyRecordChangeList = studyRecordService.
+                getStudyRecordsList(studyProtocolId);
         
         //send cover sheet email
         mailManagerService.sendCoverSheetEmail(
-                nciID, studyProtocolDTO, studyDataDiscrepancyList, studyRecordChangeList);
+                nciID, studyProtocolDTO,  studyRecordChangeList);
      
         request.setAttribute(Constants.SUCCESS_MESSAGE, Constants.EMAIL_MESSAGE);
         
@@ -670,20 +636,7 @@ ServletRequestAware , ServletResponseAware , Preparable {
         this.studyProtocolId = studyProtocolId;
     }
 
-    /**
-     * @return studyDataDiscrepancyList
-     */
-    public List<? extends StudyNotes> getStudyDataDiscrepancyList() {
-        return studyDataDiscrepancyList;
-    }
-
-    /**
-     * @param studyDataDiscrepancyList studyDataDiscrepancyList
-     */
-    public void setStudyDataDiscrepancyList(
-            List<StudyDataDiscrepancy> studyDataDiscrepancyList) {
-        this.studyDataDiscrepancyList = studyDataDiscrepancyList;
-    }
+   
 
     /**
      * @return discrepancyType
@@ -744,7 +697,7 @@ ServletRequestAware , ServletResponseAware , Preparable {
     /**
      * @return studyRecordChangeList studyRecordChangeList
      */
-    public List<? extends StudyNotes> getStudyRecordChangeList() {
+    public List<StudyRecordChange> getStudyRecordChangeList() {
         return studyRecordChangeList;
     }
 
@@ -815,15 +768,16 @@ ServletRequestAware , ServletResponseAware , Preparable {
     /**
      * @return studyNotesService
      */
-    public StudyNotesService getStudyNotesService() {
-        return studyNotesService;
+    public StudyRecordService getStudyNotesService() {
+        return studyRecordService;
     }
 
+    
     /**
-     * @param studyNotesService studyNotesService
+     * @param studyRecordServiceSet studyRecordServiceSet
      */
-    public void setStudyNotesService(StudyNotesService studyNotesService) {
-        this.studyNotesService = studyNotesService;
+    public void setStudyNotesService(StudyRecordService studyRecordServiceSet) {
+        this.studyRecordService = studyRecordServiceSet;
     }
 
     /**
@@ -959,7 +913,7 @@ ServletRequestAware , ServletResponseAware , Preparable {
                     StConverter.convertToSt(trialDocumentWebDTO
                             .getInactiveCommentText()));
         } else {
-            studyNotesService.deleteStudyNotes(objectId, deleteType);    
+            studyRecordService.deleteStudyRecord(objectId);    
         }
         
     }
