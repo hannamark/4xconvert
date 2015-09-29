@@ -98,16 +98,20 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
+import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
+import gov.nih.nci.pa.dto.AbstractionCompletionDTO.ErrorMessageTypeEnum;
 import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.RejectionReasonCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -151,6 +155,7 @@ public class PaServiceUtilsTest extends AbstractHibernateTestCase {
     private IdentifiedOrganizationCorrelationServiceRemote identifierOrganizationSvc;
     private final PAServiceUtils paServiceUtil = new PAServiceUtils();
     protected StudyMilestoneServicelocal studyMilestoneSvc;
+    protected AbstractionCompletionServiceLocal abstractionCompletionSvc; 
 
     @Before
     public void setup() throws PAException, NullifiedEntityException, TooManyResultsException {
@@ -159,15 +164,38 @@ public class PaServiceUtilsTest extends AbstractHibernateTestCase {
         PoRegistry.getInstance().setPoServiceLocator(poSvcLoc);
         PaRegistry.getInstance().setServiceLocator(paSvcLoc);
         identifierOrganizationSvc = mock(IdentifiedOrganizationCorrelationServiceRemote.class);
+        abstractionCompletionSvc = mock(AbstractionCompletionServiceLocal.class);
         when(poSvcLoc.getIdentifiedOrganizationEntityService()).thenReturn(identifierOrganizationSvc);
+        when(paSvcLoc.getAbstractionCompletionService()).thenReturn(abstractionCompletionSvc);
         List<IdentifiedOrganizationDTO> identifiedOrgs = new ArrayList<IdentifiedOrganizationDTO>();
         IdentifiedOrganizationDTO identOrgDto = new IdentifiedOrganizationDTO();
         identOrgDto.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi("player ext"));
         identOrgDto.setScoperIdentifier(IiConverter.convertToPoOrganizationIi("scoper ext"));
         identifiedOrgs.add(identOrgDto);
         when(identifierOrganizationSvc.search(any(IdentifiedOrganizationDTO.class))).thenReturn(identifiedOrgs);
+       
+        List<AbstractionCompletionDTO> completionErrors = new ArrayList<AbstractionCompletionDTO>();
+        AbstractionCompletionDTO error = new AbstractionCompletionDTO();
+        error.setErrorCode(AbstractionCompletionDTO.ERROR_TYPE);
+        error.setErrorType(AbstractionCompletionDTO.ERROR_TYPE);
+        error.setErrorDescription("I am an error!");
+        error.setComment("I am an error!");
+        
+        
+        AbstractionCompletionDTO warning = new AbstractionCompletionDTO();
+        warning.setErrorCode(AbstractionCompletionDTO.WARNING_TYPE);
+        warning.setErrorType(AbstractionCompletionDTO.WARNING_TYPE);
+        warning.setErrorDescription("I am a warning!");
+        warning.setComment("I am a warning!");
+        
+        completionErrors.add(error);
+        completionErrors.add(warning);
+        when(abstractionCompletionSvc.validateAbstractionCompletion(any(Ii.class))).thenReturn(completionErrors);
+        
         when(paSvcLoc.getLookUpTableService()).thenReturn(new MockLookUpTableServiceBean());
         studyMilestoneSvc = new StudyMilestoneServiceBean();
+        
+        
         setupPersonMocks();
     }
 
@@ -178,6 +206,15 @@ public class PaServiceUtilsTest extends AbstractHibernateTestCase {
         PersonEntityServiceRemote personService = mock(PersonEntityServiceRemote.class);
         when(personService.getPerson(eq(personPoIi))).thenReturn(personDto);
         when(poSvcLoc.getPersonEntityService()).thenReturn(personService);
+    }
+    
+    @Test
+    public void testWarningMessageSkip() throws PAException {
+    	DocumentWorkflowStatusDTO documentWorkflowStatusCode = new DocumentWorkflowStatusDTO();
+    	documentWorkflowStatusCode.setStatusCode(CdConverter.convertStringToCd(DocumentWorkflowStatusCode.ABSTRACTED.getCode()));    	
+    	StringBuilder sb = paServiceUtil.createAbstractionValidationErrorsTable(IiConverter.convertToIi((long) 1), documentWorkflowStatusCode);    	
+    	assertTrue(sb.toString().contains("I am an error!"));
+    	assertFalse(sb.toString().contains("I am a warning!"));
     }
 
     @Test

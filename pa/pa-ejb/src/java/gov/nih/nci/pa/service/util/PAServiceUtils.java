@@ -2201,11 +2201,14 @@ public class PAServiceUtils {
             if (!errorList.isEmpty()) {
                 sbuf.append("<table><tr><td><b>Type</b></td><td><b>Description</b></td><td><b>Comments</b></td></tr>");
                 for (AbstractionCompletionDTO abDTO : errorList) {
-                    sbuf.append("<tr><td>" + abDTO.getErrorType())
-                            .append("</td><td>")
-                            .append(abDTO.getErrorDescription())
-                            .append("</td><td>").append(abDTO.getComment())
-                            .append("</td></tr>");
+                    String errorType = abDTO.getErrorType();
+                    if (errorType == AbstractionCompletionDTO.ERROR_TYPE) {
+                        sbuf.append("<tr><td>" + errorType)
+                                .append("</td><td>")
+                                .append(abDTO.getErrorDescription())
+                                .append("</td><td>").append(abDTO.getComment())
+                                .append("</td></tr>");
+                    }
                 }
                 sbuf.append("</table>");
             }
