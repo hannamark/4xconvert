@@ -107,9 +107,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -327,19 +329,29 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
      * @param screenShotFileName
      */
     protected void takeScreenShot(final String screenShotFileName) {
+        Future f = Executors.newSingleThreadExecutor().submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    File destFile = new File(SystemUtils.JAVA_IO_TMPDIR,
+                            screenShotFileName);
+                    File scrFile = ((TakesScreenshot) driver)
+                            .getScreenshotAs(OutputType.FILE);
+                    FileUtils.copyFile(scrFile, destFile);
+                    System.out.println("Saved screen shot: "
+                            + destFile.getAbsolutePath());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         try {
-
-            File destFile = new File(SystemUtils.JAVA_IO_TMPDIR,
-                    screenShotFileName);
-
-            File scrFile = ((TakesScreenshot) driver)
-                    .getScreenshotAs(OutputType.FILE);
-            FileUtils.copyFile(scrFile, destFile);
-            System.out.println("Saved screen shot: "
-                    + destFile.getAbsolutePath());
-        } catch (Exception e) {
+            f.get(10, TimeUnit.SECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
             e.printStackTrace();
+            f.cancel(true);
         }
+
     }
 
     private void closeBrowser() {
@@ -825,20 +837,22 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         LOG.info("Added summary four info to db");
     }
 
-    protected void addNonCASummaryFour(long spId, String csmUserName) throws SQLException {
+    protected void addNonCASummaryFour(long spId, String csmUserName)
+            throws SQLException {
         Number orgId = getResearchOrgId("ClinicalTrials.gov");
         long userId = getCsmUserByLoginName(csmUserName);
-        
+
         String sql = "insert into study_resourcing values "
-                    + "( (SELECT NEXTVAL('HIBERNATE_SEQUENCE')),"
-                    + "'NATIONAL', 'TRUE','"+orgId.intValue()+"',"+spId+",'B09','AA',"
-                    + "'CTEP','12197','TRUE','',null,null,"+userId+","+userId+",0)";
+                + "( (SELECT NEXTVAL('HIBERNATE_SEQUENCE')),"
+                + "'NATIONAL', 'TRUE','" + orgId.intValue() + "'," + spId
+                + ",'B09','AA'," + "'CTEP','12197','TRUE','',null,null,"
+                + userId + "," + userId + ",0)";
         QueryRunner runner = new QueryRunner();
         runner.update(connection, sql);
-        
+
         LOG.info("Added summary four info to db");
     }
-    
+
     protected long getCsmUserByLoginName(String loginName) throws SQLException {
         QueryRunner runner = new QueryRunner();
         Number regUserID = (Number) runner.query(connection,
@@ -2179,7 +2193,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         new QueryRunner().update(connection, "update pa_properties set value='"
                 + value + "' where name='" + name + "'");
     }
-    
+
     protected void topWindow() {
         driver.switchTo().defaultContent();
         if (!isPhantomJS())
