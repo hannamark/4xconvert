@@ -581,6 +581,11 @@ public abstract class AbstractRegistrySeleniumTest extends
         }
     }
 
+    protected String getUIRowValue(String labeltxt) {
+        return driver.findElement(By.xpath("//div[@class='row']/span[@class='label'][normalize-space(.) = '"
+                + labeltxt + "']/following::span")).getText();
+    }
+
     /**
      * @throws URISyntaxException
      * @throws SQLException

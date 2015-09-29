@@ -1965,43 +1965,41 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         createStudyProtocolDTO.setUserLastCreated(studyProtocolDTO.getUserLastCreated());
         createStudyProtocolDTO.setAccrualDiseaseCodeSystem(studyProtocolDTO.getAccrualDiseaseCodeSystem());
 
-        if (studyProtocolDTO.getSubmitingOgranization() == null) {
-            RegistryUser usr = registryUserServiceLocal.getUser(StConverter.convertToString(studyProtocolDTO
-                    .getUserLastCreated()));
-            if (usr != null && usr.getAffiliatedOrganizationId() != null) {
-                CorrelationUtils corUtil = new CorrelationUtils();
-                Organization org = corUtil.getPAOrganizationByIi(
-                        IiConverter.convertToPoOrganizationIi(
-                        String.valueOf(usr.getAffiliatedOrganizationId())));
-                if (org == null || org.getId() == null) {
-                    LOG.warn("User not belonging to a valid organization is attemptring to create a"
-                            + " trial. Creating Org.");
-                    OrganizationDTO poOrg = null;
-                    try {
-                        poOrg = PoRegistry.getOrganizationEntityService().
-                            getOrganization(IiConverter.convertToPoOrganizationIi(
+        //PO-9304 - always update the submitting org based on amender/submitter
+        RegistryUser usr = registryUserServiceLocal.getUser(StConverter.convertToString(studyProtocolDTO
+                .getUserLastCreated()));
+        if (usr != null && usr.getAffiliatedOrganizationId() != null) {
+            CorrelationUtils corUtil = new CorrelationUtils();
+            Organization org = corUtil.getPAOrganizationByIi(
+                    IiConverter.convertToPoOrganizationIi(
                             String.valueOf(usr.getAffiliatedOrganizationId())));
-                    } catch (NullifiedEntityException e) {
-                       throw new PAException(PAExceptionConstants.NULLIFIED_ORG, e);
-                    }
-                    if (poOrg != null) {
-                        org = corUtil.createPAOrganization(poOrg);
-                    }
+            if (org == null || org.getId() == null) {
+                LOG.warn("User not belonging to a valid organization is attemptring to create a"
+                        + " trial. Creating Org.");
+                OrganizationDTO poOrg = null;
+                try {
+                    poOrg = PoRegistry.getOrganizationEntityService().
+                            getOrganization(IiConverter.convertToPoOrganizationIi(
+                                    String.valueOf(usr.getAffiliatedOrganizationId())));
+                } catch (NullifiedEntityException e) {
+                    throw new PAException(PAExceptionConstants.NULLIFIED_ORG, e);
                 }
-                
-                if (org != null) {
-                    createStudyProtocolDTO.setSubmitingOgranization(
+                if (poOrg != null) {
+                    org = corUtil.createPAOrganization(poOrg);
+                }
+            }
+
+            if (org != null) {
+                createStudyProtocolDTO.setSubmitingOgranization(
                         IiConverter.convertToPaOrganizationIi(org.getId()));
-                } else {
-                    LOG.error("Failed to create Organization, should only happen during unit tests.");
-                }
             } else {
-                LOG.error("User not assinged to an organization is attemptring to create a trial.");
+                LOG.error("Failed to create Organization, should only happen during unit tests.");
             }
         } else {
-            createStudyProtocolDTO.setSubmitingOgranization(studyProtocolDTO.getSubmitingOgranization());
+            //is this also a Unit test thing ??
+            LOG.error("User not assinged to an organization is attemptring to create a trial.");
         }
-        
+
         if (!BlConverter.convertToBool(studyProtocolDTO.getProprietaryTrialIndicator())) {
             if (studyProtocolDTO.getCtgovXmlRequiredIndicator() == null) {
                 createStudyProtocolDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(Boolean.TRUE));

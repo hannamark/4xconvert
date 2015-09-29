@@ -1077,6 +1077,23 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     }
 
     protected Number createRegistryUser(Number csmUserId) throws SQLException {
+        return createRegistryUserForDCP(csmUserId);
+    }
+
+    protected Number createRegistryUserForDCP(Number csmUserId)  throws SQLException {
+        return createRegistryUser(csmUserId,
+                "National Cancer Institute Division of Cancer Prevention");
+    }
+
+    protected Number createRegistryUserForCTEP(Number csmUserId)  throws SQLException {
+        return createRegistryUser(csmUserId,
+                "Cancer Therapy Evaluation Program");
+    }
+
+    protected Number createRegistryUser(Number csmUserId, String organizationName) throws SQLException {
+
+        String orgIdentifier = getOrgPoIdByName(organizationName);
+
         QueryRunner runner = new QueryRunner();
         String idSql = "SELECT NEXTVAL('HIBERNATE_SEQUENCE')";
 
@@ -1084,16 +1101,18 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 .query(connection, idSql, new ArrayHandler())[0];
         String firstName = "test" + id.intValue();
 
+
         String sql = "INSERT INTO registry_user VALUES ("
                 + id.intValue()
                 + ", "
                 + "'"
                 + firstName
                 + "', NULL, 'CI', '2115 E. Jefferson St.', 'North Bethesda', 'Maryland', '20852', 'USA', '123-456-7890', "
-                + "'National Cancer Institute Division of Cancer Prevention',"
+                + String.format("'%s',", organizationName)
                 + csmUserId
-                + ", NULL, NULL, 'Test Org', NULL, NULL, 'testusersel@example.com', 3, "
-                + "'MEMBER', NULL, NULL, true, false, false, false, NULL)";
+                + ", NULL, NULL, 'Test Org', NULL, NULL, 'testusersel@example.com', "
+                + orgIdentifier
+                + ", 'MEMBER', NULL, NULL, true, false, false, false, NULL)";
 
         runner.update(connection, sql);
 

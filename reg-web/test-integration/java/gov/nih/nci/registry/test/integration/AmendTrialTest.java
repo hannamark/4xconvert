@@ -186,7 +186,8 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
             // moment.
             return;
         }
-        amendTrial();
+        TrialInfo trialInfo = createTrial();
+        amendTrial(trialInfo);
     }
 
     @SuppressWarnings("deprecation")
@@ -334,6 +335,81 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
 
     }
 
+
+    @SuppressWarnings("deprecation")
+    @Test
+    //PO-9304 - should change the last submitter and last submitter org
+    public void testTransferOfOwnershipFollowedByAmend()
+            throws Exception {
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+
+        //When I login as Abstractor and create a trial & logout
+        loginAndAcceptDisclaimer();
+        String rand = RandomStringUtils.randomNumeric(10);
+        TrialInfo trialInfo = registerAndAcceptTrial(rand);
+        final String nciID = trialInfo.nciID;
+        logoutUser();
+
+        //Then trial should be available in search
+        loginAsSuperAbstractor();
+        String trialID = searchAndSelectTrial(trialInfo.title);
+        assertEquals(nciID, trialID);
+
+        //And go to ownership page
+        clickLinkAndWait("Assign Ownership");
+
+        //Then I see the last submitter as 'abstractor-ci'
+        assertEquals("abstractor-ci", getUIRowValue("Last Submitter:"));
+
+        //And I see the last submitter organization as ''
+        assertEquals("National Cancer Institute Division of Cancer Prevention", getUIRowValue("Last Submitter Organization:"));
+        logoutPA();
+
+        //Now create a new ctepAbstractor and transfer trial ownership
+        String ctepAbstractor = "u" + rand;
+        Number csmUserId = createCSMUser(ctepAbstractor);
+        createRegistryUserForCTEP(csmUserId);
+        assignUserToGroup(ctepAbstractor, "Submitter");
+        assignUserToGroup(ctepAbstractor, "RegAdmin");
+        assignUserToGroup(ctepAbstractor, "ScientificAbstractor");
+        assignUserToGroup(ctepAbstractor, "AdminAbstractor");
+        assignUserToGroup(ctepAbstractor, "SuAbstractor");
+        assignTrialOwner(ctepAbstractor, trialInfo.id);
+
+        //When I Login as ctepAbstractor
+        login(ctepAbstractor, "pass");
+        handleDisclaimer(true);
+
+        //then I must see the trial
+        searchForTrialByNciID(nciID);
+        assertTrue(selenium.isTextPresent("OTHER" + rand));
+
+        //When I amend trial & logout from registry
+        amendTrial(trialInfo);
+
+        logoutUser();
+
+        //When I login to PA as ctepAbstractor
+        loginPA(ctepAbstractor, "pass");
+        disclaimer(true);
+        String trialID2 = searchAndSelectTrial(trialInfo.title);
+        assertEquals(nciID, trialID2);
+
+        //And go to ownership page
+        clickLinkAndWait("Assign Ownership");
+
+        //Then I see the last submitter as ctepAbstractor
+        assertEquals(ctepAbstractor, getUIRowValue("Last Submitter:"));
+        //and the organization as CTEP
+        assertEquals("Cancer Therapy Evaluation Program", getUIRowValue("Last Submitter Organization:"));
+        logoutPA();
+
+    }
+
     @SuppressWarnings("deprecation")
     @Test
     public void testLateRejectionDialogMustNotShowUpForOriginalSubmission_PO_8835()
@@ -387,15 +463,16 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
      */
     private TrialInfo amendTrialAndAddMilestones() throws URISyntaxException,
             SQLException {
-        TrialInfo info = amendTrial();
+        TrialInfo trialInfo = createTrial();
+        amendTrial(trialInfo);
         logoutPA();
         loginAsSuperAbstractor();
-        searchAndSelectTrial(info.title);
+        searchAndSelectTrial(trialInfo.title);
         acceptTrial();
 
         addMilestones();
 
-        return info;
+        return trialInfo;
     }
 
     /**
@@ -424,13 +501,24 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
     }
 
     /**
+     * Will create a new trial
+     * @return
      * @throws URISyntaxException
      * @throws SQLException
      */
-    private TrialInfo amendTrial() throws URISyntaxException, SQLException {
+    private TrialInfo createTrial() throws URISyntaxException, SQLException {
         loginAndAcceptDisclaimer();
         String rand = RandomStringUtils.randomNumeric(10);
         TrialInfo info = registerAndAcceptTrial(rand);
+        return info;
+    }
+
+    /**
+     * @throws URISyntaxException
+     * @throws SQLException
+     */
+    private TrialInfo amendTrial(TrialInfo info) throws URISyntaxException, SQLException {
+
         final String nciID = info.nciID;
         addDWS(info,
                 DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
