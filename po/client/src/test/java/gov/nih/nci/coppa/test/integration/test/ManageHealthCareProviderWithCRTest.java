@@ -109,6 +109,7 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
     public String AFFILIATE_ORG_FOR_PERSON = "affiliate_org_for_person";
     public String AFFILIATE_ORG_FOR_HCP = "affiliate_org_for_hcp";
 
+    @SuppressWarnings("deprecation")
     public void testCreateActivePersonWithPendingHCP() throws Exception {
         loginAsCurator();
         // create an ACTIVE ORG for later
@@ -176,36 +177,36 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         clickAndWait("edit_healthCareProvider_id_" + hcpId.trim());
         assertTrue(selenium.isTextPresent("exact:Edit Health Care Provider - Comparison"));
         // status
-        assertEquals("ACTIVE", selenium.getText("wwctrl_person.statusCode"));
+        assertEquals("ACTIVE", selenium.getText("wwctrl_person.statusCode").trim());
         assertTrue(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' should be present
         // scoper
         assertEquals(AFFILIATE_ORG_FOR_PERSON + " (" + activeOrgId.trim() + ")", selenium
-                .getText("wwctrl_curateRoleForm_role_scoper_id"));
+                .getText("wwctrl_curateRoleForm_role_scoper_id").trim());
         // cert
         assertEquals("CR Original", selenium.getValue("curateRoleForm.role.certificateLicenseText").trim());
         // address
-        assertEquals("456 jik", selenium.getText("wwctrl_address.streetAddressLine1"));
-        assertEquals("suite xyz", selenium.getText("wwctrl_address.deliveryAddressLine1"));
-        assertEquals("phoenix", selenium.getText("wwctrl_address.cityOrMunicipality1"));
-        assertEquals("AZ", selenium.getText("wwctrl_address.stateOrProvince1"));
-        assertEquals("67890", selenium.getText("wwctrl_address.postalCode1"));
-        assertEquals("United States", selenium.getText("wwctrl_address.country1"));
+        assertEquals("456 jik", selenium.getText("wwctrl_address.streetAddressLine1").trim());
+        assertEquals("suite xyz", selenium.getText("wwctrl_address.deliveryAddressLine1").trim());
+        assertEquals("phoenix", selenium.getText("wwctrl_address.cityOrMunicipality1").trim());
+        assertEquals("AZ", selenium.getText("wwctrl_address.stateOrProvince1").trim());
+        assertEquals("67890", selenium.getText("wwctrl_address.postalCode1").trim());
+        assertEquals("United States", selenium.getText("wwctrl_address.country1").trim());
 
         // email, phone, fax, tty, url
         waitForElementById("email-remove-1", 5);
-        assertEquals("abc@example.com | Remove", selenium.getText("id=email-entry-1"));
+        assertEquals("abc@example.com | Remove", selenium.getText("id=email-entry-1").trim());
 
         waitForElementById("phone-remove-1", 5);
-        assertEquals("123-456-7890 | Remove", selenium.getText("id=phone-entry-1"));
+        assertEquals("123-456-7890 | Remove", selenium.getText("id=phone-entry-1").trim());
 
         waitForElementById("fax-remove-1", 5);
-        assertEquals("234-567-8901 | Remove", selenium.getText("id=fax-entry-1"));
+        assertEquals("234-567-8901 | Remove", selenium.getText("id=fax-entry-1").trim());
 
         waitForElementById("tty-remove-0", 5);
-        assertEquals("345-678-9012 | Remove", selenium.getText("id=tty-entry-0"));
+        assertEquals("345-678-9012 | Remove", selenium.getText("id=tty-entry-0").trim());
 
         waitForElementById("url-remove-0", 5);
-        assertEquals("http://www.example.com | Remove", selenium.getText("id=url-entry-0"));
+        assertEquals("http://www.example.com | Remove", selenium.getText("id=url-entry-0").trim());
 
         // new cert
         assertEquals("CR cert license change",
@@ -217,23 +218,23 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
 
         selenium.click("copy_emailEntry_value0"); 
         waitForElementById("email-remove-2", 5);
-        assertEquals("cr@example.com | Remove", selenium.getText("id=email-entry-2"));
+        assertEquals("cr@example.com | Remove", selenium.getText("id=email-entry-2").trim());
          
         selenium.click("copy_phoneEntry_value0"); 
         waitForElementById("phone-remove-2", 5);
-        assertEquals("112-233-4455 | Remove", selenium.getText("id=phone-entry-2"));
+        assertEquals("112-233-4455 | Remove", selenium.getText("id=phone-entry-2").trim());
          
         selenium.click("copy_faxEntry_value0"); 
         waitForElementById("fax-remove-2", 5);
-        assertEquals("112-233-4455 | Remove", selenium.getText("id=fax-entry-2"));
+        assertEquals("112-233-4455 | Remove", selenium.getText("id=fax-entry-2").trim());
          
         selenium.click("copy_ttyEntry_value0"); 
         waitForElementById("tty-remove-1", 5);
-        assertEquals("112-233-4455 | Remove", selenium.getText("id=tty-entry-1"));
+        assertEquals("112-233-4455 | Remove", selenium.getText("id=tty-entry-1").trim());
          
         selenium.click("copy_urlEntry_value0"); 
         waitForElementById("url-remove-1", 5);
-        assertEquals("http://www.cr.com | Remove", selenium.getText("id=url-entry-1"));
+        assertEquals("http://www.cr.com | Remove", selenium.getText("id=url-entry-1").trim());
          
         clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("exact:Health Care Provider was successfully updated!".trim()));
