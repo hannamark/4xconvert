@@ -5,6 +5,7 @@ import java.util.Iterator;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
+import org.openqa.selenium.By;
 
 import com.dumbster.smtp.SmtpMessage;
 
@@ -260,11 +261,11 @@ public class TrialCheckInOutTest extends AbstractTrialStatusTest {
      * @param useDashboard
      * @param trial
      */
+    @SuppressWarnings("deprecation")
     private void verifyCheckInWarningDialog(final String checkInOption) {
         selenium.click("link=" + checkInOption);
         // Verify pop-up (Slide 29).
-        waitForElementById("transitionWarnings", 5);
-        assertTrue(selenium.isVisible("id=transitionWarnings"));
+        waitForElementToBecomeVisible(By.id("transitionWarnings"), 15);      
         assertEquals(
                 "Status Transition Warnings were found. Use the Trial Status History button to review and make corrections, or select Proceed with Check-in.",
                 selenium.getText("transitionWarnings").trim());
