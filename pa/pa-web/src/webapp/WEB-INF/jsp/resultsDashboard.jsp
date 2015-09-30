@@ -411,75 +411,88 @@ function searchResults(url, studyNCIid){
          <div id="results">
              <c:set var="requestURI" value="resultsDashboardsearch.action"
                  scope="request" />
-             <display:table class="data" sort="list" pagesize="10"
+             <display:table class="data" sort="list" pagesize="30"
                  decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator"
                  name="results" requestURI="${requestURI}"
+                 defaultsort="1"
                  export="false" uid="row">
-                 <display:column  class="title" titleKey="studyProtocol.nciIdentifier" sortable="true" headerScope="col" scope="row" >
+                 <display:column  class="title" titleKey="studyProtocol.nciIdentifier" sortable="true"  scope="row" >
                     <!-- <c:out value="${row.nciIdentifier}"/> --><a id="trialview_${row.studyProtocolId}" href="javascript:void(0)" onclick="searchResults('trialViewquery.action', '${row.studyProtocolId}')"><c:out value="${row.nciIdentifier}"/></a>
                  </display:column>
-                 <display:column  title="NCT ID" property="nctIdentifier"/>
-                 <display:column  title="CTEP/DCP ID" property="ctepOrDcp"/>
-                 <display:column  title="Lead Org PO ID" property="leadOrganizationPOId"/>          
-                 <display:column  title="Lead Organization" property="leadOrganizationName"/>
-                 <display:column  title="Results Designee" property="designeeNamesList"/>                                  
-                 <display:column title="PCD Sent to PIO">
+                 <display:column  title="NCT ID" sortable="true" property="nctIdentifier"/>
+                 <display:column  title="CTEP/DCP ID" sortable="true" property="ctepOrDcp"/>
+                 <display:column  title="Lead Org PO ID" sortable="true" property="leadOrganizationPOId"/>          
+                 <display:column  title="Lead Organization" sortable="true" property="leadOrganizationName"/>
+                 <display:column  title="Results Designee" sortable="true" property="designeeNamesList"/>                                  
+                 <display:column title="PCD Sent to PIO" sortable="true">
+                    <!-- <c:out value="${row.pcdSentToPIODate}"/> -->
                     <input id="pcdSentToPIODate_${row.studyProtocolId}" class="datePicker" size="8" value="<fmt:formatDate value="${row.pcdSentToPIODate}" pattern="MM/dd/yyyy"/>"/>
                     <div id="pcdSentToPIODate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
-                 <display:column  title="PCD Confirmed">
+                 <display:column  title="PCD Confirmed" sortable="true">
+                     <!-- <c:out value="${row.pcdConfirmedDate}"/> -->
                      <input id="pcdConfirmedDate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.pcdConfirmedDate}" pattern="MM/dd/yyyy"/>"/>
                      <div id="pcdConfirmedDate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>                      
-                 <display:column  title="Designee Notified">
+                 <display:column  title="Designee Notified" sortable="true">
+                      <!-- <c:out value="${row.desgneeNotifiedDate}"/> -->
                       <input id="desgneeNotifiedDate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.desgneeNotifiedDate}" pattern="MM/dd/yyyy"/>"/>
                       <div id="desgneeNotifiedDate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
-                 <display:column  title="Reporting in Process">
+                 <display:column  title="Reporting in Process" sortable="true">
+                      <!-- <c:out value="${row.reportingInProcessDate}"/> -->                 
                       <input id="reportingInProcessDate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.reportingInProcessDate}" pattern="MM/dd/yyyy"/>"/>
                       <div id="reportingInProcessDate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
-                 <display:column  title="3 Month Reminder">
+                 <display:column  title="3 Month Reminder" sortable="true">
+                      <!-- <c:out value="${row.threeMonthReminderDate}"/> -->                 
                      <input id="threeMonthReminderDate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.threeMonthReminderDate}" pattern="MM/dd/yyyy"/>"/>
                      <div id="threeMonthReminderDate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>                             
-                 <display:column  title="5 Month Reminder">
+                 <display:column  title="5 Month Reminder" sortable="true">
+                      <!-- <c:out value="${row.fiveMonthReminderDate}"/> -->                 
                       <input id="fiveMonthReminderDate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.fiveMonthReminderDate}" pattern="MM/dd/yyyy"/>"/>
                       <div id="fiveMonthReminderDate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
-                 <display:column  title="7 Month Escalation">
+                 <display:column  title="7 Month Escalation" sortable="true">
+                      <!-- <c:out value="${row.sevenMonthEscalationtoPIODate}"/> -->                 
                      <input id="sevenMonthEscalationtoPIODate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.sevenMonthEscalationtoPIODate}" pattern="MM/dd/yyyy"/>"/>
                      <div id="sevenMonthEscalationtoPIODate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
-                 <display:column  title="Results Sent to PIO">
+                 <display:column  title="Results Sent to PIO" sortable="true">
+                      <!-- <c:out value="${row.resultsSentToPIODate}"/> -->                 
                      <input id="resultsSentToPIODate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.resultsSentToPIODate}" pattern="MM/dd/yyyy"/>"/>
                      <div id="resultsSentToPIODate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
-                 <display:column  title="Results Approved by PIO">
+                 <display:column  title="Results Approved by PIO" sortable="true">
+                      <!-- <c:out value="${row.resultsApprovedByPIODate}"/> -->                 
                       <input id="resultsApprovedByPIODate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.resultsApprovedByPIODate}" pattern="MM/dd/yyyy"/>"/>
                       <div id="resultsApprovedByPIODate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
-                 <display:column  title="CTRO Trial Comparison Review">
+                 <display:column  title="CTRO Trial Comparison Review" sortable="true">
                      <c:out value="${row.ctroUserName}"/>                 	
                      <fmt:formatDate value="${row.ctroUserCreatedDate}" pattern="MM/dd/yyyy"/>
                  </display:column>
-                 <display:column  title="CCCT Trial Comparison Review">
+                 <display:column  title="CCCT Trial Comparison Review" sortable="true">
                     <c:out value="${row.ccctUserName}"/>
                     <fmt:formatDate value="${row.ccctUserCreatedDate}" pattern="MM/dd/yyyy"/>
                  </display:column>
-                 <display:column  title="Trial Comparison Approval">
+                 <display:column  title="Trial Comparison Approval" sortable="true">
                  	  <c:out value="${row.ctroUserName}"/>                    
                      <fmt:formatDate value="${row.ctroUserCreatedDate}" pattern="MM/dd/yyyy"/>
                  </display:column>
-                 <display:column  title="PRS Release Date">
+                 <display:column  title="PRS Release Date" sortable="true">
+                      <!-- <c:out value="${row.prsReleaseDate}"/> -->
                       <input id="prsReleaseDate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.prsReleaseDate}" pattern="MM/dd/yyyy"/>"/>
                       <div id="prsReleaseDate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
-                 <display:column  title="QA Comments Returned Date">
+                 <display:column  title="QA Comments Returned Date" sortable="true">
+                      <!-- <c:out value="${row.qaCommentsReturnedDate}"/> -->                 
                       <input id="qaCommentsReturnedDate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.qaCommentsReturnedDate}" pattern="MM/dd/yyyy"/>"/>
                       <div id="qaCommentsReturnedDate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
-                 <display:column  title="Trial Results Published Date">
+                 <display:column  title="Trial Results Published Date" sortable="true">
+                      <!-- <c:out value="${row.trialPublishedDate}"/> -->                 
                       <input id="trialPublishedDate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.trialPublishedDate}" pattern="MM/dd/yyyy"/>"/>
                       <div id="trialPublishedDate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
