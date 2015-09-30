@@ -46,6 +46,9 @@ fieldset>input[id="actionCompletionDate"] {
 fieldset>input[id="actionCompletionDateChangeType"] {
   display:inline-block;
 }
+.hide_column{
+    display : none;
+}
 
 </style>   
     
@@ -80,14 +83,13 @@ jQuery(document).ready(function() {
     
 	
 	
-	table =initCoverSheetSectionDataTable('dataDisc');
+	
 	studyRecordChangeTable = initCoverSheetSectionDataTable('recordChanges');
 	
-	editFunction =initTableEditFunction('dataDisc' ,'disc' , table) ;
-	editFunctionChangeType = initTableEditFunction('recordChanges' ,'studyRecord' , studyRecordChangeTable) ;
 	
-	initDeleteFunction("deleteBtn" , "dataDisc","recordChanges" , "trialViewdelete.action","disc");
-	initDeleteFunction("deleteBtnChangeType" , "recordChanges" ,"dataDisc" , "trialViewdelete.action","studyrecord");
+	editFunctionChangeType = initTableEditFunction('recordChanges' ,'studyRecord' , studyRecordChangeTable,'trialViewdelete.action') ;
+	
+	
 	
 	//set url to be submitted in case of add/edit
     setCoverSheetUrls("trialViewaddOrEdit.action" ,"trialViewsuccessfulAdd.action",

@@ -94,7 +94,7 @@ public class ResultsReportingCoversheetTest  extends AbstractPaSeleniumTest {
        waitForPageToLoad();
        assertTrue(selenium.isTextPresent("Record Change has been added successfully."));
        
-       selenium.click("xpath=//table[@id='recordChanges']/tbody/tr[1]/td[4]");
+       selenium.click("xpath=//table[@id='recordChanges']/tbody/tr[1]/td[4]/div/img[1]");
        pause(1000);
        waitForElementById("changeType", 5);
        
@@ -144,8 +144,10 @@ public class ResultsReportingCoversheetTest  extends AbstractPaSeleniumTest {
        waitForPageToLoad();
        assertTrue(selenium.isTextPresent("Record Change has been added successfully."));
        
-       selenium.click("xpath=//table[@id='recordChanges']/tbody/tr[1]/td[5]//input");
-       ((JavascriptExecutor) driver).executeScript("jQuery('#deleteType').val('studyrecord'); jQuery('#coverSheetForm')[0].action = 'resultsReportingCoverSheetdelete.action'; jQuery('#coverSheetForm').submit();");
+       WebElement element = driver.findElement(By.xpath("//table[@id='recordChanges']/tbody/tr[1]/td[5]"));
+       String elementValue =(String)((JavascriptExecutor) driver).executeScript("return jQuery(arguments[0]).text();", element);
+       String url ="resultsReportingCoverSheetdelete.action?objectsToDelete="+elementValue;
+       ((JavascriptExecutor) driver).executeScript("jQuery('#deleteType').val('studyrecord'); jQuery('#coverSheetForm')[0].action = '"+url+"'; jQuery('#coverSheetForm').submit();");
        waitForPageToLoad();
        
        assertTrue(selenium.isTextPresent("No study record changes found."));

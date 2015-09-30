@@ -46,6 +46,9 @@ fieldset>input[id="actionCompletionDate"] {
 fieldset>input[id="actionCompletionDateChangeType"] {
   display:inline-block;
 }
+.hide_column{
+    display : none;
+}
 
 </style>   
     
@@ -75,9 +78,9 @@ var studyRecordChangeTable;
 jQuery(document).ready(function() {
     
 	studyRecordChangeTable = initCoverSheetSectionDataTable('recordChanges');
-	editFunctionChangeType = initTableEditFunction('recordChanges' ,'studyRecord' , studyRecordChangeTable) ;
+	editFunctionChangeType = initTableEditFunction('recordChanges' ,'studyRecord' , studyRecordChangeTable,'resultsReportingCoverSheetdelete.action') ;
 	
-	initDeleteFunction("deleteBtnChangeType" , "recordChanges" ,"dataDisc" , "resultsReportingCoverSheetdelete.action","studyrecord");
+	
 	
      //set url to be submitted in case of add/edit
 	setCoverSheetUrls("resultsReportingCoverSheetaddOrEdit.action" ,"resultsReportingCoverSheetsuccessfulAdd.action",

@@ -25,30 +25,34 @@ function initCoverSheetSectionDataTable(tableId) {
         "info":     true,
         "bFilter" :false ,
         "columnDefs" : [{
-            "targets" : 5,
-            "visible" : false
+            "targets" : 4,
+            "sClass" : "hide_column"
         } ]
      
     });
 	return table;
 }
 
-function initTableEditFunction(tableId ,tableType , table) {
+function initTableEditFunction(tableId ,tableType , table, deleteUrl) {
 	
 	
 
 	jQuery('#'+tableId+' tbody')
     .on(
             'click',
-            'td',
+            'td img',
             function() {
             	
-                var colIdx = table.cell(this).index().column;
-                var rowIdx = table.cell(this).index().row;
-               
-              if (colIdx == 3) {
-            	   
-                    var recordID = table.cell(rowIdx, 5).data();
+            var imgName =jQuery(this).attr("name");
+            
+            var colIdx = table.cell(jQuery(this).parent().parent()).index().column;
+            var rowIdx = table.cell(jQuery(this).parent().parent()).index().row;
+      	   
+            var recordID = table.cell(rowIdx, 4).data();
+            
+           if(imgName=="edit") {
+        	   
+              
                     var discType =table.cell(rowIdx, 0).data();
                     var actionTaken =table.cell(rowIdx, 1).data();
                     var actionCompletionDate = table.cell(rowIdx, 2).data();
@@ -97,7 +101,14 @@ function initTableEditFunction(tableId ,tableType , table) {
                     else {
                     	openStudyRecordChangeDialog();
                     }
-                }
+              
+              } else if(imgName=="delete") {
+            	  if (confirm("Click OK to remove selected records. Cancel to abort")) {
+            			jQuery("#deleteType").val("studyrecord");
+            			jQuery('#coverSheetForm')[0].action =deleteUrl+"?objectsToDelete="+recordID;
+                        jQuery('#coverSheetForm').submit();
+            	  }
+              }
             });
 	 if (tableType=="disc") {
 	   return editFunction;
@@ -107,31 +118,7 @@ function initTableEditFunction(tableId ,tableType , table) {
 	 
 }
 
-function initDeleteFunction(deleteButtonId , tableId, otherTableId , actionUrl , value) {
-	jQuery('#'+deleteButtonId)
-    .on(
-            "click",
-            function() {
-                var boxes = jQuery("#"+tableId+" input[name='objectsToDelete']:checked");
-                
-                //if other table check boxes are selected then set them to false
-                jQuery("#"+otherTableId+" input[name='objectsToDelete']").prop("checked",false);
-                
-                
-                if (boxes.length == 0) {
-                    alert('Please select one or more records to delete.');
-                    return false;
-                }
-                else {
-                if (confirm("Click OK to remove selected records. Cancel to abort")) {
-                	jQuery("#deleteType").val(value);
-                	jQuery('#coverSheetForm')[0].action =actionUrl;
-                    jQuery('#coverSheetForm').submit();
-                  } 
-                }
-               
-            });
-}
+
 
 function openDiscDialog() {
 	 jQuery("#discrepancyFormDiv").dialog({
