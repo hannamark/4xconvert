@@ -138,7 +138,10 @@ public class InvokeDocumentEjb extends InvokeStudyPaServiceEjb<DocumentDTO> impl
         throw new PAException("Unavailable from the grid services");        
     }
 
-   
+    /**
+     * {@inheritDoc}
+     * @throws PAException PAException
+     */
     public DocumentDTO getComparisonDocumentByStudyProtocol(Ii studyProtocolIi)
             throws PAException {
         throw new PAException("Unavailable from the grid services");
