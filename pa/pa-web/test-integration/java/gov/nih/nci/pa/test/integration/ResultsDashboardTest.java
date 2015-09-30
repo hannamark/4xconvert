@@ -85,6 +85,7 @@ package gov.nih.nci.pa.test.integration;
 
 
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.util.PAConstants;
 
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -117,7 +118,7 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         registerTestTrials();
         loginPA("results-abstractor", "pass");
         clickAndWait("id=acceptDisclaimer");
-        clickAndWait("link=Results Reporting");
+        clickAndWait("link=Search");
     }
     
     @After
@@ -181,6 +182,8 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isTextPresent(testTrials.get(2).nctID));
         assertFalse(selenium.isTextPresent(testTrials.get(3).nctID));
         assertFalse(selenium.isTextPresent(testTrials.get(4).nctID));
+        assertFalse(selenium.isTextPresent(testTrials.get(5).nctID));
+        assertFalse(selenium.isTextPresent(testTrials.get(5).nciID));
         assertTrue(selenium.isTextPresent("Doe, John"));
         assertTrue(selenium.isTextPresent("Results Reporting Progress"));
         assertTrue(selenium.isTextPresent("Add/Update Designee or PIO Contact"));
@@ -218,6 +221,8 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isTextPresent(testTrials.get(2).nctID));
         assertFalse(selenium.isTextPresent(testTrials.get(3).nctID));
         assertFalse(selenium.isTextPresent(testTrials.get(4).nctID));
+        assertFalse(selenium.isTextPresent(testTrials.get(5).nctID));
+        assertFalse(selenium.isTextPresent(testTrials.get(5).nciID));
     }
     
     @Test       
@@ -387,7 +392,7 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
     
     public void testTrialView(){
         clickAndWait("id=trialview_" + testTrials.get(0).id);
-        pause(3000);
+        waitForElementToBecomeAvailable(By.id("sendCoverSheetEmail"), 30);
         assertTrue(selenium.isTextPresent("Results Reporting & Tracking - Trial View"));
         assertTrue(selenium.isTextPresent(testTrials.get(0).nciID+": "+testTrials.get(0).title));
     }
@@ -395,7 +400,7 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
     public void testSearchDesigneeOrPIOContacts(){
         selenium.type("id=designeeTrialId", testTrials.get(0).nciID);
         clickSearchForResultsReportingData("designeeTrialIdSearch");
-        pause(3000);
+        waitForElementToBecomeAvailable(By.id("reportStudyContactsForm"), 30);
         assertTrue(selenium.isTextPresent("Results Reporting & Tracking - Add/Update Contact Information"));
         assertTrue(selenium.isTextPresent(testTrials.get(0).nciID+": "+testTrials.get(0).title));
     }
@@ -403,7 +408,7 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
     public void testSearchTrialComparison(){
         selenium.type("id=trialCompDocsTrialId", testTrials.get(0).nciID);
         clickSearchForResultsReportingData("trialCompDocsTrialSearch");
-        pause(3000);
+        waitForElementToBecomeAvailable(By.id("trialDocumentsForm"), 30);
         assertTrue(selenium.isTextPresent("Results Reporting & Tracking - View/Upload Trial Comparison Documents"));
         assertTrue(selenium.isTextPresent(testTrials.get(0).nciID+": "+testTrials.get(0).title));
     }
@@ -411,7 +416,7 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
     public void testSearchResultsCoverSheet(){
         selenium.type("id=coverSheetTrialId", testTrials.get(0).nciID);
         clickSearchForResultsReportingData("coverSheetTrialSearch");
-        pause(3000);
+        waitForElementToBecomeAvailable(By.id("xsrfForm"), 30);
         assertTrue(selenium.isTextPresent("Results Reporting & Tracking & Cover Sheet"));
         assertTrue(selenium.isTextPresent(testTrials.get(0).nciID+": "+testTrials.get(0).title));
     }
@@ -419,13 +424,14 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
     public void testSearchUploadErrors(){
         selenium.type("id=uploadErrorsTrialId", testTrials.get(0).nciID);
         clickSearchForResultsReportingData("uploadErrorsTrialSearch");
-        pause(3000);
+        waitForElementToBecomeAvailable(By.id("editActionTakenDialog"), 30);
         assertTrue(selenium.isTextPresent("Summary Of XML Upload Errors & Actions Taken"));
         assertTrue(selenium.isTextPresent(testTrials.get(0).nciID+": "+testTrials.get(0).title));
     }
     
     public void testSearchUploadErrorsNoTrialId(){
         clickSearchForResultsReportingData("uploadErrorsTrialSearch");
+        waitForElementToBecomeAvailable(By.id("editActionTakenDialog"), 30);
         assertTrue(selenium.isTextPresent("Summary Of XML Upload Errors & Actions Taken"));
         assertFalse(selenium.isTextPresent(testTrials.get(0).nciID+": "+testTrials.get(0).title));
     }
@@ -467,6 +473,7 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         addNctIdentifier(trial, trial.nctID);
         testTrials.add(trial);        
         
+        
         trial = createSubmittedTrial();
         addSponsor(trial, "National Cancer Institute");
         trial.nctID="NCT00004";
@@ -479,5 +486,15 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         trial.nctID="NCT00005";
         addNctIdentifier(trial, trial.nctID);
         testTrials.add(trial);
+        
+        trial = createSubmittedTrial();
+        addSponsor(trial, "National Cancer Institute");
+        replaceLeadOrg(trial, PAConstants.CCR_ORG_NAME);
+        addDWS(trial, "VERIFICATION_PENDING");
+        setPCD(trial, "2016-01-01", ActualAnticipatedTypeCode.ACTUAL);
+        setSeciont801Indicator(trial, false);
+        trial.nctID="NCT00006";
+        addNctIdentifier(trial, trial.nctID);
+        testTrials.add(trial); 
     }
 }
