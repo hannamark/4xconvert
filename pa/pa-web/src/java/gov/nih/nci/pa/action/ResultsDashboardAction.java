@@ -460,7 +460,7 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         List<StudyProtocolQueryDTO> filteredList = new ArrayList<>();
         for (StudyProtocolQueryDTO studyProtocolQueryDTO : studyProtocols) {
             // Filter out all studies with lead org = NCI-CCR  
-            if(!studyProtocolQueryDTO.getLeadOrganizationName()
+            if (!studyProtocolQueryDTO.getLeadOrganizationName()
                     .equalsIgnoreCase(PAConstants.CCR_ORG_NAME)
                     && StringUtils.isEmpty(studyProtocolQueryDTO.getCcrId())) {
                 filteredList.add(studyProtocolQueryDTO);
