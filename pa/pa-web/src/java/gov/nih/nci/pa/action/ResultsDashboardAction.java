@@ -59,6 +59,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
+import org.springframework.util.StringUtils;
 
 import com.opensymphony.xwork2.Preparable;
 
@@ -258,12 +259,12 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
                                 @Override
                                 public Object execute() throws PAException {
 
-                                    List<StudyProtocolQueryDTO> currentResults = protocolQueryService
-                                            .getStudyProtocolByCriteria(
+                                    List<StudyProtocolQueryDTO> currentResults = applyAdditionalFilters(
+                                            protocolQueryService.getStudyProtocolByCriteria(
                                                     criteria,
                                                     SKIP_ALTERNATE_TITLES,
                                                     SKIP_LAST_UPDATER_INFO,
-                                                    SKIP_OTHER_IDENTIFIERS);
+                                                    SKIP_OTHER_IDENTIFIERS));
 
                                     // collecting protocol-ids.
                                     List<Long> protocolIds = new ArrayList<Long>();
@@ -451,6 +452,22 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         }
     }
 
+    /**
+     * apply additional filters on the result 
+     * @param studyProtocols
+     */
+    private List<StudyProtocolQueryDTO> applyAdditionalFilters(List<StudyProtocolQueryDTO> studyProtocols) {
+        List<StudyProtocolQueryDTO> filteredList = new ArrayList<>();
+        for (StudyProtocolQueryDTO studyProtocolQueryDTO : studyProtocols) {
+            // Filter out all studies with lead org = NCI-CCR  
+            if(!studyProtocolQueryDTO.getLeadOrganizationName()
+                    .equalsIgnoreCase(PAConstants.CCR_ORG_NAME)
+                    && StringUtils.isEmpty(studyProtocolQueryDTO.getCcrId())) {
+                filteredList.add(studyProtocolQueryDTO);
+            } 
+        }
+        return filteredList;
+    }
     /**
      * @return the protocolQueryService
      */
