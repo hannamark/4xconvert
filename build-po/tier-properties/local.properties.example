@@ -1,0 +1,28 @@
+project.installation.path=${user.home}/ctrp/po
+
+authentication.type=db
+app.log.level=INFO
+app.log.smtp.host=mailfwd.nih.gov
+app.log.smtp.from=ctrppo-dev@example.com
+app.log.smtp.to=ctrppo-dev@example.com
+env.name=local
+csm.sync.frequency.seconds=240
+database.server=localhost
+database.port=5432
+database.name=podb
+database.user=pouser
+database.password=pouser
+ctep.url=t3://gappsbeta-ctep.nci.nih.gov:7036
+ctep.jms.client.id=POApplication-mylocal
+
+ldap.url=ldaps://cbioweb-ldap.nci.nih.gov:636
+ldap.user=cn=ncicb-dev-ldap,ou=nci,o=nih
+ldap.password=
+ldap.security.authentication=simple
+ldap.security.protocol=ssl
+ldap.timeouts.connect=60000
+ldap.timeouts.read=60000
+ldap.context=ou=nci,o=nih
+ldap.uid.attrname=uid
+ldap.migration.grouperToIdStringMap=cagrid2-gridgrouper-qa=/O=caBIG/OU=caGrid/OU=QA LOA1/OU=NCICB QA AuthnSvc IdP/CN=;cagrid-gridgrouper-stage=/O=caBIG/OU=caGrid/OU=Stage LOA1/OU=NCI STAGE/CN=;cagrid-gridgrouper-prod=/O=caBIG/OU=caGrid/OU=LOA1/OU=NCI/CN=;cagrid-gridgrouper.nci.nih.gov=/O=caBIG/OU=caGrid/OU=LOA1/OU=NCI/CN=
+ldap.migration.excludes=/O=caBIG/OU=caGrid/OU=LOA1/OU=NCI/CN=dickeypa;/O=caBIG/OU=caGrid/OU=LOA1/OU=NCI/CN=Dumaiswb;/O=caBIG/OU=caGrid/OU=LOA1/OU=NCI/CN=jacksand;/O=caBIG/OU=caGrid/OU=LOA1/OU=NCI/CN=macyba;/O=caBIG/OU=caGrid/OU=QA LOA1/OU=NCICB QA AuthnSvc IdP/CN=CTRPQATester1
