@@ -6,6 +6,7 @@ def sql = """SELECT
                 FROM STUDY_OTHERIDENTIFIERS oid
                 inner join study_otheridentifiers as nci_id on nci_id.study_protocol_id = oid.study_protocol_id
                     and nci_id.root = '2.16.840.1.113883.3.26.4.3' 
+                inner join study_protocol sp on nci_id.study_protocol_id=sp.identifier and sp.status_code='ACTIVE'
                 where oid.identifier_name NOT LIKE 'NCI study protocol entity identifier'
                     """                   
 
