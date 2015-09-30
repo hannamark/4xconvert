@@ -464,12 +464,12 @@ function searchResults(url, studyNCIid){
                      <fmt:formatDate value="${row.ctroUserCreatedDate}" pattern="MM/dd/yyyy"/>
                  </display:column>
                  <display:column  title="CCCT Trial Comparison Review">
-                     <c:out value="${row.ctroUserName}"/>                 	
-                     <fmt:formatDate value="${row.ctroUserCreatedDate}" pattern="MM/dd/yyyy"/>
+                    <c:out value="${row.ccctUserName}"/>
+                    <fmt:formatDate value="${row.ccctUserCreatedDate}" pattern="MM/dd/yyyy"/>
                  </display:column>
                  <display:column  title="Trial Comparison Approval">
-                 	<c:out value="${row.ccctUserName}"/>
-                    <fmt:formatDate value="${row.ccctUserCreatedDate}" pattern="MM/dd/yyyy"/>
+                 	  <c:out value="${row.ctroUserName}"/>                    
+                     <fmt:formatDate value="${row.ctroUserCreatedDate}" pattern="MM/dd/yyyy"/>
                  </display:column>
                  <display:column  title="PRS Release Date">
                       <input id="prsReleaseDate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.prsReleaseDate}" pattern="MM/dd/yyyy"/>"/>

@@ -144,7 +144,7 @@ ServletRequestAware , ServletResponseAware {
     private Long studyProtocolId;
     private   Map<Long, String> usersMap = new HashMap<Long, String>();
     private Long ctroUserId;
-    private Long ccctUserId;
+    private String ccctUserName;
     private HttpServletRequest request;
     private String parentPage;
     private static final String ERROR_DOCUMENT = "errorDocument";
@@ -388,7 +388,7 @@ ServletRequestAware , ServletResponseAware {
 
              DocumentDTO  docDTO =
              PaRegistry.getDocumentService().get(IiConverter.convertToIi(id));
-             docDTO.setCcctUserId(getCcctUserId());
+             docDTO.setCcctUserName(StConverter.convertToSt(getCcctUserName()));
              docDTO.setCcctUserReviewDateTime(TsConverter.convertToTs(new Date()));
              
              PaRegistry.getDocumentService().updateForReview(docDTO);
@@ -595,19 +595,7 @@ ServletRequestAware , ServletResponseAware {
         this.ctroUserId = ctroUserId;
     }
 
-    /**
-     * @return ccctUserId
-     */
-    public Long getCcctUserId() {
-        return ccctUserId;
-    }
-
-    /**
-     * @param ccctUserId ccctUserId
-     */
-    public void setCcctUserId(Long ccctUserId) {
-        this.ccctUserId = ccctUserId;
-    }
+   
 
     @Override
     public void setServletRequest(HttpServletRequest servletRequest) {
@@ -627,6 +615,20 @@ ServletRequestAware , ServletResponseAware {
      */
     public void setParentPage(String parentPage) {
         this.parentPage = parentPage;
+    }
+
+    /**
+     * @return ccctUserName
+     */
+    public String getCcctUserName() {
+        return ccctUserName;
+    }
+
+    /**
+     * @param ccctUserName ccctUserName
+     */
+    public void setCcctUserName(String ccctUserName) {
+        this.ccctUserName = ccctUserName;
     }
 
 }

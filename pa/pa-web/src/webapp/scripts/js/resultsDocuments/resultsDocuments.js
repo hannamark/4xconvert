@@ -59,6 +59,7 @@ function showreviewCCCTDialog(id) {
     	autoOpen : false,
     	height : 'auto',
         width : 450,
+        appendTo: '#trialDocumentsForm',
         title :"CCCT Review Complete"
        
      }); 
@@ -86,8 +87,17 @@ function saveCtroUserReview() {
 
 function saveCcctUserReview() {
     
-    var ccctUserId = jQuery("#ccctUserId").val();
-    jQuery('#trialDocumentsForm')[0].action = summitCcctUrl+"?ccctUserId="+ccctUserId;
+	var ccctUserName =jQuery("#ccctUserName").val();
+	
+	if (jQuery.trim(ccctUserName)==""){
+		alert("Please enter CCCT User");
+		jQuery("#ccctUserName").focus();
+		return false;
+	}
+	 var form  =  jQuery('#trialDocumentsForm')[0];
+     var datastring = jQuery(form).serialize();
+     
+    jQuery('#trialDocumentsForm')[0].action = summitCcctUrl;
     jQuery('#trialDocumentsForm').submit();
      
 }

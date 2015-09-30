@@ -1,5 +1,5 @@
  <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
- <s:form name="trialDocumentsForm" id ="trialDocumentsForm" action="">
+ <s:form name="trialDocumentsForm" action="" id="trialDocumentsForm">
         <s:actionerror/>
         <pa:studyUniqueToken/>
     <h2><fmt:message key="reportTrialDocument.subtitle" /></h2>
@@ -102,8 +102,7 @@
                 <tr>
                 
                     <td scope="row" class="label">CCCT User</td>
-                    <td class="value">  <s:select  name="ccctUserId" id="ccctUserId"
-                    list="usersMap"  />
+                    <td class="value">  <s:textfield name="ccctUserName" id="ccctUserName"  />
                 </td>
             </tr>
             <tr>
@@ -122,5 +121,6 @@
           <s:hidden name="studyProtocolId" id="studyProtocolId" />    
            <s:hidden name="id" id="docId" /> 
             <s:hidden name="objectsToDelete" id="objectsToDelete" />    
+           
               
     </s:form>

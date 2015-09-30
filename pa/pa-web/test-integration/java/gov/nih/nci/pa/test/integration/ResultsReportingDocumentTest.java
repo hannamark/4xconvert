@@ -205,7 +205,7 @@ public class ResultsReportingDocumentTest extends AbstractPaSeleniumTest {
             selenium.click("xpath=//table[@id='row']/tbody/tr[1]/td[5]/a");
             
             assertTrue(selenium.isTextPresent("CTRO Review Complete"));
-            selenium.select("id=ccctUserId", "label=ctrpsubstractor");
+            selenium.type("id=ccctUserName", "ctrpsubstractor");
             clickAndWait("id=ccctSave");
             
             WebElement webElement = driver.findElement(By.xpath("//table[@id='row']/tbody/tr[1]/td[5]"));
@@ -383,7 +383,7 @@ public class ResultsReportingDocumentTest extends AbstractPaSeleniumTest {
             sql = "select count(*) from document where study_protocol_identifier ="+trialId+" and ctro_user_id is not null";
         }
         else {
-            sql = "select count(*) from document where study_protocol_identifier ="+trialId+" and ccct_user_id  is not null";   
+            sql = "select count(*) from document where study_protocol_identifier ="+trialId+" and ccct_user_name  is not null";   
         }
        
         long trialCount =0;

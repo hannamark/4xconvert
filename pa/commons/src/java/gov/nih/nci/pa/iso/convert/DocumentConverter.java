@@ -156,18 +156,15 @@ public class DocumentConverter extends AbstractDocumentConverter<DocumentDTO, Do
             docDTO.setCtroUserName(StConverter.convertToSt(doc
                     .getCtroUser().getLoginName()));
         }
-        if (doc.getCcctUser() != null) {
-            docDTO.setCcctUserName(StConverter.convertToSt(doc
-                    .getCcctUser().getLoginName()));
+        if (doc.getCcctUserName() != null) {
+            docDTO.setCcctUserName(StConverter.convertToSt(doc.getCcctUserName()));
         }
         
         if (doc.getCtroUser() != null) {
         docDTO.setCtroUserId(doc.getCtroUser().getUserId());
         }
         
-        if (doc.getCcctUser() != null) {
-        docDTO.setCcctUserId(doc.getCcctUser().getUserId());
-        }
+        
     }
 
     /**
@@ -217,9 +214,8 @@ public class DocumentConverter extends AbstractDocumentConverter<DocumentDTO, Do
                 doc.setCtroUser(ctroUser);
             }    
             
-            if (docDTO.getCcctUserId() != null && docDTO.getCcctUserId() > 0) {
-                User ccctUser = upManager.getUserById(docDTO.getCcctUserId().toString());
-                doc.setCcctUser(ccctUser);
+            if (!ISOUtil.isStNull(docDTO.getCcctUserName())) {
+               doc.setCcctUserName(StConverter.convertToString(docDTO.getCcctUserName()));
             }
         } catch (Exception e) {
             LOG.error("Exception in setting ctroUser for Document: "

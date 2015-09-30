@@ -870,12 +870,12 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         String sql = String
                 .format("INSERT INTO document (identifier,type_code,active_indicator,file_name,study_protocol_identifier,"
                         + "inactive_comment_text,date_last_created,date_last_updated,user_last_created_id,user_last_updated_id,"
-                        + "original,deleted,study_inbox_id,ctro_user_date_created,ccct_user_date_created,ctro_user_id,ccct_user_id) VALUES "
+                        + "original,deleted,study_inbox_id,ctro_user_date_created,ccct_user_date_created,ctro_user_id,ccct_user_name) VALUES "
                         + "((SELECT NEXTVAL('HIBERNATE_SEQUENCE')),'%s',true,'%s',%s,'',"
                         + "%s,%s,%s,%s,true,false,null,%s,%s,%s,%s);", type,
                         filename, info.id, today(), today(), info.csmUserID,
                         info.csmUserID, today(), today(), info.csmUserID,
-                        info.csmUserID);
+                        info.csmUserID+"");
         runner.update(connection, sql);
 
     }

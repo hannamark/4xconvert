@@ -115,7 +115,8 @@ public class Document extends AbstractDocument implements Auditable {
     private Date ctroUserCreatedDate;
     private Date ccctUserCreatedDate;
     private User ctroUser;
-    private User ccctUser;
+    private String ccctUserName;
+
    
 
     /**
@@ -269,20 +270,21 @@ public class Document extends AbstractDocument implements Auditable {
     }
 
     /**
-     * @return ccctUser
+     * @return ccctUserName
      */
-    @ManyToOne
-    @JoinColumn(name = "ccct_user_id")
-    public User getCcctUser() {
-        return ccctUser;
+    @Column(name = "ccct_user_name")
+    public String getCcctUserName() {
+        return ccctUserName;
     }
 
     /**
-     * @param ccctUser ccctUser
+     * @param ccctUserName  ccctUserName
      */
-    public void setCcctUser(User ccctUser) {
-        this.ccctUser = ccctUser;
+    public void setCcctUserName(String ccctUserName) {
+        this.ccctUserName = ccctUserName;
     }
+
+    
 
     
 }

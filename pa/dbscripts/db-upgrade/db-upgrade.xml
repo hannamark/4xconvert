@@ -1992,5 +1992,9 @@
        <comment>Remove data disc section from coversheet</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9014-update.sql"/>
     </changeSet>
+    <changeSet id="PO-9282" author="khandalkara">       
+       <comment>Changes to the "CCCT Review Complete?" section for TCD</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9282.sql"/>
+    </changeSet>
     
 </databaseChangeLog>

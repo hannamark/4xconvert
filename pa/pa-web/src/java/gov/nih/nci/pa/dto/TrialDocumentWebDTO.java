@@ -80,6 +80,7 @@ package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -126,8 +127,10 @@ public class TrialDocumentWebDTO implements Serializable {
         this.userLastUpdated = PAUtil.getDocumentUserLastUpdatedName(iso);
         this.ctroUserName = PAUtil.getDocumentUserCtroOrCcctReviewerName(iso, true);
         this.ctroUserReviewDateTime = TsConverter.convertToTimestamp(iso.getCtroUserReviewDateTime());
-        this.ccctUserName = PAUtil.getDocumentUserCtroOrCcctReviewerName(iso, false);
+        this.ccctUserName = StConverter.convertToString(iso.getCcctUserName());
         this.ccctUserReviewDateTime = TsConverter.convertToTimestamp(iso.getCcctUserReviewDateTime());
+        
+        
        
     }
     
