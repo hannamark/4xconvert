@@ -387,12 +387,6 @@
                 </fileset>
             </batchtest>
         </junit>
-        <junitreport todir="${pa-web.test.reports}">
-            <fileset dir="${pa-web.test.reports}">
-                <include name="TEST-*.xml" />
-            </fileset>
-            <report todir="${pa-web.test.reports}" />
-        </junitreport>
         <fail if="junit.failure" message="Performance test(s) failed.  See reports in ${pa-web.test.reports}/index.html."/>
     </target>
 	
