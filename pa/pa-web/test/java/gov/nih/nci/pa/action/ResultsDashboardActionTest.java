@@ -142,11 +142,14 @@ public class ResultsDashboardActionTest extends AbstractPaActionTest {
     private ProtocolQueryServiceLocal getProtocolQueryMock() throws PAException {
         final ProtocolQueryServiceLocal mock = mock(ProtocolQueryServiceLocal.class);
         StudyProtocolQueryDTO dto1 = new StudyProtocolQueryDTO();
+        dto1.setLeadOrganizationName("Lead org");
         dto1.setStudyProtocolId(1L);
         
         StudyProtocolQueryDTO dto2 = new StudyProtocolQueryDTO();
+        
         dto2.setStudyProtocolId(2L);
         dto2.setTrialPublishedDate(new Date());
+        dto2.setLeadOrganizationName("Lead org");
         when(
                 mock.getStudyProtocolByCriteria(any(StudyProtocolQueryCriteria.class)))
                 .thenReturn(new ArrayList(Arrays.asList(dto1, dto2)));
