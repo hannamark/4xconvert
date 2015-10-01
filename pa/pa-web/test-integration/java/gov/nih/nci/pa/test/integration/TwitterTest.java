@@ -427,7 +427,7 @@ public class TwitterTest extends AbstractTrialStatusTest {
 
         // Finally, ensure the tweet actually showed up in Twitter. Use Twitter
         // API for this.
-        verifyTweetInTwitter("^A new NCI-sponsored #anuscancer #coloncancer #analcancer #colorectalcancer study is now accepting patients\\. http://t\\.co/\\w+$");
+        verifyTweetInTwitter("^A new NCI-sponsored #anuscancer #coloncancer #analcancer #colorectalcancer study is now accepting patients\\. https://t\\.co/\\w+$");
 
     }
 
@@ -449,7 +449,7 @@ public class TwitterTest extends AbstractTrialStatusTest {
 
         // Finally, ensure the tweet actually showed up in Twitter. Use Twitter
         // API for this.
-        verifyTweetInTwitter("^A new NCI-sponsored #cancer study is now accepting patients\\. http://t\\.co/\\w+$");
+        verifyTweetInTwitter("^A new NCI-sponsored #cancer study is now accepting patients\\. https://t\\.co/\\w+$");
 
     }
 
@@ -574,7 +574,7 @@ public class TwitterTest extends AbstractTrialStatusTest {
         Status status = user.getStatus();
         assertTrue(status.getText().matches(tweetTextRegexp));
 
-        String url = status.getText().replaceFirst("^.*?http://", "http://");
+        String url = status.getText().replaceFirst("^.*?https://", "https://");
         verifyURLOpens(url);
     }
 
