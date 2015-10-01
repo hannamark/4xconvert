@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolService;
@@ -145,12 +146,14 @@ public class ResultsDashboardActionTest extends AbstractPaActionTest {
         StudyProtocolQueryDTO dto1 = new StudyProtocolQueryDTO();
         dto1.setLeadOrganizationName("Lead org");
         dto1.setStudyProtocolId(1L);
+        dto1.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
         
         StudyProtocolQueryDTO dto2 = new StudyProtocolQueryDTO();
         
         dto2.setStudyProtocolId(2L);
         dto2.setTrialPublishedDate(new Date());
         dto2.setLeadOrganizationName("Lead org");
+        dto2.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
         when(
                 mock.getStudyProtocolByCriteria(any(StudyProtocolQueryCriteria.class)))
                 .thenReturn(new ArrayList(Arrays.asList(dto1, dto2)));

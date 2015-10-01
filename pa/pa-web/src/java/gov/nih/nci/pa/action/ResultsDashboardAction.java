@@ -20,6 +20,7 @@ import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
+import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -244,8 +245,7 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
 
             criteria.setNciSponsored(true);
             criteria.setStudyProtocolType(InterventionalStudyProtocol.class
-                    .getSimpleName());
-            criteria.setDocumentWorkflowStatusCodes(getResultsDashboadStatusCodeFilter());
+                    .getSimpleName());            
 
             if (!"GET".equalsIgnoreCase(request.getMethod())) {
                 CacheUtils.removeItemFromCache(
@@ -468,15 +468,23 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
      */
     private List<StudyProtocolQueryDTO> applyAdditionalFilters(
             List<StudyProtocolQueryDTO> studyProtocols) {
+        List<String> documentWorkflowStatusCodes = getResultsDashboadStatusCodeFilter();
         List<StudyProtocolQueryDTO> filteredList = new ArrayList<>();
         for (StudyProtocolQueryDTO studyProtocolQueryDTO : studyProtocols) {
-            // Filter out all studies with lead org = NCI-CCR
-            if (!PAConstants.CCR_ORG_NAME
+            // Filter out all studies with lead org = NCI-CCR  
+            if (PAConstants.CCR_ORG_NAME
                     .equalsIgnoreCase(studyProtocolQueryDTO
                             .getLeadOrganizationName())
-                    && StringUtils.isEmpty(studyProtocolQueryDTO.getCcrId())) {
-                filteredList.add(studyProtocolQueryDTO);
+                    || StringUtils.isNotBlank(studyProtocolQueryDTO.getCcrId())) {
+                continue;
+
             }
+            if (!(documentWorkflowStatusCodes.contains(studyProtocolQueryDTO.getDocumentWorkflowStatusCode().getCode()) 
+                    || ((studyProtocolQueryDTO.getSubmissionTypeCode() == SubmissionTypeCode.A) 
+                            || (studyProtocolQueryDTO.getSubmissionTypeCode() == SubmissionTypeCode.U)))) {
+                continue;
+            }
+            filteredList.add(studyProtocolQueryDTO);
         }
         return filteredList;
     }

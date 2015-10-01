@@ -85,7 +85,9 @@ package gov.nih.nci.pa.test.integration;
 
 
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+
 import gov.nih.nci.pa.util.PAConstants;
+
 
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -94,6 +96,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.commons.dbutils.QueryRunner;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -115,7 +118,7 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         super.setUp();
         logoutUser();
         deactivateAllTrials();
-        registerTestTrials();
+        registerTestTrials();        
         loginPA("results-abstractor", "pass");
         clickAndWait("id=acceptDisclaimer");
         clickAndWait("link=Search");
@@ -146,6 +149,23 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         loginPA("ctrpsubstractor", "pass");
         clickAndWait("id=acceptDisclaimer");
         assertTrue(selenium.isTextPresent("My Dashboard"));
+    }
+    
+    @Test
+    public void testAmendedTrials() throws Exception {
+    	TrialInfo acceptedTrial = createAcceptedTrial();
+        new QueryRunner()
+                .update(connection,
+                        "update study_protocol set proprietary_trial_indicator=false, amendment_date=now(), submission_number=2"
+                                + " where identifier=" + acceptedTrial.id);
+        addSponsor(acceptedTrial, "National Cancer Institute");
+        acceptedTrial.nctID="NCT00010";
+        addNctIdentifier(acceptedTrial, acceptedTrial.nctID);
+        
+        clickAndWait("link=Search");
+        assertTrue(selenium.isTextPresent("4 items found, displaying all items.1"));        
+        assertTrue(selenium.isTextPresent("NCT00010"));       
+        
     }
     
     @Test       
@@ -373,12 +393,11 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
     public void testUpdateDateToBlank(){
     	
         long trialId = testTrials.get(0).id;
-        
-        // Setting dates to 2 columns
         selenium.type("id=pcdSentToPIODate_"+trialId, "01/01/2015");
         selenium.type("id=pcdConfirmedDate_"+testTrials.get(0).id, "01/02/2015");
-        driver.findElement(By.id("trialPublishedDate_"+trialId)).sendKeys("\t");
-        pause(5000);
+        pause(1000);
+        assertTrue(selenium.isVisible("id=pcdSentToPIODate_"+trialId+"_flash"));
+        waitForElementToBecomeInvisible(By.id("pcdSentToPIODate_"+trialId+"_flash"), 3);
         clickAndWait("link=Search");
         //pause(1000);
         assertEquals("01/01/2015",driver.findElement(By.id("pcdSentToPIODate_"+trialId)).getAttribute("value"));
