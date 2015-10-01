@@ -416,7 +416,7 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
     public void testSearchResultsCoverSheet(){
         selenium.type("id=coverSheetTrialId", testTrials.get(0).nciID);
         clickSearchForResultsReportingData("coverSheetTrialSearch");
-        waitForElementToBecomeAvailable(By.id("xsrfForm"), 30);
+        waitForElementToBecomeAvailable(By.id("sendCoverSheetEmail"), 30);
         assertTrue(selenium.isTextPresent("Results Reporting & Tracking & Cover Sheet"));
         assertTrue(selenium.isTextPresent(testTrials.get(0).nciID+": "+testTrials.get(0).title));
     }
