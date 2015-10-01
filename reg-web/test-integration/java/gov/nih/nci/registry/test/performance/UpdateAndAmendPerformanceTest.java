@@ -84,6 +84,10 @@ public class UpdateAndAmendPerformanceTest extends AbstractRegistrySeleniumTest 
         } catch (Exception e1) {
             System.out.println("Status history is all set.");
         }
+        
+        s.type("trialDTO_primaryCompletionDate", "12/31/2019");
+        s.click("trialDTO_primaryCompletionDateTypeAnticipated");
+        
         populateDocuments();
         clickAndWait("xpath=//button[text()='Review Trial']");
 
