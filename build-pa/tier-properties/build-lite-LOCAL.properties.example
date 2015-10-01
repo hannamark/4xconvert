@@ -25,14 +25,20 @@ ctgov.ftp.url=ftp://ctrppa:ctrppa@localhost/
 
 log.level=INFO
 
-selenium.server.port=4444
-cadsr.url=http://cadsrapi.nci.nih.gov/cadsrapi40
+ncit.lexEVSRESTDetailsUrl=http://lexevscts2.nci.nih.gov/lexevscts2/codesystem/NCI_Thesaurus/entity
+ncit.interventionSyncUrl=http://lexevsapi62.nci.nih.gov/lexevsapi62/GetXML
+ncit.interventionPreferredNameUrl=http://lexevscts2.nci.nih.gov/lexevscts2/codesystem/NCI_Thesaurus/entity
+
 register.mail.body.url=http://localhost:39480/registry/registerUseractivate.action
+
+cadsr.url=http://cadsrapi-sandbox.nci.nih.gov/cadsrapi40
+
 ################################
 ###  ONLY USED ON DEV BOXES  ###
 ################################
 maven.username=
 maven.password=
+mock.po=false
 
 # SSH Connection Information. Currently used only to push PDQ files to remote servers.
 pa.ssh.host=
