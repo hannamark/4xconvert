@@ -99,6 +99,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -147,8 +148,10 @@ ServletRequestAware , ServletResponseAware {
     private String ccctUserName;
     private HttpServletRequest request;
     private String parentPage;
+    private InputStream ajaxResponseStream;
+    private static final String AJAX_RESPONSE = "ajaxResponse";
     private static final String ERROR_DOCUMENT = "errorDocument";
-
+   
 
     /**
      * @return result
@@ -430,6 +433,30 @@ ServletRequestAware , ServletResponseAware {
                         .getInactiveCommentText()));
     }
     
+  
+  
+    /**
+     * @return flag
+     * @throws PAException PAException
+     */
+    public String checkIfComparisionDocExists() throws PAException {
+       
+        Boolean result = false;
+        Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(getStudyProtocolId());
+        List<DocumentDTO> isoList = PaRegistry.getDocumentService().
+                getReportsDocumentsByStudyProtocol(studyProtocolIi);
+        
+        //check if comaprision document exists
+        for (DocumentDTO documentDTO : isoList) {
+            if (documentDTO.getTypeCode().getCode().equals(DocumentTypeCode.COMPARISON.getCode())) {
+                result = true;
+                break;
+            }
+        }
+        ajaxResponseStream = new ByteArrayInputStream(result.toString().getBytes());
+        return AJAX_RESPONSE;
+    }
+    
     private void sendCtroNotificationEmail(Ii studyProtocolIdentifier , File attachment) throws PAException {
       
        
@@ -629,6 +656,20 @@ ServletRequestAware , ServletResponseAware {
      */
     public void setCcctUserName(String ccctUserName) {
         this.ccctUserName = ccctUserName;
+    }
+
+    /**
+     * @return ajaxResponseStream
+     */
+    public InputStream getAjaxResponseStream() {
+        return ajaxResponseStream;
+    }
+
+    /**
+     * @param ajaxResponseStream ajaxResponseStream
+     */
+    public void setAjaxResponseStream(InputStream ajaxResponseStream) {
+        this.ajaxResponseStream = ajaxResponseStream;
     }
 
 }

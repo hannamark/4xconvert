@@ -832,7 +832,9 @@
             <result name="input">/WEB-INF/jsp/administrative/reportingTrialDocuments/reportingTrialDocumentAdd.jsp</result>
             <result name="error">/WEB-INF/jsp/administrative/reportingTrialDocuments/reportingTrialDocuments.jsp</result>
             <result name="errorDocument">/WEB-INF/jsp/administrative/reportingTrialDocuments/reportingTrialDocumentAdd.jsp</result>
-            
+            <result name="ajaxResponse" type="stream">
+                <param name="inputName">ajaxResponseStream</param>
+            </result>
         </action>
         
          <!--  PO-9014 Implement "Results Cover Sheet" screen -->
@@ -841,7 +843,9 @@
             <result name="success">/WEB-INF/jsp/administrative/reportingCoverSheet/reportingCoverSheet.jsp</result>
              <result name="error">/WEB-INF/jsp/administrative/reportingCoverSheet/reportingCoverSheet.jsp</result>
              <result name="input">/WEB-INF/jsp/administrative/reportingCoverSheet/reportingCoverSheet.jsp</result>
-            
+              <result name="ajaxResponse" type="stream">
+                <param name="inputName">ajaxResponseStream</param>
+            </result>
         </action>
         
         <action name="resultsReportingContact*" class="gov.nih.nci.pa.action.ResultsReportingContactsAction" method="{1}">

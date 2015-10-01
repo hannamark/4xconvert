@@ -101,7 +101,9 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -157,6 +159,8 @@ ServletRequestAware , ServletResponseAware , Preparable {
     private List<StudyContactWebDTO> designeeContactList = new ArrayList<StudyContactWebDTO>();
     private List<String> designeeSelectedList = new ArrayList<String>();
     private StudyContactService studyContactService;
+    private InputStream ajaxResponseStream;
+    private static final String AJAX_RESPONSE = "ajaxResponse";
 
     
     private static final Logger LOG = Logger
@@ -396,6 +400,45 @@ ServletRequestAware , ServletResponseAware , Preparable {
                 e.getLocalizedMessage());
         }
         return ERROR;
+    }
+    
+    /**
+     * @return flag
+     * @throws PAException PAException
+     */
+    public String checkIfDesigneeExists() throws PAException {
+       
+        Boolean result = false;
+        Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(getStudyProtocolId());
+        
+        //get study contacts list
+        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+         StudyContactDTO searchCriteria = new StudyContactDTO();
+         searchCriteria.setStudyProtocolIdentifier(studyProtocolIi);
+         
+         try {
+         
+         searchCriteria.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.DESIGNEE_CONTACT));
+         List<StudyContactDTO>studyDesigneeContactDtos = studyContactService.search(searchCriteria, limit);
+      
+         if (CollectionUtils.isNotEmpty(studyDesigneeContactDtos)) {
+             for (StudyContactDTO scDto : studyDesigneeContactDtos) {
+                 FunctionalRoleStatusCode stsCd = CdConverter.convertCdToEnum(FunctionalRoleStatusCode.class, 
+                         scDto.getStatusCode());
+                 if (!FunctionalRoleStatusCode.ACTIVE.equals(stsCd)
+                         && !FunctionalRoleStatusCode.PENDING.equals(stsCd)) {
+                     continue;
+                 }
+                 result = true;
+                 break;
+             }
+         }
+         } catch (Exception e) {
+           throw new PAException(e.getMessage());   
+         }
+       
+        ajaxResponseStream = new ByteArrayInputStream(result.toString().getBytes());
+        return AJAX_RESPONSE;
     }
 
     @Override
@@ -743,6 +786,20 @@ ServletRequestAware , ServletResponseAware , Preparable {
      */
     public void setStudyContactService(StudyContactService studyContactService) {
         this.studyContactService = studyContactService;
+    }
+
+    /**
+     * @return ajaxResponseStream
+     */
+    public InputStream getAjaxResponseStream() {
+        return ajaxResponseStream;
+    }
+
+    /**
+     * @param ajaxResponseStream ajaxResponseStream
+     */
+    public void setAjaxResponseStream(InputStream ajaxResponseStream) {
+        this.ajaxResponseStream = ajaxResponseStream;
     }
 
    

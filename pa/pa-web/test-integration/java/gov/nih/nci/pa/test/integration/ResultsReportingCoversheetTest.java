@@ -203,7 +203,7 @@ public class ResultsReportingCoversheetTest  extends AbstractPaSeleniumTest {
        selenium.click("id=saveFinal");
        waitForPageToLoad();     
        
-       selenium.click("id=sendCoverSheetEmail");
+       ((JavascriptExecutor) driver).executeScript("jQuery('#coverSheetForm')[0].action ='resultsReportingCoverSheetsendConverSheetEmail.action'; jQuery('#coverSheetForm').submit();");
        waitForPageToLoad();
        assertTrue(selenium.isTextPresent("Email Sent Successfully."));
        

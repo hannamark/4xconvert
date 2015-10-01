@@ -313,8 +313,60 @@ function resetFinalChanges() {
 }
 
 function sendCoverSheetEmail() {
-	jQuery('#coverSheetForm')[0].action =sendEmailUrl;
-    jQuery('#coverSheetForm').submit();
+	//check if comparision doc exists
+	var compareCheckUrl="resultsReportingDocumentcheckIfComparisionDocExists.action";
+	var designeeCheckUrl="resultsReportingCoverSheetcheckIfDesigneeExists.action";
+	
+	 jQuery.ajax(
+             {
+                 type : "POST",
+                 url : compareCheckUrl,
+                 data : jQuery('#coverSheetForm').serialize(),
+                 success: function(data)
+ 	            {    
+                	 if(data=="false") {
+                		 alert("No Comparison document exists for this trial. Please add Comparison document.")
+                		 return false;
+                	 }
+                	 else {
+                		 
+                		 //now check if designee exists
+                		 jQuery.ajax(
+                	             {
+                	                 type : "POST",
+                	                 url : designeeCheckUrl,
+                	                 data : jQuery('#coverSheetForm').serialize(),
+                	                 success: function(data)
+                	 	            {    
+                	                	 if(data=="false") {
+                	                		 //if no designee exists then confirm if user wants to continue
+                	                		if(confirm("No designee exists for this trial. Click OK to continue. Cancel to abort")) {
+                	                			jQuery('#coverSheetForm')[0].action =sendEmailUrl;
+                   	                		 	jQuery('#coverSheetForm').submit();
+                	                		}
+                	                	 }
+                	                	 else {
+                	                		 jQuery('#coverSheetForm')[0].action =sendEmailUrl;
+                	                		 jQuery('#coverSheetForm').submit();
+                	                	 }
+                	 	            }
+                	             })
+                	            .fail(
+                	             function(jqXHR, textStatus, errorThrown) {
+                	                 alert(errorThrown);
+                	                
+                	             });
+                		 
+                		 
+                	 }
+ 	            }
+             })
+            .fail(
+             function(jqXHR, textStatus, errorThrown) {
+                 alert(errorThrown);
+                
+             });
+ 	
 }
 
 function checkDesignee(){
