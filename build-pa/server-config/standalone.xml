@@ -461,6 +461,7 @@
         <socket-binding name="management-native" interface="management" port="${jboss.management.native.port:9999}"/>
         <socket-binding name="management-http" interface="management" port="${jboss.management.http.port:19991}"/>
         <socket-binding name="management-https" interface="management" port="${jboss.management.https.port:19443}"/>        
+	<socket-binding name="ajp" port="8009"/>
         <socket-binding name="http" port="@jboss.port@"/>
         <socket-binding name="https" port="28443"/>
         <socket-binding name="remoting" port="4447"/>
