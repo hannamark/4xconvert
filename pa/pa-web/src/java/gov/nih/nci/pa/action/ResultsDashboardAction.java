@@ -56,10 +56,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
-import org.springframework.util.StringUtils;
 
 import com.opensymphony.xwork2.Preparable;
 
@@ -91,6 +91,7 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
     private Date pcdFrom;
     private Date pcdTo;
     private String pcdType;
+    private String trialIdentifier;
 
     // Results
     private List<StudyProtocolQueryDTO> results;
@@ -224,6 +225,7 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         pcdFrom = null;
         pcdTo = null;
         pcdType = null;
+        trialIdentifier = null;
     }
 
     private boolean canAccessDashboard() {
@@ -412,6 +414,10 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         criteria.setPcdFrom(pcdFrom);
         criteria.setPcdTo(pcdTo);
         criteria.setPcdType(pcdType);
+        if (StringUtils.isNotBlank(trialIdentifier)) {
+            criteria.setIdentifierType(StudyProtocolQueryCriteria.ALL);
+            criteria.setIdentifier(trialIdentifier);
+        }
         return criteria;
     }
 
@@ -533,6 +539,21 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
      */
     public void setSection801IndicatorNo(Boolean section801IndicatorNo) {
         this.section801IndicatorNo = section801IndicatorNo;
+    }
+
+    /**
+     * @return the trialIdentifier
+     */
+    public String getTrialIdentifier() {
+        return trialIdentifier;
+    }
+
+    /**
+     * @param trialIdentifier
+     *            the trialIdentifier to set
+     */
+    public void setTrialIdentifier(String trialIdentifier) {
+        this.trialIdentifier = trialIdentifier;
     }
 
     /**

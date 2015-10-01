@@ -119,6 +119,7 @@ public class ResultsDashboardActionTest extends AbstractPaActionTest {
         action.setPcdFrom(new Date());
         action.setPcdTo(new Date());
         action.setPcdType("Anticipated");
+        action.setTrialIdentifier("AnyTypeId");
     }
 
     private ResultsDashboardAction getAction() throws PAException {

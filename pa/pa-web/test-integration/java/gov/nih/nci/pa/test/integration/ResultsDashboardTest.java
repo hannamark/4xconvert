@@ -238,6 +238,21 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         assertFalse(selenium.isTextPresent(testTrials.get(4).nciID));
     }
     
+    @Test    
+    public void testResultsSearchWithTrialIdentifierFilter(){
+        selenium.type("id=trialIdentifier", "NCT00001");
+        clickAndWait("link=Search");
+        assertTrue(selenium.isTextPresent("One item found.1"));
+        assertTrue(selenium.isTextPresent(testTrials.get(0).nciID));
+        assertFalse(selenium.isTextPresent(testTrials.get(1).nciID));
+        assertFalse(selenium.isTextPresent(testTrials.get(2).nciID));
+        assertFalse(selenium.isTextPresent(testTrials.get(3).nciID));
+        assertFalse(selenium.isTextPresent(testTrials.get(4).nciID));
+        
+        clickAndWait("link=Reset");
+        assertTrue(selenium.isTextPresent(""));
+    }
+    
     @Test       
     public void testResultsSearchWithDateTypeFilter(){
         selenium.type("id=pcdFrom", "01/01/2015");

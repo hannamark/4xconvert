@@ -341,7 +341,49 @@ function searchResults(url, studyNCIid){
          <s:form>
              <pa:failureMessage/>
              <table class="form" >
-                 <tr >
+                 <tr>
+                 	<td scope="row" class="label middle">
+                 		<label for="trialIdentifier" > <fmt:message key="resultsdashboard.trialIdentifier"/></label>
+                 		<s:textfield id="trialIdentifier" name="trialIdentifier" maxlength="200" size="20" cssStyle="width:120px"  />
+                  	</td>
+                  
+                	<td  scope="row" class="label middle" >
+						<table >
+                       		<tr >
+                     			<td  scope="row" class="label middle">
+                         			<label> <fmt:message key="resultsdashboard.primaryCompletionDate"/></label>
+                    			</td>
+                    			<td class="middle">
+                         			<table>
+                            			<tr>
+		                       				<td  scope="row" class="label middle" align="right" >
+		                           				<label for="pcdFrom" > <fmt:message key="resultsdashboard.pcdFrom"/></label>
+		                       				</td>
+		                       				<td  scope="row" class="label middle">
+		                           				<input type="text" id="pcdFrom" name="pcdFrom" size="15"/>
+		                       				</td>
+		                       				<td class="label middle" align="right" > 
+		                           				<label for="pcdTo"><fmt:message key="resultsdashboard.pcdTo"/></label>
+		                       				</td>
+                               				<td  scope="row" class="label middle">
+		                           				<input type="text" id="pcdTo" name="pcdTo" size="15"/>
+		                       				</td>
+	                       				</tr>
+	                       				<tr>
+		                       				<td class="label middle" align="right" >
+		                          				<label for="pcdType"><fmt:message key="resultsdashboard.pcdType"/></label>
+		                       				</td>
+                               				<td  scope="row" class="label middle">
+		                          				<s:select headerKey="" headerValue="Any" id="pcdType" name="pcdType" 
+                                  				list="#{'Actual':'Actual','Anticipated':'Anticipated'}"  value="pcdType" cssStyle="width:120px" />
+		                       				</td>		                       
+		                    			</tr>
+                         			</table>
+                     			</td>
+                  
+                 		</tr>
+                 	  </table>	
+                 <tr>
                      <td  scope="row" class="label middle">
                          <label><fmt:message key="resultsdashboard.section801Indicator"/></label>
                            <label for="section801IndicatorYes">Yes</label>
@@ -349,44 +391,11 @@ function searchResults(url, studyNCIid){
                            <label for="section801IndicatorNo">No</label>
                            <s:checkbox id="section801IndicatorNo" name="section801IndicatorNo" onclick="jQuery('#section801IndicatorYes').prop('checked', false);" />
                      </td>
-                     
-                    <td  scope="row" class="label middle" >
-					<table >
-                       <tr >
-                     <td  scope="row" class="label middle">
-                         <label> <fmt:message key="resultsdashboard.primaryCompletionDate"/></label>
-                     </td>
-                     <td class="middle">
-                         <table>
-                            <tr>
-		                       <td  scope="row" class="label middle" align="right" >
-		                           <label for="pcdFrom" > <fmt:message key="resultsdashboard.pcdFrom"/></label>
-		                       </td>
-		                       <td  scope="row" class="label middle">
-		                           <input type="text" id="pcdFrom" name="pcdFrom" size="15"/>
-		                       </td>
-		                       <td class="label middle" align="right" > 
-		                           <label for="pcdTo"><fmt:message key="resultsdashboard.pcdTo"/></label>
-		                       </td>
-                               <td  scope="row" class="label middle">
-		                           <input type="text" id="pcdTo" name="pcdTo" size="15"/>
-		                       </td>
-	                       </tr>
-	                       <tr>
-		                       <td class="label middle" align="right" >
-		                          <label for="pcdType"><fmt:message key="resultsdashboard.pcdType"/></label>
-		                       </td>
-                               <td  scope="row" class="label middle">
-		                          <s:select headerKey="" headerValue="Any" id="pcdType" name="pcdType" 
-                                  list="#{'Actual':'Actual','Anticipated':'Anticipated'}"  value="pcdType" cssStyle="width:120px" />
-		                       </td>		                       
-		                    </tr>
-                         </table>
-                     </td>
+               		      
                      </tr>
-                     </table>
+                   
                  </tr>
-                 </table>
+                </table>
                 <div class="actionsrow">
                     <del class="btnwrapper">
                         <ul class="btnrow">
