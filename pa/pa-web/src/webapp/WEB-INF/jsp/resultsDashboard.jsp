@@ -342,11 +342,25 @@ function searchResults(url, studyNCIid){
              <pa:failureMessage/>
              <table class="form" >
                  <tr>
-                 	<td scope="row" class="label middle">
-                 		<label for="trialIdentifier" > <fmt:message key="resultsdashboard.trialIdentifier"/></label>
-                 		<s:textfield id="trialIdentifier" name="trialIdentifier" maxlength="200" size="20" cssStyle="width:120px"  />
+                 	<td scope="row"  class="label middle">
+                 		<table>
+                      		<tr>
+                      			<td>
+                 					<label for="trialIdentifier"> <fmt:message key="resultsdashboard.trialIdentifier"/></label>
+                 					<s:textfield id="trialIdentifier" name="trialIdentifier" maxlength="200" size="20" cssStyle="width:120px"  />
+                 	 			</td>	
+                 			</tr>
+                 			<tr>
+                 				<td  scope="row" class="label middle">
+                         			<label><fmt:message key="resultsdashboard.section801Indicator"/></label>
+                           			<label for="section801IndicatorYes">Yes</label>
+                           			<s:checkbox id="section801IndicatorYes" name="section801IndicatorYes"  onclick="jQuery('#section801IndicatorNo').prop('checked', false);" />
+                           			<label for="section801IndicatorNo">No</label>
+                           			<s:checkbox id="section801IndicatorNo" name="section801IndicatorNo" onclick="jQuery('#section801IndicatorYes').prop('checked', false);" />
+                     			</td>
+                     		</tr>	
+                		</table>	
                   	</td>
-                  
                 	<td  scope="row" class="label middle" >
 						<table >
                        		<tr >
@@ -382,19 +396,9 @@ function searchResults(url, studyNCIid){
                      			</td>
                   
                  		</tr>
-                 	  </table>	
-                 <tr>
-                     <td  scope="row" class="label middle">
-                         <label><fmt:message key="resultsdashboard.section801Indicator"/></label>
-                           <label for="section801IndicatorYes">Yes</label>
-                           <s:checkbox id="section801IndicatorYes" name="section801IndicatorYes"  onclick="jQuery('#section801IndicatorNo').prop('checked', false);" />
-                           <label for="section801IndicatorNo">No</label>
-                           <s:checkbox id="section801IndicatorNo" name="section801IndicatorNo" onclick="jQuery('#section801IndicatorYes').prop('checked', false);" />
-                     </td>
-               		      
-                     </tr>
-                   
-                 </tr>
+                 	  </table>
+                 	 </td> 	
+                    </tr>
                 </table>
                 <div class="actionsrow">
                     <del class="btnwrapper">
