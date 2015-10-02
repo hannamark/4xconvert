@@ -96,7 +96,7 @@ jQuery(document).ready(function() {
     "trialViewaddOrEditRecordChange.action", "trialViewsuccessfulAddRecordChange.action",
     "trialViewsaveFinalChanges.action", "trialViewsendConverSheetEmail.action")
 	
-    checkDesignee();
+   
 
     submitStudyContact('reportStudyContactsForm', 'ajaxResultsReportingContactquery.action');
 });

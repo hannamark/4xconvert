@@ -339,9 +339,7 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
                                                                     FunctionalRoleStatusCode.class,
                                                                     scDto.getStatusCode());
                                                     if (!FunctionalRoleStatusCode.ACTIVE
-                                                            .equals(stsCd)
-                                                            && !FunctionalRoleStatusCode.PENDING
-                                                                    .equals(stsCd)) {
+                                                            .equals(stsCd)) {
                                                         continue;
                                                     }
 

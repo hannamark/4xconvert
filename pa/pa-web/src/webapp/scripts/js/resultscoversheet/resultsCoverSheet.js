@@ -368,16 +368,45 @@ function sendCoverSheetEmail() {
              });
  	
 }
+function submitOnChange(id) {
+	
+	jQuery.ajax(
+            {
+                type : "POST",
+                url : saveFinalChangesUrl,
+                data : jQuery('#coverSheetForm').serialize(),
+                success: function(data)
+	            {    
+                	jQuery('#'+id+'_flash').delay(100).fadeIn('normal', function() {
+                        jQuery(this).delay(2500).fadeOut();
+                 	});
+                	
+	            }
+            })
+           .fail(
+            function(jqXHR, textStatus, errorThrown) {
+                alert(errorThrown);
+               
+            });
+	
+}
 
-function checkDesignee(){
-	var value = jQuery("#designeeAccessRevoked").val();
-	if (value=="false") {
-		jQuery("#designeeContactList").hide();
-		jQuery("#designeeAccessRevokedDate").hide();
-		jQuery("#designeeImg").hide();
-	} else {
-		jQuery("#designeeContactList").show();
-        jQuery("#designeeAccessRevokedDate").show();
-        jQuery("#designeeImg").show();
+function flipDate(id){
+	jQuery("#"+id+"Date").val("");
+	submitOnChange(id);
+}
+function flipCtGovDate(){
+	jQuery("#changesInCtrpCtGovDate").val("");
+	submitOnChange(id);
+}
+
+function onFinalSaveDateEnter(id) {
+	if(id=="designeeAccessRevokedDate") {
+		jQuery("#designeeAccessRevoked_flash").hide();
 	}
+	else {
+		jQuery("#changesInCtrpCtGov_flash").hide();
+	}
+	submitOnChange(id);
+	
 }

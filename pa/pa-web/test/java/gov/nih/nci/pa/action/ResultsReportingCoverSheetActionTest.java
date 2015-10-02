@@ -81,7 +81,6 @@ public class ResultsReportingCoverSheetActionTest  extends TrialAbstractActionTe
       
         List<String> designeeSelectedList = new ArrayList<String>();
         designeeSelectedList.add("1");
-       reportingCoverSheetAction.setDesigneeSelectedList(designeeSelectedList);
        reportingCoverSheetAction.setDesigneeAccessRevoked(false);
        reportingCoverSheetAction.setDesigneeAccessRevokedDate("09/03/2015");
        reportingCoverSheetAction.setChangesInCtrpCtGov(false);

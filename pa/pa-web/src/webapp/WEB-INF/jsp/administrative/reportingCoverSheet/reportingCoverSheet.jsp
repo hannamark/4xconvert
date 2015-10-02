@@ -49,6 +49,11 @@ fieldset>input[id="actionCompletionDateChangeType"] {
 .hide_column{
     display : none;
 }
+.flash {
+ display:none; 
+ color:#00CC00;
+}
+
 
 </style>   
     
@@ -87,7 +92,22 @@ jQuery(document).ready(function() {
 	"resultsReportingCoverSheetaddOrEditRecordChange.action", "resultsReportingCoverSheetsuccessfulAddRecordChange.action",
 	"resultsReportingCoverSheetsaveFinalChanges.action", "resultsReportingCoverSheetsendConverSheetEmail.action");
      
-	checkDesignee();
+	
+	
+	jQuery("#designeeAccessRevokedDate").datepicker({
+        onClose : function (date, inp){
+            var id = inp.id;
+            onFinalSaveDateEnter(id)
+        }
+  });
+	
+	jQuery("#changesInCtrpCtGovDate").datepicker({
+        onClose : function (date, inp){
+            var id = inp.id;
+            onFinalSaveDateEnter(id)
+        }
+  });
+	
 
 });
 
@@ -100,9 +120,11 @@ jQuery(document).ready(function() {
 
 addCalendar("Cal1", "Select Date", "actionCompletionDate", "addDiscrepancyForm");
 addCalendar("Cal2", "Select Date", "actionCompletionDateChangeType", "studyRecordChangesForm");
-addCalendar("Cal3", "Select Date", "designeeAccessRevokedDate", "coverSheetForm");
-addCalendar("Cal4", "Select Date", "changesInCtrpCtGovDate", "coverSheetForm");
+//addCalendar("Cal3", "Select Date", "designeeAccessRevokedDate", "coverSheetForm");
+//addCalendar("Cal4", "Select Date", "changesInCtrpCtGovDate", "coverSheetForm");
 setFormat("mm/dd/yyyy");
+
+
 
 </SCRIPT>
 </head>

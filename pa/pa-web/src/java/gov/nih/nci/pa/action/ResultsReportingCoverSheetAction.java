@@ -157,7 +157,6 @@ ServletRequestAware , ServletResponseAware , Preparable {
     private MailManagerService mailManagerService;
     private PAServiceUtils paServiceUtil = new PAServiceUtils();
     private List<StudyContactWebDTO> designeeContactList = new ArrayList<StudyContactWebDTO>();
-    private List<String> designeeSelectedList = new ArrayList<String>();
     private StudyContactService studyContactService;
     private InputStream ajaxResponseStream;
     private static final String AJAX_RESPONSE = "ajaxResponse";
@@ -213,25 +212,7 @@ ServletRequestAware , ServletResponseAware , Preparable {
             sendToCtGovUpdated = BlConverter.convertToBoolean(studyProtocolDTO.getSendToCtGovUpdated());
             
            
-            //get study contacts list
-           LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
-            StudyContactDTO searchCriteria = new StudyContactDTO();
-            searchCriteria.setStudyProtocolIdentifier(studyProtocolIi);
             
-            searchCriteria.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.DESIGNEE_CONTACT));
-            List<StudyContactDTO>studyDesigneeContactDtos = studyContactService.search(searchCriteria, limit);
-         
-            if (CollectionUtils.isNotEmpty(studyDesigneeContactDtos)) {
-                for (StudyContactDTO scDto : studyDesigneeContactDtos) {
-                    FunctionalRoleStatusCode stsCd = CdConverter.convertCdToEnum(FunctionalRoleStatusCode.class, 
-                            scDto.getStatusCode());
-                    if (!FunctionalRoleStatusCode.ACTIVE.equals(stsCd)
-                            && !FunctionalRoleStatusCode.PENDING.equals(stsCd)) {
-                        continue;
-                    }
-                    designeeContactList.add(new StudyContactWebDTO(scDto));
-                }
-            }
 
             
         } catch (Exception e) {
@@ -350,11 +331,39 @@ ServletRequestAware , ServletResponseAware , Preparable {
         studyProtocolDTO.setSendToCtGovUpdated(BlConverter.convertToBl(sendToCtGovUpdated));
         studyProtocolService.updateStudyProtocol(studyProtocolDTO);
         
+        designeeContactList = new ArrayList<StudyContactWebDTO>();
+        
+     
+      //get study contacts list
+        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+         StudyContactDTO searchCriteria = new StudyContactDTO();
+         searchCriteria.setStudyProtocolIdentifier(studyProtocolIi);
+         
+         searchCriteria.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.DESIGNEE_CONTACT));
+         List<StudyContactDTO>studyDesigneeContactDtos = studyContactService.search(searchCriteria, limit);
+         
+      
+         if (CollectionUtils.isNotEmpty(studyDesigneeContactDtos)) {
+             for (StudyContactDTO scDto : studyDesigneeContactDtos) {
+                 FunctionalRoleStatusCode stsCd = CdConverter.convertCdToEnum(FunctionalRoleStatusCode.class, 
+                         scDto.getStatusCode());
+                 if (!FunctionalRoleStatusCode.ACTIVE.equals(stsCd) 
+                      && !FunctionalRoleStatusCode.PENDING.equals(stsCd)) {
+                     continue;
+                 }
+                 designeeContactList.add(new StudyContactWebDTO(scDto));
+             }
+         }
+        
         //set specified contats to pending so that they don't show up
-        for (String contactId : designeeSelectedList) {
-            Ii ii = IiConverter.convertToStudyContactIi(Long.valueOf(contactId));
-            StudyContactDTO studyContactDTO = studyContactService.get(ii);   
+        for (StudyContactWebDTO contactWebDTO : designeeContactList) {
+            Ii ii = IiConverter.convertToStudyContactIi(Long.valueOf(contactWebDTO.getId()));
+            StudyContactDTO studyContactDTO = studyContactService.get(ii);  
+            if (designeeAccessRevoked) {
             studyContactDTO.setStatusCode(CdConverter.convertStringToCd("Pending"));
+            } else {
+                studyContactDTO.setStatusCode(CdConverter.convertStringToCd("Active"));
+            }   
             studyContactService.update(studyContactDTO);
         }
         
@@ -760,19 +769,7 @@ ServletRequestAware , ServletResponseAware , Preparable {
         this.designeeContactList = designeeContactList;
     }
 
-    /**
-     * @return designeeSelectedList
-     */ 
-    public List<String> getDesigneeSelectedList() {
-        return designeeSelectedList;
-    }
-
-    /**
-     * @param designeeSelectedList designeeSelectedList
-     */
-    public void setDesigneeSelectedList(List<String> designeeSelectedList) {
-        this.designeeSelectedList = designeeSelectedList;
-    }
+   
 
     /**
      * @return studyContactService
