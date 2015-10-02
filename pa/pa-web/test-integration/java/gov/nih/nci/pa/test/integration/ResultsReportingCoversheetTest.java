@@ -221,8 +221,7 @@ public class ResultsReportingCoversheetTest  extends AbstractPaSeleniumTest {
        selenium.type("changesInCtrpCtGovDate", today);
        selenium.select("sendToCtGovUpdated", "Yes");
        
-       selenium.click("id=saveFinal");
-       waitForPageToLoad();     
+      
        
        ((JavascriptExecutor) driver).executeScript("jQuery('#coverSheetForm')[0].action ='resultsReportingCoverSheetsendConverSheetEmail.action'; jQuery('#coverSheetForm').submit();");
        waitForPageToLoad();
