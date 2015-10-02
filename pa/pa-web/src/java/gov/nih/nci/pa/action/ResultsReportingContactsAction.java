@@ -95,12 +95,13 @@ import gov.nih.nci.pa.service.StudyContactService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.PhoneUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -109,10 +110,13 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.PredicateUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.ServletRequestAware;
 
+import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 /**
  *
@@ -125,7 +129,7 @@ import com.opensymphony.xwork2.Preparable;
 
 @SuppressWarnings({ "PMD.TooManyFields", "PMD.TooManyMethods", "PMD.ExcessiveMethodLength"
     , "PMD.SignatureDeclareThrowsException" , "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity" })
-public class ResultsReportingContactsAction extends AbstractMultiObjectDeleteAction implements
+public class ResultsReportingContactsAction extends ActionSupport implements
 ServletRequestAware , Preparable {
     
     private static final long serialVersionUID = 5340547992533377701L;
@@ -273,11 +277,9 @@ ServletRequestAware , Preparable {
         try {
             clearErrorsAndMessages();
             retriveSession();
-            Map<Long, StudyContactDTO> scDesigneeMap = getAsMap(studyDesigneeContactDtos);
-            Map<Long, StudyContactDTO> scPioMap = getAsMap(studyPioContactDtos);
             
-            saveChanges(studyDesigneeContactWebDtos, scDesigneeMap);
-            saveChanges(studyPioContactWebDtos, scPioMap);
+            saveChanges(studyDesigneeContactWebDtos, studyDesigneeContactDtos);
+            saveChanges(studyPioContactWebDtos, studyPioContactDtos);
             
             request.setAttribute(Constants.SUCCESS_MESSAGE,
                     "Saved final changes to study contacts successfully");
@@ -294,29 +296,6 @@ ServletRequestAware , Preparable {
         return SUCCESS;
     }
     
-    /**
-     * Clear all changes
-     * @return string
-     * @throws PAException PAException
-     */
-    public String cancel() throws PAException {
-        clearErrorsAndMessages();
-        clearSession();
-        try {
-            queryDetails();
-        } catch (Exception e) {
-            //remove attribute in case of failure
-            request.removeAttribute(Constants.SUCCESS_MESSAGE);
-            addActionError(e.getLocalizedMessage());
-            return ERROR;
-        }
-        
-        request.setAttribute(Constants.SUCCESS_MESSAGE,
-                "All changes to study contacts cancelled");
-        
-        return SUCCESS;
-    }
-
     
     /**
      * Initiates selected designee contact info for view/edit
@@ -366,13 +345,72 @@ ServletRequestAware , Preparable {
         return SUCCESS;
     }
     
+    /**
+     * Deletes selected study contact
+     * @return result string
+     * @throws PAException PAException
+     */
+    public String delete() throws PAException {
+        try { 
+            clearErrorsAndMessages();
+            retriveSession();
+            
+            if (dscToEdit == null && pscToEdit == null) {
+                request.setAttribute(Constants.FAILURE_MESSAGE,
+                        "Please select a valid designee/PIO contact to delete");
+                return ERROR;
+            }
+            
+            Map<Long, StudyContactDTO> scMap = null;
+            ListIterator<StudyContactWebDTO> listIter = null;
+            Long scToDelete = null;
+            if (dscToEdit != null) {
+                scToDelete = dscToEdit;
+                scMap = getAsMap(studyDesigneeContactDtos);
+                listIter = studyDesigneeContactWebDtos.listIterator();
+            } else {
+                scToDelete = pscToEdit;
+                scMap = getAsMap(studyPioContactDtos);
+                listIter = studyPioContactWebDtos.listIterator();
+            }
+            
+            while (listIter.hasNext()) {
+                StudyContactWebDTO studyContactWebDTO = (StudyContactWebDTO) listIter
+                        .next();
+                if (studyContactWebDTO.getId().equals(scToDelete)) {
+                    if (scToDelete > 0) {
+                        StudyContactDTO scDto = scMap.get(scToDelete);
+                        scDto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.NULLIFIED));
+                        studyContactService.update(scDto);
+                    } else {
+                        listIter.remove();
+                    }
+                } 
+            }
+            clearSession();
+            
+            queryDetails();
+            request.setAttribute(Constants.SUCCESS_MESSAGE,
+                    "Selected designee/PIO study contact deleted successfully");
+            
+        } catch (Exception e) {
+            //remove attribute in case of failure
+            request.removeAttribute(Constants.SUCCESS_MESSAGE);
+            addActionError("Error deleting study contact. Error: " + e.getLocalizedMessage());
+            return ERROR;
+        }
+        
+        return SUCCESS;
+    }
+    
     
     /**
      * @return Action result.
      * @throws IOException
      *             IOException
+     * @throws TooManyResultsException TooManyResultsException
      */
-    public String addOrEditDesigneeContact() throws IOException {
+    public String addOrEditDesigneeContact() throws IOException, TooManyResultsException {
         try {
             clearErrorsAndMessages();
             retriveSession();
@@ -385,6 +423,12 @@ ServletRequestAware , Preparable {
                         "Duplicate designee study contact");
                 return ERROR;
             }
+
+            populatePOOrgAndPerson(editedDesigneeSCWebDTO);
+
+            if (!validatePhone(editedDesigneeSCWebDTO, StudyContactRoleCode.DESIGNEE_CONTACT)) {
+                return ERROR;
+            }
             
             if (EDIT_STR.equals(process)) {
                 editDesigneeContact();
@@ -392,15 +436,13 @@ ServletRequestAware , Preparable {
                 addDesigneeContact();
             }
             
-            populateSession();
-            editedDesigneeSCWebDTO = initWebDto();
-            editedPioSCWebDTO = initWebDto();
-            setProcess(ADD_STR);
+            saveChanges(studyDesigneeContactWebDtos, studyDesigneeContactDtos);
+            queryDetails();
             
             request.setAttribute(Constants.SUCCESS_MESSAGE,
-                    "Designee contact has been added/updated in the list. "
-                    + "However, please remember to click the Save button to save your changes.");
+                    "Designee contact has been added/updated successfully");
         } catch (PAException e) {
+            e.printStackTrace();
             LOG.error(ERROR_DC_MSG, e);
             request.setAttribute(Constants.FAILURE_MESSAGE,
                     ERROR_DC_MSG);
@@ -413,8 +455,9 @@ ServletRequestAware , Preparable {
      * @return Action result.
      * @throws IOException
      *             IOException
+     * @throws TooManyResultsException TooManyResultsException
      */
-    public String addOrEditPIOContact() throws IOException {
+    public String addOrEditPIOContact() throws IOException, TooManyResultsException {
         try {
             clearErrorsAndMessages();
             retriveSession();
@@ -429,20 +472,24 @@ ServletRequestAware , Preparable {
                 return ERROR;
             }
             
+            editedPioSCWebDTO.setSelPoOrgId(leadOrgId.toString());
+            populatePOOrgAndPerson(editedPioSCWebDTO);
+            
+            if (!validatePhone(editedPioSCWebDTO, StudyContactRoleCode.PIO_CONTACT)) {
+                return ERROR;
+            }
+            
             if (EDIT_STR.equals(process)) {
                 editPIOContact();
             } else if (ADD_STR.equals(process)) {
                 addPIOContact();
             }
-            
-            populateSession();
-            editedDesigneeSCWebDTO = initWebDto();
-            editedPioSCWebDTO = initWebDto();
-            setProcess(ADD_STR);
+           
+            saveChanges(studyPioContactWebDtos, studyPioContactDtos);
+            queryDetails();
             
             request.setAttribute(Constants.SUCCESS_MESSAGE,
-                    "PIO contact has been added/updated in the list. "
-                    + "However, please remember to click the Save button to save your changes.");
+                    "PIO contact has been added/updated successfully");
         } catch (PAException e) {
             LOG.error(ERROR_PC_MSG, e);
             request.setAttribute(Constants.FAILURE_MESSAGE,
@@ -453,11 +500,6 @@ ServletRequestAware , Preparable {
     }
     
     private void addDesigneeContact() throws PAException {
-        editedDesigneeSCWebDTO.setContactOrg(
-                getPaOrganizationByPoId(editedDesigneeSCWebDTO.getSelPoOrgId()));
-        editedDesigneeSCWebDTO.setContactPerson(
-                getPaPersonByPoId(editedDesigneeSCWebDTO.getSelPoPrsnId()));
-        
         editedDesigneeSCWebDTO.setUpdated(true);
         editedDesigneeSCWebDTO.setRoleCode(StudyContactRoleCode.DESIGNEE_CONTACT.getCode());
         editedDesigneeSCWebDTO.setStudyProtocolId(studyProtocolId);
@@ -471,37 +513,18 @@ ServletRequestAware , Preparable {
             StudyContactWebDTO studyContactWebDTO = (StudyContactWebDTO) listIter
                     .next();
             if (studyContactWebDTO.getId().equals(editedDesigneeSCWebDTO.getId())) {
-                Organization o = studyContactWebDTO.getContactOrg();
-                Person p = studyContactWebDTO.getContactPerson();
-                if (!(StringUtils.equals(editedDesigneeSCWebDTO.getSelPoOrgId(),
-                        editedDesigneeSCWebDTO.getEditedPoOrgId()) 
-                        && StringUtils.equals(editedPioSCWebDTO.getSelPoPrsnId(),
-                                editedPioSCWebDTO.getEditedPoPrsnId()))) {
-                    o = getPaOrganizationByPoId(editedDesigneeSCWebDTO.getSelPoOrgId());
-                    p = getPaPersonByPoId(editedDesigneeSCWebDTO.getSelPoPrsnId());
-                }
-                editedDesigneeSCWebDTO.setContactOrg(o);
-                editedDesigneeSCWebDTO.setEditedOrgNm(o.getName());
-                editedDesigneeSCWebDTO.setEditedPoOrgId(o.getIdentifier());
-                
-                editedDesigneeSCWebDTO.setContactPerson(p);
-                editedDesigneeSCWebDTO.setEditedPrsnNm(p.getFullName());
-                editedDesigneeSCWebDTO.setEditedPoPrsnId(p.getIdentifier());
                 editedDesigneeSCWebDTO.setRoleCode(StudyContactRoleCode.DESIGNEE_CONTACT.getCode());
                 editedDesigneeSCWebDTO.setStudyProtocolId(studyProtocolId);
                 
                 editedDesigneeSCWebDTO.setUpdated(true);
                 listIter.set(editedDesigneeSCWebDTO);
+                break;
             }
         }
         editedDesigneeSCWebDTO = initWebDto();
     }
     
     private void addPIOContact() throws PAException {
-        editedPioSCWebDTO.setContactOrg(
-                getPaOrganizationByPoId(leadOrgId.toString()));
-        editedPioSCWebDTO.setContactPerson(
-                getPaPersonByPoId(editedPioSCWebDTO.getSelPoPrsnId()));
         editedPioSCWebDTO.setUpdated(true);
         editedPioSCWebDTO.setRoleCode(StudyContactRoleCode.PIO_CONTACT.getCode());
         editedPioSCWebDTO.setStudyProtocolId(studyProtocolId);
@@ -515,20 +538,12 @@ ServletRequestAware , Preparable {
             StudyContactWebDTO studyContactWebDTO = (StudyContactWebDTO) listIter
                     .next();
             if (studyContactWebDTO.getId().equals(editedPioSCWebDTO.getId())) {
-                Person p = studyContactWebDTO.getContactPerson();
-                if (!StringUtils.equals(editedPioSCWebDTO.getSelPoPrsnId(),
-                        editedPioSCWebDTO.getEditedPoPrsnId())) {
-                    p = getPaPersonByPoId(editedPioSCWebDTO.getSelPoPrsnId());
-                } 
-                editedPioSCWebDTO.setContactOrg(studyContactWebDTO.getContactOrg());
-                editedPioSCWebDTO.setContactPerson(p);
-                editedPioSCWebDTO.setEditedPrsnNm(p.getFullName());
-                editedPioSCWebDTO.setEditedPoPrsnId(p.getIdentifier());
                 editedPioSCWebDTO.setRoleCode(StudyContactRoleCode.PIO_CONTACT.getCode());
                 editedPioSCWebDTO.setStudyProtocolId(studyProtocolId);
                 
                 editedPioSCWebDTO.setUpdated(true);
                 listIter.set(editedPioSCWebDTO);
+                break;
             }
         }
         editedPioSCWebDTO = initWebDto();
@@ -540,6 +555,27 @@ ServletRequestAware , Preparable {
         scWebDTO.setId(-1 * System.currentTimeMillis());
         scWebDTO.setStudyProtocolId(studyProtocolId);
         return scWebDTO;
+    }
+   
+    private void populatePOOrgAndPerson(StudyContactWebDTO editedSCWebDTO)
+            throws PAException {
+        Organization o = getPaOrganizationByPoId(editedSCWebDTO.getSelPoOrgId());
+        Person p = getPaPersonByPoId(editedSCWebDTO.getSelPoPrsnId());
+        
+        populateOrgInfo(editedSCWebDTO, o);
+        populatePersonInfo(editedSCWebDTO, p);
+    }
+
+    private void populatePersonInfo(StudyContactWebDTO studyContactWebDTO, Person p) {
+        studyContactWebDTO.setContactPerson(p);
+        studyContactWebDTO.setEditedPrsnNm(p.getFullName());
+        studyContactWebDTO.setEditedPoPrsnId(p.getIdentifier());
+    }
+
+    private void populateOrgInfo(StudyContactWebDTO studyContactWebDTO, Organization o) {
+        studyContactWebDTO.setContactOrg(o);
+        studyContactWebDTO.setEditedOrgNm(o.getName());
+        studyContactWebDTO.setEditedPoOrgId(o.getIdentifier());
     }
     
     private Organization getPaOrganizationByPoId(String orgPoId) throws PAException {
@@ -568,8 +604,27 @@ ServletRequestAware , Preparable {
         
         if (StringUtils.isEmpty(scWebDto.getEmail())) {
             addFieldError(pfx + "email", "Email is required");
+        } else if (!PAUtil.isValidEmail(scWebDto.getEmail()))  {
+            addFieldError(pfx + "email", "Invalid email address");
         }
         
+        return !hasFieldErrors();
+    }
+    
+    private boolean validatePhone(StudyContactWebDTO scWebDto, StudyContactRoleCode scrStsCd) {
+        if (scWebDto == null) {
+            return true;
+        }
+        String pfx = StudyContactRoleCode.DESIGNEE_CONTACT.equals(scrStsCd)  
+                ? "editedDesigneeSCWebDTO." : "editedPioSCWebDTO.";
+        if (!PhoneUtil.isPhoneNumberValid(scWebDto.getContactOrg().getCountryName(), 
+                scWebDto.getPhone()))  {
+            addFieldError(pfx + "phone", "Invalid phone number");
+        }
+        if (!(StringUtils.isNotEmpty(scWebDto.getExt())
+                && NumberUtils.isNumber(scWebDto.getExt())))  {
+            addFieldError(pfx + "ext", "Invalid extension number");
+        }
         return !hasFieldErrors();
     }
     
@@ -579,15 +634,11 @@ ServletRequestAware , Preparable {
         }
         List<StudyContactWebDTO> scWebDtos = StudyContactRoleCode.DESIGNEE_CONTACT.equals(scrStsCd) 
                 ? studyDesigneeContactWebDtos : studyPioContactWebDtos;
+        StudyContactWebDTO match = (StudyContactWebDTO) 
+                CollectionUtils.find(scWebDtos, PredicateUtils.equalPredicate(scWebDto));
+        return match == null ? false : !match.getId().equals(scWebDto.getId());
+    }
         
-        return scWebDtos.contains(scWebDto);
-    }
-    
-
-    @Override
-    public void deleteObject(Long objectId) throws PAException {
-       //Nothing to do...all delete handled in save
-    }
     
     private void populateSession() {
         request.getSession().setAttribute(RSLTS_RPRTNG_DSGNEE_WEB_CNTCTS
@@ -619,20 +670,11 @@ ServletRequestAware , Preparable {
                 request.getSession().getAttribute(RSLTS_RPRTNG_PIO_CNTCTS);
     }
     
-    private void saveChanges(List<StudyContactWebDTO> scWebDtos, Map<Long, StudyContactDTO> scMap) throws PAException {
-        List<String> delLst = new ArrayList<String>();
-        if (getObjectsToDelete() != null && getObjectsToDelete().length > 0) {
-            delLst = Arrays.asList(getObjectsToDelete());
-        }
+    private void saveChanges(List<StudyContactWebDTO> scWebDtos, List<StudyContactDTO> scDtos) throws PAException {
+        Map<Long, StudyContactDTO> scMap = getAsMap(scDtos);
+        
         for (StudyContactWebDTO scWebDto : scWebDtos) {
-            scWebDto.setDeleted(delLst.contains(scWebDto.getId().toString()));
-            if (scWebDto.isDeleted()) {
-                if (scWebDto.getId() > 0) {
-                    StudyContactDTO scDto = scMap.get(scWebDto.getId());
-                    scDto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.NULLIFIED));
-                    studyContactService.update(scDto);
-                }
-            } else if (scWebDto.isUpdated() && scWebDto.getId() > 0) {
+             if (scWebDto.isUpdated() && scWebDto.getId() > 0) {
                 studyContactService.update(
                         scWebDto.convertToStudyContactDto(scMap.get(scWebDto.getId())));
             } else if (scWebDto.isUpdated() && scWebDto.getId() < 0) {

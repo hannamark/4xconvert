@@ -16,6 +16,7 @@ import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -31,6 +32,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+
+import com.sun.jndi.cosnaming.IiopUrl;
 
 /**
  * @author Vrushali
@@ -67,6 +70,14 @@ public class MockPoPersonEntityService implements PersonEntityServiceRemote {
         dto = new PersonDTO();
         dto.setIdentifier(IiConverter.convertToIi("1"));
         dto.setName(EnPnConverter.convertToEnPn("OtherName", null, "OtherName", null, null));
+        dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", null, "cityOrMunicipality",
+                "stateOrProvince", "postalCode", "USA"));
+        dto.setStatusCode(CdConverter.convertStringToCd("ACTIVE"));
+        personList.add(dto);
+        
+        dto = new PersonDTO();
+        dto.setIdentifier(IiConverter.convertToIi("abc"));
+        dto.setName(EnPnConverter.convertToEnPn("SomeName", null, "SomeName", null, null));
         dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", null, "cityOrMunicipality",
                 "stateOrProvince", "postalCode", "USA"));
         dto.setStatusCode(CdConverter.convertStringToCd("ACTIVE"));

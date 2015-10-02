@@ -25,7 +25,7 @@ jQuery(document).ready(function() {
 
 function initSectionDataTable(tableId) {
     var table = jQuery('#'+tableId).DataTable({
-        "paging":   true,
+        "paging":   false,
         "ordering": false,
         "info":     true,
         "bFilter" :false
@@ -73,11 +73,58 @@ function loadDiv(orgId) {
 function loadPersDiv(persid, func) {
 }
 
+function validateEmail(emailFldId) {
+    var box = $('' + emailFldId);
+    if(box.value == '') return true;
+    
+    re = /^[0-9a-zA-Z\-\_\.\@]*$/;
+    //re =/^[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,4}$/ ;
+
+    if (!re.exec(box.value)) {
+        alert("Invalid Entry:\nOnly alphanumeric and '-@_.' are allowed for 'Email'.");
+        return false;
+    }
+    return true;
+}
+
+function validatePhone(phoneFldId) {
+    var box = $('' + phoneFldId);
+    if(box.value == '') return true;
+    
+    re = /^[0-9\-]*$/;
+
+    if (!re.exec(box.value)) {
+        alert("Invalid Entry:\nOnly numbers and '-' are allowed for 'Phone'.");
+        return false;
+    }
+    return true;
+}
+
+function validateExt(extFldId) {
+    var box = $('' + extFldId);
+    if(box.value == '') return true;
+    
+    re = /^[0-9]*$/;
+
+    if (!re.exec(box.value)) {
+        alert("Invalid Entry:\nOnly numbers are allowed for 'Ext'.");
+        return false;
+    }
+    return true;
+}
+
+
 function addOrUpdateDesigneeContact() {
+	if(!validateEmail('dscEmail')) return false;
+	if(!validatePhone('dscPhone')) return false;
+	if(!validateExt('dscExt')) return false;
 	submitStudyContact('reportStudyContactsForm', 'ajaxResultsReportingContactaddOrEditDesigneeContact.action');
 }
 
 function addOrUpdatePioContact() {
+	if(!validateEmail('pscEmail')) return false;
+    if(!validatePhone('pscPhone')) return false;
+    if(!validateExt('pscExt')) return false;
     submitStudyContact('reportStudyContactsForm', 'ajaxResultsReportingContactaddOrEditPIOContact.action');
 }
 
@@ -91,6 +138,26 @@ function editPioContact(selSCId) {
 	$('process').value='edit';
 	$('pscToEdit').value=selSCId;
 	submitStudyContact('reportStudyContactsForm', 'ajaxResultsReportingContactviewPioStudyContact.action');
+}
+
+function deleteDesigneeContact(selSCId) {
+	var r = confirm("Please confirm to delete the selected designee contact");
+	if (r == false) {
+	    return false;
+	}
+    $('process').value='delete';
+    $('dscToEdit').value=selSCId;
+    submitStudyContact('reportStudyContactsForm', 'ajaxResultsReportingContactdelete.action');
+}
+
+function deletePioContact(selSCId) {
+	var r = confirm("Please confirm to delete the selected PIO contact");
+    if (r == false) {
+        return false;
+    }
+    $('process').value='delete';
+    $('pscToEdit').value=selSCId;
+    submitStudyContact('reportStudyContactsForm', 'ajaxResultsReportingContactdelete.action');
 }
 
 function saveStudyContacts() {
@@ -137,23 +204,7 @@ function submitStudyContact(scFormName, scUrl) {
         <s:hidden id="studyProtocolId" name="studyProtocolId"/>
         
         <jsp:include page="reportAddEditDesigneeStudyContact.jsp"/>
-        <hr style="border-top: dotted 1px #aeaeae;" /><br>
         <jsp:include page="reportAddEditPioStudyContact.jsp"/>
-        
-        <div class="actionsrow">
-             <del class="btnwrapper">
-              <ul class="btnrow">
-                  <li><s:a href="javascript:void(0);" onclick="saveStudyContacts();"
-                          cssClass="btn" id="saveSC">
-                          <span class="btn_img"><span class="save">Save </span></span>
-                      </s:a></li>
-                      <li><s:a href="javascript:void(0);" onclick="cancelStudyContacts();"
-                          cssClass="btn" id="cancelSC">
-                          <span class="btn_img"><span class="cancel">Cancel </span></span>
-                      </s:a></li>
-              </ul>
-             </del>
-         </div>   
     </s:form>
  </div>
  

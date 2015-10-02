@@ -19,18 +19,15 @@
                         property="email" />
                      <display:column escapeXml="false" title="Phone" 
                         property="phoneWithExt"/>
-                    <display:column escapeXml="false" title="Edit" style="align:center" >
+                    <display:column escapeXml="false" title="Actions" style="align:center" >
                         <div align="left">
                              <img style="cursor: pointer;" alt="Click here to edit"
-                                src="${imagePath}/ico_edit.gif" onclick="editPioContact(${pscWeb.id});">
+                                src="${imagePath}/ico_edit.gif" onclick="editPioContact(${pscWeb.id});"/>
+                             <img style="cursor: pointer;" alt="Click here to delete"
+                                src="${imagePath}/ico_delete.gif" onclick="deletePioContact(${pscWeb.id});"/>
                         </div>
                     </display:column>
-                    <display:column escapeXml="false" title="Delete" media="html">
-                        <div align="left">
-                            <s:checkbox name="objectsToDelete" id="objectsToDelete_%{#attr.pscWeb.id}" fieldValue="%{#attr.pscWeb.id}" value="%{#attr.pscWeb.id in objectsToDelete}"/>
-                            <label style="display: none;" for="objectsToDelete_${pscWeb.id}">Check this box to mark row for deletion.</label>
-                        </div>
-                    </display:column>
+                    
                 </display:table>
                 
           

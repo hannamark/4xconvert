@@ -89,20 +89,16 @@ import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
-import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
-import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.StudyContactWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
-import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
-import gov.nih.nci.pa.iso.util.EnOnConverter;
-import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -111,18 +107,16 @@ import gov.nih.nci.pa.test.util.MockServiceLocator;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
-import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestSchema;
-import gov.nih.nci.services.organization.OrganizationDTO;
-import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
-import gov.nih.nci.services.person.PersonDTO;
-import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -154,52 +148,22 @@ public class ResultsReportingContactsActionTest extends AbstractHibernateTestCas
     private StudyContactDTO desgneeSrchCrit = new StudyContactDTO();
     private StudyContactDTO pioSrchCrit = new StudyContactDTO();
 
-    private List<StudyContactDTO> dscLst = new ArrayList<StudyContactDTO>();
-    private List<StudyContactDTO> pscLst = new ArrayList<StudyContactDTO>();
+    private Map<Long, StudyContactDTO> dscMap = new HashMap<Long, StudyContactDTO>();
+    private Map<Long, StudyContactDTO> pscMap = new HashMap<Long, StudyContactDTO>();
     
     private OrganizationalContact paOrgContact;
-    private OrganizationEntityServiceRemote organizationEntityService;
-    private PersonEntityServiceRemote personEntityService;
     
     
     @Before
-    public void setup() throws TooManyResultsException {
+    public void setup() throws TooManyResultsException, PAException {
         desgneeSrchCrit.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.DESIGNEE_CONTACT));
         pioSrchCrit.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.PIO_CONTACT));
         TestSchema.primeData();
         String hql = "select alias "
                    + "from OrganizationalContact alias "
-                   + "where alias.id = 1 ";
+                   + "where alias.id = 1";
         Query query = PaHibernateUtil.getCurrentSession().createQuery(hql);
         paOrgContact = (OrganizationalContact) query.list().get(0);
-        Organization cntOrg = paOrgContact.getOrganization();
-        Person  cntPrsn = paOrgContact.getPerson();
-        
-        OrganizationDTO org = new OrganizationDTO();
-        
-        org.setIdentifier(IiConverter.convertToIi(cntOrg.getIdentifier()));
-        org.setName(EnOnConverter.convertToEnOn(cntOrg.getName()));
-        org.setPostalAddress(AddressConverterUtil.create(null ,null, null, null, null, null));
-        List<OrganizationDTO> srchOrgList = new ArrayList<OrganizationDTO>();
-        srchOrgList.add(org);
-        
-        PersonDTO prsn = new PersonDTO();
-        
-        //prsn.setIdentifier(IiConverter.convertToIi(cntPrsn.getIdentifier()));
-        prsn.setIdentifier(IiConverter.convertToIi(1L));
-        prsn.setName(EnPnConverter.convertToEnPn(
-                cntPrsn.getFirstName(), cntPrsn.getMiddleName(),
-                cntPrsn.getLastName(), null, null
-                ));
-        prsn.setPostalAddress(AddressConverterUtil.create(null ,null, null, null, null, null));
-        List<PersonDTO> srchPrsnList = new ArrayList<PersonDTO>();
-        srchPrsnList.add(prsn);
-        
-        organizationEntityService = mock(OrganizationEntityServiceRemote.class);
-        when(organizationEntityService.search(any(OrganizationDTO.class) , any(LimitOffset.class))).thenReturn(srchOrgList);
-        
-        personEntityService = mock(PersonEntityServiceRemote.class);
-        when(personEntityService.search(any(PersonDTO.class) , any(LimitOffset.class))).thenReturn(srchPrsnList);
     }
     
     
@@ -263,20 +227,18 @@ public class ResultsReportingContactsActionTest extends AbstractHibernateTestCas
         assertEquals("error", result);
         assertEquals("Please select a valid PIO study contact to view",  getRequest().getAttribute(Constants.FAILURE_MESSAGE));
         
-        action.setPscToEdit(1L);
+        action.setPscToEdit(3L);
         result = action.viewPioStudyContact();
         assertEquals("success", result);
         assertNotNull(action.getEditedPioSCWebDTO().getContactPerson().getId());
         
     }
-    
+
     @Test
-    public void addAndEditDSC() throws Exception {
+    public void validateSc() throws Exception {
         ResultsReportingContactsAction action = getAction();
         action.setStudyProtocolId(1L);
         String result = action.execute();
-        assertNull(action.getDscToEdit());
-        assertNull(action.getEditedDesigneeSCWebDTO().getContactOrg().getId());
         
         result = action.addOrEditDesigneeContact();
         assertEquals("error", result);
@@ -290,7 +252,46 @@ public class ResultsReportingContactsActionTest extends AbstractHibernateTestCas
         assertTrue(allerrors.contains("Name is required"));
         assertTrue(allerrors.contains("Email is required"));
         
-        action.setEditedDesigneeSCWebDTO(new StudyContactWebDTO(createSCDto(1L)));
+        StudyContactWebDTO sc = new StudyContactWebDTO(createSCDto(1L));
+        sc.setEmail("invalidemail");
+        action.setEditedDesigneeSCWebDTO(sc);
+        result = action.addOrEditDesigneeContact();
+        assertEquals("error", result);
+        assertTrue(action.hasFieldErrors());
+        
+        allerrors = new ArrayList<String>();
+        for (List lst : action.getFieldErrors().values()) {
+            allerrors.addAll(lst);
+        }
+        assertTrue(allerrors.contains("Invalid email address"));
+        
+        sc.setEmail("some@some.com");
+        sc.setPhone("invalid phone");
+        sc.setExt("invalid ext");
+        action.setEditedDesigneeSCWebDTO(sc);
+        result = action.addOrEditDesigneeContact();
+        assertEquals("error", result);
+        assertTrue(action.hasFieldErrors());
+        
+        allerrors = new ArrayList<String>();
+        for (List lst : action.getFieldErrors().values()) {
+            allerrors.addAll(lst);
+        }
+        //assertTrue(allerrors.contains("Invalid phone number"));
+        assertTrue(allerrors.contains("Invalid extension number"));
+    }
+    
+    @Test
+    public void dscActions() throws Exception {
+        ResultsReportingContactsAction action = getAction();
+        action.setStudyProtocolId(1L);
+        String result = action.execute();
+        assertNull(action.getDscToEdit());
+        assertNull(action.getEditedDesigneeSCWebDTO().getContactOrg().getId());
+        
+        StudyContactWebDTO dupe = new StudyContactWebDTO(createSCDto(1L));
+        dupe.setId(5L); 
+        action.setEditedDesigneeSCWebDTO(dupe);
         result = action.addOrEditDesigneeContact();
         assertEquals("error", result);
         assertEquals("Duplicate designee study contact",  getRequest().getAttribute(Constants.FAILURE_MESSAGE));
@@ -301,6 +302,17 @@ public class ResultsReportingContactsActionTest extends AbstractHibernateTestCas
         assertEquals(2, action.getStudyDesigneeContactWebDtos().size());
         assertEquals("success", result);
         
+        action.setEditedDesigneeSCWebDTO(null);
+        action.setDscToEdit(null);
+        result = action.viewDesigneeStudyContact();
+        assertEquals("error", result);
+        assertEquals("Please select a valid designee study contact to view",  getRequest().getAttribute(Constants.FAILURE_MESSAGE));
+        action.setDscToEdit(5L);
+        result = action.viewDesigneeStudyContact();
+        assertEquals("success", result);
+        assertNotNull(action.getEditedDesigneeSCWebDTO());
+        assertEquals(5L, action.getEditedDesigneeSCWebDTO().getId().longValue());
+        
         action.setEditedDesigneeSCWebDTO(new StudyContactWebDTO(createSCDto(5L)));
         String oldEmail = action.getEditedDesigneeSCWebDTO().getEmail();
         assertEquals(oldEmail, action.getStudyDesigneeContactWebDtos().get(1).getEmail());
@@ -308,43 +320,54 @@ public class ResultsReportingContactsActionTest extends AbstractHibernateTestCas
         
         action.setProcess("edit");
         result = action.addOrEditDesigneeContact();
-        assertEquals(2, action.getStudyDesigneeContactWebDtos().size());
         assertEquals("success", result);
+        assertEquals(2, action.getStudyDesigneeContactWebDtos().size());
         assertEquals("new" + oldEmail, action.getStudyDesigneeContactWebDtos().get(1).getEmail());
+        
+        action.setDscToEdit(null);
+        action.setPscToEdit(null);
+        result = action.delete();
+        assertEquals("error", result);
+        assertEquals("Please select a valid designee/PIO contact to delete",  getRequest().getAttribute(Constants.FAILURE_MESSAGE));
+        action.setDscToEdit(5L);
+        result = action.delete();
+        assertEquals("success", result);
+        assertEquals(1, action.getStudyDesigneeContactWebDtos().size());
     }
     
     @Test
-    public void addAndEditPSC() throws Exception {
+    public void pscActions() throws Exception {
         ResultsReportingContactsAction action = getAction();
         action.setStudyProtocolId(1L);
         String result = action.execute();
         assertNull(action.getPscToEdit());
         assertNull(action.getEditedPioSCWebDTO().getContactPerson().getId());
         
-        result = action.addOrEditPIOContact();
-        assertEquals("error", result);
-        assertTrue(action.hasFieldErrors());
-        
-        List<String> allerrors = new ArrayList<String>();
-        for (List lst : action.getFieldErrors().values()) {
-            allerrors.addAll(lst);
-        }
-        
-        assertTrue(allerrors.contains("Name is required"));
-        assertTrue(allerrors.contains("Email is required"));
-        
-        action.setEditedPioSCWebDTO(new StudyContactWebDTO(createSCDto(1L)));
+        StudyContactWebDTO dupe = new StudyContactWebDTO(createSCDto(3L));
+        dupe.setId(6L); 
+        action.setEditedPioSCWebDTO(dupe);
         result = action.addOrEditPIOContact();
         assertEquals("error", result);
         assertEquals("Duplicate PIO study contact",  getRequest().getAttribute(Constants.FAILURE_MESSAGE));
         
         assertEquals(1, action.getStudyPioContactWebDtos().size());
-        action.setEditedPioSCWebDTO(new StudyContactWebDTO(createSCDto(5L)));
+        action.setEditedPioSCWebDTO(new StudyContactWebDTO(createSCDto(6L)));
         result = action.addOrEditPIOContact();
-        assertEquals(2, action.getStudyPioContactWebDtos().size());
         assertEquals("success", result);
+        assertEquals(2, action.getStudyPioContactWebDtos().size());
         
-        action.setEditedPioSCWebDTO(new StudyContactWebDTO(createSCDto(5L)));
+        action.setEditedPioSCWebDTO(null);
+        action.setPscToEdit(null);
+        result = action.viewPioStudyContact();
+        assertEquals("error", result);
+        assertEquals("Please select a valid PIO study contact to view",  getRequest().getAttribute(Constants.FAILURE_MESSAGE));
+        action.setPscToEdit(6L);
+        result = action.viewPioStudyContact();
+        assertEquals("success", result);
+        assertNotNull(action.getEditedPioSCWebDTO());
+        assertEquals(6L, action.getEditedPioSCWebDTO().getId().longValue());
+        
+        action.setEditedPioSCWebDTO(new StudyContactWebDTO(createSCDto(6L)));
         String oldEmail = action.getEditedPioSCWebDTO().getEmail();
         assertEquals(oldEmail, action.getStudyPioContactWebDtos().get(1).getEmail());
         action.getEditedPioSCWebDTO().setEmail("new" + oldEmail);
@@ -354,7 +377,18 @@ public class ResultsReportingContactsActionTest extends AbstractHibernateTestCas
         assertEquals(2, action.getStudyPioContactWebDtos().size());
         assertEquals("success", result);
         assertEquals("new" + oldEmail, action.getStudyPioContactWebDtos().get(1).getEmail());
+        
+        action.setDscToEdit(null);
+        action.setPscToEdit(null);
+        result = action.delete();
+        assertEquals("error", result);
+        assertEquals("Please select a valid designee/PIO contact to delete",  getRequest().getAttribute(Constants.FAILURE_MESSAGE));
+        action.setPscToEdit(6L);
+        result = action.delete();
+        assertEquals("success", result);
+        assertEquals(1, action.getStudyPioContactWebDtos().size());
     }
+    
     private ResultsReportingContactsAction getAction() throws Exception {
         StudyProtocolQueryDTO spQDto = (StudyProtocolQueryDTO) 
                 getSession().getAttribute(Constants.TRIAL_SUMMARY);
@@ -373,19 +407,19 @@ public class ResultsReportingContactsActionTest extends AbstractHibernateTestCas
         StudyContactDTO sc = createSCDto(1);
         sc.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
         sc.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.DESIGNEE_CONTACT));
-        dscLst.add(sc);
+        dscMap.put(1L, sc);
         sc = createSCDto(2);
         sc.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.NULLIFIED));
         sc.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.DESIGNEE_CONTACT));
-        dscLst.add(sc);
+        dscMap.put(2L, sc);
         sc = createSCDto(3);
         sc.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
         sc.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.PIO_CONTACT));
-        pscLst.add(sc);
+        pscMap.put(3L, sc);
         sc = createSCDto(4);
         sc.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.NULLIFIED));
         sc.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.PIO_CONTACT));
-        pscLst.add(sc);
+        pscMap.put(4L, sc);
         
         when(mock.search(any(StudyContactDTO.class), 
                 any(LimitOffset.class))).thenAnswer(new Answer<List<StudyContactDTO>>(){
@@ -396,13 +430,49 @@ public class ResultsReportingContactsActionTest extends AbstractHibernateTestCas
                         StudyContactDTO crit = (StudyContactDTO) invocation.getArguments()[0];
                         if (StudyContactRoleCode.DESIGNEE_CONTACT.equals(
                                 CdConverter.convertCdToEnum(StudyContactRoleCode.class, crit.getRoleCode()))) {
-                            return dscLst;
+                            return new ArrayList<StudyContactDTO>(dscMap.values());
                         } else if (StudyContactRoleCode.PIO_CONTACT.equals(
                                 CdConverter.convertCdToEnum(StudyContactRoleCode.class, crit.getRoleCode()))) {
-                            return dscLst;
+                            return new ArrayList<StudyContactDTO>(pscMap.values());
                         }
                         return new ArrayList<StudyContactDTO>();
                     }});
+        
+        when(mock.create(any(StudyContactDTO.class))).thenAnswer(new Answer<StudyContactDTO>(){
+
+                    @Override
+                    public StudyContactDTO answer(
+                            InvocationOnMock invocation) throws Throwable {
+                        StudyContactDTO crit = (StudyContactDTO) invocation.getArguments()[0];
+                        crit.setOrganizationalContactIi(IiConverter.convertToIi(paOrgContact.getIdentifier()));
+                        Long id = IiConverter.convertToLong(crit.getIdentifier());
+                        if (StudyContactRoleCode.DESIGNEE_CONTACT.equals(
+                                CdConverter.convertCdToEnum(StudyContactRoleCode.class, crit.getRoleCode()))) {
+                            dscMap.put(id, crit);
+                        } else if (StudyContactRoleCode.PIO_CONTACT.equals(
+                                CdConverter.convertCdToEnum(StudyContactRoleCode.class, crit.getRoleCode()))) {
+                            pscMap.put(id, crit);
+                        }
+                        return crit;
+                    }});
+        
+        when(mock.update(any(StudyContactDTO.class))).thenAnswer(new Answer<StudyContactDTO>(){
+
+            @Override
+            public StudyContactDTO answer(
+                    InvocationOnMock invocation) throws Throwable {
+                StudyContactDTO crit = (StudyContactDTO) invocation.getArguments()[0];
+                crit.setOrganizationalContactIi(IiConverter.convertToIi(paOrgContact.getIdentifier()));
+                Long id = IiConverter.convertToLong(crit.getIdentifier());
+                if (StudyContactRoleCode.DESIGNEE_CONTACT.equals(
+                        CdConverter.convertCdToEnum(StudyContactRoleCode.class, crit.getRoleCode()))) {
+                    dscMap.put(id, crit);
+                } else if (StudyContactRoleCode.PIO_CONTACT.equals(
+                        CdConverter.convertCdToEnum(StudyContactRoleCode.class, crit.getRoleCode()))) {
+                    pscMap.put(id, crit);
+                }
+                return crit;
+            }});
         
         return mock;
     }
@@ -414,7 +484,7 @@ public class ResultsReportingContactsActionTest extends AbstractHibernateTestCas
         sc.setOrganizationalContactIi(IiConverter.convertToIi(paOrgContact.getIdentifier()));
         sc.setPrsUserName(StConverter.convertToSt("prsUserName" +  index));
         sc.setComments(StConverter.convertToSt("comments"));
-        sc.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(index));
+        sc.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         
         List<String> phones = new ArrayList<String>();
         phones.add("703-111-1111X123" + index);

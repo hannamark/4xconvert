@@ -39,16 +39,14 @@ public class ResultsReportingStudyContactsTest  extends AbstractPaSeleniumTest {
         assertTrue(selenium.isTextPresent("No designee study contacts found."));
         
         addDesignee("CTEP", "JDOE01", "jdoe01@some.com", "703-111-1111");
-        assertTrue(selenium.isTextPresent("Designee contact has been added/updated in the list. "
-                    + "However, please remember to click the Save button to save your changes."));
+        assertTrue(selenium.isTextPresent("Designee contact has been added/updated successfully"));
         waitForElementToBecomeVisible(By.xpath("//table[@id='dscWeb']/tbody/tr[1]"), 5);
         
         addDesignee("CTEP", "JDOE01", "jdoe02@some.com", "703-111-2222");
-        assertTrue(selenium.isTextPresent("Designee contact has been added/updated in the list. "
-                    + "However, please remember to click the Save button to save your changes."));
+        assertTrue(selenium.isTextPresent("Designee contact has been added/updated successfully"));
         waitForElementToBecomeVisible(By.xpath("//table[@id='dscWeb']/tbody/tr[2]"), 5);
-        
-        clickAndWaitAjax("//table[@id='dscWeb']/tbody/tr[2]/td[6]/div/img");
+        //edit img
+        clickAndWaitAjax("//table[@id='dscWeb']/tbody/tr[2]/td[7]/div/img[1]");
         waitForPageToLoad();
         pause(1000);
         
@@ -58,14 +56,14 @@ public class ResultsReportingStudyContactsTest  extends AbstractPaSeleniumTest {
         selenium.click("//a[@id='addEditDSC']");
         pause(1000);
         waitForPageToLoad();
-        waitForTextToAppear(By.xpath("//table[@id='dscWeb']/tbody/tr[2]/td[4]"), "newjdoe02@some.com", 5);
+        assertTrue(selenium.isTextPresent("Designee contact has been added/updated successfully"));
+        waitForTextToAppear(By.xpath("//table[@id='dscWeb']/tbody/tr[2]/td[5]"), "newjdoe02@some.com", 5);
         
-        selenium.click("//table[@id='dscWeb']/tbody/tr[1]/td[7]//input[@type='checkbox']");
-        
-        selenium.click("//a[@id='saveSC']");
+        //delete img
+        clickAndWaitAjax("//table[@id='dscWeb']/tbody/tr[2]/td[7]/div/img[2]");
         waitForPageToLoad();
         pause(1000);
-        assertTrue(selenium.isTextPresent("Saved final changes to study contacts successfully"));
+        assertTrue(selenium.isTextPresent("Selected designee/PIO study contact deleted successfully"));
         assertFalse(selenium.isElementPresent("//table[@id='dscWeb']/tbody/tr[2]"));
     }
     
@@ -83,16 +81,15 @@ public class ResultsReportingStudyContactsTest  extends AbstractPaSeleniumTest {
         assertTrue(selenium.isTextPresent("No PIO study contacts found."));
         
         addPio("JDOE01", "jdoe01@some.com", "703-111-1111");
-        assertTrue(selenium.isTextPresent("PIO contact has been added/updated in the list. "
-                    + "However, please remember to click the Save button to save your changes."));
+        assertTrue(selenium.isTextPresent("PIO contact has been added/updated successfully"));
         waitForElementToBecomeVisible(By.xpath("//table[@id='pscWeb']/tbody/tr[1]"), 5);
         
         addPio("JDOE01", "jdoe02@some.com", "703-111-2222");
-        assertTrue(selenium.isTextPresent("PIO contact has been added/updated in the list. "
-                    + "However, please remember to click the Save button to save your changes."));
+        assertTrue(selenium.isTextPresent("PIO contact has been added/updated successfully"));
         waitForElementToBecomeVisible(By.xpath("//table[@id='pscWeb']/tbody/tr[2]"), 5);
         
-        clickAndWaitAjax("//table[@id='pscWeb']/tbody/tr[2]/td[4]/div/img");
+        //edit img
+        clickAndWaitAjax("//table[@id='pscWeb']/tbody/tr[2]/td[4]/div/img[1]");
         waitForPageToLoad();
         pause(1000);
         
@@ -102,15 +99,14 @@ public class ResultsReportingStudyContactsTest  extends AbstractPaSeleniumTest {
         selenium.click("//a[@id='addEditPSC']");
         pause(1000);
         waitForPageToLoad();
+        assertTrue(selenium.isTextPresent("PIO contact has been added/updated successfully"));
         waitForTextToAppear(By.xpath("//table[@id='pscWeb']/tbody/tr[2]/td[2]"), "newjdoe02@some.com", 5);
         
-        selenium.click("//table[@id='pscWeb']/tbody/tr[1]/td[5]//input[@type='checkbox']");
-        
-        selenium.click("//a[@id='saveSC']");
-        pause(1000);
+        //delete img
+        clickAndWaitAjax("//table[@id='pscWeb']/tbody/tr[2]/td[4]/div/img[2]");
         waitForPageToLoad();
         pause(1000);
-        assertTrue(selenium.isTextPresent("Saved final changes to study contacts successfully"));
+        assertTrue(selenium.isTextPresent("Selected designee/PIO study contact deleted successfully"));
         assertFalse(selenium.isElementPresent("//table[@id='pscWeb']/tbody/tr[2]"));
     }
     

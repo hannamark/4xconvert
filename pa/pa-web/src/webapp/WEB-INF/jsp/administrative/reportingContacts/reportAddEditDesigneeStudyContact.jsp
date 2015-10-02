@@ -4,6 +4,7 @@
     <div class="box" id="designeeContact">
            <s:hidden id="dscToEdit" name="dscToEdit"/>
 	       <s:hidden id="dscId" name="editedDesigneeSCWebDTO.id"/>
+	       <s:hidden id="edtdDscSpId" name="editedDesigneeSCWebDTO.studyProtocolId"/>
 	       <s:hidden id="dscOrgId" name="editedDesigneeSCWebDTO.selPoOrgId"/>
 	       <s:hidden id="dscPrsnId" name="editedDesigneeSCWebDTO.selPoPrsnId"/>
 	       <s:hidden id="edtdDscOrgId" name="editedDesigneeSCWebDTO.editedPoOrgId"/>
@@ -29,10 +30,6 @@
                 <td>
                 </td>
                 <td scope="row" class="label" >
-                    <s:a href="javascript:void(0);" onclick="addOrUpdateDesigneeContact();"
-                          cssClass="btn" id="addEditDSC">
-                          <span class="btn_img"><span class="save">Add/Update Designee</span></span>
-                      </s:a>
                 </td>
              </tr>
              <tr>
@@ -80,7 +77,7 @@
                     <label for="dscEmail"> <fmt:message key="reportStudyContacts.designee.email"/></label><span class="required">*</span> 
                 </td>
                 <td>
-                    <s:textfield id="dscEmail" name="editedDesigneeSCWebDTO.email" maxlength="200" size="200" cssStyle="width:200px"  />
+                    <s:textfield id="dscEmail" name="editedDesigneeSCWebDTO.email" maxlength="200" size="200" cssStyle="width:200px"  type="email" placeholder="example@example.com" />
                     <span class="formErrorMsg">
                         <s:fielderror>
                             <s:param>editedDesigneeSCWebDTO.email</s:param>
@@ -95,7 +92,7 @@
                     <label for="dscPhone"> <fmt:message key="reportStudyContacts.designee.phone"/></label>
                 </td>
                 <td>
-                    <s:textfield id="dscPhone" name="editedDesigneeSCWebDTO.phone" maxlength="200" size="200" cssStyle="width:200px"  />
+                    <s:textfield id="dscPhone" name="editedDesigneeSCWebDTO.phone" maxlength="200" size="200" cssStyle="width:200px" type="tel" placeholder="703-111-1111"/>
                     <span class="formErrorMsg">
                         <s:fielderror>
                             <s:param>editedDesigneeSCWebDTO.phone</s:param>
@@ -108,7 +105,7 @@
                     <label for="dscExt"> <fmt:message key="reportStudyContacts.designee.ext"/></label>
                 </td>
                 <td>
-                    <s:textfield id="dscExt" name="editedDesigneeSCWebDTO.ext" maxlength="200" size="200" cssStyle="width:200px"  />
+                    <s:textfield id="dscExt" name="editedDesigneeSCWebDTO.ext" maxlength="200" size="200" cssStyle="width:200px" placeholder="123" />
                     <span class="formErrorMsg">
                         <s:fielderror>
                             <s:param>editedDesigneeSCWebDTO.ext</s:param>
@@ -120,5 +117,17 @@
             
             <jsp:include page="reportDesigneeStudyContacts.jsp"/>
             
+            
+            <div class="actionsrow">
+             <del class="btnwrapper">
+                  <ul class="btnrow">
+                      <li><s:a href="javascript:void(0);" onclick="addOrUpdateDesigneeContact();"
+                              cssClass="btn" id="addEditDSC">
+                              <span class="btn_img"><span class="save">Add/Update Designee</span></span>
+                          </s:a></li>
+                  </ul>
+             </del>
+         </div>
+         
     </div>
     

@@ -255,13 +255,14 @@ public class StudyContactWebDTO implements Serializable {
         //TODO: Check if this id needs to be sent. 
         //Looks like, single orgContactId is located by the POPerson and POOrganization combo
         if (orgContactId != null) {
-            orgContacPaDto.setIdentifier(IiConverter.convertToIi(orgContactId));
+            orgContacPaDto.setIdentifier(
+                    IiConverter.convertToPoOrganizationalContactIi(orgContactId));
         }
         
         orgContacPaDto.setTypeCode(PO_ORG_CNTCT_TYPE_SITE);
         Long ocId = paBaseCorrltn.create(orgContacPaDto);
         
-        scDTO.setOrganizationalContactIi(IiConverter.convertToIi(ocId));
+        scDTO.setOrganizationalContactIi(IiConverter.convertToIi(ocId.toString()));
         scDTO.setClinicalResearchStaffIi(IiConverter.convertToIi(""));
         
         scDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(studyProtocolId));
@@ -283,7 +284,6 @@ public class StudyContactWebDTO implements Serializable {
     @Override
     public int hashCode() {
         HashCodeBuilder hcb = new HashCodeBuilder()
-        .append(id)
         .append(studyProtocolId)
         .append(selPoOrgId)
         .append(selPoPrsnId)
@@ -577,7 +577,7 @@ public class StudyContactWebDTO implements Serializable {
      * @return the phoneWithExt
      */
     public String getPhoneWithExt() {
-        return StringUtils.isNotEmpty(this.ext) ? this.phone + "X" + this.ext : this.phone;
+        return StringUtils.isNotEmpty(this.ext) ? this.phone + " X" + this.ext : this.phone;
     }
 
     /**
@@ -586,9 +586,9 @@ public class StudyContactWebDTO implements Serializable {
     public void setPhoneWithExt(String phoneWithExt) {
        if (StringUtils.isNotEmpty(phoneWithExt)) {
            String[] phoneArr = phoneWithExt.split("X");
-           this.phone = phoneArr[0];
+           this.phone = phoneArr[0].trim();
            if (phoneArr.length > 1) {
-               this.ext = phoneArr[1];
+               this.ext = phoneArr[1].trim();
            }
        }
     }

@@ -5,6 +5,7 @@
 <div class="box" id="pioContact">
         <s:hidden id="pscToEdit" name="pscToEdit"/>
         <s:hidden id="pscId" name="editedPioSCWebDTO.id"/>
+        <s:hidden id="edtdPscSpId" name="editedPioSCWebDTO.studyProtocolId"/>
         <s:hidden id="pscPrsnId" name="editedPioSCWebDTO.selPoPrsnId"/>
         <s:hidden id="edtdPscPrsnId" name="editedPioSCWebDTO.editedPoPrsnId"/>
         <table class="form">
@@ -30,10 +31,6 @@
                 <td>
                 </td>
                 <td scope="row" class="label" >
-                    <s:a href="javascript:void(0);" onclick="addOrUpdatePioContact();"
-                          cssClass="btn" id="addEditPSC">
-                          <span class="btn_img"><span class="save">Add/Update PIO</span></span>
-                      </s:a>
                 </td>
             </tr>
             <tr>
@@ -79,7 +76,17 @@
             </tr>
         </table>
         
-        
         <jsp:include page="reportPioStudyContacts.jsp"/>
         
+          <div class="actionsrow">
+           <del class="btnwrapper">
+                <ul class="btnrow">
+                    <li><s:a href="javascript:void(0);" onclick="addOrUpdatePioContact();"
+                          cssClass="btn" id="addEditPSC">
+                          <span class="btn_img"><span class="save">Add/Update PIO</span></span>
+                      </s:a> </li>
+                </ul>
+           </del>
+       </div>
+         
 </div>

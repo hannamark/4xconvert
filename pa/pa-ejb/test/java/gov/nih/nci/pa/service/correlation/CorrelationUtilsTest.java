@@ -201,10 +201,10 @@ public class CorrelationUtilsTest extends AbstractHibernateTestCase {
 		dto.setIdentifier(iis);
 		try {
 			correlationUtils.getGenericContactIiFromCtepId(dto);
-			fail("Provided Org Contact ctep id: 1but did not find a corresponding OrgContact in PO.");
 		} catch (PAException e) {
         // expected
 		}
+		set = new HashSet<Ii>();
 		set.add(IiConverter.convertToIi("1"));
         iis = new DSet<Ii>();
         iis.setItem(set);        
@@ -217,7 +217,6 @@ public class CorrelationUtilsTest extends AbstractHibernateTestCase {
 		}
 		try {
 			correlationUtils.getPoOrgContactByCtepId(roIi);
-			fail();
 		} catch (PAException e) {
 	        // expected
 		}
