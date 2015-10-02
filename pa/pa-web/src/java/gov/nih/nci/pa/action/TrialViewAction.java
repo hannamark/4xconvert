@@ -1084,4 +1084,19 @@ ServletRequestAware , ServletResponseAware , Preparable {
         this.studyProcessingErrors = studyProcessingErrors;
     }
 
+    /**
+     * @return the studyProcessingErrorService
+     */
+    public StudyProcessingErrorService getStudyProcessingErrorService() {
+        return studyProcessingErrorService;
+    }
+
+    /**
+     * @param studyProcessingErrorService the studyProcessingErrorService to set
+     */
+    public void setStudyProcessingErrorService(StudyProcessingErrorService studyProcessingErrorService) {
+        this.studyProcessingErrorService = studyProcessingErrorService;
+    }
+
+    
 }

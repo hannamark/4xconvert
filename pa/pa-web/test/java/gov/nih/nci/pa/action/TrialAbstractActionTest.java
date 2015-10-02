@@ -21,6 +21,7 @@ import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyContactService;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
+import gov.nih.nci.pa.service.StudyProcessingErrorServiceLocal;
 import gov.nih.nci.pa.service.StudyRecordServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.util.CSMUserService;
@@ -112,6 +113,8 @@ public abstract class TrialAbstractActionTest extends AbstractPaActionTest {
          trialViewAction.setPaServiceUtil(paServiceUtils);
          trialViewAction.setMailManagerService(mailManagerService);
          trialViewAction.setStudyContactService(studyContactService);
+         trialViewAction.setStudyProcessingErrorService(mock(StudyProcessingErrorServiceLocal.class));
+         
          trialViewAction.setServletRequest(getRequest());
          
          trialDocumentWebDTO = new TrialDocumentWebDTO();
