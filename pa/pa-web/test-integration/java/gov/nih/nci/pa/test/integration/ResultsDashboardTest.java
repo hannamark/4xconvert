@@ -210,7 +210,7 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isTextPresent("View/Upload Trial Comparison Documents"));
         assertTrue(selenium.isTextPresent("Results Cover Sheet"));
         assertTrue(selenium.isTextPresent("XML Upload Errors & Actions Taken"));
-        assertTrue(selenium.isTextPresent("Enter Trial ID:"));
+        assertTrue(selenium.isTextPresent("Enter NCI Trial ID:"));
         deleteContact();
     }
     
@@ -394,22 +394,21 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
     	
         long trialId = testTrials.get(0).id;
         selenium.type("id=pcdSentToPIODate_"+trialId, "01/01/2015");
-        selenium.type("id=pcdConfirmedDate_"+testTrials.get(0).id, "01/02/2015");
+        selenium.type("id=pcdConfirmedDate_"+trialId, "01/02/2015");
+        driver.findElement(By.id("pcdConfirmedDate_"+trialId)).sendKeys("\t");
         pause(1000);
         assertTrue(selenium.isVisible("id=pcdSentToPIODate_"+trialId+"_flash"));
         waitForElementToBecomeInvisible(By.id("pcdSentToPIODate_"+trialId+"_flash"), 3);
         clickAndWait("link=Search");
-        //pause(1000);
         assertEquals("01/01/2015",driver.findElement(By.id("pcdSentToPIODate_"+trialId)).getAttribute("value"));
         assertEquals("01/02/2015",driver.findElement(By.id("pcdConfirmedDate_"+trialId)).getAttribute("value"));
         
         // Re-setting dates to blank
         selenium.type("id=pcdSentToPIODate_"+trialId, "");
-        selenium.type("id=pcdConfirmedDate_"+testTrials.get(0).id, "");                
-        driver.findElement(By.id("trialPublishedDate_"+trialId)).sendKeys("\t");
+        selenium.type("id=pcdConfirmedDate_"+trialId, "");                
+        driver.findElement(By.id("pcdConfirmedDate_"+trialId)).sendKeys("\t");
         pause(5000);
         clickAndWait("link=Search");
-        //pause(5000);
         assertEquals("",driver.findElement(By.id("pcdSentToPIODate_"+trialId)).getAttribute("value"));
         assertEquals("",driver.findElement(By.id("pcdConfirmedDate_"+trialId)).getAttribute("value"));        
     }

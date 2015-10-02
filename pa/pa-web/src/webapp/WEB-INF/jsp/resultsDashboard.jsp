@@ -307,7 +307,7 @@ function searchResults(url, studyNCIid){
 		 displayWaitPanel();
 		 var ajaxReq = new Ajax.Request('resultsDashboardajaxGetStudyStudyProtocolIdByNCIId.action?', {
              method: 'post',
-             parameters: 'studyNCIId='+studyNCIid.trim(),
+             parameters: 'studyNCIId='+studyNCIid.trim().toUpperCase(),
              onSuccess: function(response) {
             	 hideWaitPanel();
             	 if(response.responseText != ''){
@@ -416,8 +416,69 @@ function searchResults(url, studyNCIid){
                     </del>
                 </div>
             </s:form>
-        </div>        
-        <s:if test="results != null">
+        </div>
+          <h2><fmt:message key="resultsdashboard.moreinfo"/></h2>
+         <table class="results">
+          <tr>
+           <td align="center" width="40%" style="border-bottom: 2px solid black;border-left:  2px solid black;" >
+             <h4><fmt:message key="resultsdashboard.chartHeader"/></h4><br>
+             <canvas id="resultsChart" width="300" height="300"></canvas>
+            </td>
+           <td width="10%" style="border-bottom: 2px solid black;border-right: 2px solid black; vertical-align: middle">
+             <div id="legend"></div>
+           </td>
+           <td  width="50%" height="100%" style="border-bottom: 2px solid black;">
+            <table class="results" height="350px">
+              <tr height="10%" style="border-right: 2px solid black;">
+                <td colspan="2"><h4><fmt:message key="resultsdashboard.designee"/></h4></td>
+              </tr>
+              <tr height="15%" style="border-right: 2px solid black;">
+                <td style="padding: 10px;">
+                 <label for="designeeTrialId" > <fmt:message key="resultsdashboard.trialId"/></label><span class="required">*</span> <input type="text" id="designeeTrialId" name="designeeTrialId" size="20"/>
+                 </td>
+                 <td >
+               <s:a id="designeeTrialIdSearch" href="javascript:void(0)" cssClass="btn" onclick="searchResults('resultsReportingContactexecute.action', jQuery('#designeeTrialId').val())"><span class="btn_img"><span class="search">Search</span></span></s:a>
+                </td>
+              </tr>
+              <tr height="10%" style="border-top: 2px solid black;border-right: 2px solid black;">
+                <td colspan="2"><h4><fmt:message key="resultsdashboard.trialCompDocs"/></h4></td>
+              </tr>
+              <tr  height="15%" style="border-right: 2px solid black;">
+                <td style="padding: 10px;">
+                 <label for="trialCompDocsTrialId" > <fmt:message key="resultsdashboard.trialId"/></label><span class="required">*</span> <input type="text" id="trialCompDocsTrialId" name="trialCompDocsTrialId" size="20"/>
+                 </td>
+                 <td>
+                 <s:a id="trialCompDocsTrialSearch" href="javascript:void(0)" cssClass="btn" onclick="searchResults('resultsReportingDocumentquery.action', jQuery('#trialCompDocsTrialId').val())"><span class="btn_img"><span class="search">Search</span></span></s:a>
+                </td>
+              </tr>
+              <tr height="10%" style="border-top: 2px solid black;border-right: 2px solid black;">
+                <td colspan="2"><h4><fmt:message key="resultsdashboard.coverSheet"/></h4></td>
+              </tr>
+              <tr height="15%" style="border-right: 2px solid black;">
+                <td style="padding: 10px;">
+                 <label for="coverSheetTrialId" > <fmt:message key="resultsdashboard.trialId"/></label><span class="required">*</span> <input type="text" id="coverSheetTrialId" name="coverSheetTrialId" size="20"/>
+                 </td>
+                 <td>
+                 <s:a id="coverSheetTrialSearch" href="javascript:void(0)" cssClass="btn" onclick="searchResults('resultsReportingCoverSheetquery.action', jQuery('#coverSheetTrialId').val())"><span class="btn_img"><span class="search">Search</span></span></s:a>
+                </td>
+              </tr>
+              <tr height="10%" style="border-top: 2px solid black;border-right: 2px solid black;">
+                <td colspan="2"><h4><fmt:message key="resultsdashboard.uploadErrors"/></h4></td>
+              </tr>
+              <tr height="15%" style="border-right: 2px solid black">
+                <td style="padding: 10px;">
+                 <label for="uploadErrorsTrialId" ><fmt:message key="resultsdashboard.trialId"/></label> <input type="text" id="uploadErrorsTrialId" name="uploadErrorsTrialId" size="20"/>
+                 </td>
+                 <td>
+                 <s:a id="uploadErrorsTrialSearch" href="javascript:void(0)" cssClass="btn" onclick="searchResults('resultsReportingActionsTakenview.action', jQuery('#uploadErrorsTrialId').val())"><span class="btn_img"><span class="search">Search</span></span></s:a>
+                </td>
+              </tr>
+            </table>
+           </td>
+         </tr>
+         </table>
+       </br></br>               
+       <s:if test="results != null">
          <div class="line"></div>
          <h2>Search Results</h2>
          <div id="results_table_container">
@@ -429,14 +490,17 @@ function searchResults(url, studyNCIid){
                  name="results" requestURI="${requestURI}"
                  defaultsort="1"
                  export="false" uid="row">
-                 <display:column  class="title" titleKey="studyProtocol.nciIdentifier" sortable="true"  scope="row" >
+                
+                 <display:column  class="title" titleKey="studyProtocol.nciIdentifier" sortable="true" scope="row" >
                     <!-- <c:out value="${row.nciIdentifier}"/> --><a id="trialview_${row.studyProtocolId}" href="javascript:void(0)" onclick="searchResults('trialViewquery.action', '${row.studyProtocolId}')"><c:out value="${row.nciIdentifier}"/></a>
                  </display:column>
                  <display:column  title="NCT ID" sortable="true" property="nctIdentifier"/>
-                 <display:column  title="CTEP/DCP ID" sortable="true" property="ctepOrDcp"/>
+                 <display:column  title="CTEP/DCP ID" sortable="true">
+                    <s:if test="%{#attr.row.ctepId != null}"><c:out value ="${row.ctepId}"/></s:if><s:else><c:out value ="${row.dcpId}"/></s:else>
+                 </display:column>
                  <display:column  title="Lead Org PO ID" sortable="true" property="leadOrganizationPOId"/>          
                  <display:column  title="Lead Organization" sortable="true" property="leadOrganizationName"/>
-                 <display:column  title="Results Designee" sortable="true" property="designeeNamesList"/>                                  
+                 <display:column  title="Results Designee" sortable="true" property="designeeNamesList" style="width:200px;"/>                                  
                  <display:column title="PCD Sent to PIO" sortable="true">
                     <!-- <c:out value="${row.pcdSentToPIODate}"/> -->
                     <input id="pcdSentToPIODate_${row.studyProtocolId}" class="datePicker" size="8" value="<fmt:formatDate value="${row.pcdSentToPIODate}" pattern="MM/dd/yyyy"/>"/>
@@ -513,67 +577,6 @@ function searchResults(url, studyNCIid){
          </div>
          </div>
        </s:if>
-       <div id="chart" class="box">
-          <h2><fmt:message key="resultsdashboard.moreinfo"/></h2>
-         <table class="results">
-          <tr>
-           <td align="center" width="40%" style="border-bottom: 2px solid black;border-left:  2px solid black;" >
-             <h4><fmt:message key="resultsdashboard.chartHeader"/></h4><br>
-             <canvas id="resultsChart" width="300" height="300"></canvas>
-            </td>
-           <td width="10%" style="border-bottom: 2px solid black;border-right: 2px solid black; vertical-align: middle">
-             <div id="legend"></div>
-           </td>
-           <td  width="50%" height="100%" style="border-bottom: 2px solid black;">
-            <table class="results" height="350px">
-              <tr height="10%" style="border-right: 2px solid black;">
-                <td colspan="2"><h4><fmt:message key="resultsdashboard.designee"/></h4></td>
-              </tr>
-              <tr height="15%" style="border-right: 2px solid black;">
-                <td style="padding: 10px;">
-                 <label for="designeeTrialId" > <fmt:message key="resultsdashboard.trialId"/></label><span class="required">*</span> <input type="text" id="designeeTrialId" name="designeeTrialId" size="20"/>
-                 </td>
-                 <td >
-               <s:a id="designeeTrialIdSearch" href="javascript:void(0)" cssClass="btn" onclick="searchResults('resultsReportingContactexecute.action', jQuery('#designeeTrialId').val())"><span class="btn_img"><span class="search">Search</span></span></s:a>
-                </td>
-              </tr>
-              <tr height="10%" style="border-top: 2px solid black;border-right: 2px solid black;">
-                <td colspan="2"><h4><fmt:message key="resultsdashboard.trialCompDocs"/></h4></td>
-              </tr>
-              <tr  height="15%" style="border-right: 2px solid black;">
-                <td style="padding: 10px;">
-                 <label for="trialCompDocsTrialId" > <fmt:message key="resultsdashboard.trialId"/></label><span class="required">*</span> <input type="text" id="trialCompDocsTrialId" name="trialCompDocsTrialId" size="20"/>
-                 </td>
-                 <td>
-                 <s:a id="trialCompDocsTrialSearch" href="javascript:void(0)" cssClass="btn" onclick="searchResults('resultsReportingDocumentquery.action', jQuery('#trialCompDocsTrialId').val())"><span class="btn_img"><span class="search">Search</span></span></s:a>
-                </td>
-              </tr>
-              <tr height="10%" style="border-top: 2px solid black;border-right: 2px solid black;">
-                <td colspan="2"><h4><fmt:message key="resultsdashboard.coverSheet"/></h4></td>
-              </tr>
-              <tr height="15%" style="border-right: 2px solid black;">
-                <td style="padding: 10px;">
-                 <label for="coverSheetTrialId" > <fmt:message key="resultsdashboard.trialId"/></label><span class="required">*</span> <input type="text" id="coverSheetTrialId" name="coverSheetTrialId" size="20"/>
-                 </td>
-                 <td>
-                 <s:a id="coverSheetTrialSearch" href="javascript:void(0)" cssClass="btn" onclick="searchResults('resultsReportingCoverSheetquery.action', jQuery('#coverSheetTrialId').val())"><span class="btn_img"><span class="search">Search</span></span></s:a>
-                </td>
-              </tr>
-              <tr height="10%" style="border-top: 2px solid black;border-right: 2px solid black;">
-                <td colspan="2"><h4><fmt:message key="resultsdashboard.uploadErrors"/></h4></td>
-              </tr>
-              <tr height="15%" style="border-right: 2px solid black">
-                <td style="padding: 10px;">
-                 <label for="uploadErrorsTrialId" ><fmt:message key="resultsdashboard.trialId"/></label> <input type="text" id="uploadErrorsTrialId" name="uploadErrorsTrialId" size="20"/>
-                 </td>
-                 <td>
-                 <s:a id="uploadErrorsTrialSearch" href="javascript:void(0)" cssClass="btn" onclick="searchResults('resultsReportingActionsTakenview.action', jQuery('#uploadErrorsTrialId').val())"><span class="btn_img"><span class="search">Search</span></span></s:a>
-                </td>
-              </tr>
-            </table>
-           </td>
-         </tr>
-         </table>
-       </div>
+       
     </body>
 </html>

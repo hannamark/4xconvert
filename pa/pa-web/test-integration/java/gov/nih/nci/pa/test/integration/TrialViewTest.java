@@ -26,7 +26,7 @@ public class TrialViewTest extends ResultsReportingStudyContactsTest {
     @Test
     public void testViewPageDisplayed() throws SQLException, ParseException {
         TrialInfo trial = createAcceptedTrial();
-        loginAsSuperAbstractor();
+        loginAsResultsAbstractor();
         searchAndSelectTrial(trial.title);
         openAndWait(baseUrl+trial.id);
         
@@ -35,6 +35,14 @@ public class TrialViewTest extends ResultsReportingStudyContactsTest {
         
         assertTrue(selenium.isTextPresent("No study record changes found."));
         assertTrue(selenium.isTextPresent("No trial documents exist on the trial"));
+        assertTrue(selenium.isTextPresent(trial.nciID+": "+trial.title));
+        // Check for the sections in the trial view page
+        assertTrue(selenium.isTextPresent("Results Designee Contact"));
+        assertTrue(selenium.isTextPresent("Assigned PIO"));
+        assertTrue(selenium.isTextPresent("Trial Comparison Documents"));
+        assertTrue(selenium.isTextPresent("Record Changes"));
+        assertTrue(selenium.isTextPresent("Summary Of XML Upload Errors & Actions Taken"));
+        assertTrue(selenium.isTextPresent("Final Record Clean-up & Release"));
     }
     
     private long getRecordCount(long trialId)

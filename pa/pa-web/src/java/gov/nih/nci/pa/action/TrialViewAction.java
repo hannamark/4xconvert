@@ -82,6 +82,7 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyRecordChange;
 import gov.nih.nci.pa.dto.StudyContactWebDTO;
+import gov.nih.nci.pa.dto.StudyProcessingErrorDTO;
 import gov.nih.nci.pa.dto.TrialDocumentWebDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
@@ -97,6 +98,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyContactService;
+import gov.nih.nci.pa.service.StudyProcessingErrorService;
 import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.StudyRecordService;
 import gov.nih.nci.pa.service.util.CSMUserService;
@@ -175,7 +177,7 @@ ServletRequestAware , ServletResponseAware , Preparable {
     private String uploadFileName;
     private List<TrialDocumentWebDTO> trialDocumentList;
     private TrialDocumentWebDTO trialDocumentWebDTO = new TrialDocumentWebDTO();
-    private String page;
+    private String page = "trialView";
     private   Map<Long, String> usersMap = new HashMap<Long, String>();
     private Long ctroUserId;
     private Long ccctUserId;
@@ -184,7 +186,8 @@ ServletRequestAware , ServletResponseAware , Preparable {
     private List<StudyContactWebDTO> designeeContactList = new ArrayList<StudyContactWebDTO>();
     private List<String> designeeSelectedList = new ArrayList<String>();
     private StudyContactService studyContactService;
-
+    private List<StudyProcessingErrorDTO> studyProcessingErrors;
+    private StudyProcessingErrorService studyProcessingErrorService;
     
     
     private static final Logger LOG = Logger
@@ -196,7 +199,7 @@ ServletRequestAware , ServletResponseAware , Preparable {
         studyProtocolService = PaRegistry.getStudyProtocolService();
         mailManagerService = PaRegistry.getMailManagerService();
         studyContactService = PaRegistry.getStudyContactService();
-        
+        studyProcessingErrorService = PaRegistry.getStudyProcessingErrorService();
     }
     
     /** 
@@ -268,8 +271,8 @@ ServletRequestAware , ServletResponseAware , Preparable {
                      designeeContactList.add(new StudyContactWebDTO(scDto));
                  }
              }
-
-           
+             // Load study processing errors             
+             setStudyProcessingErrors(studyProcessingErrorService.getStudyProcessingErrorByStudy(studyProtocolId));
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
             return ERROR;
@@ -1067,9 +1070,18 @@ ServletRequestAware , ServletResponseAware , Preparable {
         this.studyContactService = studyContactService;
     }
 
-   
-    
-   
-    
+    /**
+     * @return the studyProcessingErrors
+     */
+    public List<StudyProcessingErrorDTO> getStudyProcessingErrors() {
+        return studyProcessingErrors;
+    }
+
+    /**
+     * @param studyProcessingErrors the studyProcessingErrors to set
+     */
+    public void setStudyProcessingErrors(List<StudyProcessingErrorDTO> studyProcessingErrors) {
+        this.studyProcessingErrors = studyProcessingErrors;
+    }
 
 }

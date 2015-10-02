@@ -5,7 +5,7 @@
 
             <img alt="Progress Indicator" height="16" width="16" id="indicatorChangeType"
                 style="display: none; padding-right: 5px;"
-                src="${imagePath}/loading.gif">
+                src="${imagePath}/loading.gif"/>
 
             <s:form name="studyRecordChangesForm" id="studyRecordChangesForm"
                 action="resultsReportingCoverSheetaddOrEditStudyRecord.action">

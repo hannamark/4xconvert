@@ -123,23 +123,26 @@ setDocumentPageUrl("resultsReportingDocumentinput.action?parentPage=trialView",
  <div class="box">
     <pa:sucessMessage/>
     <pa:failureMessage/>
-   
-        <s:actionerror/>
-        <pa:studyUniqueToken/>
-        <!-- jsp for designee & PIO study contacts -->
-        <div id="studycontacts">
-	       <jsp:include page="/WEB-INF/jsp/administrative/reportingContacts/reportingStudyContactsContent.jsp"/>
-	    </div>
-        
-         <!-- jsp for trial comparision document -->
-        <s:set name="requestUrl" value="trialViewquery.action" />
-         <jsp:include page="/WEB-INF/jsp/administrative/reportingTrialDocuments/reportingTrialDocumentsList.jsp"/>
-         
+ 
+      <s:actionerror/>
+      <pa:studyUniqueToken/>
+      <!-- jsp for designee & PIO study contacts -->
+     <div id="studycontacts">
+        <jsp:include page="/WEB-INF/jsp/administrative/reportingContacts/reportingStudyContactsContent.jsp"/>
+     </div>
+     <!-- jsp for trial comparision document -->
+     <s:set name="requestUrl" value="trialViewquery.action" />
+     <jsp:include page="/WEB-INF/jsp/administrative/reportingTrialDocuments/reportingTrialDocumentsList.jsp"/>
+    
+     <div id="actions">
+        <jsp:include page="/WEB-INF/jsp/administrative/reportingActionsTaken/actionsTakenRecords.jsp"/>
+        <jsp:include page="/WEB-INF/jsp/administrative/reportingActionsTaken/editActionsTaken.jsp"/>
+     </div> 
+     </br></br>
      <s:form name="coverSheetForm" id ="coverSheetForm" action="">
         <!-- jsp for cover sheet do not include anything in this form please create separate form for another views-->
         <jsp:include page="/WEB-INF/jsp/administrative/reportingCoverSheet/reportCoverSheetStudyRecord.jsp"/>
-         <jsp:include page="/WEB-INF/jsp/administrative/reportingCoverSheet/reportCoverSheetFinalCleanup.jsp"/>             
-         
+        <jsp:include page="/WEB-INF/jsp/administrative/reportingCoverSheet/reportCoverSheetFinalCleanup.jsp"/>          
 	</s:form>
 	<!-- jsp for cover sheet -->
 	<jsp:include page="/WEB-INF/jsp/administrative/reportingCoverSheet/reportCoverSheetDisTypeDialog.jsp"/>

@@ -1,18 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-
 <div id="editActionTakenDialog" title="Add/Edit Actions taken record"
     style="display: none;">
-
-    <img alt="Progress Indicator" height="16" width="16" id="indicatorChangeType"
-        style="display: none; padding-right: 5px;"
-        src="${imagePath}/loading.gif">
-        
     <s:form method="POST" action="resultsReportingActionsTakenupdate.action"  name="editActionTakenForm" id="editActionTakenForm">
-        <s:token/>
-        <s:actionerror/>
-        <pa:studyUniqueToken/>
-    <s:hidden name="page" />
-    <s:hidden name="id" />
     <table class="form">                
                 <tr>
                     <td scope="row" class="label">
