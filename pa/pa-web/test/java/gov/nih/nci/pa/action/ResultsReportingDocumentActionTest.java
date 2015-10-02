@@ -111,8 +111,6 @@ public class ResultsReportingDocumentActionTest extends AbstractPaActionTest{
         
         result = reportingDocumentAction.query();
         assertEquals("success",result);
-        assertEquals("error.trialDocument.noRecords", ServletActionContext.getRequest().getAttribute(
-                Constants.SUCCESS_MESSAGE));
         
         
         

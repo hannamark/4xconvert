@@ -170,9 +170,6 @@ ServletRequestAware , ServletResponseAware {
                 for (DocumentDTO dto : isoList) {
                     trialDocumentList.add(new TrialDocumentWebDTO(dto));
                 }
-            } else {
-                request.setAttribute(Constants.SUCCESS_MESSAGE,
-                        getText("error.trialDocument.noRecords"));
             }
             return SUCCESS;
 

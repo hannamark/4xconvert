@@ -5,9 +5,10 @@
     <h2><fmt:message key="reportTrialDocument.subtitle" /></h2>
     
     <s:set name="hasDeletableDocs" value="%{false}" scope="request"/>
-    <s:if test="trialDocumentList != null">
     <s:set name="trialDocumentList" value="trialDocumentList" scope="request"/>
     <display:table name="${trialDocumentList}" id="row" class="data" sort="list"  pagesize="10" requestURI="${requestUrl}" export="false">
+    <display:setProperty name="basic.msg.empty_list"
+                        value="No trial documents exist on the trial" />
         <display:column titleKey="trialDocument.fileName" sortable="true" headerClass="sortable"  style="width:30%">
            <s:url id="url" action="resultsReportingDocumentsaveFile"><s:param name="id" value="%{#attr.row.id}" /></s:url>
            <s:a href="%{url}"><s:property value="%{#attr.row.fileName}" /></s:a>
@@ -49,7 +50,7 @@
            </display:column>
      
      </display:table>
-  </s:if>
+     
         <div class="actionsrow">
             <del class="btnwrapper">
                 <ul class="btnrow">

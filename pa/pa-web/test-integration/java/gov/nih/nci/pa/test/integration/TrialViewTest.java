@@ -34,7 +34,7 @@ public class TrialViewTest extends ResultsReportingStudyContactsTest {
         assertTrue(count ==0);
         
         assertTrue(selenium.isTextPresent("No study record changes found."));
-        assertTrue(selenium.isTextPresent("No Trial Documents exist on the trial."));
+        assertTrue(selenium.isTextPresent("No trial documents exist on the trial"));
     }
     
     private long getRecordCount(long trialId)

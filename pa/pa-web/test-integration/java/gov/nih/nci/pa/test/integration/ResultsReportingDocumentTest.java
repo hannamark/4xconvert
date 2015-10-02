@@ -35,7 +35,7 @@ public class ResultsReportingDocumentTest extends AbstractPaSeleniumTest {
         
         openAndWait("/pa/protected/resultsReportingDocumentquery.action?studyProtocolId="+trial.id);
         
-        assertTrue(selenium.isTextPresent("No Trial Documents exist on the trial."));
+        assertTrue(selenium.isTextPresent("No trial documents exist on the trial"));
       
 
               
@@ -126,7 +126,7 @@ public class ResultsReportingDocumentTest extends AbstractPaSeleniumTest {
             ((JavascriptExecutor) driver).executeScript(" document.forms[0].action = 'resultsReportingDocumentdelete.action'; document.forms[0].submit();");
              waitForPageToLoad();
             
-            assertTrue(selenium.isTextPresent("No Trial Documents exist on the trial."));
+            assertTrue(selenium.isTextPresent("No trial documents exist on the trial"));
             
             long recordCount = getRecordCount(trial.id,DocumentTypeCode.BEFORE_RESULTS.getName(), true);
             
@@ -231,7 +231,7 @@ public class ResultsReportingDocumentTest extends AbstractPaSeleniumTest {
         
         openAndWait("/pa/protected/resultsReportingDocumentquery.action?studyProtocolId="+trial.id);
         
-        assertTrue(selenium.isTextPresent("No Trial Documents exist on the trial."));
+        assertTrue(selenium.isTextPresent("No trial documents exist on the trial"));
       
 
               

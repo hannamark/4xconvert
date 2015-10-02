@@ -247,12 +247,7 @@ ServletRequestAware , ServletResponseAware , Preparable {
                 for (DocumentDTO dto : isoList) {
                     trialDocumentList.add(new TrialDocumentWebDTO(dto));
                 }
-            } else if (request.getAttribute(Constants.SUCCESS_MESSAGE) == null 
-                    && request.getAttribute(Constants.FAILURE_MESSAGE) == null) {
-                
-                request.setAttribute(Constants.SUCCESS_MESSAGE,
-                        getText("error.trialDocument.noRecords"));
-            }
+            } 
             
             //get study contacts list
             LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
