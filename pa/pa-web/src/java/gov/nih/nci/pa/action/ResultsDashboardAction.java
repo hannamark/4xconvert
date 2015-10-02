@@ -480,8 +480,10 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
 
             }
             if (!(documentWorkflowStatusCodes.contains(studyProtocolQueryDTO.getDocumentWorkflowStatusCode().getCode()) 
-                    || ((studyProtocolQueryDTO.getSubmissionTypeCode() == SubmissionTypeCode.A) 
-                            || (studyProtocolQueryDTO.getSubmissionTypeCode() == SubmissionTypeCode.U)))) {
+                || ((studyProtocolQueryDTO.getSubmissionTypeCode() == SubmissionTypeCode.A 
+                    && studyProtocolQueryDTO.getDocumentWorkflowStatusCode() 
+                        !=  DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED) 
+                    || (studyProtocolQueryDTO.getSubmissionTypeCode() == SubmissionTypeCode.U)))) {
                 continue;
             }
             filteredList.add(studyProtocolQueryDTO);
