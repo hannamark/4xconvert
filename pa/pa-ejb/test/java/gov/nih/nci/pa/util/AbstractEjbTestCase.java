@@ -434,7 +434,7 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
      */
     private static int randomPort() {
         int port;
-        while (isPortInUse((port = (int) (32768 + Math.random() * 32766)))) {
+        while (isPortInUse((port = (int) (1024 + Math.random() * 64500)))) {
             System.out.println("Port " + port + " in use; trying another...");
         }
         return port;
