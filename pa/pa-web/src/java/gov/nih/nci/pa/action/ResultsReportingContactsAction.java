@@ -621,8 +621,8 @@ ServletRequestAware , Preparable {
                 scWebDto.getPhone()))  {
             addFieldError(pfx + "phone", "Invalid phone number");
         }
-        if (!(StringUtils.isNotEmpty(scWebDto.getExt())
-                && NumberUtils.isNumber(scWebDto.getExt())))  {
+        if (StringUtils.isNotEmpty(scWebDto.getExt())
+                && !NumberUtils.isNumber(scWebDto.getExt()))  {
             addFieldError(pfx + "ext", "Invalid extension number");
         }
         return !hasFieldErrors();
