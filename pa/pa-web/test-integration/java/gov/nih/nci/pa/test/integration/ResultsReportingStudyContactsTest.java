@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayListHandler;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.junit.Test;
 import org.openqa.selenium.Alert;
@@ -126,6 +127,8 @@ public class ResultsReportingStudyContactsTest  extends AbstractPaSeleniumTest {
     private void addDesignee(String orgCtepId, String personCtepId, String email, String phone) {
         lookupOrg("lookupdesigneeorg", orgCtepId);
         lookupPerson("lookupdesigneeperson", personCtepId);
+        assertTrue(StringUtils.isNotEmpty(selenium.getValue("id=dscEmail")));
+        assertTrue(StringUtils.isNotEmpty(selenium.getValue("id=dscPhone")));
         selenium.type("dscPrsUserNm", "dscPrsUserNm");
         selenium.type("dscEmail", email);
         selenium.type("dscPhone", phone);
@@ -142,6 +145,8 @@ public class ResultsReportingStudyContactsTest  extends AbstractPaSeleniumTest {
     
     private void addPio(String personCtepId, String email, String phone) {
         lookupPerson("lookuppioperson", personCtepId);
+        assertTrue(StringUtils.isNotEmpty(selenium.getValue("id=pscEmail")));
+        assertTrue(StringUtils.isNotEmpty(selenium.getValue("id=pscPhone")));
         selenium.type("pscEmail", email);
         selenium.type("pscPhone", phone);
         selenium.type("pscExt", "123");

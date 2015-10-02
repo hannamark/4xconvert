@@ -612,12 +612,13 @@ ServletRequestAware , Preparable {
     }
     
     private boolean validatePhone(StudyContactWebDTO scWebDto, StudyContactRoleCode scrStsCd) {
-        if (scWebDto == null || StringUtils.isEmpty(scWebDto.getPhone())) {
+        if (scWebDto == null) {
             return true;
         }
         String pfx = StudyContactRoleCode.DESIGNEE_CONTACT.equals(scrStsCd)  
                 ? "editedDesigneeSCWebDTO." : "editedPioSCWebDTO.";
-        if (!PhoneUtil.isPhoneNumberValid(scWebDto.getContactOrg().getCountryName(), 
+        if (StringUtils.isNotEmpty(scWebDto.getPhone()) 
+                && !PhoneUtil.isPhoneNumberValid(scWebDto.getContactOrg().getCountryName(), 
                 scWebDto.getPhone()))  {
             addFieldError(pfx + "phone", "Invalid phone number");
         }

@@ -18,7 +18,8 @@
     </display:column>
     <display:column title="Action" class="action" sortable="false">
         <a href="javascript:void(0)" class="btn" onclick="callCreatePerson('${row.id}',
-            document.getElementById('${row.id}').value,'${func:escapeJavaScript(row.firstName)}','${func:escapeJavaScript(row.lastName)}')">
+            document.getElementById('${row.id}').value,'${func:escapeJavaScript(row.firstName)}','${func:escapeJavaScript(row.lastName)}', 
+            '${func:escapeJavaScript(row.email)}', '${func:escapeJavaScript(row.phone)}')">
             <span class="btn_img"><span class="add">Select</span></span>
         </a>
     </display:column>

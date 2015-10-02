@@ -61,9 +61,13 @@ function setpersid(persIdentifier,name,email,phone) {
 	if(ct=='pc') {
 		$('pscPrsnId').value = persIdentifier;
 	    $('pscPrsn').value = name;
+	    $('pscEmail').value = email;
+	    $('pscPhone').value = phone;
 	} else if(ct=='dc') {
 		$('dscPrsnId').value = persIdentifier;
 	    $('dscPrsn').value = name;
+	    $('dscEmail').value = email;
+        $('dscPhone').value = phone;
 	}
 }
 

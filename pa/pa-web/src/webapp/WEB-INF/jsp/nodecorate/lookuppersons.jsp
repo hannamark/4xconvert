@@ -12,8 +12,8 @@
                 window.top.hidePopWin(true);
             }
         
-            function callCreatePerson(persid, rolecode, fname, lname) {
-                top.window.setpersid(persid, (lname+', '+fname));
+            function callCreatePerson(persid, rolecode, fname, lname, email, phone) {
+                top.window.setpersid(persid, (lname+', '+fname), email, phone);
                 top.window.loadPersDiv(persid, rolecode, 'add');
                 window.top.hidePopWin(true);
             }
