@@ -169,7 +169,7 @@ public class StudyContactWebDTO implements Serializable {
      * @throws PAException  PAException
      */
     public StudyContactWebDTO(StudyContactDTO dto) throws PAException {
-        populateFrom(dto);       
+        populateFrom(dto); // NOPMD      
     }
 
     /**
