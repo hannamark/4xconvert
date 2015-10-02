@@ -10,7 +10,10 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayListHandler;
 import org.apache.commons.lang.SystemUtils;
 import org.junit.Test;
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
 
 
 
@@ -60,7 +63,11 @@ public class ResultsReportingStudyContactsTest  extends AbstractPaSeleniumTest {
         waitForTextToAppear(By.xpath("//table[@id='dscWeb']/tbody/tr[2]/td[5]"), "newjdoe02@some.com", 5);
         
         //delete img
-        clickAndWaitAjax("//table[@id='dscWeb']/tbody/tr[2]/td[7]/div/img[2]");
+        WebElement element = driver.findElement(By.xpath("//table[@id='dscWeb']/tbody/tr[2]/td[7]/div/img[2]"));
+        String text = element.getAttribute("onclick");
+        text = text.split("\\(")[1].split("\\)")[0];
+        ((JavascriptExecutor) driver).executeScript("$('process').value='delete';$('dscToEdit').value=" + text + ";"
+                + "submitStudyContact('reportStudyContactsForm', 'ajaxResultsReportingContactdelete.action')");
         waitForPageToLoad();
         pause(1000);
         assertTrue(selenium.isTextPresent("Selected designee/PIO study contact deleted successfully"));
@@ -103,7 +110,11 @@ public class ResultsReportingStudyContactsTest  extends AbstractPaSeleniumTest {
         waitForTextToAppear(By.xpath("//table[@id='pscWeb']/tbody/tr[2]/td[2]"), "newjdoe02@some.com", 5);
         
         //delete img
-        clickAndWaitAjax("//table[@id='pscWeb']/tbody/tr[2]/td[4]/div/img[2]");
+        WebElement element = driver.findElement(By.xpath("//table[@id='pscWeb']/tbody/tr[2]/td[4]/div/img[2]"));
+        String text = element.getAttribute("onclick");
+        text = text.split("\\(")[1].split("\\)")[0];
+        ((JavascriptExecutor) driver).executeScript("$('process').value='delete';$('pscToEdit').value=" + text + ";"
+                + "submitStudyContact('reportStudyContactsForm', 'ajaxResultsReportingContactdelete.action')");
         waitForPageToLoad();
         pause(1000);
         assertTrue(selenium.isTextPresent("Selected designee/PIO study contact deleted successfully"));

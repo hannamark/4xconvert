@@ -612,7 +612,7 @@ ServletRequestAware , Preparable {
     }
     
     private boolean validatePhone(StudyContactWebDTO scWebDto, StudyContactRoleCode scrStsCd) {
-        if (scWebDto == null) {
+        if (scWebDto == null || StringUtils.isEmpty(scWebDto.getPhone())) {
             return true;
         }
         String pfx = StudyContactRoleCode.DESIGNEE_CONTACT.equals(scrStsCd)  

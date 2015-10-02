@@ -38,7 +38,7 @@
                     <label for="pscEmail"> <fmt:message key="reportStudyContacts.pio.email"/></label><span class="required">*</span> 
                 </td>
                 <td>
-                    <s:textfield id="pscEmail" name="editedPioSCWebDTO.email" maxlength="200" size="200" cssStyle="width:200px"  />
+                    <s:textfield id="pscEmail" name="editedPioSCWebDTO.email" maxlength="200" size="200" cssStyle="width:200px" type="email" placeholder="example@example.com" />
                     <span class="formErrorMsg">
                         <s:fielderror>
                             <s:param>editedPioSCWebDTO.email</s:param>
@@ -53,7 +53,7 @@
                     <label for="pscPhone"> <fmt:message key="reportStudyContacts.pio.phone"/></label>
                 </td>
                 <td>
-                    <s:textfield id="pscPhone" name="editedPioSCWebDTO.phone" maxlength="200" size="200" cssStyle="width:200px"  />
+                    <s:textfield id="pscPhone" name="editedPioSCWebDTO.phone" maxlength="200" size="200" cssStyle="width:200px" type="tel" placeholder="703-111-1111" />
                     <span class="formErrorMsg">
                         <s:fielderror>
                             <s:param>editedPioSCWebDTO.phone</s:param>
@@ -66,7 +66,7 @@
                     <label for="pscExt"> <fmt:message key="reportStudyContacts.pio.ext"/></label>
                 </td>
                 <td>
-                    <s:textfield id="pscExt" name="editedPioSCWebDTO.ext" maxlength="200" size="200" cssStyle="width:200px"  />
+                    <s:textfield id="pscExt" name="editedPioSCWebDTO.ext" maxlength="200" size="200" cssStyle="width:200px" placeholder="123" />
                     <span class="formErrorMsg">
                         <s:fielderror>
                             <s:param>editedPioSCWebDTO.ext</s:param>

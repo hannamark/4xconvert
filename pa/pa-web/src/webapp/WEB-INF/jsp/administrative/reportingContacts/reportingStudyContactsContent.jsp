@@ -27,7 +27,7 @@ function initSectionDataTable(tableId) {
     var table = jQuery('#'+tableId).DataTable({
         "paging":   false,
         "ordering": false,
-        "info":     true,
+        "info":     false,
         "bFilter" :false
     });
     return table;
@@ -200,7 +200,6 @@ function submitStudyContact(scFormName, scUrl) {
         
         <input type="hidden" id="contactType" name="contactType" />
         <s:hidden id="process" name="process"/>
-        <s:hidden id="objectsToDelete" name="objectsToDelete"/>
         <s:hidden id="studyProtocolId" name="studyProtocolId"/>
         
         <jsp:include page="reportAddEditDesigneeStudyContact.jsp"/>
