@@ -86,6 +86,7 @@ import gov.nih.nci.pa.domain.StudyProcessingError;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProcessingErrorConverter;
 import gov.nih.nci.pa.dto.StudyProcessingErrorDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
@@ -278,27 +279,24 @@ public class StudyProcessingErrorBeanLocal extends
             String error = m.group(2).trim();
             LOG.debug("Parsed error for study:" + nciId + ", error:" + error);
             if (StringUtils.isNotEmpty(nciId)) {
-                List<Long> spIds = studyProtocolService
-                        .getProtocolIdsWithNCIId(nciId);
-
-                if (spIds == null || spIds.size() == 0) {
-                    LOG.error("No study protocol found with NCI ID: " + nciId);
-                    procesingErrors++;
-                } else if (spIds.size() > 1) {
-                    LOG.error("Multiple study protocols found with NCI ID: "
-                            + nciId);
-                    procesingErrors++;
-                } else {
+                Ii nciIi = new Ii();
+                nciIi.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+                nciIi.setExtension(nciId);
+                StudyProtocolDTO studyDto;
+                try {
+                    studyDto = studyProtocolService.getStudyProtocol(nciIi);
                     StudyProcessingError spe = new StudyProcessingError();
                     StudyProtocol sp = new StudyProtocol();
-                    sp.setId(spIds.get(0));
+                    sp.setId(IiConverter.convertToLong(studyDto.getIdentifier()));
                     spe.setStudyProtocol(sp);
                     spe.setErrorDate(new Timestamp(errorDate.getTime()));
                     spe.setErrorMessage(error);
                     spe.setRecurringError(isRecurringError(spe));
                     createStudyProcessingError(spe);
                     processedErrors++;
-                }
+                } catch (PAException pae) {
+                    LOG.error("No study protocol found with NCI ID: " + nciId);
+                }      
             }
         }
         LOG.info("Processed " + processedErrors

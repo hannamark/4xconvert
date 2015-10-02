@@ -87,6 +87,7 @@ import gov.nih.nci.pa.domain.AccountTest;
 import gov.nih.nci.pa.domain.Keystore;
 import gov.nih.nci.pa.domain.KeystoreTest;
 import gov.nih.nci.pa.domain.StudyProcessingError;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProcessingErrorDTO;
 import gov.nih.nci.pa.enums.ExternalSystemCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -134,6 +135,11 @@ public class StudyProcessingErrorServiceTest extends AbstractEjbTestCase {
     @Before
     public void setUp() throws Exception {
         TestSchema.primeData();
+        
+        TestSchema.addUpdObject(TestSchema.createDocumentWorkflowStatus(TestSchema.studyProtocols.get(0)));
+        
+        PaHibernateUtil.getCurrentSession().flush();
+        
         bean = (StudyProcessingErrorBeanLocal) getEjbBean(StudyProcessingErrorBeanLocal.class);
         studySvc = (StudyProtocolService) getEjbBean(StudyProtocolBeanLocal.class);
         
@@ -313,6 +319,9 @@ public class StudyProcessingErrorServiceTest extends AbstractEjbTestCase {
             c2.add(Calendar.DATE, 31);
             bean.processUploadErrorEmail(recurrentmessage2, c2.getTime());
             
+            PaHibernateUtil.getCurrentSession().flush();
+            PaHibernateUtil.getCurrentSession().clear();
+            
             List<StudyProcessingError> errors = studySvc.getStudyProtocol(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds
                     .get(0))).getStudyProcessingErrors();
             assertEquals(5, errors.size());
@@ -368,6 +377,10 @@ public class StudyProcessingErrorServiceTest extends AbstractEjbTestCase {
         // use greenmail to store the message
         user.deliver(message);
         bean.processStudyUploadErrors();
+        
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+        
         List<StudyProcessingError> errors =  studySvc.getStudyProtocol(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds
                 .get(0))).getStudyProcessingErrors();
         assertEquals(2, errors.size());
@@ -461,6 +474,10 @@ public class StudyProcessingErrorServiceTest extends AbstractEjbTestCase {
         // use greenmail to store the message
         user.deliver(message);
         bean.processStudyUploadErrors();
+        
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+        
         List<StudyProcessingError> errors =  studySvc.getStudyProtocol(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds
                 .get(0))).getStudyProcessingErrors();
         assertEquals(4, errors.size());
@@ -549,6 +566,9 @@ public class StudyProcessingErrorServiceTest extends AbstractEjbTestCase {
         // use greenmail to store the message
         user.deliver(message);
         bean.processStudyUploadErrors();
+        
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
         
         List<StudyProcessingErrorDTO> errors = bean.getStudyProcessingErrorByStudy(TestSchema.studyProtocolIds
                 .get(0));  
