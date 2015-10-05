@@ -671,12 +671,12 @@ public class DashboardTest extends AbstractTrialStatusTest {
     private void moveSubmissionDateBackByBizDays(TrialInfo trial, int days)
             throws SQLException {
         Date date = new Date();
-        while (days > 1) {
-            date = DateUtils.addDays(date, -1);
+        do {
             if (PAUtil.isBusinessDay(date)) {
                 days--;
             }
-        }
+        } while (days > 0 && (date = DateUtils.addDays(date, -1)) != null);
+
         new QueryRunner().update(connection,
                 "update study_protocol set date_last_created=" + jdbcTs(date)
                         + " where identifier=" + trial.id);
