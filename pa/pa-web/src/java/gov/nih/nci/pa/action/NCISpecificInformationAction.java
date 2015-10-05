@@ -170,7 +170,11 @@ public class NCISpecificInformationAction extends ActionSupport {
             
             //keep existing database logic as it is this mean false value should be shown as true in UI
             //and true value will be shown as false in UI
-            nciSpecificInformationWebDTO.setCtroOverride(!nciSpecificInformationWebDTO.getCtroOverride());
+            if (nciSpecificInformationWebDTO.getCtroOverride() != null) {
+                nciSpecificInformationWebDTO.setCtroOverride(!nciSpecificInformationWebDTO.getCtroOverride());    
+            }
+            
+            
            
             ServletActionContext.getRequest().getSession().setAttribute("summary4Sponsors", 
                     nciSpecificInformationWebDTO.getSummary4Sponsors());
