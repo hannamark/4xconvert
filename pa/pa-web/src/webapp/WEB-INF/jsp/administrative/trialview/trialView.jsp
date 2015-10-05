@@ -49,6 +49,10 @@ fieldset>input[id="actionCompletionDateChangeType"] {
 .hide_column{
     display : none;
 }
+.flash {
+ display:none; 
+ color:#00CC00;
+}
 
 </style>   
     
