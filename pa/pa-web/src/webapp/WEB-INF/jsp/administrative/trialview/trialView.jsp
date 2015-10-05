@@ -103,6 +103,21 @@ jQuery(document).ready(function() {
    
 
     submitStudyContact('reportStudyContactsForm', 'ajaxResultsReportingContactquery.action');
+	
+
+    jQuery("#designeeAccessRevokedDate").datepicker({
+        onClose : function (date, inp){
+            var id = inp.id;
+            onFinalSaveDateEnter(id)
+        }
+  });
+    
+    jQuery("#changesInCtrpCtGovDate").datepicker({
+        onClose : function (date, inp){
+            var id = inp.id;
+            onFinalSaveDateEnter(id)
+        }
+  });
 });
 
 
