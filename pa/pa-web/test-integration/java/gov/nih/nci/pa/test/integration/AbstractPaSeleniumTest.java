@@ -355,7 +355,11 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     }
 
     private void closeBrowser() {
-        driver.quit();
+        try {
+            driver.quit();
+        } catch (RuntimeException e) {           
+            e.printStackTrace();
+        }
     }
 
     protected void logoutUser() {
