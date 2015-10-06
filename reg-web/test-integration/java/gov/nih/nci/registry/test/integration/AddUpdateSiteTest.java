@@ -531,16 +531,16 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         waitForElementToBecomeInvisible(By.id("dialog-edit"), 10);
         waitForElementToBecomeAvailable(
                 By.xpath("//table[@id='siteStatusHistoryTable']/tbody/tr["
-                        + row + "]/td[position()=1 and text()='"
+                        + row + "]/td[position()=1 and normalize-space(text())='"
                         + (StringUtils.isNotBlank(date) ? date : today) + "']"),
                 20);
         waitForElementToBecomeAvailable(
                 By.xpath("//table[@id='siteStatusHistoryTable']/tbody/tr["
-                        + row + "]/td[position()=2 and text()='" + newStatus
+                        + row + "]/td[position()=2 and normalize-space(text())='" + newStatus
                         + "']"), 20);
         waitForElementToBecomeAvailable(
                 By.xpath("//table[@id='siteStatusHistoryTable']/tbody/tr["
-                        + row + "]/td[position()=3 and text()='" + comment
+                        + row + "]/td[position()=3 and normalize-space(text())='" + comment
                         + "']"), 20);
 
     }
@@ -582,7 +582,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         clickAndWaitAjax("addStatusBtn");
         waitForElementToBecomeVisible(By.id("siteStatusHistoryTable"), 10);
         waitForElementToBecomeAvailable(
-                By.xpath("//table[@id='siteStatusHistoryTable']/tbody//tr//td[position()=2 and text()='"
+                By.xpath("//table[@id='siteStatusHistoryTable']/tbody//tr//td[position()=2 and normalize-space(text())='"
                         + status + "']"), 10);
     }
 
