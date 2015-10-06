@@ -27,7 +27,7 @@ import java.net.URLEncoder;
 import java.util.logging.Logger;
 
 public class Urls {
-  private static Logger log = Logger.getLogger(Urls.class.getName());
+  private static Logger log = Logger.getLogger(Urls.class.getName());// NOPMD
 
   /**
    * Strips the specified URL so it only includes a protocal, hostname and port
@@ -46,7 +46,7 @@ public class Urls {
       }
       return u.getProtocol() + "://" + u.getAuthority();
     } catch (MalformedURLException e) {
-      throw new RuntimeException(e);
+      throw new RuntimeException(e); // NOPMD
     }
   }
 
