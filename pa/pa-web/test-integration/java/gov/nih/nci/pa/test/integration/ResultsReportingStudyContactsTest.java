@@ -50,7 +50,7 @@ public class ResultsReportingStudyContactsTest  extends AbstractPaSeleniumTest {
         assertTrue(selenium.isTextPresent("Designee contact has been added/updated successfully"));
         waitForElementToBecomeVisible(By.xpath("//table[@id='dscWeb']/tbody/tr[2]"), 5);
         //edit img
-        clickAndWaitAjax("//table[@id='dscWeb']/tbody/tr[2]/td[7]/div/img[1]");
+        clickAndWaitAjax("//table[@id='dscWeb']/tbody/tr[2]/td[8]/div/img[1]");
         waitForPageToLoad();
         pause(1000);
         
@@ -64,7 +64,7 @@ public class ResultsReportingStudyContactsTest  extends AbstractPaSeleniumTest {
         waitForTextToAppear(By.xpath("//table[@id='dscWeb']/tbody/tr[2]/td[5]"), "newjdoe02@some.com", 5);
         
         //delete img
-        WebElement element = driver.findElement(By.xpath("//table[@id='dscWeb']/tbody/tr[2]/td[7]/div/img[2]"));
+        WebElement element = driver.findElement(By.xpath("//table[@id='dscWeb']/tbody/tr[2]/td[8]/div/img[2]"));
         String text = element.getAttribute("onclick");
         text = text.split("\\(")[1].split("\\)")[0];
         ((JavascriptExecutor) driver).executeScript("$('process').value='delete';$('dscToEdit').value=" + text + ";"

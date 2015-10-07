@@ -388,7 +388,7 @@ ServletRequestAware , ServletResponseAware , Preparable {
         for (String contactId : designeeSelectedList) {
             Ii ii = IiConverter.convertToStudyContactIi(Long.valueOf(contactId));
             StudyContactDTO studyContactDTO = studyContactService.get(ii);   
-            studyContactDTO.setStatusCode(CdConverter.convertStringToCd("Pending"));
+            studyContactDTO.setStatusCode(CdConverter.convertStringToCd("Suspended"));
             studyContactService.update(studyContactDTO);
         }
         

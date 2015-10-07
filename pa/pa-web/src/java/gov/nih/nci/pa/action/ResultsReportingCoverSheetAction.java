@@ -348,7 +348,8 @@ ServletRequestAware , ServletResponseAware , Preparable {
                  FunctionalRoleStatusCode stsCd = CdConverter.convertCdToEnum(FunctionalRoleStatusCode.class, 
                          scDto.getStatusCode());
                  if (!FunctionalRoleStatusCode.ACTIVE.equals(stsCd) 
-                      && !FunctionalRoleStatusCode.PENDING.equals(stsCd)) {
+                         && !FunctionalRoleStatusCode.PENDING.equals(stsCd)
+                         && !FunctionalRoleStatusCode.SUSPENDED.equals(stsCd)) {
                      continue;
                  }
                  designeeContactList.add(new StudyContactWebDTO(scDto));
@@ -360,7 +361,7 @@ ServletRequestAware , ServletResponseAware , Preparable {
             Ii ii = IiConverter.convertToStudyContactIi(Long.valueOf(contactWebDTO.getId()));
             StudyContactDTO studyContactDTO = studyContactService.get(ii);  
             if (designeeAccessRevoked) {
-            studyContactDTO.setStatusCode(CdConverter.convertStringToCd("Pending"));
+                studyContactDTO.setStatusCode(CdConverter.convertStringToCd("Suspended"));
             } else {
                 studyContactDTO.setStatusCode(CdConverter.convertStringToCd("Active"));
             }   

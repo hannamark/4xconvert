@@ -182,6 +182,7 @@ table.results {
 	var="diseaseWidgetURL" />
 
 <script type="text/javascript" language="javascript">
+
 jQuery(function() {
 	
 	var reportDateUpdateError = function(study, attr){
@@ -232,8 +233,10 @@ jQuery(function() {
           });			
 		}
 	});
+
   });
   
+
 
 function handleAction(action) {
     document.forms[0].action = "resultsDashboardsearch.action";

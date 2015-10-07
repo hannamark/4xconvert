@@ -338,8 +338,8 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
                                                             .convertCdToEnum(
                                                                     FunctionalRoleStatusCode.class,
                                                                     scDto.getStatusCode());
-                                                    if (!FunctionalRoleStatusCode.ACTIVE
-                                                            .equals(stsCd)) {
+                                                    if (!FunctionalRoleStatusCode.ACTIVE.equals(stsCd) 
+                                                            && !FunctionalRoleStatusCode.PENDING.equals(stsCd)) {
                                                         continue;
                                                     }
 

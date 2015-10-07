@@ -257,12 +257,15 @@ ServletRequestAware , Preparable {
     private void populateWebDtos(List<StudyContactWebDTO> scWebDtos, List<StudyContactDTO> scDtos) throws PAException {
         if (CollectionUtils.isNotEmpty(scDtos)) {
             for (StudyContactDTO scDto : scDtos) {
-                if (FunctionalRoleStatusCode.ACTIVE.getCode().equals(
-                        CdConverter.convertCdToString(scDto.getStatusCode())) 
-                        || FunctionalRoleStatusCode.PENDING.getCode().equals(
-                                CdConverter.convertCdToString(scDto.getStatusCode()))) {
-                    scWebDtos.add(new StudyContactWebDTO(scDto));
+                FunctionalRoleStatusCode stsCd = CdConverter.convertCdToEnum(FunctionalRoleStatusCode.class, 
+                        scDto.getStatusCode());
+                if (!FunctionalRoleStatusCode.ACTIVE.equals(stsCd) 
+                        && !FunctionalRoleStatusCode.PENDING.equals(stsCd)
+                        && !FunctionalRoleStatusCode.SUSPENDED.equals(stsCd)) {
+                    continue;
                 }
+                
+                scWebDtos.add(new StudyContactWebDTO(scDto));
             }
         }
     }

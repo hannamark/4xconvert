@@ -25,8 +25,10 @@
                         property="email" />
                      <display:column escapeXml="false" title="Phone" 
                         property="phoneWithExt"/>
-                    <display:column escapeXml="false" title="Actions" style="align:center" media="html">
-                        <div align="left">
+                    <display:column escapeXml="false" title="Access Revoked?" style="text-align:center">
+                    ${dscWeb.statusCode == 'Suspended' ? 'Yes': 'No'}</display:column>
+                    <display:column escapeXml="false" title="Actions" media="html">
+                        <div align="center">
                              <img style="cursor: pointer;" alt="Click here to edit"
                                 src="${imagePath}/ico_edit.gif" onclick="editDesigneeContact(${dscWeb.id});"/>
                             <img style="cursor: pointer;" alt="Click here to delete"

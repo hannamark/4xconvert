@@ -133,6 +133,7 @@ public class StudyContactWebDTO implements Serializable {
     private String ext;
     private String comments;
     private String roleCode;
+    private String statusCode;
     private Long studyProtocolId;
     
     private String selPoOrgId;
@@ -183,6 +184,7 @@ public class StudyContactWebDTO implements Serializable {
         this.prsUserName = StConverter.convertToString(dto.getPrsUserName());
         this.comments = StConverter.convertToString(dto.getComments());
         this.roleCode = CdConverter.convertCdToString(dto.getRoleCode());
+        this.statusCode = CdConverter.convertCdToString(dto.getStatusCode());
         this.studyProtocolId = IiConverter.convertToLong(dto.getStudyProtocolIdentifier());
         
         OrganizationalContact oc = paServiceUtils.getOrganizationalContact(orgContactId.toString());
@@ -543,6 +545,21 @@ public class StudyContactWebDTO implements Serializable {
      */
     public void setStudyProtocolId(Long studyProtocolId) {
         this.studyProtocolId = studyProtocolId;
+    }
+    
+
+    /**
+     * @return the statusCode
+     */
+    public String getStatusCode() {
+        return statusCode;
+    }
+
+    /**
+     * @param statusCode the statusCode to set
+     */
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
     }
 
     /**
