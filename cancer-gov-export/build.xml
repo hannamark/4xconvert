@@ -42,11 +42,11 @@
 	<taskdef classname="org.codehaus.groovy.ant.Groovy" classpathref="pdqexport.classpath" name="groovy" />
 
 	<target name="generate" description="Generates the Cancer.Gov XML Feed Export">
-		<tstamp>
-			<format property="TODAY" pattern="yyyy-MM-dd" locale="US" />
-		</tstamp>
 		<echo message="Generating Cancer.Gov XML Feed Export..." />
 		<groovy classpathref="pdqexport.classpath" src="src/main/groovy/export.groovy" />
+        <tstamp>
+	            <format property="TODAY" pattern="yyyy-MM-dd" locale="US" />
+	    </tstamp>
 		<zip destfile="${output.dir}/CTRP-TO-CANCER-GOV-EXPORT-${TODAY}.zip" basedir="${output.dir}" includes="*.xml" />
 		<copy file="${output.dir}/CTRP-TO-CANCER-GOV-EXPORT-${TODAY}.zip" tofile="${output.dir}/LATEST-CTRP-TO-CANCER-GOV-EXPORT.zip" />
 		<scp todir="${pa.ssh.user}:${pa.ssh.password}@${pa.ssh.host}:${pdq.upload.filepath.loc}" trust="yes" verbose="yes">
