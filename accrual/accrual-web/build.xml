@@ -39,7 +39,7 @@
     <property name="web.coverage.reports" value="${web.report.dir}/coverage-reports"/>
     <property name="web.coverage.line" value="90"/>
     <property name="web.coverage.branch" value="83"/>
-    <property name="web.pmd.maxerrors" value="2"/>
+    <property name="web.pmd.maxerrors" value="5"/>
 
     <property name="selenium.delay" value="10"/>
 

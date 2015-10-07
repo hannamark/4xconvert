@@ -11,7 +11,7 @@
     <property file="${basedir}/../build-pa/version.properties"/>
     <property name="reg-web.coverage.line" value="77"/>
     <property name="reg-web.coverage.branch" value="62"/>
-    <property name="reg-web.pmd.maxerrors" value="144"/>
+    <property name="reg-web.pmd.maxerrors" value="131"/>
 	<property name="software.dir" value="${basedir}/.."/>
     <property name="pa.dir" value="${software.dir}/pa"/>
     <property name="pa.report.dir" value="${software.dir}/target/pa/reports"/>

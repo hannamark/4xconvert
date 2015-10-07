@@ -11,7 +11,7 @@
     <property file="${basedir}/../../build-pa/version.properties"/>
     <property name="services.coverage.line" value="91"/>
     <property name="services.coverage.branch" value="85"/>
-    <property name="services.pmd.maxerrors" value="2"/>
+    <property name="services.pmd.maxerrors" value="84"/>
 
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="common.dir" value="${basedir}/../../build-pa/common"/>

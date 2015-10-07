@@ -11,7 +11,7 @@
     <property file="${basedir}/../../build-pa/version.properties"/>
     <property name="pa-webservices.coverage.line" value="91"/>
     <property name="pa-webservices.coverage.branch" value="77"/>
-    <property name="pa-webservices.pmd.maxerrors" value="0"/>
+    <property name="pa-webservices.pmd.maxerrors" value="15"/>
 
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="pa.dir" value="${software.dir}/pa"/>

@@ -204,7 +204,10 @@
     <dependency conf="test-selenium->compile,master" org="com.google.guava" name="guava" rev="18.0" force="true">
         <artifact name="guava" type="jar" conf="*"/>
     </dependency>
-    <dependency conf="test-pmd->master,runtime" org="pmd" name="pmd" rev="4.2.5"/>
+    <dependency conf="test-pmd->master,runtime" org="net.sourceforge.pmd" name="pmd-java" rev="5.4.0"/>
+    <dependency conf="test-pmd->master,runtime" org="jaxen" name="jaxen" rev="1.1.6">
+        <artifact name="jaxen" type="jar" conf="*"/>
+    </dependency>
     <dependency conf="test-simian->master,runtime" org="redhill" name="simian" rev="2.2.4"/>
   </dependencies>
 </ivy-module>
