@@ -217,7 +217,7 @@
     <target name="test-cobertura" depends="compile-tests">
         <taskdef classpathref="test-cobertura.classpath" resource="tasks.properties"/>
         <delete file="${web.build.dir}/cobertura.ser"/>
-        <cobertura-instrument  ignoreTrivial="true" datafile="${web.build.dir}/cobertura.ser" toDir="${web.build.coberturaOutputDir}">
+        <cobertura-instrument datafile="${web.build.dir}/cobertura.ser" toDir="${web.build.coberturaOutputDir}">
             <fileset dir="${web.build.outputDir}">
                 <include name="**/*.class"/>   
             	<exclude name="**/gov/nih/nci/accrual/webservices/types/*.class"/>
