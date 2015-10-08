@@ -195,7 +195,7 @@
     </dependency>
     <dependency conf="test-checkstyle->master,runtime" org="com.puppycrawl.tools" name="checkstyle" rev="5.7"/>
 
-    <dependency conf="test-cobertura->master,runtime" org="net.sourceforge.cobertura" name="cobertura" rev="2.0.3"/>
+    <dependency conf="test-cobertura->master,runtime" org="net.sourceforge.cobertura" name="cobertura" rev="2.1.1"/>
     <dependency conf="test-junit->master" org="junit" name="junit" rev="4.8.2"/>    
     <dependency conf="test-selenium->master" org="org.seleniumhq.selenium" name="selenium-java" rev="2.47.2"/>
     <dependency conf="test-selenium->master" org="org.postgresql" name="postgresql" rev="9.2-1003-jdbc4"/>
