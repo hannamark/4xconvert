@@ -168,21 +168,21 @@ public class ResultsReportingCoversheetTest  extends AbstractPaSeleniumTest {
        openAndWait(baseUrl+trial.id);
        
        selenium.select("useStandardLanguage", "Yes");
-       waitForElementToBecomeInvisible(By.id("useStandardLanguage_flash"), 3);
+       waitForElementToBecomeInvisible(By.id("useStandardLanguage_flash"), 6);
        WebElement element = driver.findElement(By.id("useStandardLanguage"));
        //if above condition is successful that means indeed save is sucessfully just assert value of dropdown
        String selectedOption = new Select(element).getFirstSelectedOption().getText();
        assertEquals("Yes", selectedOption);
        
        selenium.select("dateEnteredInPrs", "Yes");
-       waitForElementToBecomeInvisible(By.id("dateEnteredInPrs_flash"), 3);
+       waitForElementToBecomeInvisible(By.id("dateEnteredInPrs_flash"), 6);
        //if above condition is successful that means indeed save is sucessfully just assert value of dropdown
        element = driver.findElement(By.id("dateEnteredInPrs"));
        selectedOption = new Select(element).getFirstSelectedOption().getText();
        assertEquals("Yes", selectedOption);
        
        selenium.select("designeeAccessRevoked", "Yes");
-       waitForElementToBecomeInvisible(By.id("designeeAccessRevoked_flash"), 3);
+       waitForElementToBecomeInvisible(By.id("designeeAccessRevoked_flash"), 6);
        //if above condition is successful that means indeed save is sucessfully just assert value of dropdown
        element = driver.findElement(By.id("designeeAccessRevoked"));
        selectedOption = new Select(element).getFirstSelectedOption().getText();
@@ -190,13 +190,13 @@ public class ResultsReportingCoversheetTest  extends AbstractPaSeleniumTest {
        
        
        selenium.type("designeeAccessRevokedDate", today);
-       waitForElementToBecomeInvisible(By.id("designeeAccessRevokedDate_flash"), 3);
+       waitForElementToBecomeInvisible(By.id("designeeAccessRevokedDate_flash"), 6);
        //if above condition is successful that means indeed save is sucessfully just assert value of dropdown
        element = driver.findElement(By.id("designeeAccessRevokedDate"));
        
      
        selenium.select("changesInCtrpCtGov", "Yes");
-       waitForElementToBecomeInvisible(By.id("changesInCtrpCtGov_flash"), 3);
+       waitForElementToBecomeInvisible(By.id("changesInCtrpCtGov_flash"), 6);
        //if above condition is successful that means indeed save is sucessfully just assert value of dropdown
        element = driver.findElement(By.id("changesInCtrpCtGov"));
        selectedOption = new Select(element).getFirstSelectedOption().getText();
