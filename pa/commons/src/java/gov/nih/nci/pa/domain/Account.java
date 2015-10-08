@@ -3,6 +3,7 @@ package gov.nih.nci.pa.domain;
 import gov.nih.nci.pa.enums.ExternalSystemCode;
 
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
@@ -123,7 +124,8 @@ public class Account implements Serializable {
                 Cipher cipher = Cipher.getInstance(Keystore.ALGORITHM);
                 cipher.init(Cipher.DECRYPT_MODE, keypair.getPrivate());
                 decrypt = new String(cipher.doFinal(Hex
-                        .decodeHex(getEncryptedPassword().toCharArray())));
+                        .decodeHex(getEncryptedPassword().toCharArray())),
+                        Charset.defaultCharset());
             } catch (InvalidKeyException | NoSuchAlgorithmException
                     | NoSuchPaddingException | IllegalBlockSizeException
                     | BadPaddingException | DecoderException e) {

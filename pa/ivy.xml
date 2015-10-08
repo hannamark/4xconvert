@@ -14,6 +14,7 @@
     <conf name="test-selenium"/>
     <conf name="test-pmd"/>
     <conf name="test-simian"/>
+    <conf name="test-findbugs"/>
   </configurations>
 
   <dependencies>
@@ -209,5 +210,11 @@
         <artifact name="jaxen" type="jar" conf="*"/>
     </dependency>
     <dependency conf="test-simian->master,runtime" org="redhill" name="simian" rev="2.2.4"/>
+    
+    <dependency conf="test-findbugs->master,runtime" org="com.google.code.findbugs" name="findbugs" rev="3.0.1"/>
+    <dependency conf="test-findbugs->master,runtime" org="jaxen" name="jaxen" rev="1.1.6">
+        <artifact name="jaxen" type="jar" conf="*"/>
+    </dependency>
+    
   </dependencies>
 </ivy-module>

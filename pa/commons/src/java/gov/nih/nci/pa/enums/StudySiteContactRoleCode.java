@@ -169,7 +169,7 @@ public enum StudySiteContactRoleCode implements CodedEnum<String> {
         int x = 0;
         for (int i = 0; i < l.length; i++) {
             if (l[i].getName().equals(StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getName())
-                    | l[i].getName().equals(StudySiteContactRoleCode.SUB_INVESTIGATOR.getName())) {
+                    || l[i].getName().equals(StudySiteContactRoleCode.SUB_INVESTIGATOR.getName())) {
                 a[x] = l[i].getCode();
                 x++;
             }

@@ -364,6 +364,9 @@
         <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-pmd"/>
         <ivy:resolve refresh="true" conf="test-simian"/>
         <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-simian"/>
+        <ivy:resolve refresh="true" conf="test-findbugs"/>
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-findbugs"/>
+
     </target>
 
     <!-- ====================================================================== -->
