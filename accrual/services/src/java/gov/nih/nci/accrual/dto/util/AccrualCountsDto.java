@@ -78,13 +78,18 @@
 */
 package gov.nih.nci.accrual.dto.util;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
  * @author Kalpana Guthikonda
  * @since 10/24/2012
  */
-public class AccrualCountsDto {
+public class AccrualCountsDto implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private String nciNumber;
     private String leadOrgTrialIdentifier;
     private String nctNumber;

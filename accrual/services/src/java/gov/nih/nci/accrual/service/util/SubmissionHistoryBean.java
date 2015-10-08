@@ -1,5 +1,6 @@
 package gov.nih.nci.accrual.service.util;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gov.nih.nci.accrual.dto.HistoricalSubmissionDto;
 import gov.nih.nci.accrual.service.SubjectAccrualBeanLocal;
 import gov.nih.nci.accrual.service.interceptor.RemoteAuthorizationInterceptor;
@@ -110,6 +111,7 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
     }
 
     /** Used to store data on trial. Avoid redundant db queries. */
+    @SuppressFBWarnings
     private class TrialData implements Serializable {
         private static final long serialVersionUID = -8133288058658604054L;
         private final boolean industrial;
@@ -126,6 +128,7 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
     }
 
     /** Key for trial data cache. */
+    @SuppressFBWarnings
     private class TrialDataKey implements Serializable { // NOPMD
         private static final long serialVersionUID = -7287423193024383923L;
         private final Long regUserId;

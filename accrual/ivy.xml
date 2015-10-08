@@ -12,6 +12,7 @@
     <conf name="test-selenium"/>
     <conf name="test-pmd"/>
     <conf name="test-simian"/>
+    <conf name="test-findbugs"/>
   </configurations>
 
   <dependencies>
@@ -31,7 +32,7 @@
     <dependency conf="build->master" org="commons-lang" name="commons-lang" rev="2.6"/>
    
     
-
+    <dependency conf="compile->master" org="com.google.code.findbugs" name="findbugs" rev="3.0.1" transitive="false"/>
     <dependency conf="compile->master" org="cglib" name="cglib" rev="2.2"/>
     <dependency conf="compile->master" org="commons-codec" name="commons-codec" rev="1.6"/>
     <dependency conf="compile->master" org="csmapi" name="csmapi" rev="4.2"/>
@@ -160,5 +161,11 @@
     </dependency>
 
     <dependency conf="test-simian->master,runtime" org="redhill" name="simian" rev="2.2.4"/>
+    
+    <dependency conf="test-findbugs->master,runtime" org="com.google.code.findbugs" name="findbugs" rev="3.0.1"/>
+    <dependency conf="test-findbugs->master,runtime" org="jaxen" name="jaxen" rev="1.1.6">
+        <artifact name="jaxen" type="jar" conf="*"/>
+    </dependency>
+    
   </dependencies>
 </ivy-module>

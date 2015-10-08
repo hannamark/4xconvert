@@ -32,6 +32,7 @@
 	<classpathentry kind="var" path="ACCRUAL_LIB/ear/nci-commons-ctrp-core-1.4.12.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/ear/opencsv-2.1.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/ear/po-services-1.0.1.IR6-client.jar"/>
+	<classpathentry kind="var" path="ACCRUAL_LIB/compile/findbugs-3.0.1.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/compile/cglib-2.2.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/compile/commons-codec-1.6.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/compile/hibernate-3.2.0.ga.jar"/>

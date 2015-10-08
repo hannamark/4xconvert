@@ -150,6 +150,8 @@
         <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-pmd"/>
         <ivy:resolve refresh="true" conf="test-simian"/>
         <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-simian"/>
+        <ivy:resolve refresh="true" conf="test-findbugs"/>
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-findbugs"/>    	
         <property name="pa.commons.test.jar" value="${software.dir}/pa/commons/target/pa-commons-test.jar"/>
         <available file="${pa.commons.test.jar}" property="pa.commons.test.jar.present"/>
         <fail unless="pa.commons.test.jar.present" message="File pa-commons-test.jar not found. Please build PA."/>

@@ -70,6 +70,12 @@
         </fileset>
     </path>
 
+    <path id="test-findbugs.classpath">
+        <fileset dir="${lib.dir}/test-findbugs">
+            <include name="*.jar"/>
+        </fileset>
+    </path> 	
+	
     <path id="test-simian.classpath">
         <fileset dir="${lib.dir}/test-simian">
             <include name="*.jar"/>
@@ -294,6 +300,25 @@
             </fileset>
          </pmd>
     </target>
+	
+    <!-- ====================================================================== -->
+    <!-- Run Find Bugs                                                             -->
+    <!-- ====================================================================== -->
+
+    <target name="test-findbugs">
+        <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="test-findbugs.classpath"/>
+        <findbugs reportLevel="high" failOnError="true" classpathref="test-findbugs.classpath"
+                      output="xml:withMessages" warningsProperty="bugsFound" maxrank="14" projectname="accrual-services"
+                      outputFile="${services.report.dir}/findbugs.xml">
+          <auxClasspath>
+            <path refid="compile.classpath"/>
+          </auxClasspath>
+          <sourcePath path="${services.build.srcDir}" />
+          <class location="${services.build.outputDir}" />
+        </findbugs>
+        <fail if="bugsFound" message="Bugs found! See ${services.report.dir}/findbugs.xml for details."/>
+    </target>       
+
 
 
     <!-- ====================================================================== -->
@@ -317,7 +342,7 @@
     <!-- Static analysis target                                                 -->
     <!-- ====================================================================== -->
 
-    <target name="inspect" depends="create-jar, test-checkstyle, test-pmd, test-simian"
+    <target name="inspect" depends="create-jar, test-checkstyle, test-pmd, test-simian, test-findbugs"
             description="Runs various static analysis tools such as PMD, Checkstyle, Simian">
     </target>
 
