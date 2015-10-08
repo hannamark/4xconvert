@@ -92,6 +92,12 @@
             <include name="*.jar"/>
         </fileset>
     </path>
+	
+    <path id="test-findbugs.classpath">
+        <fileset dir="${lib.dir}/test-findbugs">
+            <include name="*.jar"/>
+        </fileset>
+    </path>	
 
     <path id="test-simian.classpath">
         <fileset dir="${lib.dir}/test-simian">
@@ -395,6 +401,26 @@
             </fileset>
          </pmd>
     </target>
+	
+    <!-- ====================================================================== -->
+    <!-- Run Find Bugs                                                             -->
+    <!-- ====================================================================== -->
+
+    <target name="test-findbugs">
+        <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="test-findbugs.classpath"/>
+        <findbugs reportLevel="high" failOnError="true" classpathref="test-findbugs.classpath"
+                      output="xml:withMessages" warningsProperty="bugsFound" maxrank="14" projectname="reg-web"
+                      outputFile="${pa.report.dir}/reg-web/findbugs.xml">
+          <auxClasspath>
+            <path refid="compile.classpath"/>
+            <path refid="ejb.package.classpath"/>
+            <path refid="common.package.classpath"/>
+          </auxClasspath>
+          <sourcePath path="${reg-web.build.srcDir.0}" />
+          <class location="${reg-web.build.outputDir}" />
+        </findbugs>
+        <fail if="bugsFound" message="Bugs found! See ${pa.report.dir}/reg-web/findbugs.xml for details."/>
+    </target>   	
 
     <!-- ====================================================================== -->
     <!-- Run Simian                                                             -->
@@ -419,7 +445,7 @@
             description="Run dynamic analysis."/>
 
     <target name="test-static-analysis"
-            depends="compile,test-checkstyle,test-pmd,test-simian"
+            depends="compile,test-checkstyle,test-pmd,test-simian,test-findbugs"
             description="Run static analysis."/>
 
     <target name="test-all"

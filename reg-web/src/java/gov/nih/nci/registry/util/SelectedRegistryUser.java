@@ -83,6 +83,8 @@
 
 package gov.nih.nci.registry.util;
 
+import java.io.Serializable;
+
 import gov.nih.nci.pa.domain.RegistryUser;
 
 /**
@@ -90,7 +92,11 @@ import gov.nih.nci.pa.domain.RegistryUser;
  * @author kkanchinadam
  *
  */
-public class SelectedRegistryUser {
+public class SelectedRegistryUser implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private RegistryUser registryUser;
     private boolean selected;
     /**

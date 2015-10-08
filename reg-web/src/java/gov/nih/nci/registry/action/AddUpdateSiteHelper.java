@@ -187,7 +187,7 @@ public final class AddUpdateSiteHelper {
         studySiteDTO.setProgramCodeText(StConverter.convertToSt(siteDTO
                 .getProgramCode()));
         if (StringUtils.isNotEmpty(siteDTO.getDateClosedforAccrual())
-                && StringUtils.isNotEmpty(siteDTO.getDateClosedforAccrual())) {
+                && StringUtils.isNotEmpty(siteDTO.getDateOpenedforAccrual())) {
             studySiteDTO.setAccrualDateRange(IvlConverter.convertTs()
                     .convertToIvl(siteDTO.getDateOpenedforAccrual(),
                             siteDTO.getDateClosedforAccrual()));

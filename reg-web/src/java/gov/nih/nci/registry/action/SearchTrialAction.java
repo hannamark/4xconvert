@@ -679,10 +679,10 @@ public class SearchTrialAction extends BaseSearchTrialAction implements Preparab
             List<StudyProtocolStageDTO> spStageDTOs = studyProtocolStageService.search(criteriaSpDTO, limit);
             setRecords(convertToSpQueryDTO(spStageDTOs));
         } catch (PAException e) {
-            LOG.equals(e.getMessage());
+            LOG.error(e, e);
             addActionError("Exception :" + e.getMessage());
         } catch (TooManyResultsException e) {
-            LOG.equals("Exception :" + e.getMessage());
+            LOG.error(e, e);
         }
         ServletActionContext.getRequest().setAttribute("partialSubmission", "yes");
         return SUCCESS;
