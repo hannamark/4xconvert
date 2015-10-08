@@ -427,7 +427,7 @@ public class SearchTrialBean implements SearchTrialService {
             if (values != null && !values.isEmpty()) { // PO-9267
             query = session.createSQLQuery(LEAD_ORG_QRY_FAMILY_ORGS);
             query.setParameterList("orgIDS", AccrualUtil.convertPoOrgIdsToStrings(values));
-            if (!noCtepDcpTrialIdsList.isEmpty()) {
+            if (!trialsWithoutCTEPOrDCPId.isEmpty()) {
                 query.setParameterList(SPID, trialsWithoutCTEPOrDCPId);   
             } else {
                 query.setParameter(SPID, null,  Hibernate.LONG);  
