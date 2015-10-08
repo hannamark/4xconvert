@@ -222,6 +222,9 @@
                 <include name="**/*.class"/>   
             	<exclude name="**/gov/nih/nci/accrual/webservices/types/*.class"/>
             </fileset>
+            <auxClasspath>            
+                 <path refid="compile.classpath"/>                
+            </auxClasspath>
         </cobertura-instrument>
 
         <mkdir dir="${web.test.reports}"/>

@@ -224,6 +224,9 @@
                 <include name="**/*.class"/>
                 <exclude name="**/EJBInvokerJob.class"/>
             </fileset>
+            <auxClasspath>            
+                 <path refid="compile.classpath"/>                
+            </auxClasspath>        	
         </cobertura-instrument>
 
         <mkdir dir="${web.test.reports}"/>

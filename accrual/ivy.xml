@@ -143,8 +143,8 @@
     <dependency conf="test-checkstyle->master,runtime" org="com.google.guava" name="guava" rev="18.0" force="true">
         <artifact name="guava" type="jar" conf="*"/>
     </dependency>
-    <dependency conf="test-checkstyle->master,runtime" org="com.puppycrawl.tools" name="checkstyle" rev="5.7"/>
-    <dependency conf="test-cobertura->master,runtime" org="net.sourceforge.cobertura" name="cobertura" rev="1.9.4.1"/>
+    <dependency conf="test-checkstyle->master,runtime" org="com.puppycrawl.tools" name="checkstyle" rev="5.7"/>    
+    <dependency conf="test-cobertura->master,runtime" org="net.sourceforge.cobertura" name="cobertura" rev="2.1.1"/>
     
     <dependency conf="test-selenium->master" org="org.seleniumhq.selenium" name="selenium-java" rev="2.47.2"/>
     <dependency conf="test-selenium->master" org="org.postgresql" name="postgresql" rev="9.2-1003-jdbc4"/>

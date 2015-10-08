@@ -209,6 +209,9 @@
                 <include name="**/accrual/**/*.class"/>
             	<exclude name="**/PoMockLocator.class"/>
             </fileset>
+            <auxClasspath>            
+                 <path refid="compile.classpath"/>                
+            </auxClasspath>
         </cobertura-instrument>
 
         <mkdir dir="${services.test.reports}"/>
