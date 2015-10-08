@@ -151,9 +151,9 @@ public class StudyContactWebDTO implements Serializable {
     private boolean updated = false;
     private boolean deleted = false;
     
-    private PAServiceUtils paServiceUtils = new PAServiceUtils();
+    private transient PAServiceUtils paServiceUtils = new PAServiceUtils();
     
-    private PABaseCorrelation<PAOrganizationalContactDTO , OrganizationalContactDTO , OrganizationalContact ,
+    private transient PABaseCorrelation<PAOrganizationalContactDTO , OrganizationalContactDTO , OrganizationalContact ,
     OrganizationalContactConverter> paBaseCorrltn = new PABaseCorrelation<PAOrganizationalContactDTO ,
     OrganizationalContactDTO , OrganizationalContact , OrganizationalContactConverter>(
        PAOrganizationalContactDTO.class, OrganizationalContact.class, OrganizationalContactConverter.class);

@@ -22,9 +22,10 @@ import org.quartz.impl.StdSchedulerFactory;
  * 
  */
 @SuppressWarnings({ "PMD.ExcessiveMethodLength", "deprecation" })
+@edu.umd.cs.findbugs.annotations.SuppressWarnings
 public class QuartzInitializerServlet extends
         org.quartz.ee.servlet.QuartzInitializerServlet {
-
+ 
     private static final String CTGOV_UPLOAD_ERROR_PROCESSING_JOB_TRIGGER = "ctgovUploadErrorProcessingJobTrigger";
 
     private static final String DAILY_TRIGGER_GROUP = "DailyTriggerGroup";

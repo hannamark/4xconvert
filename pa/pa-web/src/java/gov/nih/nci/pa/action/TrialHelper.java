@@ -203,10 +203,8 @@ public class TrialHelper {
                 getPaServiceUtils().removeResponsibleParty(studyProtocolIi);
                 createSponorContact(studyProtocolIi, gtdDTO);
             }
-        } else if ((!isAbbr && !gtdDTO
-                .isCtGovXmlRequired())
-                || (isAbbr && StringUtils
-                        .isBlank(sponsorPoId))) {
+        } else if ((!isAbbr && !gtdDTO.isCtGovXmlRequired())
+                || (StringUtils.isBlank(sponsorPoId))) {
             getPaServiceUtils().removeSponsor(studyProtocolIi);
             getPaServiceUtils().removeResponsibleParty(studyProtocolIi);
         }
