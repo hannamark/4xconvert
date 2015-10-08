@@ -204,7 +204,7 @@
 
         <delete file="${services.build.dir}/cobertura.ser"/>
 
-        <cobertura-instrument datafile="${services.build.dir}/cobertura.ser" toDir="${services.build.coberturaOutputDir}">
+        <cobertura-instrument  ignoreTrivial="true" datafile="${services.build.dir}/cobertura.ser" toDir="${services.build.coberturaOutputDir}">
             <fileset dir="${services.build.outputDir}">
                 <include name="**/accrual/**/*.class"/>
             	<exclude name="**/PoMockLocator.class"/>
