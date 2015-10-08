@@ -981,7 +981,8 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         
         while (spItter.hasNext()) {
             final StudyProtocol sp = spItter.next();
-            if (family.contains(sp.getSubmitingOrganization())) {
+            if (sp.getSubmitingOrganization() != null
+                    && family.contains(sp.getSubmitingOrganization().getId())) {
                 spItter.remove();
             }
         }

@@ -847,8 +847,10 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
         if (src == null || dest == null) {
             throw new PAException("Site not found when merging participating sites.");
         }
-        if (src.getStudyProtocol().getId() != dest.getStudyProtocol().getId()) {
-            throw new PAException("Trying to merge participating sites from different trials.");
+        if (src.getStudyProtocol().getId().longValue() != dest
+                .getStudyProtocol().getId().longValue()) {
+            throw new PAException(
+                    "Trying to merge participating sites from different trials.");
         }
         mergeAccrualCounts(src, dest);
         mergeAccrualSubjects(src, dest);

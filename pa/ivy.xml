@@ -35,6 +35,7 @@
     <dependency conf="build->master" org="org.liquibase" name="liquibase-core" rev="3.0.8"/>
 
     
+    <dependency conf="compile->master" org="com.google.code.findbugs" name="findbugs" rev="3.0.1" transitive="false"/>
     <dependency conf="compile->master" org="javax.mail" name="mail" rev="1.4.5"/>
     <dependency conf="compile->master" org="org.hibernate.javax.persistence" name="hibernate-jpa-2.0-api" rev="1.0.1.Final"/>
     <dependency conf="compile->master" org="org.jboss.as" name="jboss-as-web" rev="7.2.0.Final"/>

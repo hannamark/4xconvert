@@ -128,8 +128,13 @@ public abstract class AbstractParticipatingSitesBean
                 .getCurrentStudySiteAccrualStatusByStudySite(studySiteIi);
         if (currentStatus == null || currentStatus.getStatusCode() == null
                 || currentStatus.getStatusDate() == null
-                || !currentStatus.getStatusCode().getCode().equals(newStatus.getStatusCode())
-                || !currentStatus.getStatusDate().equals(newStatus.getStatusDate())) {
+                || !currentStatus
+                        .getStatusCode()
+                        .getCode()
+                        .equals(CdConverter.convertCdToString(newStatus
+                                .getStatusCode()))
+                || !currentStatus.getStatusDate().equals(
+                        newStatus.getStatusDate())) {
 
                  newStatus.setIdentifier(IiConverter.convertToIi((Long) null));
                  newStatus.setStudySiteIi(studySiteIi);

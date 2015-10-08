@@ -1028,7 +1028,7 @@ public class PAServiceUtils {
                     recruiting = true;
                 }
                 if (!recruiting) {
-                    new PAException("Data inconsistency: At least one location needs to be recruiting"
+                    throw new PAException("Data inconsistency: At least one location needs to be recruiting"
                             + " if the overall status recruitment status is\'Recruiting\'." + ERR_MSG_SEPARATOR);
                 }
             }

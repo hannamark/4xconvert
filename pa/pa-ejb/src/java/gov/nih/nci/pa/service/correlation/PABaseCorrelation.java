@@ -1,5 +1,6 @@
 package gov.nih.nci.pa.service.correlation;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
@@ -54,6 +55,7 @@ public class PABaseCorrelation <PADTO extends PACorrelationDTO, PODTO extends Co
     /**
      * default constructor.
      */
+    @SuppressFBWarnings
     public PABaseCorrelation() {
         Type myType = getClass(); // get the parameterized type, recursively resolving type parameters
         ParameterizedType parameterizedType = (ParameterizedType) myType;

@@ -92,6 +92,7 @@ import gov.nih.nci.pa.enums.StudyFlagReasonCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -706,8 +707,12 @@ public class StudyProtocolOptions {
      * @author Denis G. Krylov
      *
      */
-    public static final class MilestoneFilter {
+    public static final class MilestoneFilter implements Serializable {
         
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
         private List<MilestoneCode> activeMilestones = new ArrayList<MilestoneCode>();
         private List<MilestoneCode> milestonesToExclude = new ArrayList<MilestoneCode>();
         

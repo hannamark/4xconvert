@@ -105,6 +105,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -174,11 +175,14 @@ implements PlannedMarkerServiceLocal {
                 PlannedMarkerSortCriterion.PLANNED_MARKER_ID, false);
         List<PlannedMarker> results = search(new AnnotatedBeanSearchCriteria<PlannedMarker>(criteria), params);
         for (PlannedMarker m : results) {
-            if (!m.getId().equals(IiConverter.convertToLong(markerDTO.getIdentifier())) 
-                    && m.getPermissibleValue().getId() == (IiConverter
-                            .convertToLong(markerDTO.getPermissibleValue()))) {
-                throw new PADuplicateException("Duplicate Planned Markers are not allowed.");
-            }      
+            if (!m.getId().equals(
+                    IiConverter.convertToLong(markerDTO.getIdentifier()))
+                    && ObjectUtils.equals(m.getPermissibleValue().getId(),
+                            (IiConverter.convertToLong(markerDTO
+                                    .getPermissibleValue())))) {
+                throw new PADuplicateException(
+                        "Duplicate Planned Markers are not allowed.");
+            }     
         }  
     }
            

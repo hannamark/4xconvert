@@ -195,7 +195,7 @@ public class AbstractionCompletionDTO implements Serializable, Comparable<Abstra
     }
     
     @Override
-    public int compareTo(AbstractionCompletionDTO o) {        
-        return Integer.valueOf(getOrder()).compareTo(o.getOrder());
+    public int compareTo(AbstractionCompletionDTO o) {
+        return Integer.compare(getOrder(), o.getOrder());
     }
 }

@@ -1035,23 +1035,26 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         Collections.sort(srDtos, new Comparator<StudyResourcingDTO>() {
 
             @Override
-           public int compare(StudyResourcingDTO o1, StudyResourcingDTO o2) {
+            public int compare(StudyResourcingDTO o1, StudyResourcingDTO o2) {
 
-           if (!ISOUtil.isCdNull(o1.getFundingMechanismCode()) &&  !ISOUtil.isCdNull(o1.getFundingMechanismCode())
-                 && !ISOUtil.isCdNull(o1.getFundingMechanismCode()) && !ISOUtil.isCdNull(o2.getFundingMechanismCode()) 
-                 &&  !ISOUtil.isCdNull(o2.getFundingMechanismCode()) 
-                 && !ISOUtil.isCdNull(o2.getFundingMechanismCode()) 
-             ) {
-             String first = o1.getFundingMechanismCode().getCode() + o1.getNihInstitutionCode().getCode()
-                         + o1.getSerialNumber().getValue();
-                        String second = o2.getFundingMechanismCode().getCode()  + o2.getNihInstitutionCode().getCode() 
-                         + o2.getSerialNumber().getValue();
-                        return first.compareToIgnoreCase(second);
-              } else {
-               return 1;
-             }
-               
-          }
+                if (!ISOUtil.isCdNull(o1.getFundingMechanismCode())
+                        && !ISOUtil.isCdNull(o2.getFundingMechanismCode())
+                        && !ISOUtil.isCdNull(o1.getNihInstitutionCode())
+                        && !ISOUtil.isCdNull(o2.getNihInstitutionCode())
+                        && !ISOUtil.isStNull(o1.getSerialNumber())
+                        && !ISOUtil.isStNull(o2.getSerialNumber())) {
+                    String first = o1.getFundingMechanismCode().getCode()
+                            + o1.getNihInstitutionCode().getCode()
+                            + o1.getSerialNumber().getValue();
+                    String second = o2.getFundingMechanismCode().getCode()
+                            + o2.getNihInstitutionCode().getCode()
+                            + o2.getSerialNumber().getValue();
+                    return first.compareToIgnoreCase(second);
+                } else {
+                    return 1;
+                }
+
+            }
 
         });
         

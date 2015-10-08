@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.util;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ad;
@@ -451,6 +452,7 @@ public class PADomainUtils {
      *
      * @throws PAException the PA exception
      */
+    @SuppressFBWarnings
     public static boolean checkIfValueExists(String value, String tableName, String column) throws PAException {
         String sql = "SELECT * FROM " + tableName + " WHERE " + column + " = '" + value + "'";
         Session session = null;
