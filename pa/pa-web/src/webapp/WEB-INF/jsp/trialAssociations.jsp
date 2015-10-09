@@ -48,6 +48,8 @@ function callOnloadFunctions(){
   
 		<div class="actionsrow">
 			<del class="btnwrapper">
+			<c:if test="${sessionScope.isAdminAbstractor==true
+	                                ||sessionScope.isScientificAbstractor==true ||sessionScope.isSuAbstractor==true}">
 				<ul class="btnrow">                                           
 					   <li><s:a href="javascript:void(0);" onclick="submitXsrfForm('trialAssociationsinput.action');" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
                         <s:if test="%{!trialAssociations.isEmpty()}">
@@ -55,6 +57,7 @@ function callOnloadFunctions(){
                             <li><pa:toggleDeleteBtn/></li>
                         </s:if>
 				</ul>
+		   </c:if>
 			</del>
 		</div>
   	</s:form>

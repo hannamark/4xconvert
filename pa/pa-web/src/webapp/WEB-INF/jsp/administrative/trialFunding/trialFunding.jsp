@@ -74,8 +74,10 @@ function updateNciGrant() {
     <table>
     <tr>
       <td>
+        <s:set var="hasOnlyResultsAbstractorRole">${!(sessionScope.isAdminAbstractor==true
+	                                ||sessionScope.isScientificAbstractor==true ||sessionScope.isSuAbstractor==true)}</s:set>
         Is this trial funded by an NCI grant?<span class="required">*</span>
-        <s:radio name="nciGrant" id="nciGrant"  list="#{true:'Yes', false:'No'}" onchange="updateNciGrant()" />
+        <s:radio name="nciGrant" id="nciGrant"  list="#{true:'Yes', false:'No'}" onchange="updateNciGrant()" disabled="#hasOnlyResultsAbstractorRole"  />
       </td>
     </tr>
     <tr><td align="right"><div id="ncigrantmessagediv" class="info"/></td></tr>

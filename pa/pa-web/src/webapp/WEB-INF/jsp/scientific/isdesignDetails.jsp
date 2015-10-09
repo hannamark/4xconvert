@@ -154,9 +154,12 @@ function initialize() {
         <td  scope="row" class="label"><label for="study">
             <fmt:message key="osdesign.details.study.type"/><span class="required">*</span></label></td>        
         <td>
+                <s:set var="hasOnlyResultsAbstractorRole">${!(sessionScope.isAdminAbstractor==true
+	                                ||sessionScope.isScientificAbstractor==true ||sessionScope.isSuAbstractor==true)}</s:set>
+        
           <s:select id="study" name="webDTO.studyType" list="#{'Interventional':'Interventional','NonInterventional':'Non-Interventional'}"  
                    onchange="changeStudyType();"
-                   value="webDTO.studyType" cssStyle="width:200px"/>
+                   value="webDTO.studyType" cssStyle="width:200px" disabled="#hasOnlyResultsAbstractorRole" />
           <span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.studyType</s:param>
