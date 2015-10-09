@@ -12,6 +12,7 @@
     <property name="reg-web.coverage.line" value="77"/>
     <property name="reg-web.coverage.branch" value="62"/>
     <property name="reg-web.pmd.maxerrors" value="131"/>
+	<property name="reg-web.jshint.maxerrors" value="527"/>
 	<property name="software.dir" value="${basedir}/.."/>
     <property name="pa.dir" value="${software.dir}/pa"/>
     <property name="pa.report.dir" value="${software.dir}/target/pa/reports"/>
@@ -30,6 +31,7 @@
     <property name="reg-web.build.outputDir" value="${reg-web.build.dir}/classes"/>
     <property name="reg-web.build.javadoc" value="${reg-web.build.dir}/javadoc"/>
     <property name="reg-web.build.srcDir.0" value="${software.dir}/reg-web/src/java"/>
+	<property name="reg-web.build.src.js" value="${software.dir}/reg-web/src/webapp/scripts"/>
     <property name="reg-web.build.resourceDir.0" value="${software.dir}/reg-web/src/resources"/>
     <property name="reg-web.build.testOutputDir" value="${reg-web.build.dir}/test-classes"/>
     <property name="reg-web.build.testDir.0" value="${software.dir}/reg-web/test/java"/>
@@ -93,6 +95,12 @@
         </fileset>
     </path>
 	
+    <path id="test-jshint.classpath">
+        <fileset dir="${basedir}/auxlib">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+	
     <path id="test-findbugs.classpath">
         <fileset dir="${lib.dir}/test-findbugs">
             <include name="*.jar"/>
@@ -146,6 +154,7 @@
     <!-- ====================================================================== -->
 
     <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="build.classpath"/>
+	<taskdef name="propertyregex" classname="net.sf.antcontrib.property.RegexTask" classpathref="build.classpath"/>
 
     <!-- ====================================================================== -->
     <!-- Cleaning up target                                                     -->
@@ -384,6 +393,43 @@
             <formatter type="xml"   toFile="${pa.report.dir}/reg-web/checkstyle.xml"/>
         </checkstyle>
     </target>
+	
+    <!-- ====================================================================== -->
+    <!-- Run JS Hint                                                             -->
+    <!-- ====================================================================== -->
+
+    <target name="test-jshint">
+        <taskdef name="jshint" classname="com.philmander.jshint.JsHintAntTask" classpathref="test-jshint.classpath"/>
+        <!-- Lint the code -->
+        <jshint dir="${reg-web.build.src.js}" fail="false" 
+            options="browser=true,devel=true,jquery=true,prototypejs=true,-W099=true,eqeqeq=false,strict=false">
+             <include name="**/*.js"/>
+             <exclude name="**/*.min.js"/>             
+             <exclude name="**/jquery*.js"/>
+        	 <exclude name="**/bootstrap*.js"/>
+             <exclude name="**/select2*.js"/>
+        	 <exclude name="**/*dataTables*.js"/>
+             <exclude name="**/prototype.js"/>             
+        	 <exclude name="**/popup.js"/>
+             <report type="jslint-xml" destFile="${pa.report.dir}/reg-web/jslint.xml" />
+             <report type="plain" destFile="${pa.report.dir}/reg-web/jshint.txt" />
+        </jshint>
+        <loadfile property="jshintReport"
+              srcFile="${pa.report.dir}/reg-web/jshint.txt"/>
+        <propertyregex property="jshintErrorCount"
+                      input="${jshintReport}"
+                      regexp="JSHint found (\d+) errors"
+                      select="\1"
+                      casesensitive="false" />
+        <condition property="jshintFailure">
+            <scriptcondition language="javascript"><![CDATA[                
+                self.setValue(project.getProperty("jshintErrorCount") > project.getProperty("reg-web.jshint.maxerrors"));
+                ]]>
+            </scriptcondition>
+        </condition>
+        <fail if="jshintFailure" message="${jshintErrorCount} JSHint errors exceed the limit of ${reg-web.jshint.maxerrors}! See ${pa.report.dir}/reg-web/jshint.txt for details."/>
+    </target>   
+	
 
     <!-- ====================================================================== -->
     <!-- Run PMD                                                                -->
@@ -445,7 +491,7 @@
             description="Run dynamic analysis."/>
 
     <target name="test-static-analysis"
-            depends="compile,test-checkstyle,test-pmd,test-simian,test-findbugs"
+            depends="compile,test-checkstyle,test-pmd,test-simian,test-findbugs,test-jshint"
             description="Run static analysis."/>
 
     <target name="test-all"
