@@ -40,7 +40,7 @@
     <property name="web.coverage.reports" value="${web.report.dir}/coverage-reports"/>
     <property name="web.coverage.line" value="90"/>
     <property name="web.coverage.branch" value="83"/>
-    <property name="web.pmd.maxerrors" value="5"/>
+    <property name="web.pmd.maxerrors" value="2"/>
 	<property name="web.jshint.maxerrors" value="568"/>
 
     <property name="selenium.delay" value="10"/>
@@ -352,7 +352,7 @@
 
     <target name="test-pmd">
         <taskdef name="pmd" classpathref="test-pmd.classpath" classname="net.sourceforge.pmd.ant.PMDTask"/>
-        <pmd shortFilenames="false" failOnRuleViolation="true" rulesetfiles="${pmdFile}" maxruleviolations="${web.pmd.maxerrors}">
+        <pmd minimumPriority="3" shortFilenames="false" failOnRuleViolation="true" rulesetfiles="${pmdFile}" maxruleviolations="${web.pmd.maxerrors}">
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${web.report.dir}/pmd.txt"/>
             <formatter type="xml"  toFile="${web.report.dir}/pmd.xml"/>
@@ -360,7 +360,7 @@
             <fileset dir="src">
                 <include name="**/*.java"/>
             </fileset>
-         </pmd>
+         <sourceLanguage name="java" version="1.7"/></pmd>
     </target>
 	
     <!-- ====================================================================== -->

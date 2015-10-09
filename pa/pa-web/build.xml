@@ -11,8 +11,8 @@
     <property file="${basedir}/../../build-pa/version.properties"/>
     <property name="pa-web.coverage.line" value="71"/>
     <property name="pa-web.coverage.branch" value="58"/>
-    <property name="pa-web.pmd.maxerrors" value="111"/>
-	<property name="pa-web.jshint.maxerrors" value="591"/>
+    <property name="pa-web.pmd.maxerrors" value="107"/>
+    <property name="pa-web.jshint.maxerrors" value="591"/>
 
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="pa.dir" value="${software.dir}/pa"/>
@@ -329,7 +329,7 @@
 
     <target name="test-pmd">
         <taskdef name="pmd" classpathref="test-pmd.classpath" classname="net.sourceforge.pmd.ant.PMDTask"/>
-        <pmd shortFilenames="false" failOnRuleViolation="true" rulesetfiles="${pa.pmd}" maxruleviolations="${pa-web.pmd.maxerrors}">
+        <pmd minimumPriority="3" shortFilenames="false" failOnRuleViolation="true" rulesetfiles="${pa.pmd}" maxruleviolations="${pa-web.pmd.maxerrors}">
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${pa.report.dir}/pa-web/pmd.txt"/>
             <formatter type="xml"  toFile="${pa.report.dir}/pa-web/pmd.xml"/>
@@ -337,7 +337,7 @@
             <fileset dir="src">
                 <include name="**/*.java"/>
             </fileset>
-        </pmd>
+        <sourceLanguage name="java" version="1.7"/></pmd>
     </target>
 	
     <!-- ====================================================================== -->

@@ -11,7 +11,7 @@
     <property file="${basedir}/../../build-pa/version.properties"/>
     <property name="commons.coverage.line" value="66"/>
     <property name="commons.coverage.branch" value="49"/>
-    <property name="commons.pmd.maxerrors" value="67"/>
+    <property name="commons.pmd.maxerrors" value="57"/>
 
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="pa.dir" value="${software.dir}/pa"/>
@@ -333,7 +333,7 @@
 
     <target name="test-pmd">
         <taskdef name="pmd" classpathref="test-pmd.classpath" classname="net.sourceforge.pmd.ant.PMDTask"/>
-        <pmd shortFilenames="false" failOnRuleViolation="true" rulesetfiles="${pa.pmd}" maxRuleViolations="${commons.pmd.maxerrors}">
+        <pmd minimumPriority="3" shortFilenames="false" failOnRuleViolation="true" rulesetfiles="${pa.pmd}" maxRuleViolations="${commons.pmd.maxerrors}">
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${pa.report.dir}/commons/pmd.txt"/>
             <formatter type="xml"  toFile="${pa.report.dir}/commons/pmd.xml"/>
@@ -341,7 +341,7 @@
             <fileset dir="src">
                 <include name="**/*.java"/>
             </fileset>
-         </pmd>
+         <sourceLanguage name="java" version="1.7"/></pmd>
     </target>
 
     <!-- ====================================================================== -->
