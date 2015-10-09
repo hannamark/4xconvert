@@ -12,6 +12,7 @@
     <property name="pa-web.coverage.line" value="71"/>
     <property name="pa-web.coverage.branch" value="58"/>
     <property name="pa-web.pmd.maxerrors" value="111"/>
+	<property name="pa-web.jshint.maxerrors" value="591"/>
 
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="pa.dir" value="${software.dir}/pa"/>
@@ -30,6 +31,7 @@
     <property name="pa-web.build.dir" value="${pa.dir}/pa-web/target"/>
     <property name="pa-web.build.outputDir" value="${pa-web.build.dir}/classes"/>
     <property name="pa-web.build.srcDir.0" value="${pa.dir}/pa-web/src/java"/>
+	<property name="pa-web.build.src.js" value="${pa.dir}/pa-web/src/webapp/scripts"/>
     <property name="pa-web.build.resourceDir.0" value="${pa.dir}/pa-web/src/resources"/>
     <property name="pa-web.build.testOutputDir" value="${pa-web.build.dir}/test-classes"/>
     <property name="pa-web.build.testDir.0" value="${pa.dir}/pa-web/test/java"/>
@@ -107,6 +109,13 @@
         </fileset>
     </path>
 	
+    <path id="test-jshint.classpath">
+        <fileset dir="${pa.dir}/pa-web/auxlib">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+	
+	
     <path id="test-findbugs.classpath">
         <fileset dir="${lib.dir}/test-findbugs">
             <include name="*.jar"/>
@@ -155,6 +164,7 @@
     <!-- ====================================================================== -->
 
     <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="build.classpath"/>
+	<taskdef name="propertyregex" classname="net.sf.antcontrib.property.RegexTask" classpathref="build.classpath"/>
     <taskdef resource="liquibasetasks.properties" classpathref="build.classpath"/>
 
     <!-- ====================================================================== -->
@@ -350,6 +360,41 @@
         <fail if="bugsFound" message="Bugs found! See ${pa.report.dir}/pa-web/findbugs.xml for details."/>
     </target>
 	
+    <!-- ====================================================================== -->
+    <!-- Run JS Hint                                                             -->
+    <!-- ====================================================================== -->
+
+    <target name="test-jshint">
+        <taskdef name="jshint" classname="com.philmander.jshint.JsHintAntTask" classpathref="test-jshint.classpath"/>
+    	<!-- Lint the code -->
+    	<jshint dir="${pa-web.build.src.js}" fail="false" 
+    		options="browser=true,devel=true,jquery=true,prototypejs=true,-W099=true,eqeqeq=false,strict=false">
+    		 <include name="**/*.js"/>
+    		 <exclude name="**/*.min.js"/>
+    		 <exclude name="**/DataTables*/**/*.js"/>
+    		 <exclude name="**/jquery*.js"/>
+    		 <exclude name="**/select2*.js"/>
+    		 <exclude name="**/prototype.js"/>
+    		 <exclude name="**/popup.js"/>
+    		 <report type="jslint-xml" destFile="${pa.report.dir}/pa-web/jslint.xml" />
+    		 <report type="plain" destFile="${pa.report.dir}/pa-web/jshint.txt" />
+        </jshint>
+    	<loadfile property="jshintReport"
+    	      srcFile="${pa.report.dir}/pa-web/jshint.txt"/>
+    	<propertyregex property="jshintErrorCount"
+    	              input="${jshintReport}"
+    	              regexp="JSHint found (\d+) errors"
+    	              select="\1"
+    	              casesensitive="false" />
+    	<condition property="jshintFailure">
+    		<scriptcondition language="javascript"><![CDATA[    			
+    		    self.setValue(project.getProperty("jshintErrorCount") > project.getProperty("pa-web.jshint.maxerrors"));
+    			]]>
+    		</scriptcondition>
+    	</condition>
+    	<fail if="jshintFailure" message="${jshintErrorCount} JSHint errors exceed the limit of ${pa-web.jshint.maxerrors}! See ${pa.report.dir}/pa-web/jshint.txt for details."/>
+    </target>	
+	
 
     <!-- ====================================================================== -->
     <!-- Run Simian                                                             -->
@@ -492,7 +537,7 @@
             description="Run dynamic analysis."/>
 
     <target name="test-static-analysis"
-            depends="compile,test-checkstyle,test-pmd,test-simian,test-findbugs"
+            depends="compile,test-checkstyle,test-pmd,test-simian,test-findbugs,test-jshint"
             description="Run static analysis."/>
 
     <target name="test-all"
