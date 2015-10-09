@@ -5,6 +5,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,9 +33,29 @@ import gov.nih.nci.registry.service.MockRestClientNCITServer;
 public class JasperServerRestClientTest {
 
     private JasperServerRestClient restClient;
-    public static final int NCIT_API_MOCK_PORT = (int) (60000 + Math.random() * 400);
+    public static final int NCIT_API_MOCK_PORT = randomPort();
     MockRestClientNCITServer mockRestClientNCITServer = new MockRestClientNCITServer();
     private Map<String, String> reportGroupMap;
+    
+    /**
+     * @return
+     */
+    private static int randomPort() {
+        int port;
+        while (isPortInUse((port = (int) (1024 + Math.random() * 64500)))) {
+            System.out.println("Port " + port + " in use; trying another...");
+        }
+        return port;
+    }
+    
+    private static boolean isPortInUse(final int port) {
+        try {
+            new ServerSocket(port).close();
+        } catch (IOException e) {
+            return true;
+        }
+        return false;
+    }
 
     @Before
     public void setup() throws Exception {
