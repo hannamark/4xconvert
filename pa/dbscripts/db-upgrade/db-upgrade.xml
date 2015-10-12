@@ -1996,5 +1996,8 @@
        <comment>Changes to the "CCCT Review Complete?" section for TCD</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9282.sql"/>
     </changeSet>
-    
+     <changeSet id="PO-8829-uat_feedback" author="khandalkara">       
+       <comment>Update definitions in Registry to match new OCC Data Guide defintions</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8829-uat_feedback.sql"/>
+    </changeSet>
 </databaseChangeLog>
