@@ -33,8 +33,6 @@
             <include name="**/*.jar" />
         </fileset>
     </path>
-    <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="build.classpath"/>
-    <taskdef name="propertyregex" classname="net.sf.antcontrib.property.RegexTask" classpathref="build.classpath"/>
 
 
     <!-- ====================================================================== -->
@@ -375,6 +373,9 @@
     </target>
 	
 	<target name="get-phantomjs">
+		
+	    <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="build.classpath"/>
+		
 		<condition property="phantomjs-url" value="${download.phantomjs.win}">
 	        <os family="windows"/>
 		</condition>
