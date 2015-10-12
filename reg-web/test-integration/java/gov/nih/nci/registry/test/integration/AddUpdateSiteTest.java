@@ -118,6 +118,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         // Since there is only one site from the family on this trial at this
         // point, we should have gone straight
         // to updating it.
+        waitForElementById("organizationName", 15);
         assertEquals("National Cancer Institute Division of Cancer Prevention",
                 selenium.getValue("organizationName"));
         assertEquals("false",selenium.getValue("//input[@name='addSitesMultiple']"));
@@ -148,7 +149,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
 
         findInMyTrials();
         invokeAction("Update My Site");
-        assertEquals("false",selenium.getValue("//input[@name='addSitesMultiple']"));
+        waitForElementById("organizationName", 15);
         assertEquals("National Cancer Institute Division of Cancer Prevention",
                 selenium.getValue("organizationName"));
         waitForElementToBecomeVisible(
@@ -319,6 +320,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         assignTrialOwner("submitter-ci", info.id);
         findInMyTrials();
         invokeAction("Add My Site");
+        waitForElementById("organizationName", 15);
         assertEquals("false",selenium.getValue("//input[@name='addSitesMultiple']"));
         assertEquals("National Cancer Institute Division of Cancer Prevention",
                 selenium.getValue("organizationName"));
