@@ -634,8 +634,8 @@
         </exec>		 
 		
 		<!-- Linux -->
-        <exec executable="chmod" osfamily="unix" spawn="true">
-        	   <arg line="u=rwx ${toString:unixexec}" />
+        <exec executable="chmod" osfamily="unix" timeout="10000">
+        	   <arg line="a=rwx ${toString:unixexec}" />
 	    </exec>
         <exec executable="${toString:unixexec}" osfamily="unix" dir="${pa-web.build.testDir.js}" timeout="60000" failonerror="true">
             <arg line="run-jasmine.js SpecRunner.html" />
