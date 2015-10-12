@@ -45,7 +45,7 @@ public class TrialSearchPerformanceTest extends AbstractRegistrySeleniumTest {
                 "OHSU Knight Cancer Institute", 8);
         testSearchByParticipatingSitePerformance("Mayo Clinic Cancer Center", 5);
         testSearchByParticipatingSitePerformance("Mayo Clinic", 15);
-        testSearchByParticipatingSitePerformance("Mayo Clinic in Arizona", 8);
+        testSearchByParticipatingSitePerformance("Mayo Clinic in Arizona", 9);
         testSearchByParticipatingSitePerformance(
                 "M D Anderson Cancer Center (MDA)", 30);
     }
