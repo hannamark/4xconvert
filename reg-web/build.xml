@@ -35,6 +35,7 @@
     <property name="reg-web.build.resourceDir.0" value="${software.dir}/reg-web/src/resources"/>
     <property name="reg-web.build.testOutputDir" value="${reg-web.build.dir}/test-classes"/>
     <property name="reg-web.build.testDir.0" value="${software.dir}/reg-web/test/java"/>
+	<property name="reg-web.build.testDir.js" value="${software.dir}/reg-web/test/js"/>
     <property name="reg-web.build.integrationTestDir.0" value="${software.dir}/reg-web/test-integration/java"/>
     <property name="reg-web.build.testResourceDir.0" value="${software.dir}/reg-web/test/resources"/>
     <property name="reg-web.test.reports" value="${pa.report.dir}/reg-web/test-reports"/>
@@ -487,7 +488,7 @@
     <!-- ====================================================================== -->
 
     <target name="test-dynamic-analysis"
-            depends="compile,compile-tests,test-cobertura"
+            depends="compile,compile-tests,test-cobertura, test-jasmine"
             description="Run dynamic analysis."/>
 
     <target name="test-static-analysis"
@@ -607,6 +608,32 @@
             </batchtest>
         </junit>
     </target>
+	
+    <target name="test-jasmine">
+        <first id="winexec">
+            <fileset dir="${lib.dir}/phantomjs" includes="**/phantomjs.exe" />
+        </first>
+        <first id="unixexec">
+            <fileset dir="${lib.dir}/phantomjs" includes="**/bin/phantomjs" />
+        </first>        
+        <echo message="${toString:winexec}" />      
+        <echo message="${toString:unixexec}" />
+        
+        <!-- Windows -->
+        <exec osfamily="windows" executable="${toString:winexec}" dir="${reg-web.build.testDir.js}" timeout="60000" failonerror="true">
+            <arg line="run-jasmine.js SpecRunner.html" />
+        </exec>      
+        
+        <!-- Linux -->
+        <exec executable="chmod" osfamily="unix" spawn="true">
+               <arg line="u=rwx ${toString:unixexec}" />
+        </exec>
+        <exec executable="${toString:unixexec}" osfamily="unix" dir="${reg-web.build.testDir.js}" timeout="60000" failonerror="true">
+            <arg line="run-jasmine.js SpecRunner.html" />
+        </exec>     
+
+    </target>
+	
 
     <target name="test-cobertura" depends="compile-tests">
         <taskdef classpathref="test-cobertura.classpath" resource="tasks.properties" />
