@@ -21,6 +21,8 @@
     <property name="jboss.deploy.directory" value="${application.base.path}/standalone/deployments"/>
 	<property name="jboss.bin.directory" value="${application.base.path}/bin"/>
 	<property name="webdriver.class" value="org.openqa.selenium.firefox.FirefoxDriver"/>
+	
+	
     
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
@@ -31,6 +33,9 @@
             <include name="**/*.jar" />
         </fileset>
     </path>
+    <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="build.classpath"/>
+    <taskdef name="propertyregex" classname="net.sf.antcontrib.property.RegexTask" classpathref="build.classpath"/>
+
 
     <!-- ====================================================================== -->
     <!-- Cleaning up target                                                     -->
@@ -349,7 +354,7 @@
         <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="reg-web"/>
     </target>
  
-    <target name="ivy-test" depends="ivy-init">
+    <target name="ivy-test" depends="ivy-init, get-phantomjs">
         <ivy:resolve refresh="true" conf="test"/>
         <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test"/>
         <ivy:resolve refresh="true" conf="test-checkstyle"/>
@@ -368,6 +373,42 @@
         <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-findbugs"/>
 
     </target>
+	
+	<target name="get-phantomjs">
+		<condition property="phantomjs-url" value="${download.phantomjs.win}">
+	        <os family="windows"/>
+		</condition>
+        <condition property="phantomjs-url" value="${download.phantomjs.mac}">
+	        <os family="mac"/>
+        </condition>
+        <condition property="phantomjs-url" value="${download.phantomjs.linux}">
+            <os family="unix"/>
+        </condition>		
+		<get dest="${lib.dir}" src="${phantomjs-url}" verbose="on" usetimestamp="true"/>
+		<mkdir dir="${lib.dir}/phantomjs"/>
+		
+		<!-- ZIP -->
+		<unzip dest="${lib.dir}/phantomjs">
+			<fileset dir="${lib.dir}">
+			        <include name="phantomjs*.zip"/>			       
+			</fileset>			 
+		</unzip>
+		
+		<!-- tar.bz2 -->
+		<for param="file">
+        	  <path>
+        	    <fileset dir="${lib.dir}" includes="phantomjs*.tar.bz2"/>
+        	  </path>
+        	  <sequential>		
+        	  	 <bunzip2 src="@{file}" dest="${lib.dir}/phantomjs"/>		  
+        	        <untar dest="${lib.dir}/phantomjs">
+        	            <fileset dir="${lib.dir}/phantomjs">
+        	                    <include name="phantomjs*.tar"/>                   
+        	            </fileset>           
+        	        </untar>		  	
+        	  </sequential>
+		 </for>		
+	</target>
 
     <!-- ====================================================================== -->
     <!-- Database targets                                                       -->
