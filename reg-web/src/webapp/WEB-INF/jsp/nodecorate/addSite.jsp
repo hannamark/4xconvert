@@ -87,7 +87,7 @@ div.error,b.error {
 
     var backendUrlTemplate = '${backendUrlTemplate}';
     var deleteImg = '${pageContext.request.contextPath}/images/ico_delete.gif';
-    var updatingSite = new Boolean('${not empty ssID}').valueOf();
+    var runValidationsOnInitialLoad = new Boolean('${not empty ssID}').valueOf();
 	
 	function addSite() {
 		$('addSiteForm').submit();
@@ -140,6 +140,14 @@ div.error,b.error {
                                     "url" : backendUrlTemplate
                                             + "getStatusHistory.action",
                                     "type" : "POST"
+                                },
+                                "initComplete": function(settings, json) {
+                                	if (runValidationsOnInitialLoad) {
+                                   	 $('#runValidations')
+                                        .val('true');
+                                   	   runValidationsOnInitialLoad = false;
+                                   	   table.ajax.reload();
+                                   }
                                 }
                             }).on('draw', function() {
                         $('#runValidations').val('');
@@ -407,11 +415,7 @@ div.error,b.error {
                                                 });
 
                             });
-            if (updatingSite) {
-            	 $('#runValidations')
-                 .val('true');
-            	   table.ajax.reload();
-            }
+            
 
         });
     })(jQuery);
