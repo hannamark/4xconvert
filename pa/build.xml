@@ -275,7 +275,7 @@
         <exec executable="nohup" osfamily="unix" dir="${jboss.bin.directory}" spawn="true">
             <env key="NOPAUSE" value="true" />
             <env key="JBOSS_HOME" value=""/>
-        	<env key="JAVA_OPTS" value="-Dctrp.env.ci=true -Xmx1024M -XX:MaxPermSize=256M -Djava.net.preferIPv4Stack=true -Dorg.apache.catalina.connector.URI_ENCODING=UTF-8"/>
+        	<env key="JAVA_OPTS" value="-Dctrp.env.ci=true -Xmx2048M -XX:MaxPermSize=256M -Djava.net.preferIPv4Stack=true -Dorg.apache.catalina.connector.URI_ENCODING=UTF-8"/>
             <arg line="./standalone.sh" />
         </exec>
 
