@@ -11,7 +11,6 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -27,7 +26,6 @@ import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
@@ -1648,19 +1646,13 @@ public class DashboardTest extends AbstractTrialStatusTest {
         verifyColumnValue(1, "Business Days on Hold (Submitter)", "2");
 
         // Business Days Since Submitted
-        final Date date = new Date();
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
+        final Date date = new Date();       
         new QueryRunner().update(connection,
                 "update study_protocol set date_last_created=" + jdbcTs(date)
                         + " where identifier=" + acceptedTrial.id);
         clickAndWait("id=dashboardMenuOption");
-        verifyColumnValue(
-                1,
-                "Business Days Since Submitted",
-                cal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY
-                        && cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY ? "1"
-                        : "0");
+        verifyColumnValue(1, "Business Days Since Submitted",
+                PAUtil.isBusinessDay(date) ? "1" : "0");
 
         // Current On Hold Date.
         verifyColumnValue(1, "Current On-Hold Date", "");
