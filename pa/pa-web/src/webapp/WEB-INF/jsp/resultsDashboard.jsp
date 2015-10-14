@@ -131,6 +131,14 @@ td.middle {
     vertical-align:middle;
 }
 
+td.pcdtypetable
+{ 
+ 	vertical-align:middle;
+	font-weight:bold; 
+	white-space:nowrap; 
+	padding:5px 5px 5px 1px !important;
+}
+
 label.pcd {
     width: 50px;
 }
@@ -138,6 +146,12 @@ label.pcd {
 table.results {
     width:100%;
     padding: 5px;
+}
+
+table.searchtable {
+    margin: 10px auto;
+    width: 98%;
+    table-layout: fixed;
 }
 
 .flash {
@@ -343,7 +357,7 @@ function searchResults(url, studyNCIid){
 	<div class="box" id="filters">
          <s:form>
              <pa:failureMessage/>
-             <table class="form" >
+             <table class="searchtable" >
                  <tr>
                  	<td scope="row"  class="label middle">
                  		<table>
@@ -373,26 +387,26 @@ function searchResults(url, studyNCIid){
                     			<td class="middle">
                          			<table>
                             			<tr>
-		                       				<td  scope="row" class="label middle" align="right" >
+		                       				<td  scope="row" class="pcdtypetable" align="right" >
 		                           				<label for="pcdFrom" > <fmt:message key="resultsdashboard.pcdFrom"/></label>
 		                       				</td>
-		                       				<td  scope="row" class="label middle">
+		                       				<td  scope="row" class="pcdtypetable">
 		                           				<input type="text" id="pcdFrom" name="pcdFrom" size="15"/>
 		                       				</td>
-		                       				<td class="label middle" align="right" > 
+		                       				<td class="pcdtypetable" align="right" > 
 		                           				<label for="pcdTo"><fmt:message key="resultsdashboard.pcdTo"/></label>
 		                       				</td>
-                               				<td  scope="row" class="label middle">
+                               				<td  scope="row" class="pcdtypetable">
 		                           				<input type="text" id="pcdTo" name="pcdTo" size="15"/>
 		                       				</td>
 	                       				</tr>
 	                       				<tr>
-		                       				<td class="label middle" align="right" >
+		                       				<td class="pcdtypetable" align="right" >
 		                          				<label for="pcdType"><fmt:message key="resultsdashboard.pcdType"/></label>
 		                       				</td>
-                               				<td  scope="row" class="label middle">
+                               				<td  scope="row" class="pcdtypetable">
 		                          				<s:select headerKey="" headerValue="Any" id="pcdType" name="pcdType" 
-                                  				list="#{'Actual':'Actual','Anticipated':'Anticipated'}"  value="pcdType" cssStyle="width:120px" />
+                                  				list="#{'Actual':'Actual','Anticipated':'Anticipated'}"  value="pcdType" cssStyle="width:100%" />
 		                       				</td>		                       
 		                    			</tr>
                          			</table>
