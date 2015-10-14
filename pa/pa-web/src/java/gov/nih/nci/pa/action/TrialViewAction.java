@@ -188,6 +188,7 @@ ServletRequestAware , ServletResponseAware , Preparable {
     private StudyContactService studyContactService;
     private List<StudyProcessingErrorDTO> studyProcessingErrors;
     private StudyProcessingErrorService studyProcessingErrorService;
+    private String ccctUserName;
     
     
     private static final Logger LOG = Logger
@@ -372,25 +373,62 @@ ServletRequestAware , ServletResponseAware , Preparable {
         if (designeeAccessRevokedDate != null) {
             Date date = dateFormat.parse(designeeAccessRevokedDate);
             studyProtocolDTO.setDesigneeAccessRevokedDate(TsConverter.convertToTs(date));
+        } else {
+            //save blank date
+            studyProtocolDTO.setDesigneeAccessRevokedDate(null);
         }
+        
             
         studyProtocolDTO.setChangesInCtrpCtGov(BlConverter.convertToBl(changesInCtrpCtGov));
         
         if (changesInCtrpCtGovDate != null) {
             Date date = dateFormat.parse(changesInCtrpCtGovDate);
             studyProtocolDTO.setChangesInCtrpCtGovDate(TsConverter.convertToTs(date));
+        } else {
+            //save blank date
+            studyProtocolDTO.setChangesInCtrpCtGovDate(null);
         }
         
         studyProtocolDTO.setSendToCtGovUpdated(BlConverter.convertToBl(sendToCtGovUpdated));
         studyProtocolService.updateStudyProtocol(studyProtocolDTO);
         
-        //set specified contats to pending so that they don't show up
-        for (String contactId : designeeSelectedList) {
-            Ii ii = IiConverter.convertToStudyContactIi(Long.valueOf(contactId));
-            StudyContactDTO studyContactDTO = studyContactService.get(ii);   
-            studyContactDTO.setStatusCode(CdConverter.convertStringToCd("Suspended"));
-            studyContactService.update(studyContactDTO);
-        }
+        designeeContactList = new ArrayList<StudyContactWebDTO>();
+        
+        
+        //get study contacts list
+          LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+           StudyContactDTO searchCriteria = new StudyContactDTO();
+           searchCriteria.setStudyProtocolIdentifier(studyProtocolIi);
+           
+           searchCriteria.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.DESIGNEE_CONTACT));
+           List<StudyContactDTO>studyDesigneeContactDtos = studyContactService.search(searchCriteria, limit);
+           
+        
+           if (CollectionUtils.isNotEmpty(studyDesigneeContactDtos)) {
+               for (StudyContactDTO scDto : studyDesigneeContactDtos) {
+                   FunctionalRoleStatusCode stsCd = CdConverter.convertCdToEnum(FunctionalRoleStatusCode.class, 
+                           scDto.getStatusCode());
+                   if (!FunctionalRoleStatusCode.ACTIVE.equals(stsCd) 
+                           && !FunctionalRoleStatusCode.PENDING.equals(stsCd)
+                           && !FunctionalRoleStatusCode.SUSPENDED.equals(stsCd)) {
+                       continue;
+                   }
+                   designeeContactList.add(new StudyContactWebDTO(scDto));
+               }
+           }
+          
+          //set specified contats to pending so that they don't show up
+          for (StudyContactWebDTO contactWebDTO : designeeContactList) {
+              Ii ii = IiConverter.convertToStudyContactIi(Long.valueOf(contactWebDTO.getId()));
+              StudyContactDTO studyContactDTO = studyContactService.get(ii);  
+              if (designeeAccessRevoked) {
+                  studyContactDTO.setStatusCode(CdConverter.convertStringToCd("Suspended"));
+              } else {
+                  studyContactDTO.setStatusCode(CdConverter.convertStringToCd("Active"));
+              }   
+              studyContactService.update(studyContactDTO);
+          }
+          
         
         
         request.setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
@@ -580,7 +618,7 @@ ServletRequestAware , ServletResponseAware , Preparable {
 
             DocumentDTO  docDTO =
             PaRegistry.getDocumentService().get(IiConverter.convertToIi(id));
-            docDTO.setCcctUserId(getCcctUserId());
+            docDTO.setCcctUserName(StConverter.convertToSt(getCcctUserName()));
             docDTO.setCcctUserReviewDateTime(TsConverter.convertToTs(new Date()));
             
             PaRegistry.getDocumentService().updateForReview(docDTO);
@@ -1096,6 +1134,20 @@ ServletRequestAware , ServletResponseAware , Preparable {
      */
     public void setStudyProcessingErrorService(StudyProcessingErrorService studyProcessingErrorService) {
         this.studyProcessingErrorService = studyProcessingErrorService;
+    }
+
+    /**
+     * @return ccctUserName
+     */
+    public String getCcctUserName() {
+        return ccctUserName;
+    }
+
+    /**
+     * @param ccctUserName ccctUserName
+     */
+    public void setCcctUserName(String ccctUserName) {
+        this.ccctUserName = ccctUserName;
     }
 
     

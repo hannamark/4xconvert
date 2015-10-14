@@ -319,6 +319,9 @@ ServletRequestAware , ServletResponseAware , Preparable {
         if (designeeAccessRevokedDate != null) {
             Date date = dateFormat.parse(designeeAccessRevokedDate);
             studyProtocolDTO.setDesigneeAccessRevokedDate(TsConverter.convertToTs(date));
+        } else {
+            //save blank date
+            studyProtocolDTO.setDesigneeAccessRevokedDate(null);
         }
             
         studyProtocolDTO.setChangesInCtrpCtGov(BlConverter.convertToBl(changesInCtrpCtGov));
@@ -326,6 +329,9 @@ ServletRequestAware , ServletResponseAware , Preparable {
         if (changesInCtrpCtGovDate != null) {
             Date date = dateFormat.parse(changesInCtrpCtGovDate);
             studyProtocolDTO.setChangesInCtrpCtGovDate(TsConverter.convertToTs(date));
+        } else {
+            //save blank date
+            studyProtocolDTO.setChangesInCtrpCtGovDate(null);
         }
         
         studyProtocolDTO.setSendToCtGovUpdated(BlConverter.convertToBl(sendToCtGovUpdated));
