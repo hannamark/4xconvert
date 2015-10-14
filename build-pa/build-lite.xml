@@ -110,7 +110,7 @@
 			</fileset>
 		</copy>
         <exec executable="chmod" osfamily="unix" dir="${application.base.path}/bin">
-            <arg line="a=rwx *.sh" />
+            <arg line="a=rwx standalone.sh jboss-cli.sh run.sh" />
         </exec>
 	</target>
 
