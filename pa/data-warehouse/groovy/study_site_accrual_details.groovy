@@ -19,7 +19,7 @@ def sql = """
        ssub.user_last_created_id,
        ssub.user_last_updated_id,
        dis.disease_code,
-       dis.code_system,
+       sp.accrual_disease_code_system as code_system,
        dis.preferred_name,
        ssub.disease_identifier,
        ssub.site_disease_identifier,
@@ -35,7 +35,7 @@ def sql = """
     JOIN country co ON (pat.country_identifier = co.identifier)
     LEFT OUTER JOIN accrual_disease dis ON (ssub.disease_identifier = dis.identifier)
     WHERE soi.root = '2.16.840.1.113883.3.26.4.3'
-      AND sp.status_code = 'ACTIVE'
+      AND sp.status_code = 'ACTIVE' and ssub.status_code !='NULLIFIED'
 """
 
 def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'],
