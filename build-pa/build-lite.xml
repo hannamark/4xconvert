@@ -109,12 +109,12 @@
 				<include name="**/*.properties" />
 			</fileset>
 		</copy>
+        <exec executable="chmod" osfamily="unix" dir="${application.base.path}/bin">
+            <arg line="a=rwx standalone.sh" />
+        </exec>
 	</target>
 
 	<target name="run" depends="install">
-		<exec executable="chmod" osfamily="unix" dir="${application.base.path}/bin" spawn="true">
-			<arg line="u=rwx standalone.sh" />
-		</exec>
 		<exec executable="nohup" osfamily="unix" dir="${application.base.path}/bin" spawn="true">
 			<env key="NOPAUSE" value="true" />
 			<env key="JBOSS_HOME" value="" />
