@@ -101,6 +101,8 @@ public class LogAnalyzer {
         if (stopWords.length() > 0) {
             exclusions = stopWords.toString().split(";");
         }
+        
+        System.out.println("Exclusions: "+Arrays.asList(exclusions));
 
         //verify that the folder exists
         File logFolder = new File(inLogFolder);
