@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class LogAnalyzer {
 
-    private final int CONTEXT_LENGTH = 4;
+    private final int CONTEXT_LENGTH = 1;
     private final String ERROR_QUALIFIER = " ERROR ";
     private final String EXCEPTION_QUALIFIER = "at ";
 
