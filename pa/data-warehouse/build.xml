@@ -149,19 +149,14 @@
     </target>
 
     <target name="gen" depends="init-db" description="Populates the data warehousing tables using the given database">
-	    <stopwatch name="timer1"/>
-        <echo message = "Running study_site_accrual_details"/>
-        <groovy src="groovy/study_site_accrual_details.groovy"/>
+        <stopwatch name="timer1"/>
+        <echo message = "Running disease"/>
+        <groovy src="groovy/disease.groovy"/>
         <stopwatch name="timer1" action="total"/>
     	
         <stopwatch name="timer1"/>
         <echo message = "Running Failed Patient Accruals"/>
         <groovy src="groovy/failed_patient_accruals.groovy"/>
-        <stopwatch name="timer1" action="total"/>
-   	
-        <stopwatch name="timer1"/>
-        <echo message = "Running disease"/>
-        <groovy src="groovy/disease.groovy"/>
         <stopwatch name="timer1" action="total"/>
     	
         <stopwatch name="timer1"/>
@@ -337,6 +332,11 @@
         <stopwatch name="timer1"/>
         <echo message = "Running study_accrual_count"/>
         <groovy src="groovy/study_accrual_count.groovy"/>
+        <stopwatch name="timer1" action="total"/>
+
+        <stopwatch name="timer1"/>
+        <echo message = "Running study_site_accrual_details"/>
+        <groovy src="groovy/study_site_accrual_details.groovy"/>
         <stopwatch name="timer1" action="total"/>
 
         <stopwatch name="timer1"/>
