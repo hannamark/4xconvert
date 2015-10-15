@@ -385,7 +385,7 @@
         <condition property="phantomjs-url" value="${download.phantomjs.linux}">
             <os family="unix"/>
         </condition>		
-		<get dest="${lib.dir}" src="${phantomjs-url}" verbose="on" usetimestamp="true"/>
+		<get dest="${lib.dir}" src="${phantomjs-url}" verbose="on" usetimestamp="true" retries="10"/>
 		<mkdir dir="${lib.dir}/phantomjs"/>
 		
 		<!-- ZIP -->
