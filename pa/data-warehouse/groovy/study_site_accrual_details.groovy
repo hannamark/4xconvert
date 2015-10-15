@@ -47,8 +47,7 @@ def ssad = destinationConnection.dataSet("stg_dw_study_site_accrual_details");
 sourceConnection.eachRow(sql) { row ->
     ssad.add(
         nci_id: row.nci_id,
-        country : row.country,
-        birth_date : row.birth_date,
+        country : row.country,        
         date_last_created : row.date_last_created,
         date_last_updated : row.date_last_updated,
         deletion_reason : row.deletion_reason,
@@ -68,8 +67,7 @@ sourceConnection.eachRow(sql) { row ->
         preferred_name : row.preferred_name,
         disease_identifier : row.disease_identifier,
         site_disease_identifier : row.site_disease_identifier,
-        submission_type : row.submission_type,
-        zip : row.zip,
+        submission_type : row.submission_type,        
         subject_identifier : row.subject_identifier
     )};
     

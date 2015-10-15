@@ -1,7 +1,6 @@
 DROP TABLE IF EXISTS stg_dw_study_site_accrual_details;
 
-CREATE TABLE stg_dw_study_site_accrual_details (
-    birth_date timestamp without time zone,
+CREATE TABLE stg_dw_study_site_accrual_details (    
     country character varying(200),
     date_last_created timestamp without time zone,
     date_last_updated timestamp without time zone,
@@ -35,6 +34,6 @@ CREATE TABLE stg_dw_study_site_accrual_details (
     user_last_updated_id integer,
     disease_code character varying(10),
     code_system text,
-    preferred_name character varying,
-    zip character varying(200)
+    preferred_name character varying
+    
 );
