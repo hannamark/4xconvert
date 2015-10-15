@@ -10,6 +10,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
 	<target name="jar">
 
+		<mkdir dir="bin"/>
+		
 		<javac srcdir="src/main/java/" destdir="bin">
 		</javac>
 
