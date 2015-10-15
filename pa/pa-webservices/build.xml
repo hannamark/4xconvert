@@ -359,6 +359,22 @@
         </simian>
     </target>
 
+    <target name="test-integration" description="Runs integration tests against the automatically deploy application."
+           depends="init-db-deploy-start-jboss,run-selenium-tests,stop-jboss-server">       
+    </target>
+    
+    <target name="init-db-deploy-start-jboss">
+        <ant target="init-db-deploy-start-jboss" dir="${pa.dir}" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+    </target>
+    
+    <target name="stop-jboss-server">
+        <ant target="stop-jboss-server" dir="${pa.dir}" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>      
+    </target>
+
 
     <!-- ====================================================================== -->
     <!-- Run JUnit Integration Tests                                            -->
