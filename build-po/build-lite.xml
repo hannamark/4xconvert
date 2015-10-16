@@ -167,12 +167,12 @@
 		            overwrite="true" failonerror="true" verbose="true" />
           <copy todir="${project.installation.path}/standalone/deployments" file="${po-ear.dist.dir}/po.ear" 
                     overwrite="true" failonerror="true" verbose="true" />
+          <exec executable="chmod" osfamily="unix" dir="${project.installation.path}/bin">            
+          	 <arg line="a=rwx standalone.sh jboss-cli.sh run.sh" />
+          </exec>		
 	</target>
 	
     <target name="run" depends="install">
-        <exec executable="chmod" osfamily="unix" dir="${project.installation.path}/bin" spawn="true">            
-            <arg line="u=rwx standalone.sh" />
-        </exec>
         <exec executable="nohup" osfamily="unix" dir="${project.installation.path}/bin" spawn="true">
             <env key="NOPAUSE" value="true" />
             <env key="JBOSS_HOME" value=""/>
