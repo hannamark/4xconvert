@@ -136,10 +136,10 @@ public class LogAnalyzer {
                 try {
                     return (int) (Files
                             .readAttributes(o1.toPath(), BasicFileAttributes.class,
-                                    LinkOption.NOFOLLOW_LINKS).creationTime()
+                                    LinkOption.NOFOLLOW_LINKS).lastModifiedTime()
                             .toMillis() - Files
                             .readAttributes(o2.toPath(), BasicFileAttributes.class,
-                                    LinkOption.NOFOLLOW_LINKS).creationTime()
+                                    LinkOption.NOFOLLOW_LINKS).lastModifiedTime()
                             .toMillis());
                 } catch (IOException e) {                   
                     e.printStackTrace();
