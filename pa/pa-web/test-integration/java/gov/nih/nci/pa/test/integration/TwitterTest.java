@@ -45,7 +45,7 @@ import twitter4j.conf.ConfigurationBuilder;
  * @author Denis G. Krylov
  * 
  */
-@Batch(number = 2)
+@Batch(number = 3)
 public class TwitterTest extends AbstractTrialStatusTest {
 
     private static final int TWEET_WAIT_TIME_SECONDS = 90;

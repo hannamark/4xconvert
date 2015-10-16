@@ -15,7 +15,7 @@ import com.dumbster.smtp.SmtpMessage;
  * 
  * @author Reshma Koganti
  */
-@Batch(number = 1)
+@Batch(number = 3)
 public class TrialCheckInOutTest extends AbstractTrialStatusTest {
 
     @SuppressWarnings("deprecation")

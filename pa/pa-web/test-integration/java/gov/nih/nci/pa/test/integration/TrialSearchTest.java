@@ -21,7 +21,7 @@ import org.openqa.selenium.WebElement;
  * 
  * @author dkrylov
  */
-@Batch(number = 2)
+@Batch(number = 3)
 public class TrialSearchTest extends AbstractTrialStatusTest {
 
     private static final int OP_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 10000

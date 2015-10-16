@@ -110,7 +110,7 @@ import org.openqa.selenium.By;
  * 
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-@Batch(number = 1)
+@Batch(number = 3)
 public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
 
     private static final int OP_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 15000
