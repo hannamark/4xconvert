@@ -7,7 +7,9 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -130,8 +132,19 @@ public class LogAnalyzer {
             }
         });
         Arrays.sort(files, new Comparator<File>() {
-            public int compare(final File o1, final File o2) {
-                return (int) (o1.lastModified() - o2.lastModified());
+            public int compare(final File o1, final File o2) {              
+                try {
+                    return (int) (Files
+                            .readAttributes(o1.toPath(), BasicFileAttributes.class,
+                                    LinkOption.NOFOLLOW_LINKS).creationTime()
+                            .toMillis() - Files
+                            .readAttributes(o2.toPath(), BasicFileAttributes.class,
+                                    LinkOption.NOFOLLOW_LINKS).creationTime()
+                            .toMillis());
+                } catch (IOException e) {                   
+                    e.printStackTrace();
+                    return 0;
+                }
             }
         });
 
