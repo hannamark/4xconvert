@@ -158,7 +158,7 @@ function deleteSelectedDocument(id) {
 		   if(jQuery("#deleteType")) {
 		      	deleteUrl = deleteUrl+"?deleteType=trialDocument";
 		   }
-		    document.forms[0].action = deleteUrl;
-		    document.forms[0].submit();
+		   jQuery('#trialDocumentsForm')[0].action = deleteUrl;
+		   jQuery('#trialDocumentsForm')[0].submit();
 	 }
 }
