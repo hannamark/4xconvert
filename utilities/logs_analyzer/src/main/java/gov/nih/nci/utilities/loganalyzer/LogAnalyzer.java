@@ -132,21 +132,8 @@ public class LogAnalyzer {
             }
         });
         Arrays.sort(files, new Comparator<File>() {
-            public int compare(final File o1, final File o2) {              
-                try {
-                    return Long.compare(
-                            Files.readAttributes(o1.toPath(),
-                                    BasicFileAttributes.class,
-                                    LinkOption.NOFOLLOW_LINKS)
-                                    .lastModifiedTime().toMillis(),
-                            Files.readAttributes(o2.toPath(),
-                                    BasicFileAttributes.class,
-                                    LinkOption.NOFOLLOW_LINKS)
-                                    .lastModifiedTime().toMillis());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return 0;
-                }
+            public int compare(final File o1, final File o2) {
+                return -Long.compare(o1.lastModified(), o2.lastModified());
             }
         });
 
