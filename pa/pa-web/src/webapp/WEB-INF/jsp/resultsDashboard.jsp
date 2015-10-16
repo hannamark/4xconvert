@@ -513,7 +513,15 @@ function searchResults(url, studyNCIid){
                  </display:column>
                  <display:column  title="NCT ID" sortable="true" property="nctIdentifier"/>
                  <display:column  title="CTEP/DCP ID" sortable="true">
-                    <s:if test="%{#attr.row.ctepId != null}"><c:out value ="${row.ctepId}"/></s:if><s:else><c:out value ="${row.dcpId}"/></s:else>
+                    <s:if test="%{#attr.row.ctepId != null && #attr.row.dcpId != null}">
+                      <c:out value ="${row.ctepId}"/>, <c:out value ="${row.dcpId}"/>
+                    </s:if>
+                    <s:elseif test="%{#attr.row.ctepId != null}">
+    					 <c:out value ="${row.ctepId}"/>
+					</s:elseif>
+                    <s:else >
+    					 <c:out value ="${row.dcpId}"/>
+					</s:else>
                  </display:column>
                  <display:column  title="Lead Org PO ID" sortable="true" property="leadOrganizationPOId"/>          
                  <display:column  title="Lead Organization" sortable="true" property="leadOrganizationName"/>

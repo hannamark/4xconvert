@@ -82,14 +82,9 @@
  */
 package gov.nih.nci.pa.test.integration;
 
-
-
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.test.integration.support.Batch;
 import gov.nih.nci.pa.util.PAConstants;
-
-
-
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -110,7 +105,7 @@ import org.openqa.selenium.support.ui.Select;
  * @author Gopalakrishnan Unnikrishnan
  */
 @Batch(number = 1)
-public class ResultsDashboardTest extends AbstractPaSeleniumTest {
+public class ResultsDashboardTest extends OtherIdentifiersRelatedTest {
     
     List<TrialInfo> testTrials;
     
@@ -470,6 +465,89 @@ public class ResultsDashboardTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isTextPresent("Summary Of XML Upload Errors & Actions Taken"));
         assertFalse(selenium.isTextPresent(testTrials.get(0).nciID+": "+testTrials.get(0).title));
     }
+    
+    @Test       
+    public void testVerifyResultReportingSearchResultsColumnDCPAndCTEPId() throws Exception { 
+        logoutUser();
+        TrialInfo trial;
+        String ctep= "CTEPString";
+        String dcp = "DCPString";
+        
+        // CTEP/DCP ID ColumValue <CTEPString, DCPString>
+        deactivateAllTrials();
+        trial = createSubmittedTrial();
+        addSponsor(trial, "National Cancer Institute");
+        addDWS(trial, "ABSTRACTION_VERIFIED_RESPONSE");
+        addNctIdentifier(trial, trial.nctID);
+        goToGTDScreen(trial);
+        verifyStudySiteAssignedIdentifier(trial, "CTEP Identifier", ctep);
+        verifyStudySiteAssignedIdentifier(trial, "DCP Identifier", dcp);
+        logoutUser();        
+        loginPA("results-abstractor", "pass");
+        clickAndWait("id=acceptDisclaimer");
+        selenium.type("id=trialIdentifier", trial.nciID);
+        clickAndWait("link=Search");
+        assertTrue(selenium.isTextPresent("One item found.1"));
+        assertTrue(selenium.isTextPresent(trial.nciID));
+        assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]"), trial.nciID);
+        assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[3]"), ctep +", "+dcp);
+        
+        //  CTEP/DCP ID ColumValue - Empty
+        logoutUser(); 
+        deactivateAllTrials();
+        trial = createSubmittedTrial();
+        addSponsor(trial, "National Cancer Institute");
+        addDWS(trial, "ABSTRACTION_VERIFIED_RESPONSE");
+        trial.nctID="NCT00001";
+        addNctIdentifier(trial, trial.nctID);
+        loginPA("results-abstractor", "pass");
+        clickAndWait("id=acceptDisclaimer");
+        selenium.type("id=trialIdentifier", trial.nciID);
+        clickAndWait("link=Search");
+        assertTrue(selenium.isTextPresent("One item found.1"));
+        assertTrue(selenium.isTextPresent(trial.nciID));
+        assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]"), trial.nciID);
+        assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[3]"), "");
+        
+        //  CTEP/DCP ID ColumValue - CTEPString
+        logoutUser(); 
+        deactivateAllTrials();
+        trial = createSubmittedTrial();
+        addSponsor(trial, "National Cancer Institute");
+        addDWS(trial, "ABSTRACTION_VERIFIED_RESPONSE");
+        addNctIdentifier(trial, trial.nctID);
+        goToGTDScreen(trial);
+        verifyStudySiteAssignedIdentifier(trial, "CTEP Identifier", ctep);
+        logoutUser();        
+        loginPA("results-abstractor", "pass");
+        clickAndWait("id=acceptDisclaimer");
+        selenium.type("id=trialIdentifier", trial.nciID);
+        clickAndWait("link=Search");
+        assertTrue(selenium.isTextPresent("One item found.1"));
+        assertTrue(selenium.isTextPresent(trial.nciID));
+        assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]"), trial.nciID);
+        assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[3]"), ctep);
+
+        //  CTEP/DCP ID ColumValue - DCPString
+        logoutUser(); 
+        deactivateAllTrials();
+        trial = createSubmittedTrial();
+        addSponsor(trial, "National Cancer Institute");
+        addDWS(trial, "ABSTRACTION_VERIFIED_RESPONSE");
+        addNctIdentifier(trial, trial.nctID);
+        goToGTDScreen(trial);
+        verifyStudySiteAssignedIdentifier(trial, "DCP Identifier", dcp);
+        logoutUser();        
+        loginPA("results-abstractor", "pass");
+        clickAndWait("id=acceptDisclaimer");
+        selenium.type("id=trialIdentifier", trial.nciID);
+        clickAndWait("link=Search");
+        assertTrue(selenium.isTextPresent("One item found.1"));
+        assertTrue(selenium.isTextPresent(trial.nciID));
+        assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]"), trial.nciID);
+        assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[3]"), dcp);
+    }    
+
     
     private void clickSearchForResultsReportingData(String searchBtnId){
         clickAndWaitAjax("//*[@id='"+searchBtnId+"']");
