@@ -141,9 +141,6 @@ public class LogAnalyzer {
         for (File file : files) {
             currentLogFile = file;
             System.out.println(" Processing : " + currentLogFile.getName());
-            System.out.println(" Last Modified : " + Files
-                    .readAttributes(currentLogFile.toPath(), BasicFileAttributes.class,
-                            LinkOption.NOFOLLOW_LINKS).lastModifiedTime());
             processLogFile();
         }
 
@@ -157,6 +154,9 @@ public class LogAnalyzer {
         currentLogLineNumber = 0;
         int n = 0;
 
+        Files.write(reportFile.toPath(),
+                ("\n********************* " + currentLogFile.getName()+"\n")
+                        .getBytes(), StandardOpenOption.APPEND);
 
         BufferedReader reader =
                 Files.newBufferedReader(currentLogFile.toPath(),
