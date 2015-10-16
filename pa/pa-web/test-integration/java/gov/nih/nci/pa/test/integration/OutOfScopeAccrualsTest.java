@@ -1,5 +1,7 @@
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
+
 import java.sql.SQLException;
 
 import org.apache.commons.dbutils.QueryRunner;
@@ -10,6 +12,7 @@ import org.junit.Test;
  * 
  * @author Denis G. Krylov
  */
+@Batch(number = 1)
 public class OutOfScopeAccrualsTest extends AbstractPaSeleniumTest {
 
     @Test

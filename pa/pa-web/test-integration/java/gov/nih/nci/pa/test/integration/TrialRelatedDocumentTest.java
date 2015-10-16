@@ -83,6 +83,7 @@
 package gov.nih.nci.pa.test.integration;
 
 import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
+import gov.nih.nci.pa.test.integration.support.Batch;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -97,6 +98,7 @@ import org.openqa.selenium.JavascriptExecutor;
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
+@Batch(number = 1)
 public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
     private static final String TRIAL_DOCUMENT = "TrialDocument.doc";
 

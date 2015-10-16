@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.test.integration;
 
 import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
+import gov.nih.nci.pa.test.integration.support.Batch;
 
 import org.junit.Test;
 
@@ -9,6 +10,7 @@ import org.junit.Test;
  * @author Reshma Koganti
  *
  */
+@Batch(number = 1)
 public class RegulatoryInformationTest extends AbstractPaSeleniumTest {
      @Test
      public void testRegulatoryInfo() throws Exception {

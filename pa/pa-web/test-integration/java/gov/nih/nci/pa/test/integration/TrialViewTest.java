@@ -1,5 +1,7 @@
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
+
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
@@ -9,7 +11,7 @@ import org.apache.commons.dbutils.handlers.ArrayListHandler;
 import org.apache.commons.lang.SystemUtils;
 import org.junit.Test;
 
-
+@Batch(number = 1)
 public class TrialViewTest extends ResultsReportingStudyContactsTest {
 
     protected static final int OP_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 15000

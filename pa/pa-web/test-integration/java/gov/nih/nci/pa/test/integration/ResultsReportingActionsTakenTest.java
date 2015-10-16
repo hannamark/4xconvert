@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -99,6 +101,7 @@ import org.openqa.selenium.WebElement;
  * 
  * @author Gopalakrishnan Unnikrishnan
  */
+@Batch(number = 1)
 public class ResultsReportingActionsTakenTest extends AbstractPaSeleniumTest {
     
     List<TrialInfo> testTrials;

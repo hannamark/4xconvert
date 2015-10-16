@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.test.integration;
 
 import gov.nih.nci.pa.enums.StudySourceCode;
+import gov.nih.nci.pa.test.integration.support.Batch;
 import gov.nih.nci.pa.util.PAConstants;
 
 import java.io.File;
@@ -20,6 +21,7 @@ import org.openqa.selenium.WebElement;
  * 
  * @author dkrylov
  */
+@Batch(number = 2)
 public class TrialSearchTest extends AbstractTrialStatusTest {
 
     private static final int OP_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 10000

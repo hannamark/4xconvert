@@ -83,6 +83,7 @@
 package gov.nih.nci.pa.test.integration;
 
 import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
+import gov.nih.nci.pa.test.integration.support.Batch;
 
 import org.junit.Test;
 import org.openqa.selenium.JavascriptExecutor;
@@ -91,6 +92,7 @@ import org.openqa.selenium.JavascriptExecutor;
  * @author mshestopalov
  *
  */
+@Batch(number = 1)
 public class AnatomicSiteTest extends AbstractPaSeleniumTest {
 
     /**

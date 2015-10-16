@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
+
 import java.sql.SQLException;
 import java.util.List;
 
@@ -91,7 +93,7 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-
+@Batch(number = 1)
 public class TrialOnHoldTest extends AbstractPaSeleniumTest {
    
     

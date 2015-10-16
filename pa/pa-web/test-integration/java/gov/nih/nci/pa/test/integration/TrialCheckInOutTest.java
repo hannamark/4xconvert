@@ -1,5 +1,7 @@
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
+
 import java.sql.SQLException;
 import java.util.Iterator;
 
@@ -13,6 +15,7 @@ import com.dumbster.smtp.SmtpMessage;
  * 
  * @author Reshma Koganti
  */
+@Batch(number = 1)
 public class TrialCheckInOutTest extends AbstractTrialStatusTest {
 
     @SuppressWarnings("deprecation")

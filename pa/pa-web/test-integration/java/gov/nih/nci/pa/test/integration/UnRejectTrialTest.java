@@ -5,12 +5,14 @@ import java.sql.SQLException;
 import org.junit.Test;
 
 import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
+import gov.nih.nci.pa.test.integration.support.Batch;
 
 /**
  * 
  * @author Reshma Koganti
  *
  */
+@Batch(number = 1)
 public class UnRejectTrialTest extends AbstractPaSeleniumTest {
     
      @Test

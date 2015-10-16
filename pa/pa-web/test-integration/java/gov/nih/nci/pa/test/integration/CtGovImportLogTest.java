@@ -1,11 +1,14 @@
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
+
 import org.junit.Test;
 
 /**
  * @author dkrylov
  * 
  */
+@Batch(number = 1)
 public class CtGovImportLogTest extends AbstractPaSeleniumTest {
 
     @Test

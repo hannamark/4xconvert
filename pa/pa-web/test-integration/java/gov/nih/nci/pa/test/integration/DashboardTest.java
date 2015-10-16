@@ -3,6 +3,7 @@ package gov.nih.nci.pa.test.integration;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
+import gov.nih.nci.pa.test.integration.support.Batch;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.File;
@@ -37,6 +38,7 @@ import org.openqa.selenium.support.ui.Select;
  * @author dkrylov
  */
 @SuppressWarnings({ "deprecation", "unused", "unchecked" })
+@Batch(number = 2)
 public class DashboardTest extends AbstractTrialStatusTest {
 
     private static final String MILESTONES_TO_COUNT = "Submission Received Date,Submission Acceptance Date,Administrative Processing Start Date,Ready for Administrative QC Date,Administrative QC Start Date,Scientific Processing Start Date,Ready for Scientific QC Date,Scientific QC Start Date,Ready for Trial Summary Report Date";

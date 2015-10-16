@@ -1,5 +1,7 @@
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
+
 import java.sql.SQLException;
 import java.util.Date;
 
@@ -13,6 +15,7 @@ import org.openqa.selenium.By;
  * 
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
+@Batch(number = 1)
 public class TrialStatusHistoryTest extends AbstractTrialStatusTest {
 
     @SuppressWarnings("deprecation")

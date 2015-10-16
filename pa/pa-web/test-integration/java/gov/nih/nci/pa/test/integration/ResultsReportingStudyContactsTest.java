@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.test.integration;
 
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
+import gov.nih.nci.pa.test.integration.support.Batch;
 
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -17,7 +18,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 
 
-
+@Batch(number = 1)
 public class ResultsReportingStudyContactsTest  extends AbstractPaSeleniumTest {
     
     protected static final int OP_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 15000

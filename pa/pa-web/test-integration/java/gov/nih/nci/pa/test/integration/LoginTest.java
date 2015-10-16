@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
+
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -89,6 +91,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.Test;
 
+@Batch(number = 1)
 public class LoginTest extends AbstractPaSeleniumTest {
 
     /**
@@ -115,7 +118,8 @@ public class LoginTest extends AbstractPaSeleniumTest {
         HttpResponse response = client.execute(get);
         final Header cookie = response.getHeaders("Set-Cookie")[0];
         System.out.println(cookie.getValue());
-        assertTrue(cookie.getValue().matches("JSESSIONID=\\p{Graph}+?; Path=/pa; HttpOnly"));
+        assertTrue(cookie.getValue().matches(
+                "JSESSIONID=\\p{Graph}+?; Path=/pa; HttpOnly"));
     }
 
 }

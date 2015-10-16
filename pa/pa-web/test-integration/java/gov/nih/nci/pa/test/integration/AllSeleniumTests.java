@@ -82,17 +82,18 @@
  */
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.pa.test.integration.support.BatchingTestSuite;
+
 import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * 
  * Class to control the order that selenium tests are run in.
  * 
- * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
+ * @author dkrylov
  */
-@RunWith(Suite.class)
+@RunWith(BatchingTestSuite.class)
 @SuiteClasses(value = { LoginTest.class, ParticipatingSiteTest.class,
         ManageTrialOtherIdentifiersTest.class, TrialStatusTest.class,
         TrialStatusHistoryTest.class, RegulatoryInformationTest.class,

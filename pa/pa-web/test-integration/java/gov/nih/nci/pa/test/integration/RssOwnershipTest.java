@@ -1,5 +1,7 @@
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
+
 import java.sql.SQLException;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -10,6 +12,7 @@ import org.openqa.selenium.By;
  * 
  * @author dkrylov
  */
+@Batch(number = 1)
 public class RssOwnershipTest extends AbstractPaSeleniumTest {
 
     @SuppressWarnings("deprecation")

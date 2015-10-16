@@ -84,6 +84,7 @@ package gov.nih.nci.pa.test.integration;
 
 import static org.apache.commons.lang.time.DateUtils.parseDate;
 import static org.apache.commons.lang.time.DateUtils.truncate;
+import gov.nih.nci.pa.test.integration.support.Batch;
 
 import java.io.File;
 import java.io.IOException;
@@ -109,6 +110,7 @@ import org.openqa.selenium.By;
  * 
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
+@Batch(number = 1)
 public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
 
     private static final int OP_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 15000

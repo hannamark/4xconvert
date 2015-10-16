@@ -5,6 +5,7 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.TweetStatusCode;
+import gov.nih.nci.pa.test.integration.support.Batch;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,6 +45,7 @@ import twitter4j.conf.ConfigurationBuilder;
  * @author Denis G. Krylov
  * 
  */
+@Batch(number = 2)
 public class TwitterTest extends AbstractTrialStatusTest {
 
     private static final int TWEET_WAIT_TIME_SECONDS = 90;

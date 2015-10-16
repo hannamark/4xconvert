@@ -84,6 +84,8 @@ package gov.nih.nci.pa.test.integration;
 
 
 
+import gov.nih.nci.pa.test.integration.support.Batch;
+
 import java.sql.SQLException;
 import java.util.List;
 
@@ -103,6 +105,7 @@ import org.openqa.selenium.support.ui.Select;
  * 
  * @author Gopalakrishnan Unnikrishnan
  */
+@Batch(number = 1)
 public class ManageTermsTest extends AbstractPaSeleniumTest {
     
     @Before

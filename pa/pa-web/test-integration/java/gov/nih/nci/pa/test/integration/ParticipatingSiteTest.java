@@ -82,20 +82,21 @@
  */
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
+
 import java.sql.SQLException;
 import java.util.Date;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebElement;
 
 /**
  * Tests creation/editing/deleting of participating sites.
  * 
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
+@Batch(number = 1)
 public class ParticipatingSiteTest extends AbstractPaSeleniumTest {
     private String today = MONTH_DAY_YEAR_FMT.format(new Date());
 

@@ -1,5 +1,7 @@
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
+
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -10,6 +12,7 @@ import org.openqa.selenium.JavascriptExecutor;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 @SuppressWarnings("deprecation")
+@Batch(number = 1)
 public class PlannedMarkerTest extends AbstractPaSeleniumTest {
 
     private static final int CADSR_SEARCH_WAIT_TIME = 90;

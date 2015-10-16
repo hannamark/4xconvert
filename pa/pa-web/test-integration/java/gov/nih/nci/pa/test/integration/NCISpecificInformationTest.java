@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.test.integration;
 
 import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
+import gov.nih.nci.pa.test.integration.support.Batch;
 
 import java.sql.SQLException;
 
@@ -14,6 +15,7 @@ import org.junit.Test;
  * @author Reshma Koganti
  *
  */
+@Batch(number = 1)
 public class NCISpecificInformationTest extends AbstractPaSeleniumTest {
      @Test
      public void testConsortiaTrialCategoryCodeValues() throws SQLException {

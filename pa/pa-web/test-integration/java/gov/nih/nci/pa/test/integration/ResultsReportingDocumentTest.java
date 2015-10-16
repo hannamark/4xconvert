@@ -2,6 +2,7 @@
 package gov.nih.nci.pa.test.integration;
 
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.test.integration.support.Batch;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -19,7 +20,7 @@ import org.openqa.selenium.WebElement;
 
 import com.dumbster.smtp.SmtpMessage;
 
-
+@Batch(number = 1)
 public class ResultsReportingDocumentTest extends AbstractPaSeleniumTest {
     private static final String TRIAL_DOCUMENT = "TrialDocument.doc";
     

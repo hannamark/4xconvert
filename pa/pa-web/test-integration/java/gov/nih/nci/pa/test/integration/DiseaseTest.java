@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -94,6 +96,7 @@ import org.openqa.selenium.WebElement;
  * 
  * @author Gopalakrishnan Unnikrishnan
  */
+@Batch(number = 2)
 public class DiseaseTest extends AbstractPaSeleniumTest {
     
     @Before

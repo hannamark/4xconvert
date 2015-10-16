@@ -85,8 +85,9 @@ package gov.nih.nci.pa.test.integration;
 
 
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
-
+import gov.nih.nci.pa.test.integration.support.Batch;
 import gov.nih.nci.pa.util.PAConstants;
+
 
 
 import java.sql.SQLException;
@@ -108,6 +109,7 @@ import org.openqa.selenium.support.ui.Select;
  * 
  * @author Gopalakrishnan Unnikrishnan
  */
+@Batch(number = 1)
 public class ResultsDashboardTest extends AbstractPaSeleniumTest {
     
     List<TrialInfo> testTrials;

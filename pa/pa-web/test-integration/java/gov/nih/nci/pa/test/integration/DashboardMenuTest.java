@@ -1,9 +1,13 @@
 package gov.nih.nci.pa.test.integration;
+
+import gov.nih.nci.pa.test.integration.support.Batch;
+
 /**
  * 
  * @author Reshma Koganti
  *
  */
+@Batch(number = 1)
 public class DashboardMenuTest extends AbstractPaSeleniumTest {
      
     @SuppressWarnings("deprecation")

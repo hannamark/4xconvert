@@ -1,5 +1,7 @@
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
+
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -17,6 +19,7 @@ import org.openqa.selenium.JavascriptExecutor;
  * 
  * @author dkrylov
  */
+@Batch(number = 1)
 public class TrialStatusTest extends AbstractTrialStatusTest {
 
     @SuppressWarnings("deprecation")

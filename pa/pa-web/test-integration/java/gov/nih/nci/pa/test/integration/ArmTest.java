@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
+
 import java.sql.SQLException;
 
 import org.junit.Test;
@@ -92,6 +94,7 @@ import org.openqa.selenium.JavascriptExecutor;
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
+@Batch(number = 1)
 public class ArmTest extends AbstractPaSeleniumTest {
     
   
