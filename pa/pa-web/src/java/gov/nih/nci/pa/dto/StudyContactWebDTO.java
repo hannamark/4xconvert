@@ -594,7 +594,8 @@ public class StudyContactWebDTO implements Serializable {
      * @return the phoneWithExt
      */
     public String getPhoneWithExt() {
-        return StringUtils.isNotEmpty(this.ext) ? this.phone + " X" + this.ext : this.phone;
+        return StringUtils.isNotEmpty(this.ext) && StringUtils.isNotEmpty(this.phone) 
+                 ? this.phone + " X" + this.ext : this.phone;
     }
 
     /**

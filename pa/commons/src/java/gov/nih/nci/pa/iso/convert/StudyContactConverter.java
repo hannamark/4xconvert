@@ -201,6 +201,8 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
             retList = DSetConverter.convertDSetToList(dto.getTelecomAddresses(), "PHONE");
             if (CollectionUtils.isNotEmpty(retList)) {
                 bo.setPhone(retList.get(0).toString());
+            } else {
+                bo.setPhone(null);            
             }
         }
         bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
