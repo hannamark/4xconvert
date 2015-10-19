@@ -196,8 +196,11 @@ table.searchtable {
 	var="diseaseWidgetURL" />
 
 <script type="text/javascript" language="javascript">
+var oldValue = "";
 
 jQuery(function() {
+	
+	
 	
 	var reportDateUpdateError = function(study, attr){
 		alert("Update of "+attr+ " failed for study "+ study+"." )
@@ -217,12 +220,25 @@ jQuery(function() {
 	  jQuery("#pcdTo").val(jQuery.datepicker.formatDate('mm/dd/yy', new Date('${pcdTo}')));
 	}
 	
+	
+	
 	jQuery(".datePicker").datepicker({
+		  beforeShow : function (date, inp){
+			   var id = inp.id;
+			   oldValue = jQuery("#"+id).val();
+			   
+		  },
+		
 		onClose : function (date, inp){
 			var id = inp.id;
 			var attr = id.split('_')[0];
 			var studyId = id.split('_')[1];
+			var newValue = jQuery("#"+id).val();
+		
+			//save only if there are changes
+			if(oldValue!=newValue) {
 			
+						  		
 			var ajaxReq = new Ajax.Request('resultsDashboardajaxChangeDate.action', {
             method: 'post',
             parameters: 'studyId='+studyId+'&dateAttr='+attr+'&dateValue='+date,
@@ -231,7 +247,7 @@ jQuery(function() {
                    	    reportDateUpdateError(studyId, attr);
                     } else {
                    	    jQuery('#'+id+'_flash').delay(100).fadeIn('normal', function() {
-                        jQuery(this).delay(2500).fadeOut();
+                   	    jQuery(this).delay(2500).fadeOut();
                  	});
                 }
             },
@@ -244,7 +260,9 @@ jQuery(function() {
             on0: function(response) {
                   ajaxReq.options.onFailure(response);
             }
-          });			
+          });	
+			
+			}	
 		}
 	});
 

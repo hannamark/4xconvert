@@ -610,4 +610,60 @@ public class ResultsDashboardTest extends OtherIdentifiersRelatedTest {
         addNctIdentifier(trial, trial.nctID);
         testTrials.add(trial); 
     }
+     
+     //test if date field value is never changed then it should never be saved
+     @Test       
+     public void testDateNotSavedIfNoUpdate(){
+         long trialId = testTrials.get(0).id;
+         selenium.type("id=pcdSentToPIODate_"+trialId, "01/01/2015");
+         selenium.type("id=pcdConfirmedDate_"+testTrials.get(0).id, "01/02/2015");
+         pause(1000);
+         waitForElementToBecomeInvisible(By.id("pcdSentToPIODate_"+trialId+"_flash"),3);
+         //if above condition is true then date is saved just check if value is present to assert
+         assertEquals("01/01/2015",driver.findElement(By.id("pcdSentToPIODate_"+trialId)).getAttribute("value"));
+         
+         //now type same value and check if that date should not be saved
+         selenium.type("id=pcdSentToPIODate_"+trialId, "01/01/2015");
+         selenium.type("id=pcdConfirmedDate_"+testTrials.get(0).id, "01/02/2015");
+         
+         //below condition should never be true because update should never be saved
+         //check if saved message is not displayed
+         
+         try {
+            waitForElementToBecomeInvisible(By.id("pcdSentToPIODate_"+trialId+"_flash"),3);
+            
+            //if message is displayed i.e. above condition is true then mark this test as failure
+            assert false;
+         } catch (Exception e) {
+             //save message is never displayed then test case result is success
+             assert true;
+         }
+         
+         //update value to blank this time it should be saved
+         selenium.type("id=pcdSentToPIODate_"+trialId, "");
+         selenium.type("id=pcdConfirmedDate_"+testTrials.get(0).id, "");
+         pause(1000);
+         waitForElementToBecomeInvisible(By.id("pcdSentToPIODate_"+trialId+"_flash"),3);
+         //if above condition is true then date is saved just check if value is present to assert
+         assertEquals("",driver.findElement(By.id("pcdSentToPIODate_"+trialId)).getAttribute("value"));
+         
+         //now again try to update value to blank this should never be saved
+         selenium.type("id=pcdSentToPIODate_"+trialId, "");
+         selenium.type("id=pcdConfirmedDate_"+testTrials.get(0).id, "");
+         
+         //below condition should never be true because update should never be saved
+         //check if saved message is not displayed
+         
+         try {
+            waitForElementToBecomeInvisible(By.id("pcdSentToPIODate_"+trialId+"_flash"),3);
+            
+            //if message is displayed i.e. above condition is true then mark this test as failure
+            assert false;
+         } catch (Exception e) {
+             //save message is never displayed then test case result is success
+             assert true;
+         }
+         
+         
+     }            
 }
