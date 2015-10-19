@@ -53,13 +53,13 @@ public class ResultsReportingStudyContactsTest  extends AbstractPaSeleniumTest {
         //edit img
         clickAndWaitAjax("//table[@id='dscWeb']/tbody/tr[2]/td[8]/div/img[1]");
         waitForPageToLoad();
-        pause(1000);
+        pause(3000);
         
         selenium.type("dscEmail", "newjdoe02@some.com");
         pause(100);
         
         selenium.click("//a[@id='addEditDSC']");
-        pause(1000);
+        pause(3000);
         waitForPageToLoad();
         assertTrue(selenium.isTextPresent("Designee contact has been added/updated successfully"));
         waitForTextToAppear(By.xpath("//table[@id='dscWeb']/tbody/tr[2]/td[5]"), "newjdoe02@some.com", 5);
@@ -71,7 +71,7 @@ public class ResultsReportingStudyContactsTest  extends AbstractPaSeleniumTest {
         ((JavascriptExecutor) driver).executeScript("$('process').value='delete';$('dscToEdit').value=" + text + ";"
                 + "submitStudyContact('reportStudyContactsForm', 'ajaxResultsReportingContactdelete.action')");
         waitForPageToLoad();
-        pause(1000);
+        pause(3000);
         assertTrue(selenium.isTextPresent("Selected designee/PIO study contact deleted successfully"));
         assertFalse(selenium.isElementPresent("//table[@id='dscWeb']/tbody/tr[2]"));
     }
