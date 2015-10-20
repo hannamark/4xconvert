@@ -216,10 +216,13 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         selenium.select("reason",
                 "label=Do not enforce unique Subject ID across sites");
         selenium.type("comments", "This is edited comment.");
+        pause(500);
         selenium.click("xpath=//button/span[normalize-space(text())='Save']");
         waitForElementToBecomeVisible(By.id("msg"), 15);
         assertTrue(selenium.isTextPresent("Changes saved!"));
 
+        pause(3000);
+        
         assertEquals(
                 "Do not enforce unique Subject ID across sites",
                 selenium.getText("xpath=//table[@id='flaggedTrials']/tbody/tr[1]/td[2]"));
@@ -584,6 +587,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         populateAddFlagDialogAndHitSave(trial);
         waitForPageToLoad();
         waitForElementToBecomeAvailable(By.className("confirm_msg"), 15);
+        pause(500);
         assertTrue(selenium
                 .isTextPresent("Flagged trial has been added successfully."));
     }
