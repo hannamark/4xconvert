@@ -20,6 +20,7 @@ import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.HibernateException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,18 +28,30 @@ import org.junit.Test;
  * @author dkrylov
  * 
  */
-public class MailManagerServiceTestNew extends AbstractEjbTestCase {
+public class NewMailManagerServiceTest extends AbstractEjbTestCase {
 
     @Before
     public void setUp() throws Exception {
+        clearEmailLog();
+    }
+
+    /**
+     * @throws HibernateException
+     */
+    private void clearEmailLog() throws HibernateException {
         PaHibernateUtil.getCurrentSession().createQuery("delete from EmailLog")
                 .executeUpdate();
         PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
     }
 
     @Test
     public void emailLogFailedSend() throws PAException, InterruptedException {
         stopSMTP();
+
+        Thread.sleep(5000);
+        clearEmailLog();
+
         MailManagerBeanLocal bean = getEjbBean(MailManagerBeanLocal.class);
         bean.sendMailWithAttachment("to@example.com", "from@example.com",
                 Arrays.asList("cc1@example.com", "cc2@example.com"),
@@ -62,6 +75,10 @@ public class MailManagerServiceTestNew extends AbstractEjbTestCase {
     @Test
     public void emailLogPlainTextNoAttachment() throws PAException,
             InterruptedException {
+
+        Thread.sleep(5000);
+        clearEmailLog();
+
         MailManagerBeanLocal bean = getEjbBean(MailManagerBeanLocal.class);
         bean.sendMailWithAttachment("to@example.com", "from@example.com",
                 Arrays.asList("cc1@example.com", "cc2@example.com"),
@@ -79,6 +96,9 @@ public class MailManagerServiceTestNew extends AbstractEjbTestCase {
     @Test
     public void emailLogPlainTextWithAttachment() throws PAException,
             InterruptedException, IOException {
+
+        Thread.sleep(5000);
+        clearEmailLog();
 
         File file = File.createTempFile(UUID.randomUUID().toString(), "txt");
         FileUtils.writeByteArrayToFile(file, new byte[] { 0x01, 0x02, 0x04 });
@@ -103,6 +123,9 @@ public class MailManagerServiceTestNew extends AbstractEjbTestCase {
     @Test
     public void emailLogHtmlTextWithAttachment() throws PAException,
             InterruptedException, IOException {
+
+        Thread.sleep(5000);
+        clearEmailLog();
 
         File file = File.createTempFile(UUID.randomUUID().toString(), "txt");
         FileUtils.writeByteArrayToFile(file, new byte[] { 0x01, 0x02, 0x04 });
@@ -132,6 +155,10 @@ public class MailManagerServiceTestNew extends AbstractEjbTestCase {
     @Test
     public void emailLogHtmlTextNoAttachment() throws PAException,
             InterruptedException {
+
+        Thread.sleep(5000);
+        clearEmailLog();
+
         MailManagerBeanLocal bean = getEjbBean(MailManagerBeanLocal.class);
         bean.sendMailWithHtmlBody("from@example.com", "to@example.com",
                 Arrays.asList("cc1@example.com", "cc2@example.com"),
@@ -166,11 +193,9 @@ public class MailManagerServiceTestNew extends AbstractEjbTestCase {
                 && System.currentTimeMillis() - stamp < 1000 * 20) {
             Thread.sleep(500);
         }
-        assertEquals(1,
-                PaHibernateUtil.getCurrentSession()
-                        .createQuery("from EmailLog").list().size());
         return (EmailLog) PaHibernateUtil.getCurrentSession()
-                .createQuery("from EmailLog").uniqueResult();
+                .createQuery("from EmailLog order by dateSent desc")
+                .setMaxResults(1).uniqueResult();
 
     }
 

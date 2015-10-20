@@ -186,6 +186,7 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
     private void populatePaProperties() throws HibernateException, IOException {
         addPaProperty("smtp", "localhost");
         addPaProperty("smtp.port", SMTP_PORT + "");
+        addPaProperty("smtp.auth.username", "");
         addPaProperty("log.email.address", "log@example.com");
         addPaProperty("fromaddress", "from@example.com");
 

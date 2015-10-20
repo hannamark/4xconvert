@@ -371,18 +371,13 @@ ServletRequestAware , Preparable {
                 scToDelete = dscToEdit;
                 scMap = getAsMap(studyDesigneeContactDtos);
                 listIter = studyDesigneeContactWebDtos.listIterator();
-                LOG.info("dscToEdit != null: scToDelete=" + scToDelete + ", scMap=" + scMap
-                        + ", listIter=" + listIter);
             } else {
                 scToDelete = pscToEdit;
                 scMap = getAsMap(studyPioContactDtos);
                 listIter = studyPioContactWebDtos.listIterator();
-                LOG.info("else: scToDelete=" + scToDelete + ", scMap=" + scMap
-                        + ", listIter=" + listIter);
             }
             
             while (listIter.hasNext()) {
-                LOG.info("Iterating...");
                 StudyContactWebDTO studyContactWebDTO = (StudyContactWebDTO) listIter
                         .next();
                 if (studyContactWebDTO.getId().equals(scToDelete)) {
@@ -390,7 +385,6 @@ ServletRequestAware , Preparable {
                         StudyContactDTO scDto = scMap.get(scToDelete);
                         scDto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.NULLIFIED));
                         studyContactService.update(scDto);
-                        LOG.info("Deleted: " + scDto);
                     } else {
                         listIter.remove();
                     }
@@ -398,13 +392,11 @@ ServletRequestAware , Preparable {
             }
             clearSession();
             
-            PaHibernateUtil.getCurrentSession().flush();
             queryDetails();
             request.setAttribute(Constants.SUCCESS_MESSAGE,
                     "Selected designee/PIO study contact deleted successfully");
             
         } catch (Exception e) {
-            LOG.error(e, e);
             //remove attribute in case of failure
             request.removeAttribute(Constants.SUCCESS_MESSAGE);
             addActionError("Error deleting study contact. Error: " + e.getLocalizedMessage());
