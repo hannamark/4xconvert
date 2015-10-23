@@ -54,5 +54,30 @@
 				<include name="**/*.zip" />
 			</fileset>
 		</scp>
+		
+		<echo message = "Granting SELECT privilege to copparead..."/>
+        <sql driver="org.postgresql.Driver" url="jdbc:postgresql://${db.server}:${db.port}/${db.name}"
+            userid="${db.username}" password="${pa.db.password}"
+            onerror="continue" failOnConnectionError="false"
+            expandproperties="true" autocommit="true">
+        	<transaction>
+        		GRANT SELECT ON ALL TABLES IN SCHEMA public TO copparead;
+        	</transaction>
+            <classpath>
+                <path refid="pdqexport.classpath"/>
+            </classpath>
+	    </sql>
+        <sql driver="org.postgresql.Driver" url="jdbc:postgresql://${database.server}:${database.port}/${database.name}"
+            userid="${database.user}" password="${po.db.password}"
+            onerror="continue" failOnConnectionError="false"
+            expandproperties="true" autocommit="true">
+            <transaction>
+                GRANT SELECT ON ALL TABLES IN SCHEMA public TO copparead;
+            </transaction>
+            <classpath>
+                <path refid="pdqexport.classpath"/>
+            </classpath>
+        </sql>     
+
 	</target>
 </project>
