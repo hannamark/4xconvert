@@ -52,7 +52,7 @@ public class TrialVerificationDataConverter
             dto.setDateLastUpdated(TsConverter.convertToTs(bo.getDateLastUpdated()));
             if (bo.getUserLastUpdated() != null) {
                 dto.setUserLastUpdated(StConverter.convertToSt(bo
-                        .getUserLastUpdated().getFirstName() + " " + bo.getUserLastUpdated().getLastName())); 
+                        .getUserLastUpdated().getLoginName())); 
             }
             
         }

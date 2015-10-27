@@ -631,47 +631,6 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         changeAndVerifyLeadOrganization();
     }
 
-    /**
-     * @param fieldID
-     * @param value
-     * @param info
-     */
-    protected void runSearchAndVerifySingleTrialResult(String fieldID,
-            String value, TrialInfo info) {
-
-        accessTrialSearchScreen();
-        selenium.type(fieldID, value);
-
-        selenium.click("runSearchBtn");
-        clickAndWait("link=All Trials");
-        waitForElementById("row", 10);
-        verifySingleTrialSearchResult(info);
-
-    }
-
-    /**
-     * @param info
-     */
-    protected void verifySingleTrialSearchResult(TrialInfo info) {
-        assertEquals(
-                info.nciID,
-                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[1]/a"));
-        assertEquals(info.title,
-                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[2]"));
-        assertEquals("Approved",
-                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[3]"));
-        assertEquals("ClinicalTrials.gov",
-                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[4]"));
-        assertEquals(info.leadOrgID,
-                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[5]"));
-        assertEquals("Doe, John",
-                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[6]"));
-        assertEquals(
-                "View",
-                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[9]/a"));
-        assertTrue(selenium
-                .isElementPresent("xpath=//table[@id='row']/tbody/tr[1]/td[10]//button[normalize-space(text())='Select Action']"));
-    }
 
     private void invokeAmendTrial() {
         final By selectActionBtn = By

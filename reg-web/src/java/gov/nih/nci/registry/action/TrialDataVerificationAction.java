@@ -120,9 +120,11 @@ public class TrialDataVerificationAction extends ActionSupport implements
                 TrialVerificationDataWebDTO trialWebDTO = new TrialVerificationDataWebDTO();
                 trialWebDTO.setStudyProtocolId(IiConverter.convertToString(studyProtocolIi));
                 trialWebDTO.setVerificationMethod("Manual Verification Entered");
-                trialWebDTO.setUserLastUpdated(StConverter.convertToString(dto.getUserLastUpdated()));
+                RegistryUser registryUser = registryUserService
+                        .getUser(StConverter.convertToString(dto.getUserLastUpdated()));
+                trialWebDTO.setUserLastUpdated(registryUser != null ? registryUser.getFullName() : " ");
                 trialWebDTO.setUpdatedDate(TsConverter.convertToTimestamp(dto.getDateLastUpdated()).toString());
-                webDTOList.add(trialWebDTO);      
+                webDTOList.add(trialWebDTO);
             }
             if (CollectionUtils.isNotEmpty(webDTOList)) {
                 Collections.sort(webDTOList, new Comparator<TrialVerificationDataWebDTO>() {

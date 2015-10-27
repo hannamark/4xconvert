@@ -97,7 +97,7 @@ import org.junit.runners.Suite.SuiteClasses;
         RegisterAbbreviatedTrialTest.class, RegisterTrialTest.class,
         AmendTrialTest.class, TrialSearchTest.class, AddUpdateSiteTest.class,
         BatchUploadTest.class, UpdateTrialTest.class, ReportViewITest.class,
-        MyAccountTest.class, SignUpTest.class })
+        MyAccountTest.class, SignUpTest.class, TrialDataVerificationTest.class })
 public class AllSeleniumTests {
 
 }
