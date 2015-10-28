@@ -120,9 +120,7 @@ public class TrialDataVerificationAction extends ActionSupport implements
                 TrialVerificationDataWebDTO trialWebDTO = new TrialVerificationDataWebDTO();
                 trialWebDTO.setStudyProtocolId(IiConverter.convertToString(studyProtocolIi));
                 trialWebDTO.setVerificationMethod("Manual Verification Entered");
-                RegistryUser registryUser = registryUserService
-                        .getUser(StConverter.convertToString(dto.getUserLastUpdated()));
-                trialWebDTO.setUserLastUpdated(registryUser != null ? registryUser.getFullName() : " ");
+                trialWebDTO.setUserLastUpdated(getRegisterUserFullName(dto));
                 trialWebDTO.setUpdatedDate(TsConverter.convertToTimestamp(dto.getDateLastUpdated()).toString());
                 webDTOList.add(trialWebDTO);
             }
@@ -143,7 +141,12 @@ public class TrialDataVerificationAction extends ActionSupport implements
             return ERROR;
         }
     }
-    
+
+    private String getRegisterUserFullName(TrialVerificationDataDTO dto) throws PAException {
+        RegistryUser registryUser = registryUserService.getUser(StConverter.convertToString(dto.getUserLastUpdated()));
+        return registryUser != null ? registryUser.getFullName() : " ";
+    }
+
     private void addUpdateSubmittedTrials(Ii studyProtocolIi) throws PAException {
         Set<RegistryUser> trialOwners = registryUserService.getAllTrialOwners(studyProtocolId);
         List<StudyInboxDTO> updateList = studyInboxService.getAllTrialUpdates(studyProtocolIi);
