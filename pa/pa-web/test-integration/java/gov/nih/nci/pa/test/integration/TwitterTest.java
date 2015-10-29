@@ -51,7 +51,7 @@ public class TwitterTest extends AbstractTrialStatusTest {
     private static final int TWEET_WAIT_TIME_SECONDS = 90;
     private static final int TWEET_STATUS_RECHECK_WAIT_TIME = 5000;
     private static final int FIRST_RUN_WAIT_TIME = 15000;
-    private static final int SCHEDULING_CHANGES_PICK_UP_TIME = 8000;
+    private static final int SCHEDULING_CHANGES_PICK_UP_TIME = 10000;
     private static final int CANCER_GOV_TIMEOUT = 60000;
 
     /**
