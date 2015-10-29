@@ -79,7 +79,7 @@ public class TwitterTest extends AbstractTrialStatusTest {
      */
     private void clearUp() throws SQLException {
         deactivateAllTrials();
-        clearTweetQueue();        
+        clearTweetQueue();
     }
 
     private void clearTweetQueue() throws SQLException {
@@ -254,20 +254,28 @@ public class TwitterTest extends AbstractTrialStatusTest {
     @Test
     public void testNoTweetsForTrialsBecomeEligibleWhenTweetingDisabled()
             throws Exception {
+        log("Setting up for first run...");
         setUpForFirstRun();
         final Modifier modifier = new Modifier() {
             public void modify(TrialInfo trial) throws Exception {
             }
         };
+        log("Disabling tweeting...");
         setPaProperty("twitter.enabled", "false");
         Thread.sleep(FIRST_RUN_WAIT_TIME);
+        log("Creating a trial...");
         TrialInfo trial = setupCompleteTrial("ABSTRACTION_VERIFIED_RESPONSE",
                 "ACTIVE", modifier);
         pause(1000);
+        log("Enabling tweeting...");
         setPaProperty("twitter.enabled", "true");
         verifyTweetDoesNotGetQueued(trial);
         waitForCanceledTweetToQueue(trial);
 
+    }
+
+    private void log(String msg) {
+        System.out.println(new Date().toLocaleString() + ": " + msg);
     }
 
     @Test
@@ -577,7 +585,8 @@ public class TwitterTest extends AbstractTrialStatusTest {
         Status status = user.getStatus();
         assertTrue(status.getText().matches(tweetTextRegexp));
 
-        String url = status.getText().replaceFirst("^.*?http(s)?://", "http$1://");
+        String url = status.getText().replaceFirst("^.*?http(s)?://",
+                "http$1://");
         verifyURLOpens(url);
     }
 
@@ -635,8 +644,9 @@ public class TwitterTest extends AbstractTrialStatusTest {
      * @throws InterruptedException
      * @throws TimeoutException
      */
-    private Number waitForTweetToQueue(TrialInfo trial, final String statusList)
-            throws SQLException, InterruptedException, TimeoutException {
+    private Number waitForTweetToQueue(final TrialInfo trial,
+            final String statusList) throws SQLException, InterruptedException,
+            TimeoutException {
         final QueryRunner runner = new QueryRunner();
         final long start = System.currentTimeMillis();
         while (System.currentTimeMillis() - start < DateUtils.MILLIS_IN_SECOND
@@ -647,12 +657,17 @@ public class TwitterTest extends AbstractTrialStatusTest {
                             + ") limit 1", new ArrayHandler());
             if (array != null && array.length > 0) {
                 Number tweetID = (Number) array[0];
+                log("Tweet showed up for protocol "
+                        + ToStringBuilder.reflectionToString(trial) + ": "
+                        + tweetID);
                 return tweetID;
             }
             Thread.sleep(1000);
         }
-        throw new TimeoutException("Tweet never showed up for protocol: "
-                + ToStringBuilder.reflectionToString(trial));
+        final String msg = "Tweet never showed up for protocol: "
+                + ToStringBuilder.reflectionToString(trial);
+        log(msg);
+        throw new TimeoutException(msg);
     }
 
     private void createCancelledTweet(Number trialID) throws SQLException {
