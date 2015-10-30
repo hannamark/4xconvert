@@ -108,6 +108,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         // Now verify On-Hold panel picked it up as well.
         clickAndWait("id=dashboardMenuOption");
+        clickAndWait("countsid");
         waitForElementToBecomeVisible(
                 By.xpath("//table[@id='on_hold_trials_table']//tr[@id='TotalHold']"),
                 20);
@@ -240,6 +241,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         // Now test the panel.
         clickAndWait("id=dashboardMenuOption");
+        clickAndWait("countsid");
         assertTrue(s.isElementPresent("count_panels_container"));
         waitForElementToBecomeVisible(
                 By.xpath("//table[@id='abstractors_work_table']//tr[3]"), 30);
@@ -290,6 +292,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         verifyResultsTabActive();
         assertTrue(isTrialInResultsTab(admSci));
         clickAndWait("id=dashboardMenuOption");
+        clickAndWait("countsid");
         waitForElementToBecomeVisible(
                 By.xpath("//table[@id='abstractors_work_table']//tr[3]"), 20);
 
@@ -297,6 +300,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         verifyResultsTabActive();
         assertTrue(isTrialInResultsTab(scientific));
         clickAndWait("id=dashboardMenuOption");
+        clickAndWait("countsid");
         waitForElementToBecomeVisible(
                 By.xpath("//table[@id='abstractors_work_table']//tr[3]"), 20);
 
@@ -324,6 +328,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         // Now test the panel.
         loginAsSuperAbstractor();
         clickAndWait("id=dashboardMenuOption");
+        clickAndWait("countsid");
         assertTrue(s.isElementPresent("count_panels_container"));
         waitForElementToBecomeVisible(
                 By.xpath("//table[@id='trial_dist_table']//tr[4]"), 20);
@@ -358,6 +363,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         }
         refresh();
+        clickAndWait("countsid");
         waitForElementToBecomeVisible(
                 By.xpath("//table[@id='trial_dist_table']//tr[4]"), 20);
         row = 1;
@@ -386,6 +392,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         // Now test the panel.
         loginAsSuperAbstractor();
         clickAndWait("id=dashboardMenuOption");
+        clickAndWait("countsid");
         assertTrue(s.isElementPresent("count_panels_container"));
         waitForElementToBecomeVisible(
                 By.xpath("//table[@id='on_hold_trials_table']//tr[@id='TotalHold']"),
@@ -424,6 +431,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         }
         refresh();
+        clickAndWait("countsid");
         waitForElementToBecomeVisible(
                 By.xpath("//table[@id='on_hold_trials_table']//tr[@id='TotalHold']"),
                 20);
@@ -453,7 +461,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         // Clicking on link should bring up Results.
         clickAndWait(countLinkPath);
         verifySearchByDistInResultsTab(trials);
-        s.click("workloadid");
+        s.click("countsid");
 
     }
 
@@ -477,7 +485,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         verifySearchByDistInResultsTab(trials);
         refresh();
         verifySearchByDistInResultsTab(trials);
-        s.click("workloadid");
+        s.click("countsid");
 
     }
 
@@ -516,6 +524,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         // Now test the panel.
         loginAsSuperAbstractor();
         clickAndWait("id=dashboardMenuOption");
+        clickAndWait("countsid");
         assertTrue(s.isElementPresent("count_panels_container"));
         waitForElementToBecomeVisible(
                 By.xpath("//table[@id='milestones_in_progress_table']//tr[@id='TotalMilestone']"),
@@ -557,6 +566,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         }
         refresh();
+        clickAndWait("countsid");
         waitForElementToBecomeVisible(
                 By.xpath("//table[@id='milestones_in_progress_table']//tr[@id='TotalMilestone']"),
                 20);
@@ -618,7 +628,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         // Clicking on link should bring up Results.
         clickAndWait(countLinkPath);
         verifySearchByDistInResultsTab(trials);
-        s.click("workloadid");
+        s.click("countsid");
 
     }
 

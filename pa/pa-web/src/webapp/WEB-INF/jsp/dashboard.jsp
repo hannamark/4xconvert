@@ -629,7 +629,7 @@ li.select2-selection__choice {
             	if ($("#resultsid.active").length > 0 && $("#distr").val().length>0 
             			&& $("#dashboardForm").attr('action').contains('searchByDistribution')) {
             		handleAction('searchByDistribution');
-                } else if ($("#resultsid.active").length > 0 || ($("#resultsid").length > 0 && $("#workloadid.active").length == 0)) {
+                } else if ($("#resultsid.active").length > 0 || ( $("#resultsid").length > 0 && $("#workloadid.active").length == 0 && $("#countsid.active").length == 0 ) ) {
                 	handleAction("search");
                 } else {
                 	$("#dateFilterField, #dateFrom, #dateTo").val(null);
@@ -986,7 +986,12 @@ li.select2-selection__choice {
                      updateHelpTopic('workload');
               jQuery('#wl_table_container').doubleScroll('refresh');
             });
-        }		
+        }
+        if ($('countsid')!=null) {
+            Event.observe($('countsid'), "click", function() {
+                    updateHelpTopic('workload');
+            });
+        }
 		
 		if ($('resultsid')!=null) {
 		    Event.observe($('resultsid'), "click", function() {
@@ -1129,6 +1134,9 @@ li.select2-selection__choice {
 						<ul id="maintabs" class="tabs">
 							<li><a id="workloadid" href="#workload">Workload</a></li>
 							<c:if test="${suAbs}">
+								<li><a id="countsid" href="#counts">Counts</a></li>
+							</c:if>
+                            <c:if test="${suAbs}">
 								<li><a id="searchid" href="#search">Search Criteria</a></li>
 							</c:if>
 							<c:if test="${dashboardSearchResults!=null}">
@@ -1144,13 +1152,13 @@ li.select2-selection__choice {
 								<div id="wl_table_container">
 									<jsp:include page="dashboard.workload.jsp" />
 								</div>
-								<c:if test="${suAbs}">
-									<div id="count_panels_container">
-										<jsp:include page="dashboard.trialcounts.jsp" />
-									</div>
-								</c:if>
 							</div>
 							<c:if test="${suAbs}">
+                            <div id="counts" class="box" style="display:none;">
+                                <div id="count_panels_container">
+                                    <jsp:include page="dashboard.trialcounts.jsp" />
+                                </div>
+                            </div>
 							<div id="search" class="box"
 								style="display:none;">
 									<table class="form">
