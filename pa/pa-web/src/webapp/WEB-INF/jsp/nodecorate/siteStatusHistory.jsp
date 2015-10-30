@@ -332,7 +332,7 @@ span.error {
 						<s:textarea name="comment" id="comment" rows="3"></s:textarea>
 					</div>
 					<div align="center">
-						<input type="button" value="Save"
+						<input type="button" value="Save" id="saveStatusHistoryPopUp"
 							onclick="$('edit-dialog').hide();displayWaitPanel();this.form.submit();" />&nbsp;<input
 							type="button" value="Cancel" onclick="$('edit-dialog').hide();" />
 					</div>

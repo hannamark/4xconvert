@@ -114,6 +114,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.service.util.SiteStatusChangeNotificationData.SiteData;
 import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -218,7 +219,8 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength"
+    , "PMD.ConsecutiveAppendsShouldReuse" })
 public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLoader {
 
     private static final String LEAD_ORG_NAME = "${leadOrgName}";
@@ -2807,6 +2809,75 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
        }
         
     }
+    
+    
+    @Override
+   public void sendSiteNotCloseNotification(SiteStatusChangeNotificationData dataForEmail)
+           throws PAException {
+        
+        String mailTo = lookUpTableService
+                .getPropertyValue("abstraction.script.mailTo");
+        
+        
+        
+        String mailSubject = lookUpTableService.getPropertyValue("participating.site.not.closed.email.subject");
+        
+        StudyProtocolQueryDTO trial = protocolQueryService
+                .getTrialSummaryByStudyProtocolId(IiConverter
+                        .convertToLong(dataForEmail.getStudyProtocolID())); 
+        
+        mailSubject = mailSubject.replace("${nciId}", trial.getNciIdentifier());
+       
+        String body = lookUpTableService.getPropertyValue("participating.site.not.closed.email.body");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(PAUtil.DATE_FORMAT_WITH_TIME 
+                , Locale.getDefault());
+        
+        body = body.replace("${currentDateTime}", simpleDateFormat.format(new Date()));
+        
+        body = body.replace("${title}"
+                , StringUtils.defaultString(trial.getOfficialTitle()));    
+        
+        body = body.replace("${nciId}"
+                , StringUtils.defaultString(trial.getNciIdentifier()));
+        
+        body = body.replace("${nctId}"
+                    , StringUtils.defaultString(trial.getNctNumber()));
+        
+        body = body.replace("${dcpId}"
+                    , StringUtils.defaultString(trial.getDcpId()));
+        
+        body = body.replace("${ctepId}"
+                   , StringUtils.defaultString(trial.getCtepId()));    
+        
+        body = body.replace("${currentStatus}",
+              CdConverter.convertCdToString(dataForEmail.getNewTrialStatus().getStatusCode()));
+        body = body.replace("${currentStatusDate}",
+                TsConverter.convertToString((dataForEmail.getNewTrialStatus().getStatusDate())));
+  
+        
+        StringBuffer notClosedSitesData = new StringBuffer(); 
+        notClosedSitesData.append("<table width='100%' border='1'>");
+        notClosedSitesData.append("<tr>");
+        notClosedSitesData.append("<td style='font-weight:bold' width='60%'>Site Name </td>");
+        notClosedSitesData.append("<td style='font-weight:bold' width='20%'>Current Status </td>");
+        notClosedSitesData.append("<td style='font-weight:bold' width='20%'>Current Site Status Date</td>");
+        notClosedSitesData.append("</tr>");
+        
+        for (SiteData siteData : dataForEmail.getSiteData()) {
+            notClosedSitesData.append("<tr>");
+            notClosedSitesData.append("<td width='60%'>" + siteData.getName() + "</td>");
+            notClosedSitesData.append("<td width='20%'>" + siteData.getPreviousTrialStatus().getCode() + "</td>");
+            notClosedSitesData.append("<td width='20%'>" + siteData.getPreviousTrialStatusDate() + "</td>");
+            notClosedSitesData.append("</tr>");
+        }
+        
+        notClosedSitesData.append("</table>");
+        
+        body = body.replace("${unclosedSites}", notClosedSitesData.toString());
+        sendMailWithHtmlBody(mailTo, mailSubject, body);
+        
+    }
+    
 
     @Override
     public List<MailMessage> getNewEmails(String mailServer, int port, String user, String password, String folder) 

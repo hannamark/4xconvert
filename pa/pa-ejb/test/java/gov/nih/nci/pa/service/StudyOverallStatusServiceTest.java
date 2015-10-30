@@ -999,7 +999,7 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
 
         StudyOverallStatusDTO closed = new StudyOverallStatusDTO();
         closed.setStatusCode(CdConverter.convertToCd(StudyStatusCode.COMPLETE));
-        closed.setStatusDate(TsConverter.convertToTs(date));
+        closed.setStatusDate(TsConverter.convertToTs(DateUtils.addDays(date, 2)));
         closed.setStudyProtocolIdentifier(IiConverter
                 .convertToStudyProtocolIi(spNew.getId()));
 
@@ -1012,8 +1012,95 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
         assertEquals(2, site.getStudySiteAccrualStatuses().size());
         assertEquals(RecruitmentStatusCode.COMPLETED, site
                 .getStudySiteAccrualStatuses().get(1).getStatusCode());
-        assertTrue(DateUtils.isSameDay(date, site.getStudySiteAccrualStatuses()
-                .get(1).getStatusDate()));
+     
+
+    }
+    
+    
+    @SuppressWarnings("deprecation")
+    @Test
+    public void checkIfSitesNotClosedForLaterDate() throws PAException {
+        // new protocol with no statuses initially.
+        final Session s = PaHibernateUtil.getCurrentSession();
+
+        final Date date = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
+        InterventionalStudyProtocol spNew = createInterventionalProtocol();
+
+        StudyOverallStatus sos = new StudyOverallStatus();
+        sos.setStudyProtocol(spNew);
+        sos.setStatusCode(StudyStatusCode.ACTIVE);
+        sos.setStatusDate(new Timestamp(DateUtils.addDays(date, -3).getTime()));
+        s.saveOrUpdate(sos);
+
+        StudySite site = TestSchema.createParticipatingSite(spNew);
+       
+       
+        s.flush();
+        assertEquals(1, site.getStudySiteAccrualStatuses().size());
+
+        StudyOverallStatusDTO closed = new StudyOverallStatusDTO();
+        closed.setStatusCode(CdConverter.convertToCd(StudyStatusCode.COMPLETE));
+        //stuy status code is still earlier date than site status date
+        closed.setStatusDate(TsConverter.convertToTs(DateUtils.addDays(date, -2)));
+        closed.setStudyProtocolIdentifier(IiConverter
+                .convertToStudyProtocolIi(spNew.getId()));
+
+        StudySourceInterceptor.STUDY_SOURCE_CONTEXT
+                .set(StudySourceCode.GRID_SERVICE);
+        bean.create(closed);
+        s.flush();
+
+        s.refresh(site);
+        
+        //check if this site should not be closed
+        assertEquals(1, site.getStudySiteAccrualStatuses().size());
+        assertEquals(RecruitmentStatusCode.ACTIVE, site
+                .getStudySiteAccrualStatuses().get(0).getStatusCode());
+     
+
+    }
+    
+    @SuppressWarnings("deprecation")
+    @Test
+    public void checkIfSitesNotClosedIfClosureInHistory() throws PAException {
+        // new protocol with no statuses initially.
+        final Session s = PaHibernateUtil.getCurrentSession();
+
+        final Date date = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
+        InterventionalStudyProtocol spNew = createInterventionalProtocol();
+
+        StudyOverallStatus sos = new StudyOverallStatus();
+        sos.setStudyProtocol(spNew);
+        sos.setStatusCode(StudyStatusCode.ACTIVE);
+        sos.setStatusDate(new Timestamp(DateUtils.addDays(date, -3).getTime()));
+        s.saveOrUpdate(sos);
+
+        //add closure status in site history
+        StudySite site = TestSchema.createParticipatingSiteWithClosureInHistory(spNew);
+       
+       
+        s.flush();
+        assertEquals(2, site.getStudySiteAccrualStatuses().size());
+
+        StudyOverallStatusDTO closed = new StudyOverallStatusDTO();
+        closed.setStatusCode(CdConverter.convertToCd(StudyStatusCode.COMPLETE));
+        
+        closed.setStatusDate(TsConverter.convertToTs(DateUtils.addDays(date, +2)));
+        closed.setStudyProtocolIdentifier(IiConverter
+                .convertToStudyProtocolIi(spNew.getId()));
+
+        StudySourceInterceptor.STUDY_SOURCE_CONTEXT
+                .set(StudySourceCode.GRID_SERVICE);
+        bean.create(closed);
+        s.flush();
+
+        s.refresh(site);
+        
+        //check if this site should not be closed
+        assertEquals(2, site.getStudySiteAccrualStatuses().size());
+        assertEquals(RecruitmentStatusCode.ACTIVE, site
+                .getStudySiteAccrualStatuses().get(0).getStatusCode());
+     
 
     }
 

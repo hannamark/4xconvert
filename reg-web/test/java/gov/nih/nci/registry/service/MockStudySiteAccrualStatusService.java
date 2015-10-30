@@ -129,4 +129,11 @@ public class MockStudySiteAccrualStatusService extends AbstractBaseSearchBean<St
         return new ArrayList<>();
     }
 
+    @Override
+    public boolean ifCloseStatusExistsInHistory(Ii studySiteIi)
+            throws PAException {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }

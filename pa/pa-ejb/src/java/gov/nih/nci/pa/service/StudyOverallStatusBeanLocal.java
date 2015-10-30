@@ -240,14 +240,13 @@ public class StudyOverallStatusBeanLocal extends // NOPMD
         if (oldStatus == null) {
             return;
         }
-        StudyProtocolDTO dto = studyProtocolService.getStudyProtocol(spID);
+       
         StudyOverallStatusDTO currentStatus = getCurrentByStudyProtocol(spID);
         StudyStatusCode oldCode = CdConverter.convertCdToEnum(
                 StudyStatusCode.class, oldStatus.getStatusCode());
         StudyStatusCode newCode = CdConverter.convertCdToEnum(
                 StudyStatusCode.class, currentStatus.getStatusCode());
-        if (!BlConverter.convertToBool(dto.getProprietaryTrialIndicator())
-                && oldCode != newCode && !oldCode.isClosed() // NOPMD
+        if (oldCode != newCode && !oldCode.isClosed() // NOPMD
                 && newCode.isClosed()) {
             participatingSiteService
                     .closeOpenSites(

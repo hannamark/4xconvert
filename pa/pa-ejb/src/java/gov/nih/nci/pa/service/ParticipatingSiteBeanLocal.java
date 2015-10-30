@@ -180,7 +180,8 @@ import gov.nih.nci.services.person.PersonDTO;
  */
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
-@SuppressWarnings("PMD.AvoidRethrowingException") //Suppressed to catch and throw PAException to avoid re-wrapping.
+@SuppressWarnings({"PMD.AvoidRethrowingException" 
+    , "PMD.CyclomaticComplexity" }) //Suppressed to catch and throw PAException to avoid re-wrapping.
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean // NOPMD
     implements ParticipatingSiteServiceLocal { // NOPMD
@@ -220,6 +221,9 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
         
         SiteStatusChangeNotificationData dataForEmail = new SiteStatusChangeNotificationData(
                 spID, oldStatus, trialStatus);
+        
+        SiteStatusChangeNotificationData dataForNotClosedEmail = new SiteStatusChangeNotificationData(
+                spID, oldStatus, trialStatus);
 
         List<ParticipatingSiteDTO> sites = getParticipatingSitesByStudyProtocol(spID);
         for (ParticipatingSiteDTO site : sites) {
@@ -231,14 +235,20 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
                     .getStatusDate());
             if (siteStatusCode != null && !siteStatusCode.isClosed()
                     && siteStatusDate != null) {
+                
+                if (!getStudySiteAccrualStatusService().ifCloseStatusExistsInHistory(
+                        site.getIdentifier()) && trialStatusDate.after(siteStatusDate)) {
+                
                 StudySiteAccrualStatusDTO newStatus = new StudySiteAccrualStatusDTO();                
-                newStatus.setStatusDate(TsConverter.convertToTs(trialStatusDate
-                        .after(siteStatusDate) ? trialStatusDate
-                        : siteStatusDate));
+                newStatus.setStatusDate(TsConverter.convertToTs(trialStatusDate));
                 final RecruitmentStatusCode newStatusCode = RecruitmentStatusCode
                         .getByStatusCode(trialStatusCode);
                 newStatus.setStatusCode(CdConverter
                         .convertToCd(newStatusCode));
+                //set comments as this is automatically closed
+                newStatus.setComments(
+                StConverter.convertToSt(
+                        "The CTRP application automatically closed this site because the trial was closed"));
                 createStudySiteAccrualStatus(site.getIdentifier(), newStatus);
                 if (notifyTrialOwners) {
                     SiteData siteData = new SiteData(site.getSiteOrgName(),
@@ -246,14 +256,31 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
                             getStatusHistoryErrors(site));
                     dataForEmail.getSiteData().add(siteData);
                 }
-            }
+              } else { //if this site is not closed then add this to list so that email can be sent later
+                    SiteData siteData = new SiteData(site.getSiteOrgName(),
+                            siteStatusCode, null,
+                            null);
+                    siteData.setPreviousTrialStatusDate(TsConverter.convertToString(siteStatus
+                        .getStatusDate()));
+                    dataForNotClosedEmail.getSiteData().add(siteData);
+                }  
+            } 
+           
         }
         
         if (!dataForEmail.getSiteData().isEmpty()) {
             Collections.sort(dataForEmail.getSiteData());
             getMailManagerService().sendSiteCloseNotification(dataForEmail);
         }
+        
+        //send sites not closed email
+        if (!dataForNotClosedEmail.getSiteData().isEmpty()) {
+            Collections.sort(dataForEmail.getSiteData());
+            getMailManagerService().sendSiteNotCloseNotification(dataForNotClosedEmail);
+        }
     }
+    
+   
 
     private String getStatusHistoryErrors(ParticipatingSiteDTO site)
             throws PAException {

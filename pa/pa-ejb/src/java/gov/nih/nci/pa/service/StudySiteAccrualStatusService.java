@@ -147,4 +147,11 @@ public interface StudySiteAccrualStatusService {
      * @throws PAException PAException
      */
     Collection<StatusDto> getStatusHistory(Ii identifier) throws PAException;
+    
+    /**
+     * @param studySiteIi studySiteIi
+     * @return flag flag
+     * @throws PAException PAException
+     */
+    boolean ifCloseStatusExistsInHistory(Ii studySiteIi) throws PAException;
 }

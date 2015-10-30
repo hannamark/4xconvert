@@ -60,6 +60,8 @@ public final class SiteStatusChangeNotificationData implements Serializable {
         private final RecruitmentStatusCode previousTrialStatus;
         private final RecruitmentStatusCode newStatus;
         private final String errors;
+        private String previousTrialStatusDate;
+        private static final long serialVersionUID = 1L;
 
         /**
          * @param name
@@ -82,7 +84,7 @@ public final class SiteStatusChangeNotificationData implements Serializable {
         /**
          * 
          */
-        private static final long serialVersionUID = 1L;
+      
 
         /**
          * @return the name
@@ -110,6 +112,20 @@ public final class SiteStatusChangeNotificationData implements Serializable {
          */
         public String getErrors() {
             return errors;
+        }
+
+        /** 
+         * @return previousTrialStatusDate
+         */
+        public String getPreviousTrialStatusDate() {
+            return previousTrialStatusDate;
+        }
+
+        /**
+         * @param previousTrialStatusDate previousTrialStatusDate
+         */
+        public void setPreviousTrialStatusDate(String previousTrialStatusDate) {
+            this.previousTrialStatusDate = previousTrialStatusDate;
         }
 
         @Override

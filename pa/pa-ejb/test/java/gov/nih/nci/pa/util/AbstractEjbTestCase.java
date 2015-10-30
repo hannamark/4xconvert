@@ -247,7 +247,11 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
                 "A new NCI-sponsored {hashtags} study is now accepting patients. {url}");
         addPaProperty("twitter.trials.url", "http://localhost:"
                 + CANCER_GOV_MOCK_PORT + "/clinicaltrials/{nctid}");
-
+        
+        addPaProperty("abstraction.script.mailTo", "sample@example.com");
+        addPaProperty("participating.site.not.closed.email.subject", "email subject");
+        addPaProperty("participating.site.not.closed.email.body", "email body");
+        
     }
 
     protected void addPaProperty(String name, String value) {

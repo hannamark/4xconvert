@@ -188,6 +188,11 @@ public class PAUtil {
      * Date format.
      */
     public static final String DATE_FORMAT = "MM/dd/yyyy";
+    /**
+     * Date format with time
+     */
+    public static final String DATE_FORMAT_WITH_TIME = "MM/dd/yyyy hh:mm:ss a";
+    
     private static final String EXTN = "extn";
     private static final String EXT = "ext";
     private static final int EXTN_COUNT = 4;

@@ -1999,6 +1999,17 @@ public class TestSchema {
         site.setStatusDateRangeLow(TODAY);
         site.setStudyProtocol(sp);
         site.setHealthCareFacility(hfc);
+        
+        Organization o = TestSchema.createOrganizationObj();
+        TestSchema.addUpdObject(o);
+        
+        ResearchOrganization ro = new ResearchOrganization();
+        ro.setOrganization(o);
+        ro.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        ro.setIdentifier("abc");
+        TestSchema.addUpdObject(ro);
+        
+        site.setResearchOrganization(ro);
         addUpdObject(site);
 
         StudySiteAccrualStatus ssas = new StudySiteAccrualStatus();
@@ -2010,6 +2021,64 @@ public class TestSchema {
         addUpdObject(ssas);
 
         site.getStudySiteAccrualStatuses().add(ssas);
+
+        return site;
+    }
+    
+    public static StudySite createParticipatingSiteWithClosureInHistory(StudyProtocol sp) {
+
+        Organization org = createOrganizationObj();
+        addUpdObject(org);
+
+        HealthCareFacility hfc = TestSchema.createHealthCareFacilityObj(org);
+        addUpdObject(hfc);
+
+        StudySite site = new StudySite();
+        site.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
+        site.setLocalStudyProtocolIdentifier(sp.getId() + "_SITE");
+        site.setUserLastUpdated(getUser());
+        site.setDateLastUpdated(TODAY);
+        site.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        site.setStatusDateRangeLow(TODAY);
+        site.setStudyProtocol(sp);
+        site.setHealthCareFacility(hfc);
+        
+        Organization o = TestSchema.createOrganizationObj();
+        TestSchema.addUpdObject(o);
+        
+        ResearchOrganization ro = new ResearchOrganization();
+        ro.setOrganization(o);
+        ro.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        ro.setIdentifier("abc");
+        TestSchema.addUpdObject(ro);
+        
+        site.setResearchOrganization(ro);
+        addUpdObject(site);
+        
+        
+      //add closure status in history
+        StudySiteAccrualStatus ssas = new StudySiteAccrualStatus();
+        ssas = new StudySiteAccrualStatus();
+        ssas.setDateLastCreated(new Date());
+        ssas.setStatusCode(RecruitmentStatusCode.CLOSED_TO_ACCRUAL);
+        ssas.setStatusDate(new Timestamp(DateUtils.addDays(new Date(), -3).getTime()));
+        ssas.setStudySite(site);
+        ssas.setUserLastCreated(getUser());
+        addUpdObject(ssas);
+
+        site.getStudySiteAccrualStatuses().add(ssas);
+
+       
+        ssas.setDateLastCreated(new Date());
+        ssas.setStatusCode(RecruitmentStatusCode.ACTIVE);
+        ssas.setStatusDate(new Timestamp(new Date().getTime()));
+        ssas.setStudySite(site);
+        ssas.setUserLastCreated(getUser());
+        addUpdObject(ssas);
+
+        site.getStudySiteAccrualStatuses().add(ssas);
+
+        
 
         return site;
     }

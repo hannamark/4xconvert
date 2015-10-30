@@ -112,7 +112,7 @@ import gov.nih.nci.services.person.PersonDTO;
  * 
  */
 @Local
-@SuppressWarnings("PMD.ExcessiveParameterList")
+@SuppressWarnings({"PMD.ExcessiveParameterList", "PMD.TooManyMethods" })
 public interface ParticipatingSiteServiceLocal {
     
     /**

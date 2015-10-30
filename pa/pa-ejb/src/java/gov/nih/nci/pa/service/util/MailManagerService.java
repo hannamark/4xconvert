@@ -536,6 +536,12 @@ public interface MailManagerService {
     String getStudyIdentifiersHTMLTable(String nciID) throws PAException;
     
     /**
+     * @param dataForEmail SiteStatusChangeNotificationData
+     * @throws PAException when there are error 
+     */
+    void sendSiteNotCloseNotification(SiteStatusChangeNotificationData dataForEmail) throws PAException;
+    
+    /**
      * An email message
      * @author gunnikrishnan
      */

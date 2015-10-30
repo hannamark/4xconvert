@@ -47,6 +47,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  *
  */
 @Stateless
+
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<StudySiteAccrualStatus>
     implements StudySiteAccrualStatusServiceLocal {
@@ -210,6 +211,22 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
             returnList.add(converter.convertFromDomainToDto(bo));
         }
         return returnList;
+    }
+   
+    @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)  
+   public boolean ifCloseStatusExistsInHistory(Ii studySiteIi) throws PAException {
+       
+        List<StudySiteAccrualStatus> queryList = getStudySiteAccrualStatusBOs(studySiteIi);
+        
+            for (StudySiteAccrualStatus bo : queryList) {
+                if (bo != null && bo.getStatusCode() != null 
+                        && bo.getStatusCode().isClosed()) {
+                    return true;
+                }
+            }
+            
+        return false;
     }
 
     /**
