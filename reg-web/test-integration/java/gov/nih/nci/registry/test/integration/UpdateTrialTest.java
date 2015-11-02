@@ -288,7 +288,7 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
         disclaimer(true);
         searchAndSelectTrial(info.title);
         String siteCtepId = "DCP";
-        addSiteToTrial(info, siteCtepId, "In Review");
+        addSiteToTrial(info, siteCtepId, "In Review" , false);
     }
 
     /**

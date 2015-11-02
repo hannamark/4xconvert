@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
@@ -20,6 +22,8 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 
 import org.apache.commons.dbutils.QueryRunner;
@@ -197,13 +201,18 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
         info.uuid = info.leadOrgID;
         logoutPA();
         selectTrialInPA(info);
-        addSiteToTrial(info, "DCP", "In Review");
-        addSiteToTrial(info, "CTEP", "Active");
-        addSiteToTrial(info, "NCI", "Withdrawn");
+        addSiteToTrial(info, "DCP", "In Review" , true);
+        addSiteToTrial(info, "CTEP", "Active" , true);
+        addSiteToTrial(info, "NCI", "Withdrawn" , true);
 
         // Amend
         restartEmailServer();
         CompleteTrialAmendment upd = readCompleteTrialAmendmentFromFile("/integration_amend_complete_trial_closed.xml");
+        GregorianCalendar c = new GregorianCalendar();
+        c.setTime(new Date());
+        XMLGregorianCalendar trialStatusDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+        upd.setTrialStatusDate(trialStatusDate);
+        
         HttpResponse response = amendTrialFromJAXBElement("pa",
                 rConf.getPaTrialID() + "", upd);
         TrialRegistrationConfirmation uConf = processTrialRegistrationResponseAndDoBasicVerification(response);
@@ -262,8 +271,8 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
                         + "Previous Site Status:</td><td align=\"left\">Active</td></tr><tr><td align=\"right\">"
                         + "New Site Status:</td><td align=\"left\">Closed to Accrual</td></tr><tr><td align=\"right\">"
                         + "Missing Status(es) or Errors:</td><td align=\"left\">Interim status [APPROVED] is missing. "
-                        + "Interim status [IN REVIEW] is missing. Statuses [ACTIVE] and [CLOSED TO ACCRUAL] can not "
-                        + "have the same date</td>"
+                        + "Interim status [IN REVIEW] is missing"
+                        + "</td>"
                         + "</tr>"
                         + "<tr><td colspan=\"2\">&nbsp;</td></tr>"
                         + "<tr>"
@@ -271,8 +280,8 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
                         + "</tr><tr><td align=\"right\">Previous Site Status:</td><td align=\"left\">In Review</td></tr><tr>"
                         + "<td align=\"right\">New Site Status:</td><td align=\"left\">Closed to Accrual</td></tr><tr>"
                         + "<td align=\"right\">Missing Status(es) or Errors:</td><td align=\"left\">"
-                        + "Interim status [ACTIVE] is missing. Interim status [APPROVED] is missing. "
-                        + "Statuses [IN REVIEW] and [CLOSED TO ACCRUAL] can not have the same date</td>"
+                        + "Interim status [ACTIVE] is missing. Interim status [APPROVED] is missing"
+                        + "</td>"
                         + "</tr>"
                         + "<tr><td colspan=\"2\">&nbsp;</td></tr>"
                         + "</table><p><b>NEXT STEPS:"

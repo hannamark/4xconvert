@@ -110,7 +110,7 @@ public class ParticipatingSiteTest extends AbstractPaSeleniumTest {
         TrialInfo info = createAndSelectTrial();
 
         String siteCtepId = "DCP";
-        addSiteToTrial(info, siteCtepId, "Withdrawn");
+        addSiteToTrial(info, siteCtepId, "Withdrawn" , false);
         Number siteID = findParticipatingSite(info,
                 "National Cancer Institute Division of Cancer Prevention");
 

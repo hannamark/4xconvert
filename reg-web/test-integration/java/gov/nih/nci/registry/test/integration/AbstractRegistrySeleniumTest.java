@@ -88,6 +88,7 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -713,7 +714,13 @@ public abstract class AbstractRegistrySeleniumTest extends
      * @param params
      */
     protected final void submitTrialAndVerifyOpenSitesDialog(String[] params,
-            String buttonToClick) {
+            String buttonToClick , boolean isEarlierDay) {
+        
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        String earlierDate = MONTH_DAY_YEAR_FMT.format(calendar.getTime());
+        
         s.click("xpath=//button[text()='" + buttonToClick + "']");
         waitForElementToBecomeVisible(By.id("dialog-opensites"), 10);
         assertEquals("The trial has open sites",
@@ -747,8 +754,15 @@ public abstract class AbstractRegistrySeleniumTest extends
                 s.getText("//table[@id='openSitesTable']/tbody/tr[1]/td[2]"));
         assertEquals(params[0],
                 s.getText("//table[@id='openSitesTable']/tbody/tr[1]/td[3]"));
-        assertEquals(today,
-                s.getText("//table[@id='openSitesTable']/tbody/tr[1]/td[4]"));
+        if(!isEarlierDay) {
+            assertEquals(today,
+                    s.getText("//table[@id='openSitesTable']/tbody/tr[1]/td[4]"));    
+        } else {
+           
+            assertEquals(earlierDate,
+                    s.getText("//table[@id='openSitesTable']/tbody/tr[1]/td[4]"));    
+        }
+        
 
         assertEquals("2",
                 s.getText("//table[@id='openSitesTable']/tbody/tr[2]/td[1]"));
@@ -756,8 +770,14 @@ public abstract class AbstractRegistrySeleniumTest extends
                 s.getText("//table[@id='openSitesTable']/tbody/tr[2]/td[2]"));
         assertEquals(params[1],
                 s.getText("//table[@id='openSitesTable']/tbody/tr[2]/td[3]"));
+        
+        if(!isEarlierDay) {
         assertEquals(today,
                 s.getText("//table[@id='openSitesTable']/tbody/tr[2]/td[4]"));
+        } else {
+            assertEquals(earlierDate,
+                    s.getText("//table[@id='openSitesTable']/tbody/tr[2]/td[4]"));
+        }
 
         // Test Cancel button.
         s.click("//div[@aria-labelledby='ui-dialog-title-dialog-opensites']//span[text()='Cancel']");

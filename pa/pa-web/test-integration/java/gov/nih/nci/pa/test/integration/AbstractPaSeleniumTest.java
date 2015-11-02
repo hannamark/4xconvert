@@ -1264,7 +1264,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
      * @param siteCtepId
      */
     protected final void addSiteToTrial(TrialInfo info, String siteCtepId,
-            String status) {
+            String status , boolean isEarlierDate) {
         clickAndWait("link=Participating Sites");
         clickAndWait("link=Add");
         clickAndWaitAjax("link=Look Up");
@@ -1280,7 +1280,17 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         if (s.isElementPresent("siteLocalTrialIdentifier"))
             selenium.type("siteLocalTrialIdentifier", info.uuid);
         selenium.select("recStatus", status);
-        selenium.type("id=recStatusDate", today);
+        if(!isEarlierDate) {
+            selenium.type("id=recStatusDate", today);    
+        }
+        else {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            calendar.add(Calendar.DAY_OF_MONTH, -1);
+            String earlierDate = MONTH_DAY_YEAR_FMT.format(calendar.getTime());
+           selenium.type("id=recStatusDate", earlierDate); 
+        }
+        
         clickAndWait("link=Save");
         assertTrue(selenium.isTextPresent("Record Created"));
 
@@ -1297,6 +1307,8 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         driver.switchTo().defaultContent();
         assertTrue(selenium.isTextPresent("One item found"));
     }
+    
+    
 
     /**
      * @param info

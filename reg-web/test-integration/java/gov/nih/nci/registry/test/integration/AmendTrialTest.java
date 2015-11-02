@@ -129,9 +129,9 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
 
         // Add 3 sites, one is already closed.
         selectTrialInPA(info);
-        addSiteToTrial(info, "DCP", "In Review");
-        addSiteToTrial(info, "CTEP", "Active");
-        addSiteToTrial(info, "NCI", "Withdrawn");
+        addSiteToTrial(info, "DCP", "In Review", true);
+        addSiteToTrial(info, "CTEP", "Active" , true);
+        addSiteToTrial(info, "NCI", "Withdrawn" , true);
         logoutPA();
 
         // Amend
@@ -156,7 +156,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
                 By.id("trialDTO.delayedPostingIndicatorNo")).isSelected());
         // Try to submit and verify the dialog (see JIRA).
         submitTrialAndVerifyOpenSitesDialog(new String[] { "In Review",
-                "Active" }, "Review Trial");
+                "Active" }, "Review Trial" , true);
 
         // Verify amendment went through.
         waitForElementById("reviewTrialForm", 10);

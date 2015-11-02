@@ -76,7 +76,7 @@ public class CtGovImportTest extends AbstractTrialStatusTest {
         // Add site.
         logoutPA();
         selectTrialInPA(info);
-        addSiteToTrial(info, "DCP", "Approved");
+        addSiteToTrial(info, "DCP", "Approved" , false);
 
         // Now re-import. This will trigger closing the sites automatically.
         // Intercept email.

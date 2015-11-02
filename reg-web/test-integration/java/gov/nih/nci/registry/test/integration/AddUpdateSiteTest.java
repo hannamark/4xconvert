@@ -110,7 +110,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         TrialInfo info = createAndSelectTrial();
 
         String siteCtepId = "DCP";
-        addSiteToTrial(info, siteCtepId, "In Review");
+        addSiteToTrial(info, siteCtepId, "In Review" , false);
 
         findInMyTrials();
         invokeAction("Update My Site");
@@ -138,7 +138,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         TrialInfo info = createAndSelectTrial();
 
         String siteCtepId = "DCP";
-        addSiteToTrial(info, siteCtepId, "In Review");
+        addSiteToTrial(info, siteCtepId, "In Review", false);
 
         addToSiteStatusHistory(
                 findParticipatingSite(
@@ -180,8 +180,8 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         // User can only add 1 org as site, as other orgs(CTEP,NCI) are
         // associated with a site.
         TrialInfo info = createAndSelectTrial();
-        addSiteToTrial(info, "CTEP", "In Review");
-        addSiteToTrial(info, "NCI", "In Review");
+        addSiteToTrial(info, "CTEP", "In Review" , false);
+        addSiteToTrial(info, "NCI", "In Review" , false);
         addMySiteAndVerify_SingleOrganization(info);
     }
 
@@ -594,9 +594,9 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
             throws URISyntaxException, SQLException {
         TrialInfo info = createAndSelectTrial();
 
-        addSiteToTrial(info, "DCP", "In Review");
-        addSiteToTrial(info, "CTEP", "In Review");
-        addSiteToTrial(info, "NCI", "In Review");
+        addSiteToTrial(info, "DCP", "In Review" , false);
+        addSiteToTrial(info, "CTEP", "In Review" , false);
+        addSiteToTrial(info, "NCI", "In Review" , false);
 
         findInMyTrials();
         invokeAction("Update My Site");
@@ -626,9 +626,9 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
 
         TrialInfo info = createAndSelectTrial();
 
-        addSiteToTrial(info, "DCP", "In Review");
-        addSiteToTrial(info, "CTEP", "In Review");
-        addSiteToTrial(info, "NCI", "In Review");
+        addSiteToTrial(info, "DCP", "In Review", false);
+        addSiteToTrial(info, "CTEP", "In Review" , false);
+        addSiteToTrial(info, "NCI", "In Review", false);
 
         findInMyTrials();
         invokeAction("Update My Site");

@@ -301,7 +301,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         String[] params = new String[] { "In Review", "Active",
                 "Closed to Accrual" };
 
-        TrialInfo info = prepareTrialForUpdateAndSelectIt(params);
+        TrialInfo info = prepareTrialForUpdateAndSelectIt(params, true);
 
         selectAction("Change Status");
         waitForElementToBecomeAvailable(By.id("popupFrame"), 15);
@@ -310,7 +310,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         changeTrialStatusAndDates(params);
 
         // Try to submit and verify the dialog (see JIRA).
-        submitTrialAndVerifyOpenSitesDialog(params, "Save");
+        submitTrialAndVerifyOpenSitesDialog(params, "Save" , true);
         waitForPageToLoad();
 
         assertTrue(selenium.isTextPresent("Trial status successfully updated."));
@@ -346,14 +346,14 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
     private void updateCompleteTrialAndCloseSitesPO_8323(String[] params)
             throws URISyntaxException, SQLException {
 
-        TrialInfo info = prepareTrialForUpdateAndSelectIt(params);
+        TrialInfo info = prepareTrialForUpdateAndSelectIt(params , true);
 
         selectAction("Update");
 
         changeTrialStatusAndDates(params);
 
         // Try to submit and verify the dialog (see JIRA).
-        submitTrialAndVerifyOpenSitesDialog(params, "Review Trial");
+        submitTrialAndVerifyOpenSitesDialog(params, "Review Trial", true);
         waitForElementById("updateTrialreviewUpdate", 10);
         clickAndWait("xpath=//button[text()='Submit']");
         waitForPageToLoad();
@@ -380,6 +380,22 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         selenium.type("trialDTO_startDate", today);
         selenium.click("trialDTO_startDateTypeActual");
     }
+    
+    /**
+     * @param params
+     */
+    protected void changeTrialStatusAndDatesForLaterDate(String[] params) {
+        deleteStatus(2);
+        deleteStatus(1);
+        addStatus(date(-3), "In Review", "");
+        addStatus(date(-2), "Approved", "");
+        addStatus(date(-1), "Active", "");
+        addStatus(date(+1), params[2], "");
+
+        // Adjust dates.
+        selenium.type("trialDTO_startDate", today);
+        selenium.click("trialDTO_startDateTypeActual");
+    }
 
     /**
      * @param params
@@ -387,7 +403,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
      * @throws URISyntaxException
      * @throws SQLException
      */
-    protected TrialInfo prepareTrialForUpdateAndSelectIt(String[] params)
+    protected TrialInfo prepareTrialForUpdateAndSelectIt(String[] params , boolean isEarlierDate)
             throws URISyntaxException, SQLException {
         loginAndAcceptDisclaimer();
 
@@ -399,9 +415,9 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
 
         // Add 3 sites, one is already closed.
         selectTrialInPA(info);
-        addSiteToTrial(info, "DCP", params[0]);
-        addSiteToTrial(info, "CTEP", params[1]);
-        addSiteToTrial(info, "NCI", "Withdrawn");
+        addSiteToTrial(info, "DCP", params[0] ,isEarlierDate);
+        addSiteToTrial(info, "CTEP", params[1] ,isEarlierDate);
+        addSiteToTrial(info, "NCI", "Withdrawn" ,isEarlierDate);
 
         // Change trial status to closed in Registry.
         findInMyTrials(info.nciID);
