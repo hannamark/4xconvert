@@ -48,6 +48,7 @@ public class UpdateFamilyAccrualAccessServiceBeanTest  extends AbstractHibernate
 	
 	 @Before
 	    public void setUp() throws Exception {
+	     TestSchema.primeData();
 		 svcBean = new UpdateFamilyAccrualAccessServiceBean();
 		 svcBean.setUseTestSeq(true);
 		 FamilyServiceBeanLocal mockFam = mock(FamilyServiceBeanLocal.class);
@@ -80,13 +81,9 @@ public class UpdateFamilyAccrualAccessServiceBeanTest  extends AbstractHibernate
          List<Object> trialsLeadOrgIdsList = new ArrayList<Object>();
          trialsLeadOrgIdsList.add(new Object[]{new BigInteger(TestSchema.studyProtocolIds.get(2).toString()), 1L});
          when(mockDA.findByQuery(qr)).thenReturn(trialsLeadOrgIdsList);
-	     TestSchema.primeData();
+	    
 	     
 	     Session session = PaHibernateUtil.getCurrentSession();
-	     session.createSQLQuery("create table rv_ctep_id(study_protocol_identifier bigint, local_sp_indentifier character varying)").executeUpdate();
-	     session.createSQLQuery("create table rv_dcp_id(study_protocol_identifier bigint, local_sp_indentifier character varying)").executeUpdate();
-	     session.createSQLQuery("insert into rv_ctep_id values (" + new BigInteger(TestSchema.studyProtocolIds.get(0).toString()) + ", 'test');").executeUpdate();
-	     session.createSQLQuery("insert into rv_dcp_id values (" + new BigInteger(TestSchema.studyProtocolIds.get(0).toString()) + ", 'test');").executeUpdate();
 	     RegistryUser user = TestSchema.getRegistryUser();
 		 user.setFamilyAccrualSubmitter(true);
 		 user.setAffiliatedOrganizationId(1L);

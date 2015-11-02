@@ -155,12 +155,13 @@ public abstract class AbstractHibernateTestCase {
 
         Transaction tx = PaHibernateUtil.getHibernateHelper()
                 .beginTransaction();
+        
+        dropViewsTriggersSequences();
         SchemaExport se = new SchemaExport(PaHibernateUtil.getHibernateHelper()
                 .getConfiguration());
         se.drop(false, true);
-        se.create(false, true);
-
-        finalizeSchema();
+        se.create(false, true);        
+        createViewsTriggersSequences();
 
         TestSchema.loadPrimaryPurposeCodes();
         makeHsqlDbSpecificAdjustments();
@@ -168,16 +169,34 @@ public abstract class AbstractHibernateTestCase {
         transaction = PaHibernateUtil.getHibernateHelper().beginTransaction();
     }
 
-    private void finalizeSchema() throws IOException, HibernateException,
-            SQLException {
+    protected void dropViewsTriggersSequences() throws HibernateException, IOException {
+        final String sqlFileName = "/drop_db_objects.sql";
+        runSQLFile(sqlFileName);
+
+    }
+
+    protected void createViewsTriggersSequences() throws IOException,
+            HibernateException, SQLException {
+        final String sqlFileName = "/create_db_objects.sql";
+        runSQLFile(sqlFileName);
+    }
+
+    /**
+     * @param sqlFileName
+     * @throws IOException
+     * @throws HibernateException
+     */
+    private void runSQLFile(final String sqlFileName) throws IOException,
+            HibernateException {
         String sqlBatch = IOUtils.toString(getClass().getResourceAsStream(
-                "/finalize_hsqldb_test_schema.sql"));
+                sqlFileName));
         for (String sql : sqlBatch.split(";")) {
             try (Statement s = PaHibernateUtil.getCurrentSession().connection()
                     .createStatement()) {
-                s.execute(sql);               
+                s.execute(sql.trim());
             } catch (SQLException e) {
-                System.out.println("Failed to run: " + sql);
+                //System.out.println("Failed to run: " + sql.trim()
+                //        + ". Reason: " + e.getMessage());
             }
         }
         PaHibernateUtil.getCurrentSession().flush();

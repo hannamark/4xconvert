@@ -522,22 +522,6 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         
         CSMUserService.setInstance(new gov.nih.nci.pa.util.MockCSMUserService());
         
-        PaHibernateUtil.getCurrentSession()
-                .createSQLQuery("drop table if exists rv_dcp_id")
-                .executeUpdate();
-        PaHibernateUtil
-                .getCurrentSession()
-                .createSQLQuery(
-                        "create table rv_dcp_id (local_sp_indentifier varchar, study_protocol_identifier int)")
-                .executeUpdate();
-        PaHibernateUtil.getCurrentSession()
-                .createSQLQuery("drop table if exists rv_ctep_id")
-                .executeUpdate();
-        PaHibernateUtil
-                .getCurrentSession()
-                .createSQLQuery(
-                        "create table rv_ctep_id (local_sp_indentifier varchar, study_protocol_identifier int)")
-                .executeUpdate();
         PaHibernateUtil.getCurrentSession().flush();
 
     }

@@ -145,6 +145,7 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -155,6 +156,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
@@ -404,10 +406,12 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
         
 
     }
-    private int executeCreateStatements() {
+    private int executeCreateStatements() throws HibernateException, IOException {
         if(count == 0) {
       	 Session session = PaHibernateUtil.getCurrentSession();
-         
+      	 
+      	 dropViewsTriggersSequences();
+      	 
          session.createSQLQuery("create table  rv_ctep_id(study_protocol_identifier bigint, local_sp_indentifier character varying)").executeUpdate();
          session.createSQLQuery("create table  rv_dcp_id(study_protocol_identifier bigint, local_sp_indentifier character varying)").executeUpdate();
          session.createSQLQuery("create table rv_dwf_current(status_code character varying, status_date_range_low timestamp, study_protocol_identifier bigint)").executeUpdate();

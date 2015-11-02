@@ -357,7 +357,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
             for (Object[] obj : otherIdentifierQueryList) { 
                 Long studyprotocolId = ((BigInteger) obj[0]).longValue();
                 for (StudyProtocolQueryDTO dto : dtoList) {     
-                   String identifierName = (String) obj[2];
+                   final String identifierName = StringUtils.defaultString((String) obj[2]);
                    if (dto.getStudyProtocolId().equals(studyprotocolId) 
                            && !identifierName.equals(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME)) {                  
                        dto.getOtherIdentifiers().add((String) obj[1]);
@@ -770,7 +770,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
     }
 
     private void loadCheckoutData(StudyProtocolQueryDTO dto, Object[] row) {
-        Integer adminCid = (Integer) row[ADMIN_CHECKOUT_IDENTIFIER_IDX];
+        final Number adminCid = (Number) row[ADMIN_CHECKOUT_IDENTIFIER_IDX];
         dto.getAdminCheckout().setCheckoutId(adminCid == null ? null : adminCid.longValue());
         dto.getAdminCheckout().setCheckoutBy((String) row[ADMIN_CHECKOUT_USER_IDX]);
         dto.getAdminCheckout().setCsmFirstName((String) row[ADMIN_CHECKOUT_CSM_FNAME]);
@@ -780,7 +780,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         dto.getAdminCheckout().setCheckoutDate((Date) row[ADMIN_CHECKOUT_DATE_IDX]);
 
         
-        Integer scientificCid = (Integer) row[SCIENTIFIC_CHECKOUT_IDENTIFIER_IDX];
+        final Number scientificCid = (Number) row[SCIENTIFIC_CHECKOUT_IDENTIFIER_IDX];
         dto.getScientificCheckout().setCheckoutId(scientificCid == null ? null : scientificCid.longValue());
         dto.getScientificCheckout().setCheckoutBy((String) row[SCIENTIFIC_CHECKOUT_USER_IDX]);
         dto.getScientificCheckout().setCsmFirstName((String) row[SCIENTIFIC_CHECKOUT_CSM_FNAME]);

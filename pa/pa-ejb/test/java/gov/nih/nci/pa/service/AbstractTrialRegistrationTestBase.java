@@ -344,16 +344,7 @@ public abstract class AbstractTrialRegistrationTestBase extends
         bean.setStudyRelationshipService(studyRelationshipSvc);
         bean.setCtGovUploadServiceLocal(ctGovUploadServiceLocal);
         
-        setupPoSvc();
-        
-        PaHibernateUtil.getCurrentSession()
-                .createSQLQuery("drop table if exists rv_dcp_id")
-                .executeUpdate();
-        PaHibernateUtil
-                .getCurrentSession()
-                .createSQLQuery(
-                        "create table rv_dcp_id (local_sp_indentifier varchar, study_protocol_identifier int)")
-                .executeUpdate();
+        setupPoSvc();        
         PaHibernateUtil.getCurrentSession().flush();
     }
 

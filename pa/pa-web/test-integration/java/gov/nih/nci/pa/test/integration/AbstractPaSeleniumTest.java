@@ -357,7 +357,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     private void closeBrowser() {
         try {
             driver.quit();
-        } catch (RuntimeException e) {           
+        } catch (RuntimeException e) {
             e.printStackTrace();
         }
     }
@@ -879,7 +879,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                         + "%s,%s,%s,%s,true,false,null,%s,%s,%s,%s);", type,
                         filename, info.id, today(), today(), info.csmUserID,
                         info.csmUserID, today(), today(), info.csmUserID,
-                        info.csmUserID+"");
+                        info.csmUserID + "");
         runner.update(connection, sql);
 
     }
@@ -1098,17 +1098,20 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         return createRegistryUserForDCP(csmUserId);
     }
 
-    protected Number createRegistryUserForDCP(Number csmUserId)  throws SQLException {
+    protected Number createRegistryUserForDCP(Number csmUserId)
+            throws SQLException {
         return createRegistryUser(csmUserId,
                 "National Cancer Institute Division of Cancer Prevention");
     }
 
-    protected Number createRegistryUserForCTEP(Number csmUserId)  throws SQLException {
+    protected Number createRegistryUserForCTEP(Number csmUserId)
+            throws SQLException {
         return createRegistryUser(csmUserId,
                 "Cancer Therapy Evaluation Program");
     }
 
-    protected Number createRegistryUser(Number csmUserId, String organizationName) throws SQLException {
+    protected Number createRegistryUser(Number csmUserId,
+            String organizationName) throws SQLException {
 
         String orgIdentifier = getOrgPoIdByName(organizationName);
 
@@ -1118,7 +1121,6 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         Number id = (Number) runner
                 .query(connection, idSql, new ArrayHandler())[0];
         String firstName = "test" + id.intValue();
-
 
         String sql = "INSERT INTO registry_user VALUES ("
                 + id.intValue()
@@ -1336,13 +1338,13 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         assertTrue(selenium.isTextPresent("Record Created"));
 
     }
-    
+
     /**
      * @param info
      * @param siteCtepId
      */
-    protected final void addSiteToTrialWithNameAndDate(TrialInfo info, String name,
-            String status,String date , boolean isAccrualDate) {
+    protected final void addSiteToTrialWithNameAndDate(TrialInfo info,
+            String name, String status, String date, boolean isAccrualDate) {
         clickAndWait("link=Participating Sites");
         clickAndWait("link=Add");
         clickAndWaitAjax("link=Look Up");
@@ -1359,11 +1361,11 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
             selenium.type("siteLocalTrialIdentifier", info.uuid);
         selenium.select("recStatus", status);
         selenium.type("id=recStatusDate", date);
-        
-        if(isAccrualDate) {
-            
+
+        if (isAccrualDate) {
+
             selenium.type("dateOpenedForAccrual", date);
-            
+
         }
         clickAndWait("link=Save");
         assertTrue(selenium.isTextPresent("Record Created"));
