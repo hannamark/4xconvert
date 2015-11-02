@@ -73,11 +73,10 @@ public class TrialCheckInOutTest extends AbstractTrialStatusTest {
                 .contains(
                         "Status Transition Errors were found. Please select a Super Abstractor from the list below, then click Proceed with Check-in. The system will: Check the trial in for Scientific Abstraction, Check-out the trial to the selected Super Abstractor for Admin Abstraction, Send an email to the Super Abstractor to correct the errors found. Super Abstractor:"));
 
-        final String titlePath = !useDashboard ? "ui-dialog-title-pickSuperAbstractor"
-                : "//div[@aria-describedby='pickSuperAbstractor']//span[@class='ui-dialog-title']";
-        final String cancelPath = !useDashboard ? "//div[@aria-labelledby='ui-dialog-title-pickSuperAbstractor']//button//span[text()='Cancel']"
+        final String titlePath = "//div[@aria-describedby='pickSuperAbstractor']//span[@class='ui-dialog-title']";
+        final String cancelPath = !useDashboard ? "//div[@aria-describedby='pickSuperAbstractor']//div[@class='ui-dialog-buttonset']//button[2]//span[text()='Cancel']"
                 : "//div[@aria-describedby='pickSuperAbstractor']//button//span[text()='Cancel']";
-        final String proceedPath = !useDashboard ? "//div[@aria-labelledby='ui-dialog-title-pickSuperAbstractor']//button//span[text()='Proceed with Check-in']"
+        final String proceedPath = !useDashboard ? "//div[@aria-describedby='pickSuperAbstractor']//div[@class='ui-dialog-buttonset']//button[1]//span[text()='Proceed with Check-in']"
                 : "//div[@aria-describedby='pickSuperAbstractor']//button//span[text()='Proceed with Check-in']";
 
         assertEquals("Trial Status Validation", selenium.getText(titlePath)
@@ -163,8 +162,7 @@ public class TrialCheckInOutTest extends AbstractTrialStatusTest {
 
         // Bring the dialog back again
         selenium.click("link=Admin Check In");
-        clickAndWait(!useDashboard ? "//div[@aria-labelledby='ui-dialog-title-transitionErrors']//button//span[text()='Trial Status History']"
-                : "//div[@aria-describedby='transitionErrors']//button//span[text()='Trial Status History']");
+        clickAndWait("//div[@aria-describedby='transitionErrors']//div[@class='ui-dialog-buttonset']//button[1]//span[text()='Trial Status History']");
         assertEquals("Trial Status", driver.getTitle());
     }
 

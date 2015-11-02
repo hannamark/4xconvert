@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <c:set var="topic" scope="request" value="managegroupspa" />
-<c:set scope="request" var="disableDefaultJQuery" value="${true}" />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title>Manage User Groups</title>
@@ -38,10 +37,7 @@ table.dataTable tbody td {
 </style>
 
 
-<script type="text/javascript"
-	src="${scriptPath}/js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript"
-	src="${scriptPath}/js/jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
+
 <!-- DataTables -->
 <script type="text/javascript" charset="utf8"
 	src="${scriptPath}/js/DataTables-1.10.4/media/js/jquery.dataTables.min.js"></script>

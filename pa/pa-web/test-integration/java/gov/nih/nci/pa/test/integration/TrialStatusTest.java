@@ -344,10 +344,11 @@ public class TrialStatusTest extends AbstractTrialStatusTest {
         loginAsSuperAbstractor();
         searchAndSelectTrial(trial.title);
         clickAndWait("link=Trial Status");
-
+        
         // Move to Active: no errors.
         selenium.select("id=currentTrialStatus", "label=Active");
         clickAndWait("link=Save");
+        
         assertTrue(selenium.isTextPresent("Record Updated"));
         assertTrue(driver.findElements(By.className("error_msg")).isEmpty());
         assertEquals("ACTIVE", getCurrentTrialStatus(trial).statusCode);
@@ -355,6 +356,7 @@ public class TrialStatusTest extends AbstractTrialStatusTest {
         // Move to Withdrawn produces an error: bad transition.
         selenium.select("id=currentTrialStatus", "label=Approved");
         clickAndWait("link=Save");
+        
         assertTrue(selenium.isTextPresent("Record Updated"));
         assertTrue(selenium
                 .isTextPresent("Status Transition Errors were found. Please use the History button to review and make corrections. Trial record cannot be checked-in until all Status Transition Errors have been resolved."));
@@ -370,9 +372,7 @@ public class TrialStatusTest extends AbstractTrialStatusTest {
                         .trim());
         assertEquals(
                 "Trial Status Validation",
-                selenium.getText(
-                        "ui-dialog-title-displaySuAbstractorAutoCheckoutMessage")
-                        .trim());
+                selenium.getText("class=ui-dialog-title").trim());
         // Verify History button
         selenium.click("xpath=//button/span[normalize-space(text())='Trial Status History']");
         waitForElementById("popupFrame", 15);

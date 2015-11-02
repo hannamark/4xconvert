@@ -255,7 +255,7 @@ public class DiseaseTest extends AbstractPaSeleniumTest {
         searchDisease("lung cancer");
         //selenium.click("class=breadcrumbFeaturedElementTreeLink");
         selenium.fireEvent("class=breadcrumbFeaturedElementText", "click" );
-        assertTrue(selenium.isElementPresent("id=ui-dialog-title-pdq_tree_dialog"));
+        assertTrue(selenium.isElementPresent("id=pdq_tree_dialog"));
     } 
     
     /**
@@ -277,7 +277,7 @@ public class DiseaseTest extends AbstractPaSeleniumTest {
     @Test
     public void testShowTree(){
         selenium.click("link=Show Tree");
-        assertTrue(selenium.isElementPresent("id=ui-dialog-title-pdq_tree_dialog"));
+        assertTrue(selenium.isElementPresent("id=pdq_tree_dialog"));
     }  
     
     /**

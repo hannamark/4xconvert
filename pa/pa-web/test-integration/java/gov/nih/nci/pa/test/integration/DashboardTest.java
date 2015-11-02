@@ -2492,7 +2492,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
                 .xpath("//span[@class='selectionFeaturedElement' and text()='"
                         + disease + "']");
         waitForElementToBecomeAvailable(diseaseSelected, 5);
-        s.click("//span[@class='ui-icon ui-icon-closethick']");
+        s.click("//span[@class='ui-button-icon-primary ui-icon ui-icon-closethick']");
         clickAndWait("//span[@class='add' and text()='Add']");
         driver.switchTo().defaultContent();
         waitForElementToBecomeAvailable(

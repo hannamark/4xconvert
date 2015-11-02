@@ -71,7 +71,7 @@ span.error {
 <script type="text/javascript"
 	src="<c:url value='/scripts/js/jquery-1.11.1.min.js'/>"></script>
 <script type="text/javascript"
-	src="<c:url value='/scripts/js/jquery-ui-1.11.2.custom/jquery-ui.min.js'/>"></script>
+	src="<c:url value='/scripts/js/jquery-ui-1.11.4.custom/jquery-ui.min.js'/>"></script>
 <!-- DataTables -->
 <script type="text/javascript" charset="utf8"
 	src="<c:url value='/scripts/js/DataTables-1.10.4/media/js/jquery.dataTables.min.js'/>"></script>

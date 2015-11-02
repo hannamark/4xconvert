@@ -3,18 +3,11 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<c:set scope="request" var="disableDefaultJQuery" value="${true}" />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<title><fmt:message key="trialDocument.title"/></title>
 
-    <script type="text/javascript"
-    src="${scriptPath}/js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript"
-    src="${scriptPath}/js/jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
-	<link href="${scriptPath}/js/jquery-ui-1.11.2.custom/jquery-ui.css"
-    rel="stylesheet" media="all" type="text/css" />
-	<script type="text/javascript"   src="${scriptPath}/js/resultsDocuments/resultsDocuments.js"></script>
+    <script type="text/javascript"   src="${scriptPath}/js/resultsDocuments/resultsDocuments.js"></script>
 </head>
 
 <SCRIPT LANGUAGE="JavaScript">
