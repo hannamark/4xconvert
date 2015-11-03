@@ -3,7 +3,7 @@
 	scope="request" />
 <display:table class="data" sort="list" uid="wl" pagesize="2147483647"
 	defaultsort="${sessionScope.isSuAbstractor?5:4}"
-	defaultorder="descending"
+	defaultorder="ascending"
 	decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator"
 	name="${workload}" requestURI="${requestURI}" export="true">
 	<display:setProperty name="paging.banner.item_name" value="trial" />

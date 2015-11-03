@@ -1212,16 +1212,16 @@ public class DashboardTest extends AbstractTrialStatusTest {
         // Submission Plus 10 Business Days
         clickAndWait("id=dashboardMenuOption");
         verifyDateRangeFilter(first,
-                getColumnValue(2, "Submission Plus 10 Business Days"), second,
-                getColumnValue(1, "Submission Plus 10 Business Days"),
+                getColumnValue(1, "Submission Plus 10 Business Days"), second,
+                getColumnValue(2, "Submission Plus 10 Business Days"),
                 "Submission Plus 10 Business Days");
 
         // Expected Abstraction Completion Date
         clickAndWait("id=dashboardMenuOption");
         verifyDateRangeFilter(first,
-                getColumnValue(2, "Expected Abstraction Completion Date"),
-                second,
                 getColumnValue(1, "Expected Abstraction Completion Date"),
+                second,
+                getColumnValue(2, "Expected Abstraction Completion Date"),
                 "Expected Abstraction Completion Date");
 
         // Current On-Hold Date
@@ -1729,9 +1729,8 @@ public class DashboardTest extends AbstractTrialStatusTest {
         refresh();
         verifyColumnValue(1, "Checked Out By",
                 "admin-ci (AD) scientific-ci (SC)");
-
         // Initial list sort is by Abstraction Expected Completion Date,
-        // descending
+        // ascending
         deactivateAllTrials();
         logoutPA();
         TrialInfo second = createAcceptedTrial();
@@ -1746,14 +1745,14 @@ public class DashboardTest extends AbstractTrialStatusTest {
                                 + second.id);
         loginAsSuperAbstractor();
         clickAndWait("id=dashboardMenuOption");
-        verifyColumnValue(1, "NCI Trial Identifier",
-                first.nciID.replaceFirst("NCI-", ""));
         verifyColumnValue(2, "NCI Trial Identifier",
+                first.nciID.replaceFirst("NCI-", ""));
+        verifyColumnValue(1, "NCI Trial Identifier",
                 second.nciID.replaceFirst("NCI-", ""));
         sort("Expected Abstraction Completion Date");
-        verifyColumnValue(2, "NCI Trial Identifier",
-                first.nciID.replaceFirst("NCI-", ""));
         verifyColumnValue(1, "NCI Trial Identifier",
+                first.nciID.replaceFirst("NCI-", ""));
+        verifyColumnValue(2, "NCI Trial Identifier",
                 second.nciID.replaceFirst("NCI-", ""));
 
         // Sort NCI ID.
