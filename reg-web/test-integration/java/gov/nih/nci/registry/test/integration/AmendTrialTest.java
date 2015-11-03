@@ -448,8 +448,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         s.type("milestoneCommentsTA", "Rejecting entire trial.");
         s.click("addMilestoneBtn");
         waitForElementToBecomeVisible(By.id("late-reject-dialog"), 5);
-        assertEquals("Late Rejection",
-                s.getText("ui-dialog-title-late-reject-dialog"));
+        assertEquals("Late Rejection",s.getText("class=ui-dialog-title"));
         assertEquals(
                 "Please indicate an action you want to take on this trial:", s
                         .getText("late-reject-dialog").trim());

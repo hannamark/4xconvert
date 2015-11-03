@@ -7,7 +7,7 @@
 <c:set var="pagePrefix" value="disclaimer." />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<link href="${scriptPath}/js/jquery-ui-1.11.2.custom/jquery-ui.css"
+<link href="${scriptPath}/js/jquery-ui-1.11.4.custom/jquery-ui.css"
     rel="stylesheet" media="all" type="text/css" />
 <s:set name="action" value="action" />
 <title><fmt:message key="manageTerms.syncDisease.page.title" /></title>

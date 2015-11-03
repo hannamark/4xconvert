@@ -6,7 +6,7 @@
 <link href="<c:url value='/styles/style.css?1'/>" rel="stylesheet"
 	type="text/css" media="all" />
 <link
-	href="<c:url value='/scripts/js/jquery-ui-1.11.2.custom/jquery-ui.css'/>"
+	href="<c:url value='/scripts/js/jquery-ui-1.11.4.custom/jquery-ui.css'/>"
 	rel="stylesheet" media="all" type="text/css" />
 <link rel="stylesheet" type="text/css"
 	href="<c:url value='/scripts/js/DataTables-1.10.4/media/css/jquery.dataTables.min.css'/>">

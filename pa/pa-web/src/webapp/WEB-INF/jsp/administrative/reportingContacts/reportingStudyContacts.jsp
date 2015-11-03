@@ -7,7 +7,7 @@
 <head>
     <title><fmt:message key="reportStudyContacts.title"/></title>
     
-    <link href="${scriptPath}/js/jquery-ui-1.11.2.custom/jquery-ui.css"
+    <link href="${scriptPath}/js/jquery-ui-1.11.4.custom/jquery-ui.css"
     rel="stylesheet" media="all" type="text/css" />
     <!-- DataTables CSS -->
    <link rel="stylesheet" type="text/css"

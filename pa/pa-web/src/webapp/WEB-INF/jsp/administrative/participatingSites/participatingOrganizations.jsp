@@ -14,7 +14,7 @@
             var siteRecruitmentStatusDate = new CalendarPopup();
 </script>
 <link
-    href="<c:url value='/scripts/js/jquery-ui-1.11.2.custom/jquery-ui.css'/>"
+    href="<c:url value='/scripts/js/jquery-ui-1.11.4.custom/jquery-ui.css'/>"
     rel="stylesheet" media="all" type="text/css" />
 <link rel="stylesheet" type="text/css"
     href="<c:url value='/scripts/js/DataTables-1.10.4/media/css/jquery.dataTables.min.css'/>">

@@ -4,7 +4,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <html>
 <head>
-<link href="${scriptPath}/js/jquery-ui-1.11.2.custom/jquery-ui.css"
+<link href="${scriptPath}/js/jquery-ui-1.11.4.custom/jquery-ui.css"
     rel="stylesheet" media="all" type="text/css" />
 <c:url value="/protected/popupDisdisplayDiseaseWidget.action?lookUp=true"
 	var="lookupUrl" />

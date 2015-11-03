@@ -8,7 +8,7 @@
 <head>
 	<title><fmt:message key="reportCoverSheet.title"/></title>
 	
-	<link href="${scriptPath}/js/jquery-ui-1.11.2.custom/jquery-ui.css"
+	<link href="${scriptPath}/js/jquery-ui-1.11.4.custom/jquery-ui.css"
     rel="stylesheet" media="all" type="text/css" />
 <!-- DataTables CSS -->
 <link rel="stylesheet" type="text/css"
@@ -59,7 +59,7 @@ fieldset>input[id="actionCompletionDateChangeType"] {
     <script type="text/javascript"
     src="${scriptPath}/js/jquery-1.11.1.min.js"></script>
 <script type="text/javascript"
-    src="${scriptPath}/js/jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
+    src="${scriptPath}/js/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
 <script type="text/javascript"
     src="${scriptPath}/js/resultscoversheet/resultsCoverSheet.js"></script>
 <script type="text/javascript"   src="${scriptPath}/js/resultsDocuments/resultsDocuments.js"></script>    
