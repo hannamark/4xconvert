@@ -381,9 +381,13 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
      */
     @Test
     public void testImportDiseaseTerm(){
+        final String manageTermssearchDiseaseLinkXPath = "//a[@href='manageTermssearchDisease.action?searchStart=true']";
+        final String manageTermssearchDiseaseLink = "xpath="
+                + manageTermssearchDiseaseLinkXPath;
         Actions action = new Actions(driver);
-        action.moveToElement(driver.findElements(By.xpath("//span[@class='btn_img']")).get(1)).perform();
-        clickAndWait("xpath=//a[@href='manageTermssearchDisease.action?searchStart=true']");
+        action.moveToElement(driver.findElements(By.xpath("//span[@class='btn_img']")).get(1)).perform();  
+        waitForElementToBecomeVisible(By.xpath(manageTermssearchDiseaseLinkXPath), 5);
+        clickAndWait(manageTermssearchDiseaseLink);
         assertTrue(selenium.isTextPresent("Import New Disease/Condiion From NCIt"));
         
         // Test for validation errors
@@ -420,7 +424,8 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
         
         //Test sync        
         action.moveToElement(driver.findElements(By.xpath("//span[@class='btn_img']")).get(1)).perform();
-        clickAndWait("xpath=//a[@href='manageTermssearchDisease.action?searchStart=true']");
+        waitForElementToBecomeVisible(By.xpath(manageTermssearchDiseaseLinkXPath), 5);
+        clickAndWait(manageTermssearchDiseaseLink);
                
         selenium.type("id=ntTermIdentifier", "C97111");
         clickAndWait("link=Look Up");
