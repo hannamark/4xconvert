@@ -92,6 +92,7 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.convert.AbstractStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.StudyOverallStatusConverter;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
+import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -117,8 +118,10 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.EJB;
@@ -230,17 +233,20 @@ public class StudyOverallStatusBeanLocal extends // NOPMD
             return oldStatus;
         }       
         StudyOverallStatusDTO createdStatus = runChecksAndCreate(newStatus, oldStatus);
-        closeOpenSitesIfNeeded(newStatus.getStudyProtocolIdentifier(), oldStatus);
+        Map <String, ParticipatingSiteDTO> sitesClosedMap = 
+                closeOpenSitesIfNeeded(newStatus.getStudyProtocolIdentifier(), oldStatus);
+        newStatus.setSitesClosedMap(sitesClosedMap);
         return createdStatus;
     }
 
 
-    private void closeOpenSitesIfNeeded(Ii spID, StudyOverallStatusDTO oldStatus)
+    private Map <String, ParticipatingSiteDTO> closeOpenSitesIfNeeded(Ii spID, StudyOverallStatusDTO oldStatus)
             throws PAException {
+        Map <String, ParticipatingSiteDTO> sitesClosedMap = new HashMap<String, ParticipatingSiteDTO>();
         if (oldStatus == null) {
-            return;
+            return sitesClosedMap;
         }
-       
+      
         StudyOverallStatusDTO currentStatus = getCurrentByStudyProtocol(spID);
         StudyStatusCode oldCode = CdConverter.convertCdToEnum(
                 StudyStatusCode.class, oldStatus.getStatusCode());
@@ -248,7 +254,8 @@ public class StudyOverallStatusBeanLocal extends // NOPMD
                 StudyStatusCode.class, currentStatus.getStatusCode());
         if (oldCode != newCode && !oldCode.isClosed() // NOPMD
                 && newCode.isClosed()) {
-            participatingSiteService
+            
+            sitesClosedMap =  participatingSiteService
                     .closeOpenSites(
                             spID,
                             oldStatus,
@@ -257,6 +264,8 @@ public class StudyOverallStatusBeanLocal extends // NOPMD
                             || StudySourceInterceptor.STUDY_SOURCE_CONTEXT
                                     .get() == StudySourceCode.REST_SERVICE));
         }
+        
+        return sitesClosedMap;
     }
 
 

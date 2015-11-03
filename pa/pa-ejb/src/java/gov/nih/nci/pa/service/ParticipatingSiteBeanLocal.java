@@ -83,35 +83,6 @@
 package gov.nih.nci.pa.service;
 
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
-import javax.ejb.EJBTransactionRolledbackException;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.exception.ConstraintViolationException;
-
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
@@ -174,6 +145,35 @@ import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.ejb.EJBTransactionRolledbackException;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.exception.ConstraintViolationException;
+
 /**
  * @author mshestopalov
  *
@@ -211,9 +211,13 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
     
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void closeOpenSites(Ii spID, StudyOverallStatusDTO oldStatus,
+    public Map <String, ParticipatingSiteDTO> closeOpenSites(Ii spID, StudyOverallStatusDTO oldStatus,
             StudyOverallStatusDTO trialStatus, boolean notifyTrialOwners)
             throws PAException {        
+        
+       
+        Map <String, ParticipatingSiteDTO> siteStatusMap = 
+                new HashMap<String, ParticipatingSiteDTO>();
         StudyStatusCode trialStatusCode = CdConverter.convertCdToEnum(
                 StudyStatusCode.class, trialStatus.getStatusCode());
         Date trialStatusDate = TsConverter.convertToTimestamp(trialStatus
@@ -238,6 +242,8 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
                 
                 if (!getStudySiteAccrualStatusService().ifCloseStatusExistsInHistory(
                         site.getIdentifier()) && trialStatusDate.after(siteStatusDate)) {
+                    
+                       
                 
                 StudySiteAccrualStatusDTO newStatus = new StudySiteAccrualStatusDTO();                
                 newStatus.setStatusDate(TsConverter.convertToTs(trialStatusDate));
@@ -250,6 +256,12 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
                 StConverter.convertToSt(
                         "The CTRP application automatically closed this site because the trial was closed"));
                 createStudySiteAccrualStatus(site.getIdentifier(), newStatus);
+                
+                //if site is closed collect details so it can be used later when 
+                //application is sending email for industrial site status close
+                siteStatusMap.put(siteStatusCode.getDisplayName(), site);
+               
+                
                 if (notifyTrialOwners) {
                     SiteData siteData = new SiteData(site.getSiteOrgName(),
                             siteStatusCode, newStatusCode,
@@ -278,6 +290,8 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
             Collections.sort(dataForEmail.getSiteData());
             getMailManagerService().sendSiteNotCloseNotification(dataForNotClosedEmail);
         }
+        
+        return siteStatusMap;
     }
     
    

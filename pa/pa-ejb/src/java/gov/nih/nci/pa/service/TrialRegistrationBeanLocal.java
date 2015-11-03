@@ -104,7 +104,6 @@ import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
-import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.RejectionReasonCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyInboxTypeCode;
@@ -193,9 +192,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -1224,62 +1225,47 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                 protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(spIi));
         String closeIndustrialTrialStatuses = lookUpTableServiceRemote.getPropertyValue("closed_industrial_trial_statuses");
         
-//            if (StudyStatusCode.CLOSED_TO_ACCRUAL == newStatus 
-//                  || StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION == newStatus
-//                  || StudyStatusCode.ADMINISTRATIVELY_COMPLETE == newStatus 
-//                  || StudyStatusCode.COMPLETE == newStatus) {
+
         if (!closeIndustrialTrialStatuses.contains(newTrialStatus.name())) return;
         
-        List<ParticipatingSiteDTO> participatingSites = 
-                participatingSiteService.getParticipatingSitesByStudyProtocol(spIi);
-        if (participatingSites == null || participatingSites.isEmpty()) return;
+        Map <String, ParticipatingSiteDTO> sitesClosedMap = 
+                overallStatusDTO.getSitesClosedMap();
         
-        StudySiteAccrualStatusDTO newSSStatusDto = null;
+        if (sitesClosedMap != null) {
+            
+        Iterator<String> iterator = sitesClosedMap.keySet().iterator();
         
-        for (ParticipatingSiteDTO participatingSiteDTO : participatingSites) {
-            StudySiteAccrualStatusDTO studySiteAccrualStatusDTO 
-                = participatingSiteDTO.getStudySiteAccrualStatus();
+        while (iterator.hasNext()) {
             
-            if (studySiteAccrualStatusDTO == null) continue;
-            RecruitmentStatusCode currSSStatus = CdConverter.convertCdToEnum(RecruitmentStatusCode.class,
-                    studySiteAccrualStatusDTO.getStatusCode());
+         String oldCode = iterator.next();
+        
+         ParticipatingSiteDTO participatingSiteDTO =
+                sitesClosedMap.get(oldCode);
+          
+         StudySiteAccrualStatusDTO studySiteAccrualStatusDTO 
+             = participatingSiteDTO.getStudySiteAccrualStatus();
             
-            if (RecruitmentStatusCode.COMPLETED == currSSStatus
-                    || RecruitmentStatusCode.ADMINISTRATIVELY_COMPLETE == currSSStatus) {
-                continue;
-            }
-            //create new recruitment status
-            newSSStatusDto = new StudySiteAccrualStatusDTO();
-            newSSStatusDto.setStatusDate(overallStatusDTO.getStatusDate());
-            newSSStatusDto.setStudySiteIi(participatingSiteDTO.getIdentifier());
+          if (studySiteAccrualStatusDTO == null) continue;
+          
             
-            if (StudyStatusCode.CLOSED_TO_ACCRUAL == newTrialStatus 
-                    || StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION == newTrialStatus) {
-                    if(RecruitmentStatusCode.CLOSED_TO_ACCRUAL == currSSStatus 
-                            || RecruitmentStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION == currSSStatus) {
-                        continue;
-                    } else {
-                        //update pp status
-                        newSSStatusDto.setStatusCode(CdConverter.convertToCd(newTrialStatus));
-                    }
-            } else if (StudyStatusCode.COMPLETE == newTrialStatus) {
-              //update pp status
-                newSSStatusDto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.COMPLETED));
-            } else if (StudyStatusCode.ADMINISTRATIVELY_COMPLETE == newTrialStatus) {
-              //update pp status
-                newSSStatusDto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ADMINISTRATIVELY_COMPLETE));
-            }
-            
-            studySiteAccrualStatusService.createStudySiteAccrualStatus(newSSStatusDto);
-            
-            //send notification for study site status change
-           try {
-               sendStatusChangeNotification(spDTO, participatingSiteDTO, currSSStatus.getCode(), newSSStatusDto.getStatusCode().getCode());
-            } catch (NumberFormatException | NullifiedRoleException e) {
-                throw new PAException(e.getMessage(), e);
-            }
-            
-        }//end of for
+            //Do not change participating site status as it is already changed
+            //this is taken care in StudyOverallStatusService.closeOpenSitesIfNeeded
+            //only send email notification here
+          
+        
+                try {
+                    sendStatusChangeNotification(spDTO, participatingSiteDTO,
+                            oldCode, 
+                            newTrialStatus.getDisplayName());
+                 } catch (NumberFormatException | NullifiedRoleException e) {
+                     throw new PAException(e.getMessage(), e);
+                 }
+                 
+           
+        }
+        }
+         
+        
     }
     
     @SuppressWarnings({ "unchecked", "rawtypes" })

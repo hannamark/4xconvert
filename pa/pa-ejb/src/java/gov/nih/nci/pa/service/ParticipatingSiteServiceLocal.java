@@ -82,11 +82,6 @@
  */
 package gov.nih.nci.pa.service;
 
-import java.util.Collection;
-import java.util.List;
-
-import javax.ejb.Local;
-
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
@@ -105,6 +100,12 @@ import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import javax.ejb.Local;
 
 /**
  * 
@@ -348,10 +349,11 @@ public interface ParticipatingSiteServiceLocal {
      *            trial status to use
      * @param mustNotifyTrialOwners
      *            mustNotifyTrialOwners
+     * @return Map <String, ParticipatingSiteDTO> map         
      * @throws PAException
      *             PAException
      */
-    void closeOpenSites(Ii spID, StudyOverallStatusDTO oldStatus,
+    Map <String, ParticipatingSiteDTO>  closeOpenSites(Ii spID, StudyOverallStatusDTO oldStatus,
             StudyOverallStatusDTO currentStatus, boolean mustNotifyTrialOwners)
             throws PAException;
 

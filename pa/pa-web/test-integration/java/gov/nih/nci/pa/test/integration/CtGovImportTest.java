@@ -112,7 +112,7 @@ public class CtGovImportTest extends AbstractTrialStatusTest {
                         "CI",
                         today,
                         "National Cancer Institute Division of Cancer Prevention",
-                        "Approved", "Closed to Accrual")
+                        "Approved", "Closed to accrual")
                         .replaceAll("\\s+", " ").replaceAll(">\\s+", ">"), body);
 
     }

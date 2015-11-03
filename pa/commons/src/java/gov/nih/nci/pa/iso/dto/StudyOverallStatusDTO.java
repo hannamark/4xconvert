@@ -84,6 +84,8 @@ import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.iso.util.BlConverter;
 
+import java.util.Map;
+
 /**
  * StudyOverallStatusDTO for transferring StudyOverallStatus object .
  * @author Hugh Reinhart
@@ -107,6 +109,7 @@ public class StudyOverallStatusDTO extends StudyDTO {
     
     private Ts lastUpdatedDate;
     private St lastUpdatedUser;
+    private Map <String, ParticipatingSiteDTO> sitesClosedMap;
     
     /**
      * @return the statusCode
@@ -230,5 +233,18 @@ public class StudyOverallStatusDTO extends StudyDTO {
     public void setWarnings(St warnings) {
         this.warnings = warnings;
     }
+    /**
+     * @return sitesClosedMap sitesClosedMap
+     */
+    public Map<String, ParticipatingSiteDTO> getSitesClosedMap() {
+        return sitesClosedMap;
+    }
+    /**
+     * @param sitesClosedMap setSitesClosedMap
+     */
+    public void setSitesClosedMap(Map<String, ParticipatingSiteDTO> sitesClosedMap) {
+        this.sitesClosedMap = sitesClosedMap;
+    }
+   
     
 }
