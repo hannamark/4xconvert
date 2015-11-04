@@ -145,6 +145,7 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
     public void testEnterInterventionTerm(){
         Actions action = new Actions(driver);
         action.moveToElement(driver.findElement(By.xpath("//span[@class='btn_img']"))).perform();
+        pause(1000);
         clickAndWait("xpath=//a[@href='manageTermscreateIntervention.action']");
         assertTrue(selenium.isTextPresent("Enter New Intervention Details"));
         
@@ -172,6 +173,7 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
     public void testEnterExistingInterventionTerm(){
         Actions action = new Actions(driver);
         action.moveToElement(driver.findElement(By.xpath("//span[@class='btn_img']"))).perform();
+        pause(1000);
         clickAndWait("xpath=//a[@href='manageTermscreateIntervention.action']");
         assertTrue(selenium.isTextPresent("Enter New Intervention Details"));
         
@@ -182,6 +184,7 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
         clickAndWait("link=Save");
 
         action.moveToElement(driver.findElement(By.xpath("//span[@class='btn_img']"))).perform();
+        pause(1000);
         clickAndWait("xpath=//a[@href='manageTermscreateIntervention.action']");
         assertTrue(selenium.isTextPresent("Enter New Intervention Details"));
        
@@ -203,6 +206,7 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
     public void testImportInterventionTerm(){
         Actions action = new Actions(driver);
         action.moveToElement(driver.findElement(By.xpath("//span[@class='btn_img']"))).perform();
+        waitForElementToBecomeVisible(By.xpath("//a[@href='manageTermssearchIntervention.action?searchStart=true']"), 5);
         clickAndWait("xpath=//a[@href='manageTermssearchIntervention.action?searchStart=true']");
         assertTrue(selenium.isTextPresent("Import New Intervention From NCIt"));
         
@@ -245,6 +249,7 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
         
         //Test sync        
         action.moveToElement(driver.findElement(By.xpath("//span[@class='btn_img']"))).perform();
+        waitForElementToBecomeVisible(By.xpath("//a[@href='manageTermssearchIntervention.action?searchStart=true']"), 5);
         clickAndWait("xpath=//a[@href='manageTermssearchIntervention.action?searchStart=true']");
         assertTrue(selenium.isTextPresent("Import New Intervention From NCIt"));
         
@@ -267,6 +272,7 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
     public void testImportInterventionNameTypeCode() throws SQLException{
         Actions action = new Actions(driver);
         action.moveToElement(driver.findElement(By.xpath("//span[@class='btn_img']"))).perform();
+        waitForElementToBecomeVisible(By.xpath("//a[@href='manageTermssearchIntervention.action?searchStart=true']"), 5);
         clickAndWait("xpath=//a[@href='manageTermssearchIntervention.action?searchStart=true']");
         assertTrue(selenium.isTextPresent("Import New Intervention From NCIt"));
         
@@ -294,6 +300,7 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
         
         //Test sync        
         action.moveToElement(driver.findElement(By.xpath("//span[@class='btn_img']"))).perform();
+        waitForElementToBecomeVisible(By.xpath("//a[@href='manageTermssearchIntervention.action?searchStart=true']"), 5);
         clickAndWait("xpath=//a[@href='manageTermssearchIntervention.action?searchStart=true']");
         assertTrue(selenium.isTextPresent("Import New Intervention From NCIt"));
         
@@ -319,6 +326,7 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
     public void testEnterDiseaseTerm(){
         Actions action = new Actions(driver);
         action.moveToElement(driver.findElements(By.xpath("//span[@class='btn_img']")).get(1)).perform();
+        waitForElementToBecomeVisible(By.xpath("//a[@href='manageTermscreateDisease.action']"), 5);
         clickAndWait("xpath=//a[@href='manageTermscreateDisease.action']");
         assertTrue(selenium.isTextPresent("Enter New Disease/Condition Details"));
         
@@ -353,6 +361,7 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
     public void testEnterExistingDiseaseTerm(){
         Actions action = new Actions(driver);
         action.moveToElement(driver.findElements(By.xpath("//span[@class='btn_img']")).get(1)).perform();
+        waitForElementToBecomeVisible(By.xpath("//a[@href='manageTermscreateDisease.action']"), 5);
         clickAndWait("xpath=//a[@href='manageTermscreateDisease.action']");
         
         // Test save successful with mandatory fields
@@ -363,6 +372,7 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
         clickAndWait("link=Save");
         
         action.moveToElement(driver.findElements(By.xpath("//span[@class='btn_img']")).get(1)).perform();
+        waitForElementToBecomeVisible(By.xpath("//a[@href='manageTermscreateDisease.action']"), 5);
         clickAndWait("xpath=//a[@href='manageTermscreateDisease.action']");
         assertTrue(selenium.isTextPresent("Enter New Disease/Condition Details"));
       
@@ -450,6 +460,7 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
         
         Actions action = new Actions(driver);
         action.moveToElement(driver.findElements(By.xpath("//span[@class='btn_img']")).get(1)).perform();
+        waitForElementToBecomeVisible(By.xpath("//a[@href='manageTermscreateDisease.action']"), 5);
         clickAndWait("xpath=//a[@href='manageTermscreateDisease.action']");
         assertTrue(selenium.isTextPresent("Enter New Disease/Condition Details"));
 
@@ -597,6 +608,7 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
     public void testEnterDiseaseCancel() {
         Actions action = new Actions(driver);
         action.moveToElement(driver.findElements(By.xpath("//span[@class='btn_img']")).get(1)).perform();
+        waitForElementToBecomeVisible(By.xpath("//a[@href='manageTermscreateDisease.action']"), 5);
         clickAndWait("xpath=//a[@href='manageTermscreateDisease.action']");
         assertTrue(selenium.isTextPresent("Enter New Disease/Condition Details"));
 
@@ -612,6 +624,7 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
     public void testEnterInterventionCancel() {
         Actions action = new Actions(driver);
         action.moveToElement(driver.findElements(By.xpath("//span[@class='btn_img']")).get(0)).perform();
+        waitForElementToBecomeVisible(By.xpath("//a[@href='manageTermscreateIntervention.action']"), 5);
         clickAndWait("xpath=//a[@href='manageTermscreateIntervention.action']");
         assertTrue(selenium.isTextPresent("Enter New Intervention Details"));
 
@@ -663,6 +676,7 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
     public void testIfAddRemoveButtonNotPresent() {
     	  Actions action = new Actions(driver);
           action.moveToElement(driver.findElements(By.xpath("//span[@class='btn_img']")).get(1)).perform();
+          pause(1000);
           clickAndWait("xpath=//a[@href='manageTermssearchDisease.action?searchStart=true']");
           
           
