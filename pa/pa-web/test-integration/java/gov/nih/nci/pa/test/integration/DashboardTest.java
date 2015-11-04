@@ -1495,6 +1495,44 @@ public class DashboardTest extends AbstractTrialStatusTest {
     }
 
     @Test
+    public void testWorkloadTab_ExpectedAbstractionAbstractionCompletionDate() throws SQLException,
+            ParseException {
+        deactivateAllTrials();
+        TrialInfo submittedTrial = createSubmittedTrial();
+
+        // Expected Abstraction Completion Date
+        new QueryRunner()
+                .update(connection,
+                        "update study_protocol set date_last_created='2015-10-14 09:15.000' where identifier="
+                                + submittedTrial.id);
+
+        
+        addOnHold(submittedTrial, "SUBMISSION_INCOM", date("10/15/2015"),
+                date("10/15/2015"), "Submitter");
+
+        loginAsSuperAbstractor();
+        
+        clickAndWait("id=dashboardMenuOption");
+        verifyColumnValue(1, "Expected Abstraction Completion Date",
+                "10/29/2015");
+        verifyColumnValue(1, "Business Days on Hold (Submitter)", "1");
+        
+        // when calculated Expected Abstraction Completion Date falls on weekend it is moved to next Business day
+        new QueryRunner()
+                .update(connection,
+                        "update study_protocol set date_last_created='2015-10-15 09:15.000' where identifier="
+                                + submittedTrial.id);
+        addOnHold(submittedTrial, "SUBMISSION_INCOM", date("10/15/2015"),
+                date("10/16/2015"), "Submitter");
+
+        clickAndWait("id=dashboardMenuOption");
+        verifyColumnValue(1, "Business Days on Hold (Submitter)", "2");
+        verifyColumnValue(1, "Expected Abstraction Completion Date",
+                "11/02/2015");
+     
+    }
+    
+    @Test
     public void testProperSubmissionTypeCalculationAndSearch() throws Exception {
         // Verify submission type.
         deactivateAllTrials();

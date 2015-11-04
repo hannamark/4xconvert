@@ -951,12 +951,20 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO
 
     /**
      * @return Date
+     *  PO-9399 - update calculation of the Expected Abstraction Abstraction Completion Date value 
+     *  The date may not fall on a holiday or a weekend  pushed to the next business day.
      */
     public final Date getCalculatedAbstractionCompletionDate() {
-        return calculatedAbstractionCompletionDate != null ? calculatedAbstractionCompletionDate
-                : (calculatedAbstractionCompletionDate = DateUtils.addDays(
-                        getLastCreated().getDateLastCreatedPlusTenBiz(),
-                        getBizDaysOnHoldSubmitter()));
+        if (calculatedAbstractionCompletionDate == null) {
+            Date tempCalculatedAbsCompDate = DateUtils.addDays(getLastCreated().getDateLastCreatedPlusTenBiz(),
+                    getBizDaysOnHoldSubmitter());
+            if (PAUtil.isBusinessDay(tempCalculatedAbsCompDate)) {
+                calculatedAbstractionCompletionDate = tempCalculatedAbsCompDate;
+            } else {
+                calculatedAbstractionCompletionDate = PAUtil.addBusinessDays(tempCalculatedAbsCompDate, 1);
+            }
+        }
+        return calculatedAbstractionCompletionDate;
     }
 
     /**
