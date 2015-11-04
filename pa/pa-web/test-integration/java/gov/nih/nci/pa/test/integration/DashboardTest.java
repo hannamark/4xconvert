@@ -1495,8 +1495,8 @@ public class DashboardTest extends AbstractTrialStatusTest {
     }
 
     @Test
-    public void testWorkloadTab_ExpectedAbstractionAbstractionCompletionDate() throws SQLException,
-            ParseException {
+    public void testWorkloadTab_ExpectedAbstractionAbstractionCompletionDate()
+            throws SQLException, ParseException {
         deactivateAllTrials();
         TrialInfo submittedTrial = createSubmittedTrial();
 
@@ -1506,18 +1506,18 @@ public class DashboardTest extends AbstractTrialStatusTest {
                         "update study_protocol set date_last_created='2015-10-14 09:15.000' where identifier="
                                 + submittedTrial.id);
 
-        
         addOnHold(submittedTrial, "SUBMISSION_INCOM", date("10/15/2015"),
                 date("10/15/2015"), "Submitter");
 
         loginAsSuperAbstractor();
-        
+
         clickAndWait("id=dashboardMenuOption");
         verifyColumnValue(1, "Expected Abstraction Completion Date",
                 "10/29/2015");
         verifyColumnValue(1, "Business Days on Hold (Submitter)", "1");
-        
-        // when calculated Expected Abstraction Completion Date falls on weekend it is moved to next Business day
+
+        // when calculated Expected Abstraction Completion Date falls on weekend
+        // it is moved to next Business day
         new QueryRunner()
                 .update(connection,
                         "update study_protocol set date_last_created='2015-10-15 09:15.000' where identifier="
@@ -1529,9 +1529,9 @@ public class DashboardTest extends AbstractTrialStatusTest {
         verifyColumnValue(1, "Business Days on Hold (Submitter)", "2");
         verifyColumnValue(1, "Expected Abstraction Completion Date",
                 "11/02/2015");
-     
+
     }
-    
+
     @Test
     public void testProperSubmissionTypeCalculationAndSearch() throws Exception {
         // Verify submission type.
@@ -1696,7 +1696,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         verifyColumnValue(1, "Business Days on Hold (Submitter)", "2");
 
         // Business Days Since Submitted
-        final Date date = new Date();       
+        final Date date = new Date();
         new QueryRunner().update(connection,
                 "update study_protocol set date_last_created=" + jdbcTs(date)
                         + " where identifier=" + acceptedTrial.id);
@@ -2544,8 +2544,10 @@ public class DashboardTest extends AbstractTrialStatusTest {
         driver.switchTo().frame("popupFrame");
         s.type("disease", disease);
         clickAndWait("css=.search_inner_button");
-        clickAndWait("//span[@class='breadcrumbHighlight' and text()='"
-                + disease + "']");
+        final String xpath = "//span[@class='breadcrumbHighlight' and text()='"
+                + disease + "']";
+        waitForElementToBecomeAvailable(By.xpath(xpath), 10);
+        clickAndWait(xpath);
         clickAndWait("//span[@class='add' and text()='Add']");
         topWindow();
 
