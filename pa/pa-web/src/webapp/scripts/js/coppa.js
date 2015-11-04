@@ -264,3 +264,44 @@ function isValidDate(dateString)
     // Check the range of the day
     return day > 0 && day <= monthLength[month - 1];
 }
+
+/**
+ * Validates a phone number according to US format. 
+ * @param phone
+ * @returns {Boolean}
+ */
+function validateUSPhoneNumber(phone) {	
+	var re = /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/;
+
+    if (!re.exec(phone)) {        
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Validates a email using regex
+ * @param email
+ */
+function validateEmailWithRegex(email) {
+	var re = /^[0-9a-zA-Z\-\_\.\@]*$/;
+
+    if (!re.exec(email)) {        
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Validates a extension for phone using regex
+ * @param ext
+ * @returns {Boolean}
+ */
+function validateExtWithRegex(ext) {
+	var re = /^[0-9]*$/;
+
+    if (!re.exec(ext)) {        
+        return false;
+    }
+    return true;	
+}

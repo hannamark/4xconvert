@@ -42,6 +42,43 @@ describe(
 					expect(isValidDate("28/02/2015")).not.toBe(true);
 				});
 			});
+			
+			describe("US phone validations", function() {
+				it("should detect valid number", function() {
+					expect(validateUSPhoneNumber("703-111-1111")).toBe(true);					
+				});
+				it("should detect invalid numbers", function() {
+					expect(validateUSPhoneNumber("703-111-11111")).not.toBe(true);
+					expect(validateUSPhoneNumber("(703)-111-1111")).not.toBe(true);
+					expect(validateUSPhoneNumber("7031111111")).not.toBe(true);
+				});
+			});
+			
+			describe("email validations", function() {
+				it("should detect valid email", function() {
+					expect(validateEmailWithRegex("test@test.com")).toBe(true);
+					expect(validateEmailWithRegex("test123-456@test.com")).toBe(true);
+					expect(validateEmailWithRegex("test.test@test.co.in")).toBe(true);
+				});
+				it("should detect invalid email", function() {
+					expect(validateEmailWithRegex("test.test!@test.com")).not.toBe(true);
+					expect(validateEmailWithRegex("test.test%@test.com")).not.toBe(true);					
+					expect(validateEmailWithRegex("test.test!@test..com")).not.toBe(true);					
+				});
+			});
+			
+			
+			describe("extension validations", function() {
+				it("should detect valid extensions", function() {
+					expect(validateExtWithRegex("123")).toBe(true);
+					expect(validateExtWithRegex("0123456789")).toBe(true);					
+				});
+				it("should detect invalid extensions", function() {
+					expect(validateExtWithRegex("0123456789!")).not.toBe(true);
+					expect(validateExtWithRegex("abc")).not.toBe(true);
+					expect(validateExtWithRegex("123a'bc")).not.toBe(true);
+				});
+			});
 
 			describe(
 					"Phone numbers",

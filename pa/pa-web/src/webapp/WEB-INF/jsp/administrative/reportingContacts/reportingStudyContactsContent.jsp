@@ -4,6 +4,7 @@
 
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <head>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
 <c:url value="/protected/popupOrglookuporgs.action" var="lookupUrl"/>
 <c:url value="/protected/popuplookuppersons.action" var="lookupPersonsUrl"/>
     
@@ -81,10 +82,7 @@ function validateEmail(emailFldId) {
     var box = $('' + emailFldId);
     if(box.value == '') return true;
     
-    re = /^[0-9a-zA-Z\-\_\.\@]*$/;
-    //re =/^[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,4}$/ ;
-
-    if (!re.exec(box.value)) {
+    if (!validateEmailWithRegex(box.value)) {
         alert("Invalid Entry:\nOnly alphanumeric and '-@_.' are allowed for 'Email'.");
         return false;
     }
@@ -93,12 +91,10 @@ function validateEmail(emailFldId) {
 
 function validatePhone(phoneFldId) {
     var box = $('' + phoneFldId);
-    if(box.value == '') return true;
-    
-    re = /^[0-9\-]*$/;
+    if(box.value == '') return true;   
 
-    if (!re.exec(box.value)) {
-        alert("Invalid Entry:\nOnly numbers and '-' are allowed for 'Phone'.");
+    if (!validateUSPhoneNumber(box.value)) {
+        alert("Invalid Entry:\nOnly numbers and '-' are allowed for 'Phone'. Supported format is XXX-XXX-XXXX");
         return false;
     }
     return true;
@@ -106,11 +102,9 @@ function validatePhone(phoneFldId) {
 
 function validateExt(extFldId) {
     var box = $('' + extFldId);
-    if(box.value == '') return true;
-    
-    re = /^[0-9]*$/;
+    if(box.value == '') return true;    
 
-    if (!re.exec(box.value)) {
+    if (!validateExtWithRegex(box.value)) {
         alert("Invalid Entry:\nOnly numbers are allowed for 'Ext'.");
         return false;
     }
