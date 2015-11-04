@@ -971,13 +971,22 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO
      * Business Days Elapsed Since Submitted is a calculated field. It is equal
      * to Today's date minus Submission Date minus (weekend and federal holiday
      * days between Today date and the Submission Date, inclusive)
-     * 
+     * PO-9397 - Update the calculation of the "Business Days Since Submitted" 
+     * date on the Dashboard-Workload tab (Do not include submission date)
      * @return int BizDaysOnHoldSubmitter
      */
     public final Integer getBizDaysSinceSubmitted() {
-        return bizDaysSinceSubmitted != null ? bizDaysSinceSubmitted
-                : (bizDaysSinceSubmitted = PAUtil.getBusinessDaysBetween(
-                        getLastCreated().getDateLastCreated(), new Date()));
+        if (bizDaysSinceSubmitted == null) {
+            if (getLastCreated().getDateLastCreated() != null
+                    && PAUtil.isBusinessDay(getLastCreated().getDateLastCreated())) {
+                bizDaysSinceSubmitted = PAUtil.getBusinessDaysBetween(
+                        PAUtil.addBusinessDays(getLastCreated().getDateLastCreated(), 1), new Date());
+            } else {
+                bizDaysSinceSubmitted = PAUtil.getBusinessDaysBetween(getLastCreated().getDateLastCreated(),
+                        new Date());
+            }
+        }
+        return bizDaysSinceSubmitted;
     }
 
     /**

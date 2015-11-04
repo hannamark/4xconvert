@@ -1827,7 +1827,7 @@
        <comment>Adding more PA properties to on-hold trials panel.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9027.sql"/>       
     </changeSet>
-    <changeSet id="PO-9033" author="krylovd">
+    <changeSet id="PO-9033" author="krylovd" runOnChange="true">
        <comment>Adding more PA properties to support trial dist. panel.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-9033.sql"/>       
     </changeSet>

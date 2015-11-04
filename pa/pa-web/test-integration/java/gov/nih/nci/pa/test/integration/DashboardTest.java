@@ -43,7 +43,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
     private static final String MILESTONES_TO_COUNT = "Submission Received Date,Submission Acceptance Date,Administrative Processing Start Date,Ready for Administrative QC Date,Administrative QC Start Date,Scientific Processing Start Date,Ready for Scientific QC Date,Scientific QC Start Date,Ready for Trial Summary Report Date";
     private static final String HOLDS_TO_COUNT = "Submission Incomplete,Submission Incomplete -- Missing Documents,Invalid Grant,Pending CTRP Review,Pending Disease Curation,Pending Person Curation,Pending Organization Curation,Pending Intervention Curation,Other (CTRP),Other (Submitter)";
-    private static final String RANGES = "1-3,4-7,8-10,>10";
+    private static final String RANGES = "0-3,4-7,8-10,>10";
     private static final int OP_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 10000
             : 2000;
 
@@ -685,7 +685,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
             if (PAUtil.isBusinessDay(date)) {
                 days--;
             }
-        } while (days > 0 && (date = DateUtils.addDays(date, -1)) != null);
+        } while (days >= 0 && (date = DateUtils.addDays(date, -1)) != null);
 
         new QueryRunner().update(connection,
                 "update study_protocol set date_last_created=" + jdbcTs(date)
@@ -1697,8 +1697,9 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         // Business Days Since Submitted
         final Date date = new Date();
+        Date yesterday = DateUtils.addDays(date, -1);
         new QueryRunner().update(connection,
-                "update study_protocol set date_last_created=" + jdbcTs(date)
+                "update study_protocol set date_last_created=" + jdbcTs(yesterday)
                         + " where identifier=" + acceptedTrial.id);
         clickAndWait("id=dashboardMenuOption");
         verifyColumnValue(1, "Business Days Since Submitted",
@@ -1966,6 +1967,46 @@ public class DashboardTest extends AbstractTrialStatusTest {
         verifyWorkloadCSVExport();
 
     }
+    
+    
+    @Test
+    public void testWorkloadTab_CheckBusinessDaysSinceSubmitted() throws Exception {
+        deactivateAllTrials();
+        TrialInfo acceptedTrial = createAcceptedTrial();
+        loginAsSuperAbstractor();
+
+        // submission date and today's date are the same, the value of this
+        // Business Days will be zero.
+        final Date date = new Date();
+        new QueryRunner().update(connection, "update study_protocol set date_last_created=" + jdbcTs(date)
+                + " where identifier=" + acceptedTrial.id);
+        clickAndWait("id=dashboardMenuOption");
+        // Business Days Since Submitted
+        verifyColumnValue(1, "Business Days Since Submitted", "0");
+
+        // submission date one day before today's date
+        Date yesterday = DateUtils.addDays(date, -1);
+        new QueryRunner().update(connection, "update study_protocol set date_last_created=" + jdbcTs(yesterday)
+                + " where identifier=" + acceptedTrial.id);
+        clickAndWait("id=dashboardMenuOption");
+        // Business Days Since Submitted
+        verifyColumnValue(1, "Business Days Since Submitted", PAUtil.isBusinessDay(date) ? "1" : "0");
+
+        // Business Days Since Submitted 20 days before current Date
+        Date beforeDate = PAUtil.addBusinessDays(date, -20);
+        if (PAUtil.isBusinessDay(beforeDate)) {
+            beforeDate = PAUtil.addBusinessDays(beforeDate, 1);
+        }
+        int businessDays = PAUtil.getBusinessDaysBetween(beforeDate, date);
+
+        new QueryRunner().update(connection, "update study_protocol set date_last_created=" + jdbcTs(beforeDate)
+                + " where identifier=" + acceptedTrial.id);
+        clickAndWait("id=dashboardMenuOption");
+        // Business Days Since Submitted
+        verifyColumnValue(1, "Business Days Since Submitted", (businessDays) + "");
+
+    }
+
 
     /**
      * @throws SQLException
