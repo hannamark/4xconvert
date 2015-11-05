@@ -201,7 +201,7 @@ public class ResultsDashboardTest extends OtherIdentifiersRelatedTest {
         assertFalse(selenium.isTextPresent(testTrials.get(4).nctID));
         assertFalse(selenium.isTextPresent(testTrials.get(5).nctID));
         assertFalse(selenium.isTextPresent(testTrials.get(5).nciID));
-        assertTrue(selenium.isTextPresent("Doe, John"));
+        assertTrue(selenium.isTextPresent("Doe - John"));
         assertTrue(selenium.isTextPresent("Results Reporting Progress"));
         assertTrue(selenium.isTextPresent("Add/Update Designee or PIO Contact"));
         assertTrue(selenium.isTextPresent("View/Upload Trial Comparison Documents"));

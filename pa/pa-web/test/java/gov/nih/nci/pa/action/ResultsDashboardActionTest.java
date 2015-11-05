@@ -114,6 +114,21 @@ public class ResultsDashboardActionTest extends AbstractPaActionTest {
         assertEquals(0,action.getIssuesCnt());
     }
     
+    @Test
+    public void testDesigneeNamesSorting() throws PAException {
+    	getRequest().setUserInRole(Constants.RESULTS_ABSTRACTOR, true);
+        ResultsDashboardAction action = getAction();
+        List<String> designeeList = new ArrayList<String>();
+        designeeList.add("ZDoe - John");
+        designeeList.add("Test - User");
+        designeeList.add("Doe - John");
+        assertEquals("Doe - John, Test - User, ZDoe - John", action.sortResultsDashboardDesigneeNames(designeeList));        
+        designeeList.add("ADoe - John");
+        assertEquals("ADoe - John, Doe - John, Test - User, ZDoe - John", action.sortResultsDashboardDesigneeNames(designeeList));        
+        designeeList.add("ADoe - AJohn");
+        assertEquals("ADoe - AJohn, ADoe - John, Doe - John, Test - User, ZDoe - John", action.sortResultsDashboardDesigneeNames(designeeList));
+    }
+    
     private void loadCriteriaIntoAction(ResultsDashboardAction action) {
         action.setSection801IndicatorYes(true);
         action.setSection801IndicatorNo(true);

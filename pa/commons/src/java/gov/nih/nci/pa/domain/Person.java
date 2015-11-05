@@ -247,20 +247,44 @@ public class Person extends AbstractEntity implements Auditable {
             List<OrganizationalContact> organizationalContacts) {
         this.organizationalContacts = organizationalContacts;
     }
+    
     /**
      *
      * @return fullName
      */
     @Transient
     public String getFullName() {
-        if (lastName != null) {
-            fullName = lastName;
-        }
-        if (firstName != null) {
-            fullName = lastName + ", " + firstName;
-        }
-        return fullName;
+        return fetchName(", ");
     }
+    
+    
+    /**
+    *
+    * @return fullName
+    */
+   @Transient
+   public String getFullNameForResultsDashboard() {
+       return fetchName(" - ");
+   }
+   
+   /**
+    * 
+    * @param separator
+    * @return
+    */
+   private String fetchName(String separator) {
+       if (lastName != null) {
+           fullName = lastName;
+       }
+       if (firstName != null) {
+           fullName = firstName;
+       }
+       if (firstName != null && lastName != null) {
+           fullName = lastName + separator + firstName;
+       } 
+       return fullName;
+   }  
+   
 
     /**
      *

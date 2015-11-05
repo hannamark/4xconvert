@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -309,66 +310,10 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
                                                             documentDTO, true));
                                         }
 
-                                        // BJ - the following approach may
-                                        // need refactoring.
-                                        StringBuffer studyContactNamesList = new StringBuffer();
-
-                                        // get study contacts list
-                                        LimitOffset limit = new LimitOffset(
-                                                PAConstants.MAX_SEARCH_RESULTS,
-                                                0);
-                                        StudyContactDTO searchCriteria = new StudyContactDTO();
-                                        searchCriteria
-                                                .setStudyProtocolIdentifier(IiConverter
-                                                        .convertToStudyProtocolIi(resultQueryDTO
-                                                                .getStudyProtocolId()));
-
-                                        searchCriteria.setRoleCode(CdConverter
-                                                .convertToCd(StudyContactRoleCode.DESIGNEE_CONTACT));
-                                        try {
-
-                                            List<StudyContactDTO> studyDesigneeContactDtos = studyContactService
-                                                    .search(searchCriteria,
-                                                            limit);
-
-                                            if (CollectionUtils
-                                                    .isNotEmpty(studyDesigneeContactDtos)) {
-                                                for (StudyContactDTO scDto : studyDesigneeContactDtos) {
-                                                    FunctionalRoleStatusCode stsCd = CdConverter
-                                                            .convertCdToEnum(
-                                                                    FunctionalRoleStatusCode.class,
-                                                                    scDto.getStatusCode());
-                                                    if (!FunctionalRoleStatusCode.ACTIVE.equals(stsCd) 
-                                                            && !FunctionalRoleStatusCode.PENDING.equals(stsCd)) {
-                                                        continue;
-                                                    }
-
-                                                    StudyContactWebDTO studyContactWebDTO = new StudyContactWebDTO(
-                                                            scDto);
-                                                    Person person = studyContactWebDTO
-                                                            .getContactPerson();
-
-                                                    if (person != null) {
-                                                        if (studyContactNamesList
-                                                                .length() > 0) {
-                                                            studyContactNamesList
-                                                                    .append("<br>");
-                                                        }
-                                                        studyContactNamesList.append(person
-                                                                .getFullName());
-                                                    }
-
-                                                }
-                                            }
-                                        } catch (TooManyResultsException e) {
-                                            LOG.error(
-                                                    "Error while searching study contacts",
-                                                    e);
-                                            throw new PAException(e);
-                                        }
+                                        
                                         resultQueryDTO
-                                                .setDesigneeNamesList(studyContactNamesList
-                                                        .toString());
+                                                .setDesigneeNamesList(getStudyContacts(resultQueryDTO
+                                                        .getStudyProtocolId()));
                                     }
 
                                     return currentResults;
@@ -386,6 +331,68 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
                     e.getLocalizedMessage());
         }
         return RESULT_ABSTRACTOR_LANDING;
+    }
+    
+    private String getStudyContacts(Long studyProtocolId) throws PAException {
+        // BJ - the following approach may
+        // need refactoring.
+        
+        List<String> studyContactsNamesList = new ArrayList<String>();
+        StringBuffer studyContactNames = new StringBuffer();
+
+        // get study contacts list
+        LimitOffset limit = new LimitOffset(
+                PAConstants.MAX_SEARCH_RESULTS,
+                0);
+        StudyContactDTO searchCriteria = new StudyContactDTO();
+        searchCriteria
+                .setStudyProtocolIdentifier(IiConverter
+                        .convertToStudyProtocolIi(studyProtocolId));
+
+        searchCriteria.setRoleCode(CdConverter
+                .convertToCd(StudyContactRoleCode.DESIGNEE_CONTACT));
+        try {
+
+            List<StudyContactDTO> studyDesigneeContactDtos = studyContactService
+                    .search(searchCriteria,
+                            limit);
+
+            if (CollectionUtils
+                    .isNotEmpty(studyDesigneeContactDtos)) {
+                for (StudyContactDTO scDto : studyDesigneeContactDtos) {
+                    FunctionalRoleStatusCode stsCd = CdConverter
+                            .convertCdToEnum(
+                                    FunctionalRoleStatusCode.class,
+                                    scDto.getStatusCode());
+                    if (!FunctionalRoleStatusCode.ACTIVE.equals(stsCd) 
+                            && !FunctionalRoleStatusCode.PENDING.equals(stsCd)) {
+                        continue;
+                    }
+
+                    StudyContactWebDTO studyContactWebDTO = new StudyContactWebDTO(
+                            scDto);
+                    Person person = studyContactWebDTO
+                            .getContactPerson();
+
+                    if (person != null) {                        
+                        studyContactsNamesList.add(person
+                                .getFullNameForResultsDashboard());                        
+                    }                    
+                }
+            }
+        } catch (TooManyResultsException e) {
+            LOG.error(
+                    "Error while searching study contacts",
+                    e);
+            throw new PAException(e);
+        }        
+        
+        return sortResultsDashboardDesigneeNames(studyContactsNamesList);        
+    }
+    
+    String sortResultsDashboardDesigneeNames(List<String> designees) {
+        Collections.sort(designees);
+        return StringUtils.join(designees, ", ");
     }
 
     private List<String> getResultsDashboadStatusCodeFilter() {
