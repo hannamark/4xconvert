@@ -460,6 +460,26 @@ CREATE VIEW rv_search_results AS
 
 
 
-CREATE TRIGGER study_milestone_set_active_trigger_insert AFTER INSERT ON study_milestone FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.triggers.set_active_study_milestone";    
-CREATE TRIGGER study_milestone_set_active_trigger_update AFTER UPDATE ON study_milestone FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.triggers.set_active_study_milestone";
-CREATE TRIGGER study_milestone_set_active_trigger_delete AFTER DELETE ON study_milestone FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.triggers.set_active_study_milestone";
+CREATE TRIGGER study_milestone_set_active_trigger_insert AFTER INSERT ON study_milestone FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_active_study_milestone";    
+CREATE TRIGGER study_milestone_set_active_trigger_update AFTER UPDATE ON study_milestone FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_active_study_milestone";
+CREATE TRIGGER study_milestone_set_active_trigger_delete AFTER DELETE ON study_milestone FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_active_study_milestone";
+
+CREATE TRIGGER study_milestone_set_admin_trigger_insert AFTER INSERT ON study_milestone FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_admin_study_milestone";    
+CREATE TRIGGER study_milestone_set_admin_trigger_update AFTER UPDATE ON study_milestone FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_admin_study_milestone";
+CREATE TRIGGER study_milestone_set_admin_trigger_delete AFTER DELETE ON study_milestone FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_admin_study_milestone";
+
+CREATE TRIGGER study_milestone_set_last_trigger_insert AFTER INSERT ON study_milestone FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_last_study_milestone";    
+CREATE TRIGGER study_milestone_set_last_trigger_update AFTER UPDATE ON study_milestone FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_last_study_milestone";
+CREATE TRIGGER study_milestone_set_last_trigger_delete AFTER DELETE ON study_milestone FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_last_study_milestone";
+
+CREATE TRIGGER study_milestone_set_other_trigger_insert AFTER INSERT ON study_milestone FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_other_study_milestone";    
+CREATE TRIGGER study_milestone_set_other_trigger_update AFTER UPDATE ON study_milestone FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_other_study_milestone";
+CREATE TRIGGER study_milestone_set_other_trigger_delete AFTER DELETE ON study_milestone FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_other_study_milestone";
+
+CREATE TRIGGER study_milestone_set_scientific_trigger_insert AFTER INSERT ON study_milestone FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_scientific_study_milestone";    
+CREATE TRIGGER study_milestone_set_scientific_trigger_update AFTER UPDATE ON study_milestone FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_scientific_study_milestone";
+CREATE TRIGGER study_milestone_set_scientific_trigger_delete AFTER DELETE ON study_milestone FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_scientific_study_milestone";
+
+CREATE TRIGGER study_overall_status_set_current_trigger_insert AFTER INSERT ON study_overall_status FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_current_study_overall_status";    
+CREATE TRIGGER study_overall_status_set_current_trigger_update AFTER UPDATE ON study_overall_status FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_current_study_overall_status";
+CREATE TRIGGER study_overall_status_set_current_trigger_delete AFTER DELETE ON study_overall_status FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_current_study_overall_status";

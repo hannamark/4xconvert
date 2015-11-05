@@ -34,3 +34,23 @@ drop view rv_search_results  IF EXISTS CASCADE;
 DROP TRIGGER study_milestone_set_active_trigger_insert;    
 DROP TRIGGER study_milestone_set_active_trigger_update;
 DROP TRIGGER study_milestone_set_active_trigger_delete;
+
+DROP TRIGGER study_milestone_set_admin_trigger_insert;    
+DROP TRIGGER study_milestone_set_admin_trigger_update;
+DROP TRIGGER study_milestone_set_admin_trigger_delete;
+
+DROP TRIGGER study_milestone_set_last_trigger_insert;    
+DROP TRIGGER study_milestone_set_last_trigger_update;
+DROP TRIGGER study_milestone_set_last_trigger_delete;
+
+DROP TRIGGER study_milestone_set_other_trigger_insert;    
+DROP TRIGGER study_milestone_set_other_trigger_update;
+DROP TRIGGER study_milestone_set_other_trigger_delete;
+
+DROP TRIGGER study_milestone_set_scientific_trigger_insert;    
+DROP TRIGGER study_milestone_set_scientific_trigger_update;
+DROP TRIGGER study_milestone_set_scientific_trigger_delete;
+
+DROP TRIGGER study_overall_status_set_current_trigger_insert;    
+DROP TRIGGER study_overall_status_set_current_trigger_update;
+DROP TRIGGER study_overall_status_set_current_trigger_delete;

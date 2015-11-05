@@ -82,26 +82,40 @@
  */
 package gov.nih.nci.pa.util;
 
+import gov.nih.nci.pa.util.testsupport.HsqlDbTriggerSupportInterceptor;
+
 import org.hibernate.Session;
 
 import com.fiveamsolutions.nci.commons.audit.AuditLogInterceptor;
+import com.fiveamsolutions.nci.commons.util.CompositeInterceptor;
 import com.fiveamsolutions.nci.commons.util.CsmEnabledHibernateHelper;
 import com.fiveamsolutions.nci.commons.util.HibernateHelper;
 
 /**
  * PA implementation of hibernate util.
+ * 
  * @author Steve Lustbader
  */
-public class PaHibernateUtil {
-    private static final AuditLogInterceptor AUDIT_LOG_INTERCEPTOR = new AuditLogInterceptor(null);
-    private static HibernateHelper hibernateHelper = new CsmEnabledHibernateHelper(null, AUDIT_LOG_INTERCEPTOR, null);
+public final class PaHibernateUtil {
+    private static final AuditLogInterceptor AUDIT_LOG_INTERCEPTOR = new AuditLogInterceptor(
+            null);
+    private static final HsqlDbTriggerSupportInterceptor HSQL_TRIGGER_SUPPORT_INTERCEPTOR = 
+            new HsqlDbTriggerSupportInterceptor();
+    private static HibernateHelper hibernateHelper = new CsmEnabledHibernateHelper(
+            null, new CompositeInterceptor(AUDIT_LOG_INTERCEPTOR,
+                    HSQL_TRIGGER_SUPPORT_INTERCEPTOR), null);
     static {
         hibernateHelper.initialize();
         AUDIT_LOG_INTERCEPTOR.setHibernateHelper(hibernateHelper);
     }
 
+    private PaHibernateUtil() {
+        // NOOP
+    }
+
     /**
      * Get the hibernate helper.
+     * 
      * @return the helper.
      */
     public static HibernateHelper getHibernateHelper() {
@@ -110,6 +124,7 @@ public class PaHibernateUtil {
 
     /**
      * Get the current session.
+     * 
      * @return the session.
      */
     public static Session getCurrentSession() {
@@ -118,13 +133,15 @@ public class PaHibernateUtil {
 
     /**
      * Injects Hibernate Helper.
-     * @param helper the helper.
-     *
+     * 
+     * @param helper
+     *            the helper.
+     * 
      */
     public static void setHibernateHelper(HibernateHelper helper) {
         hibernateHelper = helper;
     }
-    
+
     /**
      * Disables audit by {@link AuditLogInterceptor} for the current thread. Do
      * not forget to enable it back.

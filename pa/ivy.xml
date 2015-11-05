@@ -34,7 +34,7 @@
     <dependency conf="build->master" org="org.apache.maven" name="maven-ant-tasks" rev="2.1.3"/>
     <dependency conf="build->master" org="org.liquibase" name="liquibase-core" rev="3.0.8"/>
 
-    
+    <dependency conf="compile->master" org="org.hsqldb" name="hsqldb" rev="1.8.0.10"/>
     <dependency conf="compile->master" org="com.google.code.findbugs" name="findbugs" rev="3.0.1" transitive="false"/>
     <dependency conf="compile->master" org="javax.mail" name="mail" rev="1.4.5"/>
     <dependency conf="compile->master" org="org.hibernate.javax.persistence" name="hibernate-jpa-2.0-api" rev="1.0.1.Final"/>
