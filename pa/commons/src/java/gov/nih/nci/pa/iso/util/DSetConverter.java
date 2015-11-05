@@ -241,6 +241,7 @@ public class DSetConverter {
             if (value != null) {
                 retList.add(value);
             }
+            
         }
         return retList;
     }
@@ -248,7 +249,11 @@ public class DSetConverter {
     private static String convertPhonePart(Tel t) {
         try {
             if (t instanceof TelPhone) {
+                //check the schema name this will avoid any fax number to be replaced as phone number
+                String schemeName = t.getValue().getScheme();
+                if (schemeName != null && schemeName.equals("tel")) {
                 return (URLDecoder.decode(t.getValue().getSchemeSpecificPart(), "UTF-8"));
+                }
             }
             String url = t.getValue().toString();
             if (url != null && url.startsWith("tel")) {
