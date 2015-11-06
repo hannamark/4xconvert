@@ -2080,7 +2080,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         verifyColumnValue(1, "Business Days Since Submitted", PAUtil.isBusinessDay(date) ? "1" : "0");
 
         // Business Days Since Submitted 20 days before current Date
-        Date beforeDate = PAUtil.addBusinessDays(date, -20);
+        Date beforeDate = DateUtils.addDays(date, -20);
         if (PAUtil.isBusinessDay(beforeDate)) {
             beforeDate = PAUtil.addBusinessDays(beforeDate, 1);
         }
