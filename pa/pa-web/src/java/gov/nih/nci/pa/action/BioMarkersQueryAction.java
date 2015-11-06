@@ -122,20 +122,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.hibernate.FetchMode;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Property;
-
-import java.util.Map;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
@@ -174,6 +174,8 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
     private String markerName;
     private Long id = null;
     private String caDsrId;
+    
+    private static final Logger LOG = Logger.getLogger(BioMarkersQueryAction.class);
     
     @Override
     public void prepare() {
@@ -303,6 +305,7 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
                 addActionError(getText("error.plannedMarker.question"));
             }
         } catch (PAException e) {
+            LOG.error(e, e);
             addActionError(e.getMessage());
         }
         return MARKER_QUESTION;
@@ -321,6 +324,7 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
             PaRegistry.getMailManagerService().sendMarkerQuestionToCTROMail(webDTO.getNciIdentifier(),
                     webDTO.getCsmUserEmailId(), marker, plannedMarker.getQuestion());
         } catch (PAException e) {
+            LOG.error(e, e);
             addActionError(e.getMessage());
         }
         return execute();
@@ -364,6 +368,7 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
                     PaRegistry.getMailManagerService().sendMarkerAcceptanceMailToCDE(
                             webDTO.getNciIdentifier(), webDTO.getCsmUserEmailId(), marker);           
                 } catch (PAException e) {
+                    LOG.error(e, e);
                     addActionError(e.getMessage());
                 }
             }
@@ -453,6 +458,7 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
              permissibleValues = appService.query(criteria);
             
         } catch (Exception e) {
+            LOG.error(e, e);
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
                     getText("error.plannedMarker.request.caDSRLookup"));
         }
@@ -589,11 +595,12 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
             out.close();
         } catch (FileNotFoundException err) {
             LOG.error("TrialDocumentAction failed with FileNotFoundException: "
-                    + err);
+                    + err, err);
             this.addActionError("File not found: " + err.getLocalizedMessage());
             execute();
             return ERROR;
         } catch (Exception e) {
+            LOG.error(e, e);
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
             execute();
             return ERROR;

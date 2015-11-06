@@ -245,6 +245,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
             List<CaDSRWebDTO> values = getSearchResults(new ArrayList<Object>(result));
             markers.addAll(values);
         } catch (Exception e) {
+            LOG.error(e, e);
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
                     getText("error.plannedMarker.request.caDSRLookup"));
         }
@@ -365,6 +366,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
             getPlannedMarker().setDateEmailSent(new Date());
             dto.setDateEmailSent(TsConverter.convertToTs(new Date()));
         } catch (Exception e) {
+            LOG.error(e, e);
             passedValidation = false;
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
                     getText("error.plannedMarker.request.sendEmail"));
@@ -408,6 +410,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
             Long id = IiConverter.convertToLong(markerDto.getPermissibleValue());
             permissibleService.updateValueById(getPlannedMarker().getName(), id);
         } catch (Exception e) {
+            LOG.error(e, e);
             passedValidation = false;
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
                     getText("error.plannedMarker.request.sendEmail"));

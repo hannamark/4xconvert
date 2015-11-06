@@ -298,6 +298,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     
                     plannedMarkerService.update(marker);
                 } catch (PAException e) {
+                    LOG.error(e, e);
                     addActionError(e.getMessage());
                 }
             }
@@ -331,6 +332,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
             deleteSelectedObjects();
             return super.delete();
         } catch (PAException e) {
+            LOG.error(e, e);
             ServletActionContext.getRequest().setAttribute(
                     Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
         }
@@ -393,6 +395,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
             setPreSelectedAttributeValues(dto);
             setPlannedMarker(dto);
         } catch (Exception e) {
+            LOG.error(e, e);
             ServletActionContext.getRequest().setAttribute(
                     Constants.FAILURE_MESSAGE, e.getMessage());
         }
@@ -464,6 +467,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
                         new PAServiceUtils());  
             } 
         } catch (Exception e) {
+            LOG.error(e, e);
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
         }
         return AR_LIST;
