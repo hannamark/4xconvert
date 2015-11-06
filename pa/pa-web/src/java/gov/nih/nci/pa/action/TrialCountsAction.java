@@ -48,6 +48,17 @@ import com.opensymphony.xwork2.Preparable;
 public class TrialCountsAction extends ActionSupport implements Preparable,
         ServletRequestAware {
 
+    private static final String JSON_KEY_DAY = "day";
+    private static final String JSON_KEY_BDAY = "bday";
+    private static final String JSON_KEY_SUBMITTED_CNT = "submittedCnt";
+    private static final String JSON_KEY_PAST_TEN_CNT = "pastTenCnt";
+    private static final String JSON_KEY_EXPECTED_CNT = "expectedCnt";
+    private static final String JSON_KEY_DT_ROW_ID = "DT_RowId";
+    private static final String JSON_KEY_COUNT = "count";
+    private static final String JSON_KEY_DATA = "data";
+    private static final String JSON_VALUE_TOTAL = "Total";
+    private static final int TEN = 10;
+
     private ProtocolQueryServiceLocal protocolQueryService;
     private LookUpTableServiceRemote lookUpService;
     private CSMUserUtil csmUserUtil;
@@ -75,7 +86,7 @@ public class TrialCountsAction extends ActionSupport implements Preparable,
             PAException, JSONException {
         JSONObject root = new JSONObject();
         JSONArray arr = new JSONArray();
-        root.put("data", arr);
+        root.put(JSON_KEY_DATA, arr);
         abstractorsWork(arr);
         return new StreamResult(new ByteArrayInputStream(root.toString()
                 .getBytes(UTF_8)));
@@ -149,7 +160,7 @@ public class TrialCountsAction extends ActionSupport implements Preparable,
             PAException, JSONException {
         JSONObject root = new JSONObject();
         JSONArray arr = new JSONArray();
-        root.put("data", arr);
+        root.put(JSON_KEY_DATA, arr);
         trialDist(arr);
         return new StreamResult(new ByteArrayInputStream(root.toString()
                 .getBytes(UTF_8)));
@@ -187,8 +198,8 @@ public class TrialCountsAction extends ActionSupport implements Preparable,
         for (String range : countsMap.keySet()) {
             JSONObject data = new JSONObject();
             data.put("range", range);
-            data.put("count", (int) countsMap.get(range));
-            data.put("DT_RowId", range);
+            data.put(JSON_KEY_COUNT, (int) countsMap.get(range));
+            data.put(JSON_KEY_DT_ROW_ID, range);
             arr.put(data);
         }
 
@@ -209,7 +220,7 @@ public class TrialCountsAction extends ActionSupport implements Preparable,
 
         JSONObject root = new JSONObject();
         JSONArray arr = new JSONArray();
-        root.put("data", arr);
+        root.put(JSON_KEY_DATA, arr);
         if (from != null || to != null) {
             countsByDate(from, to, arr);
         }
@@ -218,6 +229,7 @@ public class TrialCountsAction extends ActionSupport implements Preparable,
                 .getBytes(UTF_8)));
     }
 
+    @SuppressWarnings({ "PMD.NPathComplexity"})
     private void countsByDate(Date from, Date to, JSONArray arr) throws PAException, JSONException {
 
         List<StudyProtocolQueryDTO> results = protocolQueryService.getWorkload();
@@ -237,42 +249,44 @@ public class TrialCountsAction extends ActionSupport implements Preparable,
 
         for (StudyProtocolQueryDTO dto : results) {
             Date submittedOn = dto.getLastCreated().getDateLastCreated();
+
             //filter if from & to dates are provided
-            if ((from != null && submittedOn.before(from)) || (to != null && submittedOn.after(to))) {
-                continue; // out of range
+            if (!((from != null && submittedOn.before(from)) || (to != null && submittedOn.after(to)))) {
+
+                //find the lowest and highest dates
+                if (lowest == null || lowest.after(submittedOn)) {
+                    lowest = submittedOn;
+                }
+                if (highest == null || highest.before(submittedOn)) {
+                    highest = submittedOn;
+                }
+
+
+                String strDate = DateFormatUtils.format(submittedOn, PAUtil.DATE_FORMAT);
+
+                //update submitted index
+                Integer nSubmitted = submittedIndex.get(strDate);
+                nSubmitted = nSubmitted != null ? nSubmitted + 1 : 1;
+                submittedIndex.put(strDate, nSubmitted);
+
+                //update 10-day index
+                Integer daysPast = dto.getBizDaysSinceSubmitted();
+                if (daysPast == TEN) {
+                    Integer n10Days = tenDaysIndex.get(strDate);
+                    n10Days = n10Days != null ? n10Days + 1 : 1;
+                    tenDaysIndex.put(strDate, n10Days);
+                }
+
+                //update the expected index
+                String strExpectedDate = DateFormatUtils.format(dto.getExpectedAbstractionCompletionDate(), PAUtil.DATE_FORMAT);
+                Integer nExpected = expectedOnIndex.get(strDate);
+                nExpected = nExpected != null ? nExpected + 1 : 1;
+                expectedOnIndex.put(strExpectedDate, nExpected);
+
             }
-
-            //find the lowest and highest dates
-            if (lowest == null || lowest.after(submittedOn)) {
-                lowest = submittedOn;
-            }
-            if (highest == null || highest.before(submittedOn)) {
-                highest = submittedOn;
-            }
-
-
-            String strDate = DateFormatUtils.format(submittedOn, PAUtil.DATE_FORMAT);
-
-            //update submitted index
-            Integer nSubmitted = submittedIndex.get(strDate);
-            nSubmitted = nSubmitted != null ? nSubmitted + 1 : 1;
-            submittedIndex.put(strDate, nSubmitted);
-
-            //update 10-day index
-            Integer daysPast = dto.getBizDaysSinceSubmitted();
-            if (daysPast == 10) {
-                Integer n10Days = tenDaysIndex.get(strDate);
-                n10Days = n10Days != null ? n10Days + 1 : 1;
-                tenDaysIndex.put(strDate, n10Days);
-            }
-
-            //update the expected index
-            String strExpectedDate = DateFormatUtils.format(dto.getExpectedAbstractionCompletionDate(), PAUtil.DATE_FORMAT);
-            Integer nExpected = expectedOnIndex.get(strDate);
-            nExpected = nExpected != null ? nExpected + 1 : 1;
-            expectedOnIndex.put(strExpectedDate, nExpected);
 
         }
+
 
         //return if highest or lowest is null
         if (highest == null || lowest == null) {
@@ -292,49 +306,47 @@ public class TrialCountsAction extends ActionSupport implements Preparable,
             boolean isBusinessDay = PAUtil.isBusinessDay(begin);
             String strDate = DateFormatUtils.format(begin, PAUtil.DATE_FORMAT);
             JSONObject data = new JSONObject();
-            data.put("day", strDate);
-            data.put("bday", isBusinessDay);
+            data.put(JSON_KEY_DAY, strDate);
+            data.put(JSON_KEY_BDAY, isBusinessDay);
+            data.put(JSON_KEY_SUBMITTED_CNT, 0);
+            data.put(JSON_KEY_PAST_TEN_CNT, 0);
+            data.put(JSON_KEY_EXPECTED_CNT, 0);
+            data.put(JSON_KEY_DT_ROW_ID, i++);
 
             Integer nSubmitted = submittedIndex.get(strDate);
             if (nSubmitted != null) {
-                data.put("submittedCnt", nSubmitted);
+                data.put(JSON_KEY_SUBMITTED_CNT, nSubmitted);
                 totalTrialsSubmitted += nSubmitted;
-            } else {
-                data.put("submittedCnt", 0);
             }
 
             Integer nPast10Days = tenDaysIndex.get(strDate);
             if (nPast10Days != null) {
-                data.put("pastTenCnt", nPast10Days);
+                data.put(JSON_KEY_PAST_TEN_CNT, nPast10Days);
                 totalTrialsPast10Days += nPast10Days;
-            } else {
-                data.put("pastTenCnt", 0);
             }
             Integer nExpected = expectedOnIndex.get(strDate);
             if (nExpected != null) {
-                data.put("expectedCnt", nExpected);
+                data.put(JSON_KEY_EXPECTED_CNT, nExpected);
                 totalTrialsExpected += nExpected;
-            } else {
-                data.put("expectedCnt", 0);
             }
 
-            data.put("DT_RowId", i++);
             arr.put(data);
             begin = DateUtils.addDays(begin, 1);
         }
 
         //add the totals row
         JSONObject data = new JSONObject();
-        data.put("day", "Total");
-        data.put("submittedCnt", totalTrialsSubmitted);
-        data.put("pastTenCnt", totalTrialsPast10Days);
-        data.put("expectedCnt", totalTrialsExpected);
-        data.put("bday", false);
+        data.put(JSON_KEY_DAY, JSON_VALUE_TOTAL);
+        data.put(JSON_KEY_SUBMITTED_CNT, totalTrialsSubmitted);
+        data.put(JSON_KEY_PAST_TEN_CNT, totalTrialsPast10Days);
+        data.put(JSON_KEY_EXPECTED_CNT, totalTrialsExpected);
+        data.put(JSON_KEY_BDAY, false);
 
-        data.put("DT_RowId", i++);
+        data.put(JSON_KEY_DT_ROW_ID, i++);
         arr.put(data);
 
     }
+
 
     /**
      * @return StreamResult
@@ -350,7 +362,7 @@ public class TrialCountsAction extends ActionSupport implements Preparable,
             PAException, JSONException {
         JSONObject root = new JSONObject();
         JSONArray arr = new JSONArray();
-        root.put("data", arr);
+        root.put(JSON_KEY_DATA, arr);
         onHoldTrials(arr);
         return new StreamResult(new ByteArrayInputStream(root.toString()
                 .getBytes(UTF_8)));
@@ -393,16 +405,16 @@ public class TrialCountsAction extends ActionSupport implements Preparable,
             data.put("reason", code);
             data.put("reasonKey", code.replaceFirst("\\s+\\(", "_")
                     .replaceFirst("\\)", ""));
-            data.put("count", (int) countsMap.get(code));
-            data.put("DT_RowId", code);
+            data.put(JSON_KEY_COUNT, (int) countsMap.get(code));
+            data.put(JSON_KEY_DT_ROW_ID, code);
             arr.put(data);
             total += countsMap.get(code);
         }
         JSONObject data = new JSONObject();
-        data.put("reason", "Total");
-        data.put("reasonKey", "Total");
-        data.put("count", total);
-        data.put("DT_RowId", "TotalHold");
+        data.put("reason", JSON_VALUE_TOTAL);
+        data.put("reasonKey", JSON_VALUE_TOTAL);
+        data.put(JSON_KEY_COUNT, total);
+        data.put(JSON_KEY_DT_ROW_ID, "TotalHold");
         arr.put(data);
     }
 
@@ -440,7 +452,7 @@ public class TrialCountsAction extends ActionSupport implements Preparable,
             throws UnsupportedEncodingException, PAException, JSONException {
         JSONObject root = new JSONObject();
         JSONArray arr = new JSONArray();
-        root.put("data", arr);
+        root.put(JSON_KEY_DATA, arr);
         milestonesInProgress(arr);
         return new StreamResult(new ByteArrayInputStream(root.toString()
                 .getBytes(UTF_8)));
@@ -481,14 +493,14 @@ public class TrialCountsAction extends ActionSupport implements Preparable,
         for (String code : countsMap.keySet()) {
             JSONObject data = new JSONObject();
             data.put("milestone", code);
-            data.put("count", (int) countsMap.get(code));
-            data.put("DT_RowId", code);
+            data.put(JSON_KEY_COUNT, (int) countsMap.get(code));
+            data.put(JSON_KEY_DT_ROW_ID, code);
             arr.put(data);
             total += countsMap.get(code);
         }
         JSONObject data = new JSONObject();
-        data.put("milestone", "Total");
-        data.put("count", total);
+        data.put("milestone", JSON_VALUE_TOTAL);
+        data.put(JSON_KEY_COUNT, total);
         data.put("DT_RowId", "TotalMilestone");
         arr.put(data);
     }

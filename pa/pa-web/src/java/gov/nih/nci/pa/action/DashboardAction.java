@@ -269,6 +269,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements
     }
 
 
+    @SuppressWarnings({ "PMD.NPathComplexity" })
     private void applyCountTypeFilter(final List<StudyProtocolQueryDTO> results) {
         if (StringUtils.isEmpty(countForDay) || StringUtils.isEmpty(countType)) {
             return;
