@@ -8,6 +8,8 @@ import static org.mockito.Matchers.*;
 import static org.mockito.Matchers.anyVararg;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import gov.nih.nci.pa.dto.LastCreatedDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.MilestoneCode;
@@ -123,6 +125,52 @@ public class TrialCountsActionTest extends AbstractPaActionTest {
         assertEquals(">10", map.get("range"));
         assertEquals(2.0, map.get("count"));
     }
+
+
+    @Test
+    public void testTrialCountsByDate() throws PAException, JSONException,
+            JsonSyntaxException, NoSuchFieldException, SecurityException,
+            IllegalArgumentException, IllegalAccessException, IOException {
+        getRequest().setUserInRole(Constants.SUABSTRACTOR, true);
+        UsernameHolder.setUser("suAbstractor");
+        TrialCountsAction action = getAction();
+        action.setFromDate("01/01/2015");
+        action.setToDate("03/01/2015");
+        action.setProtocolQueryService(getProtocolQueryMockForCountsByDate());
+        StreamResult result = action.countsByDate();
+        Map json = getJsonMap(result);
+
+        List list = (List) json.get("data");
+        assertEquals(61, list.size());
+
+        Map map = (Map) list.get(0);
+        assertEquals("01/01/2015", map.get("day"));
+        assertEquals(0.0, map.get("pastTenCnt"));
+        assertEquals(0.0, map.get("submittedCnt"));
+        assertEquals(0.0, map.get("expectedCnt"));
+
+        map = (Map) list.get(4);
+        assertEquals("01/05/2015", map.get("day"));
+        assertEquals(1.0, map.get("pastTenCnt"));
+        assertEquals(2.0, map.get("submittedCnt"));
+        assertEquals(0.0, map.get("expectedCnt"));
+
+        Map totals = (Map) list.get(60);
+        assertEquals("Total", totals.get("day"));
+        assertEquals(2.0, totals.get("pastTenCnt"));
+        assertEquals(7.0, totals.get("submittedCnt"));
+        assertEquals(8.0, totals.get("expectedCnt"));
+
+
+        action.setFromDate("01/01/2011");
+        action.setToDate("03/01/2012");
+        result = action.countsByDate();
+        json = getJsonMap(result);
+
+        list = (List) json.get("data");
+        assertEquals(0, list.size());
+    }
+
 
     @Test
     public void testOnHoldTrials() throws PAException, JSONException,
@@ -388,6 +436,65 @@ public class TrialCountsActionTest extends AbstractPaActionTest {
         dto = new StudyProtocolQueryDTO();
         dto.setStudyProtocolId(new Random().nextLong());
         setField(dto, "bizDaysSinceSubmitted", 12);
+        dtos.add(dto);
+
+        when(mock.getWorkload()).thenReturn(dtos);
+
+        return mock;
+    }
+
+
+    /**
+     * @return
+     * @throws PAException
+     */
+    private ProtocolQueryServiceLocal getProtocolQueryMockForCountsByDate()
+            throws PAException {
+
+        final ProtocolQueryServiceLocal mock = mock(ProtocolQueryServiceLocal.class);
+        final List<StudyProtocolQueryDTO> dtos = new ArrayList<>();
+
+        StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
+        dto.setStudyProtocolId(new Random().nextLong());
+        dto.getLastCreated().setDateLastCreated(PAUtil.dateStringToDate("01/05/2015"));
+        dto.setOverriddenExpectedAbstractionCompletionDate(PAUtil.dateStringToDate("01/28/2015"));
+        setField(dto, "bizDaysSinceSubmitted", 10);
+        dtos.add(dto);
+
+        dto = new StudyProtocolQueryDTO();
+        dto.setStudyProtocolId(new Random().nextLong());
+        dto.getLastCreated().setDateLastCreated(PAUtil.dateStringToDate("01/05/2015"));
+        setField(dto, "bizDaysSinceSubmitted", 4);
+        dtos.add(dto);
+
+        dto = new StudyProtocolQueryDTO();
+        dto.getLastCreated().setDateLastCreated(PAUtil.dateStringToDate("01/06/2015"));
+        setField(dto, "bizDaysSinceSubmitted", 10);
+        dtos.add(dto);
+
+        dto = new StudyProtocolQueryDTO();
+        dto.setStudyProtocolId(new Random().nextLong());
+        dto.getLastCreated().setDateLastCreated(PAUtil.dateStringToDate("01/07/2015"));
+        setField(dto, "bizDaysSinceSubmitted", 12);
+        dtos.add(dto);
+
+        dto = new StudyProtocolQueryDTO();
+        dto.setStudyProtocolId(new Random().nextLong());
+        dto.getLastCreated().setDateLastCreated(PAUtil.dateStringToDate("01/08/2015"));
+        dto.setOverriddenExpectedAbstractionCompletionDate(PAUtil.dateStringToDate("01/30/2015"));
+        setField(dto, "bizDaysSinceSubmitted", 2);
+        dtos.add(dto);
+
+        dto = new StudyProtocolQueryDTO();
+        dto.setStudyProtocolId(new Random().nextLong());
+        dto.getLastCreated().setDateLastCreated(PAUtil.dateStringToDate("01/09/2015"));
+        setField(dto, "bizDaysSinceSubmitted", 14);
+        dtos.add(dto);
+
+        dto = new StudyProtocolQueryDTO();
+        dto.setStudyProtocolId(new Random().nextLong());
+        dto.getLastCreated().setDateLastCreated(PAUtil.dateStringToDate("01/30/2015"));
+        setField(dto, "bizDaysSinceSubmitted", 2);
         dtos.add(dto);
 
         when(mock.getWorkload()).thenReturn(dtos);

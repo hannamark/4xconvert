@@ -328,6 +328,70 @@ public class DashboardActionTest extends AbstractPaActionTest {
         assertEquals(true, getRequest().getAttribute("toggleResultsTab"));
     }
 
+
+    @Test
+    public void testSearchByCountType() throws PAException {
+        getRequest().setUserInRole(Constants.SUABSTRACTOR, true);
+        UsernameHolder.setUser("suAbstractor");
+        DashboardAction action = getAction();
+
+        action.setCountRangeFrom("05/25/2013");
+        action.setCountRangeTo("07/25/2013");
+
+        //When I do not pass coutForDay and countType prameters
+        assertEquals("suAbstractorLanding", action.searchByCountType());
+        List trials = (List) getRequest().getSession().getAttribute("dashboardSearchResults");
+
+        //Then result should not be filtered
+        assertNotNull(trials);
+        assertEquals(2, trials.size());
+        assertEquals(true, getRequest().getAttribute("toggleResultsTab"));
+
+        //When I set the day I am interested.
+         action.setCountForDay("05/25/2013");
+         action.setCountType("submittedCnt");
+         assertEquals("suAbstractorLanding", action.searchByCountType());
+         trials = (List) getRequest().getSession().getAttribute("dashboardSearchResults");
+
+         //Then result should see the result filtered
+         assertNotNull(trials);
+         assertEquals(1, trials.size());
+
+        //Also when I ask for the different count type on a different date that have data
+        action.setCountForDay("06/25/2013");
+        action.setCountType("expectedCnt");
+        assertEquals("suAbstractorLanding", action.searchByCountType());
+        trials = (List) getRequest().getSession().getAttribute("dashboardSearchResults");
+
+        //Then result should see the result filtered appropriately
+        assertNotNull(trials);
+        assertEquals(1, trials.size());
+
+        //When I set the day I am interested, which is not present in workload
+        action.setCountForDay("05/24/2013");
+        action.setCountType("expectedCnt");
+        assertEquals("suAbstractorLanding", action.searchByCountType());
+        trials = (List) getRequest().getSession().getAttribute("dashboardSearchResults");
+
+        //Then result should see the result filtered
+        assertNotNull(trials);
+        assertEquals(0, trials.size());
+
+
+        //And when I ask for a different count type that do not exist for the day
+        action.setCountForDay("05/24/2013");
+        action.setCountType("expectedCnt");
+        assertEquals("suAbstractorLanding", action.searchByCountType());
+        trials = (List) getRequest().getSession().getAttribute("dashboardSearchResults");
+
+        //Then result should see the result filtered appropriately
+        assertNotNull(trials);
+        assertEquals(0, trials.size());
+
+
+    }
+
+
     @Test
     public void testSearch() throws PAException {
         getRequest().setUserInRole(Constants.SUABSTRACTOR, true);
@@ -441,12 +505,15 @@ public class DashboardActionTest extends AbstractPaActionTest {
         StudyProtocolQueryDTO dto1 = new StudyProtocolQueryDTO();
         dto1.setStudyProtocolId(1L);
         dto1.getAdminCheckout().setCheckoutBy("suAbstractor");
+        dto1.getLastCreated().setDateLastCreated(PAUtil.dateStringToDate("05/20/2013"));
         dto1.setActiveHoldDate(PAUtil.dateStringToTimestamp("06/04/2015"));
         dto1.setProprietaryTrial(true);
         setField(dto1, "bizDaysSinceSubmitted", 2);
 
         StudyProtocolQueryDTO dto2 = new StudyProtocolQueryDTO();
         dto2.setStudyProtocolId(2L);
+        dto2.getLastCreated().setDateLastCreated(PAUtil.dateStringToDate("05/25/2013"));
+        dto2.setOverriddenExpectedAbstractionCompletionDate(PAUtil.dateStringToDate("06/25/2013"));
         dto2.setActiveHoldDate(PAUtil.dateStringToTimestamp("06/01/2015"));
         dto2.setAmendmentDate(PAUtil.dateStringToTimestamp("06/01/2015"));
         setField(dto2, "bizDaysSinceSubmitted", 15);

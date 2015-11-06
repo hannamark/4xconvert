@@ -22,12 +22,16 @@ import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.struts2.dispatcher.StreamResult;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.json.JSONArray;
@@ -52,6 +56,8 @@ public class TrialCountsAction extends ActionSupport implements Preparable,
     private static final String UTF_8 = "UTF-8";
 
     private HttpServletRequest request;
+    private String fromDate;
+    private String toDate;
 
     // CHECKSTYLE:OFF
 
@@ -185,6 +191,148 @@ public class TrialCountsAction extends ActionSupport implements Preparable,
             data.put("DT_RowId", range);
             arr.put(data);
         }
+
+    }
+
+    /**
+     * @return StreamResult
+     * @throws UnsupportedEncodingException UnsupportedEncodingException
+     * @throws PAException                  PAException
+     * @throws JSONException                JSONException
+     */
+    public StreamResult countsByDate() throws UnsupportedEncodingException,
+            PAException, JSONException {
+
+        //grab the from-date and to-date parameters from request
+        Date from = PAUtil.dateStringToDate(fromDate);
+        Date to = PAUtil.dateStringToDate(toDate);
+
+        JSONObject root = new JSONObject();
+        JSONArray arr = new JSONArray();
+        root.put("data", arr);
+        if (from != null || to != null) {
+            countsByDate(from, to, arr);
+        }
+
+        return new StreamResult(new ByteArrayInputStream(root.toString()
+                .getBytes(UTF_8)));
+    }
+
+    private void countsByDate(Date from, Date to, JSONArray arr) throws PAException, JSONException {
+
+        List<StudyProtocolQueryDTO> results = protocolQueryService.getWorkload();
+
+        //Loop and find date range of workload
+        Date lowest = null;
+        Date highest = null;
+
+        //also find the counts at various levels
+        LinkedHashMap<String, Integer> submittedIndex = new LinkedHashMap<String, Integer>();
+        LinkedHashMap<String, Integer> tenDaysIndex = new LinkedHashMap<String, Integer>();
+        LinkedHashMap<String, Integer> expectedOnIndex = new LinkedHashMap<String, Integer>();
+
+        //Note :- when user clicks on "count", we need to show in the search results the filtered data.
+        // for this, we will use the existing search functionality which allows filtering based on "submitted date"
+        // so, for 'past 10 business day' & 'expected completion' we need to also capture the lowest submitted and
+
+        for (StudyProtocolQueryDTO dto : results) {
+            Date submittedOn = dto.getLastCreated().getDateLastCreated();
+            //filter if from & to dates are provided
+            if ((from != null && submittedOn.before(from)) || (to != null && submittedOn.after(to))) {
+                continue; // out of range
+            }
+
+            //find the lowest and highest dates
+            if (lowest == null || lowest.after(submittedOn)) {
+                lowest = submittedOn;
+            }
+            if (highest == null || highest.before(submittedOn)) {
+                highest = submittedOn;
+            }
+
+
+            String strDate = DateFormatUtils.format(submittedOn, PAUtil.DATE_FORMAT);
+
+            //update submitted index
+            Integer nSubmitted = submittedIndex.get(strDate);
+            nSubmitted = nSubmitted != null ? nSubmitted + 1 : 1;
+            submittedIndex.put(strDate, nSubmitted);
+
+            //update 10-day index
+            Integer daysPast = dto.getBizDaysSinceSubmitted();
+            if (daysPast == 10) {
+                Integer n10Days = tenDaysIndex.get(strDate);
+                n10Days = n10Days != null ? n10Days + 1 : 1;
+                tenDaysIndex.put(strDate, n10Days);
+            }
+
+            //update the expected index
+            String strExpectedDate = DateFormatUtils.format(dto.getExpectedAbstractionCompletionDate(), PAUtil.DATE_FORMAT);
+            Integer nExpected = expectedOnIndex.get(strDate);
+            nExpected = nExpected != null ? nExpected + 1 : 1;
+            expectedOnIndex.put(strExpectedDate, nExpected);
+
+        }
+
+        //return if highest or lowest is null
+        if (highest == null || lowest == null) {
+            return;
+        }
+
+        Date begin = from != null ? from : lowest;
+        Date end = to != null ? to : highest;
+        int i = 0;
+
+        Integer totalTrialsSubmitted = 0;
+        Integer totalTrialsPast10Days = 0;
+        Integer totalTrialsExpected = 0;
+
+        //for each day layout the respective counts
+        while (begin.compareTo(end) <= 0) {
+            boolean isBusinessDay = PAUtil.isBusinessDay(begin);
+            String strDate = DateFormatUtils.format(begin, PAUtil.DATE_FORMAT);
+            JSONObject data = new JSONObject();
+            data.put("day", strDate);
+            data.put("bday", isBusinessDay);
+
+            Integer nSubmitted = submittedIndex.get(strDate);
+            if (nSubmitted != null) {
+                data.put("submittedCnt", nSubmitted);
+                totalTrialsSubmitted += nSubmitted;
+            } else {
+                data.put("submittedCnt", 0);
+            }
+
+            Integer nPast10Days = tenDaysIndex.get(strDate);
+            if (nPast10Days != null) {
+                data.put("pastTenCnt", nPast10Days);
+                totalTrialsPast10Days += nPast10Days;
+            } else {
+                data.put("pastTenCnt", 0);
+            }
+            Integer nExpected = expectedOnIndex.get(strDate);
+            if (nExpected != null) {
+                data.put("expectedCnt", nExpected);
+                totalTrialsExpected += nExpected;
+            } else {
+                data.put("expectedCnt", 0);
+            }
+
+            data.put("DT_RowId", i++);
+            arr.put(data);
+            begin = DateUtils.addDays(begin, 1);
+        }
+
+        //add the totals row
+        JSONObject data = new JSONObject();
+        data.put("day", "Total");
+        data.put("submittedCnt", totalTrialsSubmitted);
+        data.put("pastTenCnt", totalTrialsPast10Days);
+        data.put("expectedCnt", totalTrialsExpected);
+        data.put("bday", false);
+
+        data.put("DT_RowId", i++);
+        arr.put(data);
 
     }
 
@@ -412,4 +560,35 @@ public class TrialCountsAction extends ActionSupport implements Preparable,
         this.csmUserUtil = csmUserUtil;
     }
 
+    /**
+     * Returns the from date
+     * @return - the fromDate
+     */
+    public String getFromDate() {
+        return fromDate;
+    }
+
+    /**
+     * Sets the fromDate
+     * @param fromDate    Sets the fromDate
+     */
+    public void setFromDate(String fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    /**
+     * Gets the toDate
+     * @return   toDate
+     */
+    public String getToDate() {
+        return toDate;
+    }
+
+    /**
+     * Sets the toDate
+     * @param toDate  - toDate
+     */
+    public void setToDate(String toDate) {
+        this.toDate = toDate;
+    }
 }

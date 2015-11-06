@@ -65,4 +65,58 @@
 </div>
 
 
+<div id="trials_bydate" class="trials_bydate_panel">
+    <h3><fmt:message key="dashboard.trialCountsByDate.tabtitle" /></h3>
+    <div>
+        <table id="trials_bydate_criteria_table">
+            <tr>
+                <td colspan="4">
+                    <fmt:message key="dashboard.trialCountsByDate.header" />
+                </td>
+            </tr>
+            <tr>
+                <td scope="row" class="label cright">
+                    <label for="countRangeFrom"><fmt:message key="dashboard.trialCountsByDate.from" /></label>
+                </td>
+                <td nowrap="nowrap">
+                    <s:textfield id="countRangeFrom" name="countRangeFrom" maxlength="10" size="10" />
+                </td>
+                <td  scope="row" class="label cright">
+                    <label for="countRangeTo"><fmt:message key="dashboard.trialCountsByDate.to" /></label>
+                </td>
+                <td nowrap="nowrap">
+                    <s:textfield id="countRangeTo" name="countRangeTo" maxlength="10" size="10" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" class="cright">
+                    <input id="btnDisplayCounts" type="button" value="<fmt:message key="dashboard.trialCountsByDate.btnDisplay" />" onclick="displayTrialsByDate()"  />
+                </td>
+                <td colspan="2" class="ccenter">
+                    <input id="btnResetCounts" type="button" value="<fmt:message key="dashboard.trialCountsByDate.btnReset" />" onclick="resetTrialsByDate()"/>
+                </td>
+            </tr>
+        </table>
+
+        <div class="tcbd">
+            <table id="trials_bydate_table">
+                <thead>
+                <tr>
+                    <th><fmt:message key="dashboard.trialCountsByDate.date" /></th>
+                    <th><fmt:message key="dashboard.trialCountsByDate.submitted" /></th>
+                    <th><fmt:message key="dashboard.trialCountsByDate.submittedplus10" /></th>
+                    <th><fmt:message key="dashboard.trialCountsByDate.expectedToComplete" /></th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+
 

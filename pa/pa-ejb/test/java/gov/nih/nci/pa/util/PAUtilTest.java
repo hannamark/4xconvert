@@ -979,8 +979,8 @@ public class PAUtilTest {
         // Negative increments not supported; result in same date being
         // returned.
         assertEquals(date, PAUtil.addBusinessDays(date, 0));
-        assertEquals(date, PAUtil.addBusinessDays(date, -1));
-        assertEquals(date, PAUtil.addBusinessDays(date, -2));
+        assertTrue(DateUtils.isSameDay(date("06/01/2015"), PAUtil.addBusinessDays(date("06/02/2015"), -1)));
+        assertTrue(DateUtils.isSameDay(date("06/01/2015"), PAUtil.addBusinessDays(date("06/03/2015"), -2)));
 
         assertTrue(DateUtils.isSameDay(date("06/02/2015"),
                 (PAUtil.addBusinessDays(date("06/01/2015"), 1))));

@@ -68,6 +68,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.dispatcher.StreamResult;
@@ -95,6 +96,11 @@ public class DashboardAction extends AbstractCheckInOutAction implements
     private static final String ABSTRACTOR_LANDING = "abstractorLanding";
     private static final String DASHBOARD_SEARCH_RESULTS = "dashboardSearchResults";
     private static final String WORKLOAD = "workload";
+    private static final String COUNT_TYPE_SUBMITTED = "submittedCnt";
+    private static final String COUNT_TYPE_PAST_TEN = "pastTenCnt";
+    private static final String COUNT_TYPE_EXPECTED = "expectedCnt";
+    private static final int POSITIVE_TEN = 10;
+    private static final int NEGATIVE_TEN = -10;
 
     private static final Logger LOG = Logger.getLogger(DashboardAction.class);
 
@@ -168,10 +174,17 @@ public class DashboardAction extends AbstractCheckInOutAction implements
 
     private List<String> checkoutCommands = new ArrayList<String>();
 
+    //trial counts by date filter
+    private String countForDay;
+    private String countType;
+    private String countRangeFrom;
+    private String countRangeTo;
+
     @Override
     public String execute() {
         clearSearchSessionAttributes();
         clearFilters();
+        initializeCountByRangeDates();
         if (!canAccessDashboard()) {
             return NON_ABSTRACTOR_LANDING;
         }
@@ -213,6 +226,14 @@ public class DashboardAction extends AbstractCheckInOutAction implements
         dateFilterField = null;
     }
 
+    private void initializeCountByRangeDates() {
+        Date from = PAUtil.addBusinessDays(new Date(), NEGATIVE_TEN);
+        Date to = PAUtil.addBusinessDays(new Date(), POSITIVE_TEN);
+
+        countRangeFrom = DateFormatUtils.format(from, PAUtil.DATE_FORMAT);
+        countRangeTo = DateFormatUtils.format(to, PAUtil.DATE_FORMAT);
+    }
+
     private void prepareWorkload() throws PAException {
         List<StudyProtocolQueryDTO> results = protocolQueryService
                 .getWorkload();
@@ -243,6 +264,52 @@ public class DashboardAction extends AbstractCheckInOutAction implements
                 StudyProtocolQueryDTO dto = (StudyProtocolQueryDTO) o;
                 return PAUtil.isInRange(dto.getBizDaysSinceSubmitted(),
                         getDistr());
+            }
+        });
+    }
+
+
+    private void applyCountTypeFilter(final List<StudyProtocolQueryDTO> results) {
+        if (StringUtils.isEmpty(countForDay) || StringUtils.isEmpty(countType)) {
+            return;
+        }
+
+
+        final Date rangeStart = StringUtils.equals(countForDay, "Total")
+            ? PAUtil.dateStringToDateTime(countRangeFrom) : PAUtil.dateStringToDateTime(countForDay);
+        final Date rangeEnd = StringUtils.equals(countForDay, "Total")
+            ? PAUtil.dateStringToDateTime(countRangeTo) : DateUtils.addDays(rangeStart, 1);
+
+        //adjust start and end based on business days
+
+        CollectionUtils.filter(results, new Predicate() {
+            @Override
+            public boolean evaluate(Object o) {
+                StudyProtocolQueryDTO dto = (StudyProtocolQueryDTO) o;
+
+                if (StringUtils.equals(COUNT_TYPE_EXPECTED, countType)) {
+                    Date date = dto.getExpectedAbstractionCompletionDate();
+                    return date != null
+                            && (DateUtils.isSameDay(date, rangeStart) || date.after(rangeStart))
+                            && (date.before(rangeEnd));
+                }
+
+                if (StringUtils.equals(COUNT_TYPE_SUBMITTED, countType)) {
+                    Date date = dto.getLastCreated().getDateLastCreated();
+                    return date != null
+                            && (DateUtils.isSameDay(date, rangeStart) || date.after(rangeStart))
+                            && (date.before(rangeEnd));
+                }
+
+                if (StringUtils.equals(COUNT_TYPE_PAST_TEN, countType)) {
+                    Date submittedOn = dto.getLastCreated().getDateLastCreated();
+                    Date date = submittedOn != null ? PAUtil.addBusinessDays(submittedOn, POSITIVE_TEN) : null;
+                    return date != null
+                            && (DateUtils.isSameDay(date, rangeStart) || date.after(rangeStart))
+                            && (date.before(rangeEnd));
+                }
+
+                return false;
             }
         });
     }
@@ -317,6 +384,27 @@ public class DashboardAction extends AbstractCheckInOutAction implements
         }
         return landingPage();
     }
+
+
+    /**
+     * @return String
+     * @throws PAException PAException
+     */
+    public String searchByCountType() throws PAException {
+        clearSearchSessionAttributes();
+        try {
+            List<StudyProtocolQueryDTO> results = protocolQueryService
+                    .getWorkload();
+            applyCountTypeFilter(results);
+            storeResults(results);
+        } catch (PAException e) {
+            LOG.error(e, e);
+            request.setAttribute(Constants.FAILURE_MESSAGE,
+                    e.getLocalizedMessage());
+        }
+        return landingPage();
+    }
+
 
     /**
      * @return String
@@ -904,11 +992,82 @@ public class DashboardAction extends AbstractCheckInOutAction implements
     }
 
     /**
-     * @param submittedOnOrBefore
-     *            the submittedOnOrBefore to set
+     * @param submittedOnOrBefore the submittedOnOrBefore to set
      */
     public void setSubmittedOnOrBefore(String submittedOnOrBefore) {
         this.submittedOnOrBefore = submittedOnOrBefore;
+    }
+
+    /**
+     * The day for which the count type is requested
+     *
+     * @return - countForDay
+     */
+    public String getCountForDay() {
+        return countForDay;
+    }
+
+    /**
+     * Sets the day for which count type is requested.
+     *
+     * @param countForDay - count for day
+     */
+    public void setCountForDay(String countForDay) {
+        this.countForDay = countForDay;
+    }
+
+    /**
+     * The count type, ie. past-10day , submitted-on, exptected-on
+     *
+     * @return  countType
+     */
+    public String getCountType() {
+        return countType;
+    }
+
+    /**
+     * Sets the count type.
+     *
+     * @param countType  - count type
+     */
+    public void setCountType(String countType) {
+        this.countType = countType;
+    }
+
+    /**
+     * The range start date for counting
+     *
+     * @return  countRangeFrom
+     */
+    public String getCountRangeFrom() {
+        return countRangeFrom;
+    }
+
+    /**
+     * Sets the range start date for counting
+     *
+     * @param countRangeFrom - count range from
+     */
+    public void setCountRangeFrom(String countRangeFrom) {
+        this.countRangeFrom = countRangeFrom;
+    }
+
+    /**
+     * The range end date for counting
+     *
+     * @return  - countRangeTo
+     */
+    public String getCountRangeTo() {
+        return countRangeTo;
+    }
+
+    /**
+     * Sets the range end date for counting.
+     *
+     * @param countRangeTo - count range to
+     */
+    public void setCountRangeTo(String countRangeTo) {
+        this.countRangeTo = countRangeTo;
     }
 
     /**

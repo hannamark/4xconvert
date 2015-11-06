@@ -250,7 +250,7 @@ public class PAUtil {
      * @param inDate string to be normalized
      * @return Date
      */
-    private static Date dateStringToDate(String inDate) {
+    public static Date dateStringToDate(String inDate) {
         if (inDate == null || inDate.isEmpty()) {
             return null;
         }
@@ -1389,22 +1389,24 @@ public class PAUtil {
     }
     
     /**
-     * Adds the given positive number of business days to the provided date.
+     * Adds or substract business days from the given date.
      * 
      * @param date
      *            Date
      * @param days
-     *            days
+     *            days - adds when positive, substracts when negative.
      * @return Date
      */
     public static Date addBusinessDays(Date date, int days) { // NOPMD
         if (date == null) {
             return null;
         }
-        while (days > 0) {
-            date = DateUtils.addDays(date, 1);
+        int counter = days > 0 ? 1 : -1;
+        int latch = Math.abs(days);
+        while (latch > 0) {
+            date = DateUtils.addDays(date, counter);
             if (PAUtil.isBusinessDay(date)) {
-                days--;
+                latch--;
             }
         }
         return date;

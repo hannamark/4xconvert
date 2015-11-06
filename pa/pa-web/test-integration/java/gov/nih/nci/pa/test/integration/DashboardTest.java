@@ -17,7 +17,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -375,6 +377,75 @@ public class DashboardTest extends AbstractTrialStatusTest {
     }
 
     @Test
+    public void testTrialCountsPanel() throws Exception {
+        deactivateAllTrials();
+
+        //prepare the trials
+        List<TrialInfo> allTrials = registerBunchOfTrialsForCountsByDate();
+
+
+        // Now test the panel.
+        loginAsSuperAbstractor();
+        clickAndWait("id=dashboardMenuOption");
+        clickAndWait("countsid");
+        assertTrue(s.isElementPresent("count_panels_container"));
+        waitForElementToBecomeVisible(
+                By.xpath("//table[@id='trials_bydate_table']//tr[2]"), 20);
+
+        // Panel must be collapsible, but initially open.
+        verifyPanelWidget("trials_bydate", "Trial Counts by Date");
+
+        // Verify table headers.
+        assertEquals("Business Days Since Trial Submission",
+                s.getText("//table[@id='trial_dist_table']//th[1]"));
+        assertEquals("Trial Count",
+                s.getText("//table[@id='trial_dist_table']//th[2]"));
+
+
+        //Verify that no data comes when filtered out of range.
+        s.type("countRangeFrom", "08/10/2015");
+        s.type("countRangeTo", "08/11/2015");
+        s.click("btnDisplayCounts");
+        waitForElementToBecomeAvailable(By.xpath("//table[@id='trials_bydate_table']//td[@class='dataTables_empty']"), 20);
+
+        // Verify that data is filtered properly
+        s.type("countRangeFrom", DateFormatUtils.format(new Date(), PAUtil.DATE_FORMAT));
+        s.type("countRangeTo", DateFormatUtils.format(DateUtils.addDays(new Date(), 1), PAUtil.DATE_FORMAT));
+
+        //click on display counts and wait for reload
+        s.click("btnDisplayCounts");
+        waitForElementToBecomeVisible(By.xpath("//table[@id='trials_bydate_table']//tr[2]"), 20);
+        assertEquals("6", s.getText("//tr[@id='TotalByCount']/td[2]"));
+
+        //refresh and check data that is displayed
+        refresh();
+        clickAndWait("countsid");
+        waitForElementToBecomeVisible(By.xpath("//table[@id='trials_bydate_table']//tr[2]"), 20);
+        assertEquals("10", s.getText("//tr[@id='TotalByCount']/td[2]"));
+        assertEquals(DateFormatUtils.format(PAUtil.addBusinessDays(new Date(), -10), PAUtil.DATE_FORMAT), s.getValue("countRangeFrom"));
+        assertEquals(DateFormatUtils.format(PAUtil.addBusinessDays(new Date(), 10), PAUtil.DATE_FORMAT), s.getValue("countRangeTo"));
+
+        //click on a link and verify data is properly displayed in results tab
+        clickAndWait("//tr[@id='TotalByCount']/td[2]/a");
+        verifySearchByDistInResultsTab(allTrials);
+
+        //Clear the filter range, and re-filter on a data range with which we can verify expected range.
+        clickAndWait("countsid");
+        waitForElementToBecomeVisible(By.xpath("//table[@id='trials_bydate_table']//tr[2]"), 20);
+        s.type("countRangeFrom", "08/10/2015");
+        s.type("countRangeTo", "08/11/2015");
+        s.click("btnDisplayCounts");
+        waitForElementToBecomeAvailable(By.xpath("//table[@id='trials_bydate_table']//td[@class='dataTables_empty']"), 20);
+
+        s.type("countRangeFrom", DateFormatUtils.format(new Date(), PAUtil.DATE_FORMAT));
+        s.type("countRangeTo", DateFormatUtils.format(PAUtil.addBusinessDays(new Date(), 10), PAUtil.DATE_FORMAT));
+        s.click("btnDisplayCounts");
+        waitForElementToBecomeVisible(By.xpath("//table[@id='trials_bydate_table']//tr[2]"), 20);
+        assertEquals("1", s.getText("//tr[@id='TotalByCount']/td[4]"));
+
+    }
+
+    @Test
     public void testOnHoldPanel() throws Exception {
         deactivateAllTrials();
 
@@ -690,6 +761,22 @@ public class DashboardTest extends AbstractTrialStatusTest {
         new QueryRunner().update(connection,
                 "update study_protocol set date_last_created=" + jdbcTs(date)
                         + " where identifier=" + trial.id);
+    }
+
+    private List<TrialInfo> registerBunchOfTrialsForCountsByDate() throws SQLException {
+        List<TrialInfo> list = new ArrayList<>();
+        for(int i = 1; i <= 5 ; i++) {
+            TrialInfo trial = createAcceptedTrial();
+            moveSubmissionDateBackByBizDays(trial, i);
+            list.add(trial);
+        }
+        for(int i = 1; i <= 5 ; i++) {
+            TrialInfo trial = createSubmittedTrial();
+            moveSubmissionDateBackByBizDays(trial, 1);
+            list.add(trial);
+        }
+        return list;
+
     }
 
     private List<TrialInfo> registerBunchOfTrialsWithHold(String code)

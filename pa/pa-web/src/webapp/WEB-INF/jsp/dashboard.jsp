@@ -51,7 +51,7 @@ i.fa-filter {
 	padding: 5px;
 }
 
-#date-range-filter input {
+#date-range-filter input, #trials_bydate input {
 	min-width: 150px;
 	margin-right: 5px;
 }
@@ -126,7 +126,7 @@ th.sorting_disabled {
     background-color: white !important;
 }
 
-#TotalMilestone td, #TotalHold td{
+#TotalMilestone td, #TotalHold td, #TotalByCount td {
     font-weight: bold;
 }
 
@@ -143,6 +143,18 @@ a.count {
 
 li.select2-selection__choice {
     white-space: normal;
+}
+td.ccenter {
+    text-align: center;
+}
+td.cright {
+    text-align: right;
+}
+div.tcbd {
+   padding-top:25px;
+}
+tr.holiday {
+    background: lightgray !important;
 }
 
 </style>
@@ -188,7 +200,9 @@ li.select2-selection__choice {
     var onHoldTrialsURL = '<c:url value='/protected/trialCountsonHoldTrials.action'/>';
     var trialDistURL = '<c:url value='/protected/trialCountstrialDist.action'/>';
     var abstractorsWorkURL = '<c:url value='/protected/trialCountsabstractorsWork.action'/>';
-    
+    var countsByDateURL = '<c:url value='/protected/trialCountscountsByDate.action'/>';
+    var trialsByDateTable;
+
 	function handleAction(action) {
 		
 		
@@ -286,6 +300,14 @@ li.select2-selection__choice {
 		handleAction('view');
 		return false;
 	}
+
+    function displayTrialsByDate() {
+        trialsByDateTable.ajax.reload();
+    }
+    function resetTrialsByDate() {
+        $('countRangeFrom').clear();
+        $('countRangeTo').clear();
+    }
 
 	function resetValues() {
 		$('dashboardForm').getElements().each(function(el) {
@@ -624,6 +646,8 @@ li.select2-selection__choice {
             	if ($("#resultsid.active").length > 0 && $("#distr").val().length>0 
             			&& $("#dashboardForm").attr('action').contains('searchByDistribution')) {
             		handleAction('searchByDistribution');
+                } else if ($("#resultsid.active").length > 0 && $("#dashboardForm").attr('action').contains('searchByCountType')) {
+                    handleAction('searchByCountType');
                 } else if ($("#resultsid.active").length > 0 || ( $("#resultsid").length > 0 && $("#workloadid.active").length == 0 && $("#countsid.active").length == 0 ) ) {
                 	handleAction("search");
                 } else {
@@ -928,6 +952,80 @@ li.select2-selection__choice {
                         handleAction('search');
             });
 
+            //Setup trials by count Panel
+            $("#trials_bydate" ).accordion({
+                collapsible: true,
+                heightStyle: "content"
+        });
+            trialsByDateTable =  $('#trials_bydate_table').DataTable({
+                "bFilter" : false,
+                "paging":   false,
+                "searching":   false,
+                "info":     false,
+                "order": [],
+                "createdRow": function( row, data, index ) {
+                    if(data.day == 'Total') {
+                        $(row).attr('id', "TotalByCount");
+                    } else if(!data.bday) {
+                        $(row).addClass('holiday');
+                    }
+                },
+                "columns": [
+                    { "data": "day" },
+                    { "data": "submittedCnt" },
+                    { "data": "pastTenCnt" },
+                    { "data": "expectedCnt" }
+                ],
+                "ajax" : {
+                    "url" : countsByDateURL,
+                    "type" : "POST",
+                    "data": function ( d ) {
+                        d.fromDate = $('#countRangeFrom').val();
+                        d.toDate = $('#countRangeTo').val();
+                    }
+                },
+                "columnDefs" : [{
+                    "targets" : [0,1,2,3],
+                    "orderable" : false
+                },
+                {
+                        "targets" : 1,
+                        "render" : function(data, type, r, meta) {
+                            if(r.submittedCnt == 0) return '';
+                            var content = '<a class="count" countForDay="'+r.day+'" countType="submittedCnt">'+r.submittedCnt+'</a>';
+                            return content;
+                        }
+                },
+                {
+                    "targets" : 2,
+                    "render" : function(data, type, r, meta) {
+                        if(r.pastTenCnt == 0) return '';
+                        var content = '<a class="count" countForDay="'+r.day+'" countType="pastTenCnt">'+r.pastTenCnt+'</a>';
+                        return content;
+                    }
+                },
+                {
+                    "targets" : 3,
+                    "render" : function(data, type, r, meta) {
+                        if(r.expectedCnt == 0) return '';
+                        var content = '<a class="count" countForDay="'+r.day+'" countType="expectedCnt">'+r.expectedCnt+'</a>';
+                        return content;
+                    }
+                }]
+            }).on('xhr', function() {
+                $('#wl_table_container').doubleScroll('refresh');
+            });
+            $('#trials_bydate_table tbody').on('click', "a[countType]",function() {
+                        var curFromDate = $('#countRangeFrom').val()
+                        var curToDate = $('#countRangeTo').val()
+                        resetValues();
+                        $('#countRangeFrom').val(curFromDate) ;
+                        $('#countRangeTo').val(curToDate);
+                        $("#countForDay").val($(this).attr('countForDay'));
+                        $("#countType").val($(this).attr('countType'));
+                        handleAction('searchByCountType');
+            });
+
         });
 	}(jQuery));
         
@@ -956,6 +1054,24 @@ li.select2-selection__choice {
 				"dashboardForm");
 		addCalendar("Cal2", "Select Date", "submittedOnOrBefore",
 				"dashboardForm");
+
+        jQuery("#countRangeFrom").datepicker({
+            showOn: "button",
+            buttonImage: "<c:url value='/images/ico_calendar.gif'/>",
+            buttonImageOnly: true,
+            buttonText: "Select a date",
+            dateFormat:"mm/dd/yy"
+        });
+
+        jQuery("#countRangeTo").datepicker({
+            showOn: "button",
+            buttonImage: "<c:url value='/images/ico_calendar.gif'/>",
+            buttonImageOnly: true,
+            buttonText: "Select a date",
+            dateFormat:"mm/dd/yy"
+        });
+
+
 		setWidth(90, 1, 15, 1);
 		setFormat("mm/dd/yyyy");
 		
@@ -1114,6 +1230,8 @@ li.select2-selection__choice {
 			<s:hidden name="checkInReason" id="checkInReason" />
 			<s:hidden name="superAbstractorId" />
 			<s:hidden name="distr" id="distr"/>
+			<s:hidden name="countForDay" id="countForDay"/>
+			<s:hidden name="countType" id="countType"/>
 			<table class="form">
 				<tr>
 					<td align="right" nowrap="nowrap" style="padding: 0; margin: 0;">
