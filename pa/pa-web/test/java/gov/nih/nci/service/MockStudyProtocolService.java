@@ -449,7 +449,7 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
 	}
 
     @Override
-    public List<Long> getByPublicTitle(String publicTitle) 
+    public List<Long> getNonRejectedByPublicTitle(String publicTitle) 
             throws PAException {
         return new ArrayList<Long>();
     }

@@ -375,7 +375,7 @@ public interface StudyProtocolService {
      * @return List<Long>
      * @throws PAException PAException
      */
-    List<Long> getByPublicTitle(String publicTitle) throws PAException;
+    List<Long> getNonRejectedByPublicTitle(String publicTitle) throws PAException;
     
     /**
      * Update the value of the specified study protocol results date attribute of the study

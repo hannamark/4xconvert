@@ -1084,28 +1084,29 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      */
     @Override
     @SuppressWarnings(UNCHECKED)
-    public List<Long> getByPublicTitle(String publicTitle) {
+    public List<Long> getNonRejectedByPublicTitle(String publicTitle) {
         Session session = PaHibernateUtil.getCurrentSession();
         List<Long> resultSet = new ArrayList<Long>();
         List<Object> queryList = null;
-        SQLQuery query = session
-        .createSQLQuery("select DISTINCT(sp.identifier) " 
+        SQLQuery query = session.createSQLQuery("select DISTINCT(sp.identifier) "
                 + " from study_protocol as sp where sp.status_code ='ACTIVE'"
-                + " and UPPER(sp.public_tittle) = UPPER(:title)");
+                + " and UPPER(sp.public_tittle) = UPPER(:title)"
+                + " and sp.identifier not in (select study_protocol_identifier from rv_dwf_current "
+                + " where status_code='REJECTED')");
         query.setParameter("title", publicTitle);
         queryList = query.list();
         for (Object oArr : queryList) {
             BigInteger ret = null;
-            if (oArr instanceof BigInteger) { 
-                ret =  (BigInteger) oArr;
+            if (oArr instanceof BigInteger) {
+                ret = (BigInteger) oArr;
                 if (oArr != null) {
                     resultSet.add(ret.longValue());
                 }
-            }       
+            }
         }
         return resultSet;
     }
-    
+
     /**
      * @param studyIndldeService the studyIndldeService to set
      */

@@ -1388,7 +1388,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     }
 
     private boolean hasUniqueBriefTitle(StudyProtocolDTO studyProtocolDTO) throws PAException {
-        List<Long> protocolIdList = studyProtocolService.getByPublicTitle(StConverter
+        List<Long> protocolIdList = studyProtocolService.getNonRejectedByPublicTitle(StConverter
                 .convertToString(studyProtocolDTO.getPublicTitle()));
         for (Long id : protocolIdList) {
             if (id != IiConverter.convertToLong(studyProtocolDTO.getIdentifier()).longValue()) {

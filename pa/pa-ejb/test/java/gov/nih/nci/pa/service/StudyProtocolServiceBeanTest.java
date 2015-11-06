@@ -170,6 +170,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Rule;
@@ -1540,7 +1541,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void testGetByPublicTitle() throws PAException {
+    public void testGetNonRejectedByPublicTitle_NonRejected() throws PAException {
         InterventionalStudyProtocolDTO study1 = StudyProtocolServiceBeanTest
                 .createInterventionalStudyProtocolDTOObj();
         study1.setPublicTitle(StConverter
@@ -1552,11 +1553,45 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
                 .convertToSt("Test BriefTitle for complete"));
         Ii id2 = remoteEjb.createInterventionalStudyProtocol(study2);
         List<Long> ids = remoteEjb
-                .getByPublicTitle("Test BriefTitle for complete");
+                .getNonRejectedByPublicTitle("Test BriefTitle for complete");
+        
         assertTrue(ids.size() > 0);
         assertTrue(ids.size() == 2);
         assertTrue(ids.get(0).equals(IiConverter.convertToLong(id1)));
         assertTrue(ids.get(1).equals(IiConverter.convertToLong(id2)));
+    }
+    
+    @Test
+    public void testGetNonRejectedByPublicTitle_Rejected() throws PAException {
+        InterventionalStudyProtocolDTO study1 = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
+        study1.setPublicTitle(StConverter.convertToSt("Test BriefTitle for complete"));
+        Ii id1 = remoteEjb.createInterventionalStudyProtocol(study1);
+        InterventionalStudyProtocolDTO study2 = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
+
+        study2.setPublicTitle(StConverter.convertToSt("Test BriefTitle for complete"));
+        Ii id2 = remoteEjb.createInterventionalStudyProtocol(study2);
+
+        Session session = PaHibernateUtil.getCurrentSession();
+        StudyProtocol studyprotocol2 = (StudyProtocol) session.get(StudyProtocol.class, IiConverter.convertToLong(id2));
+        DocumentWorkflowStatus dws = new DocumentWorkflowStatus();
+        dws.setStudyProtocol(studyprotocol2);
+        dws.setStatusCode(DocumentWorkflowStatusCode.REJECTED);
+        dws.setCommentText("Rejected");
+        dws.setUserLastUpdated(studyprotocol2.getUserLastUpdated());
+        TestSchema.addUpdObject(dws);
+        // set document_workflow_status current column value as true.
+        SQLQuery query = session.createSQLQuery("update document_workflow_status dwf1 set current = true "
+                + "WHERE dwf1.study_protocol_identifier=" + studyprotocol2.getId());
+        assertTrue(query.executeUpdate() == 1);
+
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+
+        List<Long> ids = remoteEjb.getNonRejectedByPublicTitle("Test BriefTitle for complete");
+
+        assertTrue(ids.size() > 0);
+        assertTrue(ids.size() == 1);
+        assertTrue(ids.get(0).equals(IiConverter.convertToLong(id1)));
     }
 
     @Test
