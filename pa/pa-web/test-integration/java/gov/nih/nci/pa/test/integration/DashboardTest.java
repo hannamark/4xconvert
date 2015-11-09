@@ -2090,10 +2090,9 @@ public class DashboardTest extends AbstractTrialStatusTest {
                 + " where identifier=" + acceptedTrial.id);
         clickAndWait("id=dashboardMenuOption");
         // Business Days Since Submitted
-        verifyColumnValue(1, "Business Days Since Submitted", (businessDays) + "");
-
+        verifyColumnValue(1, "Business Days Since Submitted",
+                (PAUtil.isBusinessDay(beforeDate) ? (businessDays - 1) : businessDays) + "");
     }
-
 
     /**
      * @throws SQLException
