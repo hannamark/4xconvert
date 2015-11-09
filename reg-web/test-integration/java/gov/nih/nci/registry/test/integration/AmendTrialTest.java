@@ -190,6 +190,45 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         amendTrial(trialInfo);
     }
 
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testAmendWithZeroLengthDoc() throws Exception {
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+        TrialInfo trialInfo = createTrial();
+        final String nciID = trialInfo.nciID;
+        addDWS(trialInfo,
+                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
+                        .toString());
+        searchForTrialByNciID(nciID);
+        selectAction("Amend");
+        populateAmendTrialPage(trialInfo);
+        populateAdditionalDocuments();
+
+        //submit the trial
+        clickAndWait("xpath=//button[text()='Review Trial']");
+        waitForElementById("reviewTrialForm", 10);
+        clickAndWait("xpath=//button[text()='Submit']");
+        waitForPageToLoad();
+        assertTrue(selenium.isTextPresent("Document data cannot be null"));
+
+
+        //Then trial should be available in search
+        loginAsSuperAbstractor();
+        String trialID = searchAndSelectTrial(trialInfo.title);
+        assertEquals(nciID, trialID);
+
+        clickLinkAndWait("Trial Related Documents");
+        assertTrue(selenium.isTextPresent("IrbDoc.doc"));
+        assertFalse(selenium.isTextPresent("IrbUpdated.doc"));
+        assertFalse(selenium.isTextPresent("Zero.doc"));
+
+    }
+
     @SuppressWarnings("deprecation")
     @Test
     public void testServerSideErrorDuringAmendAndTransactionRollback()
@@ -590,6 +629,22 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         selenium.type("irbApproval", irbDocPath);
         selenium.type("protocolHighlightDocument", protocolDocPath);
     }
+
+
+    /**
+     * @throws URISyntaxException
+     */
+    protected void populateAdditionalDocuments() throws URISyntaxException {
+        // Add Informed consent document
+        String zeroDocPath = (new File(ClassLoader.getSystemResource(
+                ZERO_DOCUMENT).toURI()).toString());
+        selenium.type("informedConsentDocument", zeroDocPath);
+
+        String irbDocPath = (new File(ClassLoader.getSystemResource(
+                IRB_UPDATED_DOCUMENT).toURI()).toString());
+        selenium.type("irbApproval", irbDocPath);
+    }
+
 
     /**
      * 

@@ -345,9 +345,13 @@ public class PAServiceUtils {
         if (CollectionUtils.isEmpty(dtos)) {
             return results;
         }
+        //validate all documents before saving (PO-9433)
+        StudyPaService<StudyDTO> paService = getRemoteService(id);
         for (StudyDTO dto : dtos) {
             dto.setStudyProtocolIdentifier(studyProtocolIi);
-            StudyPaService<StudyDTO> paService = getRemoteService(id);
+            paService.validate(dto);
+        }
+        for (StudyDTO dto : dtos) {
             if (ISOUtil.isIiNull(dto.getIdentifier())) {
                 results.add((T) paService.create(dto));
             } else {

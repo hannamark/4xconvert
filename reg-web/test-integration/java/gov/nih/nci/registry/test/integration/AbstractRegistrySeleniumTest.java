@@ -120,9 +120,11 @@ public abstract class AbstractRegistrySeleniumTest extends
 
     protected static final String PROTOCOL_DOCUMENT = "ProtocolDoc.doc";
     protected static final String IRB_DOCUMENT = "IrbDoc.doc";
+    protected static final String IRB_UPDATED_DOCUMENT = "IrbUpdated.doc";
     protected static final String SITES_DOCUMENT = "Sites.doc";
     protected static final String CONSENT_DOCUMENT = "Consent.doc";
     protected static final String OTHER_DOCUMENT = "Other.doc";
+    protected static final String ZERO_DOCUMENT = "Zero.doc";
 
     @Override
     protected void logoutUser() {

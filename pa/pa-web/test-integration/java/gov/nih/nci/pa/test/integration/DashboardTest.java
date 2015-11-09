@@ -395,12 +395,6 @@ public class DashboardTest extends AbstractTrialStatusTest {
         // Panel must be collapsible, but initially open.
         verifyPanelWidget("trials_bydate", "Trial Counts by Date");
 
-        // Verify table headers.
-        assertEquals("Business Days Since Trial Submission",
-                s.getText("//table[@id='trial_dist_table']//th[1]"));
-        assertEquals("Trial Count",
-                s.getText("//table[@id='trial_dist_table']//th[2]"));
-
 
         //Verify that no data comes when filtered out of range.
         s.type("countRangeFrom", "08/10/2015");
@@ -409,8 +403,8 @@ public class DashboardTest extends AbstractTrialStatusTest {
         waitForElementToBecomeAvailable(By.xpath("//table[@id='trials_bydate_table']//td[@class='dataTables_empty']"), 20);
 
         // Verify that data is filtered properly
-        s.type("countRangeFrom", DateFormatUtils.format(new Date(), PAUtil.DATE_FORMAT));
-        s.type("countRangeTo", DateFormatUtils.format(DateUtils.addDays(new Date(), 1), PAUtil.DATE_FORMAT));
+        s.type("countRangeFrom", DateFormatUtils.format(PAUtil.addBusinessDays(new Date(), -1), PAUtil.DATE_FORMAT));
+        s.type("countRangeTo", DateFormatUtils.format(PAUtil.addBusinessDays(new Date(), 1), PAUtil.DATE_FORMAT));
 
         //click on display counts and wait for reload
         s.click("btnDisplayCounts");
@@ -437,7 +431,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         s.click("btnDisplayCounts");
         waitForElementToBecomeAvailable(By.xpath("//table[@id='trials_bydate_table']//td[@class='dataTables_empty']"), 20);
 
-        s.type("countRangeFrom", DateFormatUtils.format(new Date(), PAUtil.DATE_FORMAT));
+        s.type("countRangeFrom", DateFormatUtils.format(PAUtil.addBusinessDays(new Date(), -1), PAUtil.DATE_FORMAT));
         s.type("countRangeTo", DateFormatUtils.format(PAUtil.addBusinessDays(new Date(), 10), PAUtil.DATE_FORMAT));
         s.click("btnDisplayCounts");
         waitForElementToBecomeVisible(By.xpath("//table[@id='trials_bydate_table']//tr[2]"), 20);
