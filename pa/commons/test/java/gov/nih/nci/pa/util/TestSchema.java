@@ -1286,7 +1286,7 @@ public class TestSchema {
         return create;
     }
 
-    private static StudyMilestone createStudyMilestoneObj(String comment,
+    public static StudyMilestone createStudyMilestoneObj(String comment,
             StudyProtocol studyProtocol) {
         StudyMilestone result = new StudyMilestone();
         result.setCommentText(comment);

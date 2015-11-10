@@ -483,3 +483,12 @@ CREATE TRIGGER study_milestone_set_scientific_trigger_delete AFTER DELETE ON stu
 CREATE TRIGGER study_overall_status_set_current_trigger_insert AFTER INSERT ON study_overall_status FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_current_study_overall_status";    
 CREATE TRIGGER study_overall_status_set_current_trigger_update AFTER UPDATE ON study_overall_status FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_current_study_overall_status";
 CREATE TRIGGER study_overall_status_set_current_trigger_delete AFTER DELETE ON study_overall_status FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_current_study_overall_status";
+
+CREATE TRIGGER document_workflow_status_set_current_trigger_insert AFTER INSERT ON document_workflow_status FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_current_document_workflow_status";    
+CREATE TRIGGER document_workflow_status_set_current_trigger_update AFTER UPDATE ON document_workflow_status FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_current_document_workflow_status";
+CREATE TRIGGER document_workflow_status_set_current_trigger_delete AFTER DELETE ON document_workflow_status FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_current_document_workflow_status";
+
+CREATE TRIGGER document_workflow_status_set_previous_trigger_insert AFTER INSERT ON document_workflow_status FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_previous_document_workflow_status";    
+CREATE TRIGGER document_workflow_status_set_previous_trigger_update AFTER UPDATE ON document_workflow_status FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_previous_document_workflow_status";
+CREATE TRIGGER document_workflow_status_set_previous_trigger_delete AFTER DELETE ON document_workflow_status FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_previous_document_workflow_status";
+

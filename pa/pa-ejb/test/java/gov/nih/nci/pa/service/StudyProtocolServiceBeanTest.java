@@ -1579,10 +1579,6 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         dws.setCommentText("Rejected");
         dws.setUserLastUpdated(studyprotocol2.getUserLastUpdated());
         TestSchema.addUpdObject(dws);
-        // set document_workflow_status current column value as true.
-        SQLQuery query = session.createSQLQuery("update document_workflow_status dwf1 set current = true "
-                + "WHERE dwf1.study_protocol_identifier=" + studyprotocol2.getId());
-        assertTrue(query.executeUpdate() == 1);
 
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();

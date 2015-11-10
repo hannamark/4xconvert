@@ -23,7 +23,9 @@ public final class set_other_study_milestone extends // NOPMD
     public void fireInternal(int type, String trigName, String tabName,
             Object[] oldRow, Object[] newRow) { // NOPMD
 
-        Long spID = (Long) (newRow != null ? newRow[11] : oldRow[11]);
+        Long spID = (Long) (newRow != null ? newRow[columnIndex(tabName,
+                "study_protocol_identifier")] : oldRow[columnIndex(tabName,
+                        "study_protocol_identifier")]);
         if (spID != null) {
             SQLS_TO_RUN
                     .add("update study_milestone sm1 set other = false where sm1.study_protocol_identifier="

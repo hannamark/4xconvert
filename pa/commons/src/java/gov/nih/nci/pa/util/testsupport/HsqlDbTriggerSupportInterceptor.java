@@ -32,7 +32,7 @@ public final class HsqlDbTriggerSupportInterceptor extends EmptyInterceptor {
 
     @SuppressWarnings("rawtypes")
     @Override
-    public void preFlush(final Iterator entities) {
+    public void postFlush(final Iterator entities) {
         String sql = null;
         while ((sql = SQLS_TO_RUN.poll()) != null) {
             run(sql);

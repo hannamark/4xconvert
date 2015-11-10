@@ -10,7 +10,7 @@ import static gov.nih.nci.pa.util.testsupport.HsqlDbTriggerSupportInterceptor.SQ
  * 
  */
 // CHECKSTYLE:OFF
-public final class set_active_study_milestone extends // NOPMD
+public final class set_current_document_workflow_status extends // NOPMD
         AbstractHsqlDbSupportTrigger {
 
     /*
@@ -28,14 +28,12 @@ public final class set_active_study_milestone extends // NOPMD
                 "study_protocol_identifier")]);
         if (spID != null) {
             SQLS_TO_RUN
-                    .add("update study_milestone sm1 set active = false where sm1.study_protocol_identifier="
+                    .add("update document_workflow_status dwf1 set current = false where dwf1.study_protocol_identifier="
                             + spID);
             SQLS_TO_RUN
-                    .add("update study_milestone sm1 set active = true WHERE sm1.study_protocol_identifier = "
+                    .add(" update document_workflow_status dwf1 set current = true WHERE dwf1.study_protocol_identifier="
                             + spID
-                            + " AND sm1.identifier = (SELECT sm2.identifier FROM study_milestone sm2 WHERE "
-                            + spID
-                            + " = sm2.study_protocol_identifier AND sm2.milestone_code NOT IN ('SUBMISSION_TERMINATED', 'SUBMISSION_REACTIVATED')  ORDER BY sm2.milestone_date DESC, sm2.identifier DESC LIMIT 1)");
+                            + " AND                    dwf1.identifier IN                  (                      SELECT                      max(dwf2.identifier)                    FROM document_workflow_status dwf2                      WHERE dwf1.study_protocol_identifier = dwf2.study_protocol_identifier                    )");
 
         }
 

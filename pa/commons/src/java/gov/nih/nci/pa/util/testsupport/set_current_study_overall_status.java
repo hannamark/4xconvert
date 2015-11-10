@@ -23,7 +23,9 @@ public final class set_current_study_overall_status extends // NOPMD
     public void fireInternal(int type, String trigName, String tabName,
             Object[] oldRow, Object[] newRow) { // NOPMD
 
-        Long spID = (Long) (newRow != null ? newRow[11] : oldRow[11]);
+        Long spID = (Long) (newRow != null ? newRow[columnIndex(tabName,
+                "study_protocol_identifier")] : oldRow[columnIndex(tabName,
+                        "study_protocol_identifier")]);
         if (spID != null) {
             SQLS_TO_RUN
                     .add("update study_overall_status sos1 set current = false where sos1.study_protocol_identifier="

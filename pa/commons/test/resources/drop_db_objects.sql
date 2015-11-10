@@ -54,3 +54,12 @@ DROP TRIGGER study_milestone_set_scientific_trigger_delete;
 DROP TRIGGER study_overall_status_set_current_trigger_insert;    
 DROP TRIGGER study_overall_status_set_current_trigger_update;
 DROP TRIGGER study_overall_status_set_current_trigger_delete;
+
+DROP TRIGGER document_workflow_status_set_current_trigger_insert;    
+DROP TRIGGER document_workflow_status_set_current_trigger_update;
+DROP TRIGGER document_workflow_status_set_current_trigger_delete;
+
+DROP TRIGGER document_workflow_status_set_previous_trigger_insert;    
+DROP TRIGGER document_workflow_status_set_previous_trigger_update;
+DROP TRIGGER document_workflow_status_set_previous_trigger_delete;
+

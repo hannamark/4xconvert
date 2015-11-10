@@ -82,15 +82,25 @@
  */
 package gov.nih.nci.pa.service.util;
 
+import static org.junit.Assert.*;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
+import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.AbstractEjbTestCase;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
+
+import java.sql.Timestamp;
+
 import junit.framework.Assert;
 
+import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -114,10 +124,20 @@ public class ProtocolQueryBeanTest extends AbstractEjbTestCase {
         TestSchema.primeData();
 
         StudyProtocol sp = TestSchema.studyProtocols.get(0);
-        DocumentWorkflowStatus dws = TestSchema
+
+        // DWS
+        DocumentWorkflowStatus submitted = TestSchema
                 .createDocumentWorkflowStatus(sp);
-        PaHibernateUtil.getCurrentSession().save(dws);
-        PaHibernateUtil.getCurrentSession().flush();
+        submitted.setStatusDateRangeLow(new Timestamp(System
+                .currentTimeMillis() - DateUtils.MILLIS_PER_DAY));
+        submitted.setStatusCode(DocumentWorkflowStatusCode.SUBMITTED);
+        final Session s = PaHibernateUtil.getCurrentSession();
+        s.save(submitted);
+        DocumentWorkflowStatus accepted = TestSchema
+                .createDocumentWorkflowStatus(sp);
+        s.save(accepted);
+
+        s.flush();
 
     }
 
@@ -132,5 +152,81 @@ public class ProtocolQueryBeanTest extends AbstractEjbTestCase {
         crit.setIdentifierType("NCI");
         crit.setIdentifier("NCI-2009-00001");
         Assert.assertEquals(1, bean.getStudyProtocolByCriteria(crit).size());
+
+    }
+
+    /**
+     * tests if tree traversal is correct
+     * 
+     * @throws PAException
+     */
+    @Test
+    public void testDWS() throws PAException {
+        StudyProtocolQueryDTO dto = findProtocol();
+        assertEquals("NCI-2009-00001", dto.getNciIdentifier());
+        assertEquals(DocumentWorkflowStatusCode.ACCEPTED,
+                dto.getDocumentWorkflowStatusCode());
+        assertEquals(DocumentWorkflowStatusCode.SUBMITTED,
+                dto.getPreviousDocumentWorkflowStatusCode());
+
+    }
+
+    /**
+     * tests if tree traversal is correct
+     * 
+     * @throws PAException
+     */
+    @Test
+    public void testMilestones() throws PAException {
+        final Session s = PaHibernateUtil.getCurrentSession();
+        StudyProtocol sp = TestSchema.studyProtocols.get(0);
+
+        // Wipe out current milestones
+        s.createQuery(
+                "delete from StudyMilestone sm where sm.studyProtocol.id="
+                        + sp.getId()).executeUpdate();
+        s.flush();
+
+        // Admin milestones
+        StudyMilestone adminStart = TestSchema.createStudyMilestoneObj(
+                "ADMINISTRATIVE_PROCESSING_START_DATE", sp);
+        adminStart
+                .setMilestoneCode(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE);
+        adminStart.setMilestoneDate(new Timestamp(System.currentTimeMillis()
+                - DateUtils.MILLIS_PER_DAY * 2));
+        s.save(adminStart);
+
+        StudyMilestone adminEnd = TestSchema.createStudyMilestoneObj(
+                "ADMINISTRATIVE_PROCESSING_COMPLETED_DATE", sp);
+        adminEnd.setMilestoneCode(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE);
+        adminEnd.setMilestoneDate(new Timestamp(System.currentTimeMillis()
+                - DateUtils.MILLIS_PER_DAY * 1));
+        s.save(adminEnd);
+        s.flush();
+
+        StudyProtocolQueryDTO dto = findProtocol();
+        assertEquals(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE,
+                dto.getMilestones().getActiveMilestone().getMilestone());
+        assertEquals(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE,
+                dto.getMilestones().getLastMilestone().getMilestone());
+        assertEquals(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE,
+                dto.getMilestones().getAdminMilestone().getMilestone());
+        assertNull(dto.getMilestones().getScientificMilestone().getMilestone());
+        assertNull(dto.getMilestones().getStudyMilestone().getMilestone());
+
+    }
+
+    /**
+     * @return
+     * @throws PAException
+     */
+    private StudyProtocolQueryDTO findProtocol() throws PAException {
+        StudyProtocolQueryCriteria crit = new StudyProtocolQueryCriteria();
+        crit.setIdentifierType("NCI");
+        crit.setIdentifier("NCI-2009-00001");
+
+        StudyProtocolQueryDTO dto = bean.getStudyProtocolByCriteria(crit)
+                .get(0);
+        return dto;
     }
 }
