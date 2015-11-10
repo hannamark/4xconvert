@@ -82,14 +82,26 @@
  */
 package gov.nih.nci.pa.service.util;
 
-import static org.junit.Assert.*;
+import static gov.nih.nci.pa.enums.MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE;
+import static gov.nih.nci.pa.enums.MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE;
+import static gov.nih.nci.pa.enums.MilestoneCode.ADMINISTRATIVE_READY_FOR_QC;
+import static gov.nih.nci.pa.enums.MilestoneCode.READY_FOR_TSR;
+import static gov.nih.nci.pa.enums.MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE;
+import static gov.nih.nci.pa.enums.MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE;
+import static gov.nih.nci.pa.enums.MilestoneCode.SCIENTIFIC_READY_FOR_QC;
+import static gov.nih.nci.pa.enums.MilestoneCode.SUBMISSION_ACCEPTED;
+import static gov.nih.nci.pa.enums.MilestoneCode.SUBMISSION_RECEIVED;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.StudyMilestone;
+import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.AbstractEjbTestCase;
 import gov.nih.nci.pa.util.PaHibernateUtil;
@@ -177,43 +189,107 @@ public class ProtocolQueryBeanTest extends AbstractEjbTestCase {
      * @throws PAException
      */
     @Test
-    public void testMilestones() throws PAException {
-        final Session s = PaHibernateUtil.getCurrentSession();
+    public void testSOS() throws PAException {
         StudyProtocol sp = TestSchema.studyProtocols.get(0);
 
-        // Wipe out current milestones
-        s.createQuery(
-                "delete from StudyMilestone sm where sm.studyProtocol.id="
-                        + sp.getId()).executeUpdate();
-        s.flush();
-
-        // Admin milestones
-        StudyMilestone adminStart = TestSchema.createStudyMilestoneObj(
-                "ADMINISTRATIVE_PROCESSING_START_DATE", sp);
-        adminStart
-                .setMilestoneCode(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE);
-        adminStart.setMilestoneDate(new Timestamp(System.currentTimeMillis()
-                - DateUtils.MILLIS_PER_DAY * 2));
-        s.save(adminStart);
-
-        StudyMilestone adminEnd = TestSchema.createStudyMilestoneObj(
-                "ADMINISTRATIVE_PROCESSING_COMPLETED_DATE", sp);
-        adminEnd.setMilestoneCode(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE);
-        adminEnd.setMilestoneDate(new Timestamp(System.currentTimeMillis()
-                - DateUtils.MILLIS_PER_DAY * 1));
-        s.save(adminEnd);
-        s.flush();
+        StudyOverallStatus sos = new StudyOverallStatus();
+        sos.setStatusCode(StudyStatusCode.ENROLLING_BY_INVITATION);
+        sos.setStatusDate(TestSchema.TOMMORROW);
+        sos.setStudyProtocol(sp);
+        sos.setDeleted(true);
+        TestSchema.addUpdObject(sos);
 
         StudyProtocolQueryDTO dto = findProtocol();
-        assertEquals(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE,
-                dto.getMilestones().getActiveMilestone().getMilestone());
-        assertEquals(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE,
-                dto.getMilestones().getLastMilestone().getMilestone());
-        assertEquals(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE,
-                dto.getMilestones().getAdminMilestone().getMilestone());
+        assertEquals(StudyStatusCode.ACTIVE, dto.getStudyStatusCode());
+
+        sos = new StudyOverallStatus();
+        sos.setStatusCode(StudyStatusCode.ENROLLING_BY_INVITATION);
+        sos.setStatusDate(TestSchema.TOMMORROW);
+        sos.setStudyProtocol(sp);
+        sos.setDeleted(false);
+        TestSchema.addUpdObject(sos);
+
+        dto = findProtocol();
+        assertEquals(StudyStatusCode.ENROLLING_BY_INVITATION,
+                dto.getStudyStatusCode());
+
+    }
+
+    /**
+     * tests if tree traversal is correct
+     * 
+     * @throws PAException
+     */
+    @Test
+    public void testMilestones() throws PAException {
+        StudyProtocol sp = TestSchema.studyProtocols.get(0);
+
+        createMilestoneHistory(sp, SUBMISSION_RECEIVED, SUBMISSION_ACCEPTED,
+                ADMINISTRATIVE_PROCESSING_START_DATE,
+                ADMINISTRATIVE_PROCESSING_COMPLETED_DATE);
+
+        StudyProtocolQueryDTO dto = findProtocol();
+        assertEquals(ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, dto
+                .getMilestones().getActiveMilestone().getMilestone());
+        assertEquals(ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, dto
+                .getMilestones().getLastMilestone().getMilestone());
+        assertEquals(ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, dto
+                .getMilestones().getAdminMilestone().getMilestone());
         assertNull(dto.getMilestones().getScientificMilestone().getMilestone());
         assertNull(dto.getMilestones().getStudyMilestone().getMilestone());
 
+        createMilestoneHistory(sp, SUBMISSION_RECEIVED, SUBMISSION_ACCEPTED,
+                ADMINISTRATIVE_PROCESSING_START_DATE,
+                ADMINISTRATIVE_PROCESSING_COMPLETED_DATE,
+                ADMINISTRATIVE_READY_FOR_QC, SCIENTIFIC_PROCESSING_START_DATE,
+                SCIENTIFIC_PROCESSING_COMPLETED_DATE, SCIENTIFIC_READY_FOR_QC);
+
+        dto = findProtocol();
+        assertEquals(SCIENTIFIC_READY_FOR_QC, dto.getMilestones()
+                .getActiveMilestone().getMilestone());
+        assertEquals(SCIENTIFIC_READY_FOR_QC, dto.getMilestones()
+                .getLastMilestone().getMilestone());
+        assertEquals(ADMINISTRATIVE_READY_FOR_QC, dto.getMilestones()
+                .getAdminMilestone().getMilestone());
+        assertEquals(SCIENTIFIC_READY_FOR_QC, dto.getMilestones()
+                .getScientificMilestone().getMilestone());
+        assertNull(dto.getMilestones().getStudyMilestone().getMilestone());
+
+        createMilestoneHistory(sp, SUBMISSION_RECEIVED, SUBMISSION_ACCEPTED,
+                ADMINISTRATIVE_PROCESSING_START_DATE,
+                ADMINISTRATIVE_PROCESSING_COMPLETED_DATE,
+                ADMINISTRATIVE_READY_FOR_QC, SCIENTIFIC_PROCESSING_START_DATE,
+                SCIENTIFIC_PROCESSING_COMPLETED_DATE, SCIENTIFIC_READY_FOR_QC,
+                READY_FOR_TSR);
+
+        dto = findProtocol();
+        assertEquals(READY_FOR_TSR, dto.getMilestones().getActiveMilestone()
+                .getMilestone());
+        assertEquals(READY_FOR_TSR, dto.getMilestones().getLastMilestone()
+                .getMilestone());
+        assertEquals(READY_FOR_TSR, dto.getMilestones().getStudyMilestone()
+                .getMilestone());
+
+    }
+
+    private void createMilestoneHistory(StudyProtocol sp,
+            MilestoneCode... milestones) {
+        final Session s = PaHibernateUtil.getCurrentSession();
+        s.createQuery(
+                "delete from StudyMilestone sm where sm.studyProtocol.id="
+                        + sp.getId()).executeUpdate();
+        int days = -milestones.length;
+        for (MilestoneCode code : milestones) {
+            days++;
+            StudyMilestone adminStart = TestSchema.createStudyMilestoneObj(
+                    code.name(), sp);
+            adminStart.setMilestoneCode(code);
+            adminStart.setMilestoneDate(new Timestamp(System
+                    .currentTimeMillis() + DateUtils.MILLIS_PER_DAY * days));
+            s.save(adminStart);
+        }
+
+        s.flush();
     }
 
     /**
