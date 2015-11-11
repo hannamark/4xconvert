@@ -1016,7 +1016,7 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO
                         hold.getOnholdDate());
                 
                 holdEnd = (holdEnd == null ? new Date() : holdEnd);
-                while (holdStart.compareTo(holdEnd) <= 0) {
+                while ((holdStart.compareTo(holdEnd) <= 0) || DateUtils.isSameDay(holdStart, holdEnd)) {
                     Date current = holdStart;
                     int bDays = PAUtil.getBusinessDaysBetween(current,holdStart);
                     if (bDays > 0){

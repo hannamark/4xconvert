@@ -1573,6 +1573,15 @@ public class DashboardTest extends AbstractTrialStatusTest {
         loginAsSuperAbstractor();
         clickAndWait("id=dashboardMenuOption");
         verifyColumnValue(1, "Business Days on Hold (Submitter)", "7");
+
+        deactivateAllTrials();
+        submittedTrial = createSubmittedTrial();
+        addOnHold_Timestamp(submittedTrial, "SUBMISSION_INCOM", "{ts '2015-06-30 16:14:09.253'}",
+                "{ts '2015-07-06 13:15:47.391'}", "Submitter");
+        addOnHold_Timestamp(submittedTrial, "SUBMISSION_INCOM", "{ts '2015-07-13 14:36:36.636'}",
+                "{ts '2015-07-21 12:43:36.117'}", "Submitter");
+        clickAndWait("id=dashboardMenuOption");
+        verifyColumnValue(1, "Business Days on Hold (Submitter)", "11");
     }
 
     @Test
