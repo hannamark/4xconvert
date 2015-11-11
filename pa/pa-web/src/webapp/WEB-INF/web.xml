@@ -13,7 +13,10 @@
 			<http-only>true</http-only>
 		</cookie-config>
 	</session-config>
-
+    <listener>
+        <description>For running Liquibase migrations</description>
+        <listener-class>liquibase.integration.servlet.LiquibaseServletListener</listener-class>
+    </listener>
 	<listener>
 		<listener-class>gov.nih.nci.coppa.services.ldap.GridToLDAPAccountMigrator
 		</listener-class>
@@ -33,7 +36,25 @@
 		<listener-class>gov.nih.nci.pa.util.ServletContextConfigurator</listener-class>
 	</listener>
 
-	<!-- CSM. -->
+
+    <!-- Liquibase Parameters -->
+    <context-param>
+        <param-name>liquibase.changelog</param-name>
+        <param-value>/db/db-upgrade.xml</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>liquibase.datasource</param-name>
+        <param-value>java:/pa-ds</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>liquibase.onerror.fail</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
+
+    <!-- CSM. -->
 	<context-param>
 		<param-name>csmApplicationName</param-name>
 		<param-value>pa</param-value>

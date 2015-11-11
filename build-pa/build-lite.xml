@@ -69,10 +69,10 @@
 		</ant>
 	</target>
 
-	<target name="dist" depends="clean,pa,accrual,copy-artifacts,update-database" description="Build all artifacts">
+	<target name="dist" depends="clean,pa,accrual,copy-artifacts" description="Build all artifacts">
 	</target>
 
-	<target name="test" depends="dist" description="Build all artifacts and run all tests">
+	<target name="test" depends="update-database,dist" description="Build all artifacts and run all tests">
 		<ant target="test" dir="${pa.dir}" inheritAll="false">
 			<property name="tier" value="${tier}" />
 		</ant>

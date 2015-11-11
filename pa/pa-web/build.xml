@@ -580,6 +580,15 @@
                 <filter token="showErrorStackTraces" value="${showErrorStackTraces}"/>
             </filterset>
         </copy>
+        <copy todir="${pa-web.build.outputDir}/db">
+            <fileset dir="${database.upgrades.dir}"/>
+        </copy>
+        <copy file="${database.upgrades.dir}/db-upgrade.xml" todir="${pa-web.build.outputDir}/db"
+              filtering="true" overwrite="true">
+            <filterset>
+                <filter token="db-upgrade.run.dir" value="/db/postgresql"/>
+            </filterset>
+        </copy>
         <war destfile="${pa-web.build.dir}/${pa-web.war}"
              compress="false" duplicate="fail"
              webxml="${pa-web.build.dir}/${pa-web.build.finalName}/WEB-INF/web.xml">

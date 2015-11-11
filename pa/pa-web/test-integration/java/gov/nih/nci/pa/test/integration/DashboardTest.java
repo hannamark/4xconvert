@@ -403,7 +403,9 @@ public class DashboardTest extends AbstractTrialStatusTest {
         waitForElementToBecomeAvailable(By.xpath("//table[@id='trials_bydate_table']//td[@class='dataTables_empty']"), 20);
 
         // Verify that data is filtered properly
-        s.type("countRangeFrom", DateFormatUtils.format(PAUtil.addBusinessDays(new Date(), -1), PAUtil.DATE_FORMAT));
+        Date from = new Date();
+        from =  PAUtil.isBusinessDay(from) ? from : PAUtil.addBusinessDays(from , -1);
+        s.type("countRangeFrom", DateFormatUtils.format(PAUtil.addBusinessDays(from, -1), PAUtil.DATE_FORMAT));
         s.type("countRangeTo", DateFormatUtils.format(PAUtil.addBusinessDays(new Date(), 1), PAUtil.DATE_FORMAT));
 
         //click on display counts and wait for reload
@@ -431,7 +433,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         s.click("btnDisplayCounts");
         waitForElementToBecomeAvailable(By.xpath("//table[@id='trials_bydate_table']//td[@class='dataTables_empty']"), 20);
 
-        s.type("countRangeFrom", DateFormatUtils.format(PAUtil.addBusinessDays(new Date(), -1), PAUtil.DATE_FORMAT));
+        s.type("countRangeFrom", DateFormatUtils.format(PAUtil.addBusinessDays(from, -1), PAUtil.DATE_FORMAT));
         s.type("countRangeTo", DateFormatUtils.format(PAUtil.addBusinessDays(new Date(), 10), PAUtil.DATE_FORMAT));
         s.click("btnDisplayCounts");
         waitForElementToBecomeVisible(By.xpath("//table[@id='trials_bydate_table']//tr[2]"), 20);

@@ -157,7 +157,9 @@
     <dependency conf="pa-web->master" org="com.sun.xml.bind" name="jaxb-impl" rev="2.2.6"/>
 	<dependency conf="pa-web->master" org="nih.nci.cadsr" name="sdk-client-framework" rev="1.0"/>
 	<dependency conf="pa-web->master" org="nih.nci.cadsr" name="cadsrapi41-beans" rev="1.0"/>
-    
+    <dependency conf="pa-web->master" org="org.liquibase" name="liquibase-core" rev="3.0.8"/>
+    <dependency conf="pa-web->default" org="org.yaml" name="snakeyaml" rev="1.8"/>
+
     <dependency conf="pa-webservices->master" org="commons-io" name="commons-io" rev="2.4"/>
     
     <dependency conf="reg-web->master" org="displaytag" name="displaytag" rev="1.2"/>
