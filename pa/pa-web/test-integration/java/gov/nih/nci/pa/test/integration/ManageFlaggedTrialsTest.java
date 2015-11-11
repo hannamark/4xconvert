@@ -216,12 +216,12 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         selenium.select("reason",
                 "label=Do not enforce unique Subject ID across sites");
         selenium.type("comments", "This is edited comment.");
-        pause(500);
+        pause(1500);
         selenium.click("xpath=//button/span[normalize-space(text())='Save']");
         waitForElementToBecomeVisible(By.id("msg"), 15);
         assertTrue(selenium.isTextPresent("Changes saved!"));
 
-        pause(3000);
+        pause(5000);
         
         assertEquals(
                 "Do not enforce unique Subject ID across sites",
