@@ -173,6 +173,9 @@ public class DashboardAction extends AbstractCheckInOutAction implements
     private String newCompletionDateComments;
 
     private List<String> checkoutCommands = new ArrayList<String>();
+    
+    //filer type choice in case of date
+    private String choice;
 
     //trial counts by date filter
     private String countForDay;
@@ -187,6 +190,12 @@ public class DashboardAction extends AbstractCheckInOutAction implements
         initializeCountByRangeDates();
         if (!canAccessDashboard()) {
             return NON_ABSTRACTOR_LANDING;
+        }
+        
+        //set default search value as 
+        //unrestricted if no radio is selected in case of date search
+        if (choice == null) {
+            setChoice("unrestricted");
         }
         return filter();
     }
@@ -316,33 +325,49 @@ public class DashboardAction extends AbstractCheckInOutAction implements
     }
 
     private void applyDateRangeFilter(final List<StudyProtocolQueryDTO> results) {
-        if (StringUtils.isBlank(dateFilterField)
-                || (StringUtils.isBlank(dateFrom) && StringUtils
-                        .isBlank(dateTo))) {
-            clearDateRangeFilter();
-            return;
-        }
-        final Date rangeStart = PAUtil.dateStringToDateTime(dateFrom);
-        final Date rangeEnd = PAUtil.dateStringToDateTime(dateTo);
-        CollectionUtils.filter(results, new Predicate() {
-            @Override
-            public boolean evaluate(Object o) {
-                try {
-                    Date date = (Date) PropertyUtils.getProperty(o,
-                            dateFilterField);
-                    return date != null
-                            && (rangeStart == null
-                                    || DateUtils.isSameDay(date, rangeStart) || date
-                                        .after(rangeStart))
-                            && (rangeEnd == null
-                                    || DateUtils.isSameDay(date, rangeEnd) || date
-                                        .before(rangeEnd));
-                } catch (Exception e) {
-                    LOG.error(e, e);
-                }
-                return false;
-            }
-        });
+        
+        //filter based on type
+        if (!StringUtils.isEmpty(choice)) {
+            //it means clear all filters
+           if (("unrestricted").equalsIgnoreCase(choice)) {
+               clearDateRangeFilter();
+               return;
+           } else {
+                final Date rangeStart = PAUtil.dateStringToDateTime(dateFrom);
+                final Date rangeEnd = PAUtil.dateStringToDateTime(dateTo);
+                CollectionUtils.filter(results, new Predicate() {
+                    @Override
+                    public boolean evaluate(Object o) {
+                        try {
+                            Date date = (Date) PropertyUtils.getProperty(o,
+                                    dateFilterField);
+                            //return records with date as null                            
+                            if (("nullDate").equalsIgnoreCase(choice)) {
+                                return date == null;
+                            } else if (("limit").equalsIgnoreCase(choice)) {
+                                //if range not specified return records with not null date
+                                 if (rangeStart == null && rangeEnd == null) {
+                                     return date != null;
+                                 } else {
+                                     //return existing filter as usual
+                                     return date != null
+                                             && (rangeStart == null
+                                                     || DateUtils.isSameDay(date, rangeStart) || date
+                                                         .after(rangeStart))
+                                             && (rangeEnd == null
+                                                     || DateUtils.isSameDay(date, rangeEnd) || date
+                                                         .before(rangeEnd));
+                                 }
+                            }
+                           
+                        } catch (Exception e) {
+                            LOG.error(e, e);
+                        }
+                        return false;
+                    }
+                });
+            }  
+        }  
     }
 
     private boolean canAccessDashboard() {
@@ -1617,6 +1642,20 @@ public class DashboardAction extends AbstractCheckInOutAction implements
      */
     public void setDistr(String distr) {
         this.distr = distr;
+    }
+
+    /**
+     * @return choice
+     */
+    public String getChoice() {
+        return choice;
+    }
+
+    /**
+     * @param choice choice
+     */
+    public void setChoice(String choice) {
+        this.choice = choice;
     }
 
 }

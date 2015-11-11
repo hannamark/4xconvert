@@ -81,7 +81,7 @@ public class DashboardActionTest extends AbstractPaActionTest {
         final List trials = (List) getRequest().getSession().getAttribute(
                 "workload");
         assertNotNull(trials);
-        assertEquals(2, trials.size());
+        assertEquals(3, trials.size());
         assertNull(getRequest().getAttribute("toggleResultsTab"));
     }
 
@@ -151,7 +151,7 @@ public class DashboardActionTest extends AbstractPaActionTest {
         assertEquals("abstractorLanding", action.filter());
         List<StudyProtocolQueryDTO> trials = (List) getRequest().getSession()
                 .getAttribute("workload");
-        assertEquals(2, trials.size());
+        assertEquals(3, trials.size());
 
         action = getAction();
         action.setSubmissionTypeFilter(Arrays.asList("Abbreviated"));
@@ -164,7 +164,7 @@ public class DashboardActionTest extends AbstractPaActionTest {
         action.setSubmissionTypeFilter(Arrays.asList("Amendment"));
         assertEquals("abstractorLanding", action.filter());
         trials = (List) getRequest().getSession().getAttribute("workload");
-        assertEquals(1, trials.size());
+        assertEquals(2, trials.size());
         assertFalse(trials.get(0).isProprietaryTrial());
         assertTrue(trials.get(0).getAmendmentDate() != null);
 
@@ -178,13 +178,13 @@ public class DashboardActionTest extends AbstractPaActionTest {
         action.setSubmissionTypeFilter(new ArrayList<String>());
         assertEquals("abstractorLanding", action.filter());
         trials = (List) getRequest().getSession().getAttribute("workload");
-        assertEquals(2, trials.size());
+        assertEquals(3, trials.size());
 
         action = getAction();
         action.setSubmissionTypeFilter(Arrays.asList("Abbreviated"));
         assertEquals("abstractorLanding", action.execute());
         trials = (List) getRequest().getSession().getAttribute("workload");
-        assertEquals(2, trials.size());
+        assertEquals(3, trials.size());
         assertTrue(action.getSubmissionTypeFilter().isEmpty());
 
     }
@@ -200,6 +200,7 @@ public class DashboardActionTest extends AbstractPaActionTest {
         action.setDateFilterField("activeHoldDate");
         action.setDateFrom("06/03/2015");
         action.setDateTo("06/05/2015");
+        action.setChoice("limit");
         assertEquals("abstractorLanding", action.filter());
         List<StudyProtocolQueryDTO> trials = (List) getRequest().getSession()
                 .getAttribute("workload");
@@ -211,6 +212,7 @@ public class DashboardActionTest extends AbstractPaActionTest {
         action.setDateFilterField("activeHoldDate");
         action.setDateFrom("06/01/2015");
         action.setDateTo("06/01/2015");
+        action.setChoice("limit");
         assertEquals("abstractorLanding", action.filter());
         trials = (List) getRequest().getSession().getAttribute("workload");
         assertEquals(1, trials.size());
@@ -223,12 +225,13 @@ public class DashboardActionTest extends AbstractPaActionTest {
         action.setDateTo("06/04/2015");
         assertEquals("abstractorLanding", action.filter());
         trials = (List) getRequest().getSession().getAttribute("workload");
-        assertEquals(2, trials.size());
+        assertEquals(3, trials.size());
 
         action = getAction();
         action.setDateFilterField("activeHoldDate");
         action.setDateFrom("05/30/2015");
         action.setDateTo("05/30/2015");
+        action.setChoice("limit");
         assertEquals("abstractorLanding", action.filter());
         trials = (List) getRequest().getSession().getAttribute("workload");
         assertEquals(0, trials.size());
@@ -237,21 +240,21 @@ public class DashboardActionTest extends AbstractPaActionTest {
         action.setDateFilterField("activeHoldDate");
         assertEquals("abstractorLanding", action.filter());
         trials = (List) getRequest().getSession().getAttribute("workload");
-        assertEquals(2, trials.size());
+        assertEquals(3, trials.size());
 
         action = getAction();
         action.setDateFrom("05/30/2015");
         action.setDateFilterField("activeHoldDate");
         assertEquals("abstractorLanding", action.filter());
         trials = (List) getRequest().getSession().getAttribute("workload");
-        assertEquals(2, trials.size());
+        assertEquals(3, trials.size());
 
         action = getAction();
         action.setDateTo("06/04/2015");
         action.setDateFilterField("activeHoldDate");
         assertEquals("abstractorLanding", action.filter());
         trials = (List) getRequest().getSession().getAttribute("workload");
-        assertEquals(2, trials.size());
+        assertEquals(3, trials.size());
 
         // ensure execute resets any active filter.
         action = getAction();
@@ -260,7 +263,7 @@ public class DashboardActionTest extends AbstractPaActionTest {
         action.setDateFilterField("activeHoldDate");
         assertEquals("abstractorLanding", action.execute());
         trials = (List) getRequest().getSession().getAttribute("workload");
-        assertEquals(2, trials.size());
+        assertEquals(3, trials.size());
         assertNull(action.getDateFilterField());
         assertNull(action.getDateTo());
         assertNull(action.getDateFrom());
@@ -273,9 +276,31 @@ public class DashboardActionTest extends AbstractPaActionTest {
         action.setDateTo("56/01/2010");
         assertEquals("abstractorLanding", action.filter());
         trials = (List) getRequest().getSession().getAttribute("workload");
-        assertEquals(2, trials.size());
+        assertEquals(3, trials.size());
 
     }
+    
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Test
+    public void testNullDateFilter() throws PAException {
+        getRequest().setUserInRole(Constants.ADMIN_ABSTRACTOR, true);
+        getRequest().setUserInRole(Constants.SCIENTIFIC_ABSTRACTOR, true);
+        UsernameHolder.setUser("suAbstractor");
+
+        DashboardAction action = getAction();
+        action.setDateFilterField("activeHoldDate");
+        action.setChoice("nullDate");
+        assertEquals("abstractorLanding", action.filter());
+        List<StudyProtocolQueryDTO> trials = (List) getRequest().getSession()
+                .getAttribute("workload");
+        assertEquals(1, trials.size());
+        assertEquals(null, trials.get(0)
+                .getActiveHoldDate());
+
+       
+
+    }
+
 
     @Test
     public void testSearchByDistribution() throws PAException {
@@ -517,17 +542,25 @@ public class DashboardActionTest extends AbstractPaActionTest {
         dto2.setActiveHoldDate(PAUtil.dateStringToTimestamp("06/01/2015"));
         dto2.setAmendmentDate(PAUtil.dateStringToTimestamp("06/01/2015"));
         setField(dto2, "bizDaysSinceSubmitted", 15);
+        
+        
+        StudyProtocolQueryDTO dto3 = new StudyProtocolQueryDTO();
+        dto3.setStudyProtocolId(2L);
+        dto3.getLastCreated().setDateLastCreated(PAUtil.dateStringToDate("05/25/2013"));
+        dto3.setOverriddenExpectedAbstractionCompletionDate(PAUtil.dateStringToDate("06/25/2013"));
+        dto3.setAmendmentDate(PAUtil.dateStringToTimestamp("06/01/2015"));
+        setField(dto3, "bizDaysSinceSubmitted", 15);
 
         when(mock.getWorkload()).thenReturn(
-                new ArrayList(Arrays.asList(dto1, dto2)));
+                new ArrayList(Arrays.asList(dto1, dto2,dto3)));
         when(
                 mock.getStudyProtocolByCriteria(any(StudyProtocolQueryCriteria.class)))
-                .thenReturn(new ArrayList(Arrays.asList(dto1, dto2)));
+                .thenReturn(new ArrayList(Arrays.asList(dto1, dto2,dto3)));
         when(
                 mock.getStudyProtocolByCriteria(
                         any(StudyProtocolQueryCriteria.class),
                         (ProtocolQueryPerformanceHints[]) anyVararg()))
-                .thenReturn(new ArrayList(Arrays.asList(dto1, dto2)));
+                .thenReturn(new ArrayList(Arrays.asList(dto1, dto2,dto3)));
         when(mock.getTrialSummaryByStudyProtocolId(any(Long.class)))
                 .thenReturn(dto1);
         return mock;

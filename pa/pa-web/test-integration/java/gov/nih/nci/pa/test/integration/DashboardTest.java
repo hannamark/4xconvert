@@ -1374,6 +1374,101 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
     }
 
+    @Test    
+    public void testNullDateFilter() throws Exception {
+        
+        deactivateAllTrials();
+        TrialInfo second = createSubmittedTrial();
+        TrialInfo first = createAcceptedTrial();
+        loginAsSuperAbstractor();
+        
+        
+        verifyDateNullFilter(first, second, "Submitted On");
+        verifyDateNullFilter(first, second, "Submission Plus 10 Business Days");
+        verifyDateNullFilter(first, second, "Expected Abstraction Completion Date");
+        
+        addOnHold(first, "SUBMISSION_INCOM", date("06/01/2015"), null,
+                "Submitter");
+        verifyDateNullFilter(first, second, "Current On-Hold Date");
+        
+        addDWS(first, "ACCEPTED");
+        addMilestone(first, "SUBMISSION_ACCEPTED",
+                jdbcTs(DateUtils.addDays(new Date(), 1)));
+        
+        verifyDateNullFilter(first, second, "Accepted");
+        
+        // ADMINISTRATIVE_PROCESSING_COMPLETED_DATE
+        addMilestone(first, "ADMINISTRATIVE_PROCESSING_COMPLETED_DATE",
+                jdbcTs(new Date()));
+        verifyDateNullFilter(first, second, "Admin Abstraction Completed");
+        
+        addMilestone(first, "ADMINISTRATIVE_QC_COMPLETE", jdbcTs(new Date()));
+        verifyDateNullFilter(first, second, "Admin QC Completed");
+
+        // SCIENTIFIC_PROCESSING_COMPLETED_DATE
+        addMilestone(first, "SCIENTIFIC_PROCESSING_COMPLETED_DATE",
+                jdbcTs(new Date()));
+        
+        verifyDateNullFilter(first, second, "Scientific Abstraction Completed");
+
+        // SCIENTIFIC_QC_COMPLETE
+        addMilestone(first, "SCIENTIFIC_QC_COMPLETE", jdbcTs(new Date()));
+        verifyDateNullFilter(first, second, "Scientific QC Completed");
+
+        // READY_FOR_TSR
+        addMilestone(first, "READY_FOR_TSR", jdbcTs(new Date()));
+        verifyDateNullFilter(first, second, "Ready for TSR");
+        
+    }
+    
+    @Test    
+    public void testNotNullDateFilter() throws Exception {
+        
+        deactivateAllTrials();
+        TrialInfo second = createSubmittedTrial();
+        TrialInfo first = createAcceptedTrial();
+        loginAsSuperAbstractor();
+        
+        
+        verifyDateNotNullFilter(first, second, "Submitted On");
+        verifyDateNotNullFilter(first, second, "Submission Plus 10 Business Days");
+        verifyDateNotNullFilter(first, second, "Expected Abstraction Completion Date");
+        
+        addOnHold(first, "SUBMISSION_INCOM", date("06/01/2015"), null,
+                "Submitter");
+        verifyDateNotNullFilter(first, second, "Current On-Hold Date");
+        
+        addDWS(first, "ACCEPTED");
+        addMilestone(first, "SUBMISSION_ACCEPTED",
+                jdbcTs(DateUtils.addDays(new Date(), 1)));
+        
+        verifyDateNotNullFilter(first, second, "Accepted");
+        
+        // ADMINISTRATIVE_PROCESSING_COMPLETED_DATE
+        addMilestone(first, "ADMINISTRATIVE_PROCESSING_COMPLETED_DATE",
+                jdbcTs(new Date()));
+        verifyDateNotNullFilter(first, second, "Admin Abstraction Completed");
+        
+        addMilestone(first, "ADMINISTRATIVE_QC_COMPLETE", jdbcTs(new Date()));
+        verifyDateNotNullFilter(first, second, "Admin QC Completed");
+
+        // SCIENTIFIC_PROCESSING_COMPLETED_DATE
+        addMilestone(first, "SCIENTIFIC_PROCESSING_COMPLETED_DATE",
+                jdbcTs(new Date()));
+        
+        verifyDateNotNullFilter(first, second, "Scientific Abstraction Completed");
+
+        // SCIENTIFIC_QC_COMPLETE
+        addMilestone(first, "SCIENTIFIC_QC_COMPLETE", jdbcTs(new Date()));
+        verifyDateNotNullFilter(first, second, "Scientific QC Completed");
+
+        // READY_FOR_TSR
+        addMilestone(first, "READY_FOR_TSR", jdbcTs(new Date()));
+        verifyDateNotNullFilter(first, second, "Ready for TSR");
+        
+    }
+    
+
     private void verifyDateRangeFilter(TrialInfo first, String date1,
             TrialInfo second, String date2, String columnHeader) {
         clickAndWait("id=dashboardMenuOption");
@@ -1417,6 +1512,9 @@ public class DashboardTest extends AbstractTrialStatusTest {
         s.click(filledFunnelPath);
         s.type("dateFrom", "");
         s.type("dateTo", "");
+        //click unrestricted radio 
+        s.click("//input[@id='choiceunrestricted']");
+        
         clickAndWait("//div[@aria-describedby='date-range-filter']//button//span[text()='OK']");
         assertTrue(isTrialInWorkloadTab(first));
         assertTrue(isTrialInWorkloadTab(second));
@@ -1424,14 +1522,19 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         // Type dates so that both trials included.
         s.click(emptyFunnelPath);
+        //click the radio button first
+        clickAndWait("//input[@id='choicelimit']");
         s.type("dateFrom", date1);
         s.type("dateTo", date2);
+       
         clickAndWait("//div[@aria-describedby='date-range-filter']//button//span[text()='OK']");
         assertTrue(isTrialInWorkloadTab(first));
         assertTrue(isTrialInWorkloadTab(second));
 
         // Ensure Refresh resets filters.
         s.click(filledFunnelPath);
+        //click the radio button first
+        clickAndWait("//input[@id='choicelimit']");
         s.type("dateFrom", date1);
         s.type("dateTo", date1);
         clickAndWait("//div[@aria-describedby='date-range-filter']//button//span[text()='OK']");
@@ -1444,12 +1547,14 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         // Providing only one of the two dates must produce both trials.
         s.click(emptyFunnelPath);
+        clickAndWait("//input[@id='choicelimit']");
         s.type("dateFrom", date1);
         s.type("dateTo", "");
         clickAndWait("//div[@aria-describedby='date-range-filter']//button//span[text()='OK']");
         assertTrue(isTrialInWorkloadTab(first));
         assertTrue(isTrialInWorkloadTab(second));
         s.click(filledFunnelPath);
+        clickAndWait("//input[@id='choicelimit']");
         s.type("dateFrom", "");
         s.type("dateTo", date2);
         clickAndWait("//div[@aria-describedby='date-range-filter']//button//span[text()='OK']");
@@ -1460,6 +1565,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         // Negative date range should not error out, but must produce no
         // results.
         s.click(emptyFunnelPath);
+        clickAndWait("//input[@id='choicelimit']");
         s.type("dateFrom", date2);
         s.type("dateTo", date1);
         clickAndWait("//div[@aria-describedby='date-range-filter']//button//span[text()='OK']");
@@ -1468,6 +1574,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         // Ensure column sorting does not reset filters.
         s.click(emptyFunnelPath);
+        clickAndWait("//input[@id='choicelimit']");
         s.type("dateFrom", date1);
         s.type("dateTo", date1);
         clickAndWait("//div[@aria-describedby='date-range-filter']//button//span[text()='OK']");
@@ -1514,7 +1621,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
                 s.getText("//div[@aria-describedby='date-range-filter']//span[@class='ui-dialog-title']"));
         assertEquals(
                 "Limit the results to the following date range (inclusive):",
-                s.getText("//div[@id='date-range-filter']/p"));
+                s.getText("//div[@id='date-range-filter']/table/tbody/tr[1]/td/label"));
 
         // Check 'x' icon (close)
         clickAndWait("//div[@aria-describedby='date-range-filter']//button[@title='Close']");
@@ -1530,6 +1637,9 @@ public class DashboardTest extends AbstractTrialStatusTest {
         elementThatInvokesPopup.click();
         assertTrue(s.isVisible("dateFrom"));
         assertTrue(s.isVisible("dateTo"));
+        
+        //click the radio button first
+        clickAndWait("//input[@id='choicelimit']");
 
         // Verify Calendars come up.
         clickAndWait("//input[@id='dateFrom']/following-sibling::img");
@@ -1558,6 +1668,130 @@ public class DashboardTest extends AbstractTrialStatusTest {
         s.click("//div[@aria-describedby='validationError']//button[@title='Close']");
         assertFalse(s.isVisible("validationError"));
 
+    }
+    
+    private void verifyDateNullFilter(TrialInfo first, 
+            TrialInfo second, String columnHeader) {
+        clickAndWait("id=dashboardMenuOption");
+        verifyWorkfloadTabActive();
+
+        // Find Funnel for this column; it will be unselected.
+        String emptyFunnelPath = "//table[@id='wl']//th//a[normalize-space(text())='"
+                + columnHeader
+                + "']/../..//i[@class='fa fa-filter fa-2x fa-inverse']";
+        String filledFunnelPath = "//table[@id='wl']//th//a[normalize-space(text())='"
+                + columnHeader + "']/../..//i[@class='fa fa-filter fa-2x']";
+        assertTrue(s.isElementPresent(emptyFunnelPath));
+
+        // Click on Funnel
+        driver.findElement(By.xpath(emptyFunnelPath)).click();;
+        
+        s.click("//input[@id='choicenullDate']");
+
+      
+      
+        clickAndWait("//div[@aria-describedby='date-range-filter']//button//span[text()='OK']");
+        
+        List<String> noRecordsFoundColumnsList = new ArrayList<String>();
+        List<String> firstRecordFoundColumnsList = new ArrayList<String>();
+        noRecordsFoundColumnsList.add("Submission Plus 10 Business Days");
+        noRecordsFoundColumnsList.add("Submitted On");
+        noRecordsFoundColumnsList.add("Expected Abstraction Completion Date");
+      
+        firstRecordFoundColumnsList.add("Current On-Hold Date");
+        firstRecordFoundColumnsList.add("Accepted");
+        firstRecordFoundColumnsList.add("Admin Abstraction Completed");
+        firstRecordFoundColumnsList.add("Admin QC Completed");
+        firstRecordFoundColumnsList.add("Scientific Abstraction Completed");
+        firstRecordFoundColumnsList.add("Scientific QC Completed");
+        firstRecordFoundColumnsList.add("Ready for TSR");
+        
+
+        
+        if (noRecordsFoundColumnsList.contains(columnHeader)) {
+            assertFalse(isTrialInWorkloadTab(first));
+            assertFalse(isTrialInWorkloadTab(second));
+        }
+        
+        if (firstRecordFoundColumnsList.contains(columnHeader)) {
+            assertFalse(isTrialInWorkloadTab(first));
+            assertTrue(isTrialInWorkloadTab(second));
+            
+            //ensure that sorting does not change filter
+            sort(columnHeader);
+            sort(columnHeader);
+            assertFalse(isTrialInWorkloadTab(first));
+            assertTrue(isTrialInWorkloadTab(second));
+        }
+        
+        //test refresh reset filter
+        refresh();
+        assertTrue(isTrialInWorkloadTab(first));
+        assertTrue(isTrialInWorkloadTab(second));
+
+      
+    }
+    
+    private void verifyDateNotNullFilter(TrialInfo first, 
+            TrialInfo second, String columnHeader) {
+        clickAndWait("id=dashboardMenuOption");
+        verifyWorkfloadTabActive();
+
+        // Find Funnel for this column; it will be unselected.
+        String emptyFunnelPath = "//table[@id='wl']//th//a[normalize-space(text())='"
+                + columnHeader
+                + "']/../..//i[@class='fa fa-filter fa-2x fa-inverse']";
+        String filledFunnelPath = "//table[@id='wl']//th//a[normalize-space(text())='"
+                + columnHeader + "']/../..//i[@class='fa fa-filter fa-2x']";
+        assertTrue(s.isElementPresent(emptyFunnelPath));
+
+        // Click on Funnel
+        driver.findElement(By.xpath(emptyFunnelPath)).click();;
+        
+        s.click("//input[@id='choicelimit']");
+
+      
+      
+        clickAndWait("//div[@aria-describedby='date-range-filter']//button//span[text()='OK']");
+        
+        List<String> noRecordsFoundColumnsList = new ArrayList<String>();
+        List<String> firstRecordFoundColumnsList = new ArrayList<String>();
+        noRecordsFoundColumnsList.add("Submission Plus 10 Business Days");
+        noRecordsFoundColumnsList.add("Submitted On");
+        noRecordsFoundColumnsList.add("Expected Abstraction Completion Date");
+      
+        firstRecordFoundColumnsList.add("Current On-Hold Date");
+        firstRecordFoundColumnsList.add("Accepted");
+        firstRecordFoundColumnsList.add("Admin Abstraction Completed");
+        firstRecordFoundColumnsList.add("Admin QC Completed");
+        firstRecordFoundColumnsList.add("Scientific Abstraction Completed");
+        firstRecordFoundColumnsList.add("Scientific QC Completed");
+        firstRecordFoundColumnsList.add("Ready for TSR");
+        
+
+        
+        if (noRecordsFoundColumnsList.contains(columnHeader)) {
+            assertTrue(isTrialInWorkloadTab(first));
+            assertTrue(isTrialInWorkloadTab(second));
+        }
+        
+        if (firstRecordFoundColumnsList.contains(columnHeader)) {
+            assertTrue(isTrialInWorkloadTab(first));
+            assertFalse(isTrialInWorkloadTab(second));
+            
+            //ensure that sorting does not change filter
+            sort(columnHeader);
+            sort(columnHeader);
+            assertTrue(isTrialInWorkloadTab(first));
+            assertFalse(isTrialInWorkloadTab(second));         
+        }
+        
+        //test refresh reset filter
+        refresh();
+        assertTrue(isTrialInWorkloadTab(first));
+        assertTrue(isTrialInWorkloadTab(second));
+
+      
     }
 
     @Test

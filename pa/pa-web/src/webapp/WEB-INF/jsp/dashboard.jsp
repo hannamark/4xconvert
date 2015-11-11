@@ -51,7 +51,8 @@ i.fa-filter {
 	padding: 5px;
 }
 
-#date-range-filter input, #trials_bydate input {
+
+#date-range-filter input:not([type='radio']) , #trials_bydate input {
 	min-width: 150px;
 	margin-right: 5px;
 }
@@ -203,6 +204,31 @@ tr.holiday {
     var countsByDateURL = '<c:url value='/protected/trialCountscountsByDate.action'/>';
     var trialsByDateTable;
 
+    
+    function disableFieldsIfNeeded() {
+    	var filterTypeValue ="";
+    	var selected = jQuery("#date-range-filter input[type='radio']:checked");
+    	if (selected.length > 0) {
+    		filterTypeValue = selected.val();
+    	}
+    	
+    	if (filterTypeValue!="limit") {
+    		jQuery("#dateFrom").val("");
+    		jQuery("#dateTo").val("");
+    		jQuery("#dateFrom").prop('disabled', true);
+    		jQuery("#dateTo").prop('disabled', true);
+    		jQuery("#dateFrom").next().hide();
+    		jQuery("#dateTo").next().hide();
+    	}
+    	else {
+    		jQuery("#dateFrom").prop('disabled', false);
+            jQuery("#dateTo").prop('disabled', false);
+            jQuery("#dateFrom").next().show();
+            jQuery("#dateTo").next().show();
+    	}
+    	
+    }
+    
 	function handleAction(action) {
 		
 		
@@ -576,8 +602,8 @@ tr.holiday {
                            $("#validationError").dialog('open');
                        } else {
                     	   // Dates are valid. Proceed with filtering.
-                    	   // However, empty dates mean cancel any existing filtering.
-                    	   $("#dateFilterField").val((dateFrom != '' || dateTo != ''?filterField:''));
+                    	   // Now empty dates also means some kind of filter so don't cancel any existing filter
+                    	   $("#dateFilterField").val(filterField);
                     	   $(this).dialog("close");
                     	   handleAction('filter');
 	            	   }
@@ -652,6 +678,7 @@ tr.holiday {
                 	handleAction("search");
                 } else {
                 	$("#dateFilterField, #dateFrom, #dateTo").val(null);
+                	$("#choiceunrestricted").prop('checked', true);
                 	$("input[name='submissionTypeFilter']:checked").prop('checked', false);
                 	handleAction("execute");
                 }              
@@ -951,7 +978,10 @@ tr.holiday {
                                                     "Abstraction Verified No Response", "On-Hold"]);
                         handleAction('search');
             });
-
+            
+           //enable/disable date filer
+           disableFieldsIfNeeded();
+            
             //Setup trials by count Panel
             $("#trials_bydate" ).accordion({
                 collapsible: true,

@@ -225,19 +225,37 @@
 </display:table>
 
 <div id="date-range-filter" title="Date Filter" style="display: none;">
-  <p>   
-    Limit the results to the following date range (inclusive):
-  </p>  
   <table>
-    <tr>
-        <td><label for="dateFrom">From:</label></td>
-        <td><s:textfield name="dateFrom" id="dateFrom"/></td>       
-    </tr>
-    <tr>
-        <td><label for="dateTo">To:</label></td>
-        <td><s:textfield name="dateTo" id="dateTo"/></td>       
-    </tr> 
-  </table>
+  <s:iterator 
+  value="#{'limit':' Limit the results to the following date range (inclusive):',
+  'nullDate':'Does NOT exist',
+  'unrestricted':'Unrestricted'}" 
+  var ="radioValue"  >
+ <tr>
+  <td>   
+   <s:radio list="#radioValue.key" listValue="#radioValue.value"  name="choice"
+    id="choice" onChange="disableFieldsIfNeeded()">
+  </s:radio>
+  </td>
+  </tr>
+   <s:if test="#radioValue.key.equals('limit')">
+  <tr>
+  <td>  
+    <table>
+        <tr>
+            <td><label for="dateFrom">From:</label></td>
+            <td><s:textfield name="dateFrom" id="dateFrom"/></td>       
+        </tr>
+        <tr>
+            <td><label for="dateTo">To:</label></td>
+            <td><s:textfield name="dateTo" id="dateTo"/></td>       
+        </tr> 
+    </table>
+   </td>
+   </tr>
+   </s:if>
+   </s:iterator>
+  </table>  
   <s:hidden name="dateFilterField" id="dateFilterField"/>
 </div>
 
