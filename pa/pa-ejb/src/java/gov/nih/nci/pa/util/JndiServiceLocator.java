@@ -179,7 +179,7 @@ public class JndiServiceLocator implements ServiceLocator {
         try {
             ctx = new InitialContext();
         } catch (Exception e) {
-            LOG.error(e);
+            LOG.error(e, e);
         }
     }
 
@@ -738,7 +738,7 @@ public class JndiServiceLocator implements ServiceLocator {
         try {
             svc = (T) ctx.lookup("java:global/pa/pa-ejb/" + name);
         } catch (NamingException e) {
-            LOG.error(e);
+            LOG.error(e, e);
         }
         return svc;
     }
