@@ -289,7 +289,8 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     public void tearDown() throws Exception {
         DbUtils.closeQuietly(connection);
         stopSMTP();
-        takeScreenShot();
+        if (testFailed)
+            takeScreenShot();
         logoutUser();
         closeBrowser();
         super.tearDown();
@@ -333,11 +334,13 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
             @Override
             public void run() {
                 try {
-                    File destFile = new File(SystemUtils.JAVA_IO_TMPDIR,
-                            screenShotFileName);
+                    File destFile = new File(
+                            (SystemUtils.IS_OS_WINDOWS ? SystemUtils.JAVA_IO_TMPDIR
+                                    : SystemUtils.USER_DIR), screenShotFileName);
                     File scrFile = ((TakesScreenshot) driver)
                             .getScreenshotAs(OutputType.FILE);
                     FileUtils.copyFile(scrFile, destFile);
+                    scrFile.delete();
                     System.out.println("Saved screen shot: "
                             + destFile.getAbsolutePath());
                 } catch (Exception e) {
@@ -1266,7 +1269,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
      * @param siteCtepId
      */
     protected final void addSiteToTrial(TrialInfo info, String siteCtepId,
-            String status , boolean isEarlierDate) {
+            String status, boolean isEarlierDate) {
         clickAndWait("link=Participating Sites");
         clickAndWait("link=Add");
         clickAndWaitAjax("link=Look Up");
@@ -1282,17 +1285,16 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         if (s.isElementPresent("siteLocalTrialIdentifier"))
             selenium.type("siteLocalTrialIdentifier", info.uuid);
         selenium.select("recStatus", status);
-        if(!isEarlierDate) {
-            selenium.type("id=recStatusDate", today);    
-        }
-        else {
+        if (!isEarlierDate) {
+            selenium.type("id=recStatusDate", today);
+        } else {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
             calendar.add(Calendar.DAY_OF_MONTH, -1);
             String earlierDate = MONTH_DAY_YEAR_FMT.format(calendar.getTime());
-           selenium.type("id=recStatusDate", earlierDate); 
+            selenium.type("id=recStatusDate", earlierDate);
         }
-        
+
         clickAndWait("link=Save");
         assertTrue(selenium.isTextPresent("Record Created"));
 
@@ -1309,8 +1311,6 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         driver.switchTo().defaultContent();
         assertTrue(selenium.isTextPresent("One item found"));
     }
-    
-    
 
     /**
      * @param info
@@ -2093,9 +2093,10 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + ", '" + category + "')";
         runner.update(connection, sql);
     }
-    
-    protected void addOnHold_Timestamp(TrialInfo trial, String code, String onHold_TS, String OffHold_TS,
-            String category) throws SQLException {
+
+    protected void addOnHold_Timestamp(TrialInfo trial, String code,
+            String onHold_TS, String OffHold_TS, String category)
+            throws SQLException {
         QueryRunner runner = new QueryRunner();
         String sql = "insert into study_onhold (identifier, onhold_reason_code, onhold_date, offhold_date, study_protocol_identifier, "
                 + "onhold_reason_category)"

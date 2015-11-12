@@ -115,24 +115,29 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
     protected Selenium s;
     protected WebDriver driver;
     protected String url;
-    
+
     protected File downloadDir = new File("./");
+
+    protected volatile boolean testFailed;
 
     @SuppressWarnings("deprecation")
     @Override
     @Before
     public void setUp() throws Exception {
+        testFailed = false;
         String hostname = getServerHostname();
         int port = getServerPort();
         String driverClass = getDriverClass();
-        url = port == 0 ? "http://" + hostname : "http://" + hostname
-                + ":" + port;
-        System.out.println("URL: "+url);
+        url = port == 0 ? "http://" + hostname : "http://" + hostname + ":"
+                + port;
+        System.out.println("URL: " + url);
         FirefoxProfile profile = new FirefoxProfile();
-        profile.setPreference("browser.download.dir", downloadDir.getCanonicalPath());
+        profile.setPreference("browser.download.dir",
+                downloadDir.getCanonicalPath());
         profile.setPreference("browser.download.folderList", 2);
-        profile.setPreference("browser.helperApps.neverAsk.saveToDisk", "text/csv,application/rtf");        
-        
+        profile.setPreference("browser.helperApps.neverAsk.saveToDisk",
+                "text/csv,application/rtf");
+
         final Class<?> clazz = Class.forName(driverClass);
         try {
             driver = (WebDriver) clazz.getConstructor(FirefoxProfile.class)
@@ -140,14 +145,23 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
         } catch (Exception e) {
             System.out.println(e.getMessage());
             driver = (WebDriver) clazz.newInstance();
-        }       
+        }
         driver.manage().window().setSize(new Dimension(1500, 900));
         selenium = new WebDriverBackedSelenium(driver, url);
         selenium.setTimeout(toMillisecondsString(PAGE_TIMEOUT_SECONDS));
-        driver.manage().timeouts().pageLoadTimeout(PAGE_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-        driver.manage().timeouts().setScriptTimeout(PAGE_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        driver.manage().timeouts()
+                .pageLoadTimeout(PAGE_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        driver.manage().timeouts()
+                .setScriptTimeout(PAGE_TIMEOUT_SECONDS, TimeUnit.SECONDS);
         s = selenium;
-       
+
+    }
+
+    @Override
+    protected void runTest() throws Throwable {
+        testFailed = true;
+        super.runTest();
+        testFailed = false;
     }
 
     /**
@@ -181,43 +195,43 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
                 "selenium.browserbot.getCurrentWindow().document.getElementById('"
                         + id + "');", toMillisecondsString(timeoutSeconds));
     }
-    
+
     protected void waitForTextToAppear(By by, String text, int timeoutSeconds) {
         WebDriverWait wait = new WebDriverWait(driver, timeoutSeconds);
         wait.until(ExpectedConditions.textToBePresentInElement(by, text));
     }
-    
+
     protected void waitForElementToBecomeVisible(By by, int timeoutSeconds) {
         waitForElementToBecomeAvailable(by, timeoutSeconds);
         WebDriverWait wait = new WebDriverWait(driver, timeoutSeconds);
         wait.until(ExpectedConditions.visibilityOf(driver.findElement(by)));
     }
-    
+
     protected void waitForElementToBecomeAvailable(By by, int timeoutSeconds) {
         WebDriverWait wait = new WebDriverWait(driver, timeoutSeconds);
         wait.until(ExpectedConditions.presenceOfElementLocated(by));
     }
-    
+
     protected void waitForElementToGoAway(final By by, int timeoutSeconds) {
         WebDriverWait wait = new WebDriverWait(driver, timeoutSeconds);
-        wait.until(new Predicate<WebDriver>() {            
+        wait.until(new Predicate<WebDriver>() {
             @Override
-            public boolean apply(WebDriver wd) {                
+            public boolean apply(WebDriver wd) {
                 return wd.findElements(by).isEmpty();
             }
-        });        
-    }
-    
-    protected void waitForElementToBecomeInvisible(final By by, int timeoutSeconds) {
-        WebDriverWait wait = new WebDriverWait(driver, timeoutSeconds);
-        wait.until(new Predicate<WebDriver>() {            
-            @Override
-            public boolean apply(WebDriver wd) {                
-                return !wd.findElement(by).isDisplayed();
-            }
-        });        
+        });
     }
 
+    protected void waitForElementToBecomeInvisible(final By by,
+            int timeoutSeconds) {
+        WebDriverWait wait = new WebDriverWait(driver, timeoutSeconds);
+        wait.until(new Predicate<WebDriver>() {
+            @Override
+            public boolean apply(WebDriver wd) {
+                return !wd.findElement(by).isDisplayed();
+            }
+        });
+    }
 
     /**
      * Click and wait for a page to load.
@@ -249,9 +263,9 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
         el.click();
         pause(MILLISECONDS_PER_SECOND / 2);
     }
-    
+
     protected void clickOnFirstVisible(By by) {
-        for (WebElement e: driver.findElements(by)) {
+        for (WebElement e : driver.findElements(by)) {
             if (e.isDisplayed() && e.isEnabled()) {
                 e.click();
                 break;
@@ -272,7 +286,7 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
     protected void clickAndWaitSaveButton() {
         clickAndWait("save_button");
     }
-    
+
     protected void verifyAlertTextAndAccept(String msg) {
         Alert javascriptAlert = driver.switchTo().alert();
         String text = javascriptAlert.getText(); // Get text on alert box
