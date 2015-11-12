@@ -153,6 +153,7 @@ public class TrialDataVerificationAction extends ActionSupport implements
         for (StudyInboxDTO studyInboxDTO : updateList) {
             for (RegistryUser user : trialOwners) {
                 if (studyInboxDTO.getUserLastCreated() != null 
+                  && user.getCsmUser() != null      
                   && user.getCsmUser().getLoginName()
                   .equals(studyInboxDTO.getUserLastCreated().getValue())) {
                     TrialVerificationDataWebDTO trialWebDTO = new TrialVerificationDataWebDTO();
