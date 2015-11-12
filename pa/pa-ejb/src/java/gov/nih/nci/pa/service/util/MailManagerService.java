@@ -542,6 +542,13 @@ public interface MailManagerService {
     void sendSiteNotCloseNotification(SiteStatusChangeNotificationData dataForEmail) throws PAException;
     
     /**
+     * sends email on failure of a job
+     * @param jobName job name
+     * @param errorTrace stacktrace
+     */
+    void sendJobFailureNotification(String jobName, String errorTrace);
+    
+    /**
      * An email message
      * @author gunnikrishnan
      */

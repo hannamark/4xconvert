@@ -4,6 +4,7 @@ package gov.nih.nci.pa.util;
 import gov.nih.nci.pa.service.PAException;
 
 import org.quartz.Job;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -32,7 +33,9 @@ public class CaDSRPermissibleValueSyncJob implements Job {
                PaRegistry.getMailManagerService()
                   .sendCadsrJobErrorEMail();
             } catch (PAException e1) {
-               LOG.error("error while sending email", e);
+                PaRegistry.getMailManagerService()
+                .sendJobFailureNotification(context.getJobDetail().getName(), ExceptionUtils.getFullStackTrace(e));     
+                LOG.error("error while sending email", e);
             }
         }
     }

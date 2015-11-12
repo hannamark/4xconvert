@@ -254,7 +254,12 @@ public class StudyOnholdServiceTest extends AbstractHibernateTestCase {
         doCallRealMethod().when(service).setProtocolQueryServiceLocal(protocolQueryServiceBean);
         doCallRealMethod().when(service).setMailManagerSerivceLocal(mailManagerServiceLocal);
         doCallRealMethod().when(service).setStudyMilestoneService(studyMilestoneServicelocal);
-        doCallRealMethod().when(service).processOnHoldTrials();
+        try {
+			doCallRealMethod().when(service).processOnHoldTrials();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         when(service.getTodaysDate()).thenReturn(today);
         setDependencies(service);
         return service;
@@ -749,7 +754,7 @@ public class StudyOnholdServiceTest extends AbstractHibernateTestCase {
     }
     
     @Test
-    public void testNoOnHoldProcessing() throws PAException {
+    public void testNoOnHoldProcessing() throws PAException, Exception {
         reset(mailManagerServiceLocal, studyMilestoneServicelocal);
         StudyOnholdBeanLocal studyOnholdBeanLocal = createStudyOnholdBeanLocalMock(); 
         Session session = PaHibernateUtil.getCurrentSession();
@@ -806,7 +811,7 @@ public class StudyOnholdServiceTest extends AbstractHibernateTestCase {
     }
     
     @Test
-    public void testOnHoldReminder() throws PAException {
+    public void testOnHoldReminder() throws PAException, Exception {
         reset(mailManagerServiceLocal, studyMilestoneServicelocal);
         StudyOnholdBeanLocal studyOnholdBeanLocal = createStudyOnholdBeanLocalMock();
         Session session = PaHibernateUtil.getCurrentSession();
@@ -833,7 +838,7 @@ public class StudyOnholdServiceTest extends AbstractHibernateTestCase {
     }
     
     @Test
-    public void testOnHoldEqualsStartDate() throws PAException, ParseException {
+    public void testOnHoldEqualsStartDate() throws PAException, ParseException, Exception {
         reset(mailManagerServiceLocal, studyMilestoneServicelocal);
         StudyOnholdBeanLocal studyOnholdBeanLocal = createStudyOnholdBeanLocalMock();
         Session session = PaHibernateUtil.getCurrentSession();
@@ -876,7 +881,7 @@ public class StudyOnholdServiceTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void testOnHoldBeforeStartDate() throws PAException, ParseException {
+    public void testOnHoldBeforeStartDate() throws PAException, ParseException, Exception {
         reset(mailManagerServiceLocal, studyMilestoneServicelocal);
         StudyOnholdBeanLocal studyOnholdBeanLocal = createStudyOnholdBeanLocalMock();
         Session session = PaHibernateUtil.getCurrentSession();
@@ -912,7 +917,7 @@ public class StudyOnholdServiceTest extends AbstractHibernateTestCase {
     }
     
     @Test
-    public void testOnHoldStartDateWrong() throws PAException, ParseException {
+    public void testOnHoldStartDateWrong() throws PAException, ParseException, Exception {
         reset(mailManagerServiceLocal, studyMilestoneServicelocal);
         StudyOnholdBeanLocal studyOnholdBeanLocal = createStudyOnholdBeanLocalMock();
         Session session = PaHibernateUtil.getCurrentSession();
@@ -943,7 +948,7 @@ public class StudyOnholdServiceTest extends AbstractHibernateTestCase {
     
     
     @Test
-    public void testSubmissionTermination() throws PAException {
+    public void testSubmissionTermination() throws PAException, Exception {
         reset(mailManagerServiceLocal, studyMilestoneServicelocal);
         StudyOnholdBeanLocal studyOnholdBeanLocal = createStudyOnholdBeanLocalMock();
         Session session = PaHibernateUtil.getCurrentSession();

@@ -6,32 +6,41 @@ package gov.nih.nci.pa.service.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+
 import gov.nih.nci.pa.domain.EmailLog;
 import gov.nih.nci.pa.enums.OpOutcomeCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.AbstractEjbTestCase;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.HibernateException;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.dumbster.smtp.SmtpMessage;
+
 /**
  * @author dkrylov
  * 
  */
-public class NewMailManagerServiceTest extends AbstractEjbTestCase {
-
+public class NewMailManagerServiceTest extends AbstractEjbTestCase {	
+	
+    
     @Before
-    public void setUp() throws Exception {
+    public void setUp() throws Exception {             
+        
         clearEmailLog();
     }
 
@@ -43,6 +52,26 @@ public class NewMailManagerServiceTest extends AbstractEjbTestCase {
                 .executeUpdate();
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();
+    }
+    
+    @Test
+    public void testJobFailureEmail() throws InterruptedException {
+    	 Thread.sleep(5000);
+    	     	
+    	 
+    	 MailManagerBeanLocal bean = getEjbBean(MailManagerBeanLocal.class);
+    	 bean.sendJobFailureNotification("TestJob", ExceptionUtils.getFullStackTrace(new RuntimeException("This is a test")));
+    	 
+    	 
+         clearEmailLog();         
+         waitForEmailsToArrive(1);           
+         
+         Iterator emailIter = smtp.getReceivedEmail();
+         SmtpMessage email = (SmtpMessage)emailIter.next();
+         assertTrue(email.getHeaderValue("Subject").contains("CTRP nightly job failure: TestJob"));
+         assertTrue(email.getBody().contains("<pre>java.lang.RuntimeException: This is a test	at gov.nih.nci.pa.service.util.NewMailManagerServiceTest.testJobFailureEmail"));	
+         assertTrue(email.getBody().contains("Dear Sir or Madam,<br /><br />This is to notify that CTRP nightly job <strong>TestJob</strong> failed its processing"));      
+         assertTrue(email.getBody().contains("Please consult the server logs for more details."));
     }
 
     @Test

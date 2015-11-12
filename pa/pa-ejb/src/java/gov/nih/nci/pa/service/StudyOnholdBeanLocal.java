@@ -337,7 +337,7 @@ implements StudyOnholdServiceLocal {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void processOnHoldTrials() {
+    public void processOnHoldTrials() throws Exception {
         try {
             LOG.info("On-hold reminders task kicked off.");
             List<StudyProtocolQueryDTO> studyDTOs = findOnHoldTrials();
@@ -346,10 +346,11 @@ implements StudyOnholdServiceLocal {
             for (StudyProtocolQueryDTO studyDTO : studyDTOs) {
                 if (DocumentWorkflowStatusCode.ON_HOLD.equals(studyDTO.getDocumentWorkflowStatusCode())) {
                     processOnHoldTrial(studyDTO);
-                }
+               }
             }
         } catch (Exception e) {
             LOG.error(e, e);
+            throw e;
         }
     }
 

@@ -255,6 +255,14 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
         addPaProperty("participating.site.not.closed.email.subject", "email subject");
         addPaProperty("participating.site.not.closed.email.body", "email body");
         
+        addPaProperty("ctrp.job.failure.body", "Dear Sir or Madam,<br /><br />This is to notify that CTRP nightly job <strong>${jobName}</strong> "
+        		+ "failed its processing at <strong>${timeStamp}</strong> with the following error message:" +
+        		"<br /><br /><pre>${stackTrace}</pre>"
+        		+ "<br /><br />Please consult the server logs for more details.");
+        
+        addPaProperty("ctrp.job.failure.subject", "CTRP nightly job failure: ${jobName}");
+        addPaProperty("ctrp.job.failure.recipients", "to@example.com");        
+        
     }
 
     protected void addPaProperty(String name, String value) {

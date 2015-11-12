@@ -90,10 +90,10 @@ public class StudyMilestoneTasksServiceBeanTest {
 
     /**
      * Test the performTask method
-     * @throws PAException if an error occurs.
+     * @throws Exception 
      */
     @Test
-    public void testPerformTask() throws PAException {
+    public void testPerformTask() throws Exception {
         sut = createStudyMilestoneTasksServiceBeanMock();
         doCallRealMethod().when(sut).performTask();
         DateTime threshold = new DateTime();

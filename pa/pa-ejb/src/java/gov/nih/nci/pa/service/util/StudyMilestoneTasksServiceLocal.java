@@ -102,8 +102,9 @@ public interface StudyMilestoneTasksServiceLocal {
  
     /**
      * Perform task.
+     * @throws Exception 
      */
-    void performTask();
+    void performTask() throws Exception;
 
     /**
      * Gets the milestones that needs to be processed.

@@ -99,9 +99,10 @@ public interface StudyOnholdServiceLocal extends StudyPaService<StudyOnholdDTO> 
     
     /**
      * Sends out email notifications about on-hold trials.
+     * @throws Exception 
      * @see https://tracker.nci.nih.gov/browse/PO-2899
      */
-    void processOnHoldTrials(); 
+    void processOnHoldTrials() throws Exception; 
     
     /**
      * @param key key

@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.util;
 
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -29,6 +30,8 @@ public class CaDSRSyncJob implements Job {
             LOG.info("CaDSRSyncJob job success.....");
         } catch (Exception e) {
             LOG.error("error", e);
+            PaRegistry.getMailManagerService()
+            .sendJobFailureNotification(context.getJobDetail().getName(), ExceptionUtils.getFullStackTrace(e)); 
         }
     }
 

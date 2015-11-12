@@ -218,7 +218,7 @@ public class StudyProcessingErrorBeanLocal extends
     }
 
     @Override
-    public void processStudyUploadErrors() {
+    public void processStudyUploadErrors() throws PAException {
         try {
             LOG.info("Starting study upload errors processing...");
             Account ctGovemailAcc = getCTGovMailAccount();
@@ -246,8 +246,9 @@ public class StudyProcessingErrorBeanLocal extends
                     }
                 }
             }
-        } catch (PAException e) {
+        } catch (PAException e) {            
             LOG.error("Error reading email message", e);
+            throw e;
         }
     }
 

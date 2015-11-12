@@ -139,10 +139,11 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
     /**
      * Perform task. if we run into more problems, we should look into making the query protocol-focused, rather than
      * milestone-focused, which may simplify the code a bit (at the cost of a more complex query)
+     * @throws Exception 
      */
     @Override
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void performTask() {
+    public void performTask() throws Exception {
         try {
             LOG.info("Starting StudyMilestoneTasksServiceBean");
             UsernameHolder.setUser(PA_USER);
@@ -152,7 +153,7 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
             StudyMilestoneTaskMessageCollection errors = createMilestones(milestones);
             sendFailureNotification(errors);
             LOG.info("Ending StudyMilestoneTasksServiceBean");
-        } finally {
+        } finally {        
             UsernameHolder.setUser(null);
         }
     }

@@ -89,6 +89,7 @@ import javax.naming.NamingException;
 import javax.rmi.PortableRemoteObject;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
@@ -164,6 +165,7 @@ public class EJBInvokerJob implements Job {
 
     /** The Constant CREDENTIALS. */
     public static final String CREDENTIALS = "java.naming.security.credentials";
+    
 
 
     /** The initial context. */
@@ -175,13 +177,15 @@ public class EJBInvokerJob implements Job {
     public EJBInvokerJob() {
         // do nothing
     }
-
+    
+    
     /** execute.
      * @param context JobExecutionContext
      * @throws JobExecutionException exception
      */
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
+        
         JobDataMap dataMap = context.getMergedJobDataMap();
 
         String ejbJNDIName = dataMap.getString(EJB_JNDI_NAME_KEY);
@@ -207,6 +211,8 @@ public class EJBInvokerJob implements Job {
             context.setResult(returnObj);
         } catch (Exception e) {
             LOG.info("Caught error executing job", e);
+            PaRegistry.getMailManagerService()
+            .sendJobFailureNotification(context.getJobDetail().getName(), ExceptionUtils.getFullStackTrace(e));
             throw new JobExecutionException(e);
         } finally {
             // Don't close jndiContext until after method execution because

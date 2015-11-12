@@ -2004,5 +2004,9 @@
        <comment>Validate the logic used to close participating sites when a trial is closed</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3.1/PO-8884.sql"/>
     </changeSet>
+    <changeSet id="PO-9414" author="lagarwal">       
+       <comment>Addition of email property for list to recipients</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3.1/PO-9414.sql"/>
+    </changeSet>
    
 </databaseChangeLog>

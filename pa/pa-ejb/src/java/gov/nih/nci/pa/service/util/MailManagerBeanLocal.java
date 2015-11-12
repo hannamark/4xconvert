@@ -779,12 +779,85 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
     }
     
     /**
+     * Sends a job failure email
+     * @param jobName job name
+     * @param errorTrace stacktrace       
+     */
+    @Override
+    public void sendJobFailureNotification(String jobName, String errorTrace)  {
+        String mailSubject = processJobFailureSubject(jobName);
+        String mailBody = processJobFailureBody(jobName, errorTrace);
+        try {
+            String emailsToSendJobFailures = lookUpTableService.getPropertyValue("ctrp.job.failure.recipients");
+            List<String> emails = null;
+            if (StringUtils.isNotBlank(emailsToSendJobFailures)) {
+                emails = new ArrayList<String>(Arrays.asList(emailsToSendJobFailures.split(",")));
+            }        
+            for (String email : emails) {
+                sendMailWithHtmlBody(email, mailSubject, mailBody);
+            }    
+        } catch (PAException e) {
+            LOG.error(e, e);
+        }
+    }
+    
+    /**
+     * 
+     * @param jobName
+     * @return
+     */
+    String processJobFailureSubject(String jobName) {
+        String subject = "";
+        try {
+            Template subjectFtl = cfg
+                    .getTemplate("ctrp.job.failure.subject");
+        
+            Map<String, Object> root = new HashMap<String, Object>();
+            root.put("jobName", jobName);        
+        
+            StringWriter body = new StringWriter();
+            subjectFtl.process(root, body);
+            subject = body.toString();
+        } catch (IOException | TemplateException e) {
+            LOG.error(e, e);
+        }
+        return subject;
+        
+    }
+    
+    /**
+     * 
+     * @param jobName
+     * @param errorTrace
+     * @return
+     */
+    String processJobFailureBody(String jobName, String errorTrace) {
+        String body = "";
+        try {
+            Template bodyFtl = cfg
+                    .getTemplate("ctrp.job.failure.body");
+        
+            Map<String, Object> root = new HashMap<String, Object>();
+            root.put("jobName", jobName);        
+            root.put("stackTrace", errorTrace);
+            root.put("timeStamp", new Date().toString());
+        
+            StringWriter bodyWriter = new StringWriter();
+            bodyFtl.process(root, bodyWriter);
+            body = bodyWriter.toString();
+        } catch (IOException | TemplateException e) {
+            LOG.error(e, e);
+        }
+        return body;
+    }
+    
+    /**
      * Common Mail Body replacements.
      * @param sp
      * @param mailBody
      * @return    
      */
-    String commonMailBodyReplacements(StudyProtocolQueryDTO spDTO, String mailBody) throws PAException {
+    String commonMailBodyReplacements(StudyProtocolQueryDTO spDTO, String mailBody) throws PAException {        
         if (mailBody == null || spDTO == null) {
             //throw a graceful exception on blank body
             throw new PAException("Can't send email with blank data.");

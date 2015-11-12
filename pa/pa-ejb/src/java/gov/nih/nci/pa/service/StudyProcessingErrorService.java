@@ -118,8 +118,9 @@ public interface StudyProcessingErrorService {
     
     /**
      * Study upload errors processing job
+     * @throws PAException 
      */
-    void processStudyUploadErrors();
+    void processStudyUploadErrors() throws PAException;
     
     /**
      * Get list of study processing errors by study
