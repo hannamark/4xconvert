@@ -89,6 +89,7 @@ import gov.nih.nci.pa.test.integration.support.Batch;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -206,8 +207,20 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         TrialInfo trial = createTrialAndAccessManageFlags();
         trial.flaggedReason = "Do not submit tweets";
         addFlaggedTrial(trial);
+
+        takeScreenShot(getClass().getSimpleName()
+                + "_BeforeClickingEdit_"
+                + new Timestamp(System.currentTimeMillis()).toString()
+                        .replaceAll("\\D+", "_") + ".png");
+
         selenium.click("xpath=//table[@id='flaggedTrials']/tbody/tr[1]/td[6]");
         assertTrue(selenium.isVisible("flag-form"));
+
+        takeScreenShot(getClass().getSimpleName()
+                + "_EditFormShowedUp_"
+                + new Timestamp(System.currentTimeMillis()).toString()
+                        .replaceAll("\\D+", "_") + ".png");
+
         assertEquals("true",
                 driver.findElement(By.id("nciID")).getAttribute("disabled"));
         assertEquals("Do not submit tweets", selenium.getValue("reason"));
@@ -217,12 +230,38 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
                 "label=Do not enforce unique Subject ID across sites");
         selenium.type("comments", "This is edited comment.");
         pause(1500);
+
+        takeScreenShot(getClass().getSimpleName()
+                + "_BeforeClickingSave_"
+                + new Timestamp(System.currentTimeMillis()).toString()
+                        .replaceAll("\\D+", "_") + ".png");
+
         selenium.click("xpath=//button/span[normalize-space(text())='Save']");
+
+        takeScreenShot(getClass().getSimpleName()
+                + "_ImmediatelyAfterClickingSave_"
+                + new Timestamp(System.currentTimeMillis()).toString()
+                        .replaceAll("\\D+", "_") + ".png");
+
         waitForElementToBecomeVisible(By.id("msg"), 15);
         assertTrue(selenium.isTextPresent("Changes saved!"));
 
+        takeScreenShot(getClass().getSimpleName()
+                + "_ChangesSaved"
+                + new Timestamp(System.currentTimeMillis()).toString()
+                        .replaceAll("\\D+", "_") + ".png");
+
         pause(5000);
-        
+
+        takeScreenShot(getClass().getSimpleName()
+                + "_AfterPause_"
+                + new Timestamp(System.currentTimeMillis()).toString()
+                        .replaceAll("\\D+", "_") + ".png");
+
+        System.out.println("flaggedTrials inner HTML: "
+                + driver.findElement(By.xpath("//table[@id='flaggedTrials']"))
+                        .getAttribute("innerHTML"));
+
         assertEquals(
                 "Do not enforce unique Subject ID across sites",
                 selenium.getText("xpath=//table[@id='flaggedTrials']/tbody/tr[1]/td[2]"));
