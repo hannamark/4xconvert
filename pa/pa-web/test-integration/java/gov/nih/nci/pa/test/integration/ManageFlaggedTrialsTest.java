@@ -209,7 +209,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         addFlaggedTrial(trial);
 
         takeScreenShot(getClass().getSimpleName()
-                + "_BeforeClickingEdit_"
+                + "_BeforeClickingEdit_ScreenShot_"
                 + new Timestamp(System.currentTimeMillis()).toString()
                         .replaceAll("\\D+", "_") + ".png");
 
@@ -217,7 +217,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isVisible("flag-form"));
 
         takeScreenShot(getClass().getSimpleName()
-                + "_EditFormShowedUp_"
+                + "_EditFormShowedUp_ScreenShot_"
                 + new Timestamp(System.currentTimeMillis()).toString()
                         .replaceAll("\\D+", "_") + ".png");
 
@@ -232,14 +232,14 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         pause(1500);
 
         takeScreenShot(getClass().getSimpleName()
-                + "_BeforeClickingSave_"
+                + "_BeforeClickingSave_ScreenShot_"
                 + new Timestamp(System.currentTimeMillis()).toString()
                         .replaceAll("\\D+", "_") + ".png");
 
         selenium.click("xpath=//button/span[normalize-space(text())='Save']");
 
         takeScreenShot(getClass().getSimpleName()
-                + "_ImmediatelyAfterClickingSave_"
+                + "_ImmediatelyAfterClickingSave_ScreenShot_"
                 + new Timestamp(System.currentTimeMillis()).toString()
                         .replaceAll("\\D+", "_") + ".png");
 
@@ -247,14 +247,14 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isTextPresent("Changes saved!"));
 
         takeScreenShot(getClass().getSimpleName()
-                + "_ChangesSaved"
+                + "_ChangesSaved_ScreenShot_"
                 + new Timestamp(System.currentTimeMillis()).toString()
                         .replaceAll("\\D+", "_") + ".png");
 
         pause(5000);
 
         takeScreenShot(getClass().getSimpleName()
-                + "_AfterPause_"
+                + "_AfterPause_ScreenShot_"
                 + new Timestamp(System.currentTimeMillis()).toString()
                         .replaceAll("\\D+", "_") + ".png");
 
