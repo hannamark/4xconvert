@@ -1858,6 +1858,38 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
     }
 
+    @Test 
+    public void testWorkloadTab_UpdateCalcSubmissionPlusTenBizDays() throws SQLException, ParseException {
+        //(Submission Plus 10 Business Days) = (Submission Date) + (Business Days on-Hold (Submitter)) + 10 biz days
+        // The date may not fall on a holiday or a weekend.
+        TrialInfo acceptedTrial;
+        deactivateAllTrials();
+        acceptedTrial = createAcceptedTrial();
+        new QueryRunner()
+                .update(connection,
+                        "update study_protocol set date_last_created='2015-05-22 09:15.000' where identifier="
+                                + acceptedTrial.id);
+        
+        addOnHold(acceptedTrial, "SUBMISSION_INCOM", date("05/15/2015"),
+                date("05/15/2015"), "Submitter");
+
+        loginAsSuperAbstractor();
+        clickAndWait("id=dashboardMenuOption");
+        verifyColumnValue(1, "Submitted On", "05/22/2015");
+        verifyColumnValue(1, "Submission Plus 10 Business Days", "06/09/2015");
+        
+        // when calculated "Submission Plus 10 Business Days" Date falls on weekend
+        // it is moved to next Business day 
+        // As Per PO-9400 Example 
+        new QueryRunner().update(connection,
+                "update study_protocol set date_last_created='2015-10-14 09:15.000' where identifier="
+                        + acceptedTrial.id);
+        addOnHold(acceptedTrial, "SUBMISSION_INCOM", date("10/15/2015"), date("10/19/2015"), "Submitter");
+        clickAndWait("id=dashboardMenuOption");
+        verifyColumnValue(1, "Submitted On", "10/14/2015");
+        verifyColumnValue(1, "Submission Plus 10 Business Days", "11/02/2015");
+    }
+    
     @Test
     public void testProperSubmissionTypeCalculationAndSearch() throws Exception {
         // Verify submission type.

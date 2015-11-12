@@ -124,6 +124,11 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO
     private Date calculatedAbstractionCompletionDate;
     
     /**
+     * Submission Plus 10 Business Days
+     */
+    private Date calculatedSubmissionPlusTenBizDate;
+    
+    /**
      * Comes from DB
      */
     private Date overriddenExpectedAbstractionCompletionDate;
@@ -937,7 +942,25 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO
     public Long getSubmitterOrgId() {
         return poOrganizationId;
     }
-
+    
+    /**
+     *  PO-9400 Update the calculation of the "Submission Plus 10 Business Days"
+     *  (Submission Plus 10 Business Days)= (Submission Date)+ (Business Days on-Hold (Submitter)) + 10 business days. 
+     *  The date may not fall on a holiday or a weekend
+     *  @return Date
+     */
+    public Date getCalculatedSubmissionPlusTenBizDate() {
+        if (calculatedSubmissionPlusTenBizDate == null) {
+            calculatedSubmissionPlusTenBizDate = pushToNextBusinessDayIfNotBusinessDay(
+                    DateUtils.addDays(getLastCreated().getDateLastCreatedPlusTenBiz(), getBizDaysOnHoldSubmitter()));
+        }
+        return calculatedSubmissionPlusTenBizDate;
+    }
+    
+    private Date pushToNextBusinessDayIfNotBusinessDay(Date calculatedDate) {
+        return PAUtil.isBusinessDay(calculatedDate) ? calculatedDate : PAUtil.addBusinessDays(calculatedDate, 1);
+    }    
+    
     // CHECKSTYLE:OFF
     /**
      * @return Date
@@ -956,13 +979,8 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO
      */
     public final Date getCalculatedAbstractionCompletionDate() {
         if (calculatedAbstractionCompletionDate == null) {
-            Date tempCalculatedAbsCompDate = DateUtils.addDays(getLastCreated().getDateLastCreatedPlusTenBiz(),
-                    getBizDaysOnHoldSubmitter());
-            if (PAUtil.isBusinessDay(tempCalculatedAbsCompDate)) {
-                calculatedAbstractionCompletionDate = tempCalculatedAbsCompDate;
-            } else {
-                calculatedAbstractionCompletionDate = PAUtil.addBusinessDays(tempCalculatedAbsCompDate, 1);
-            }
+            calculatedAbstractionCompletionDate = pushToNextBusinessDayIfNotBusinessDay(
+                    DateUtils.addDays(getLastCreated().getDateLastCreatedPlusTenBiz(), getBizDaysOnHoldSubmitter()));
         }
         return calculatedAbstractionCompletionDate;
     }

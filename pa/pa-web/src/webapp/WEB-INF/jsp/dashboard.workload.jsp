@@ -32,10 +32,11 @@
 	<display:column title="Submitted On" sortable="true" headerClass="filter lastCreated.dateLastCreated"
 		property="lastCreated.dateLastCreated" format="{0,date,MM/dd/yyyy}" />
 	<c:if test="${sessionScope.isSuAbstractor}">
-		<display:column title="Submission Plus 10 Business Days" headerClass="filter lastCreated.dateLastCreatedPlusTenBiz"
-			sortable="true" property="lastCreated.dateLastCreatedPlusTenBiz"
-			format="{0,date,MM/dd/yyyy}" />
-	</c:if>
+        <display:column title="Submission Plus 10 Business Days" headerClass="filter calculatedSubmissionPlusTenBizDate"
+            sortable="true" property="calculatedSubmissionPlusTenBizDate"
+            format="{0,date,MM/dd/yyyy}" />
+ 
+ 	</c:if>
     <display:column title="Expected Abstraction Completion Date" headerClass="filter expectedAbstractionCompletionDate" escapeXml="false"    
         sortable="true" media="html"><!--<fmt:formatDate value="${wl.expectedAbstractionCompletionDate}" pattern="yyyy-MM-dd" />-->
         <span data-expected-abstraction-completion-date="true"
