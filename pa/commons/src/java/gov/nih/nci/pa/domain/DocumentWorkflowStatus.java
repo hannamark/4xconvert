@@ -109,6 +109,7 @@ public class DocumentWorkflowStatus extends AbstractEntity implements Auditable 
     private static final long serialVersionUID = 1234567890L;
     private String commentText;
     private DocumentWorkflowStatusCode statusCode;
+    private Boolean currentlyActive;
     /** The status date range low. */
     private Timestamp statusDateRangeLow;
 
@@ -200,4 +201,19 @@ public class DocumentWorkflowStatus extends AbstractEntity implements Auditable 
     public void setStudyProtocol(StudyProtocol studyProtocol) {
         this.studyProtocol = studyProtocol;
     }
+
+    /**
+     * @return the currentlyActive
+     */
+    @Column(name = "current", insertable = false, updatable = false)
+    public Boolean getCurrentlyActive() {
+        return currentlyActive;
+    }
+    /**
+     * @param currentlyActive the currentlyActive to set
+     */
+    public void setCurrentlyActive(Boolean currentlyActive) {
+        this.currentlyActive = currentlyActive;
+    }
+
 }

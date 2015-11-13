@@ -384,8 +384,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                     statusCodes.add(status.getStatusCode());
                 }
                 whereClause.append(String.format(" %s dws.statusCode in (:%s) ", operator, DWS_PARAM));
-                whereClause.append(String.format(" and dws.id = (select max(id) from %s.documentWorkflowStatuses)",
-                        SearchableUtils.ROOT_OBJ_ALIAS));
+                whereClause.append(" and dws.currentlyActive = true");
                 params.put(DWS_PARAM, statusCodes);
             }
         }
@@ -445,8 +444,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 final DocumentWorkflowStatusCode code, final String param) {
             String operator = determineOperator(whereClause);               
             whereClause.append(String.format(" %s dws.statusCode != :%s", operator, param));
-            whereClause.append(String.format(" and dws.id = (select max(id) from %s.documentWorkflowStatuses)",
-                    SearchableUtils.ROOT_OBJ_ALIAS));
+            whereClause.append(" and dws.currentlyActive = true");
             params.put(param, code);
         }
 

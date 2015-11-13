@@ -4,8 +4,11 @@
 package gov.nih.nci.pa.service.search;
 
 import static org.mockito.Mockito.*;
+
+import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.service.search.StudyProtocolOptions.MilestoneFilter;
@@ -131,5 +134,38 @@ public class StudyProtocolQueryBeanSearchCriteriaTest extends
         System.out.println(hql);
         Assert.assertTrue(hql.contains("WHERE  obj.section801Indicator in (:section801Indicator)  AND  obj.dates.primaryCompletionDate >= :pcdFromDate AND  obj.dates.primaryCompletionDate <= :pcdToDate AND  obj.dates.primaryCompletionDateTypeCode in (:pcdDateType) "));
     }
-  
+
+
+    @Test
+    public final void testResultsQueryExcluedRejectedTrials() {
+        StudyProtocol sp = new StudyProtocol();
+        StudyProtocolOptions options = new StudyProtocolOptions();
+        options.setPcdFromDate(new java.util.Date());
+        options.setPcdToDate(new java.util.Date());
+        options.setExcludeRejectedTrials(true);
+        StudyProtocolQueryBeanSearchCriteria criteria = new StudyProtocolQueryBeanSearchCriteria(
+                sp, options);
+        Query query = criteria.getQuery("", false);
+        String hql = query.getQueryString();
+        System.out.println(hql);
+        Assert.assertTrue(hql.contains("WHERE  dws.statusCode != :rejectedDocumentWorkflowStatusParam and dws.currentlyActive = true AND  obj.dates.primaryCompletionDate >= :pcdFromDate AND  obj.dates.primaryCompletionDate <= :pcdToDate"));
+    }
+
+
+    @Test
+    public final void testResultsQueryForAcceptedDocuments() {
+        StudyProtocol sp = new StudyProtocol();
+        DocumentWorkflowStatus acceptedWS = new DocumentWorkflowStatus();
+        acceptedWS.setStatusCode(DocumentWorkflowStatusCode.ACCEPTED);
+        sp.getDocumentWorkflowStatuses().add(acceptedWS);
+        StudyProtocolOptions options = new StudyProtocolOptions();
+        options.setPcdFromDate(new java.util.Date());
+        options.setPcdToDate(new java.util.Date());
+        StudyProtocolQueryBeanSearchCriteria criteria = new StudyProtocolQueryBeanSearchCriteria(
+                sp, options);
+        Query query = criteria.getQuery("", false);
+        String hql = query.getQueryString();
+        System.out.println(hql);
+        Assert.assertTrue(hql.contains("WHERE  dws.statusCode in (:documentWorkflowStatusParam)  and dws.currentlyActive = true AND  obj.dates.primaryCompletionDate >= :pcdFromDate AND  obj.dates.primaryCompletionDate <= :pcdToDate"));
+    }
 }
