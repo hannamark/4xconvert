@@ -231,7 +231,7 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     
 
     private Set<RegistryUser> studyOwners = new HashSet<RegistryUser>();
-    
+    private Set<ProgramCode> programCodes = new TreeSet<ProgramCode>();
    
     private String ctroOverRideFlagComments;
     
@@ -908,6 +908,27 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     public void setSecondaryPurposes(Set<SecondaryPurpose> secondaryPurposes) {
         this.secondaryPurposes = secondaryPurposes;
     }
+    
+    /**
+     * @return the programCodes
+     */
+    @ManyToMany(targetEntity = ProgramCode.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "study_program_code", joinColumns = 
+        @JoinColumn(name = "study_protocol_id"), inverseJoinColumns = @JoinColumn(name = "program_code_id"))
+    @ForeignKey(name = "fk_study_protocol_id", 
+        inverseName = "fk_program_code_id")
+    @Sort(type = SortType.NATURAL)
+    public Set<ProgramCode> getProgramCodes() {
+        return programCodes;
+    }
+
+    /**
+     * @param programCodes
+     *            the programCodes to set
+     */
+    public void setProgramCodes(Set<ProgramCode> programCodes) {
+        this.programCodes = programCodes;
+    }
 
     /**
      * @return the comments
@@ -1529,4 +1550,6 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
             return -date1.compareTo(date2);
         }
     }
+
+    
 }

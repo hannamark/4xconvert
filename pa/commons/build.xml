@@ -260,6 +260,8 @@
             	<exclude name="**/StudyProtocolFlag.class"/>
             	<exclude name="**/StudyProtocolFlagDTO.class"/>
             	<exclude name="**/StudyFlagReasonCode.class"/>
+            	<exclude name="**/ProgramCode.class"/>
+            	<exclude name="**/Family.class"/>
             	<exclude name="**/gov/nih/nci/po/ws/common/types/*.class" />
             	<exclude name="**/testsupport/*.class" />
             </fileset>
