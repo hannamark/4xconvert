@@ -272,7 +272,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         try {
             trialDTO.setStatusHistory(getStatusHistoryFromSession());
             
-            trialDTO.setDocDtos(getTrialDocuments());
+            
 
             // add the IndIde,FundingList
             List<TrialIndIdeDTO> indAddList = (List<TrialIndIdeDTO>) session.getAttribute(Constants.INDIDE_ADD_LIST);
@@ -294,6 +294,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             synchDTOWithAction();
             
             String failureMessage = validateTrial();
+            trialDTO.setDocDtos(getTrialDocuments());
             if (failureMessage != null) {
                 ServletActionContext.getRequest().setAttribute("failureMessage", failureMessage);
 
@@ -327,7 +328,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             //trialUtil.populateRegulatoryList(trialDTO);
             trialUtil.populateRegulatoryListStartWithUSA(trialDTO);
             return ERROR;
-        }
+        }        
         TrialSessionUtil.removeSessionAttributes();
         session.setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
         return "review";
@@ -419,6 +420,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
                     .addAll(util
                             .convertStatusHistory(getDeletedStatusHistoryFromSession()));
             
+                  
             List<DocumentDTO> documentDTOs = util.convertToISODocument(trialDTO.getDocDtos(), studyProtocolIi);
 
             // indide updates and adds

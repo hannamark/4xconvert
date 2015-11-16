@@ -84,6 +84,7 @@ package gov.nih.nci.registry.test.integration;
 
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 
+import java.io.File;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -130,8 +131,12 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
 
         String rand = info.leadOrgID;
         runSearchAndVerifySingleTrialResult("officialTitle", rand, info);
+        
+        
+        
         invokeUpdateTrial();
-        verifyCalendarPopup();
+        verifyCalendarPopup();        
+        
     }
 
     private void updateNciGrant(TrialInfo info, boolean nciGrant) throws SQLException {
@@ -186,6 +191,51 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
     }
     
     @Test
+    public void testUpdateOfDocs() throws SQLException, URISyntaxException, InterruptedException {
+    	if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+
+        TrialInfo info = createAcceptedTrial(false);
+        final String nciID = getLastNciId();
+        
+        addNonCASummaryFour(info.id, "abstractor-ci");
+        
+        loginToPAAndAddSite(info);
+
+        acceptTrialByNciIdWithGivenDWS(nciID, info.leadOrgID,
+                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
+                        .toString());
+        assignTrialOwner("abstractor-ci", info.id);
+
+        loginAndAcceptDisclaimer();
+
+        String rand = info.leadOrgID;
+        runSearchAndVerifySingleTrialResult("officialTitle", rand, info);        
+
+        invokeUpdateTrial(); 
+        waitForPageToLoad();
+        
+        String protocolDocPath = (new File(ClassLoader.getSystemResource(
+                PROTOCOL_DOCUMENT).toURI()).toString());
+        String irbDocPath = (new File(ClassLoader.getSystemResource(
+                IRB_DOCUMENT).toURI()).toString());
+        selenium.type("protocolDoc", protocolDocPath);
+        selenium.type("irbApproval", irbDocPath);        
+       
+        //Trial Abstraction Error
+        clickAndWait("xpath=//button[text()='Review Trial']");
+        verifyUploadedDocs();
+        
+        clickAndWait("xpath=//button[text()='Submit']");
+        pause(2000);
+        verifyUploadedDocs();
+	
+    }
+    
+    @Test
     public void testUpdateTrialEmailNotification() throws SQLException, URISyntaxException, InterruptedException {
 
         if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
@@ -214,9 +264,10 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
         restartEmailServer();
         invokeUpdateTrial(); 
         waitForPageToLoad();
-       
-        //Trial Abstraction Error
+        
+         //Trial Abstraction Error
         clickAndWait("xpath=//button[text()='Review Trial']");
+        
         
         clickAndWait("xpath=//button[text()='Submit']");
         pause(2000);
@@ -244,6 +295,15 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
         SmtpMessage email = (SmtpMessage) emailIter.next();
         String body = email.getBody();
         assertTrue(body.contains("<p><b>Update Information:</b><br>Trial Start Date Type was updated.Trial Start Date was updated.</p>"));
+    }
+    
+    private void verifyUploadedDocs() {
+    	assertTrue(selenium.isTextPresent("IRB Approval Document"));
+        assertTrue(selenium.isTextPresent("IrbDoc.doc"));
+        
+        assertTrue(selenium.isTextPresent("Protocol Document"));
+        assertTrue(selenium.isTextPresent("ProtocolDoc.doc"));
+        
     }
     
     private void validateGrant() {
