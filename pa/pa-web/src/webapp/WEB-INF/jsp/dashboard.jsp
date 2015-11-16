@@ -988,6 +988,10 @@ tr.holiday {
                 heightStyle: "content"
         });
             trialsByDateTable =  $('#trials_bydate_table').DataTable({
+                "bProcessing" :true,
+                "oLanguage": {
+                    "sProcessing": "<div class=\"ctrp-loading ui-corner-all ui-tooltip-shadow\">Loading trial counts...<img src=\"../images/loading.gif\" width='16px' height='16px'></div>"
+                },
                 "bFilter" : false,
                 "paging":   false,
                 "searching":   false,
