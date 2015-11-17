@@ -18,7 +18,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
-import org.hibernate.validator.Min;
 import org.hibernate.validator.NotNull;
 
 import com.fiveamsolutions.nci.commons.audit.Auditable;
@@ -104,8 +103,7 @@ public class Family implements PersistentObject, Auditable {
     /**
      * @return the reportingPeriodLength
      */
-    @NotNull
-    @Min(value = 0)
+    @NotNull    
     @Column(name = "rep_period_len_months")
     @Searchable
     public Integer getReportingPeriodLength() {
