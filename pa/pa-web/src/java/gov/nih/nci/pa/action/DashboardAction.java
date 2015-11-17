@@ -539,6 +539,8 @@ public class DashboardAction extends AbstractCheckInOutAction implements
                                             .convertToStudyProtocolIi(getStudyProtocolId()),
                                     PAConstants.NCT_IDENTIFIER_TYPE));
             session.setAttribute(Constants.TRIAL_SUMMARY, summaryDTO);
+            session.setAttribute(Constants.TRIAL_SUBMITTER_ORG_PO_ID, summaryDTO.getSubmitterOrgId());
+            session.setAttribute(Constants.TRIAL_SUBMITTER_ORG, summaryDTO.getSubmitterOrgName());
             session.setAttribute(Constants.STUDY_PROTOCOL_II,
                     IiConverter.convertToStudyProtocolIi(getStudyProtocolId()));
 
