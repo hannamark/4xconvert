@@ -79,9 +79,13 @@
 package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.dto.OrgFamilyDTO;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.util.PaRegistry;
+
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -106,6 +110,7 @@ public class DisclaimerAction extends ActionSupport {
         HttpServletRequest request = ServletActionContext.getRequest();
         request.getSession().setAttribute("disclaimerAccepted", true);
         String isReportsAllowed = getShowReportViewerFlag();
+        
         request.getSession().setAttribute("isReportsAllowed", isReportsAllowed);
 
         RegistryUser registryUser = PaRegistry.getRegistryUserService().getUser(request.getRemoteUser());
@@ -115,6 +120,8 @@ public class DisclaimerAction extends ActionSupport {
             request.getSession().invalidate();
             return "missing_account";
         } else {
+            Boolean isProgramCodesAllowed = getProgramCodesMenuFlag(registryUser);
+            request.getSession().setAttribute("isProgramCodesAllowed", isProgramCodesAllowed);
             String reportGroups = registryUser.getReportGroups();
             boolean showExtReportLink = (reportGroups != null && reportGroups.length() > 1);
             
@@ -126,6 +133,22 @@ public class DisclaimerAction extends ActionSupport {
             
             return "redirect_to";
         }
+    }
+    
+    private Boolean getProgramCodesMenuFlag(RegistryUser registryUser) {        
+        
+        List<OrgFamilyDTO> orgFamilies = null;
+        
+        try {
+            orgFamilies = FamilyHelper.getByOrgId(registryUser.getAffiliatedOrganizationId());
+        } catch (PAException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        
+        if (orgFamilies.isEmpty()) {
+            return false;
+        }        
+        return true;
     }
 
     /**
