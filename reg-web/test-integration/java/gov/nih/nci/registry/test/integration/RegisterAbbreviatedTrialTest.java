@@ -165,7 +165,9 @@ public class RegisterAbbreviatedTrialTest extends AbstractRegistrySeleniumTest {
         waitForPageToLoad();
         driver.switchTo().defaultContent();
 
+        moveElementIntoView(By.id("trialDTO.summaryFourOrgName"));
         selenium.click("id=trialDTO.summaryFourOrgName");
+        pause(500);
         selenium.click("//table[@id='dropdown-sum4Organization']/tbody/tr[2]/td[3]/a");
         selenium.select("id=trialDTO.siteStatusCode", "In Review");
         selenium.type("id=trialDTO.siteStatusDate", "06/02/2014");
