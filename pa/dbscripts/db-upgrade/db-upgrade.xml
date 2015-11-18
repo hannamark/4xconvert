@@ -2011,5 +2011,9 @@
     <changeSet id="PO-9192" author="krylovd">       
        <comment>Backend for program codes.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3.1/PO-9192.sql"/>
-    </changeSet>   
+    </changeSet>
+    <changeSet id="PO-9192-2" author="krylovd">       
+       <comment>Program name is optional.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3.1/PO-9192-2.sql"/>
+    </changeSet>
 </databaseChangeLog>

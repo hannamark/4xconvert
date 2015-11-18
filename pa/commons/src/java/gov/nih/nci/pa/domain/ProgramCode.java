@@ -86,8 +86,6 @@ public class ProgramCode implements PersistentObject, Auditable,
     /**
      * @return the programName
      */
-    @NotNull
-    @Length(min = 1)
     @Column(name = "program_name")
     @Searchable
     public String getProgramName() {
