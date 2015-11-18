@@ -74,11 +74,12 @@ public class TrialTweetingBean implements TrialTweetingService {
     @EJB
     private URLShortenerServiceLocal urlShortenerService;
 
-    private Boolean mostRecentEnabledCheck;
+    private volatile Boolean mostRecentEnabledCheck;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void processTrials() throws PAException, IOException {
+        LOG.info("mostRecentEnabledCheck=" + mostRecentEnabledCheck);
         final boolean wasDisabledOnPreviousCheck = Boolean.FALSE
                 .equals(mostRecentEnabledCheck);
         if (!isTweetingEnabled()) {
