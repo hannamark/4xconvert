@@ -131,6 +131,7 @@ import gov.nih.nci.pa.service.util.CTGovSyncNightlyServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
+import gov.nih.nci.pa.service.util.FamilyProgramCodeService;
 import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.FlaggedTrialService;
 import gov.nih.nci.pa.service.util.I2EGrantsServiceLocal;
@@ -771,5 +772,10 @@ public class JndiServiceLocator implements ServiceLocator {
     @Override
     public StudyProcessingErrorServiceLocal getStudyProcessingErrorService() {
         return lookup("StudyProcessingErrorBeanLocal!gov.nih.nci.pa.service.StudyProcessingErrorServiceLocal");
+    }
+
+    @Override
+    public FamilyProgramCodeService getProgramCodesFamilyService() {
+        return lookup("FamilyProgramCodeService!gov.nih.nci.pa.service.util.FamilyProgramCodeService");
     }
 }

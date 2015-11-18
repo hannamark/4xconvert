@@ -131,6 +131,7 @@ import gov.nih.nci.pa.service.util.CTGovSyncNightlyServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
+import gov.nih.nci.pa.service.util.FamilyProgramCodeService;
 import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.FlaggedTrialService;
 import gov.nih.nci.pa.service.util.I2EGrantsServiceLocal;
@@ -552,5 +553,10 @@ public interface ServiceLocator {
      * @return StudyProcessingErrorService
      */
     StudyProcessingErrorService getStudyProcessingErrorService();
+    
+    /**
+     * @return FamilyServiceLocal
+     */
+    FamilyProgramCodeService getProgramCodesFamilyService();
 }
 
