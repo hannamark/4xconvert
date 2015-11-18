@@ -61,6 +61,7 @@ public class TwitterTest extends AbstractTrialStatusTest {
     public void setUp() throws Exception {
         super.setUp();
 
+        log("Setting up for a Twitter test case");
         new File(SystemUtils.USER_HOME, "pa-keystore.pkcs12").delete();
         setupTwitterAccounts();
         setupGoUsaGovAccount();
@@ -70,7 +71,9 @@ public class TwitterTest extends AbstractTrialStatusTest {
         setPaProperty("twitter.enabled", "true");
 
         // Wait for PA to pick up changes to scheduling
+        log("Wait for PA to pick up changes to scheduling...");
         Thread.sleep(SCHEDULING_CHANGES_PICK_UP_TIME);
+        log("Wait over");
 
     }
 
@@ -367,6 +370,7 @@ public class TwitterTest extends AbstractTrialStatusTest {
     private void setUpForFirstRun() throws SQLException, InterruptedException {
         // This will avoid 'first run'.
         createCancelledTweet(null);
+        log("Waiting after creating a cancelled tweet...");
         Thread.sleep(FIRST_RUN_WAIT_TIME);
     }
 
