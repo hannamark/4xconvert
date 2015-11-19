@@ -1886,8 +1886,8 @@ public class StudyProtocolQueryCriteria implements Serializable {
     /**
      * Represents a study reporting period status criterion
      */
-    public static class ReportingPeriodStatusCriterion {
-
+    public static class ReportingPeriodStatusCriterion  implements Serializable {
+        private static final long serialVersionUID = 1047596217516205316L;
         private Date startDate;
         private Date endDate;
         private List<StudyStatusCode> studyStatusCodes = new ArrayList<StudyStatusCode>();
@@ -1898,7 +1898,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
          * @param endDate - the interval endDate
          * @param codes - the status codes
          */
-        public ReportingPeriodStatusCriterion (Date startDate, Date endDate, StudyStatusCode... codes) {
+        public ReportingPeriodStatusCriterion (final Date startDate, final Date endDate, final StudyStatusCode... codes) {
             this.startDate = startDate;
             this.endDate = endDate;
             for (StudyStatusCode statusCode : codes) {
