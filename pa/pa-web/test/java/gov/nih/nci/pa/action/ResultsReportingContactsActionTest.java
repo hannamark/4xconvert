@@ -92,6 +92,7 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.OrganizationalContact;
+import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.dto.StudyContactWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
@@ -107,10 +108,12 @@ import gov.nih.nci.pa.test.util.MockServiceLocator;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
+import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.services.person.PersonSearchCriteriaDTO;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -151,7 +154,7 @@ public class ResultsReportingContactsActionTest extends AbstractHibernateTestCas
     private Map<Long, StudyContactDTO> dscMap = new HashMap<Long, StudyContactDTO>();
     private Map<Long, StudyContactDTO> pscMap = new HashMap<Long, StudyContactDTO>();
     
-    private OrganizationalContact paOrgContact;
+   
     
     
     @Before
@@ -159,11 +162,6 @@ public class ResultsReportingContactsActionTest extends AbstractHibernateTestCas
         desgneeSrchCrit.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.DESIGNEE_CONTACT));
         pioSrchCrit.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.PIO_CONTACT));
         TestSchema.primeData();
-        String hql = "select alias "
-                   + "from OrganizationalContact alias "
-                   + "where alias.id = 1";
-        Query query = PaHibernateUtil.getCurrentSession().createQuery(hql);
-        paOrgContact = (OrganizationalContact) query.list().get(0);
     }
     
     
@@ -265,20 +263,7 @@ public class ResultsReportingContactsActionTest extends AbstractHibernateTestCas
         }
         assertTrue(allerrors.contains("Invalid email address"));
         
-        sc.setEmail("some@some.com");
-        sc.setPhone("invalid phone");
-        sc.setExt("invalid ext");
-        action.setEditedDesigneeSCWebDTO(sc);
-        result = action.addOrEditDesigneeContact();
-        assertEquals("error", result);
-        assertTrue(action.hasFieldErrors());
-        
-        allerrors = new ArrayList<String>();
-        for (List lst : action.getFieldErrors().values()) {
-            allerrors.addAll(lst);
-        }
-        //assertTrue(allerrors.contains("Invalid phone number"));
-        assertTrue(allerrors.contains("Invalid extension number"));
+      
     }
     
     @Test
@@ -399,6 +384,7 @@ public class ResultsReportingContactsActionTest extends AbstractHibernateTestCas
         action.setServletRequest(getRequest());
         action.prepare();
         action.setStudyContactService(getStudyContactService());
+      
         return action;
     }
 
@@ -444,7 +430,7 @@ public class ResultsReportingContactsActionTest extends AbstractHibernateTestCas
                     public StudyContactDTO answer(
                             InvocationOnMock invocation) throws Throwable {
                         StudyContactDTO crit = (StudyContactDTO) invocation.getArguments()[0];
-                        crit.setOrganizationalContactIi(IiConverter.convertToIi(paOrgContact.getIdentifier()));
+                        crit.setOrganizationalContactIi(IiConverter.convertToIi("abcdef"));
                         Long id = IiConverter.convertToLong(crit.getIdentifier());
                         if (StudyContactRoleCode.DESIGNEE_CONTACT.equals(
                                 CdConverter.convertCdToEnum(StudyContactRoleCode.class, crit.getRoleCode()))) {
@@ -462,7 +448,7 @@ public class ResultsReportingContactsActionTest extends AbstractHibernateTestCas
             public StudyContactDTO answer(
                     InvocationOnMock invocation) throws Throwable {
                 StudyContactDTO crit = (StudyContactDTO) invocation.getArguments()[0];
-                crit.setOrganizationalContactIi(IiConverter.convertToIi(paOrgContact.getIdentifier()));
+                crit.setOrganizationalContactIi(IiConverter.convertToIi("abcdef"));
                 Long id = IiConverter.convertToLong(crit.getIdentifier());
                 if (StudyContactRoleCode.DESIGNEE_CONTACT.equals(
                         CdConverter.convertCdToEnum(StudyContactRoleCode.class, crit.getRoleCode()))) {
@@ -471,6 +457,7 @@ public class ResultsReportingContactsActionTest extends AbstractHibernateTestCas
                         CdConverter.convertCdToEnum(StudyContactRoleCode.class, crit.getRoleCode()))) {
                     pscMap.put(id, crit);
                 }
+                
                 return crit;
             }});
         
@@ -480,8 +467,9 @@ public class ResultsReportingContactsActionTest extends AbstractHibernateTestCas
     private StudyContactDTO createSCDto(long index) {
         StudyContactDTO sc = new StudyContactDTO();
         
+        
         sc.setIdentifier(IiConverter.convertToIi(index));
-        sc.setOrganizationalContactIi(IiConverter.convertToIi(paOrgContact.getIdentifier()));
+        sc.setOrganizationalContactIi(IiConverter.convertToIi("abcdef"));
         sc.setPrsUserName(StConverter.convertToSt("prsUserName" +  index));
         sc.setComments(StConverter.convertToSt("comments"));
         sc.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
@@ -494,6 +482,7 @@ public class ResultsReportingContactsActionTest extends AbstractHibernateTestCas
         DSet<Tel> dsetList = null;
         dsetList =  DSetConverter.convertListToDSet(phones, DSetConverter.TYPE_PHONE, dsetList);
         dsetList =  DSetConverter.convertListToDSet(emails, DSetConverter.TYPE_EMAIL, dsetList);
+        
         sc.setTelecomAddresses(dsetList);
         
         return sc;

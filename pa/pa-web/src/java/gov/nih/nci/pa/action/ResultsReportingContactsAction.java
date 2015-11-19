@@ -98,7 +98,6 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.pa.util.PhoneUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -111,7 +110,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.PredicateUtils;
-import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.ServletRequestAware;
@@ -165,6 +163,11 @@ ServletRequestAware , Preparable {
     private Long pscToEdit;
     
     private String process;
+    private String contactType;
+    private String dcCountry;
+    private String pcCountry;
+    
+    
     
     private PAServiceUtils paSvcUtils = new PAServiceUtils();
     
@@ -242,6 +245,7 @@ ServletRequestAware , Preparable {
             studyPioContactWebDtos = new ArrayList<StudyContactWebDTO>();
             populateWebDtos(studyPioContactWebDtos, studyPioContactDtos);
             
+            
             populateSession();
             editedDesigneeSCWebDTO = initWebDto();
             editedPioSCWebDTO = initWebDto();
@@ -254,7 +258,7 @@ ServletRequestAware , Preparable {
     /**
      * @throws PAException
      */
-    private void populateWebDtos(List<StudyContactWebDTO> scWebDtos, List<StudyContactDTO> scDtos) throws PAException {
+    private void populateWebDtos(List<StudyContactWebDTO> scWebDtos, List<StudyContactDTO> scDtos) throws Exception {
         if (CollectionUtils.isNotEmpty(scDtos)) {
             for (StudyContactDTO scDto : scDtos) {
                 FunctionalRoleStatusCode stsCd = CdConverter.convertCdToEnum(FunctionalRoleStatusCode.class, 
@@ -320,7 +324,8 @@ ServletRequestAware , Preparable {
                 break;
             }
         }
-        
+        contactType = "dc";
+        dcCountry = editedDesigneeSCWebDTO.getCountry();
         return SUCCESS;
     }
     
@@ -344,7 +349,8 @@ ServletRequestAware , Preparable {
                 break;
             }
         }
-        
+        contactType = "pc";
+        pcCountry = editedPioSCWebDTO.getCountry();
         return SUCCESS;
     }
     
@@ -429,9 +435,6 @@ ServletRequestAware , Preparable {
 
             populatePOOrgAndPerson(editedDesigneeSCWebDTO);
 
-            if (!validatePhone(editedDesigneeSCWebDTO, StudyContactRoleCode.DESIGNEE_CONTACT)) {
-                return ERROR;
-            }
             
             if (EDIT_STR.equals(process)) {
                 editDesigneeContact();
@@ -477,10 +480,7 @@ ServletRequestAware , Preparable {
             
             editedPioSCWebDTO.setSelPoOrgId(leadOrgId.toString());
             populatePOOrgAndPerson(editedPioSCWebDTO);
-            
-            if (!validatePhone(editedPioSCWebDTO, StudyContactRoleCode.PIO_CONTACT)) {
-                return ERROR;
-            }
+          
             
             if (EDIT_STR.equals(process)) {
                 editPIOContact();
@@ -588,6 +588,7 @@ ServletRequestAware , Preparable {
     private Person getPaPersonByPoId(String prsnPoId) throws PAException {
         return paSvcUtils.getOrCreatePAPersonByPoIi(IiConverter.convertToPoPersonIi(prsnPoId));
     }
+ 
     
     private boolean validateScWebDto(StudyContactWebDTO scWebDto, StudyContactRoleCode scrStsCd) {
         if (scWebDto == null) {
@@ -614,23 +615,7 @@ ServletRequestAware , Preparable {
         return !hasFieldErrors();
     }
     
-    private boolean validatePhone(StudyContactWebDTO scWebDto, StudyContactRoleCode scrStsCd) {
-        if (scWebDto == null) {
-            return true;
-        }
-        String pfx = StudyContactRoleCode.DESIGNEE_CONTACT.equals(scrStsCd)  
-                ? "editedDesigneeSCWebDTO." : "editedPioSCWebDTO.";
-        if (StringUtils.isNotEmpty(scWebDto.getPhone()) 
-                && !PhoneUtil.isPhoneNumberValid(scWebDto.getContactOrg().getCountryName(), 
-                scWebDto.getPhone()))  {
-            addFieldError(pfx + "phone", "Invalid phone number");
-        }
-        if (StringUtils.isNotEmpty(scWebDto.getExt())
-                && !NumberUtils.isNumber(scWebDto.getExt()))  {
-            addFieldError(pfx + "ext", "Invalid extension number");
-        }
-        return !hasFieldErrors();
-    }
+   
     
     private boolean checkDuplicate(StudyContactWebDTO scWebDto, StudyContactRoleCode scrStsCd) {
         if (scWebDto == null) {
@@ -889,6 +874,48 @@ ServletRequestAware , Preparable {
      */
     public void setPaSvcUtils(PAServiceUtils paSvcUtils) {
         this.paSvcUtils = paSvcUtils;
+    }
+
+    /**
+     * @return contactType
+     */
+    public String getContactType() {
+        return contactType;
+    }
+
+    /**
+     * @param contactType contactType
+     */
+    public void setContactType(String contactType) {
+        this.contactType = contactType;
+    }
+
+    /**
+     * @return dcCountry
+     */
+    public String getDcCountry() {
+        return dcCountry;
+    }
+
+    /**
+     * @param dcCountry dcCountry
+     */
+    public void setDcCountry(String dcCountry) {
+        this.dcCountry = dcCountry;
+    }
+
+    /**
+     * @return pcCountry
+     */
+    public String getPcCountry() {
+        return pcCountry;
+    }
+
+    /**
+     * @param pcCountry pcCountry
+     */
+    public void setPcCountry(String pcCountry) {
+        this.pcCountry = pcCountry;
     }
 
     

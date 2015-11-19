@@ -437,11 +437,22 @@ public class TestSchema {
         addUpdObject(crs);
         clinicalResearchStaffIds.add(crs.getId());
 
+       
         OrganizationalContact orgContact = createOrganizationalContactObj(org,
                 per);
         orgContact.setIdentifier("abcd");
         addUpdObject(orgContact);
         organizationalContactIds.add(orgContact.getId());
+        
+        Person person = TestSchema.createPersonObj();
+        person.setIdentifier("1");
+        addUpdObject(person);
+        orgContact = createOrganizationalContactObj(org,
+                person);
+        orgContact.setIdentifier("abcdef");
+        addUpdObject(orgContact);
+      
+        
 
         StudySite sPart = new StudySite();
         sPart.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);

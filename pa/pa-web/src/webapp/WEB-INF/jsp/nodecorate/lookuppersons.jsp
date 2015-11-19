@@ -12,9 +12,14 @@
                 window.top.hidePopWin(true);
             }
         
-            function callCreatePerson(persid, rolecode, fname, lname, email, phone) {
+            function callCreatePerson(persid, rolecode, fname, lname, email, phone, country) {
                 top.window.setpersid(persid, (lname+', '+fname), email, phone);
                 top.window.loadPersDiv(persid, rolecode, 'add');
+                //check if function exists in top window to accept value of country
+                if(typeof top.window['setPersonCountry'] =='function') {
+                	top.window.setPersonCountry(country);
+                } 
+                
                 window.top.hidePopWin(true);
             }
         

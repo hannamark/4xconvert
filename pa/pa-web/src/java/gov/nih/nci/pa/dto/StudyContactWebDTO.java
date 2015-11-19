@@ -94,7 +94,9 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.PABaseCorrelation;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
+import gov.nih.nci.services.person.PersonSearchCriteriaDTO;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -153,6 +155,8 @@ public class StudyContactWebDTO implements Serializable {
     
     private transient PAServiceUtils paServiceUtils = new PAServiceUtils();
     
+    private String country;
+    
     private transient PABaseCorrelation<PAOrganizationalContactDTO , OrganizationalContactDTO , OrganizationalContact ,
     OrganizationalContactConverter> paBaseCorrltn = new PABaseCorrelation<PAOrganizationalContactDTO ,
     OrganizationalContactDTO , OrganizationalContact , OrganizationalContactConverter>(
@@ -203,6 +207,22 @@ public class StudyContactWebDTO implements Serializable {
             editedPoPrsnId = contactPerson.getIdentifier();
             selPoPrsnId = contactPerson.getIdentifier();
             editedPrsnNm = contactPerson.getFullName();
+            
+            
+          
+                PersonSearchCriteriaDTO personSearchCriteriaDTO = new PersonSearchCriteriaDTO();
+                personSearchCriteriaDTO.setId(selPoPrsnId);
+                List<PaPersonDTO> personList;
+                try {
+                    personList = PADomainUtils.searchPoPersons(personSearchCriteriaDTO);
+                if (personList != null && personList.size() > 0) {
+                    this.country = personList.get(0).getCountry();
+                }
+                } catch (Exception e) {
+                    throw new PAException(e.getMessage());
+                }
+                
+          
         } else {
             contactPerson = new Person();
         }
@@ -218,6 +238,7 @@ public class StudyContactWebDTO implements Serializable {
         if (CollectionUtils.isNotEmpty(phoneLst)) {
             setPhoneWithExt(phoneLst.get(0));
         }
+        
     }
     
     /**
@@ -626,6 +647,20 @@ public class StudyContactWebDTO implements Serializable {
             OrganizationalContactDTO, OrganizationalContact,
             OrganizationalContactConverter> paBaseCorrltn) {
         this.paBaseCorrltn = paBaseCorrltn;
+    }
+
+    /**
+     * @return country
+     */
+    public String getCountry() {
+        return country;
+    }
+
+    /**
+     * @param country country
+     */
+    public void setCountry(String country) {
+        this.country = country;
     }
     
 

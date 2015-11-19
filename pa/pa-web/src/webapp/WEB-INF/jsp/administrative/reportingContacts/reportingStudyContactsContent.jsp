@@ -72,6 +72,15 @@ function setpersid(persIdentifier,name,email,phone) {
 	}
 }
 
+function setPersonCountry(country) {
+    var ct = $('contactType').value;
+    if(ct=='dc') {
+        jQuery("#dcCountry").val(country);
+    } else if(ct=='pc') {
+    	  jQuery("#pcCountry").val(country);
+    }
+}
+
 function loadDiv(orgId) {
 }
 
@@ -100,9 +109,16 @@ function validatePhone(phoneFldId) {
     return true;
 }
 
-function validateExt(extFldId) {
+function validateExt(extFldId, phoneId) {
+	
     var box = $('' + extFldId);
-    if(box.value == '') return true;    
+    if(box.value == '') return true; 
+    
+    var phoneVal = jQuery("#"+phoneId).val();
+    if(jQuery.trim(phoneVal)=="") {
+        alert("Please enter phone");
+        return false;
+    }
 
     if (!validateExtWithRegex(box.value)) {
         alert("Invalid Entry:\nOnly numbers are allowed for 'Ext'.");
@@ -111,18 +127,53 @@ function validateExt(extFldId) {
     return true;
 }
 
+function getCountry() {
+	var country; 
+    var ct = jQuery('#contactType').val();
+    if(ct=='dc') {
+        country = jQuery("#dcCountry").val();
+    }
+    else if(ct=='pc') {
+        country = jQuery("#pcCountry").val();
+    }
+    return country;
+}
+
+
 
 function addOrUpdateDesigneeContact() {
+	var personVal = jQuery("#dscPrsn").val();
+	if(jQuery.trim(personVal)=="") {
+		 alert("Name is required");
+		 jQuery("#dscPrsn").focus();
+		 return false;
+	}
+	
 	if(!validateEmail('dscEmail')) return false;
-	if(!validatePhone('dscPhone')) return false;
-	if(!validateExt('dscExt')) return false;
+	var country = getCountry();
+		//only validate phone for usa or canada
+	    if(country=="USA" || country=="CAN") {
+	    	   if(!validatePhone('dscPhone')) return false;
+	    } 
+    if(!validateExt('dscExt','dscPhone')) return false;
 	submitStudyContact('reportStudyContactsForm', 'ajaxResultsReportingContactaddOrEditDesigneeContact.action');
 }
 
 function addOrUpdatePioContact() {
-	if(!validateEmail('pscEmail')) return false;
-    if(!validatePhone('pscPhone')) return false;
-    if(!validateExt('pscExt')) return false;
+	var personVal = jQuery("#pscPrsn").val();
+    if(jQuery.trim(personVal)=="") {
+         alert("Name is required");
+         jQuery("#pscPrsn").focus();
+         return false;
+    }
+    
+    var country = getCountry();
+   if(!validateEmail('pscEmail')) return false;
+	//only validate phone for usa or canada
+    if(country=="USA" || country=="CAN") {
+     if(!validatePhone('pscPhone')) return false;
+    }
+    if(!validateExt('pscExt','pscPhone')) return false;
     submitStudyContact('reportStudyContactsForm', 'ajaxResultsReportingContactaddOrEditPIOContact.action');
 }
 
@@ -196,9 +247,11 @@ function submitStudyContact(scFormName, scUrl) {
     <s:form name="reportStudyContactsForm" id ="reportStudyContactsForm" action="">
         <pa:studyUniqueToken/>
         
-        <input type="hidden" id="contactType" name="contactType" />
+         <s:hidden id="contactType" name="contactType"/>
         <s:hidden id="process" name="process"/>
         <s:hidden id="studyProtocolId" name="studyProtocolId"/>
+        <s:hidden id="dcCountry" name="dcCountry" />
+        <s:hidden id="pcCountry" name="pcCountry" />
         
         <jsp:include page="reportAddEditDesigneeStudyContact.jsp"/>
         <jsp:include page="reportAddEditPioStudyContact.jsp"/>
