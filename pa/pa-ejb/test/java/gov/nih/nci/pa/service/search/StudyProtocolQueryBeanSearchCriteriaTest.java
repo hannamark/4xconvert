@@ -6,18 +6,21 @@ package gov.nih.nci.pa.service.search;
 import static org.mockito.Mockito.*;
 
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
+import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.service.search.StudyProtocolOptions.MilestoneFilter;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
 
-import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,6 +28,7 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.apache.commons.collections.ListUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Query;
 import org.junit.Before;
 import org.junit.Test;
@@ -121,8 +125,8 @@ public class StudyProtocolQueryBeanSearchCriteriaTest extends
         sec801Inds.add(true);
         sec801Inds.add(false);
         options.setSection801Indicators(sec801Inds);
-        options.setPcdFromDate(new java.util.Date());
-        options.setPcdToDate(new java.util.Date());
+        options.setPcdFromDate(new Date());
+        options.setPcdToDate(new Date());
         List<ActualAnticipatedTypeCode> dateTypes = new ArrayList<ActualAnticipatedTypeCode>();
         dateTypes.add(ActualAnticipatedTypeCode.ACTUAL);
         dateTypes.add(ActualAnticipatedTypeCode.ANTICIPATED);
@@ -140,8 +144,8 @@ public class StudyProtocolQueryBeanSearchCriteriaTest extends
     public final void testResultsQueryExcluedRejectedTrials() {
         StudyProtocol sp = new StudyProtocol();
         StudyProtocolOptions options = new StudyProtocolOptions();
-        options.setPcdFromDate(new java.util.Date());
-        options.setPcdToDate(new java.util.Date());
+        options.setPcdFromDate(new Date());
+        options.setPcdToDate(new Date());
         options.setExcludeRejectedTrials(true);
         StudyProtocolQueryBeanSearchCriteria criteria = new StudyProtocolQueryBeanSearchCriteria(
                 sp, options);
@@ -159,13 +163,36 @@ public class StudyProtocolQueryBeanSearchCriteriaTest extends
         acceptedWS.setStatusCode(DocumentWorkflowStatusCode.ACCEPTED);
         sp.getDocumentWorkflowStatuses().add(acceptedWS);
         StudyProtocolOptions options = new StudyProtocolOptions();
-        options.setPcdFromDate(new java.util.Date());
-        options.setPcdToDate(new java.util.Date());
+        options.setPcdFromDate(new Date());
+        options.setPcdToDate(new Date());
         StudyProtocolQueryBeanSearchCriteria criteria = new StudyProtocolQueryBeanSearchCriteria(
                 sp, options);
         Query query = criteria.getQuery("", false);
         String hql = query.getQueryString();
         System.out.println(hql);
         Assert.assertTrue(hql.contains("WHERE  dws.statusCode in (:documentWorkflowStatusParam)  and dws.currentlyActive = true AND  obj.dates.primaryCompletionDate >= :pcdFromDate AND  obj.dates.primaryCompletionDate <= :pcdToDate"));
+    }
+
+
+    @Test
+    public final void testResultsQueryForReportingPeriodStatusCriterion() {
+
+        StudyProtocol sp = new StudyProtocol();
+
+
+        StudyProtocolOptions options = new StudyProtocolOptions();
+        options.setPcdFromDate(new Date());
+        options.setPcdToDate(new Date());
+        options.setReportingPeriodEnd(new Date());
+        options.setReportingPeriodStart(new Date());
+        options.getStudyStatusCodes().add(StudyStatusCode.ENROLLING_BY_INVITATION);
+        options.getStudyStatusCodes().add(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL);
+
+        StudyProtocolQueryBeanSearchCriteria criteria = new StudyProtocolQueryBeanSearchCriteria(
+                sp, options);
+        Query query = criteria.getQuery("", false);
+        String hql = query.getQueryString();
+        System.out.println(hql);
+        Assert.assertTrue(hql.contains("WHERE  obj.dates.primaryCompletionDate >= :pcdFromDate AND  obj.dates.primaryCompletionDate <= :pcdToDate  AND  sos.statusCode in (:studyOverallStatusParam)  and sos.id in (select id from obj.studyOverallStatuses where statusDate between :reportingPeriodStartParam and :reportingPeriodEndParam)"));
     }
 }

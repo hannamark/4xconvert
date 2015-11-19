@@ -7,6 +7,7 @@ import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudyFlagReasonCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.service.search.StudyProtocolOptions.MilestoneFilter;
 
@@ -137,6 +138,8 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private String pcdType;    
 
     private StudyFlagReasonCode notFlaggedWith;
+
+    private ReportingPeriodStatusCriterion reportingPeriodStatusCriterion;
 
     /**
      * @return the inBoxProcessing
@@ -808,7 +811,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     }
 
     /**
-     * @param listOfStrings
+     * @param list - a list of strings
      * @return
      */
     @SuppressWarnings("unchecked")
@@ -1028,6 +1031,36 @@ public class StudyProtocolQueryCriteria implements Serializable {
     }
 
     /**
+     * Will return the reporting period status criterion
+     *
+     * @return the reportingPeriodStatusCriterion
+     */
+    public ReportingPeriodStatusCriterion getReportingPeriodStatusCriterion() {
+        return reportingPeriodStatusCriterion;
+    }
+
+    /**
+     * Sets the reporting period criterion
+     * @param rpCriterion the reportingPeriodStatusCriterion
+     */
+    public void setReportingPeriodStatusCriterion(ReportingPeriodStatusCriterion rpCriterion) {
+        this.reportingPeriodStatusCriterion = rpCriterion;
+    }
+
+
+    /**
+     * A convenience method to populate the reporting period status criterion
+     * @param reportingPeriodStart the reportingPeriodStart
+     * @param reportingPeriodEnd the reportingPeriodEnd
+     * @param statusCodescodes the statusCodescodes
+     */
+    public void populateReportingPeriodStatusCriterion(Date reportingPeriodStart, Date reportingPeriodEnd,
+                                                       StudyStatusCode... statusCodescodes) {
+        setReportingPeriodStatusCriterion(new ReportingPeriodStatusCriterion(reportingPeriodStart,
+                reportingPeriodEnd, statusCodescodes));
+    }
+
+    /**
      * Returns a {@link String} key that identifies this criteria. Two criteria
      * objects that are exactly the same will return the same key. Two criteria
      * objects that are different at least in one field value will have
@@ -1116,7 +1149,9 @@ public class StudyProtocolQueryCriteria implements Serializable {
                 .append(", section801Indicators=").append(section801Indicators)
                 .append(" pcdFromDate=").append(pcdFrom).append(" pcdToDate=")
                 .append(pcdTo).append(" pcdFromDateType=").append(pcdType)                
-                .append(" notFlaggedWith=").append(notFlaggedWith).append("]");
+                .append(" notFlaggedWith=").append(notFlaggedWith)
+                .append(" reportingPeriodStatusCriterion=").append(reportingPeriodStatusCriterion)
+                .append("]");
         return builder.toString();
     }
 
@@ -1781,6 +1816,8 @@ public class StudyProtocolQueryCriteria implements Serializable {
             builder.append("pcdFromType=").append(pcdType).append(", ");     
         if (notFlaggedWith != null)
             builder.append("notFlaggedWith=").append(notFlaggedWith);
+        if (reportingPeriodStatusCriterion != null)
+            builder.append("reportingPeriodStatusCriterion=").append(reportingPeriodStatusCriterion);
         builder.append("]");
         return builder.toString();
     }
@@ -1844,6 +1881,69 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public void setSiteStatusCodes(List<RecruitmentStatusCode> siteStatusCodes) {
         this.siteStatusCodes = siteStatusCodes;
+    }
+
+    /**
+     * Represents a study reporting period status criterion
+     */
+    public static class ReportingPeriodStatusCriterion {
+
+        private Date startDate;
+        private Date endDate;
+        private List<StudyStatusCode> studyStatusCodes = new ArrayList<StudyStatusCode>();
+
+        /**
+         * Will create a  ReportingPeriodStatusCriterion
+         * @param startDate - the interval startDate
+         * @param endDate - the interval endDate
+         * @param codes - the status codes
+         */
+        public ReportingPeriodStatusCriterion (Date startDate, Date endDate, StudyStatusCode... codes) {
+            this.startDate = startDate;
+            this.endDate = endDate;
+            for (StudyStatusCode statusCode : codes) {
+                studyStatusCodes.add(statusCode);
+            }
+        }
+
+        /**
+         * Returns the start date
+         * @return  - the start date of interval
+         */
+        public Date getStartDate() {
+            return startDate;
+        }
+
+        /**
+         * Returns the end date
+         * @return  - endDate of interval
+         */
+        public Date getEndDate() {
+            return endDate;
+        }
+
+        /**
+         * Returns the Study status codes set
+         * @return
+         */
+        public List<StudyStatusCode> getStudyStatusCodes() {
+            return studyStatusCodes;
+        }
+
+        /**
+         * Will return the string version of this criterion object
+         * @return  - a String
+         */
+        public String toString() {
+            StringBuilder sb = new StringBuilder("{");
+            sb.append("from=")
+              .append(String.valueOf(startDate))
+              .append(",to=").append(String.valueOf(endDate))
+              .append(",statusCodes=")
+              .append(String.valueOf(studyStatusCodes));
+            sb.append("}");
+            return sb.toString();
+        }
     }
 
 }

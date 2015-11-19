@@ -108,11 +108,14 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
 
 import junit.framework.Assert;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Session;
+import org.joda.time.Interval;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -185,7 +188,7 @@ public class ProtocolQueryBeanTest extends AbstractEjbTestCase {
 
     /**
      * tests if tree traversal is correct
-     * 
+     *
      * @throws PAException
      */
     @Test
@@ -212,6 +215,73 @@ public class ProtocolQueryBeanTest extends AbstractEjbTestCase {
         dto = findProtocol();
         assertEquals(StudyStatusCode.ENROLLING_BY_INVITATION,
                 dto.getStudyStatusCode());
+
+    }
+
+
+
+    /**
+     * tests if tree traversal is correct
+     *
+     * @throws PAException
+     */
+    @Test
+    public void testSearchProtocolsByReportingPeriodAndStatus() throws PAException {
+
+        // When there exist no study with TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION status code
+        List<StudyProtocolQueryDTO> studyProtocolQueryDTOs = findProtocolsWithinReportingPeriodHavingStatus(
+                TestSchema.YESTERDAY, TestSchema.TOMMORROW);
+        //then I must not get any data
+        assertEquals(0, studyProtocolQueryDTOs.size());
+
+        //when I update a study, with TEMPORARILY_CLOSED_TO_ACCRUAL
+        StudyProtocol sp = TestSchema.studyProtocols.get(0);
+
+        StudyOverallStatus sos = new StudyOverallStatus();
+        sos.setStatusCode(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL);
+        sos.setStatusDate(TestSchema.TODAY);
+        sos.setStudyProtocol(sp);
+        sos.setDeleted(true);
+        TestSchema.addUpdObject(sos);
+
+        //then also I should not get any maches for TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION
+        studyProtocolQueryDTOs = findProtocolsWithinReportingPeriodHavingStatus(
+                TestSchema.YESTERDAY, TestSchema.TOMMORROW);
+        //then I must not get any data
+        assertEquals(0, studyProtocolQueryDTOs.size());
+
+
+        //When I update a study with TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION
+        sp = TestSchema.studyProtocols.get(1);
+        sos = new StudyOverallStatus();
+        sos.setStatusCode(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION);
+        sos.setStatusDate(TestSchema.TODAY);
+        sos.setStudyProtocol(sp);
+        sos.setDeleted(false);
+        TestSchema.addUpdObject(sos);
+
+        //then I must see the correct study
+        studyProtocolQueryDTOs = findProtocolsWithinReportingPeriodHavingStatus(
+                TestSchema.YESTERDAY, TestSchema.TOMMORROW);
+        assertEquals(1, studyProtocolQueryDTOs.size());
+        assertEquals(sp.getId(), studyProtocolQueryDTOs.get(0).getStudyProtocolId());
+
+        //But, when I search with out of range dates
+        studyProtocolQueryDTOs = findProtocolsWithinReportingPeriodHavingStatus(
+                TestSchema.TOMMORROW, TestSchema.DAY_AFTER_TOMMORROW);
+        //then I should not get any results
+        assertEquals(0, studyProtocolQueryDTOs.size());
+
+        //when I delete the status TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION on a known study
+        sos.setDeleted(true);
+        TestSchema.addUpdObject(sos);
+
+        //And I search  TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION
+        studyProtocolQueryDTOs = findProtocolsWithinReportingPeriodHavingStatus(
+                TestSchema.YESTERDAY, TestSchema.TOMMORROW);
+
+        //That study (which is the only study) should not be present in search
+        assertEquals(0, studyProtocolQueryDTOs.size());
 
     }
 
@@ -304,5 +374,20 @@ public class ProtocolQueryBeanTest extends AbstractEjbTestCase {
         StudyProtocolQueryDTO dto = bean.getStudyProtocolByCriteria(crit)
                 .get(0);
         return dto;
+    }
+
+
+    /**
+     * @return
+     * @throws PAException
+     */
+    private  List<StudyProtocolQueryDTO>  findProtocolsWithinReportingPeriodHavingStatus(Date from, Date to) throws PAException {
+        System.out.println("-----------------------------------------------------------------------------------------");
+        StudyProtocolQueryCriteria crit = new StudyProtocolQueryCriteria();
+        crit.populateReportingPeriodStatusCriterion(from, to,
+                StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION);
+        List<StudyProtocolQueryDTO> dtoList =  bean.getStudyProtocolByCriteria(crit);
+        System.out.println("=========================================================================================");
+        return dtoList;
     }
 }

@@ -97,7 +97,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.junit.Test;
 
 /**
@@ -222,6 +225,14 @@ public class StudyProtocolQueryCriteriaTest {
         assertEquals("Wrong result size", 2, result.size());
         assertEquals("Wrong result(0)", "name1", result.get(0));
         assertEquals("Wrong result(1)", "name2", result.get(1));
+    }
+
+    @Test
+    public void testToString() {
+        assertFalse(sut.toString().contains("reportingPeriodStatusCriterion"));
+        sut.populateReportingPeriodStatusCriterion(new Date(), new Date(),
+                StudyStatusCode.ACTIVE, StudyStatusCode.IN_REVIEW);
+        assertTrue(sut.toString().contains("reportingPeriodStatusCriterion"));
     }
     
     @Test
@@ -661,9 +672,18 @@ public class StudyProtocolQueryCriteriaTest {
         PropertyUtils.setSimpleProperty(c2, "holdRecordExists", true);
         assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
         assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
-        usedKeys.add(c1.getUniqueCriteriaKey());  
-        
+        usedKeys.add(c1.getUniqueCriteriaKey());
 
+        Date startDate = new Date();
+        Date endDate = new Date();
+        c1.populateReportingPeriodStatusCriterion(startDate, endDate, StudyStatusCode.ACTIVE,
+                StudyStatusCode.IN_REVIEW);
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        c2.populateReportingPeriodStatusCriterion(startDate, endDate, StudyStatusCode.ACTIVE,
+                StudyStatusCode.IN_REVIEW);
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
     }
     
 }

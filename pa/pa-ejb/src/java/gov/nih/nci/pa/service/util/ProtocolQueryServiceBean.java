@@ -556,6 +556,12 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         }        
         options.setPcdDateTypes(pcdDateTypes);
         populateExample(criteria, example);
+        if (criteria.getReportingPeriodStatusCriterion() != null) {
+            options.setReportingPeriodEnd(criteria.getReportingPeriodStatusCriterion().getEndDate());
+            options.setReportingPeriodStart(criteria.getReportingPeriodStatusCriterion().getStartDate());
+            options.getStudyStatusCodes().addAll(criteria.getReportingPeriodStatusCriterion().getStudyStatusCodes());
+        }
+
         return new StudyProtocolQueryBeanSearchCriteria(example, options);
     }
 
@@ -914,6 +920,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && CollectionUtils.isEmpty(criteria.getInterventionIds())
                 && CollectionUtils.isEmpty(criteria.getInterventionAlternateNameIds())
                 && CollectionUtils.isEmpty(criteria.getInterventionTypes())
+                && criteria.getReportingPeriodStatusCriterion() == null
                 && (criteria.isMyTrialsOnly() != null && !criteria.isMyTrialsOnly()
                         || criteria.isMyTrialsOnly() == null));
     }

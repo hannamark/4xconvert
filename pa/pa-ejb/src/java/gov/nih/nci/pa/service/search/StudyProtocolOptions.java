@@ -89,13 +89,16 @@ import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudyFlagReasonCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -157,7 +160,10 @@ public class StudyProtocolOptions {
     private List<ActualAnticipatedTypeCode> pcdDateTypes;
     private StudyFlagReasonCode notFlaggedWith;
     private List<RecruitmentStatusCode> siteStatusCodes = new ArrayList<>();
-    
+    private Date reportingPeriodStart;
+    private Date reportingPeriodEnd;
+    private Set<StudyStatusCode> studyStatusCodes = new HashSet<StudyStatusCode>();
+
     /**
      * @return excludeRejectedTrials
      */
@@ -946,5 +952,53 @@ public class StudyProtocolOptions {
      */
     public void setSiteStatusCodes(List<RecruitmentStatusCode> siteStatusCodes) {
         this.siteStatusCodes = siteStatusCodes;
+    }
+
+    /**
+     *
+     * @return the reportingPeriodStart
+     */
+    public Date getReportingPeriodStart() {
+        return reportingPeriodStart;
+    }
+
+    /**
+     * Sets the reportingPeriodStart
+     * @param reportingPeriodStart  the reportingPeriodStart
+     */
+    public void setReportingPeriodStart(Date reportingPeriodStart) {
+        this.reportingPeriodStart = reportingPeriodStart;
+    }
+
+    /**
+     *
+     * @return the reportingPeriodEnd
+     */
+    public Date getReportingPeriodEnd() {
+        return reportingPeriodEnd;
+    }
+
+    /**
+     * Sets the reportingPeriodEnd
+     * @param reportingPeriodEnd  the reportingPeriodEnd
+     */
+    public void setReportingPeriodEnd(Date reportingPeriodEnd) {
+        this.reportingPeriodEnd = reportingPeriodEnd;
+    }
+
+    /**
+     * Gets the studyStatusCodes
+     * @return  the studyStatusCodes
+     */
+    public Set<StudyStatusCode> getStudyStatusCodes() {
+        return studyStatusCodes;
+    }
+
+    /**
+     * Sets the studyStatusCodes
+     * @param studyStatusCodes   the studyStatusCodes
+     */
+    public void setStudyStatusCodes(Set<StudyStatusCode> studyStatusCodes) {
+        this.studyStatusCodes = studyStatusCodes;
     }
 }

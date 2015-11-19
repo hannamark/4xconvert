@@ -161,8 +161,8 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
     }
 
     private boolean needJoinOnOverallStatuses() {
-        return CollectionUtils.isNotEmpty(getCriteria()
-                .getStudyOverallStatuses());
+        return CollectionUtils.isNotEmpty(getCriteria().getStudyOverallStatuses())
+               || CollectionUtils.isNotEmpty(spo.getStudyStatusCodes());
     }
 
     private boolean needJoinOnMilestones() {
@@ -195,7 +195,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         return SearchableUtils.getQueryBySearchableFields(getCriteria(), isCountOnly, orderByProperty,
                 leftJoinClause + joinClause, getSession(), new StudyProtocolHelper(getCriteria(), spo));
     }
-    
+
     /**
      * @param attributes attributes
      * @param orderByProperty orderByProperty
@@ -209,22 +209,24 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 attributes, isCountOnly, orderByProperty, "", leftJoinClause
                         + joinClause, getSession(), new StudyProtocolHelper(
                         getCriteria(), spo));
-    } 
+    }
 
     /**
      * Helper that adds synonym checks to the searches.
      */
     @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
     private static class StudyProtocolHelper implements SearchableUtils.AfterIterationHelper {
-       
+
         private static final String CONNECTOR = " %s ";
-        private static final String CITY_PARAM = "city";       
-        private static final String STATES_PARAM = "states";        
-        private static final String COUNTRY_NAME_PARAM = "countryName";      
+        private static final String CITY_PARAM = "city";
+        private static final String STATES_PARAM = "states";
+        private static final String COUNTRY_NAME_PARAM = "countryName";
         private static final String LEAD_ORGANIZATION_FUNCTIONAL_CODE_PARAM = "leadOrganizationFunctionalCode";
         private static final String ID_ASSIGNER_FUNCTIONAL_CODE_PARAM = "idAssignerFunctionalCode";
         private static final String PARTICIPATING_SITE_FUNCTIONAL_CODE_PARAM = "participatingSitefunctionalCode";
         private static final String SOS_PARAM = "studyOverallStatusParam";
+        private static final String REPORTING_PERIOD_START_PARAM = "reportingPeriodStartParam";
+        private static final String REPORTING_PERIOD_END_PARAM = "reportingPeriodEndParam";
         private static final String DWS_PARAM = "documentWorkflowStatusParam";
         private static final String REJECTED_DWS_PARAM = "rejectedDocumentWorkflowStatusParam";
         private static final String TERMINATED_DWS_PARAM = "terminatedDocumentWorkflowStatusParam";
@@ -269,7 +271,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         private static final String FLAG_CODE_PARAM = "flagReason";
         private static final String SITE_STATUSES_PARAM = "siteStatuses";
         private final StudyProtocol sp;
-        private final StudyProtocolOptions spo;        
+        private final StudyProtocolOptions spo;
 
         public StudyProtocolHelper(StudyProtocol sp, StudyProtocolOptions spo) {
             this.sp = sp;
@@ -284,9 +286,9 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 Map<String, Object> params) {
             handleStudyOverallStatuses(whereClause, params);
             handleDocumentWorkflowStatuses(whereClause, params);
-            handleMilestones(whereClause, params);   
+            handleMilestones(whereClause, params);
             handleOfficialTitle(whereClause, params);
-            
+
             if (spo.isExcludeRejectedTrials()) {
                 appendDWSExclusionClause(whereClause, params,
                         DocumentWorkflowStatusCode.REJECTED, REJECTED_DWS_PARAM);
@@ -296,7 +298,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                         DocumentWorkflowStatusCode.SUBMISSION_TERMINATED,
                         TERMINATED_DWS_PARAM);
             }
-            
+
             handlePrimaryPurposeCodes(whereClause, params);
             handlePhaseCodes(whereClause, params);
             handleSummary4AnatomicSites(whereClause, params);
@@ -304,54 +306,55 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
             generateLocationWhereClause(whereClause, params);
             handleIdentifiersAndOwnership(whereClause, params);
             handleAdditionalCriteria(whereClause, params);
-            
-            if (spo.getCtgovXmlRequiredIndicator() != null) {  
+
+            if (spo.getCtgovXmlRequiredIndicator() != null) {
                 String operator = determineOperator(whereClause);
-                whereClause.append(String.format(" %s %s.ctgovXmlRequiredIndicator = :%s" , operator,  
+                whereClause.append(String.format(" %s %s.ctgovXmlRequiredIndicator = :%s" , operator,
                          SearchableUtils.ROOT_OBJ_ALIAS, CTGOV_XML_REQUIRED_INDICATOR));
                 params.put(CTGOV_XML_REQUIRED_INDICATOR, spo.getCtgovXmlRequiredIndicator());
             }
-            
+
             handleStudySource(whereClause, params);
             handleResultsFilters(whereClause, params);
+            handleStudyReportingPeriodStatusCritera(whereClause, params);
         }
 
-        
+
         private void handleResultsFilters(StringBuffer whereClause, Map<String, Object> params) {
             if (spo.getSection801Indicators() != null && spo.getSection801Indicators().size() > 0) {
                 String operator = determineOperator(whereClause);
-                whereClause.append(String.format(" %s %s.section801Indicator in (:%s) " , operator,  
+                whereClause.append(String.format(" %s %s.section801Indicator in (:%s) " , operator,
                         SearchableUtils.ROOT_OBJ_ALIAS, SECTION_801_INDICATOR));
                 params.put(SECTION_801_INDICATOR, spo.getSection801Indicators());
             }
             if (spo.getPcdFromDate() != null) {
                 String operator = determineOperator(whereClause);
-                whereClause.append(String.format("%s %s.dates.primaryCompletionDate >= :%s" , operator,  
+                whereClause.append(String.format("%s %s.dates.primaryCompletionDate >= :%s" , operator,
                         SearchableUtils.ROOT_OBJ_ALIAS, PCD_FROM_DATE));
                 params.put(PCD_FROM_DATE, spo.getPcdFromDate());
             }
-            
+
             if (spo.getPcdToDate() != null) {
                 String operator = determineOperator(whereClause);
-                whereClause.append(String.format("%s %s.dates.primaryCompletionDate <= :%s" , operator,  
+                whereClause.append(String.format("%s %s.dates.primaryCompletionDate <= :%s" , operator,
                         SearchableUtils.ROOT_OBJ_ALIAS, PCD_TO_DATE));
                 params.put(PCD_TO_DATE, spo.getPcdToDate());
             }
-            
-            if ((spo.getPcdToDate() != null || spo.getPcdFromDate() != null) && spo.getPcdDateTypes() != null 
+
+            if ((spo.getPcdToDate() != null || spo.getPcdFromDate() != null) && spo.getPcdDateTypes() != null
                         && spo.getPcdDateTypes().size() > 0) {
                 Set<ActualAnticipatedTypeCode> dateTypeCodes = new HashSet<ActualAnticipatedTypeCode>();
                 for (ActualAnticipatedTypeCode code : spo.getPcdDateTypes()) {
                     dateTypeCodes.add(code);
                 }
                 String operator = determineOperator(whereClause);
-                whereClause.append(String.format("%s %s.dates.primaryCompletionDateTypeCode in (:%s) " , operator,  
+                whereClause.append(String.format("%s %s.dates.primaryCompletionDateTypeCode in (:%s) " , operator,
                         SearchableUtils.ROOT_OBJ_ALIAS, PCD_DATE_TYPE));
                 params.put(PCD_DATE_TYPE, dateTypeCodes);
             }
-            
+
         }
-        
+
         /**
          * @param whereClause
          * @param params
@@ -415,24 +418,48 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
             }
         }
 
-       
 
         /**
-         * @param whereClause where clause 
+         * @param whereClause
+         * @param params
+         */
+        private void handleStudyReportingPeriodStatusCritera(StringBuffer whereClause,
+                                                Map<String, Object> params) {
+
+            if (CollectionUtils.isNotEmpty(spo.getStudyStatusCodes())
+                    && spo.getReportingPeriodStart() != null
+                    && spo.getReportingPeriodEnd() != null) {
+                String operator = determineOperator(whereClause);
+                Set<StudyStatusCode> sosCodes = spo.getStudyStatusCodes();
+                whereClause.append(String.format(
+                        " %s sos.statusCode in (:%s) ", operator, SOS_PARAM));
+                whereClause.append(String.format(
+                        " and sos.id in (select id from %s.studyOverallStatuses where "
+                                        + "statusDate between :%s and :%s)",
+                                        SearchableUtils.ROOT_OBJ_ALIAS,
+                                        REPORTING_PERIOD_START_PARAM, REPORTING_PERIOD_END_PARAM));
+                params.put(SOS_PARAM, sosCodes);
+                params.put(REPORTING_PERIOD_START_PARAM, spo.getReportingPeriodStart());
+                params.put(REPORTING_PERIOD_END_PARAM, spo.getReportingPeriodEnd());
+            }
+        }
+
+        /**
+         * @param whereClause where clause
          * @param params mapping of params and values
          */
-        private void handleOfficialTitle(StringBuffer whereClause, Map<String, Object> params) {            
-            if (!StringUtils.isEmpty(sp.getOfficialTitle())) {                
-                String operator = determineOperator(whereClause);                
-                whereClause.append(String.format(" %s (lower(%s.officialTitle) like :%s or " 
-                        + "exists (select sat.id from StudyAlternateTitle sat where " 
-                        + "sat.studyProtocol.id = %s.id and lower(sat.alternateTitle) like :%s))", 
-                        operator, SearchableUtils.ROOT_OBJ_ALIAS, STUDY_ALTERNATE_TITLE_PARAM, 
+        private void handleOfficialTitle(StringBuffer whereClause, Map<String, Object> params) {
+            if (!StringUtils.isEmpty(sp.getOfficialTitle())) {
+                String operator = determineOperator(whereClause);
+                whereClause.append(String.format(" %s (lower(%s.officialTitle) like :%s or "
+                        + "exists (select sat.id from StudyAlternateTitle sat where "
+                        + "sat.studyProtocol.id = %s.id and lower(sat.alternateTitle) like :%s))",
+                        operator, SearchableUtils.ROOT_OBJ_ALIAS, STUDY_ALTERNATE_TITLE_PARAM,
                         SearchableUtils.ROOT_OBJ_ALIAS, STUDY_ALTERNATE_TITLE_PARAM));
                 params.put(STUDY_ALTERNATE_TITLE_PARAM, "%" + sp.getOfficialTitle().toLowerCase() + "%");
-            }            
+            }
         }
-        
+
         /**
          * @param whereClause
          * @param params
@@ -442,7 +469,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         private void appendDWSExclusionClause(StringBuffer whereClause,
                 Map<String, Object> params,
                 final DocumentWorkflowStatusCode code, final String param) {
-            String operator = determineOperator(whereClause);               
+            String operator = determineOperator(whereClause);
             whereClause.append(String.format(" %s dws.statusCode != :%s", operator, param));
             whereClause.append(" and dws.currentlyActive = true");
             params.put(param, code);
@@ -467,7 +494,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                                         operator, SMS_PARAM));
                 params.put(SMS_PARAM, statusCodes);
             }
-            
+
             if (spo.getCurrentOrPreviousMilestone() != null) {
                 String operator = determineOperator(whereClause);
                 whereClause
@@ -479,7 +506,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 params.put(CURRENT_OR_PREV_MILESTONE_PARAM,
                         spo.getCurrentOrPreviousMilestone());
             }
-            
+
             if (CollectionUtils.isNotEmpty(spo.getMilestoneFilters())) {
                 String operator = determineOperator(whereClause);
                 whereClause.append(String.format(" %s ( ", operator));
@@ -488,7 +515,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                     whereClause.append(String.format(
                             "(sms.milestoneCode in (:%s) ",
                             ACTIVE_MILESTONES_PARAM + cnt));
-                    
+
                     if (!filter.getMilestonesToExclude().isEmpty()) {
                         whereClause.append(String.format(
                                 " and (select count(id) from %s.studyMilestones "
@@ -498,12 +525,12 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                         params.put(INACTIVE_MILESTONES_PARAM + cnt,
                                 filter.getMilestonesToExclude());
                     }
-                    
+
                     whereClause.append(" and sms.currentlyActive = true)");
-                    
+
                     params.put(ACTIVE_MILESTONES_PARAM + cnt,
-                            filter.getActiveMilestones());                   
-                    
+                            filter.getActiveMilestones());
+
                     if (spo.getMilestoneFilters().indexOf(filter) < spo
                             .getMilestoneFilters().size() - 1) {
                         whereClause.append(" OR ");
@@ -512,9 +539,9 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 }
                 whereClause.append(" ) ");
             }
-            
+
         }
-        
+
         private void handlePrimaryPurposeCodes(StringBuffer whereClause,
                 Map<String, Object> params) {
             if (CollectionUtils.isNotEmpty(spo.getPrimaryPurposeCodes())) {
@@ -527,7 +554,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                         spo.getPrimaryPurposeCodeEnums());
             }
         }
-        
+
         private void handlePhaseCodes(StringBuffer whereClause, Map<String, Object> params) {
             if (CollectionUtils.isNotEmpty(spo.getPhaseCodes())) {
                 String operator = determineOperator(whereClause);
@@ -536,7 +563,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 params.put(STUDY_PHASE_CODE_PARAM, spo.getPhaseCodes());
             }
         }
-        
+
         private void handleSummary4AnatomicSites(StringBuffer whereClause, Map<String, Object> params) {
             if (CollectionUtils.isNotEmpty(spo.getSummary4AnatomicSites())) {
                 String operator = determineOperator(whereClause);
@@ -552,9 +579,9 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
             final String siteClause = "exists (select sps2.id from StudySite sps2 "
                     + "left outer join sps2.healthCareFacility as hcf "
                     + "left outer join hcf.organization as site "
-                    + "where sps2.studyProtocol.id = %s.id and site.id in (:%s))";            
+                    + "where sps2.studyProtocol.id = %s.id and site.id in (:%s))";
             final String operator = determineOperator(whereClause);
-            
+
             if (hasLeadOrgs && hasSites) {
                 String fmt = CONNECTOR;
                 whereClause.append(String.format(fmt, operator));
@@ -568,25 +595,25 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 whereClause.append(") ");
                 params.put(PARTICIPATING_SITE_PARAM, spo.getParticipatingSiteIds());
                 params.put(LEAD_ORG_FUNCTIONAL_CODE_PARAM, StudySiteFunctionalCode.LEAD_ORGANIZATION);
-                params.put(LEAD_ORG_IDS_PARAM, spo.getLeadOrganizationIds());                
-            } else if (hasLeadOrgs) {                                
+                params.put(LEAD_ORG_IDS_PARAM, spo.getLeadOrganizationIds());
+            } else if (hasLeadOrgs) {
                 String fmt = CONNECTOR
                         + leadOrgClause;
                 whereClause.append(String.format(fmt, operator, LEAD_ORG_FUNCTIONAL_CODE_PARAM, LEAD_ORG_IDS_PARAM));
                 params.put(LEAD_ORG_FUNCTIONAL_CODE_PARAM, StudySiteFunctionalCode.LEAD_ORGANIZATION);
-                params.put(LEAD_ORG_IDS_PARAM, spo.getLeadOrganizationIds());                
-            } else if (hasSites) {                              
+                params.put(LEAD_ORG_IDS_PARAM, spo.getLeadOrganizationIds());
+            } else if (hasSites) {
                 whereClause
                         .append(String
                                 .format(CONNECTOR + siteClause,
                                         operator,
                                         SearchableUtils.ROOT_OBJ_ALIAS,
                                         PARTICIPATING_SITE_PARAM));
-                params.put(PARTICIPATING_SITE_PARAM, spo.getParticipatingSiteIds());                
-            }            
-            
+                params.put(PARTICIPATING_SITE_PARAM, spo.getParticipatingSiteIds());
+            }
+
         }
-        
+
         private void generateLocationWhereClause(StringBuffer whereClause, Map<String, Object> params) {
             if (spo.isByLocation()) {
                 String operator = determineOperator(whereClause);
@@ -597,8 +624,8 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 whereClause.append(" )");
                 setLocationParams(params);
             }
-        }  
-       
+        }
+
 
         private void createWhereClauseForLeadOrganization(StringBuffer whereClause) {
             whereClause.append("exists (select sslo.id from StudySite sslo where sslo.studyProtocol.id = "
@@ -639,33 +666,33 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
 
             whereClause.append(" )");
         }
-        
+
         private void setLocationParams(Map<String, Object> params) {
             params.put(LEAD_ORGANIZATION_FUNCTIONAL_CODE_PARAM, StudySiteFunctionalCode.LEAD_ORGANIZATION);
             params.put(PARTICIPATING_SITE_FUNCTIONAL_CODE_PARAM, StudySiteFunctionalCode.TREATING_SITE);
-            if (StringUtils.isNotBlank(spo.getCountryName())) {              
+            if (StringUtils.isNotBlank(spo.getCountryName())) {
                 params.put(COUNTRY_NAME_PARAM, spo.getCountryName());
             }
 
-            if (CollectionUtils.isNotEmpty(spo.getStates())) {              
+            if (CollectionUtils.isNotEmpty(spo.getStates())) {
                 params.put(STATES_PARAM, spo.getStates());
             }
-            
-            if (StringUtils.isNotBlank(spo.getCity())) {                
+
+            if (StringUtils.isNotBlank(spo.getCity())) {
                 params.put(CITY_PARAM, "%" + spo.getCity() + "%");
             }
         }
 
         @SuppressWarnings({ "PMD.ExcessiveMethodLength", "PMD.NPathComplexity" })
         private void handleAdditionalCriteria(StringBuffer whereClause, Map<String, Object> params) {
-            
+
             handleOnHolds(whereClause, params);
             handleSubmissionTypes(whereClause);
             handleCheckouts(whereClause, params);
-            handleSubmissionDateRange(whereClause, params);            
+            handleSubmissionDateRange(whereClause, params);
             handleNciSponsored(whereClause, params);
             handleFlags(whereClause, params);
-            handleCTEPAndDCP(whereClause, params);  
+            handleCTEPAndDCP(whereClause, params);
             handleTweetingCriteria(whereClause, params);
             handleSiteStatusCriteria(whereClause, params);
 
@@ -674,7 +701,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 whereClause.append(String.format(" %s (select count(id) from %s.studyInbox where closeDate is null) "
                         + "> 0", operator, SearchableUtils.ROOT_OBJ_ALIAS));
             }
-            
+
             if (CollectionUtils.isNotEmpty(spo.getBioMarkers())) {
                 String operator = determineOperator(whereClause);
                 whereClause.append(String.format(" %s exists (select plm.id from PlannedMarker plm "
@@ -683,7 +710,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                                                  SearchableUtils.ROOT_OBJ_ALIAS, BIOMARKERS_PARAM));
                 params.put(BIOMARKERS_PARAM, spo.getBioMarkers());
             }
-            
+
             if (CollectionUtils.isNotEmpty(spo.getPdqDiseases())) {
                 String operator = determineOperator(whereClause);
                 whereClause.append(String
@@ -692,7 +719,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                             SearchableUtils.ROOT_OBJ_ALIAS, PDQDISEASES_PARAM));
                 params.put(PDQDISEASES_PARAM, spo.getPdqDiseases());
             }
-            
+
             if (CollectionUtils.isNotEmpty(spo.getProcessingPriority())) {
                 String operator = determineOperator(whereClause);
                 whereClause.append(String.format(
@@ -702,7 +729,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 params.put(PROCESSING_PRIORITY_PARAM,
                         spo.getProcessingPriority());
             }
-            
+
             searchByIntervention(whereClause, params);
         }
 
@@ -748,7 +775,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                     + ID_ASSIGNER_FUNCTIONAL_CODE_PARAM
                     + " and ssdcp.researchOrganization.organization.name='"
                     + PAConstants.DCP_ORG_NAME + "') ";
-            
+
             final String ctepIdExistsClause = "exists (select ssctep.id from StudySite ssctep where "
                     + "ssctep.studyProtocol.id = "
                     + SearchableUtils.ROOT_OBJ_ALIAS
@@ -757,8 +784,8 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                     + ID_ASSIGNER_FUNCTIONAL_CODE_PARAM
                     + " and ssctep.researchOrganization.organization.name='"
                     + PAConstants.CTEP_ORG_NAME
-                    + "') ";            
-            
+                    + "') ";
+
             if (spo.isSearchDCPTrials()) {
                 String operator = determineOperator(whereClause);
                 params.put(ID_ASSIGNER_FUNCTIONAL_CODE_PARAM,
@@ -766,17 +793,17 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 whereClause.append(String.format(CONNECTOR + dcpIdExistsClause,
                         operator));
             }
-            
+
             if (spo.isSearchCTEPTrials()) {
                 String operator = determineOperator(whereClause);
                 params.put(ID_ASSIGNER_FUNCTIONAL_CODE_PARAM,
-                        StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);                
+                        StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
                 whereClause
                         .append(String
                                 .format(CONNECTOR + ctepIdExistsClause + " and not " + dcpIdExistsClause,
                                         operator));
             }
-            
+
             if (spo.isSearchCTEPAndDCPTrials()) {
                 String operator = determineOperator(whereClause);
                 params.put(ID_ASSIGNER_FUNCTIONAL_CODE_PARAM,
@@ -784,7 +811,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 whereClause.append(String.format(" %s (" + ctepIdExistsClause
                         + " or " + dcpIdExistsClause + ") ", operator));
             }
-            
+
             if (spo.isExcludeCtepDcpTrials()) {
                 String operator = determineOperator(whereClause);
                 params.put(ID_ASSIGNER_FUNCTIONAL_CODE_PARAM,
@@ -792,7 +819,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 whereClause.append(String.format(" %s not " + ctepIdExistsClause
                         + " and not " + dcpIdExistsClause + " ", operator));
             }
-            
+
         }
 
         /**
@@ -809,7 +836,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 whereClause.append(String.format(" %s (select count(id) from %s.studyOnholds where onholdDate is "
                         + "not null and offholdDate is null) = 0", operator, SearchableUtils.ROOT_OBJ_ALIAS));
             }
-            
+
             if (Boolean.TRUE.equals(spo.getHoldRecordExists())) {
                 String operator = determineOperator(whereClause);
                 whereClause.append(String.format(
@@ -823,7 +850,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                                 + "not null) = 0", operator,
                         SearchableUtils.ROOT_OBJ_ALIAS));
             }
-            
+
             if (CollectionUtils.isNotEmpty(spo.getOnholdReasons())) {
                 String operator = determineOperator(whereClause);
                 // On-hold reason OTHER needs special handling: we need to
@@ -936,7 +963,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 }
             }
         }
-        
+
         /**
          * @param whereClause
          * @param params
@@ -956,7 +983,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 params.put(FLAG_CODE_PARAM, spo.getNotFlaggedWith());
             }
         }
-        
+
 
         /**
          * @param whereClause
@@ -970,7 +997,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 addNciSponsoredClause(whereClause, params, true);
             }
         }
-        
+
         /**
          * @param whereClause
          * @param params
@@ -1104,13 +1131,13 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 String operator = determineOperator(whereClause);
                 whereClause.append(String.format(" %s (select count(id) from %s.studyCheckout where "
                         + "userIdentifier is not null and checkInDate is null) > 0", operator,
-                        SearchableUtils.ROOT_OBJ_ALIAS));                
+                        SearchableUtils.ROOT_OBJ_ALIAS));
             }
             if (Boolean.FALSE.equals(spo.getCheckedOut())) {
                 String operator = determineOperator(whereClause);
                 whereClause.append(String.format(" %s (select count(id) from %s.studyCheckout where "
                         + "userIdentifier is not null and checkInDate is null) = 0", operator,
-                        SearchableUtils.ROOT_OBJ_ALIAS));                
+                        SearchableUtils.ROOT_OBJ_ALIAS));
             }
         }
 
@@ -1182,7 +1209,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 appendIdentifierAssignerSearchClause(whereClause,
                         anyTypeIdentifierSQL, PAConstants.DCP_ORG_NAME, params);
                 whereClause.append(" or "); // NOPMD
-                
+
                 // CCR
                 appendIdentifierAssignerSearchClause(whereClause,
                         anyTypeIdentifierSQL, PAConstants.CCR_ORG_NAME, params);
@@ -1227,9 +1254,9 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                     + LEAD_ORG_FUNCTIONAL_CODE_PARAM
                     + ") ");
             params.put(LEAD_ORG_FUNCTIONAL_CODE_PARAM,
-                    StudySiteFunctionalCode.LEAD_ORGANIZATION);            
+                    StudySiteFunctionalCode.LEAD_ORGANIZATION);
         }
-        
+
         private void appendOtherIdentifierSearchClause(
                 StringBuffer whereClause, String anyTypeIdentifierSQL,
                 String root) {
@@ -1241,7 +1268,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                             + "%')");
 
         }
-        
+
         private void appendIdentifierAssignerSearchClause(
                 StringBuffer whereClause, String anyTypeIdentifierSQL,
                 String orgName, Map<String, Object> params) {
@@ -1274,12 +1301,12 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                         + "str(affiliatedOrganizationId) in (select "
                         + "ss.healthCareFacility.organization.identifier from  %s.studySites ss where "
                         + "ss.functionalCode = :%s and ss.statusCode != :%s)) and %s.proprietaryTrialIndicator=true)) "
-                        + "and dws.statusCode  != :%s ", 
+                        + "and dws.statusCode  != :%s ",
                         operator, STUDY_OWNER_PARAM,
                         STUDY_OWNER_PARAM, STUDY_OWNER_TYPE_PARAM, SearchableUtils.ROOT_OBJ_ALIAS,
-                        STUDY_OWNER_SITE_PARAM, STUDY_OWNER_PARAM, SearchableUtils.ROOT_OBJ_ALIAS, 
-                        TREATING_SITE_CODE_PARAM, 
-                        NULLIFIED_STATUS_PARAM, SearchableUtils.ROOT_OBJ_ALIAS, 
+                        STUDY_OWNER_SITE_PARAM, STUDY_OWNER_PARAM, SearchableUtils.ROOT_OBJ_ALIAS,
+                        TREATING_SITE_CODE_PARAM,
+                        NULLIFIED_STATUS_PARAM, SearchableUtils.ROOT_OBJ_ALIAS,
                         STUDY_OWNER_DWS_PARAM));
                 params.put(STUDY_OWNER_PARAM, spo.getUserId());
                 params.put(STUDY_OWNER_TYPE_PARAM, UserOrgType.ADMIN);
@@ -1296,7 +1323,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 params.put(STUDY_OWNER_DWS_PARAM, DocumentWorkflowStatusCode.SUBMITTED);
             }
         }
-        
+
         /**
          * @param whereClause
          * @param params
@@ -1316,7 +1343,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                         spo.getSubmitterAffiliateOrgId());
             }
         }
-        
+
         /**
          * @param whereClause
          * @param params
@@ -1340,7 +1367,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                         orgList);
             }
         }
-       
+
         /**
          * @param whereClause
          */

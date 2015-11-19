@@ -222,6 +222,8 @@ public class TestSchema {
             new Date(), -1).getTime());
     public static final Timestamp TOMMORROW = new Timestamp(DateUtils.addDays(
             new Date(), 1).getTime());
+    public static final Timestamp DAY_AFTER_TOMMORROW = new Timestamp(DateUtils.addDays(
+            new Date(), 2).getTime());
     public static final Timestamp ONE_YEAR_FROM_TODAY = new Timestamp(DateUtils
             .addYears(new Date(), 1).getTime());
     public static List<Long> registryUserIds;
