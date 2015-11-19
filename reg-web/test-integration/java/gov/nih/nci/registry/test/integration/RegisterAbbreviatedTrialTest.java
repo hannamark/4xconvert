@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.registry.test.integration;
 
+import java.sql.Timestamp;
 import java.util.UUID;
 
 import org.junit.Test;
@@ -165,18 +166,46 @@ public class RegisterAbbreviatedTrialTest extends AbstractRegistrySeleniumTest {
         waitForPageToLoad();
         driver.switchTo().defaultContent();
 
+        takeScreenShot(getClass().getSimpleName()
+                + "_ScreenShot_BeforeMovingSum4IntoView_"
+                + new Timestamp(System.currentTimeMillis()).toString()
+                        .replaceAll("\\D+", "_") + ".png");
+
         moveElementIntoView(By.id("trialDTO.summaryFourOrgName"));
+
+        takeScreenShot(getClass().getSimpleName()
+                + "_ScreenShot_AfterMovingSum4IntoView_"
+                + new Timestamp(System.currentTimeMillis()).toString()
+                        .replaceAll("\\D+", "_") + ".png");
+
         selenium.click("id=trialDTO.summaryFourOrgName");
         pause(500);
+
+        takeScreenShot(getClass().getSimpleName()
+                + "_ScreenShot_AfterClickingOnSummary4SelectionLink_"
+                + new Timestamp(System.currentTimeMillis()).toString()
+                        .replaceAll("\\D+", "_") + ".png");
+
         selenium.click("//table[@id='dropdown-sum4Organization']/tbody/tr[2]/td[3]/a");
+
+        takeScreenShot(getClass().getSimpleName()
+                + "_ScreenShot_AfterPickingSummary4Org_"
+                + new Timestamp(System.currentTimeMillis()).toString()
+                        .replaceAll("\\D+", "_") + ".png");
+
         selenium.select("id=trialDTO.siteStatusCode", "In Review");
         selenium.type("id=trialDTO.siteStatusDate", "06/02/2014");
+
+        takeScreenShot(getClass().getSimpleName()
+                + "_ScreenShot_BaseDataPopulated_"
+                + new Timestamp(System.currentTimeMillis()).toString()
+                        .replaceAll("\\D+", "_") + ".png");
     }
 
     private void checkInterventionalNonInterventionalFields_PO7457() {
 
         moveElementIntoView(By.id("trialDTO.trialType.Noninterventional"));
-        
+
         selenium.click("id=trialDTO.trialType.Noninterventional");
         assertTrue(selenium.isElementPresent("id=trialDTO.studySubtypeCode"));
         assertTrue(selenium.isElementPresent("id=trialDTO.studyModelCode"));
