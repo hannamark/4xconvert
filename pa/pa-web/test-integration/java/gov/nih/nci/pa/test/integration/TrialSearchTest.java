@@ -24,7 +24,7 @@ import org.openqa.selenium.WebElement;
 @Batch(number = 3)
 public class TrialSearchTest extends AbstractTrialStatusTest {
 
-    private static final int OP_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 15000
+    private static final int OP_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 20000
             : 2000;
 
     @SuppressWarnings({ "deprecation", "unused", "unchecked" })
