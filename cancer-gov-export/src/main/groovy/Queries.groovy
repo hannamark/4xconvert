@@ -178,7 +178,7 @@ class Queries {
             END as elig_criteria_text
          from planned_eligibility_criterion elig
             join planned_activity pa on pa.identifier = elig.identifier 
-        where pa.study_protocol_identifier = ?
+        where pa.study_protocol_identifier = ? order by elig.DISPLAY_ORDER,elig.identifier
     """
     
    public static def primaryContactSQL = """
