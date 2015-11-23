@@ -66,8 +66,8 @@ public class TwitterTest extends AbstractTrialStatusTest {
         setupTwitterAccounts();
         setupGoUsaGovAccount();
         clearUp();
-        setPaProperty("twitter.queue.process.schedule", "0/2 * * * * ?");
-        setPaProperty("twitter.trials.scan.schedule", "0/2 * * * * ?");
+        setPaProperty("twitter.queue.process.schedule", "0/7 * * * * ?");
+        setPaProperty("twitter.trials.scan.schedule", "0/4 * * * * ?");
         setPaProperty("twitter.enabled", "true");
 
         // Wait for PA to pick up changes to scheduling
