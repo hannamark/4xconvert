@@ -48,9 +48,10 @@ import twitter4j.conf.ConfigurationBuilder;
 @Batch(number = 3)
 public class TwitterTest extends AbstractTrialStatusTest {
 
-    private static final int TWEET_WAIT_TIME_SECONDS = 90;
+    private static final int TWEET_WAIT_TIME_SECONDS = 30;
     private static final int TWEET_STATUS_RECHECK_WAIT_TIME = 5000;
-    private static final int FIRST_RUN_WAIT_TIME = 15000;
+    private static final int ON_OFF_SWITCH_RECHECK_WAIT_TIME = 5000;
+    private static final int FIRST_RUN_WAIT_TIME = 6000;
     private static final int SCHEDULING_CHANGES_PICK_UP_TIME = 10000;
     private static final int CANCER_GOV_TIMEOUT = 60000;
 
@@ -60,19 +61,22 @@ public class TwitterTest extends AbstractTrialStatusTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-
         log("Setting up for a Twitter test case");
+
+        setPaProperty("twitter.queue.process.schedule", "0/3 * * * * ?");
+        setPaProperty("twitter.trials.scan.schedule", "0/2 * * * * ?");
+        setPaProperty("twitter.enabled", "false");
+        Thread.sleep(SCHEDULING_CHANGES_PICK_UP_TIME);
+
         new File(SystemUtils.USER_HOME, "pa-keystore.pkcs12").delete();
         setupTwitterAccounts();
         setupGoUsaGovAccount();
         clearUp();
-        setPaProperty("twitter.queue.process.schedule", "0/7 * * * * ?");
-        setPaProperty("twitter.trials.scan.schedule", "0/4 * * * * ?");
-        setPaProperty("twitter.enabled", "true");
 
+        setPaProperty("twitter.enabled", "true");
         // Wait for PA to pick up changes to scheduling
         log("Wait for PA to pick up changes to scheduling...");
-        Thread.sleep(SCHEDULING_CHANGES_PICK_UP_TIME);
+        Thread.sleep(ON_OFF_SWITCH_RECHECK_WAIT_TIME);
         log("Wait over");
 
     }
