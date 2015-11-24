@@ -670,9 +670,10 @@ tr.holiday {
             $("#refreshBtn").button().click(function(event) {
             	// if we are on Results tab after clicking on a Trial Dist. in panel, refresh it.
             	if ($("#resultsid.active").length > 0 && $("#distr").val().length>0 
-            			&& $("#dashboardForm").attr('action').contains('searchByDistribution')) {
+            			&& $("#dashboardForm").attr('action').indexOf('searchByDistribution')>=0) {
             		handleAction('searchByDistribution');
-                } else if ($("#resultsid.active").length > 0 && $("#dashboardForm").attr('action').contains('searchByCountType')) {
+                } else if ($("#resultsid.active").length > 0 && 
+                		$("#dashboardForm").attr('action').indexOf('searchByCountType')>=0) {
                     handleAction('searchByCountType');
                 } else if ($("#resultsid.active").length > 0 || ( $("#resultsid").length > 0 && $("#workloadid.active").length == 0 && $("#countsid.active").length == 0 ) ) {
                 	handleAction("search");
@@ -681,7 +682,7 @@ tr.holiday {
                 	$("#choiceunrestricted").prop('checked', true);
                 	$("input[name='submissionTypeFilter']:checked").prop('checked', false);
                 	handleAction("execute");
-                }              
+                }    
             });
             
             // For super abstractors, set up expected abs. date override.
