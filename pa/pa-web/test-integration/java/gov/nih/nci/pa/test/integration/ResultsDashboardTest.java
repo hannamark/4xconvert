@@ -85,6 +85,9 @@ package gov.nih.nci.pa.test.integration;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.test.integration.support.Batch;
 import gov.nih.nci.pa.util.PAConstants;
+
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -93,6 +96,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -666,4 +671,50 @@ public class ResultsDashboardTest extends OtherIdentifiersRelatedTest {
          
          
      }            
+     
+     @Test
+     public void testResutlReportingCSVExport() throws SQLException, IOException {
+         deactivateAllTrials();
+         TrialInfo trial = createSubmittedTrial();
+         addSponsor(trial, "National Cancer Institute");
+         addDWS(trial, "ABSTRACTION_VERIFIED_RESPONSE");
+         setPCD(trial, "2015-01-01", ActualAnticipatedTypeCode.ANTICIPATED);
+         addDocument(trial, "COMPARISON", "Protocol.doc");
+         setSeciont801Indicator(trial, true);
+         trial.nctID = "NCT00001";
+         addNctIdentifier(trial, trial.nctID);
+
+         clickAndWait("link=Search");
+
+         assertTrue(selenium.isTextPresent("Results Reporting & Tracking Dashboard"));
+
+         DateFormat df = new SimpleDateFormat("MM/dd/yyyy");        
+         java.util.Date today = Calendar.getInstance().getTime();
+         String reportDate = df.format(today);
+         
+         // Finally, download CSV.
+         if (!isPhantomJS()) {
+             selenium.click("xpath=//div[@id='results']//a/span[normalize-space(text())='CSV']");
+             pause(SystemUtils.IS_OS_LINUX ? 10000 : 2000);
+             File csv = new File(downloadDir, "resultsReportingDashboard.csv");
+             assertTrue(csv.exists());
+             csv.deleteOnExit();
+
+             List<String> lines = FileUtils.readLines(csv);
+             assertEquals(
+                     "NCI Trial Identifier,NCT ID,CTEP/DCP ID,Lead Org PO ID,Lead Organization,Results Designee,PCD Sent to PIO,PCD Confirmed,Designee Notified,Reporting in Process,3 Month Reminder,5 Month Reminder,7 Month Escalation,Results Sent to PIO,Results Approved by PIO,CTRO Trial Comparison Review,CCCT Trial Comparison Review,Trial Comparison Approval,PRS Release Date,QA Comments Returned Date,Trial Results Published Date",
+                     lines.get(0));
+
+             final String normalizedContent = lines.get(1).replaceAll("\\s+", " ");
+             final String expected = trial.nciID
+                     + ",NCT00001,,1,ClinicalTrials.gov,,,,,,,,,,,ClinicalTrials.gov Import " + reportDate+","
+                     + "11 "+reportDate+",ClinicalTrials.gov Import "+reportDate+",,,";
+
+             System.out.println(normalizedContent);
+             System.out.println(expected);
+             assertTrue(normalizedContent.matches(expected));
+
+             csv.delete();
+         }
+     }
 }

@@ -519,11 +519,20 @@ function searchResults(url, studyNCIid){
                  decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator"
                  name="results" requestURI="${requestURI}"
                  defaultsort="1"
-                 export="false" uid="row">
+                 export="true" uid="row">
+                 <display:setProperty name="export.xml" value="false" />
+                 <display:setProperty name="export.excel.filename" value="resultsReportingDashboard.xls" />
+                 <display:setProperty name="export.excel.include_header" value="true" />
+                 <display:setProperty name="export.csv.filename" value="resultsReportingDashboard.csv" />
+                 <display:setProperty name="export.csv.include_header" value="true" />
                 
-                 <display:column  class="title" titleKey="studyProtocol.nciIdentifier" sortable="true" scope="row" >
+                 <display:column  class="title" titleKey="studyProtocol.nciIdentifier" sortable="true" scope="row"  media="html">
                     <!-- <c:out value="${row.nciIdentifier}"/> --><a id="trialview_${row.studyProtocolId}" href="javascript:void(0)" onclick="searchResults('trialViewquery.action', '${row.studyProtocolId}')"><c:out value="${row.nciIdentifier}"/></a>
                  </display:column>
+                 <display:column  class="title" titleKey="studyProtocol.nciIdentifier" sortable="true" scope="row" media="excel csv xml" >
+                   <c:out value="${row.nciIdentifier}"/>
+                 </display:column>
+                 
                  <display:column  title="NCT ID" sortable="true" property="nctIdentifier"/>
                  <display:column  title="CTEP/DCP ID" sortable="true">
                     <s:if test="%{#attr.row.ctepId != null && #attr.row.dcpId != null}">
@@ -538,78 +547,138 @@ function searchResults(url, studyNCIid){
                  </display:column>
                  <display:column  title="Lead Org PO ID" sortable="true" property="leadOrganizationPOId"/>          
                  <display:column  title="Lead Organization" sortable="true" property="leadOrganizationName"/>
-                 <display:column  title="Results Designee" sortable="true" property="designeeNamesList" style="width:200px;"/>                                  
-                 <display:column title="PCD Sent to PIO" sortable="true">
+                 <display:column  title="Results Designee" sortable="true" property="designeeNamesList" style="width:200px;"/> 
+                                                  
+                 <display:column title="PCD Sent to PIO" sortable="true" media="html">
                     <!-- <c:out value="${row.pcdSentToPIODate}"/> -->
                     <input id="pcdSentToPIODate_${row.studyProtocolId}" class="datePicker" size="8" value="<fmt:formatDate value="${row.pcdSentToPIODate}" pattern="MM/dd/yyyy"/>"/>
                     <div id="pcdSentToPIODate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
-                 <display:column  title="PCD Confirmed" sortable="true">
+                <display:column title="PCD Sent to PIO" sortable="true" media="excel csv xml" >
+                     <c:out value="${row.pcdSentToPIODate}"/>
+                 </display:column>
+                 
+                 <display:column  title="PCD Confirmed" sortable="true" media="html">
                      <!-- <c:out value="${row.pcdConfirmedDate}"/> -->
                      <input id="pcdConfirmedDate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.pcdConfirmedDate}" pattern="MM/dd/yyyy"/>"/>
                      <div id="pcdConfirmedDate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
-                 </display:column>                      
-                 <display:column  title="Designee Notified" sortable="true">
+                 </display:column>    
+                 <display:column  title="PCD Confirmed" sortable="true" media="excel csv xml">
+                     <c:out value="${row.pcdConfirmedDate}"/>
+                 </display:column>    
+                                   
+                 <display:column  title="Designee Notified" sortable="true" media="html">
                       <!-- <c:out value="${row.desgneeNotifiedDate}"/> -->
                       <input id="desgneeNotifiedDate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.desgneeNotifiedDate}" pattern="MM/dd/yyyy"/>"/>
                       <div id="desgneeNotifiedDate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
-                 <display:column  title="Reporting in Process" sortable="true">
+                 <display:column  title="Designee Notified" sortable="true" media="excel csv xml">
+                      <c:out value="${row.desgneeNotifiedDate}"/>
+                 </display:column>
+                 
+                 <display:column  title="Reporting in Process" sortable="true" media="html">
                       <!-- <c:out value="${row.reportingInProcessDate}"/> -->                 
                       <input id="reportingInProcessDate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.reportingInProcessDate}" pattern="MM/dd/yyyy"/>"/>
                       <div id="reportingInProcessDate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
-                 <display:column  title="3 Month Reminder" sortable="true">
+                 <display:column  title="Reporting in Process" sortable="true" media="excel csv xml">
+                      <c:out value="${row.reportingInProcessDate}"/>                 
+                 </display:column>
+                 
+                 <display:column  title="3 Month Reminder" sortable="true" media="html">
                       <!-- <c:out value="${row.threeMonthReminderDate}"/> -->                 
                      <input id="threeMonthReminderDate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.threeMonthReminderDate}" pattern="MM/dd/yyyy"/>"/>
                      <div id="threeMonthReminderDate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>                             
-                 <display:column  title="5 Month Reminder" sortable="true">
+                 <display:column  title="3 Month Reminder" sortable="true" media="excel csv xml" >
+                      <c:out value="${row.threeMonthReminderDate}"/>                 
+                 </display:column>                             
+
+                 <display:column  title="5 Month Reminder" sortable="true" media="html">
                       <!-- <c:out value="${row.fiveMonthReminderDate}"/> -->                 
                       <input id="fiveMonthReminderDate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.fiveMonthReminderDate}" pattern="MM/dd/yyyy"/>"/>
                       <div id="fiveMonthReminderDate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
-                 <display:column  title="7 Month Escalation" sortable="true">
+                 <display:column  title="5 Month Reminder" sortable="true" media="excel csv xml">
+                      <c:out value="${row.fiveMonthReminderDate}"/>                 
+                 </display:column>
+                 
+                 <display:column  title="7 Month Escalation" sortable="true" media="html">
                       <!-- <c:out value="${row.sevenMonthEscalationtoPIODate}"/> -->                 
                      <input id="sevenMonthEscalationtoPIODate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.sevenMonthEscalationtoPIODate}" pattern="MM/dd/yyyy"/>"/>
                      <div id="sevenMonthEscalationtoPIODate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
-                 <display:column  title="Results Sent to PIO" sortable="true">
+                 <display:column  title="7 Month Escalation" sortable="true" media="excel csv xml">
+                      <c:out value="${row.sevenMonthEscalationtoPIODate}"/>                 
+                 </display:column>
+                 
+                 <display:column  title="Results Sent to PIO" sortable="true" media="html">
                       <!-- <c:out value="${row.resultsSentToPIODate}"/> -->                 
                      <input id="resultsSentToPIODate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.resultsSentToPIODate}" pattern="MM/dd/yyyy"/>"/>
                      <div id="resultsSentToPIODate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
-                 <display:column  title="Results Approved by PIO" sortable="true">
+                 <display:column  title="Results Sent to PIO" sortable="true" media="excel csv xml">
+                      <c:out value="${row.resultsSentToPIODate}"/>                 
+                 </display:column>
+
+                 <display:column  title="Results Approved by PIO" sortable="true" media="html">
                       <!-- <c:out value="${row.resultsApprovedByPIODate}"/> -->                 
                       <input id="resultsApprovedByPIODate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.resultsApprovedByPIODate}" pattern="MM/dd/yyyy"/>"/>
                       <div id="resultsApprovedByPIODate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
-                 <display:column  title="CTRO Trial Comparison Review" sortable="true">
+                 <display:column  title="Results Approved by PIO" sortable="true" media="excel csv xml">
+                      <c:out value="${row.resultsApprovedByPIODate}"/>                 
+                 </display:column>
+
+                 <display:column  title="CTRO Trial Comparison Review" sortable="true" media="html">
                      <c:out value="${row.ctroUserName}"/>                 	
                      <fmt:formatDate value="${row.ctroUserCreatedDate}" pattern="MM/dd/yyyy"/>
                  </display:column>
-                 <display:column  title="CCCT Trial Comparison Review" sortable="true">
+                 <display:column  title="CTRO Trial Comparison Review" sortable="true" media="excel csv xml">
+                     <c:out value="${row.ctroUserName}"/> <fmt:formatDate value="${row.ctroUserCreatedDate}" pattern="MM/dd/yyyy"/>
+                 </display:column>
+                                  
+                 <display:column  title="CCCT Trial Comparison Review" sortable="true" media="html">
                     <c:out value="${row.ccctUserName}"/>
                     <fmt:formatDate value="${row.ccctUserCreatedDate}" pattern="MM/dd/yyyy"/>
                  </display:column>
-                 <display:column  title="Trial Comparison Approval" sortable="true">
-                 	  <c:out value="${row.ctroUserName}"/>                    
-                     <fmt:formatDate value="${row.ctroUserCreatedDate}" pattern="MM/dd/yyyy"/>
+                 <display:column  title="CCCT Trial Comparison Review" sortable="true" media="excel csv xml">
+                    <c:out value="${row.ccctUserName}"/> <fmt:formatDate value="${row.ccctUserCreatedDate}" pattern="MM/dd/yyyy"/>
                  </display:column>
-                 <display:column  title="PRS Release Date" sortable="true">
+
+                 <display:column  title="Trial Comparison Approval" sortable="true" media="html">
+                 	  <c:out value="${row.ctroUserName}"/>
+                 	  <fmt:formatDate value="${row.ctroUserCreatedDate}" pattern="MM/dd/yyyy"/>
+                 </display:column>
+                 <display:column  title="Trial Comparison Approval" sortable="true" media="excel csv xml">
+                      <c:out value="${row.ctroUserName}"/> <fmt:formatDate value="${row.ctroUserCreatedDate}" pattern="MM/dd/yyyy"/>
+                 </display:column>
+                 
+                 <display:column  title="PRS Release Date" sortable="true" media="html">
                       <!-- <c:out value="${row.prsReleaseDate}"/> -->
                       <input id="prsReleaseDate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.prsReleaseDate}" pattern="MM/dd/yyyy"/>"/>
                       <div id="prsReleaseDate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
-                 <display:column  title="QA Comments Returned Date" sortable="true">
+                 <display:column  title="PRS Release Date" sortable="true" media="excel csv xml">
+                      <c:out value="${row.prsReleaseDate}"/>
+                 </display:column>
+
+                 <display:column  title="QA Comments Returned Date" sortable="true" media="html">
                       <!-- <c:out value="${row.qaCommentsReturnedDate}"/> -->                 
                       <input id="qaCommentsReturnedDate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.qaCommentsReturnedDate}" pattern="MM/dd/yyyy"/>"/>
                       <div id="qaCommentsReturnedDate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
                  </display:column>
-                 <display:column  title="Trial Results Published Date" sortable="true">
+                 <display:column  title="QA Comments Returned Date" sortable="true" media="excel csv xml">
+                      <c:out value="${row.qaCommentsReturnedDate}"/>                 
+                 </display:column>
+                 
+                 <display:column  title="Trial Results Published Date" sortable="true" media="html">
                       <!-- <c:out value="${row.trialPublishedDate}"/> -->                 
                       <input id="trialPublishedDate_${row.studyProtocolId}" class="datePicker"  size="8" value="<fmt:formatDate value="${row.trialPublishedDate}" pattern="MM/dd/yyyy"/>"/>
                       <div id="trialPublishedDate_${row.studyProtocolId}_flash" class="flash" align="center">Saved!</div>
+                 </display:column>
+                 <display:column  title="Trial Results Published Date" sortable="true" media="excel csv xml">
+                      <c:out value="${row.trialPublishedDate}"/>                 
                  </display:column>
              </display:table>
          </div>
