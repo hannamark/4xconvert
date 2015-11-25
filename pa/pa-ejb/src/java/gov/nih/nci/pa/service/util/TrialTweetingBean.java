@@ -35,6 +35,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -86,7 +87,7 @@ public class TrialTweetingBean implements TrialTweetingService {
             return;
         }
         LOG.info("Tweeting enabled; searching for new trials to be tweeted about...");
-        List<StudyProtocolQueryDTO> trials = findTrialsToTweet();
+        final List<StudyProtocolQueryDTO> trials = findTrialsToTweet();
         LOG.info(trials.size()
                 + " trial(s) can potentially be tweeted, but this number is before we check Cancer.gov");
         if (isFirstTimeRun()) {
@@ -217,7 +218,10 @@ public class TrialTweetingBean implements TrialTweetingService {
                 .replace("{nctid}", StringUtils.trim(nctID));
     }
 
-    private void markWithCanceledTweets(List<StudyProtocolQueryDTO> trials) {
+    private void markWithCanceledTweets(final List<StudyProtocolQueryDTO> trials) {
+        if (CollectionUtils.isEmpty(trials)) {
+            return;
+        }
         Session s = PaHibernateUtil.getCurrentSession();
         for (StudyProtocolQueryDTO trial : trials) {
             StudyProtocol sp = new StudyProtocol();
