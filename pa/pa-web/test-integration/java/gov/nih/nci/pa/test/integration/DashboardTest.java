@@ -3029,6 +3029,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         s.type("searchName", in);
         clickAndWait("link=Search");
         clickAndWait("//td[@class='action']//span[text()='Select']");
+        pause(1000);
         driver.switchTo().defaultContent();
         clickAndWait("link=Save");
         assertTrue(s.isTextPresent("Message. Record Created."));
