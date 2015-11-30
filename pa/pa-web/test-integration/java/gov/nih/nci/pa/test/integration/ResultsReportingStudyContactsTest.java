@@ -119,7 +119,7 @@ public class ResultsReportingStudyContactsTest  extends AbstractPaSeleniumTest {
         ((JavascriptExecutor) driver).executeScript("$('process').value='delete';$('pscToEdit').value='" + text + "';"
                 + "submitStudyContact('reportStudyContactsForm', 'ajaxResultsReportingContactdelete.action')");
         waitForPageToLoad();
-        pause(1000);
+        pause(3000);
         assertTrue(selenium.isTextPresent("Selected designee/PIO study contact deleted successfully"));
         assertFalse(selenium.isElementPresent("//table[@id='pscWeb']/tbody/tr[2]"));
     }

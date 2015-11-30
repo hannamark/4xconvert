@@ -230,6 +230,7 @@ ServletRequestAware , Preparable {
      */
     private void queryDetails() throws PAException, TooManyResultsException {
         try {
+            PaHibernateUtil.getCurrentSession().flush();
             PaHibernateUtil.getCurrentSession().clear();
             Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(getStudyProtocolId());
             LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
