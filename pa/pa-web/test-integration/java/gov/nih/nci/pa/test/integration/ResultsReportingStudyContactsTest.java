@@ -113,8 +113,10 @@ public class ResultsReportingStudyContactsTest  extends AbstractPaSeleniumTest {
         //delete img
         WebElement element = driver.findElement(By.xpath("//table[@id='pscWeb']/tbody/tr[2]/td[4]/div/img[2]"));
         String text = element.getAttribute("onclick");
-        text = text.split("\\(")[1].split("\\)")[0];
-        ((JavascriptExecutor) driver).executeScript("$('process').value='delete';$('pscToEdit').value=" + text + ";"
+        log("onclick is "+text);
+        text = text.replaceAll("\\D", "");
+        log("ID is "+text);
+        ((JavascriptExecutor) driver).executeScript("$('process').value='delete';$('pscToEdit').value='" + text + "';"
                 + "submitStudyContact('reportStudyContactsForm', 'ajaxResultsReportingContactdelete.action')");
         waitForPageToLoad();
         pause(1000);
@@ -124,6 +126,7 @@ public class ResultsReportingStudyContactsTest  extends AbstractPaSeleniumTest {
     
     
     
+    @SuppressWarnings("deprecation")
     private void addDesignee(String orgCtepId, String personCtepId, String email, String phone) {
         lookupOrg("lookupdesigneeorg", orgCtepId);
         lookupPerson("lookupdesigneeperson", personCtepId);

@@ -2268,6 +2268,10 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         if (!isPhantomJS())
             driver.switchTo().parentFrame();
     }
+    
+    protected void log(String msg) {
+        System.out.println(new Date().toLocaleString() + ": " + msg);
+    }
 
     public static final class TrialInfo implements Comparable<TrialInfo> {
 

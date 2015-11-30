@@ -78,6 +78,7 @@ public class StudyContactBeanLocal extends AbstractRoleIsoService<StudyContactDT
      * @return updated dto
      */
     @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public StudyContactDTO update(StudyContactDTO dto) throws PAException {
         validate(dto);
         getStatusCode(dto);
@@ -110,6 +111,7 @@ public class StudyContactBeanLocal extends AbstractRoleIsoService<StudyContactDT
      * @return dto
      */
     @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public StudyContactDTO create(StudyContactDTO dto) throws PAException {
         validate(dto);
         return super.create(dto);

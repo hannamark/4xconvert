@@ -111,6 +111,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.PredicateUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.ServletRequestAware;
 
@@ -382,14 +383,20 @@ ServletRequestAware , Preparable {
                 scMap = getAsMap(studyPioContactDtos);
                 listIter = studyPioContactWebDtos.listIterator();
             }
-            
+            LOG.info("scToDelete=" + scToDelete);
+            LOG.info("scMap=" + scMap);
             while (listIter.hasNext()) {
-                StudyContactWebDTO studyContactWebDTO = (StudyContactWebDTO) listIter
+                final StudyContactWebDTO studyContactWebDTO = (StudyContactWebDTO) listIter
                         .next();
+                LOG.info("studyContactWebDTO="
+                        + ToStringBuilder
+                                .reflectionToString(studyContactWebDTO));
                 if (studyContactWebDTO.getId().equals(scToDelete)) {
                     if (scToDelete > 0) {
                         StudyContactDTO scDto = scMap.get(scToDelete);
                         scDto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.NULLIFIED));
+                        LOG.info("Deleting: "
+                                + ToStringBuilder.reflectionToString(scDto));
                         studyContactService.update(scDto);
                     } else {
                         listIter.remove();

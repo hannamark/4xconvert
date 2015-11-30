@@ -281,9 +281,7 @@ public class TwitterTest extends AbstractTrialStatusTest {
 
     }
 
-    private void log(String msg) {
-        System.out.println(new Date().toLocaleString() + ": " + msg);
-    }
+    
 
     @Test
     public void testNoTweetsForTrialsNotInCancerGov() throws Exception {
