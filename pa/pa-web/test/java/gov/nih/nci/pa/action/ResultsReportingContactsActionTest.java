@@ -461,6 +461,26 @@ public class ResultsReportingContactsActionTest extends AbstractHibernateTestCas
                 return crit;
             }});
         
+        when(mock.nullify(any(StudyContactDTO.class))).thenAnswer(new Answer<StudyContactDTO>(){
+
+            @Override
+            public StudyContactDTO answer(
+                    InvocationOnMock invocation) throws Throwable {
+                final StudyContactDTO crit = (StudyContactDTO) invocation.getArguments()[0];
+                crit.setOrganizationalContactIi(IiConverter.convertToIi("abcdef"));
+                Long id = IiConverter.convertToLong(crit.getIdentifier());
+                if (StudyContactRoleCode.DESIGNEE_CONTACT.equals(
+                        CdConverter.convertCdToEnum(StudyContactRoleCode.class, crit.getRoleCode()))) {
+                    dscMap.put(id, crit);
+                } else if (StudyContactRoleCode.PIO_CONTACT.equals(
+                        CdConverter.convertCdToEnum(StudyContactRoleCode.class, crit.getRoleCode()))) {
+                    pscMap.put(id, crit);
+                }
+                crit.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.NULLIFIED));
+                return crit;
+            }});
+
+        
         return mock;
     }
     
