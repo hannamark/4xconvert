@@ -187,7 +187,7 @@ public class RegisterAbbreviatedTrialTest extends AbstractRegistrySeleniumTest {
                         .replaceAll("\\D+", "_") + ".png");
 
         selenium.click("//table[@id='dropdown-sum4Organization']/tbody/tr[2]/td[3]/a");
-
+        pause(2000);
         takeScreenShot(getClass().getSimpleName()
                 + "_ScreenShot_AfterPickingSummary4Org_"
                 + new Timestamp(System.currentTimeMillis()).toString()
