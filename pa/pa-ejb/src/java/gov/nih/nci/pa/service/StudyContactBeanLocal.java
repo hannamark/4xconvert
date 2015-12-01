@@ -84,6 +84,14 @@ public class StudyContactBeanLocal extends AbstractRoleIsoService<StudyContactDT
         getStatusCode(dto);
         return super.update(dto);
     }
+    
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public StudyContactDTO nullify(final StudyContactDTO scDto) throws PAException {
+        scDto.setStatusCode(CdConverter
+                .convertToCd(FunctionalRoleStatusCode.NULLIFIED));
+        return super.update(scDto);
+    }
 
     /**
      * validates the dto.
@@ -174,4 +182,6 @@ public class StudyContactBeanLocal extends AbstractRoleIsoService<StudyContactDT
             delete(dto.getIdentifier());
         }
     }
+
+   
 }

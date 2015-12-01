@@ -397,11 +397,10 @@ ServletRequestAware , Preparable {
                                 .reflectionToString(studyContactWebDTO));
                 if (studyContactWebDTO.getId().equals(scToDelete)) {
                     if (scToDelete > 0) {
-                        StudyContactDTO scDto = scMap.get(scToDelete);
-                        scDto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.NULLIFIED));
+                        StudyContactDTO scDto = scMap.get(scToDelete);                        
                         LOG.info("Deleting: "
                                 + ToStringBuilder.reflectionToString(scDto));
-                        studyContactService.update(scDto);
+                        studyContactService.nullify(scDto);
                     } else {
                         listIter.remove();
                     }

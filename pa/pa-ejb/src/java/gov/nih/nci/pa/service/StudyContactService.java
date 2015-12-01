@@ -126,5 +126,16 @@ public interface StudyContactService extends RolePaService<StudyContactDTO> {
      */
     void removeResponsiblePartyContact(Ii studyProtocolIi) throws PAException;
 
+    /**
+     * Nullify.
+     * 
+     * @param scDto
+     *            scDto
+     * @throws PAException
+     *             PAException
+     * @return StudyContactDTO
+     */
+    StudyContactDTO nullify(StudyContactDTO scDto) throws PAException;
+
     
 }

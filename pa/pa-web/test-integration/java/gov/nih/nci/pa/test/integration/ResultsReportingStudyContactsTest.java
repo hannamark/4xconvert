@@ -154,8 +154,8 @@ public class ResultsReportingStudyContactsTest extends AbstractPaSeleniumTest {
         assertEquals(
                 getRecordCount(trial.id,
                         StudyContactRoleCode.PIO_CONTACT.name()), 1);
-        // assertFalse(selenium
-        // .isElementPresent("//table[@id='pscWeb']/tbody/tr[2]"));
+        assertFalse(selenium
+                .isElementPresent("//table[@id='pscWeb']/tbody/tr[2]"));
     }
 
     @SuppressWarnings("deprecation")
