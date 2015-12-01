@@ -271,7 +271,10 @@ ServletRequestAware , Preparable {
                     continue;
                 }
                 
-                scWebDtos.add(new StudyContactWebDTO(scDto));
+                final StudyContactWebDTO webDTO = new StudyContactWebDTO(scDto);
+                scWebDtos.add(webDTO);
+                LOG.info("Added webDTO: "
+                        + ToStringBuilder.reflectionToString(webDTO));
             }
         }
     }
