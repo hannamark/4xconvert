@@ -278,7 +278,6 @@
                                 <display:column escapeXml="true" title="Site" property="name"  headerClass="sortable"/>
                                 <display:column title="Recruitment Status" property="recruitmentStatus"  headerClass="sortable"/>
                                 <display:column title="Date" property="recruitmentStatusDate"  headerClass="sortable"/>
-                                <display:column escapeXml="true" title="Program Code" property="programCode"  headerClass="sortable"/>
                             </display:table>
                         </div>
                     </c:if>

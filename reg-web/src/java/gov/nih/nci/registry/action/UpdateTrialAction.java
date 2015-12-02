@@ -453,8 +453,8 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             List<StudySiteAccrualStatusDTO> pssDTOList = getParticipatingSitesForUpdate(trialDTO
                     .getParticipatingSites());
 
-            // list of studysite dtos with updated program code
-            List<StudySiteDTO> prgCdUpdatedList = getStudySiteToUpdateProgramCode(trialDTO.getParticipatingSites());
+            // PO-9498 - list of studysite dtos Retain Program code values from the database
+            List<StudySiteDTO> prgCdUpdatedList = getStudySiteToUpdate(trialDTO.getParticipatingSites());
 
             updateId = studyProtocolIi;
 
@@ -729,18 +729,21 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         return ssaDTO;
     }
 
-    private List<StudySiteDTO> getStudySiteToUpdateProgramCode(List<PaOrganizationDTO> ps) throws PAException {
+    /**
+     * get the StudtsiteDtos
+     * @param ps List PaOrganizationDTO
+     * @return the ssDTO
+     * @throws PAException the PA exception
+     */
+    protected List<StudySiteDTO> getStudySiteToUpdate(List<PaOrganizationDTO> ps) throws PAException {
         List<StudySiteDTO> ssDTO = new ArrayList<StudySiteDTO>();
         for (PaOrganizationDTO dto : ps) {
             StudySiteDTO sp = studySiteService.get(IiConverter.convertToIi(dto.getId()));
-            sp.setProgramCodeText(StConverter.convertToSt(dto.getProgramCode()));
             ssDTO.add(sp);
         }
         return ssDTO;
 
     }
-
-   
 
     /**
      * Validates the summary four info.

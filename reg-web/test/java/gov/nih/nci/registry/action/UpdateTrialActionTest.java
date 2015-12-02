@@ -3,11 +3,7 @@
  */
 package gov.nih.nci.registry.action;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -15,6 +11,8 @@ import static org.mockito.Mockito.when;
 import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.registry.dto.SummaryFourSponsorsWebDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
@@ -573,6 +571,7 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         action.setInitialStatusHistory(action.getTrialDTO().getStatusHistory());
         assertEquals("redirect_to_search", action.update());
     }
+    
     @Test
     public void testUpdateWithParticipatingSite() {
         List<PaOrganizationDTO> paOrgList = new ArrayList<PaOrganizationDTO>();
@@ -592,6 +591,36 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         action.setServletRequest(request);
         action.setInitialStatusHistory(action.getTrialDTO().getStatusHistory());
         assertEquals("redirect_to_search", action.update());
+    }
+    
+    @Test
+    public void testUpdateProgramCode() throws PAException {
+        List<PaOrganizationDTO> paOrgList = new ArrayList<PaOrganizationDTO>();
+        PaOrganizationDTO paOrgDto = new PaOrganizationDTO();
+        paOrgDto.setName("name");
+        paOrgDto.setRecruitmentStatus("recruitmentStatus");
+        paOrgDto.setRecruitmentStatusDate("recruitmentStatusDate");
+        paOrgDto.setId("1");
+        paOrgDto.setProgramCode("ProgramCodeFromUI");
+        paOrgList.add(paOrgDto);
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpSession session = new MockHttpSession();
+        TrialDTO tDto = getMockTrialDTO();
+        tDto.setParticipatingSites(paOrgList);
+        session.setAttribute("trialDTO", tDto);
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        action.setServletRequest(request);
+        action.setInitialStatusHistory(action.getTrialDTO().getStatusHistory());  
+        
+        List<StudySiteDTO> ssList = new ArrayList<StudySiteDTO>();
+        StudySiteDTO ssDto = new StudySiteDTO();
+        ssDto.setIdentifier(IiConverter.convertToStudySiteIi(1L));
+        ssList.add(ssDto);
+        when(action.getStudySiteToUpdate(paOrgList)).thenReturn(ssList);
+        action.update();
+        assertNotSame(ssList.get(0).getProgramCodeText(),paOrgList.get(0).getProgramCode());
+        assertEquals(ssList.get(0).getIdentifier().getExtension(),paOrgList.get(0).getId());
     }
 
     @Test 

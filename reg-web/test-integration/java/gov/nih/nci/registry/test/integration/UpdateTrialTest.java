@@ -93,6 +93,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.lang.SystemUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -296,6 +297,68 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
         String body = email.getBody();
         assertTrue(body.contains("<p><b>Update Information:</b><br>Trial Start Date Type was updated.Trial Start Date was updated.</p>"));
     }
+    
+    @Test
+    public void testProgramCodeAfterUpdateTrial() throws SQLException, URISyntaxException, InterruptedException {
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+
+        TrialInfo info = createAcceptedTrial(false);
+        
+        final String nciID = getLastNciId();
+        
+        addNonCASummaryFour(info.id, "abstractor-ci");
+        
+        loginToPAAndAddSite(info);
+        // Update programcode
+        QueryRunner runner = new QueryRunner();
+        String sql = "update study_site set program_code_text='ProgramCodeFromDatabase' where functional_code ='TREATING_SITE' and study_protocol_identifier="
+                + info.id;
+        runner.update(connection, sql);
+
+        acceptTrialByNciIdWithGivenDWS(nciID, info.leadOrgID,
+                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
+                        .toString());
+        assignTrialOwner("abstractor-ci", info.id);
+
+        loginAndAcceptDisclaimer();
+
+        String rand = info.leadOrgID;
+        runSearchAndVerifySingleTrialResult("officialTitle", rand, info);        
+
+        invokeUpdateTrial(); 
+        waitForPageToLoad();
+        
+        String protocolDocPath = (new File(ClassLoader.getSystemResource(
+                PROTOCOL_DOCUMENT).toURI()).toString());
+        String irbDocPath = (new File(ClassLoader.getSystemResource(
+                IRB_DOCUMENT).toURI()).toString());
+        selenium.type("protocolDoc", protocolDocPath);
+        selenium.type("irbApproval", irbDocPath);        
+        
+        String programCodebeforeUpdate = getProgramCodePartcipatingSite(info);
+       
+        //Trial Abstraction Error
+        clickAndWait("xpath=//button[text()='Review Trial']");
+        
+        clickAndWait("xpath=//button[text()='Submit']");
+       
+        String programAfterUpdate = getProgramCodePartcipatingSite(info);
+        
+        assertEquals(programCodebeforeUpdate, programAfterUpdate);
+    }
+
+    private String getProgramCodePartcipatingSite(TrialInfo info) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String ssql = "select  program_code_text from study_site where functional_code ='TREATING_SITE' and  study_protocol_identifier="
+                + info.id;
+        
+        return (String) runner
+                .query(connection, ssql ,  new ArrayHandler())[0];
+      }
     
     private void verifyUploadedDocs() {
     	assertTrue(selenium.isTextPresent("IRB Approval Document"));
