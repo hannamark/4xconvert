@@ -3,6 +3,9 @@ package gov.nih.nci.pa.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+
+
+
 /**
  * 
  * @author lalit-sb
@@ -10,6 +13,7 @@ import java.util.Date;
  */
 public class FamilyDTO implements Serializable {
     
+
     private static final long serialVersionUID = 235503630658839402L;
     
     private Long id;    
@@ -18,7 +22,76 @@ public class FamilyDTO implements Serializable {
 
     private Date reportingPeriodEndDate;
     
-    private Integer reportingPeriodLength;    
+    private Integer reportingPeriodLength;
+    
+    private String name;    
+    
+    // reporting length
+    private static final int REPORTING_LENGTH = 12;
+    
+    // identifier
+    private static final int RESULTS_IDENTIFIER = 0;
+    
+    // po identifier
+    private static final int RESULTS_PO_ID = 1;
+    
+    // reporting period
+    private static final int RESULTS_PERIOD_END = 2;
+    
+    // reporting date
+    private static final int RESULTS_PERIOD_DATE = 3;
+    
+    /**
+     * sets family dto 
+     * @param poId po identifier
+     */
+    public FamilyDTO(Long poId) {
+        super();
+        this.poId = poId;        
+        this.reportingPeriodEndDate = new Date();
+        this.reportingPeriodLength = REPORTING_LENGTH;
+    }
+    
+    /**
+     * sets family dto
+     * @param id identifier
+     * @param poId po identifier
+     * @param reportingPeriodEndDate reporting end date
+     * @param reportingPeriodLength reporting length
+     */
+    public FamilyDTO(Long id, Long poId, Date reportingPeriodEndDate, Integer reportingPeriodLength) {
+        super();
+        this.id = id;
+        this.poId = poId;
+        this.reportingPeriodEndDate = reportingPeriodEndDate;
+        this.reportingPeriodLength = reportingPeriodLength;
+    }
+    
+    /**
+     * sets family dto
+     * @param poId po identifier
+     * @param reportingPeriodEndDate reporting end date
+     * @param reportingPeriodLength reporting period length
+     */
+    public FamilyDTO(Long poId, Date reportingPeriodEndDate, Integer reportingPeriodLength) {
+        super();        
+        this.poId = poId;
+        this.reportingPeriodEndDate = reportingPeriodEndDate;
+        this.reportingPeriodLength = reportingPeriodLength;
+    }
+    
+    /**
+     * Converts to DTO
+     * @param family list of family objects
+     * @return familydto familydto 
+     */
+    public static FamilyDTO convertResultsToDTO(Object[] family) {
+        Long identifier = (Long) family[RESULTS_IDENTIFIER];
+        Long poId = (Long) family[RESULTS_PO_ID];
+        Date repPeriodEnd = (Date) family[RESULTS_PERIOD_END];
+        Integer repLength = (Integer) family[RESULTS_PERIOD_DATE];
+        return new FamilyDTO(identifier, poId, repPeriodEnd, repLength);
+    }
     
     /**
      * @return id
@@ -79,5 +152,21 @@ public class FamilyDTO implements Serializable {
     public void setReportingPeriodLength(Integer reportingPeriodLength) {
         this.reportingPeriodLength = reportingPeriodLength;
     }    
+    
+    /**
+     * get name
+     * @return name name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * sets name
+     * @param name name of dto
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
 }

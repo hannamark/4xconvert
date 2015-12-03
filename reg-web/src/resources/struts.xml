@@ -395,10 +395,17 @@
         <action name="participatingSitespopup*" class="gov.nih.nci.registry.action.ParticipatingSitesAction" method="{1}">
             <result name="success">/WEB-INF/jsp/nodecorate/viewParticipatingSites.jsp</result>         
         </action>
+        
+        
 
     </package>
     
     <package name="siteadmin" namespace="/siteadmin" extends="protected">
+        
+    	<action name="programCodes*" class="gov.nih.nci.registry.action.ProgramCodesAction" method="{1}">
+            <result>/WEB-INF/jsp/programCodeList.jsp</result>     
+            <result name="success">/WEB-INF/jsp/programCodeList.jsp</result>                          
+        </action>
         
         <action name="siteAdministration*" class="gov.nih.nci.registry.action.SiteAdministrationAction" method="{1}">
             <result name="success">/WEB-INF/jsp/siteAdministration.jsp</result>

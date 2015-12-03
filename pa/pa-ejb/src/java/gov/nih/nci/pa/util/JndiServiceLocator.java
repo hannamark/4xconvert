@@ -776,6 +776,6 @@ public class JndiServiceLocator implements ServiceLocator {
 
     @Override
     public FamilyProgramCodeService getProgramCodesFamilyService() {
-        return lookup("FamilyProgramCodeService!gov.nih.nci.pa.service.util.FamilyProgramCodeService");
+        return lookup("FamilyProgramCodeBeanLocal!gov.nih.nci.pa.service.util.FamilyProgramCodeServiceLocal");
     }
 }

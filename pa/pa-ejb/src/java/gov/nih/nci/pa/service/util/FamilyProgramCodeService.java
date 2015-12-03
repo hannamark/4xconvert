@@ -1,13 +1,14 @@
 package gov.nih.nci.pa.service.util;
 
 
+
 import gov.nih.nci.pa.dto.FamilyDTO;
 
 /**
  * FamilyProgramCodeService
  * @author lalit
  */
-public interface FamilyProgramCodeService {
+public interface FamilyProgramCodeService {    
     
     
     /**
@@ -15,18 +16,20 @@ public interface FamilyProgramCodeService {
      * @param familyPoId family po id 
      * @return FamityDTO
      */
-    FamilyDTO getFamilyByPoId(Long familyPoId);
+    FamilyDTO getFamilyDTOByPoId(Long familyPoId);
     
     /**
      * Updates a family DTO in db
      * @param familyDTO family dto
+     * @return familydto family dto
      */
-    void update(FamilyDTO familyDTO);
+    FamilyDTO update(FamilyDTO familyDTO);
     
     /**
      * Inserts a new family DTO in db
      * @param familyDTO family dto object
+     * @return familkyDTO family dto
      */
-    void create(FamilyDTO familyDTO);
+    FamilyDTO create(FamilyDTO familyDTO);
 
 }
