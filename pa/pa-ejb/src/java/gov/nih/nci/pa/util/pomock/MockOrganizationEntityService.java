@@ -182,6 +182,27 @@ public class MockOrganizationEntityService implements
             createOrg(org);
             new MockFamilyService().relate(org,
                     new MockFamilyService().getFamily(newFamily.getIdentifier()));
+            
+            // Program codes
+            FamilyDTO familyOnedto = new FamilyDTO();
+            familyOnedto.setName(EnOnConverter.convertToEnOn("Family One"));
+            familyOnedto.setStatusCode(CdConverter.convertStringToCd("Active"));
+            FamilyDTO familyOne = new MockFamilyService().createFamily(familyOnedto);
+            
+            FamilyDTO familyTwodto = new FamilyDTO();
+            familyTwodto.setName(EnOnConverter.convertToEnOn("Family Two"));
+            familyTwodto.setStatusCode(CdConverter.convertStringToCd("Active"));
+            FamilyDTO familyTwo = new MockFamilyService().createFamily(familyTwodto);
+            
+            org = new OrganizationDTO();
+            org.setName(EnOnConverter.convertToEnOn("Multi Family Org"));
+            createOrg(org);
+            new MockFamilyService().relate(org,
+                    new MockFamilyService().getFamily(familyOne.getIdentifier()));
+            
+            new MockFamilyService().relate(org,
+                    new MockFamilyService().getFamily(familyTwo.getIdentifier()));
+            
         } catch (Exception e) {
             e.printStackTrace(); // NOPMD
         }

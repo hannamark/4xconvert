@@ -16,16 +16,19 @@
 			<h1 class="heading"><span><fmt:message key="programcodes.master.list"/></span></h1>
 		</div>		
 		<div class="col-md-12">
-			<form class="form-horizontal">		
+			
+			<s:form cssClass="form-horizontal" name="programCodeHeader" action="programCodes.action" id="programCodesHeaderForm">		
 			  <div class="form-group">
-			    <label for="exampleInputEmail1" class="col-sm-2 control-label"><fmt:message key="programcodes.organization.family.label"/></label>
+			    <label for="selectedFamily" class="col-sm-2 control-label"><fmt:message key="programcodes.organization.family.label"/></label>
 			    <div class="col-sm-2">
-			    <s:select name="orgFamilies"
+			    <s:select name="selectedDTOId"
+			    	id="selectedDTOId"
 			    	cssClass="form-control" 
 			    	list="familyDTOs" 
-       				listKey="identifier"
-       				listValue="name"       
-       				value="%{name}"
+       				listKey="id"
+       				listValue="name"
+       				value= "selectedFamilyDTO.id"  
+       				onchange="document.getElementById('programCodesHeaderForm').submit()"     				
 				/>
 				</div>		
 			  </div>			  
@@ -63,7 +66,7 @@
 			  <div class="col-md-12">
 			  	<hr />
 			  </div> 			    
-			</form>		
+			</s:form>		
 		</div>
 	</div>
 </div>

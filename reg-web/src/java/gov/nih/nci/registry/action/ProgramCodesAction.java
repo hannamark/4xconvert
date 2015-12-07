@@ -62,7 +62,7 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
     private String poId;
     private String reportingLength;
     private String reportingDate;
-
+    private Long selectedDTOId;    
 
     /**
      * execute
@@ -81,8 +81,16 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
             findOrCreateFamilyAndAddToList(orgFamilyDTO);
         }    
         
-        if (!familyDTOs.isEmpty()) {
-            setSelectedFamilyDTO(familyDTOs.get(0));
+        if (!familyDTOs.isEmpty()) {            
+            if (selectedDTOId != null) {
+                for (FamilyDTO familyDTO : familyDTOs) {
+                    if (familyDTO.getId().equals(selectedDTOId)) {
+                        setSelectedFamilyDTO(familyDTO);
+                    }
+                }
+            } else {
+                setSelectedFamilyDTO(familyDTOs.get(0));
+            }            
         }        
         return SUCCESS;
     }    
@@ -277,5 +285,21 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
      */
     public void setFamilyProgramCodeService(FamilyProgramCodeService familyProgramCodeService) {
         this.familyProgramCodeService = familyProgramCodeService;
+    }
+    
+    /**
+     * selected dto id
+     * @return selectedDTO id
+     */
+    public Long getSelectedDTOId() {
+        return selectedDTOId;
+    }
+
+    /**
+     * sets dto id for selected family
+     * @param selectedDTOId selected dto id
+     */
+    public void setSelectedDTOId(Long selectedDTOId) {
+        this.selectedDTOId = selectedDTOId;
     }
 }
