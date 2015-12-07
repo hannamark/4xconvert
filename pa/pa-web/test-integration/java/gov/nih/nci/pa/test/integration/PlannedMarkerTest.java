@@ -15,7 +15,7 @@ import org.openqa.selenium.JavascriptExecutor;
 @Batch(number = 1)
 public class PlannedMarkerTest extends AbstractPaSeleniumTest {
 
-    private static final int CADSR_SEARCH_WAIT_TIME = 120;
+    private static final int CADSR_SEARCH_WAIT_TIME = 180;
 
     /**
      * Tests add/edit/deleting planned markers.
@@ -282,9 +282,10 @@ public class PlannedMarkerTest extends AbstractPaSeleniumTest {
         assertTrue(StringUtils.containsIgnoreCase(selenium.getText(
                 "xpath=//form//table[@class='data']//tr[1]//td[1]")
                 .trim(), "alpha"));
-        clickAndWait("link=Select");
-        pause(3000);
+        clickAndWait("link=Select");        
         driver.switchTo().defaultContent();
+        waitForElementToBecomeAvailable(
+                By.id("plannedMarker.evaluationType-1"), CADSR_SEARCH_WAIT_TIME);
         selenium.check("id=plannedMarker.evaluationType-1");
         selenium.check("id=plannedMarker.assayType-1");
         selenium.select("id=assayUse","label=Integral");
