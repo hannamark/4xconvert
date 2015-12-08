@@ -3,6 +3,7 @@ package gov.nih.nci.pa.test.integration;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.test.integration.support.Batch;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -1855,7 +1856,27 @@ public class DashboardTest extends AbstractTrialStatusTest {
         verifyColumnValue(1, "Business Days on Hold (Submitter)", "2");
         verifyColumnValue(1, "Expected Abstraction Completion Date",
                 "11/02/2015");
-
+        
+        logoutPA();
+        deactivateAllTrials();
+        submittedTrial = createSubmittedTrial();
+        new QueryRunner().update(connection,
+                "update study_protocol set date_last_created='2015-10-14 09:15.000' where identifier="
+                        + submittedTrial.id);
+        addOnHold(submittedTrial, "SUBMISSION_INCOM", date("10/15/2015"), null, "Submitter");
+        
+        Date todayDate = new Date();
+        int onHoldDays = PAUtil.getBusinessDaysBetween(date("10/15/2015"),todayDate);
+        Date expectedAbsDate = PAUtil.addBusinessDays(PAUtil.addBusinessDays(date("10/14/2015"),10), onHoldDays);
+        if (!PAUtil.isBusinessDay(expectedAbsDate)) {
+            PAUtil.addBusinessDays(expectedAbsDate, 1);
+        }
+        
+        loginAsSuperAbstractor();
+        clickAndWait("id=dashboardMenuOption");
+        verifyColumnValue(1, "Business Days on Hold (Submitter)", onHoldDays+"");
+        verifyColumnValue(1, "Expected Abstraction Completion Date", PAUtil.convertTsToFormattedDate(TsConverter
+                .convertToTs(expectedAbsDate) ));
     }
 
     @Test 
@@ -1863,7 +1884,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         //(Submission Plus 10 Business Days) = (Submission Date) + (Business Days on-Hold (Submitter)) + 10 biz days
         // The date may not fall on a holiday or a weekend.
         TrialInfo acceptedTrial;
-        deactivateAllTrials();
+       deactivateAllTrials();
         acceptedTrial = createAcceptedTrial();
         new QueryRunner()
                 .update(connection,
@@ -1878,16 +1899,48 @@ public class DashboardTest extends AbstractTrialStatusTest {
         verifyColumnValue(1, "Submitted On", "05/22/2015");
         verifyColumnValue(1, "Submission Plus 10 Business Days", "06/09/2015");
         
+        
         // when calculated "Submission Plus 10 Business Days" Date falls on weekend
         // it is moved to next Business day 
         // As Per PO-9400 Example 
+        logoutPA();
+        deactivateAllTrials();
+        acceptedTrial = createSubmittedTrial();
+
         new QueryRunner().update(connection,
                 "update study_protocol set date_last_created='2015-10-14 09:15.000' where identifier="
                         + acceptedTrial.id);
         addOnHold(acceptedTrial, "SUBMISSION_INCOM", date("10/15/2015"), date("10/19/2015"), "Submitter");
+        loginAsSuperAbstractor();
         clickAndWait("id=dashboardMenuOption");
         verifyColumnValue(1, "Submitted On", "10/14/2015");
         verifyColumnValue(1, "Submission Plus 10 Business Days", "11/02/2015");
+        
+        // Test Case 
+        logoutPA();
+        deactivateAllTrials();
+        acceptedTrial = createSubmittedTrial();
+
+        new QueryRunner().update(connection,
+                "update study_protocol set date_last_created='2015-10-14 09:15.000' where identifier="
+                        + acceptedTrial.id);
+        addOnHold(acceptedTrial, "SUBMISSION_INCOM", date("10/15/2015"), null, "Submitter");
+        
+        loginAsSuperAbstractor();
+        clickAndWait("id=dashboardMenuOption");
+        
+        Date todayDate = new Date();
+        int onHoldDays = PAUtil.getBusinessDaysBetween(date("10/15/2015"),todayDate);
+        Date expectedBizDate = PAUtil.addBusinessDays(PAUtil.addBusinessDays(date("10/14/2015"),10), onHoldDays);
+        if (!PAUtil.isBusinessDay(expectedBizDate)) {
+            PAUtil.addBusinessDays(expectedBizDate, 1);
+        }
+        
+        verifyColumnValue(1, "Submitted On", "10/14/2015");
+        verifyColumnValue(1, "Business Days on Hold (Submitter)", onHoldDays+"");
+        verifyColumnValue(1, "Submission Plus 10 Business Days", PAUtil.convertTsToFormattedDate(TsConverter
+                .convertToTs(expectedBizDate) ));
+
     }
     
     @Test

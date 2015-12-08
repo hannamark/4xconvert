@@ -951,8 +951,8 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO
      */
     public Date getCalculatedSubmissionPlusTenBizDate() {
         if (calculatedSubmissionPlusTenBizDate == null) {
-            calculatedSubmissionPlusTenBizDate = pushToNextBusinessDayIfNotBusinessDay(
-                    DateUtils.addDays(getLastCreated().getDateLastCreatedPlusTenBiz(), getBizDaysOnHoldSubmitter()));
+            calculatedSubmissionPlusTenBizDate = pushToNextBusinessDayIfNotBusinessDay(PAUtil
+                    .addBusinessDays(getLastCreated().getDateLastCreatedPlusTenBiz(), getBizDaysOnHoldSubmitter()));
         }
         return calculatedSubmissionPlusTenBizDate;
     }
@@ -979,8 +979,8 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO
      */
     public final Date getCalculatedAbstractionCompletionDate() {
         if (calculatedAbstractionCompletionDate == null) {
-            calculatedAbstractionCompletionDate = pushToNextBusinessDayIfNotBusinessDay(
-                    DateUtils.addDays(getLastCreated().getDateLastCreatedPlusTenBiz(), getBizDaysOnHoldSubmitter()));
+            calculatedAbstractionCompletionDate = pushToNextBusinessDayIfNotBusinessDay(PAUtil
+                    .addBusinessDays(getLastCreated().getDateLastCreatedPlusTenBiz(), getBizDaysOnHoldSubmitter()));
         }
         return calculatedAbstractionCompletionDate;
     }
