@@ -1946,8 +1946,10 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         createStudyProtocolDTO.setProprietaryTrialIndicator(studyProtocolDTO.getProprietaryTrialIndicator());
         createStudyProtocolDTO.setConsortiaTrialCategoryCode(studyProtocolDTO.getConsortiaTrialCategoryCode());
         
-        
-        createStudyProtocolDTO.setCtroOverride(studyProtocolDTO.getCtroOverride());
+        if (!ISOUtil.isBlNull(studyProtocolDTO
+                .getCtroOverride())) {
+          createStudyProtocolDTO.setCtroOverride(studyProtocolDTO.getCtroOverride());
+        }
         createStudyProtocolDTO.setUserLastCreated(studyProtocolDTO.getUserLastCreated());
         createStudyProtocolDTO.setAccrualDiseaseCodeSystem(studyProtocolDTO.getAccrualDiseaseCodeSystem());
 
