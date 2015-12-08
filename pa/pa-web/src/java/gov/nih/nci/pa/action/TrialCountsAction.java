@@ -3,6 +3,7 @@ package gov.nih.nci.pa.action;
 import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_ALTERNATE_TITLES;
 import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_LAST_UPDATER_INFO;
 import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_OTHER_IDENTIFIERS;
+import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_PROGRAM_CODES;
 import static gov.nih.nci.pa.util.Constants.IS_SU_ABSTRACTOR;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
@@ -424,7 +425,7 @@ public class TrialCountsAction extends ActionSupport implements Preparable,
         criteria.setHoldStatus(PAConstants.ON_HOLD);
         List<StudyProtocolQueryDTO> results = protocolQueryService
                 .getStudyProtocolByCriteria(criteria, SKIP_ALTERNATE_TITLES,
-                        SKIP_LAST_UPDATER_INFO, SKIP_OTHER_IDENTIFIERS);
+                        SKIP_LAST_UPDATER_INFO, SKIP_OTHER_IDENTIFIERS, SKIP_PROGRAM_CODES);
         return results;
     }
 
@@ -518,7 +519,7 @@ public class TrialCountsAction extends ActionSupport implements Preparable,
         criteria.setHoldStatus(PAConstants.NOT_ON_HOLD);
         List<StudyProtocolQueryDTO> results = protocolQueryService
                 .getStudyProtocolByCriteria(criteria, SKIP_ALTERNATE_TITLES,
-                        SKIP_LAST_UPDATER_INFO, SKIP_OTHER_IDENTIFIERS);
+                        SKIP_LAST_UPDATER_INFO, SKIP_OTHER_IDENTIFIERS, SKIP_PROGRAM_CODES);
         protocolQueryService.populateMilestoneHistory(results);
         return results;
     }

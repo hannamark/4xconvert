@@ -80,7 +80,9 @@ package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
@@ -211,6 +213,11 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
             + "IN (:ids) " 
             + "group by study_protocol_identifier) IQ "
             + "WHERE study_protocol_identifier=IQ.id AND open_date=IQ.maxdate ";
+
+    static final String STUDY_PROGRAM_CODE_QRY_STRING = "select sp.study_protocol_id, p.identifier,"
+            + "p.program_code, p.program_name,p.status_code from study_program_code sp join program_code p on "
+            + "p.identifier = sp.program_code_id where sp.study_protocol_id in (:ids)";
+
     private static final int STUDY_PROTOCOL_IDENTIFIER_IDX = 0;
     private static final int OFFICIAL_TITLE_IDX = 1;
     private static final int PROPRIETARY_TRIAL_INDICATOR_IDX = 2;
@@ -318,6 +325,12 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
     private static final int ACCESS_OWNER = 2;
     private static final int ACCESS_SITE = 3;
 
+
+    private static final int PROGRAM_CODE_IDENTIFIER_IDX = 1;
+    private static final int PROGRAM_CODE_CODE_IDX = 2;
+    private static final int PROGRAM_CODE_PROGRAM_NAME_IDX = 3;
+    private static final int PROGRAM_CODE_STATUS_IDX = 4;
+
     /**
      * {@inheritDoc}
      */
@@ -414,6 +427,33 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
                 }
             }
         }
+        if (!ArrayUtils.contains(hints, ProtocolQueryPerformanceHints.SKIP_PROGRAM_CODES)) {
+            query = new DAQuery();
+            query.setSql(true);
+            query.setText(STUDY_PROGRAM_CODE_QRY_STRING);
+            query.addParameter(IDS, ownerMap.keySet());
+            List<Object[]> programCodeTupleList = dataAccessService.findByQuery(query);
+            for (StudyProtocolQueryDTO dto : dtoList) {
+                for (Object[] obj : programCodeTupleList) {
+                    Long studyprotocolId = ((BigInteger) obj[STUDY_PROTOCOL_IDENTIFIER_IDX]).longValue();
+                    if (dto.getStudyProtocolId().equals(studyprotocolId)) {
+                        ProgramCodeDTO programCodeDTO = new ProgramCodeDTO();
+                        String status = (String) obj[PROGRAM_CODE_STATUS_IDX];
+                        programCodeDTO.setActive(ActiveInactiveCode.ACTIVE == ActiveInactiveCode.getByCode(status));
+                        if (obj[PROGRAM_CODE_IDENTIFIER_IDX] instanceof BigInteger) {
+                            programCodeDTO.setId(((BigInteger) obj[PROGRAM_CODE_IDENTIFIER_IDX]).longValue());
+                        }  else {
+                            programCodeDTO.setId(((Integer) obj[PROGRAM_CODE_IDENTIFIER_IDX]).longValue());
+                        }
+
+                        programCodeDTO.setProgramCode((String) obj[PROGRAM_CODE_CODE_IDX]);
+                        programCodeDTO.setProgramName((String) obj[PROGRAM_CODE_PROGRAM_NAME_IDX]);
+                        dto.getProgramCodes().add(programCodeDTO);
+                    }
+                }
+            }
+        }
+
         return dtoList;
     }
     
@@ -452,7 +492,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
     
 
     /**
-     * @param userId
+     * @param user - the registry user
      * @return IDs of studies on which the user's affiliated organization is a participating site.
      * @throws PAException
      */

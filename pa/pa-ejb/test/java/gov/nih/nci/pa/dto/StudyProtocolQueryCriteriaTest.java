@@ -233,6 +233,9 @@ public class StudyProtocolQueryCriteriaTest {
         sut.populateReportingPeriodStatusCriterion(new Date(), new Date(),
                 StudyStatusCode.ACTIVE, StudyStatusCode.IN_REVIEW);
         assertTrue(sut.toString().contains("reportingPeriodStatusCriterion"));
+        assertFalse(sut.toString().contains("programCodeIds"));
+        sut.getProgramCodeIds().add(5L);
+        assertTrue(sut.toString().contains("programCodeIds"));
     }
     
     @Test
@@ -670,6 +673,15 @@ public class StudyProtocolQueryCriteriaTest {
         PropertyUtils.setSimpleProperty(c1, "holdRecordExists", true);
         assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
         PropertyUtils.setSimpleProperty(c2, "holdRecordExists", true);
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "programCodeIds",
+                Arrays.asList(new Long[] { 1L, 2L }));
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "programCodeIds",
+                Arrays.asList(new Long[] { 1L, 2L }));
         assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
         assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
         usedKeys.add(c1.getUniqueCriteriaKey());

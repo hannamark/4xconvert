@@ -3,10 +3,7 @@
  */
 package gov.nih.nci.pa.service.search;
 
-import static org.mockito.Mockito.*;
-
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
-import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -18,20 +15,20 @@ import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
-
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import junit.framework.Assert;
-
 import org.apache.commons.collections.ListUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Query;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Denis G. Krylov
@@ -195,4 +192,29 @@ public class StudyProtocolQueryBeanSearchCriteriaTest extends
         System.out.println(hql);
         Assert.assertTrue(hql.contains("WHERE  obj.dates.primaryCompletionDate >= :pcdFromDate AND  obj.dates.primaryCompletionDate <= :pcdToDate  AND  sos.statusCode in (:studyOverallStatusParam)  and sos.id in (select id from obj.studyOverallStatuses where statusDate between :reportingPeriodStartParam and :reportingPeriodEndParam)"));
     }
+
+
+
+    @Test
+    public final void testResultsQueryHavingAtleastOneProgramCode() {
+        StudyProtocol sp = new StudyProtocol();
+        StudyProtocolOptions options = new StudyProtocolOptions();
+        options.setProgramCodeIds(Arrays.asList(1L, 2L, 3L));
+        StudyProtocolQueryBeanSearchCriteria criteria = new StudyProtocolQueryBeanSearchCriteria(
+                sp, options);
+        Query query = criteria.getQuery("", false);
+        String hql = query.getQueryString();
+        System.out.println(hql);
+        Assert.assertTrue(hql.contains("WHERE  pgc.id in (:pgCodeIds)"));
+
+        options.setPcdFromDate(new Date());
+        options.setPcdToDate(new Date());
+
+        query = criteria.getQuery("", false);
+        hql = query.getQueryString();
+        System.out.println(hql);
+        Assert.assertTrue(hql.contains("WHERE  obj.dates.primaryCompletionDate >= :pcdFromDate AND  obj.dates.primaryCompletionDate <= :pcdToDate  AND  pgc.id in (:pgCodeIds)"));
+    }
+
+
 }

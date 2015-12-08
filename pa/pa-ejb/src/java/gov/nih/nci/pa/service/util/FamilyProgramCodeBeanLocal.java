@@ -61,7 +61,7 @@ public class FamilyProgramCodeBeanLocal implements FamilyProgramCodeServiceLocal
         Object result = getFamilyByPoId(familyPoId);        
         if (result != null) {
             return convert((Family) result);
-    }
+        }
         return null;                              
     }
 
@@ -90,7 +90,7 @@ public class FamilyProgramCodeBeanLocal implements FamilyProgramCodeServiceLocal
         PaHibernateUtil.getCurrentSession().saveOrUpdate(family);
         return convert(family);
     }      
-        
+    
     FamilyDTO convert(Family bo) {
         FamilyDTO familyDTO = new FamilyDTO(bo.getId(), bo.getPoId(), 
                 bo.getReportingPeriodEnd(), bo.getReportingPeriodLength());

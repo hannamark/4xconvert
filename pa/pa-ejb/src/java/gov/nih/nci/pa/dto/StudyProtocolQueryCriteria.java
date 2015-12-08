@@ -140,6 +140,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private StudyFlagReasonCode notFlaggedWith;
 
     private ReportingPeriodStatusCriterion reportingPeriodStatusCriterion;
+    private List<Long> programCodeIds = new ArrayList<Long>();
 
     /**
      * @return the inBoxProcessing
@@ -280,6 +281,22 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public List<Long> getParticipatingSiteIds() {
         return participatingSiteIds;
+    }
+
+    /**
+     * The program code IDs
+     * @return the programCodeIds
+     */
+    public List<Long> getProgramCodeIds() {
+        return programCodeIds;
+    }
+
+    /**
+     * The programCodeIds
+     * @param programCodeIds  the programCodeIds
+     */
+    public void setProgramCodeIds(List<Long> programCodeIds) {
+        this.programCodeIds = programCodeIds;
     }
 
     /**
@@ -1151,6 +1168,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
                 .append(pcdTo).append(" pcdFromDateType=").append(pcdType)                
                 .append(" notFlaggedWith=").append(notFlaggedWith)
                 .append(" reportingPeriodStatusCriterion=").append(reportingPeriodStatusCriterion)
+                .append(" programCodeIds=").append(programCodeIds)
                 .append("]");
         return builder.toString();
     }
@@ -1817,7 +1835,9 @@ public class StudyProtocolQueryCriteria implements Serializable {
         if (notFlaggedWith != null)
             builder.append("notFlaggedWith=").append(notFlaggedWith);
         if (reportingPeriodStatusCriterion != null)
-            builder.append("reportingPeriodStatusCriterion=").append(reportingPeriodStatusCriterion);
+            builder.append("reportingPeriodStatusCriterion=").append(reportingPeriodStatusCriterion).append(", ");
+        if (isNotEmpty(programCodeIds))
+            builder.append("programCodeIds=").append(programCodeIds);
         builder.append("]");
         return builder.toString();
     }

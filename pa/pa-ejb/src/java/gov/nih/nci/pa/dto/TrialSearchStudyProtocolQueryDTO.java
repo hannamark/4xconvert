@@ -91,6 +91,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -315,6 +316,31 @@ public class TrialSearchStudyProtocolQueryDTO extends UpdateableStudyProtocolQue
      */
     public void setCtgovXmlRequiredIndicator(Boolean ctgovXmlRequiredIndicator) {
         this.ctgovXmlRequiredIndicator = ctgovXmlRequiredIndicator;
+    }
+
+    /**
+     * Will return the identifers as comma separated strings
+     * @return - identifiers
+     */
+    public String getAllIdentifiersAsString() {
+        List<String> ids = new ArrayList<String>();
+        if (StringUtils.isNotEmpty(getNciIdentifier())) {
+            ids.add(getNciIdentifier());
+        }
+        if (StringUtils.isNotEmpty(getNctIdentifier())) {
+            ids.add(getNctIdentifier());
+        }
+        if (StringUtils.isNotEmpty(getDcpId())) {
+            ids.add(getDcpId());
+        }
+
+        if (StringUtils.isNotEmpty(getCtepId())) {
+            ids.add(getCtepId());
+        }
+        if (CollectionUtils.isNotEmpty(getOtherIdentifiers())) {
+            ids.addAll(getOtherIdentifiers());
+        }
+        return StringUtils.join(ids, ", ");
     }
     
     /**

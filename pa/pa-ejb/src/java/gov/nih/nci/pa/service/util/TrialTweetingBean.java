@@ -3,6 +3,8 @@ package gov.nih.nci.pa.service.util;
 import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_ALTERNATE_TITLES;
 import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_LAST_UPDATER_INFO;
 import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_OTHER_IDENTIFIERS;
+import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_PROGRAM_CODES;
+
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -261,7 +263,7 @@ public class TrialTweetingBean implements TrialTweetingService {
                 StudyStatusCode.ENROLLING_BY_INVITATION.getCode()));
         return protocolQueryService.getStudyProtocolByCriteria(criteria,
                 SKIP_ALTERNATE_TITLES, SKIP_LAST_UPDATER_INFO,
-                SKIP_OTHER_IDENTIFIERS);
+                SKIP_OTHER_IDENTIFIERS, SKIP_PROGRAM_CODES);
     }
 
     private Collection<StudyProtocolQueryDTO> findIndustrialTrialsToTweet()
@@ -272,7 +274,7 @@ public class TrialTweetingBean implements TrialTweetingService {
                 RecruitmentStatusCode.ENROLLING_BY_INVITATION));
         return protocolQueryService.getStudyProtocolByCriteria(criteria,
                 SKIP_ALTERNATE_TITLES, SKIP_LAST_UPDATER_INFO,
-                SKIP_OTHER_IDENTIFIERS);
+                SKIP_OTHER_IDENTIFIERS, SKIP_PROGRAM_CODES);
     }
 
     /**

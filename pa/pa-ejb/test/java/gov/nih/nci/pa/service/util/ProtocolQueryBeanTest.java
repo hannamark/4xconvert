@@ -92,11 +92,16 @@ import static gov.nih.nci.pa.enums.MilestoneCode.SCIENTIFIC_READY_FOR_QC;
 import static gov.nih.nci.pa.enums.MilestoneCode.SUBMISSION_ACCEPTED;
 import static gov.nih.nci.pa.enums.MilestoneCode.SUBMISSION_RECEIVED;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -108,11 +113,14 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import junit.framework.Assert;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Session;
 import org.joda.time.Interval;
@@ -218,6 +226,74 @@ public class ProtocolQueryBeanTest extends AbstractEjbTestCase {
 
     }
 
+
+    /**
+     * tests if tree traversal is correct
+     *
+     * @throws PAException
+     */
+    @Test
+    public void testRetrieveStudyProtocolsWithProgramCodes() throws PAException {
+        //Given few studies in database having cancer in official title, and program code association
+        StudyProtocolQueryCriteria crit = new StudyProtocolQueryCriteria();
+        crit.setOfficialTitle("cancer");
+
+        //When I load it
+        List<StudyProtocolQueryDTO>  list = bean.getStudyProtocolByCriteria(crit);
+
+        //then program codes should not be loaded.
+        assertNotNull(list);
+        for(StudyProtocolQueryDTO dto : list) {
+            assertTrue(dto.getProgramCodes().isEmpty());
+        }
+
+        //When I query with program codes
+        list = bean.getStudyProtocolByCriteria(crit,
+                ProtocolQueryPerformanceHints.SKIP_OTHER_IDENTIFIERS,
+                ProtocolQueryPerformanceHints.SKIP_ALTERNATE_TITLES );
+
+        //Then I must get program codes in the result.
+        assertNotNull(list);
+        for(StudyProtocolQueryDTO dto : list) {
+            assertFalse(dto.getProgramCodes().isEmpty());
+            assertEquals(2, dto.getProgramCodes().size());
+            assertEquals(TestSchema.theProgramCodes.get(0).getId(), dto.getProgramCodes().get(0).getId()) ;
+        }
+
+    }
+
+    /**
+     *  tests if filter by program code is returning results properly
+     */
+    @Test
+    public void testFilterByProgramCodeIds() throws PAException {
+
+        //When I filter by program codes that are not yet associated with any study
+        StudyProtocolQueryCriteria crit = new StudyProtocolQueryCriteria();
+        crit.getProgramCodeIds().add(TestSchema.theProgramCodes.get(4).getId());
+        crit.getProgramCodeIds().add(TestSchema.theProgramCodes.get(5).getId());
+
+        List<StudyProtocolQueryDTO>  list = bean.getStudyProtocolByCriteria(crit,
+                ProtocolQueryPerformanceHints.SKIP_ALTERNATE_TITLES);
+        //Then I should see no result
+        assertTrue(CollectionUtils.isEmpty(list));
+
+        //when I ask for program code that is associated to the, to the filter list above
+        crit.getProgramCodeIds().add(TestSchema.theProgramCodes.get(0).getId());
+        list = bean.getStudyProtocolByCriteria(crit,
+                ProtocolQueryPerformanceHints.SKIP_ALTERNATE_TITLES);
+        //Then I should get the protocols (at least 2) back
+        assertTrue(CollectionUtils.isNotEmpty(list));
+        assertEquals(2, list.size());
+        for (StudyProtocolQueryDTO sp : list) {
+            List<Long> pgIds = new ArrayList<Long>();
+            for(ProgramCodeDTO pc : sp.getProgramCodes()) {
+                pgIds.add(pc.getId());
+            }
+            assertTrue(pgIds.contains(TestSchema.theProgramCodes.get(0).getId()));
+        }
+
+    }
 
 
     /**
@@ -382,12 +458,10 @@ public class ProtocolQueryBeanTest extends AbstractEjbTestCase {
      * @throws PAException
      */
     private  List<StudyProtocolQueryDTO>  findProtocolsWithinReportingPeriodHavingStatus(Date from, Date to) throws PAException {
-        System.out.println("-----------------------------------------------------------------------------------------");
         StudyProtocolQueryCriteria crit = new StudyProtocolQueryCriteria();
         crit.populateReportingPeriodStatusCriterion(from, to,
                 StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION);
         List<StudyProtocolQueryDTO> dtoList =  bean.getStudyProtocolByCriteria(crit);
-        System.out.println("=========================================================================================");
         return dtoList;
     }
 }

@@ -6,6 +6,7 @@ package gov.nih.nci.pa.action; // NOPMD
 import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_ALTERNATE_TITLES;
 import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_LAST_UPDATER_INFO;
 import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_OTHER_IDENTIFIERS;
+import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_PROGRAM_CODES;
 import static gov.nih.nci.pa.util.Constants.IS_RESULTS_ABSTRACTOR;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
@@ -268,7 +269,8 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
                                                     criteria,
                                                     SKIP_ALTERNATE_TITLES,
                                                     SKIP_LAST_UPDATER_INFO,
-                                                    SKIP_OTHER_IDENTIFIERS));
+                                                    SKIP_OTHER_IDENTIFIERS,
+                                                    SKIP_PROGRAM_CODES));
 
                                     // collecting protocol-ids.
                                     List<Long> protocolIds = new ArrayList<Long>();

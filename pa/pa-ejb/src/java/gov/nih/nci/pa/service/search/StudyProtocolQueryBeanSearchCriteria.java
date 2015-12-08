@@ -156,8 +156,16 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
             join.append(" left outer join obj.studyOverallStatuses as sos ");
         }
         join.append(" left outer join obj.studyOwners as sowner ");
+        if (needJoinStudyProgramCodes()) {
+           join.append(" join obj.programCodes as pgc ");
+        }
+
         return join.toString();
 
+    }
+
+    private boolean needJoinStudyProgramCodes() {
+        return CollectionUtils.isNotEmpty(spo.getProgramCodeIds());
     }
 
     private boolean needJoinOnOverallStatuses() {
@@ -270,6 +278,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         private static final String PCD_DATE_TYPE = "pcdDateType";
         private static final String FLAG_CODE_PARAM = "flagReason";
         private static final String SITE_STATUSES_PARAM = "siteStatuses";
+        private static final String PROGRAM_CODE_ID_PARAM = "pgCodeIds";
         private final StudyProtocol sp;
         private final StudyProtocolOptions spo;
 
@@ -317,6 +326,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
             handleStudySource(whereClause, params);
             handleResultsFilters(whereClause, params);
             handleStudyReportingPeriodStatusCritera(whereClause, params);
+            handleProgramCodeFilters(whereClause, params);
         }
 
 
@@ -443,6 +453,20 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 params.put(REPORTING_PERIOD_END_PARAM, spo.getReportingPeriodEnd());
             }
         }
+
+        /**
+         * Will add the programCode id filter
+         * @param whereClause
+         * @param params
+         */
+        public void handleProgramCodeFilters(StringBuffer whereClause, Map<String, Object> params) {
+            if (CollectionUtils.isNotEmpty(spo.getProgramCodeIds())) {
+                String operator = determineOperator(whereClause);
+                whereClause.append(String.format(" %s pgc.id in (:%s)", operator, PROGRAM_CODE_ID_PARAM));
+                params.put(PROGRAM_CODE_ID_PARAM, spo.getProgramCodeIds());
+            }
+        }
+
 
         /**
          * @param whereClause where clause

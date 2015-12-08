@@ -136,8 +136,11 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
                 downloadDir.getCanonicalPath());
         profile.setPreference("browser.download.folderList", 2);
         profile.setPreference("browser.helperApps.neverAsk.saveToDisk",
-                "text/csv,application/rtf");
-
+                "text/csv;" +
+                        "application/rtf;" +
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;" +
+                        "application/xlsx;" +
+                        "application/xls");
         final Class<?> clazz = Class.forName(driverClass);
         try {
             driver = (WebDriver) clazz.getConstructor(FirefoxProfile.class)

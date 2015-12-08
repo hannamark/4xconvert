@@ -163,6 +163,7 @@ public class StudyProtocolOptions {
     private Date reportingPeriodStart;
     private Date reportingPeriodEnd;
     private Set<StudyStatusCode> studyStatusCodes = new HashSet<StudyStatusCode>();
+    private List<Long> programCodeIds = new ArrayList<Long>();
 
     /**
      * @return excludeRejectedTrials
@@ -1000,5 +1001,21 @@ public class StudyProtocolOptions {
      */
     public void setStudyStatusCodes(Set<StudyStatusCode> studyStatusCodes) {
         this.studyStatusCodes = studyStatusCodes;
+    }
+
+    /**
+     * The programCodeIds
+     * @return  the programCodeIDs
+     */
+    public List<Long> getProgramCodeIds() {
+        return programCodeIds;
+    }
+
+    /**
+     * The programCodeIds
+     * @param programCodeIds the programCode IDs
+     */
+    public void setProgramCodeIds(List<Long> programCodeIds) {
+        this.programCodeIds = programCodeIds;
     }
 }

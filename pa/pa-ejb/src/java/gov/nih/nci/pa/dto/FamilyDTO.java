@@ -1,5 +1,7 @@
 package gov.nih.nci.pa.dto;
 
+import org.apache.commons.lang.time.DateUtils;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -92,6 +94,14 @@ public class FamilyDTO implements Serializable {
         Integer repLength = (Integer) family[RESULTS_PERIOD_DATE];
         return new FamilyDTO(identifier, poId, repPeriodEnd, repLength);
     }
+
+    /**
+     * Will return the start date
+     * @return the start date
+     */
+    public Date findStartDate() {
+        return DateUtils.addMonths(reportingPeriodEndDate, -1 * reportingPeriodLength);
+    }
     
     /**
      * @return id
@@ -151,7 +161,7 @@ public class FamilyDTO implements Serializable {
      */
     public void setReportingPeriodLength(Integer reportingPeriodLength) {
         this.reportingPeriodLength = reportingPeriodLength;
-    }    
+    }   
     
     /**
      * get name

@@ -401,7 +401,19 @@
     </package>
     
     <package name="siteadmin" namespace="/siteadmin" extends="protected">
-        
+    
+    	<action name="programCodes*" class="gov.nih.nci.registry.action.ProgramCodesAction" method="{1}">
+            <result>/WEB-INF/jsp/programCodeList.jsp</result>     
+            <result name="success">/WEB-INF/jsp/programCodeList.jsp</result>                          
+        </action>
+
+
+        <action name="managePCAssignment*" class="gov.nih.nci.registry.action.ProgramCodeAssignmentAction" method="{1}">
+            <result>/WEB-INF/jsp/manageProgramCodeAssignment.jsp</result>
+            <result name="success">/WEB-INF/jsp/manageProgramCodeAssignment.jsp</result>
+        </action>
+
+
     	<action name="programCodes*" class="gov.nih.nci.registry.action.ProgramCodesAction" method="{1}">
             <result>/WEB-INF/jsp/programCodeList.jsp</result>     
             <result name="success">/WEB-INF/jsp/programCodeList.jsp</result>                          

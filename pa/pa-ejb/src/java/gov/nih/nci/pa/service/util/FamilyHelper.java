@@ -98,6 +98,23 @@ public final class FamilyHelper {
     }
 
     /**
+     * Get all sibling organizations associated with the family.
+     * @param familyPoId the PO id of family
+     * @return list of sibling PO organization ids
+     * @throws PAException exception
+     */
+    public static List<Long> getRelatedOrgsInFamily(Long familyPoId) throws PAException {
+
+        List<Long> result = new ArrayList<Long>();
+        List<FamilyOrganizationRelationshipDTO> rList = PoRegistry.getFamilyService()
+                .getActiveRelationships(familyPoId);
+        for (FamilyOrganizationRelationshipDTO r : rList) {
+            result.add(IiConverter.convertToLong(r.getOrgIdentifier()));
+        }
+        return result;
+    }
+
+    /**
      * Get all sibling organizations.
      * @param orgId the PO organization id
      * @return list of sibling PO organization ids
@@ -107,11 +124,7 @@ public final class FamilyHelper {
         List<OrgFamilyDTO> families = getByOrgId(orgId);
         Set<Long> result = new HashSet<Long>();
         for (OrgFamilyDTO family : families) {
-            List<FamilyOrganizationRelationshipDTO> rList = PoRegistry.getFamilyService()
-                    .getActiveRelationships(family.getId());
-            for (FamilyOrganizationRelationshipDTO r : rList) {
-                result.add(IiConverter.convertToLong(r.getOrgIdentifier()));
-            }
+           result.addAll(getRelatedOrgsInFamily(family.getId()));
         }
         return new ArrayList<Long>(result);
     }

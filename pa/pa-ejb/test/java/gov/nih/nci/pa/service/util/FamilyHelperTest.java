@@ -89,6 +89,24 @@ public class FamilyHelperTest {
     }
 
     @Test
+    public void testGetRelatedOrgsInFamilyNull() throws Exception {
+        assertTrue(FamilyHelper.getRelatedOrgsInFamily((Long) null).isEmpty());
+    }
+
+
+    @Test
+    public void testGetRelatedOrgsInFamilyNotFound() throws Exception {
+        assertTrue(FamilyHelper.getRelatedOrgsInFamily(-1L).isEmpty());
+    }
+    @Test
+    public void testGetRelatedOrgsInFamily() throws Exception {
+        assertEquals(0, FamilyHelper.getRelatedOrgsInFamily(1L).size());
+        when(fs.getActiveRelationships(1L)).thenReturn(getRelationships(new Long[] {1L, 2L}));
+        assertEquals(2, FamilyHelper.getRelatedOrgsInFamily(1L).size());
+    }
+
+
+    @Test
     public void getAllRelatedOrgsNull() throws Exception {
         assertTrue(FamilyHelper.getAllRelatedOrgs((Long) null).isEmpty());
     }

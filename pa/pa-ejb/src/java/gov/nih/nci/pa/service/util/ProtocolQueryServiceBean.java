@@ -85,6 +85,8 @@ package gov.nih.nci.pa.service.util;
 import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_ALTERNATE_TITLES;
 import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_LAST_UPDATER_INFO;
 import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_OTHER_IDENTIFIERS;
+import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_PROGRAM_CODES;
+
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
@@ -211,8 +213,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudyProtocolQueryDTO> getStudyProtocolByCriteria(
             StudyProtocolQueryCriteria spsc) throws PAException {
-        return getStudyProtocolByCriteria(spsc,
-                new ProtocolQueryPerformanceHints[0]);
+        return getStudyProtocolByCriteria(spsc, SKIP_OTHER_IDENTIFIERS, SKIP_PROGRAM_CODES);
     }
     
     /**
@@ -560,6 +561,9 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             options.setReportingPeriodEnd(criteria.getReportingPeriodStatusCriterion().getEndDate());
             options.setReportingPeriodStart(criteria.getReportingPeriodStatusCriterion().getStartDate());
             options.getStudyStatusCodes().addAll(criteria.getReportingPeriodStatusCriterion().getStudyStatusCodes());
+        }
+        if (criteria.getProgramCodeIds() != null) {
+            options.getProgramCodeIds().addAll(criteria.getProgramCodeIds());
         }
 
         return new StudyProtocolQueryBeanSearchCriteria(example, options);
@@ -920,6 +924,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && CollectionUtils.isEmpty(criteria.getInterventionIds())
                 && CollectionUtils.isEmpty(criteria.getInterventionAlternateNameIds())
                 && CollectionUtils.isEmpty(criteria.getInterventionTypes())
+                && CollectionUtils.isEmpty(criteria.getProgramCodeIds())
                 && criteria.getReportingPeriodStatusCriterion() == null
                 && (criteria.isMyTrialsOnly() != null && !criteria.isMyTrialsOnly()
                         || criteria.isMyTrialsOnly() == null));
@@ -1116,7 +1121,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         StudyProtocolQueryCriteria criteria = buildWorkloadCriteria();
         List<StudyProtocolQueryDTO> results = getStudyProtocolByCriteria(
                 criteria, SKIP_ALTERNATE_TITLES, SKIP_LAST_UPDATER_INFO,
-                SKIP_OTHER_IDENTIFIERS);
+                SKIP_OTHER_IDENTIFIERS, SKIP_PROGRAM_CODES);
         populateMilestoneHistory(results);
         return results;
     }

@@ -80,7 +80,8 @@
                   <li class="dropdown-submenu"><a href="#">Program Codes</a>
 	                <ul class="dropdown-menu">
 	                  <li><a id="programCodesMasterList" href="javascript:void(0)" onclick="submitXsrfForm('${pageContext.request.contextPath}/siteadmin/programCodesexecute.action');">Manage Master List</a></li>
-	                  <li><a id="manageAccrualAccessMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('${pageContext.request.contextPath}/siteadmin/manageAccrualAccess.action');">Manage Code Assignments</a></li>	                  
+	                  <li><a id="programCodesMasterList" href="javascript:void(0)" onclick="submitXsrfForm('${pageContext.request.contextPath}/siteadmin/managePCAssignmentexecute.action');">Manage Code Assignments</a></li>
+	                  <li><a id="manageAccrualAccessMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('${pageContext.request.contextPath}/siteadmin/manageAccrualAccess.action');">Manage Accruals</a></li>
 	                </ul>
 	              </li>
                   </c:if>

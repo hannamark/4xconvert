@@ -82,8 +82,9 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO
     private List<OrganizationDTO> orgsThatCanBeAddedAsSite;
     private String accrualDiseaseCode;
     private List<StudyOnholdDTO> allHolds = new ArrayList<>();
+    private List<ProgramCodeDTO> programCodes = new ArrayList<>();
     private String designeeNamesList;
-    
+
    /**
      * Whether this trial permits self-registration of participating sites.
      * 
@@ -1404,5 +1405,20 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO
     public void setDesigneeNamesList(String designeeNamesList) {
         this.designeeNamesList = designeeNamesList;
     }
-    
+
+    /**
+     * Gets the programCodes list
+     * @return the programCodes  list
+     */
+    public List<ProgramCodeDTO> getProgramCodes() {
+        return programCodes;
+    }
+
+    /**
+     * Sets the  programCodes
+     * @param programCodes  the programCodes list
+     */
+    public void setProgramCodes(List<ProgramCodeDTO> programCodes) {
+        this.programCodes = programCodes;
+    }
 }

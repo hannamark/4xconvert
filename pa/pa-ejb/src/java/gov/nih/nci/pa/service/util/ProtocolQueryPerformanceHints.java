@@ -22,6 +22,9 @@ public enum ProtocolQueryPerformanceHints {
      * Tells the search bean to skip querying for last
      * updater info.
      */
-    SKIP_LAST_UPDATER_INFO;
+    SKIP_LAST_UPDATER_INFO,
+    /** Tells the search bean to skip querying for program codes
+     */
+    SKIP_PROGRAM_CODES;
 
 }

@@ -83,69 +83,7 @@
 package gov.nih.nci.pa.util;
 
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.AccrualDisease;
-import gov.nih.nci.pa.domain.AnatomicSite;
-import gov.nih.nci.pa.domain.Arm;
-import gov.nih.nci.pa.domain.AssayType;
-import gov.nih.nci.pa.domain.BiomarkerPurpose;
-import gov.nih.nci.pa.domain.BiomarkerUse;
-import gov.nih.nci.pa.domain.ClinicalResearchStaff;
-import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.domain.Document;
-import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
-import gov.nih.nci.pa.domain.EvaluationType;
-import gov.nih.nci.pa.domain.FundingMechanism;
-import gov.nih.nci.pa.domain.HealthCareFacility;
-import gov.nih.nci.pa.domain.HealthCareProvider;
-import gov.nih.nci.pa.domain.Intervention;
-import gov.nih.nci.pa.domain.InterventionAlternateName;
-import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
-import gov.nih.nci.pa.domain.NIHinstitute;
-import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.domain.OrganizationalContact;
-import gov.nih.nci.pa.domain.OversightCommittee;
-import gov.nih.nci.pa.domain.PAProperties;
-import gov.nih.nci.pa.domain.PDQDisease;
-import gov.nih.nci.pa.domain.PDQDiseaseAltername;
-import gov.nih.nci.pa.domain.PDQDiseaseParent;
-import gov.nih.nci.pa.domain.Person;
-import gov.nih.nci.pa.domain.PlannedActivity;
-import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
-import gov.nih.nci.pa.domain.PlannedMarker;
-import gov.nih.nci.pa.domain.PlannedMarkerSyncWithCaDSR;
-import gov.nih.nci.pa.domain.PlannedMarkerSynonyms;
-import gov.nih.nci.pa.domain.PlannedProcedure;
-import gov.nih.nci.pa.domain.PlannedSubstanceAdministration;
-import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.domain.RegulatoryAuthority;
-import gov.nih.nci.pa.domain.ResearchOrganization;
-import gov.nih.nci.pa.domain.SpecimenCollection;
-import gov.nih.nci.pa.domain.SpecimenType;
-import gov.nih.nci.pa.domain.StratumGroup;
-import gov.nih.nci.pa.domain.StudyAccrualAccess;
-import gov.nih.nci.pa.domain.StudyCheckout;
-import gov.nih.nci.pa.domain.StudyContact;
-import gov.nih.nci.pa.domain.StudyDisease;
-import gov.nih.nci.pa.domain.StudyDocumentStage;
-import gov.nih.nci.pa.domain.StudyFundingStage;
-import gov.nih.nci.pa.domain.StudyIndIdeStage;
-import gov.nih.nci.pa.domain.StudyIndlde;
-import gov.nih.nci.pa.domain.StudyMilestone;
-import gov.nih.nci.pa.domain.StudyOnhold;
-import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
-import gov.nih.nci.pa.domain.StudyOverallStatus;
-import gov.nih.nci.pa.domain.StudyProcessingError;
-import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.domain.StudyProtocolAssociation;
-import gov.nih.nci.pa.domain.StudyProtocolDates;
-import gov.nih.nci.pa.domain.StudyProtocolStage;
-import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
-import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
-import gov.nih.nci.pa.domain.StudyResourcing;
-import gov.nih.nci.pa.domain.StudySite;
-import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
-import gov.nih.nci.pa.domain.StudySiteContact;
-import gov.nih.nci.pa.domain.TrialDataVerification;
+import gov.nih.nci.pa.domain.*;
 import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
@@ -255,6 +193,7 @@ public class TestSchema {
     public static Long inactiveProtocolId;
     public static List<Long> assayTypeIds;
     public static List<Long> studyProtocolErrorIds;
+    public static List<ProgramCode> theProgramCodes;
 
     /**
      * 
@@ -310,9 +249,12 @@ public class TestSchema {
         assayTypeIds = new ArrayList<Long>();
         studyProtocols = new ArrayList<StudyProtocol>();
         studyProtocolErrorIds = new ArrayList<Long>();
+        theProgramCodes = new ArrayList<ProgramCode>();
         
         User curator = getUser(true);
         addUpdObject(curator);
+
+        createFamily();
 
         StudyProtocol sp = new InterventionalStudyProtocol();
         sp.setOfficialTitle("cancer for THOLA");
@@ -359,6 +301,8 @@ public class TestSchema {
         sp.setComments("Comments");
         sp.setAssignedUser(ru.getUserLastCreated());
         sp.setAccrualDiseaseCodeSystem("SDC");
+        sp.getProgramCodes().add(theProgramCodes.get(0));
+        sp.getProgramCodes().add(theProgramCodes.get(1));
         addUpdObject(sp);
         sp.setId(sp.getId());
         studyProtocolIds.add(sp.getId());
@@ -922,6 +866,8 @@ public class TestSchema {
         sp.setProprietaryTrialIndicator(Boolean.FALSE);
         sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
         sp.setAccrualDiseaseCodeSystem("SDC");
+        sp.getProgramCodes().add(theProgramCodes.get(0));
+        sp.getProgramCodes().add(theProgramCodes.get(2));
         addUpdObject(sp);
         studyProtocolIds.add(sp.getId());
         studyProtocols.add(sp);
@@ -969,6 +915,8 @@ public class TestSchema {
         sp.setProprietaryTrialIndicator(Boolean.FALSE);
         sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
         sp.setAccrualDiseaseCodeSystem("SDC");
+        sp.getProgramCodes().add(theProgramCodes.get(0));
+        sp.getProgramCodes().add(theProgramCodes.get(3));
         addUpdObject(sp);
         addUpdObject(scc);
         sp.setId(sp.getId());
@@ -998,7 +946,7 @@ public class TestSchema {
         addUpdObject(spe);
         addUpdObject(sp);        
         studyProtocolErrorIds.add(spe.getId());
-        
+
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();
     }
@@ -1227,6 +1175,39 @@ public class TestSchema {
         sm.setMilestoneDate(TODAY);
         TestSchema.addUpdObject(sm);
         return sm;
+    }
+
+    public static Family createFamily() {
+        Family family = new Family();
+        family.setPoId(-1L);
+        family.setReportingPeriodEnd(ONE_YEAR_FROM_TODAY);
+        family.setReportingPeriodLength(12);
+        TestSchema.addUpdObject(family);
+
+        //add the program codes
+        String[] programs = new String[]{
+                "Cancer Immunology & Immunotherapy",
+                "Cell Signaling & Experimental Therapeutics",
+                "Free Radical Cancer Biology",
+                "Tumor Imaging",
+                "Cancer Epidemiology",
+                "Cancer & Genetics Computational"
+        };
+        int i = 1;
+        for (String s : programs) {
+
+            ProgramCode pc = new ProgramCode();
+            family.getProgramCodes().add(pc);
+            pc.setFamily(family);
+            pc.setProgramCode("" + i);
+            pc.setProgramName(s);
+            pc.setStatusCode(ActiveInactiveCode.ACTIVE);
+            TestSchema.addUpdObject(pc);
+            theProgramCodes.add(pc);
+            i++;
+        }
+
+        return family;
     }
     
     public static Document createDocumentObj(DocumentTypeCode dt, String fileName, StudyProtocol sp) {
@@ -1711,6 +1692,8 @@ public class TestSchema {
         sp.setDateLastCreated(TODAY);
         sp.setStatusDate(TODAY);
         sp.setAccrualDiseaseCodeSystem("SDC");
+        sp.getProgramCodes().add(theProgramCodes.get(0));
+        sp.getProgramCodes().add(theProgramCodes.get(1));
         addUpdObject(sp);
         addOwners(sp);
         addUpdObject(sp);
