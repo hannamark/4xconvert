@@ -53,7 +53,8 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
     private FamilyProgramCodeService familyProgramCodeService;
     
 
-    private RegistryUserService registryUserService;
+    private RegistryUserService registryUserService;    
+
     private LookUpTableServiceRemote lookUpTableServiceRemote;    
     
     private HttpServletRequest request;
@@ -301,5 +302,21 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
      */
     public void setSelectedDTOId(Long selectedDTOId) {
         this.selectedDTOId = selectedDTOId;
+    }
+    
+    /**
+     * returns registry user service 
+     * @return registryUserService user service
+     */
+    public RegistryUserService getRegistryUserService() {
+        return registryUserService;
+    }
+
+    /**
+     * Sets registry user service
+     * @param registryUserService registry user service
+     */
+    public void setRegistryUserService(RegistryUserService registryUserService) {
+        this.registryUserService = registryUserService;
     }
 }
