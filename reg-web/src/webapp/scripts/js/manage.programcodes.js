@@ -42,7 +42,7 @@ jQuery(function($) {
             {width:"8%",
              orderable: false ,
              data: function ( row, type, val, meta ) {
-                snippet = "";
+               var snippet = "";
                 $(row.programCodes).each(function(i,pc) {
                     snippet = snippet +  '<a href="#" onclick="removePgCode(' + row.studyProtocolId + ')" class="btn-xs pgcrm ">' + pc + ' <span class="glyphicon glyphicon-remove"></span></a> ';
                 });
@@ -73,7 +73,7 @@ jQuery(function($) {
         $('#pgcFilter').val(this.value);
     } );
 
-    if ($('#pgcFilter').val() != '') {
+    if ($('#pgcFilter').val() !== '') {
         $('#cfProgramCode').val($('#pgcFilter').val());
     }
 

@@ -47,7 +47,7 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
     private static final Logger LOG = Logger.getLogger(ProgramCodeAssignmentAction.class);
     private static final String IS_SITE_ADMIN = "isSiteAdmin";
 
-    private StudyStatusCode[] activeProtocolStatuses = new StudyStatusCode[]{ACTIVE, APPROVED,
+    private static final StudyStatusCode[] ACTIVE_PROTOCOL_STATUSES = new StudyStatusCode[]{ACTIVE, APPROVED,
             IN_REVIEW, ENROLLING_BY_INVITATION,
             TEMPORARILY_CLOSED_TO_ACCRUAL,
             TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION};
@@ -238,7 +238,7 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
               loadFamily();
               StudyProtocolQueryCriteria spQueryCriteria = new StudyProtocolQueryCriteria();
               spQueryCriteria.populateReportingPeriodStatusCriterion(familyDto.findStartDate(),
-                      familyDto.getReportingPeriodEndDate(), activeProtocolStatuses);
+                      familyDto.getReportingPeriodEndDate(), ACTIVE_PROTOCOL_STATUSES);
               spQueryCriteria.setExcludeRejectProtocol(true);
               spQueryCriteria.setExcludeTerminatedTrials(true);
               Long affliatedOrgId = getAffiliatedOrganizationId();
