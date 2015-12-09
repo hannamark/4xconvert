@@ -67,11 +67,7 @@ function updateNciGrant() {
             </del>
         </div>
     </c:if>
-    <s:if test="trialFundingList != null">
-    <s:hidden name="page" />
-    <s:hidden name="cbValue" />
-    <s:set name="trialFundingList" value="trialFundingList" scope="request"/>
-    <table>
+   <table>
     <tr>
       <td>
         <s:set var="hasOnlyResultsAbstractorRole">${!(sessionScope.isAdminAbstractor==true
@@ -83,6 +79,10 @@ function updateNciGrant() {
     <tr><td align="right"><div id="ncigrantmessagediv" class="info"/></td></tr>
     <tr><td style="padme10">&nbsp;</td></tr>
     </table>
+    <s:if test="trialFundingList != null">
+    <s:hidden name="page" />
+    <s:hidden name="cbValue" />
+    <s:set name="trialFundingList" value="trialFundingList" scope="request"/>
     <display:table name="trialFundingList" id="row" class="data" sort="list" pagesize="200" requestURI="trialFundingquery.action" export="false"
             decorator="gov.nih.nci.pa.decorator.TrialFundingTableDecorator">
         <display:column escapeXml="true" titleKey="trialFunding.funding.mechanism" property="fundingMechanismCode" sortable="true" headerClass="sortable" />
