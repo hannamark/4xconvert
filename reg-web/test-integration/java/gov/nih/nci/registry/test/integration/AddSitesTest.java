@@ -142,7 +142,6 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
                 selenium.getValue("id=trial_" + trial.id + "_site_0_pi_poid"));
 
         selenium.type("id=trial_" + trial.id + "_site_0_localID", "XYZ0001");
-        selenium.type("id=trial_" + trial.id + "_site_0_pgcode", "PG0001");
 
         populateStatusHistory(trial);
 
@@ -386,10 +385,8 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
     @Test
     public void testAddSiteValidationMissingFields() throws SQLException {
         TrialInfo trial = createTrialAndBeginAddingSites();
-        selenium.type("id=trial_" + trial.id + "_site_0_pgcode", "PG0001");
+        selenium.type("id=trial_" + trial.id + "_site_0_localID", "XYZ0001");
         clickAndWait("id=saveBtn");
-        waitForTextToAppear(By.className("alert-danger"),
-                "Local Trial Identifier is required", WAIT_FOR_ELEMENT_TIMEOUT);
         waitForTextToAppear(By.className("alert-danger"),
                 "Please choose a Site Principal Investigator using the lookup",
                 WAIT_FOR_ELEMENT_TIMEOUT);

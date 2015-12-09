@@ -388,7 +388,6 @@ public class SubmittedOrganizationDTO implements Serializable {
     public boolean isBlank() {
         return investigatorId == null
                 && StringUtils.isBlank(siteLocalTrialIdentifier)
-                && StringUtils.isBlank(programCode)
                 && StringUtils.isBlank(recruitmentStatus)
                 && StringUtils.isBlank(recruitmentStatusDate)
                 && StringUtils.isBlank(dateOpenedforAccrual)

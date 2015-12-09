@@ -194,7 +194,6 @@ div.error,b.error {
 		$('trial_'+spID+'_site_'+index+'_pi_name').innerHTML = $('trial_'+spID+'_site_'+(index-1)+'_pi_name').innerHTML;
 		$('trial_'+spID+'_site_'+index+'_pi_poid').setValue($('trial_'+spID+'_site_'+(index-1)+'_pi_poid').getValue());
 		$('trial_'+spID+'_site_'+index+'_localID').setValue($('trial_'+spID+'_site_'+(index-1)+'_localID').getValue());
-		$('trial_'+spID+'_site_'+index+'_pgcode').setValue($('trial_'+spID+'_site_'+(index-1)+'_pgcode').getValue());
 		$('trial_'+spID+'_site_'+index+'_status').setValue($('trial_'+spID+'_site_'+(index-1)+'_status').getValue());
 		$('trial_'+spID+'_site_'+index+'_statusDate').setValue($('trial_'+spID+'_site_'+(index-1)+'_statusDate').getValue());
 		
@@ -689,7 +688,6 @@ div.error,b.error {
 	                                <td><b>Principal Investigator<span class="required">*</span></b></td>
 	                                <td></td>
 	                                <td><b>Local Trial Identifier<span class="required">*</span></b></td>
-	                                <td><b>Program Code</b></td>                                                                
 	                                <td></td>
 	                            </tr>
 								<tr
@@ -744,11 +742,6 @@ div.error,b.error {
 										id="trial_${trial.studyProtocolId}_site_${stat.index}_localID"
 										name="trial_${trial.studyProtocolId}_site_${stat.index}_localID"
 										placeholder="Enter Local Trial ID" maxlength="50"
-										class="form-control" /></td>
-									<td><input type="text"
-										id="trial_${trial.studyProtocolId}_site_${stat.index}_pgcode"
-										name="trial_${trial.studyProtocolId}_site_${stat.index}_pgcode"
-										placeholder="Enter Program Code" maxlength="50"
 										class="form-control" /></td>
 									<c:if test="${not stat.first}">
 										<td><div class="input-append" style="padding-left: 10px;"

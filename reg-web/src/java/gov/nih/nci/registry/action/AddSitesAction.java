@@ -290,10 +290,6 @@ public class AddSitesAction extends StatusHistoryManagementAction {
                         index))).trim();
         site.setInvestigatorId(investigatorID.isEmpty() ? null : Long
                 .parseLong(investigatorID));
-
-        site.setProgramCode(StringUtils.defaultString(
-                r.getParameter(String.format("trial_%s_site_%s_pgcode", spID,
-                        index))).trim());
         
         super.setDiscriminator(String.format("trial_%s_site_%s.statusHistory.", spID, index));
         site.setStatusHistory(getStatusHistoryFromSession());

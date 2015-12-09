@@ -513,7 +513,6 @@ public class AddSitesActionTest extends AbstractRegWebTest {
                 .getRequest();
         r.setupAddParameter("trial_1_site_0_org_poid", "1");
         r.setupAddParameter("trial_1_site_0_localID", "MN001");
-        r.setupAddParameter("trial_1_site_0_pgcode", "PCODE");
         r.setupAddParameter("trial_1_site_0_pi_poid", "1");
         
         final ArrayList<StatusDto> statHistoryList = new ArrayList<StatusDto>();
@@ -551,7 +550,7 @@ public class AddSitesActionTest extends AbstractRegWebTest {
                 .getStudyProtocolIdentifier());
         assertEquals(StConverter.convertToSt("MN001"), ssDTO.getValue()
                 .getLocalStudyProtocolIdentifier());
-        assertEquals(StConverter.convertToSt("PCODE"), ssDTO.getValue()
+        assertEquals(StConverter.convertToSt(null), ssDTO.getValue()
                 .getProgramCodeText());
 
         assertEquals(CdConverter.convertToCd((CodedEnum)null),
