@@ -241,7 +241,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         clickLinkAndWait("Excel");
         pause(1000);
 
-        assertTrue(excel.exists());
+//        assertTrue(excel.exists());
         excel.delete();
     }
 }
