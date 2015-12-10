@@ -20,11 +20,11 @@ ul.errorMessage > li > span {
                             <th>Site</th>
                             <th>Recruitment Status</th>
                             <th>Date</th>
-                            <th>Program Code</th>
                         </tr>
                     </thead>
                         <tbody>
                         <s:iterator id="participatingSitesList" value="participatingSitesList" status="psstats">
+                          <s:hidden  name="participatingSitesList[%{#psstats.index}].id" value="%{id}"/>
                             <tr>
                                 <td>
                                     <s:hidden name="participatingSitesList[%{#psstats.index}].name" value="%{name}"/>
@@ -48,10 +48,6 @@ ul.errorMessage > li > span {
                                             <s:param>participatingsite.recStatusDate<s:property value="%{#psstats.index}"/></s:param>
                                         </s:fielderror>
                                     </span>
-                                </td>
-                                <td>
-                                    <label><s:textfield  name="participatingSitesList[%{#psstats.index}].programCode" value="%{programCode}" cssClass="form-control"/></label>
-                                    <s:hidden  name="participatingSitesList[%{#psstats.index}].id" value="%{id}"/>
                                 </td>
                             </tr>
                         </s:iterator >
