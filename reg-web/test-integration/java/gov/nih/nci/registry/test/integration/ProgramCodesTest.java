@@ -44,6 +44,7 @@ public class ProgramCodesTest extends AbstractRegistrySeleniumTest {
         changeUserToAdmin(userID.toString());
         
         // Re-login with admin privileges
+        logoutUser();
         login(loginName, "pass");
         handleDisclaimer(true);  
         
