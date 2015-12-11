@@ -36,4 +36,5 @@
   <security-role><role-name>Submitter</role-name></security-role>
   <security-role><role-name>ResultsAbstractor</role-name></security-role>
   <security-role><role-name>SecurityAdmin</role-name></security-role>
+  <security-role><role-name>ProgramCodeAdministrator</role-name></security-role>
 </application>

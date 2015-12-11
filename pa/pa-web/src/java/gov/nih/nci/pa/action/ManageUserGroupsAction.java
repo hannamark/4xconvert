@@ -56,7 +56,7 @@ public class ManageUserGroupsAction extends ActionSupport implements
     private static final String[] GROUPS = new String[] { "Submitter",
             "RegAdmin", "ReportViewer", "SuAbstractor", "gridClient",
             "AdminAbstractor", "ScientificAbstractor", "ResultsAbstractor",
-            "SecurityAdmin" };
+            "SecurityAdmin", "ProgramCodeAdministrator" };
     private static final List<String> SYSTEM_USERS = Arrays
             .asList(new String[] { "ejbclient", "firebird", "pauser",
                     "subscriber", "csmadmin", "publisher",

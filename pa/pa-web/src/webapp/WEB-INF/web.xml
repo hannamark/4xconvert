@@ -261,6 +261,7 @@
 			<role-name>SuAbstractor</role-name>
 			<role-name>ReportViewer</role-name>
 			<role-name>ResultsAbstractor</role-name>
+			<role-name>ProgramCodeAdministrator</role-name>
 			<role-name>SecurityAdmin</role-name>
 		</auth-constraint>
 	</security-constraint>
@@ -340,6 +341,10 @@
 		<description>Results reporting and tracking abstractor.</description>
 		<role-name>ResultsAbstractor</role-name>
 	</security-role>
+    <security-role>
+        <description>ProgramCode Administrator manage program codes.</description>
+        <role-name>ProgramCodeAdministrator</role-name>
+    </security-role>
     <security-role>
         <description>Security administrators manager users and groups in PA.</description>
         <role-name>SecurityAdmin</role-name>

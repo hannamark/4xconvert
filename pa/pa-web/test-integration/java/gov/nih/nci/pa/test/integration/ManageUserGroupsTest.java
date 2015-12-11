@@ -20,6 +20,7 @@ public class ManageUserGroupsTest extends AbstractPaSeleniumTest {
         String loginName = "security_" + System.currentTimeMillis();
         Number userID = createCSMUser(loginName);
         assignUserToGroup(userID, "SecurityAdmin");
+        
         loginPA(loginName, "pass");
         clickAndWait("id=acceptDisclaimer");
 
@@ -103,6 +104,15 @@ public class ManageUserGroupsTest extends AbstractPaSeleniumTest {
         assertTrue(isUserInGroup(userID, "SecurityAdmin"));
         assertTrue(isUserInGroup(userID, "SuAbstractor"));
         assertTrue(isUserInGroup(userID, "gridClient"));
+        
+        useSelect2ToPickAnOption("groups_of_user_" + userID, "Prog",
+                "ProgramCodeAdministrator");
+        waitForElementToBecomeInvisible(By.id("progress_indicator_panel"),
+                WAIT_TIME);
+        assertTrue(isUserInGroup(userID, "SecurityAdmin"));
+        assertTrue(isUserInGroup(userID, "SuAbstractor"));
+        assertTrue(isUserInGroup(userID, "gridClient"));
+        assertTrue(isUserInGroup(userID, "ProgramCodeAdministrator"));
 
         // Now remove all groups again
         useSelect2ToUnselectOption("SecurityAdmin");
@@ -114,9 +124,13 @@ public class ManageUserGroupsTest extends AbstractPaSeleniumTest {
         useSelect2ToUnselectOption("gridClient");
         waitForElementToBecomeInvisible(By.id("progress_indicator_panel"),
                 WAIT_TIME);
+        useSelect2ToUnselectOption("ProgramCodeAdministrator");
+        waitForElementToBecomeInvisible(By.id("progress_indicator_panel"),
+                WAIT_TIME);
         assertFalse(isUserInGroup(userID, "SecurityAdmin"));
         assertFalse(isUserInGroup(userID, "SuAbstractor"));
         assertFalse(isUserInGroup(userID, "gridClient"));
+        assertFalse(isUserInGroup(userID, "ProgramCodeAdministrator"));
 
     }
 

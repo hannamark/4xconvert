@@ -153,6 +153,8 @@ public class Constants {
     public static final String ADMIN_ABSTRACTOR = "AdminAbstractor";
     /** CSM Group used to define results abstractor role.**/
     public static final String RESULTS_ABSTRACTOR = "ResultsAbstractor";
+    /** CSM Group used to define ProgramCode Administrator role.**/
+    public static final String PROGRAMCODE_ADMINISTRATOR = "ProgramCodeAdministrator";
     /** Is user in the results abstractor role.**/
     public static final String IS_RESULTS_ABSTRACTOR = "isResultsAbstractor";
     /** NCI. */

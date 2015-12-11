@@ -2024,4 +2024,8 @@
        <comment>Adding unique constraint to family po id.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3.1/PO-9468-2.sql"/>
     </changeSet>
+    <changeSet id="PO-9480" author="purams">       
+       <comment>Adding the ProgramCode Administrator role to db.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3.1/PO-9480.sql"/>
+    </changeSet>
 </databaseChangeLog>
