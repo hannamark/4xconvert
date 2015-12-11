@@ -84,14 +84,17 @@ import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.ProgramCode;
 import gov.nih.nci.pa.domain.SecondaryPurpose;
 import gov.nih.nci.pa.domain.StudyAlternateTitle;
 import gov.nih.nci.pa.domain.StudyProcessingError;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.StudySourceCode;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -112,6 +115,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -254,7 +258,10 @@ public class StudyProtocolConverter {
 
         // Copy StudyProcessingErrors 
         studyProtocolDTO.setStudyProcessingErrors(new ArrayList<StudyProcessingError>(
-                (Collection<StudyProcessingError>) studyProtocol.getStudyProcessingErrors()));        
+                (Collection<StudyProcessingError>) studyProtocol.getStudyProcessingErrors()));
+        
+        convertProgramCodesToDTO(studyProtocol, studyProtocolDTO);
+        
         return studyProtocolDTO;
     }
 
@@ -392,6 +399,9 @@ public class StudyProtocolConverter {
         // Copy StudyProcessingErrors
         studyProtocol.setStudyProcessingErrors(new ArrayList<StudyProcessingError>(
                 (Collection<StudyProcessingError>) studyProtocolDTO.getStudyProcessingErrors()));
+        
+        convertProgramCodesToDomain(studyProtocolDTO, studyProtocol);
+        
        return studyProtocol;
    }
 
@@ -452,7 +462,8 @@ public class StudyProtocolConverter {
                                 .convertToString(st)));
             }
         }
-        bo.setSecondaryPurposeOtherText(StConverter.convertToString(dto.getSecondaryPurposeOtherText()));
+        bo.setSecondaryPurposeOtherText(StConverter.convertToString(dto.getSecondaryPurposeOtherText()));  
+        
     }
     
     /**
@@ -522,5 +533,62 @@ public class StudyProtocolConverter {
             }
         } 
         return bo;
+    }
+    
+    /**
+     * Populates program code information in corresponding domain object using the corresponding
+     * DTO object
+     * @param dto program code DTO object
+     * @param bo program code domain object
+     * @return study protocol
+     * @throws PAException PAException
+     */
+    public static StudyProtocol convertProgramCodesToDomain(StudyProtocolDTO dto, StudyProtocol bo) 
+            throws PAException {
+        if (dto.getProgramCodes() == null) {
+            return bo;
+        }        
+        bo.getProgramCodes().clear();         
+        for (ProgramCodeDTO programCodeDTO : dto.getProgramCodes()) {          
+            bo.getProgramCodes().add(getProgramCode(programCodeDTO.getId()));
+        }         
+        return bo;
+    }
+    
+    
+    /**
+     * Populates program code information in corresponding DTO object using the 
+     * corresponding domain object.
+     * @param bo program code domain object
+     * @param dto program code DTO object
+     */
+    private static void convertProgramCodesToDTO(StudyProtocol bo, StudyProtocolDTO dto) {
+        List<ProgramCodeDTO> programCodeDTOs = new ArrayList<ProgramCodeDTO>();
+        if (!CollectionUtils.isEmpty(bo.getProgramCodes())) {            
+            for (ProgramCode programCode : bo.getProgramCodes()) {
+                ProgramCodeDTO programCodeDTO = new ProgramCodeDTO();
+                programCodeDTO.setProgramCode(programCode.getProgramCode());
+                programCodeDTO.setProgramName(programCode.getProgramName());
+                programCodeDTO.setId(programCode.getId());
+                if (programCode.getStatusCode() == ActiveInactiveCode.ACTIVE) {
+                    programCodeDTO.setActive(true);
+                } else {
+                    programCodeDTO.setActive(false);
+                }
+                programCodeDTOs.add(programCodeDTO);
+            }            
+        }
+        dto.setProgramCodes(programCodeDTOs);
+    }
+    
+    
+    /**
+     * @param name
+     *            name
+     * @return ProgramCode
+     */
+    private static ProgramCode getProgramCode(Long id) {
+        Session session = PaHibernateUtil.getCurrentSession();
+        return (ProgramCode) session.get(ProgramCode.class, id);
     }
 }

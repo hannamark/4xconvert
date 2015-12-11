@@ -80,7 +80,6 @@ package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -93,6 +92,7 @@ import gov.nih.nci.pa.enums.StudySubtypeCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.iso.convert.BaseStudyProtocolQueryConverter;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;

@@ -1,4 +1,5 @@
-package gov.nih.nci.pa.dto;
+package gov.nih.nci.pa.iso.dto;
+
 
 import java.io.Serializable;
 
@@ -74,5 +75,5 @@ public class ProgramCodeDTO implements Serializable {
      */
     public void setActive(boolean active) {
         this.active = active;
-    }
+    }    
 }

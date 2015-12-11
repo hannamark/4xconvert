@@ -5,7 +5,7 @@ import com.opensymphony.xwork2.Preparable;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.FamilyDTO;
 import gov.nih.nci.pa.dto.OrgFamilyDTO;
-import gov.nih.nci.pa.dto.ProgramCodeDTO;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.StudyStatusCode;

@@ -88,8 +88,11 @@ import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.pa.domain.AnatomicSite;
+import gov.nih.nci.pa.domain.ProgramCode;
 import gov.nih.nci.pa.domain.StudyAlternateTitle;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -110,6 +113,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
@@ -138,11 +142,13 @@ public class StudyProtocolConverterTest extends AbstractHibernateTestCase {
         Session session  = PaHibernateUtil.getCurrentSession();
         StudyProtocol sp = TestSchema.createStudyProtocolObj(new StudyProtocol());
         addAlternateTitles(sp);
+        addProgramCodes(sp);
         session.save(sp);
         assertNotNull(sp.getId());
         StudyProtocolDTO spDTO = StudyProtocolConverter.convertFromDomainToDTO(sp);
         assertStudyProtocol(sp, spDTO);
         assertStudyAlternateTitles(sp, spDTO);
+        assertProgramCodes(sp, spDTO);
     }
 
     @Test
@@ -164,6 +170,7 @@ public class StudyProtocolConverterTest extends AbstractHibernateTestCase {
         Session session  = PaHibernateUtil.getCurrentSession();
         StudyProtocol create = TestSchema.createStudyProtocolObj(new StudyProtocol());
         addAlternateTitles(create);
+        addProgramCodes(create);
         session.save(create);
         assertNotNull(create.getId());
 
@@ -171,6 +178,7 @@ public class StudyProtocolConverterTest extends AbstractHibernateTestCase {
         StudyProtocolDTO spDTO = StudyProtocolConverter.convertFromDomainToDTO(create);
         assertStudyProtocol(create, spDTO);
         assertStudyAlternateTitles(create, spDTO);
+        assertProgramCodes(create, spDTO);
         AbstractStudyProtocolConverter.setCsmUserUtil(new MockCSMUserService());
         CSMUserUtil csmUserService = mock(CSMUserService.class);
         CSMUserService.setInstance(csmUserService);
@@ -178,6 +186,7 @@ public class StudyProtocolConverterTest extends AbstractHibernateTestCase {
         StudyProtocol sp = StudyProtocolConverter.convertFromDTOToDomain(spDTO);
         assertStudyProtocol(sp, spDTO);
         assertStudyAlternateTitles(sp, spDTO);
+        assertProgramCodes(sp, spDTO);
     }
 
     @Test
@@ -242,6 +251,26 @@ public class StudyProtocolConverterTest extends AbstractHibernateTestCase {
     }
     
     /**
+     * Adds program codes to study protocol.
+     * @param sp study protocol
+     */
+    private void addProgramCodes(StudyProtocol sp) {
+        ProgramCode programCode1 = new ProgramCode();   
+        programCode1.setId(Long.valueOf(12345));
+        programCode1.setProgramCode("Code1");
+        programCode1.setProgramName("Test1");  
+        programCode1.setStatusCode(ActiveInactiveCode.ACTIVE);
+        sp.getProgramCodes().add(programCode1);
+        
+        ProgramCode programCode2 = new ProgramCode();
+        programCode2.setId(Long.valueOf(123456));
+        programCode2.setProgramCode("Code2");
+        programCode2.setProgramName("Test2");
+        programCode2.setStatusCode(ActiveInactiveCode.ACTIVE);
+        sp.getProgramCodes().add(programCode2);
+    }
+    
+    /**
      * Asserts study alternate title information. 
      * @param sp study protocol 
      * @param spDTO study protocol DTO.
@@ -298,6 +327,24 @@ public class StudyProtocolConverterTest extends AbstractHibernateTestCase {
        spDTO.setAmendmentReasonCode(null);
        sp = StudyProtocolConverter.convertFromDTOToDomain(spDTO, sp);
        assertEquals(null ,sp.getAmendmentReasonCode());
-   }    
+   } 
+   
+   /**
+    * Asserts study alternate title information. 
+    * @param sp study protocol 
+    * @param spDTO study protocol DTO.
+    */
+   private void assertProgramCodes(StudyProtocol sp, StudyProtocolDTO spDTO) {
+       assertNotNull(sp.getProgramCodes());
+       assertNotNull(spDTO.getProgramCodes());
+       assertEquals(sp.getProgramCodes().size(), 
+               spDTO.getProgramCodes().size());
+       Iterator<ProgramCode> itr = sp.getProgramCodes().iterator();
+       for (ProgramCodeDTO dto : spDTO.getProgramCodes()) {            
+           ProgramCode pg = itr.next();
+           assertEquals(pg.getProgramCode(), dto.getProgramCode());
+           assertEquals(pg.getProgramName(), dto.getProgramName());
+       }
+   }
     
 }

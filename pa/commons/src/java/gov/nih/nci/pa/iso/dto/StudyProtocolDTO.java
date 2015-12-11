@@ -162,7 +162,8 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     private Bl changesInCtrpCtGov;
     private Ts changesInCtrpCtGovDate;
     private Bl sendToCtGovUpdated;
-    private List<StudyProcessingError> studyProcessingErrors = new ArrayList<StudyProcessingError>();
+    private List<StudyProcessingError> studyProcessingErrors = new ArrayList<StudyProcessingError>();    
+    private List<ProgramCodeDTO> programCodes;    
     
     /**
      *
@@ -973,5 +974,18 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
         this.studyProcessingErrors = studyProcessingErrors;
     }
     
+    /**
+     * @return the programCodes
+     */
+    public List<ProgramCodeDTO> getProgramCodes() {
+        return programCodes;
+    }
+
+    /**
+     * @param programCodesDTO the program codes dto to set
+     */
+    public void setProgramCodes(List<ProgramCodeDTO> programCodesDTO) {
+        this.programCodes = programCodesDTO;
+    }
     
 }
