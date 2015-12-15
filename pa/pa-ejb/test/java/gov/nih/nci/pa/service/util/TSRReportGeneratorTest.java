@@ -458,7 +458,10 @@ public class TSRReportGeneratorTest {
         matcher = regexp.matcher(value);
         matcher.find();
         result = matcher.group(2).trim();
-        assertTrue(result.equals("Summary4_123"));
+        String[] resultCodes = result.split(Pattern.quote(","));
+        assertTrue(resultCodes[0].equals("2"));
+        assertTrue(resultCodes[1].trim().equals("code5"));
+        assertTrue(resultCodes[2].trim().equals("code2"));
         
         regexp = Pattern.compile("(Anatomic Site Code)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
         matcher = regexp.matcher(value);
@@ -802,7 +805,7 @@ public class TSRReportGeneratorTest {
         TSRReportSummary4Information summaryInfo = new TSRReportSummary4Information();
         summaryInfo.setFundingCategory("Industrial");
         summaryInfo.setFundingSponsor("Cancer Therapy Evaluation Program");
-        summaryInfo.setProgramCode("Summary4_123");
+        summaryInfo.setProgramCode("2, code5, code2");
         summaryInfo.setAnatomicSites(Arrays.asList("liver"));
         tsrReportGenerator.setSummary4Information(summaryInfo);
 
@@ -1018,7 +1021,6 @@ public class TSRReportGeneratorTest {
         site.setLocalTrialIdentifier("234232334");
         site.getInvestigators().add(new TSRReportInvestigator("Sarah", "M.", "Guisti", "Principal Investigator"));
         site.getInvestigators().add(new TSRReportInvestigator("John", "M.", "Guisti", "PI"));
-        site.setProgramCode("SITE1_CODE");
         participatingSites.add(site);
 
         site = new TSRReportParticipatingSite();
@@ -1031,7 +1033,6 @@ public class TSRReportGeneratorTest {
         site.setOpenForAccrualDate("01/01/2009");
         site.getInvestigators().add(new TSRReportInvestigator("Sarah", "M.", "Guisti", "Principal Investigator"));
         site.getInvestigators().add(new TSRReportInvestigator("John", "M.", "Guisti", "PI"));
-        site.setProgramCode("SITE1_CODE_2");
         participatingSites.add(site);
         tsrReportGenerator.setParticipatingSites(participatingSites);
     }
@@ -1046,4 +1047,5 @@ public class TSRReportGeneratorTest {
         DateFormat format = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
         return format.format(date);
     }
+    
 }

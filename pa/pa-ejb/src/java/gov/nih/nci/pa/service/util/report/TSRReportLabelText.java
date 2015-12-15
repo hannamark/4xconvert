@@ -699,11 +699,7 @@ public class TSRReportLabelText { //NOPMD
      * Trial Identifier.
      */
     public static final String PS_LOCAL_TRIAL_IDENTIFIER = "Trial Identifier";
-    /**
-     * Program Code.
-     */
-    public static final String PS_PROGRAM_CODE = "Program Code";
-    /**
+     /**
      * Summary 4 sponsor or source.
      */
     public static final String PS_SUMMARY4_SPONSOR = "Summary 4 Sponsor/Source";

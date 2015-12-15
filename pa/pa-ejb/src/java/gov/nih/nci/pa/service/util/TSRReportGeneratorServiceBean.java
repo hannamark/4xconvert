@@ -78,6 +78,26 @@
 */
 package gov.nih.nci.pa.service.util;
 
+import java.io.ByteArrayOutputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
@@ -111,6 +131,7 @@ import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.dto.StratumGroupDTO;
 import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
@@ -193,26 +214,6 @@ import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
-
-import java.io.ByteArrayOutputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * service bean for generating TSR.
@@ -823,7 +824,16 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceL
                 }
         }
         sum4Info.setFundingSponsor(StringUtils.defaultString(orgNames.toString(), INFORMATION_NOT_PROVIDED));
-        if (studyProtocolDto.getProgramCodeText().getValue() != null) {
+        if (CollectionUtils.isNotEmpty(studyProtocolDto.getProgramCodes())) {
+            StringBuilder programCodes = new StringBuilder();
+            for (ProgramCodeDTO pg : studyProtocolDto.getProgramCodes()) {
+                if (programCodes.length() > 0) {
+                    programCodes.append(", ");
+                }
+                programCodes.append(pg.getProgramCode());
+            }
+            sum4Info.setProgramCode(programCodes.toString());
+        } else if (studyProtocolDto.getProgramCodeText().getValue() != null) {
             sum4Info.setProgramCode(getValue(studyProtocolDto.getProgramCodeText(), INFORMATION_NOT_PROVIDED));
         }
         setSummary4AnatomicSite(studyProtocolDto, sum4Info);

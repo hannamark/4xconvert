@@ -935,7 +935,7 @@ public abstract class AbstractTsrReportGenerator {
         Table siteTable = getInnerTable(Arrays.asList(TSRReportLabelText.PS_PO_ID, TSRReportLabelText.PS_FACILITY,
                 TSRReportLabelText.PS_INVESTIGATORS, TSRReportLabelText.PS_LOCAL_TRIAL_IDENTIFIER,
                 TSRReportLabelText.PS_RECRUITMENT_STATUS_AND_DATES, TSRReportLabelText.PS_TARGET_ACCRUAL,
-                TSRReportLabelText.PS_SUMMARY4_SPONSOR, TSRReportLabelText.PS_PROGRAM_CODE));
+                TSRReportLabelText.PS_SUMMARY4_SPONSOR));
         String summary4Sponsor = "";
         if (getSummary4Information() != null) {
             summary4Sponsor = "Funding Sponsor/Source: " + getSummary4Information().getFundingSponsor()
@@ -962,7 +962,6 @@ public abstract class AbstractTsrReportGenerator {
             siteTable.addCell(getItemValueCell(sb.toString()));
             siteTable.addCell(getItemValueCell(site.getTargetAccrual()));
             siteTable.addCell(getItemValueCell(summary4Sponsor));
-            siteTable.addCell(getItemValueCell(site.getProgramCode()));
         }
 
         return siteTable;
