@@ -1,11 +1,12 @@
 package gov.nih.nci.pa.dto;
 
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import org.apache.commons.lang.time.DateUtils;
 
 import java.io.Serializable;
 import java.util.Date;
-
-
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -26,7 +27,9 @@ public class FamilyDTO implements Serializable {
     
     private Integer reportingPeriodLength;
     
-    private String name;    
+    private String name;
+
+    private Set<ProgramCodeDTO> programCodes = new HashSet<ProgramCodeDTO>();
     
     // reporting length
     private static final int REPORTING_LENGTH = 12;
@@ -177,6 +180,24 @@ public class FamilyDTO implements Serializable {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * The programCodes
+     *
+     * @return the programCodes
+     */
+    public Set<ProgramCodeDTO> getProgramCodes() {
+        return programCodes;
+    }
+
+    /**
+     * The programCodes
+     *
+     * @param programCodes the programCodes
+     */
+    public void setProgramCodes(Set<ProgramCodeDTO> programCodes) {
+        this.programCodes = programCodes;
     }
 
 }

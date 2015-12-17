@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 import org.hibernate.validator.NotNull;
@@ -135,4 +136,18 @@ public class Family implements PersistentObject, Auditable {
         this.programCodes = programCodes;
     }
 
+    /**
+     * Will return a matching active program code from family
+     *
+     * @param pgCode the code of ProgramCode
+     * @return ProgramCode
+     */
+    public ProgramCode findActiveProgramCodeByCode(String pgCode) {
+        for (ProgramCode pg : programCodes) {
+            if (pg.getStatusCode() == ActiveInactiveCode.ACTIVE && pg.getProgramCode().equals(pgCode)) {
+                return pg;
+            }
+        }
+        return null;
+    }
 }

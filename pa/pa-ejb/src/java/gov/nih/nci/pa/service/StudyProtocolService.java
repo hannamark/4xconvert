@@ -385,4 +385,14 @@ public interface StudyProtocolService {
      * @return <code>true</code> if attribute updated, successfully <code>false</code> otherwise
      */
     boolean updateStudyProtocolResultsDate(Long studyId, String attribute, Timestamp value);
+
+    /**
+     * Will assign the given program codes to the study
+     * @param studyId - the study PA identifier
+     * @param organizationPoID  - the organization PO identifier
+     * @param programCodes - a list of program codes
+     * @throws PAException - exception when there is an error.
+     */
+    void assignProgramCodes(Long studyId, Long organizationPoID, List<String> programCodes)
+            throws PAException;
 }

@@ -7,6 +7,10 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
+
+import gov.nih.nci.pa.domain.ProgramCode;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import org.hibernate.Query;
 
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
@@ -89,11 +93,19 @@ public class FamilyProgramCodeBeanLocal implements FamilyProgramCodeServiceLocal
         Family family = convert(familyDTO);
         PaHibernateUtil.getCurrentSession().saveOrUpdate(family);
         return convert(family);
-    }      
-    
+    }
+
     FamilyDTO convert(Family bo) {
-        FamilyDTO familyDTO = new FamilyDTO(bo.getId(), bo.getPoId(), 
+        FamilyDTO familyDTO = new FamilyDTO(bo.getId(), bo.getPoId(),
                 bo.getReportingPeriodEnd(), bo.getReportingPeriodLength());
+        for (ProgramCode pg : bo.getProgramCodes()) {
+            ProgramCodeDTO dto = new ProgramCodeDTO();
+            dto.setId(pg.getId());
+            dto.setProgramName(pg.getProgramName());
+            dto.setProgramCode(pg.getProgramCode());
+            dto.setActive(pg.getStatusCode() == ActiveInactiveCode.ACTIVE);
+            familyDTO.getProgramCodes().add(dto);
+        }
         return familyDTO;
     }
     

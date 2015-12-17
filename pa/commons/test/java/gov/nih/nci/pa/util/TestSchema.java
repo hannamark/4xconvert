@@ -193,7 +193,7 @@ public class TestSchema {
     public static Long inactiveProtocolId;
     public static List<Long> assayTypeIds;
     public static List<Long> studyProtocolErrorIds;
-    public static List<ProgramCode> theProgramCodes;
+    public static List<ProgramCode> theProgramCodes = new ArrayList<ProgramCode>();
 
     /**
      * 
@@ -1177,9 +1177,13 @@ public class TestSchema {
         return sm;
     }
 
-    public static Family createFamily() {
+    private static Family createFamily() {
+        return createFamily(-1L);
+    }
+
+    public static Family createFamily(long familyPoId) {
         Family family = new Family();
-        family.setPoId(-1L);
+        family.setPoId(familyPoId);
         family.setReportingPeriodEnd(ONE_YEAR_FROM_TODAY);
         family.setReportingPeriodLength(12);
         TestSchema.addUpdObject(family);

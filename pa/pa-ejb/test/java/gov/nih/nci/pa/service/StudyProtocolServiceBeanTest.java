@@ -78,19 +78,7 @@
  */
 package gov.nih.nci.pa.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
@@ -108,6 +96,7 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolAssociation;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.dto.FamilyDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
@@ -125,6 +114,7 @@ import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolAssociationDTO;
@@ -138,6 +128,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.FamilyProgramCodeServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.MockPAServiceUtils;
@@ -149,12 +140,20 @@ import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.AnatomicSiteComparator;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.Session;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -169,15 +168,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.lang.StringUtils;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
-import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Naveen Amiruddin
@@ -193,10 +196,11 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
     private final RegistryUserServiceBean registryService = mock(MockRegistryUserServiceBean.class);
     private final MailManagerServiceLocal mailManagerServiceLocal = mock(MailManagerServiceLocal.class);
     private final ProtocolQueryServiceLocal protocolQueryServiceLocal = mock(ProtocolQueryServiceLocal.class);
+    private final FamilyProgramCodeServiceLocal familyProgramCodeService = mock(FamilyProgramCodeServiceLocal.class);
 
     @Before
     public void setUp() throws Exception {
-
+        PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
         CSMUserService.setInstance(new MockCSMUserService());
         UsernameHolder.setUser(TestSchema.getUser().getLoginName());
         AnatomicSite as = new AnatomicSite();
@@ -214,7 +218,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         bean.setRegistryUserService(registryService);
         bean.setMailManagerService(mailManagerServiceLocal);
         bean.setProtocolQueryService(protocolQueryServiceLocal);
-
+        bean.setFamilyProgramCodeService(familyProgramCodeService);
     }
 
     @Test(expected = PAException.class)
@@ -432,6 +436,87 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
                 IiConverter.convertToLong(ii));
         verify(registryService, times(1)).assignOwnership(Long.MIN_VALUE,
                 IiConverter.convertToLong(ii));
+
+    }
+
+    @Test
+    public void testAssignProgramCodesWhenOrgHasNoFamily() throws Exception {
+
+
+        //Given that a study is present
+        createStudyProtocols(1, PAConstants.DCP_ORG_NAME, "PO-9581-1", false);
+        Ii ii = new Ii();
+        ii.setRoot(IiConverter.DCP_STUDY_PROTOCOL_ROOT);
+        ii.setExtension("PO-9581-1");
+        StudyProtocolDTO spDTO = remoteEjb.getStudyProtocol(ii);
+        assertTrue(StringUtils.isEmpty(spDTO.getProgramCodeText().getValue()));
+        long studyPaId = Long.parseLong(spDTO.getIdentifier().getExtension());
+
+        //When I assign program code legacy data
+        remoteEjb.assignProgramCodes(studyPaId, -1L, Arrays.asList("1", "5"));
+
+        //Then it must get associated to study under program codeText field
+        StudyProtocolDTO spDTO2 = remoteEjb.getStudyProtocol(ii);
+        assertTrue(spDTO2.getProgramCodeText().getValue().contains("1"));
+        assertTrue(spDTO2.getProgramCodeText().getValue().contains("5"));
+
+        //When I reassociate the study with program codes list having duplicates
+        remoteEjb.assignProgramCodes(studyPaId, -1L, Arrays.asList("1", "3", "3", "5"));
+
+        //Then it should associate only unique results
+        StudyProtocolDTO spDTO3 = remoteEjb.getStudyProtocol(ii);
+        assertTrue(spDTO3.getProgramCodeText().getValue().contains("1"));
+        assertTrue(spDTO3.getProgramCodeText().getValue().contains("3"));
+        assertTrue(spDTO3.getProgramCodeText().getValue().contains("5"));
+        assertEquals(3, StringUtils.split(spDTO3.getProgramCodeText().getValue() , ";").length);
+
+    }
+    @Test
+    public void testAssignProgramCodesWhenOrgHasFamily() throws Exception {
+
+        //Given that the family and program codes are available.
+        TestSchema.createFamily(1L);
+        ProgramCodeDTO pgDto1 = new ProgramCodeDTO();
+        pgDto1.setActive(true);
+        pgDto1.setProgramName("test1");
+        pgDto1.setProgramCode("1");
+        ProgramCodeDTO pgDto2 = new ProgramCodeDTO();
+        pgDto2.setActive(true);
+        pgDto2.setProgramName("test2");
+        pgDto2.setProgramCode("5");
+
+        FamilyDTO familyDTO = new FamilyDTO(-1L);
+        familyDTO.getProgramCodes().add(pgDto1);
+        familyDTO.getProgramCodes().add(pgDto2);
+
+        when(familyProgramCodeService.getFamilyDTOByPoId(1L)).thenReturn(familyDTO);
+
+        //And a study is present
+        createStudyProtocols(1, PAConstants.DCP_ORG_NAME, "PO-9581-2", false);
+        Ii ii = new Ii();
+        ii.setRoot(IiConverter.DCP_STUDY_PROTOCOL_ROOT);
+        ii.setExtension("PO-9581-2");
+        StudyProtocolDTO spDTO = remoteEjb.getStudyProtocol(ii);
+        long studyPaId = Long.parseLong(spDTO.getIdentifier().getExtension());
+        //assert can be done on getProgramCodes after Lalit's code merging.
+
+        //When I assign program code legacy data
+        remoteEjb.assignProgramCodes(studyPaId, 1L, Arrays.asList("1", "5"));
+
+        //Then it must get associated to study under programCodes field
+        StudyProtocolDTO spDTO2 = remoteEjb.getStudyProtocol(ii);
+        //assert can be done on getProgramCodes after Lalit's code merging.
+        List<ProgramCodeDTO> programCodeDTOs = spDTO2.getProgramCodes();
+        assertEquals(2, programCodeDTOs.size());
+
+        //When I reassociate the study with program codes list having duplicates
+        remoteEjb.assignProgramCodes(studyPaId, 1L, Arrays.asList("1", "3", "3", "5"));
+
+        //Then it should associate only unique results
+        StudyProtocolDTO spDTO3 = remoteEjb.getStudyProtocol(ii);
+        programCodeDTOs = spDTO3.getProgramCodes();
+        assertEquals(3, programCodeDTOs.size());
+
 
     }
 

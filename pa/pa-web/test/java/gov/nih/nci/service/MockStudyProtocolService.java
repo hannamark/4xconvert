@@ -460,4 +460,9 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
         // TODO Auto-generated method stub
         return false;
     }
+
+    @Override
+    public void assignProgramCodes(Long studyId, Long organizationPoID, List<String> programCodes) throws PAException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

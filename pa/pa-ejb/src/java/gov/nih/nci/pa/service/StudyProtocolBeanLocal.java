@@ -79,6 +79,9 @@
 
 package gov.nih.nci.pa.service;
 
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
@@ -90,10 +93,12 @@ import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.Arm;
 import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
+import gov.nih.nci.pa.domain.Family;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.PerformedActivity;
+import gov.nih.nci.pa.domain.ProgramCode;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StratumGroup;
@@ -114,6 +119,7 @@ import gov.nih.nci.pa.domain.StudyRelationship;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.dto.OrgFamilyDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
@@ -147,6 +153,8 @@ import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.search.StudyProtocolBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudyProtocolSortCriterion;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.FamilyHelper;
+import gov.nih.nci.pa.service.util.FamilyProgramCodeServiceLocal;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -193,9 +201,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.joda.time.DateMidnight;
 
-import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
-import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
-import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  * @author Naveen Amiruddin
@@ -210,6 +215,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     private static final Logger LOG  = Logger.getLogger(StudyProtocolBeanLocal.class);
     private static final String CREATE = "Create";
     private static final String UPDATE = "Update"; // NOPMD
+    private static final int ONE_THOUSAND = 1000;
     @EJB
     private StudyIndldeServiceLocal studyIndldeService;
     
@@ -222,6 +228,9 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     
     @EJB
     private ProtocolQueryServiceLocal protocolQueryService;
+
+    @EJB
+    private FamilyProgramCodeServiceLocal familyProgramCodeService;
     
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
 
@@ -815,7 +824,8 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
 
     /**
      * Sends a warning email to CTRO telling about unmatched trial record owners.
-     * @param unmatchedEmails
+     * @param studyProtocolId  the studyProtocolId
+     * @param emails the emails
      */
     private void handleUnmatchedEmails(Long studyProtocolId,
             Collection<String> emails) {
@@ -1370,6 +1380,22 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     }
 
     /**
+     * The familyProgramCodeService
+     * @return the familyProgramCodeService
+     */
+    public FamilyProgramCodeServiceLocal getFamilyProgramCodeService() {
+        return familyProgramCodeService;
+    }
+
+    /**
+     * The familyProgramCodeService
+     * @param familyProgramCodeService the familyProgramCodeService
+     */
+    public void setFamilyProgramCodeService(FamilyProgramCodeServiceLocal familyProgramCodeService) {
+        this.familyProgramCodeService = familyProgramCodeService;
+    }
+
+    /**
      * @return the protocolQueryServiceLocal
      */
     public ProtocolQueryServiceLocal getProtocolQueryService() {
@@ -1549,4 +1575,85 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         session.update(studyProtocol);
         return true;
     }
+
+
+    /**
+     * Will assign the given program codes to the study
+     *
+     * @param studyId          - the study PA identifier
+     * @param organizationPoID - the organization PO identifier
+     * @param programCodes     - a list of program codes
+     * @throws PAException - exception when there is an error.
+     */
+    public void assignProgramCodes(Long studyId, Long organizationPoID, List<String> programCodes)
+            throws PAException {
+
+        //fetch the study
+        Session session = PaHibernateUtil.getCurrentSession();
+        StudyProtocol studyProtocol = (StudyProtocol) session.get(StudyProtocol.class, studyId);
+        if (studyProtocol == null) {
+            LOG.error("Unable to find study with the given identifier : " + studyId);
+            throw new PAException("Unable to load study protocol with id : " + studyId);
+        }
+
+        List<OrgFamilyDTO> orgFamilyList = FamilyHelper.getByOrgId(organizationPoID);
+
+        if (CollectionUtils.isEmpty(orgFamilyList)) {
+
+            Set<String> uniqueProgramCodes = new HashSet<String>(programCodes);
+            studyProtocol.setProgramCodeText(StringUtils.left(StringUtils.join(uniqueProgramCodes, ";"), ONE_THOUSAND));
+
+        } else {
+
+            //collect familyPOIds and load families
+            List<Long> familyPoIds = new ArrayList<Long>();
+
+            for (OrgFamilyDTO orgFamilyDto : orgFamilyList) {
+                familyPoIds.add(orgFamilyDto.getId());
+            }
+
+            List<Family> families = loadFamilies(familyPoIds);
+            Map<Long, ProgramCode> validProgramCodeMap = new HashMap<Long, ProgramCode>();
+            for (String pgCode : programCodes) {
+               for (Family family : families) {
+                   ProgramCode pg = family.findActiveProgramCodeByCode(pgCode);
+                   if (pg != null) {
+                       validProgramCodeMap.put(pg.getId(), pg);
+                   }
+               }
+            }
+
+
+            //find program codes to remove & to add
+            List<ProgramCode> toRemoveList = new ArrayList<ProgramCode>();
+            for (ProgramCode pg : studyProtocol.getProgramCodes()) {
+                if (!validProgramCodeMap.containsKey(pg.getId())) {
+                    toRemoveList.add(pg);
+                } else {
+                    validProgramCodeMap.remove(pg.getId());
+                }
+            }
+
+            studyProtocol.getProgramCodes().removeAll(toRemoveList);
+            if (!validProgramCodeMap.isEmpty()) {
+                studyProtocol.getProgramCodes().addAll(validProgramCodeMap.values());
+            }
+        }
+
+        session.update(studyProtocol);
+    }
+
+    /**
+     * Will load the Family objects based on PO identifier
+     * @param poIds
+     * @return
+     */
+    private List<Family> loadFamilies(List<Long> poIds) {
+        return (List<Family>) PaHibernateUtil.getCurrentSession()
+                .createQuery("select f from Family f where f.poId in (:ids)")
+                .setParameterList("ids", poIds)
+                .list();
+    }
+
+
 }
