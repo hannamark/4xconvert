@@ -5,13 +5,16 @@ import com.opensymphony.xwork2.Preparable;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.FamilyDTO;
 import gov.nih.nci.pa.dto.OrgFamilyDTO;
-import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
+import gov.nih.nci.pa.dto.PaPersonDTO;
+import gov.nih.nci.pa.dto.ParticipatingOrgDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.service.util.FamilyProgramCodeService;
+import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -56,12 +59,30 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
     private FamilyProgramCodeService familyProgramCodeService;
     private ProtocolQueryServiceLocal protocolQueryService;
     private RegistryUserServiceLocal registryUserService;
+    private ParticipatingOrgServiceLocal participatingOrgService;
 
     private List<OrgFamilyDTO> affiliatedFamilies;
     private FamilyDTO family;
     private Long familyPoId;
     private FamilyDTO familyDto;
     private String pgcFilter;
+    private Long studyProtocolId;
+
+    /**
+     *  Will return the studyProtocolId
+     * @return the studyProtocolId
+     */
+    public Long getStudyProtocolId() {
+        return studyProtocolId;
+    }
+
+    /**
+     * Will set the studyProtocolId
+     * @param studyProtocolId the studyProtocolId
+     */
+    public void setStudyProtocolId(Long studyProtocolId) {
+        this.studyProtocolId = studyProtocolId;
+    }
 
     /**
      * Gets affiliatedFamilies
@@ -175,6 +196,22 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
     }
 
     /**
+     * Will return the participatingOrgService
+     * @return the participatingOrgService
+     */
+    public ParticipatingOrgServiceLocal getParticipatingOrgService() {
+        return participatingOrgService;
+    }
+
+    /**
+     * Will set the participatingOrgService
+     * @param participatingOrgService  the participatingOrgService
+     */
+    public void setParticipatingOrgService(ParticipatingOrgServiceLocal participatingOrgService) {
+        this.participatingOrgService = participatingOrgService;
+    }
+
+    /**
      * Will initialize the action
      */
     @Override
@@ -182,6 +219,7 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
         familyProgramCodeService = PaRegistry.getProgramCodesFamilyService();
         protocolQueryService = PaRegistry.getCachingProtocolQueryService();
         registryUserService = PaRegistry.getRegistryUserService();
+        participatingOrgService = PaRegistry.getParticipatingOrgService();
     }
 
     /**
@@ -227,6 +265,49 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
         JSONArray arr = new JSONArray();
         root.put("data", arr);
         populateTrials(arr);
+        return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
+    }
+
+    /**
+     * Will return the sites and investigators
+     *
+     * @return json having sites and investigators
+     * @throws UnsupportedEncodingException - when error
+     */
+    public StreamResult participation() throws UnsupportedEncodingException {
+        JSONObject root = new JSONObject();
+        JSONArray arr = new JSONArray();
+        root.put("data", arr);
+
+        try {
+            if (familyPoId != null && studyProtocolId != null) {
+                List<ParticipatingOrgDTO> treatingSites = participatingOrgService.getTreatingSites(studyProtocolId);
+                List<Long> associatedOrgIds = FamilyHelper.getRelatedOrgsInFamily(familyPoId);
+                for (ParticipatingOrgDTO site : treatingSites) {
+                    if (associatedOrgIds.contains(Long.valueOf(site.getPoId()))) {
+                        JSONObject json = new JSONObject();
+                        json.put("site", site.getName());
+
+                        List<PaPersonDTO> allInvestigators = new ArrayList<PaPersonDTO>();
+                        allInvestigators.addAll(site.getPrincipalInvestigators());
+                        allInvestigators.addAll(site.getSubInvestigators());
+                        StringBuilder sb = new StringBuilder();
+                        for (PaPersonDTO person : allInvestigators) {
+                            sb.append(sb.length() > 0 ? "; " : "");
+                            sb.append(person.getLastName());
+                            sb.append(", ");
+                            sb.append(person.getFirstName());
+                        }
+                        json.put("investigator", sb.toString());
+                        arr.put(json);
+                    }
+                }
+            }
+
+
+        } catch (PAException pae) {
+            LOG.error("error while checking my participation", pae);
+        }
         return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
     }
 

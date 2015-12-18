@@ -2,14 +2,19 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.FamilyDTO;
-import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
+import gov.nih.nci.pa.dto.ParticipatingOrgDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
+import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.service.util.FamilyProgramCodeService;
+import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.StreamResult;
 import org.junit.Before;
@@ -18,6 +23,7 @@ import org.springframework.util.ReflectionUtils;
 
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,6 +46,7 @@ public class ProgramCodeAssignmentActionTest  extends AbstractRegWebTest {
     private FamilyProgramCodeService familyProgramCodeService;
     private ProtocolQueryServiceLocal protocolQueryService;
     private RegistryUserServiceLocal registryUserService;
+    private ParticipatingOrgServiceLocal participatingOrgService;
 
     @Before
     public void init() throws Exception {
@@ -48,10 +55,12 @@ public class ProgramCodeAssignmentActionTest  extends AbstractRegWebTest {
         familyProgramCodeService = mock(FamilyProgramCodeService.class);
         protocolQueryService = mock(ProtocolQueryServiceLocal.class);
         registryUserService = mock(RegistryUserServiceLocal.class);
+        participatingOrgService = mock(ParticipatingOrgServiceLocal.class);
 
         action.setRegistryUserService(registryUserService);
         action.setFamilyProgramCodeService(familyProgramCodeService);
         action.setProtocolQueryService(protocolQueryService);
+        action.setParticipatingOrgService(participatingOrgService);
         RegistryUser user = new RegistryUser();
         user.setAffiliatedOrganizationId(1L);
         when(registryUserService.getUser(anyString())).thenReturn(user);
@@ -59,6 +68,16 @@ public class ProgramCodeAssignmentActionTest  extends AbstractRegWebTest {
         FamilyDTO f = new FamilyDTO(1L);
         f.setName("FamilyDTO-1");
         when(familyProgramCodeService.getFamilyDTOByPoId(1L)).thenReturn(f);
+
+
+        ParticipatingOrgDTO site = new ParticipatingOrgDTO();
+        site.setPoId("1");
+        site.setName("DCP");
+        site.setRecruitmentStatusDate(new Timestamp(DateUtils.parseDate(
+                "01/01/2015", new String[]{"MM/dd/yyyy"}).getTime()));
+        site.setRecruitmentStatus(RecruitmentStatusCode.ACTIVE);
+
+        when(participatingOrgService.getTreatingSites(eq(1L))).thenReturn(Arrays.asList(site));
 
 
         when(protocolQueryService.getStudyProtocolByCriteria(any(StudyProtocolQueryCriteria.class),
@@ -70,6 +89,28 @@ public class ProgramCodeAssignmentActionTest  extends AbstractRegWebTest {
     public void testExecute() {
        assertEquals("success", action.execute());
     }
+
+    @Test
+    public void testParticipation() throws  Exception {
+        Field field = StreamResult.class.getDeclaredField("inputStream");
+        ReflectionUtils.makeAccessible(field);
+
+        StreamResult sr = action.participation();
+        InputStream is = (InputStream) field.get(sr);
+        String json = IOUtils.toString(is);
+        assertEquals(json, "{\"data\":[]}");
+
+        action.setFamilyPoId(1L);
+        action.setStudyProtocolId(1L);
+
+        when(FamilyHelper.getRelatedOrgsInFamily(1L)).thenReturn(Arrays.asList(1L, 2L));
+
+        sr = action.participation();
+        is = (InputStream) field.get(sr);
+        json = IOUtils.toString(is);
+        assertEquals(json, "{\"data\":[]}");
+    }
+
     @Test
     public void testFindTrials() {
       try {

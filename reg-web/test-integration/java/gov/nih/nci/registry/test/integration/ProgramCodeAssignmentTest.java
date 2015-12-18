@@ -1,23 +1,16 @@
 package gov.nih.nci.registry.test.integration;
 
-import gov.nih.nci.pa.dto.FamilyDTO;
-import gov.nih.nci.pa.dto.OrgFamilyDTO;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.enums.StudyContactRoleCode;
+import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Select;
 
-import java.awt.event.KeyEvent;
 import java.io.File;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 /**
  *Integration test for Program Code assignment screen.
@@ -25,6 +18,7 @@ import java.util.Locale;
 public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
     private List<TrialInfo> trials = new ArrayList<TrialInfo>();
+
     /**
      * Test the program codes menu items
      * @throws Exception exception
@@ -105,6 +99,28 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
         verifyCSVExport();
         verifyExcelExport();
+        logoutUser();
+    }
+
+
+    @Test
+    public void testParticipation() throws Exception {
+        accessMangeCodeAssignmentsScreen();
+        Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
+        dropdown.selectByVisibleText("National Cancer Institute");
+        TrialInfo trial4 = trials.get(4);
+        String trial4Title = trial4.title;
+        waitForElementToBecomeAvailable(
+                By.xpath("//table[@id='trialsTbl']/tbody//tr//td[text()='" + trial4Title + "']"), 10);
+
+        clickLinkAndWait("Show my participation");
+        waitForElementToBecomeVisible(By.xpath("//table[@id='participationTbl']"), 10);
+        waitForElementToBecomeAvailable(
+                By.xpath("//table[@id='participationTbl']/tbody//tr//td[text()='National Cancer Institute Division of Cancer Prevention']"), 10);
+        selenium.isTextPresent("Abraham, Sony; Kennedy, James");
+        selenium.click("xpath=//button/span[text()='Close']");
+        waitForElementToBecomeInvisible(By.xpath("//table[@id='participationTbl']"), 10);
+
         logoutUser();
     }
 
@@ -206,10 +222,15 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
     private void recreateTrials() throws Exception {
        deactivateAllTrials();
-       for (int i = 0; i < 11; i++) {
+       for (int i = 1; i <= 11; i++) {
           TrialInfo trial =  createAcceptedTrial();
           addParticipatingSite(trial, "National Cancer Institute Division of Cancer Prevention", "ACTIVE");
+          addSiteInvestigator(trial,  "National Cancer Institute Division of Cancer Prevention", "45" + i , "James",
+                  "H", "Kennedy",  StudySiteContactRoleCode.SUB_INVESTIGATOR.name());
+           addSiteInvestigator(trial,  "National Cancer Institute Division of Cancer Prevention", "55" + i , "Sony",
+                   "K", "Abraham",  StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.name());
           trials.add(trial);
+
        }
        associateProgramCodes();
     }

@@ -1608,18 +1608,26 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 new ArrayHandler())[0];
     }
 
-    private Number findOrCreatePersonByPoId(String poPersonID)
-            throws SQLException {
+    private Number findPersonByPoId(String poPersonID) throws SQLException {
         QueryRunner runner = new QueryRunner();
         final String sql = "select identifier from person where assigned_identifier='"
                 + poPersonID + "'";
         final Object[] results = runner.query(connection, sql,
                 new ArrayHandler());
+
         Number paID = results != null ? (Number) results[0] : null;
+        return paID;
+    }
+
+    private Number findOrCreatePersonByPoId(String poPersonID)
+            throws SQLException {
+
+        Number paID = findPersonByPoId(poPersonID);
         if (paID == null) {
             createPerson(poPersonID, "John", "G", "Doe", "Mr.", "III");
-            paID = (Number) runner.query(connection, sql, new ArrayHandler())[0];
+            paID = findPersonByPoId(poPersonID);
         }
+
         return paID;
     }
 
@@ -1883,6 +1891,34 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                         + "'"
                         + status
                         + "', now(), (select max (identifier) from study_site), false)");
+
+    }
+
+    protected void addSiteInvestigator(TrialInfo trial, String siteOrgName, String invPoId,
+                                       String firstName, String middleName,
+                                       String lastName, String role) throws SQLException {
+        Number paID = findPersonByPoId(invPoId);
+        if(paID == null) {
+            createPerson(invPoId, firstName, middleName, lastName, "Mr.", "I");
+            paID = findPersonByPoId(invPoId);
+        }
+
+
+        QueryRunner runner = new QueryRunner();
+
+        Number crsID = findOrCreateCrs(paID, siteOrgName);
+        Number hcpID = findOrCreateHcp(paID, siteOrgName);
+        Number siteID = findParticipatingSite(trial, siteOrgName);
+
+
+        String invSql = "insert into study_site_contact " +
+                "(identifier, role_code, primary_indicator, study_protocol_identifier, " +
+                "status_code,status_date_range_low, healthcare_provider_identifier," +
+                "clinical_research_staff_identifier, study_site_identifier) values(" +
+                "(SELECT NEXTVAL('HIBERNATE_SEQUENCE'))," +
+                "'" + role +"', false," + trial.id + ", 'PENDING'," + today() + "," + hcpID
+                + "," + crsID + "," + siteID + ")";
+        runner.update(connection, invSql);
 
     }
 

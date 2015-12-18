@@ -17,6 +17,13 @@
                 background: white !important;
                 color: black !important;
             }
+            a.mypgp, a.pgcrm {
+                font-weight: normal !important;
+            }
+            div.ui-dialog-buttonset {
+                float: none !important;
+                text-align: center;
+            }
         </style>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery.dataTables.min.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/dataTables.buttons.min.js'/>"></script>
@@ -80,4 +87,24 @@
 	</div>
 </div>
 
+<div id="dialog-participation" title="Participating sites"
+     style="display: none;">
+    <p>
+		<span class="pgcpSite"></span> Participating Sites:
+    </p>
+    <div>
+        <div class="table-header-wrap">
+            <table class="table table-bordered" id="participationTbl" width="100%">
+                <thead>
+                <tr>
+                    <th width="50%" nowrap="nowrap">Site Name</th>
+                    <th width="50%" nowrap="nowrap">Investigators</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 </body>
