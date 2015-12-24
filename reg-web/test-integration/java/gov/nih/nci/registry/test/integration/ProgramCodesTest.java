@@ -132,7 +132,7 @@ public class ProgramCodesTest extends AbstractRegistrySeleniumTest {
         changeUserToNoFamilyOrg(userID.toString());        
         login(loginName, "pass");
         handleDisclaimer(true); 
-        waitForElementToBecomeVisible(By.linkText("Administration"), 2);
+        waitForElementToBecomeVisible(By.linkText("Administration"), 5);
         hoverLink("Administration");        
         assertFalse(selenium.isTextPresent("Program Codes"));       
     }
@@ -146,9 +146,9 @@ public class ProgramCodesTest extends AbstractRegistrySeleniumTest {
     }     
     
     private void accessManageMasterListScreen() {    	
-        waitForElementToBecomeVisible(By.linkText("Administration"), 2);        
+        waitForElementToBecomeVisible(By.linkText("Administration"), 5);        
         hoverLink("Administration");   
-        waitForElementToBecomeVisible(By.linkText("Program Codes"), 2);        
+        waitForElementToBecomeVisible(By.linkText("Program Codes"), 5);        
         hoverLink("Program Codes");
         clickAndWait("link=Manage Master List");
     }
