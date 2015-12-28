@@ -1,5 +1,5 @@
+// used by programCodeList jsp file.
 jQuery(function() { 	        		
-        	
         	jQuery('#datetimepicker').datetimepicker().on('hide', function(e){
         		
        		var selectedDate = jQuery("#datetimepicker :input").val();
@@ -59,3 +59,53 @@ function changeReportingPeriodLength(element) {
 						.getResponseHeader('msg'));
 	});        	
 }
+
+(function ($) {
+    $(function() {
+
+        var table = $('#programCodesTable').DataTable({
+            "dom": 'lprftip<"row">B',
+            "pagingType": "full_numbers",
+            "order": [
+                [0, "asc"]
+            ],
+            "oLanguage": {
+                "sInfo": "Showing _START_ to _END_ of _TOTAL_",
+                "sLengthMenu": "Show _MENU_",
+                "oPaginate": {
+                    "sFirst": "<<",
+                    "sPrevious": "<",
+                    "sNext": ">",
+                    "sLast": ">>"
+                }
+            },
+            "serverSide": false,
+            "columns": [{
+                "data": "programCode"
+            }, {
+                "data": "programName"
+            }, {
+                "data": "",
+                "defaultContent": ""
+            }],
+            "ajax": {
+                "url": "programCodesfetchProgramCodesForFamily.action",
+                "data": {
+                    "selectedDTOId": $("#selectedDTOId").val()
+                },
+                "type": "POST"
+            },
+            "columnDefs": [{
+                "render": function(data, type, full) {
+                    if (full.isActive === false) {
+                        return ' <span style="color:red;font-weight:bold"> (INACTIVE) </span>' + data;
+                    } else {
+                        return data;
+                    }
+                },
+                "targets": [1]
+            }]
+        });
+    });
+})(jQuery);
+

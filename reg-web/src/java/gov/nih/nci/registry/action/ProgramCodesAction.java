@@ -1,7 +1,20 @@
 package gov.nih.nci.registry.action;
 
+import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.dto.FamilyDTO;
+import gov.nih.nci.pa.dto.OrgFamilyDTO;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.FamilyHelper;
+import gov.nih.nci.pa.service.util.FamilyProgramCodeService;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
+import gov.nih.nci.pa.service.util.RegistryUserService;
+import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,21 +30,11 @@ import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.StreamResult;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
-
-import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.dto.FamilyDTO;
-import gov.nih.nci.pa.dto.OrgFamilyDTO;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.util.FamilyHelper;
-import gov.nih.nci.pa.service.util.FamilyProgramCodeService;
-import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
-import gov.nih.nci.pa.service.util.RegistryUserService;
-import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.pa.util.PaRegistry;
 
 /**
  * Program codes
@@ -134,6 +137,36 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
             return handleExceptionDuringAjax(e);
         }        
     }
+    
+    /**
+     * Gets program codes for family 
+     * @throws UnsupportedEncodingException Unsupported encoding exception
+     * @return JSON String
+     */
+    
+    public StreamResult fetchProgramCodesForFamily() throws UnsupportedEncodingException {
+        JSONObject root = new JSONObject();
+        JSONArray arr = new JSONArray();
+        root.put("data", arr);
+        populateProgramCodes(arr);
+        return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
+    }
+    
+    private void populateProgramCodes(JSONArray arr) {
+        LOG.debug("populating program codes for [familyPOId : " + selectedDTOId + "]");
+        FamilyDTO familyDTO = familyProgramCodeService.getFamilyDTOByPoId(selectedDTOId);
+        if (familyDTO != null) {
+            for (ProgramCodeDTO programCodeDTO : familyDTO.getProgramCodes()) {
+                JSONObject o = new JSONObject();
+                o.put("programCode", programCodeDTO.getId());
+                o.put("programName", programCodeDTO.getProgramName());
+                o.put("programCode", programCodeDTO.getProgramCode());
+                o.put("isActive", programCodeDTO.isActive());
+                arr.put(o);
+             }
+        }
+
+      }
     
     private void findOrCreateFamilyAndAddToList(OrgFamilyDTO orgFamilyDTO) throws PAException, ParseException {
         FamilyDTO familyDTO = familyProgramCodeService.getFamilyDTOByPoId(orgFamilyDTO.getId());        

@@ -1,29 +1,32 @@
 package gov.nih.nci.registry.action;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.fail;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import java.text.ParseException;
-import java.util.Date;
-
-import org.apache.struts2.dispatcher.StreamResult;
-
-import org.apache.struts2.ServletActionContext;
-import org.junit.Test;
-
-import com.mockrunner.mock.web.MockHttpServletRequest;
-import com.mockrunner.mock.web.MockHttpServletResponse;
-import com.mockrunner.mock.web.MockHttpSession;
-
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.FamilyDTO;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.FamilyProgramCodeServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.util.Date;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.dispatcher.StreamResult;
+import org.junit.Test;
+import org.springframework.util.ReflectionUtils;
+
+import com.mockrunner.mock.web.MockHttpServletRequest;
+import com.mockrunner.mock.web.MockHttpServletResponse;
+import com.mockrunner.mock.web.MockHttpSession;
 
 public class ProgramCodesActionTest extends AbstractRegWebTest {
 	
@@ -63,7 +66,30 @@ public class ProgramCodesActionTest extends AbstractRegWebTest {
         when(action.getFamilyProgramCodeService().update(any(FamilyDTO.class))).thenThrow(new RuntimeException());        
         assertFalse(action.ajaxChangeLength() instanceof StreamResult);
         assertFalse(action.ajaxChangeDate() instanceof StreamResult);
-	}
+    }
+    
+    @Test
+    public void testFetchProgramCodesForFamily() throws Exception {        
+        ProgramCodesAction action = getAction();
+        action.setSelectedDTOId(123456L);
+        assertTrue(action.fetchProgramCodesForFamily() instanceof StreamResult);     
+        
+      try {
+
+          Field field = StreamResult.class.getDeclaredField("inputStream");
+          ReflectionUtils.makeAccessible(field);
+
+          StreamResult sr = action.fetchProgramCodesForFamily();
+
+          InputStream is = (InputStream) field.get(sr);
+          String json = IOUtils.toString(is);
+          assertEquals("{\"data\":[{\"isActive\":true,\"programCode\":\"PG1\",\"programName\":\"Program Name1\"}]}", json);
+
+      } catch (Exception e) {
+          e.printStackTrace();
+          fail("should not throw exception");
+      }
+    }
 	
 	private ProgramCodesAction getAction() throws Exception {
 		ProgramCodesAction action = new ProgramCodesAction();
@@ -78,6 +104,7 @@ public class ProgramCodesActionTest extends AbstractRegWebTest {
 		final FamilyProgramCodeServiceLocal mock = mock(FamilyProgramCodeServiceLocal.class);
 		
 		FamilyDTO dto = new FamilyDTO(Long.valueOf("12345"), Long.valueOf("123456"), new Date(), 12);
+		createAndAddProgramCodes(dto);
 		
 		when(mock.getFamilyDTOByPoId(any(Long.class)))
                 .thenReturn(dto);
@@ -99,7 +126,16 @@ public class ProgramCodesActionTest extends AbstractRegWebTest {
 	    when(mock.getUser(any(String.class))).thenReturn(registryUser);
 		
 		return mock;
-	}
+    }
+    
+     private void createAndAddProgramCodes(FamilyDTO familyDTO) {
+
+            ProgramCodeDTO pg1 = new ProgramCodeDTO();
+            pg1.setProgramName("Program Name1");
+            pg1.setProgramCode("PG1");
+            pg1.setActive(true);
+            familyDTO.getProgramCodes().add(pg1);
+        }
 	
 	/**
      * @return MockHttpServletRequest
