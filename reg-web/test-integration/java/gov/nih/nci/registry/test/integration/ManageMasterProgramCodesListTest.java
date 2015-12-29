@@ -7,13 +7,14 @@ import org.openqa.selenium.By;
 /**
  *Integration test for Manage Program Codes List screen.
  */
-public class MangeMasterProgramCodesListTest  extends AbstractRegistrySeleniumTest {
+public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumTest {
 
     /**
      * Test the program codes menu items
      * @throws Exception exception
      */
     @Test
+    @SuppressWarnings({"deprecation" })
     public void testProgramCodesDataTableWithFilteringPagingAndSorting() throws Exception {
         loginAndAcceptDisclaimer();
         waitForElementToBecomeVisible(By.linkText("Administration"), 2);
@@ -22,9 +23,9 @@ public class MangeMasterProgramCodesListTest  extends AbstractRegistrySeleniumTe
         assertTrue(selenium.isTextPresent("Program Codes"));
         hoverLink("Program Codes");
         assertTrue(selenium.isTextPresent("Manage Master List"));
-        clickAndWait("link=Manage Master List");
         recreateFamilies();
         associateProgramCodesToFamilies();
+        clickAndWait("link=Manage Master List");
         assertTrue(selenium.isTextPresent("Program Code"));
         assertTrue(selenium.isTextPresent("Program Name"));
         assertTrue(selenium.isTextPresent("Search:"));
