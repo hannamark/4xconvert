@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Locale;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
@@ -25,6 +26,12 @@ public void readAndProcessCtepData(String serverUrl, String userName,
      
     FileInputStream file = new FileInputStream(new File(inputFileName));
     String outputFileName = "Result_"+inputFileName;
+    File logFile = new File("dataLoad.log");
+    //delete log file if exists
+    FileUtils.deleteQuietly(logFile);
+    logFile.createNewFile();
+    String lineSeperator = System.getProperty("line.separator");
+
   
     //Get the workbook instance for XLS file 
     XSSFWorkbook workbook = new XSSFWorkbook(file);
@@ -37,8 +44,12 @@ public void readAndProcessCtepData(String serverUrl, String userName,
     int rowIndex = 0;
     
     String url = serverUrl;
-     
+    StringBuffer logInformation = new StringBuffer();
+   try {  
+    
     while(rowIterator.hasNext()) {
+        
+     StringBuffer rowInformation = new StringBuffer();   
         
         rowIndex++;
         Row row = rowIterator.next();
@@ -71,7 +82,7 @@ public void readAndProcessCtepData(String serverUrl, String userName,
             continue;
         }
         
-           
+        rowInformation.append("Processing row "+rowIndex+" ");
         int cellIndexCount = 0;
         
         String studyCtepId =null;
@@ -149,7 +160,7 @@ public void readAndProcessCtepData(String serverUrl, String userName,
             XMLGenerator xmlGenerator = new XMLGenerator();
            String xml = xmlGenerator.generateNewSiteXML(localStudyIdentifier, studySiteCtepId, 
                    recruitmentStatus, recruitmentStatusDate, piCtepId ,skipContactInformation);
-           sendInsertCall(xml,url,studyCtepId,studySiteCtepId, row,restClient,skipContactInformation);
+           sendInsertCall(xml,url,studyCtepId,studySiteCtepId, row,restClient,skipContactInformation ,rowInformation);
           
            
         }
@@ -162,9 +173,13 @@ public void readAndProcessCtepData(String serverUrl, String userName,
                     , recruitmentStatusDate, piCtepId,skipContactInformation);
             System.out.println("Processing update for trial id "+studyCtepId+" and site id "+studySiteCtepId);
             
-            sendUpdateCall(xml,url,studyCtepId,studySiteCtepId,row,restClient,skipContactInformation);
+            sendUpdateCall(xml,url,studyCtepId,studySiteCtepId,row,restClient,skipContactInformation ,rowInformation);
           
         }
+         
+         //log this information to file
+         FileUtils.writeStringToFile(logFile, rowInformation.toString()+lineSeperator, true);   
+
        
       
        /* System.out.println ("studyCtepId = "+studyCtepId 
@@ -180,19 +195,23 @@ public void readAndProcessCtepData(String serverUrl, String userName,
         // System.out.println("The contactPhone here --->"+contactPhone +" the email here --->"+contactEmail);
     }
     
-    file.close();
+   } 
     
-    //write output file name
-    FileOutputStream out = 
-     new FileOutputStream(new File(outputFileName));
-   workbook.write(out);
-   out.close();
-
+    finally {
+        file.close();
+    
+        //write output file name
+        FileOutputStream out = 
+        new FileOutputStream(new File(outputFileName));
+    workbook.write(out);
+    out.close();
+    }
 }
 
 
 private void sendInsertCall(String xml, String url,
-            String studyCtepId, String studySiteCtepId, Row row, RestClient restClient , boolean skipContactInformation)
+            String studyCtepId, String studySiteCtepId, Row row, RestClient restClient , boolean skipContactInformation,
+            StringBuffer rowInformation)
             throws Exception {
 
         String resultString = null;
@@ -223,22 +242,31 @@ private void sendInsertCall(String xml, String url,
 
         }
         
+        
+        
         Cell resultCell = row.createCell(11);
         resultCell.setCellValue(resultString);
-  
+        rowInformation.append (" Result ="+resultString);
         
         
         resultCell = row.createCell(12);
         resultCell.setCellValue(siteId);
 
+        rowInformation.append (" SiteId ="+siteId);
       //create failure message created 
         resultCell = row.createCell(13);
         resultCell.setCellValue(failureMessge);
+        
+        rowInformation.append (" FailureMessage ="+failureMessge);
+        
+        
          
 }
 
 private void sendUpdateCall(String xml, String url,
-        String studyCtepId, String studySiteCtepId, Row row,RestClient restClient, boolean skipContactInformation)
+        String studyCtepId, String studySiteCtepId, Row row,RestClient restClient,
+        boolean skipContactInformation,
+        StringBuffer rowInformation)
         throws Exception {
 
     String resultString = null;
@@ -272,13 +300,16 @@ private void sendUpdateCall(String xml, String url,
     //create result
     Cell resultCell = row.createCell(11);
     resultCell.setCellValue(resultString);
+    rowInformation.append (" Result ="+resultString);
     
     resultCell = row.createCell(12);
     resultCell.setCellValue(ctrpResponse.getSiteIdAdded());
+    rowInformation.append (" SiteId ="+ctrpResponse.getSiteIdAdded());
 
   //create failure message created 
     resultCell = row.createCell(13);
     resultCell.setCellValue(failureMessge);
+    rowInformation.append (" FailureMessage ="+failureMessge);
     
 
     
