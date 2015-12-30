@@ -148,7 +148,7 @@ public void readAndProcessCtepData(String serverUrl, String userName,
         RestClient restClient = initRestClient(userName,password,isAddException);
         boolean skipContactInformation = false;
         //if update type = SITE_PUBLIC_CONTACT then skip this recode
-        if(contactType.equalsIgnoreCase("SITE_PUBLIC_CONTACT")) {
+        if(contactType!=null && !contactType.equalsIgnoreCase("PI_PUBLIC_CONTACT")) {
             skipContactInformation = true;
         }
         
