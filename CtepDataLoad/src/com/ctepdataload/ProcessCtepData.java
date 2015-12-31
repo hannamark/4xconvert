@@ -225,9 +225,9 @@ private void sendInsertCall(String xml, String url,
 
             if (ctrpResponse.isSucess()) {
                 if (skipContactInformation){
-                    resultString = "Sucess and Skipped contact information";    
+                    resultString = "Success and Skipped contact information";    
                 } else {
-                    resultString ="Sucess";
+                    resultString ="Success";
                 }
                 siteId = ctrpResponse.getSiteIdAdded();
             } else {
@@ -280,9 +280,9 @@ private void sendUpdateCall(String xml, String url,
 
         if (ctrpResponse.isSucess()) {
             if (skipContactInformation){
-                resultString = "Sucess and Skipped contact information";    
+                resultString = "Success and Skipped contact information";    
             } else {
-                resultString ="Sucess";
+                resultString ="Success";
             }
             
         } else {
