@@ -111,12 +111,13 @@ public class XMLGenerator {
         OrganizationOrPersonID organizationOrPersonID2 = createOrgOrPerson(piCtepId);
         person.setExistingPerson(organizationOrPersonID2);
         investigator.setPerson(person);
-        if (skipContactInformation) {
+       /* if (skipContactInformation) {
             investigator.setPrimaryContact(false);    
         }
         else {
             investigator.setPrimaryContact(true);  
-        }
+        }*/
+        investigator.setPrimaryContact(true);  
          investigator.setRole("Principal Investigator");
         
         baseParticipatingSite.getInvestigator().add(investigator);

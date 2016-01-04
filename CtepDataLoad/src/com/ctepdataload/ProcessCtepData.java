@@ -27,9 +27,15 @@ public void readAndProcessCtepData(String serverUrl, String userName,
     FileInputStream file = new FileInputStream(new File(inputFileName));
     String outputFileName = "Result_"+inputFileName;
     File logFile = new File("dataLoad.log");
+    File sqlFile = new File("updateContactDetails.sql");
     //delete log file if exists
     FileUtils.deleteQuietly(logFile);
     logFile.createNewFile();
+    
+    //delete sql file if exists
+    FileUtils.deleteQuietly(sqlFile);
+    sqlFile.createNewFile();
+    
     String lineSeperator = System.getProperty("line.separator");
 
   
@@ -45,11 +51,18 @@ public void readAndProcessCtepData(String serverUrl, String userName,
     
     String url = serverUrl;
     StringBuffer logInformation = new StringBuffer();
+  
+    
+    
    try {  
     
+
+       FileUtils.writeStringToFile(sqlFile, "BEGIN;"+lineSeperator, true);   
+       
     while(rowIterator.hasNext()) {
         
-     StringBuffer rowInformation = new StringBuffer();   
+     StringBuffer rowInformation = new StringBuffer();  
+     StringBuffer sqlQueryString = new StringBuffer();
         
         rowIndex++;
         Row row = rowIterator.next();
@@ -160,7 +173,8 @@ public void readAndProcessCtepData(String serverUrl, String userName,
             XMLGenerator xmlGenerator = new XMLGenerator();
            String xml = xmlGenerator.generateNewSiteXML(localStudyIdentifier, studySiteCtepId, 
                    recruitmentStatus, recruitmentStatusDate, piCtepId ,skipContactInformation);
-           sendInsertCall(xml,url,studyCtepId,studySiteCtepId, row,restClient,skipContactInformation ,rowInformation);
+           sendInsertCall(xml,url,studyCtepId,studySiteCtepId, row,restClient,skipContactInformation ,rowInformation,
+                   sqlQueryString  ,contactPhone,contactEmail);
           
            
         }
@@ -173,12 +187,17 @@ public void readAndProcessCtepData(String serverUrl, String userName,
                     , recruitmentStatusDate, piCtepId,skipContactInformation);
             System.out.println("Processing update for trial id "+studyCtepId+" and site id "+studySiteCtepId);
             
-            sendUpdateCall(xml,url,studyCtepId,studySiteCtepId,row,restClient,skipContactInformation ,rowInformation);
+            sendUpdateCall(xml,url,studyCtepId,studySiteCtepId,row,restClient,skipContactInformation ,rowInformation,
+                    sqlQueryString, contactPhone,contactEmail);
           
         }
          
          //log this information to file
          FileUtils.writeStringToFile(logFile, rowInformation.toString()+lineSeperator, true);   
+         if(sqlQueryString.length() > 0) {
+             FileUtils.writeStringToFile(sqlFile, sqlQueryString.toString()+lineSeperator, true);    
+         }
+            
 
        
       
@@ -196,6 +215,7 @@ public void readAndProcessCtepData(String serverUrl, String userName,
     }
     
    } 
+ 
     
     finally {
         file.close();
@@ -205,13 +225,17 @@ public void readAndProcessCtepData(String serverUrl, String userName,
         new FileOutputStream(new File(outputFileName));
     workbook.write(out);
     out.close();
+    FileUtils.writeStringToFile(sqlFile, "END;"+lineSeperator, true);   
     }
 }
 
 
 private void sendInsertCall(String xml, String url,
             String studyCtepId, String studySiteCtepId, Row row, RestClient restClient , boolean skipContactInformation,
-            StringBuffer rowInformation)
+            StringBuffer rowInformation,
+            StringBuffer queryInformation,
+            String contactPhone,
+            String contactEmail)
             throws Exception {
 
         String resultString = null;
@@ -226,6 +250,8 @@ private void sendInsertCall(String xml, String url,
             if (ctrpResponse.isSucess()) {
                 if (skipContactInformation){
                     resultString = "Success and Skipped contact information";    
+                    queryInformation.append(generateContactUpdateQuery(contactPhone,
+                            contactEmail,ctrpResponse.getSiteIdAdded()));                   
                 } else {
                     resultString ="Success";
                 }
@@ -266,7 +292,10 @@ private void sendInsertCall(String xml, String url,
 private void sendUpdateCall(String xml, String url,
         String studyCtepId, String studySiteCtepId, Row row,RestClient restClient,
         boolean skipContactInformation,
-        StringBuffer rowInformation)
+         StringBuffer rowInformation,
+         StringBuffer queryInformation,
+         String contactPhone,
+         String contactEmail)
         throws Exception {
 
     String resultString = null;
@@ -280,7 +309,9 @@ private void sendUpdateCall(String xml, String url,
 
         if (ctrpResponse.isSucess()) {
             if (skipContactInformation){
-                resultString = "Success and Skipped contact information";    
+                resultString = "Success and Skipped contact information"; 
+                queryInformation.append(generateContactUpdateQuery(contactPhone,
+                        contactEmail,ctrpResponse.getSiteIdAdded()));    
             } else {
                 resultString ="Success";
             }
@@ -361,6 +392,29 @@ public static String convertDateToString(Date date, String format) {
     }
     return formattedDate;
 
+}
+
+private String generateContactUpdateQuery(String contactPhone,String contactEmail, String siteId){
+    StringBuffer resultString= new StringBuffer ();
+    resultString.append("update study_site_contact set telephone='");
+    if(contactPhone!=null && !contactPhone.equalsIgnoreCase("null")) {
+        resultString.append(contactPhone);
+    }
+    else {
+        resultString.append("");
+    }
+    resultString.append("',email='");
+    if(contactEmail!=null & !contactEmail.equalsIgnoreCase("null")) {
+        resultString.append(contactEmail);
+    }
+    else {
+        resultString.append("");
+    }
+    
+    resultString.append("' where study_site_identifier ='");
+    resultString.append(siteId);
+    resultString.append("' and role_code='PRIMARY_CONTACT' and status_code ='PENDING';");
+    return resultString.toString();
 }
   
 public static void main(String[] args) throws Exception {
