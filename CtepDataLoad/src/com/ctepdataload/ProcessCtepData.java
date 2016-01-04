@@ -180,6 +180,13 @@ public void readAndProcessCtepData(String serverUrl, String userName,
         }
          //send update REST call
         else {
+            
+            //in case of update if contact type is not PI_PUBLIC_CONTACT then skip update
+            if(skipContactInformation) {
+                continue;
+            }
+            
+            
             XMLGenerator xmlGenerator = new XMLGenerator();
            
  
