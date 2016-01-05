@@ -6,6 +6,7 @@ package gov.nih.nci.pa.util.pomock;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -44,7 +45,24 @@ public final class MockFamilyService implements FamilyServiceRemote { // NOPMD
     static {
         reset();
     }
+    
+    static List<FamilyDTO> familyList;
+    static {
+        familyList = new ArrayList<FamilyDTO>();
+        FamilyDTO dto = new FamilyDTO();
+        dto.setIdentifier(IiConverter.convertToIi(1L));
+        dto.setName(EnOnConverter.convertToEnOn("Family1"));
+        dto.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
+        familyList.add(dto);
 
+        FamilyDTO dto2 = new FamilyDTO();
+        
+        dto2.setIdentifier(IiConverter.convertToIi(2L));
+        dto2.setName(EnOnConverter.convertToEnOn("Family2"));
+        dto2.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
+        familyList.add(dto2);
+    }
+    
     public FamilyDTO createFamily(FamilyDTO dto) {
         return create(dto);
     }
@@ -214,7 +232,32 @@ public final class MockFamilyService implements FamilyServiceRemote { // NOPMD
     @Override
     public List<FamilyDTO> search(FamilyDTO arg0, LimitOffset arg1)
             throws TooManyResultsException {
-        return new ArrayList<>();
+        List<FamilyDTO> families = new ArrayList<FamilyDTO>();
+        if (arg0.getName() != null) {
+            String inputName = EnOnConverter.convertEnOnToString(arg0.getName());
+            for(FamilyDTO dto : familyList){
+                String dtoName = EnOnConverter.convertEnOnToString(dto.getName());
+                if(dtoName .equals(inputName)){
+                    families.add(dto);
+                }
+            }
+        }
+        if (arg0.getIdentifier() != null && arg0.getIdentifier().getExtension() != null ) {
+            for(FamilyDTO dto : familyList){
+                if(dto.getIdentifier().getExtension().equals(arg0.getIdentifier().getExtension())){
+                     families.add(dto);
+                }
+            }
+        }
+        if (arg0.getStatusCode() != null) {
+            for(FamilyDTO dto : familyList){
+                if(CdConverter.convertCdToString(dto.getStatusCode())
+                     .equals(CdConverter.convertCdToString(arg0.getStatusCode()))) {
+                     families.add(dto);
+                }
+            }
+        }
+        return families ;
     }
 
     @SuppressWarnings("unchecked")

@@ -4,6 +4,8 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.FamilyDTO;
 import gov.nih.nci.pa.dto.OrgFamilyDTO;
 import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
+import gov.nih.nci.pa.iso.util.EnOnConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.service.util.FamilyProgramCodeService;
@@ -11,13 +13,15 @@ import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserService;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
-
+import gov.nih.nci.registry.util.Constants;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -25,6 +29,7 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.StreamResult;
@@ -76,11 +81,16 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
      */
     @Override
     public String execute() throws PAException, ParseException {   
-        
         request = ServletActionContext.getRequest();
         RegistryUser registryUser = registryUserService.getUser(request.getRemoteUser());    
-        
-        List<OrgFamilyDTO> affiliatedFamilies = FamilyHelper.getByOrgId(registryUser.getAffiliatedOrganizationId());
+        boolean isProgramCodeAdmin = ServletActionContext.getRequest()
+                .isUserInRole(Constants.PROGRAM_CODE_ADMINISTRATOR);
+        List<OrgFamilyDTO> affiliatedFamilies = new ArrayList<OrgFamilyDTO>();
+        if (isProgramCodeAdmin) {
+            affiliatedFamilies = getAllFamiliesDto();
+        } else {
+            affiliatedFamilies = FamilyHelper.getByOrgId(registryUser.getAffiliatedOrganizationId());
+        }
         for (OrgFamilyDTO orgFamilyDTO : affiliatedFamilies) {            
             findOrCreateFamilyAndAddToList(orgFamilyDTO);
         }    
@@ -98,6 +108,36 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
         }        
         return SUCCESS;
     }    
+    
+    /**
+     * Get all family DTOs
+     * @return List<OrgFamilyDTO> List<OrgFamilyDTO>
+     * @throws PAException
+     */
+    private List<OrgFamilyDTO> getAllFamiliesDto() throws PAException {
+        List<OrgFamilyDTO> affiliatedFamilies = new ArrayList<OrgFamilyDTO>();
+        List<gov.nih.nci.services.family.FamilyDTO> families = FamilyHelper.getAllFamilies();
+        if (families != null) {
+          for (gov.nih.nci.services.family.FamilyDTO family : families) {
+              OrgFamilyDTO orgFamilyDto = new OrgFamilyDTO();
+              orgFamilyDto.setId(IiConverter.convertToLong(family.getIdentifier()));
+              orgFamilyDto.setName(EnOnConverter.convertEnOnToString(family.getName()));
+              affiliatedFamilies.add(orgFamilyDto);
+          }
+         if (affiliatedFamilies != null && !affiliatedFamilies.isEmpty()) {
+             Collections.sort(affiliatedFamilies, new Comparator<OrgFamilyDTO>() {
+                 @Override
+                 public int compare(OrgFamilyDTO o1, OrgFamilyDTO o2) {
+                     return StringUtils
+                             .defaultString(o1.getName())
+                             .compareTo(
+                                     StringUtils.defaultString(o2.getName()));
+                 }
+             });
+         }
+        }
+         return affiliatedFamilies;
+    }
     
     /**
      * Changes Ajax date 

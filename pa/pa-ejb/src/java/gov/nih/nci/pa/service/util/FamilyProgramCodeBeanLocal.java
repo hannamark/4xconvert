@@ -11,6 +11,9 @@ import javax.interceptor.Interceptors;
 import gov.nih.nci.pa.domain.ProgramCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
+import gov.nih.nci.pa.iso.util.EnOnConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+
 import org.hibernate.Query;
 
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
@@ -48,9 +51,15 @@ public class FamilyProgramCodeBeanLocal implements FamilyProgramCodeServiceLocal
                     
         if (result != null) {
             return ((Family) result);
+        } else {
+            gov.nih.nci.services.family.FamilyDTO dto = FamilyHelper.getPOFamilyByPOID(familyPoId);
+            if (dto != null) {
+                FamilyDTO familyDTO = new FamilyDTO(IiConverter.convertToLong(dto.getIdentifier()));
+                familyDTO.setName(EnOnConverter.convertEnOnToString(dto.getName()));
+                return convert(create(familyDTO));
+            } 
         }
         return null;                      
-        
     }
     
     /**

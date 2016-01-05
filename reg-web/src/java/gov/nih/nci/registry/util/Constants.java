@@ -235,4 +235,9 @@ public class Constants {
 
     /** STUDY ALTERNATE TITLES. */
     public static final String STUDY_ALTERNATE_TITLES = "studyAlternateTitles";
+    
+    /**
+     * PROGRAM_CODE_ADMINISTRATOR
+     */
+    public static final String PROGRAM_CODE_ADMINISTRATOR = "ProgramCodeAdministrator";
 }

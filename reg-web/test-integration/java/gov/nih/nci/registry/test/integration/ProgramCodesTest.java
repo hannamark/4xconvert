@@ -84,6 +84,26 @@ public class ProgramCodesTest extends AbstractRegistrySeleniumTest {
         assertTrue(selenium.isTextPresent("Manage Code Assignments"));
     }    
     
+	/**
+     * Test the program codes Organization Family List
+	 * @throws SQLException 
+     */
+    @Test
+    public void testProgramCodesOrgFammilyList() throws SQLException {    	
+        assignUserToGroup("abstractor-ci", "ProgramCodeAdministrator");
+        loginAndAcceptDisclaimer();
+        waitForElementToBecomeVisible(By.linkText("Administration"), 2);        
+        hoverLink("Administration");   
+        waitForElementToBecomeVisible(By.linkText("Program Codes"), 2);
+        assertTrue(selenium.isTextPresent("Program Codes"));        
+        hoverLink("Program Codes");
+        assertTrue(selenium.isTextPresent("Manage Master List"));
+        clickAndWait("link=Manage Master List");
+        Select dropdown = new Select(driver.findElement(By.id("selectedDTOId")));
+        dropdown.selectByVisibleText("Family1");
+        dropdown.selectByVisibleText("Family2");
+    }  
+    
     /**
      * Test the program codes menu items
      * @throws SQLException 

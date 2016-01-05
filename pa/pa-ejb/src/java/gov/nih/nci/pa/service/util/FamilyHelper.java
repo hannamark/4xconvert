@@ -5,11 +5,13 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.OrgFamilyDTO;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.bo.FamilyFunctionalType;
@@ -242,5 +244,34 @@ public final class FamilyHelper {
             }
         }
         return admins;
+    }
+    
+    /**
+     * Get all families from PO
+     * @return List<FamilyDTO> List of all families
+     * @throws PAException exception thrown if any
+     */
+    public static List<FamilyDTO> getAllFamilies() throws PAException { 
+        FamilyDTO  familySearchCriteria = new FamilyDTO();
+        familySearchCriteria.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
+        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+        List<FamilyDTO> familyList = new ArrayList<FamilyDTO>();
+        try {
+            familyList = PoRegistry.getFamilyService().search(familySearchCriteria, limit);
+            if (CollectionUtils.isEmpty(familyList)) {
+                return null;
+            }
+        } catch (TooManyResultsException e) {
+            throw new PAException(e);
+        }
+        return familyList;
+    }
+    /**
+     * Get family from PO using familyPOID
+     * @param familyPoID familyPoID
+     * @return FamilyDTO FamilyDTO
+     */
+    public static FamilyDTO getPOFamilyByPOID(Long familyPoID) {
+        return PoRegistry.getFamilyService().getFamily(IiConverter.convertToIi(familyPoID));
     }
 }

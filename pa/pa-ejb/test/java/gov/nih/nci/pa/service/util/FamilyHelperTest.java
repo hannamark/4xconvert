@@ -10,6 +10,7 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -208,5 +209,26 @@ public class FamilyHelperTest {
             result.add(rel);
         }
         return result;
+    }
+    @Test
+    public void getAllFamiliesTest() throws Exception { 
+        List<FamilyDTO> familyList = new ArrayList<FamilyDTO>();
+        FamilyDTO dto= new FamilyDTO();
+        dto.setIdentifier(IiConverter.convertToIi(1L));
+        dto.setName(EnOnConverter.convertToEnOn("Family1"));
+        dto.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
+        familyList.add(dto);
+        when(fs.search(any(FamilyDTO.class), any(LimitOffset.class))).thenReturn(familyList);
+        assertEquals(1, FamilyHelper.getAllFamilies().size());
+    }
+    
+    @Test
+    public void getPOFamilyByPOIDTest() {
+       FamilyDTO dto = new FamilyDTO();
+       dto.setIdentifier(IiConverter.convertToIi(1L));
+       dto.setName(EnOnConverter.convertToEnOn("Family1"));
+       dto.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
+       when(fs.getFamily(any(Ii.class))).thenReturn(dto);
+       assertEquals(1, IiConverter.convertToLong(FamilyHelper.getPOFamilyByPOID(1L).getIdentifier()).longValue());
     }
 }
