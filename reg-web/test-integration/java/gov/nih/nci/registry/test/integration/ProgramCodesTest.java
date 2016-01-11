@@ -115,7 +115,7 @@ public class ProgramCodesTest extends AbstractRegistrySeleniumTest {
     	loginAndAcceptDisclaimer();
     	accessManageMasterListScreen();
         pause(500);
-        assertEquals(1, getCountOfFamily().intValue());
+        assertEquals(2, getCountOfFamily().intValue());
     }    
     
     /** 
