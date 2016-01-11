@@ -174,6 +174,7 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
         assertTrue(DateUtils.isSameDay(getCurrentTrialStatus(trial).statusDate,
                 DateUtils.parseDate("06/03/13", new String[] { "MM/dd/yy" })));
         verifyEmailSentByBatchProcessing();
+        verifyLegacyProgramCode("PG00034", "PG00035");
     }
     /**
      * @throws SQLException
@@ -261,6 +262,22 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
                                + "ORDER BY date_sent desc LIMIT 1",
                        new ArrayHandler())[0];
        verifyBodyDSPWarning(loggedBody);
+   }
+
+   private void verifyLegacyProgramCode(String... pgcodes) {
+       accessTrialSearchScreen();
+       selenium.type("officialTitle",
+               "PHASE II TRIAL OF LOW-DOSE METHOTREXATE AND IODINE I 131 TOSITUMOMAB FOR PREVIOUSLY UNTREATED, ADVANCED-STAGE, FOLLICULAR LYMPHOMA");
+       selenium.click("runSearchBtn");
+       clickAndWait("link=All Trials");
+       waitForElementById("row", 10);
+       driver.findElement(By.xpath("//table[@id='row']/tbody/tr[1]/td[1]/a")).click();
+       waitForPageToLoad();
+       for (String c : pgcodes) {
+           selenium.isTextPresent(c);
+       }
+
+       selenium.isTextPresent("PG00035");
    }
 
     /**
@@ -377,7 +394,7 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
         assertEquals("APPROVED",
                 getCurrentTrialStatus(trial).statusCode);
         assertEquals(null, getTrialField(trial, "DELAYED_POSTING_INDICATOR"));
-        
+        verifyLegacyProgramCode("PG0022");
     }
 
 

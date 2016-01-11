@@ -91,6 +91,7 @@ import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
@@ -147,6 +148,7 @@ import gov.nih.nci.services.person.PersonDTO;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -772,6 +774,19 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
             siteDTO.setHealthcareFacilityIi(paHcfIi);
         }
         siteDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
+        //update program codes on legacy study - PO-9192
+        String pgcText = StConverter.convertToString(siteDTO.getProgramCodeText());
+        if (StringUtils.isNotEmpty(pgcText)) { //legacy
+            pgcText = StringUtils.join(pgcText.trim().split("\\s*;\\s*"), ";");
+            siteDTO.setProgramCodeText(StConverter.convertToSt(pgcText));
+            Long studyId = IiConverter.convertToLong(siteDTO.getStudyProtocolIdentifier());
+            String paHealthCareFacilityId = IiConverter.convertToString(siteDTO.getHealthcareFacilityIi());
+            Ii paHcfIi = IiConverter.convertToPoHealthcareProviderIi(paHealthCareFacilityId);
+            HealthCareFacility hcf = getCorrUtils().getStructuralRoleByIi(paHcfIi);
+            Long orgPoId = Long.parseLong(hcf.getOrganization().getIdentifier());
+            List<String> programCodes = Arrays.asList(pgcText.split(";"));
+            getStudyProtocolService().assignProgramCodes(studyId, orgPoId, programCodes);
+        }
 
         if (isCreate) {
             siteDTO.setIdentifier(null);
@@ -786,6 +801,7 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
             studySiteDTO = getStudySiteService().update(siteDTO);
         }
         createStudySiteAccrualStatus(studySiteDTO.getIdentifier(), currentStatus);
+
         return getStudySite(studySiteDTO.getIdentifier());        
     }
 

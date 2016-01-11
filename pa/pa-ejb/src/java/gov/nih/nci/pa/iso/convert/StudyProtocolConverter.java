@@ -563,8 +563,9 @@ public class StudyProtocolConverter {
      * @param dto program code DTO object
      */
     private static void convertProgramCodesToDTO(StudyProtocol bo, StudyProtocolDTO dto) {
-        List<ProgramCodeDTO> programCodeDTOs = new ArrayList<ProgramCodeDTO>();
-        if (!CollectionUtils.isEmpty(bo.getProgramCodes())) {            
+
+        if (!CollectionUtils.isEmpty(bo.getProgramCodes())) {
+            List<ProgramCodeDTO> programCodeDTOs = new ArrayList<ProgramCodeDTO>();
             for (ProgramCode programCode : bo.getProgramCodes()) {
                 ProgramCodeDTO programCodeDTO = new ProgramCodeDTO();
                 programCodeDTO.setProgramCode(programCode.getProgramCode());
@@ -576,9 +577,10 @@ public class StudyProtocolConverter {
                     programCodeDTO.setActive(false);
                 }
                 programCodeDTOs.add(programCodeDTO);
-            }            
+            }
+            dto.setProgramCodes(programCodeDTOs);
         }
-        dto.setProgramCodes(programCodeDTOs);
+
     }
     
     

@@ -40,7 +40,7 @@
 			<tns:ctepID>NCI</tns:ctepID>
 		</tns:existingOrganization>
 	</tns:summary4FundingSponsor>
-	<tns:programCode>PG00001</tns:programCode>
+	<tns:programCode>PG00001;PG00022</tns:programCode>
 	<tns:fundedByNciGrant>false</tns:fundedByNciGrant>
 	<tns:grant>
 		<tns:fundingMechanism>B09</tns:fundingMechanism>

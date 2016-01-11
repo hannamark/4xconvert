@@ -12,6 +12,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.service.util.FamilyProgramCodeService;
 import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
@@ -25,9 +26,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static gov.nih.nci.pa.enums.StudyStatusCode.ACTIVE;
@@ -43,6 +47,7 @@ import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_LAS
  * To manage program code assignments.
  * For details refer to PO-9192 (attachment PPT) page 10
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public class ProgramCodeAssignmentAction extends ActionSupport implements Preparable {
 
     private static final long serialVersionUID = 4866645110688822061L;
@@ -60,9 +65,9 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
     private ProtocolQueryServiceLocal protocolQueryService;
     private RegistryUserServiceLocal registryUserService;
     private ParticipatingOrgServiceLocal participatingOrgService;
+    private StudyProtocolServiceLocal studyProtocolService;
 
     private List<OrgFamilyDTO> affiliatedFamilies;
-    private FamilyDTO family;
     private Long familyPoId;
     private FamilyDTO familyDto;
     private String pgcFilter;
@@ -108,21 +113,6 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
         this.familyProgramCodeService = familyProgramCodeService;
     }
 
-    /**
-     * The selected family
-     * @return the family
-     */
-    public FamilyDTO getFamily() {
-        return family;
-    }
-
-    /**
-     * The selected family
-     * @param family the family
-     */
-    public void setFamily(FamilyDTO family) {
-        this.family = family;
-    }
 
     /**
      * Will populate the affiliatedFamilies
@@ -212,6 +202,22 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
     }
 
     /**
+     * Will return the study protocol service
+     * @return the studyProtocolService
+     */
+    public StudyProtocolServiceLocal getStudyProtocolService() {
+        return studyProtocolService;
+    }
+
+    /**
+     * Will set the study protocol service
+     * @param studyProtocolService the studyProtocolService
+     */
+    public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
+        this.studyProtocolService = studyProtocolService;
+    }
+
+    /**
      * Will initialize the action
      */
     @Override
@@ -220,6 +226,7 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
         protocolQueryService = PaRegistry.getCachingProtocolQueryService();
         registryUserService = PaRegistry.getRegistryUserService();
         participatingOrgService = PaRegistry.getParticipatingOrgService();
+        studyProtocolService = PaRegistry.getStudyProtocolService();
     }
 
     /**
@@ -266,6 +273,50 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
         root.put("data", arr);
         populateTrials(arr);
         return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
+    }
+
+    /**
+     *  Will unassign program code from trial
+     * @return  StreamResult - the json object array
+     * @throws IOException - for encoding issues
+     */
+    public StreamResult unassignProgramCode() throws IOException {
+        String programCode = ServletActionContext.getRequest().getParameter("pgc");
+        try {
+            studyProtocolService.unAssignProgramCode(studyProtocolId, programCode);
+            JSONObject root = new JSONObject();
+            root.put("status", "REMOVED");
+            return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
+        } catch (PAException pae) {
+            LOG.error("unassignProgramCode - studyProtocol:"
+                    + getStudyProtocolId()
+                    + "programCode:" + programCode);
+            ServletActionContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST, pae.getMessage());
+        }
+        return null;
+    }
+
+
+    /**
+     *  Will assign program code from trial
+     * @return  StreamResult - the json object array
+     * @throws IOException - for encoding issues
+     */
+    public StreamResult assignProgramCode() throws IOException {
+        String programCode = ServletActionContext.getRequest().getParameter("pgc");
+        try {
+            studyProtocolService.assignProgramCodesToTrials(Arrays.asList(studyProtocolId),
+                    familyPoId, Arrays.asList(programCode));
+            JSONObject root = new JSONObject();
+            root.put("status", "ADDED");
+            return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
+        } catch (PAException pae) {
+            LOG.error("assignProgramCode - studyProtocol:"
+                    + getStudyProtocolId()
+                    + "programCode:" + programCode);
+            ServletActionContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST, pae.getMessage());
+        }
+        return null;
     }
 
     /**
@@ -338,11 +389,17 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
                  o.put("leadOrganizationName", trial.getLeadOrganizationName());
                  o.put("piFullName", trial.getPiFullName());
                  o.put("trialStatus", trial.getStudyStatusCode().getDisplayName());
-                 List<String> pgCodes = new ArrayList<String>();
+                 o.put("DT_RowId", "trial_" + trial.getStudyProtocolId());
+
+                 JSONArray pgcArr = new JSONArray();
                  for (ProgramCodeDTO pg : trial.getProgramCodes()) {
-                    pgCodes.add(pg.getProgramCode());
+                     JSONObject pgcObj = new JSONObject();
+                     pgcObj.put("id", pg.getId());
+                     pgcObj.put("code", pg.getProgramCode());
+                     pgcObj.put("name", pg.getProgramName());
+                     pgcArr.put(pgcObj);
                  }
-                 o.put("programCodes", new JSONArray(pgCodes));
+                 o.put("programCodes", pgcArr);
                  arr.put(o);
               }
           }

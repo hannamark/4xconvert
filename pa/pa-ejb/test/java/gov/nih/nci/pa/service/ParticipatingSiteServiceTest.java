@@ -228,7 +228,6 @@ public class ParticipatingSiteServiceTest extends AbstractHibernateTestCase {
                                                                                        - Long.valueOf("300000000")),
                                                                                null));
         studySiteDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt("LOCAL SP ID"));
-        studySiteDTO.setProgramCodeText(StConverter.convertToSt("PROGRAM CODE"));
         studySiteDTO.setStudyProtocolIdentifier(spIi);
         return studySiteDTO;
     }

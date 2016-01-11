@@ -1,5 +1,6 @@
 package gov.nih.nci.registry.action;
 
+import com.mockrunner.mock.web.MockHttpServletRequest;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.FamilyDTO;
 import gov.nih.nci.pa.dto.ParticipatingOrgDTO;
@@ -8,6 +9,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.service.util.FamilyProgramCodeService;
 import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
@@ -47,6 +49,7 @@ public class ProgramCodeAssignmentActionTest  extends AbstractRegWebTest {
     private ProtocolQueryServiceLocal protocolQueryService;
     private RegistryUserServiceLocal registryUserService;
     private ParticipatingOrgServiceLocal participatingOrgService;
+    private StudyProtocolServiceLocal studyProtocolService;
 
     @Before
     public void init() throws Exception {
@@ -56,11 +59,14 @@ public class ProgramCodeAssignmentActionTest  extends AbstractRegWebTest {
         protocolQueryService = mock(ProtocolQueryServiceLocal.class);
         registryUserService = mock(RegistryUserServiceLocal.class);
         participatingOrgService = mock(ParticipatingOrgServiceLocal.class);
+        studyProtocolService = mock(StudyProtocolServiceLocal.class);
 
         action.setRegistryUserService(registryUserService);
         action.setFamilyProgramCodeService(familyProgramCodeService);
         action.setProtocolQueryService(protocolQueryService);
         action.setParticipatingOrgService(participatingOrgService);
+        action.setStudyProtocolService(studyProtocolService);
+
         RegistryUser user = new RegistryUser();
         user.setAffiliatedOrganizationId(1L);
         when(registryUserService.getUser(anyString())).thenReturn(user);
@@ -111,6 +117,39 @@ public class ProgramCodeAssignmentActionTest  extends AbstractRegWebTest {
         assertEquals(json, "{\"data\":[]}");
     }
 
+
+    @Test
+    public void testUnassignProgramCode() throws  Exception {
+        Field field = StreamResult.class.getDeclaredField("inputStream");
+        ReflectionUtils.makeAccessible(field);
+        action.setStudyProtocolId(1L);
+        action.setFamilyPoId(1L);
+        action.setStudyProtocolId(1L);
+        ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("pgc", "3");
+        when(FamilyHelper.getRelatedOrgsInFamily(1L)).thenReturn(Arrays.asList(1L, 2L));
+
+        StreamResult sr = action.unassignProgramCode();
+        InputStream is = (InputStream) field.get(sr);
+        String json = IOUtils.toString(is);
+        assertEquals(json, "{\"status\":\"REMOVED\"}");
+    }
+
+    @Test
+    public void testAssignProgramCode() throws  Exception {
+        Field field = StreamResult.class.getDeclaredField("inputStream");
+        ReflectionUtils.makeAccessible(field);
+        action.setStudyProtocolId(1L);
+        action.setFamilyPoId(1L);
+        action.setStudyProtocolId(1L);
+        ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("pgc", "3");
+        when(FamilyHelper.getRelatedOrgsInFamily(1L)).thenReturn(Arrays.asList(1L, 2L));
+
+        StreamResult sr = action.assignProgramCode();
+        InputStream is = (InputStream) field.get(sr);
+        String json = IOUtils.toString(is);
+        assertEquals(json, "{\"status\":\"ADDED\"}");
+    }
+
     @Test
     public void testFindTrials() {
       try {
@@ -134,7 +173,8 @@ public class ProgramCodeAssignmentActionTest  extends AbstractRegWebTest {
           is = (InputStream) field.get(sr);
           json = IOUtils.toString(is);
           assertEquals("{\"data\":[{\"title\":\"title\",\"identifiers\":\"1, 2\"," +
-                  "\"programCodes\":[null,null],\"trialStatus\":\"Active\"," +
+                  "\"programCodes\":[{\"id\":3,\"name\":\"3\"},{\"id\":4,\"name\":\"4\"}]," +
+                  "\"DT_RowId\":\"trial_null\",\"trialStatus\":\"Active\"," +
                   "\"piFullName\":\"Joel Joseph\",\"nciIdentifier\":\"1\"}]}", json);
 
 

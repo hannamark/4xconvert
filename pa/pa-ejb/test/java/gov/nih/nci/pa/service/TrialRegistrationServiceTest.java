@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -117,6 +118,7 @@ import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -155,6 +157,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -202,15 +205,65 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
         
         studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);        
         assertEquals(2, studyProtocolDTO.getProcessingPriority().getValue().intValue());
+        assertNull(StConverter.convertToString(studyProtocolDTO.getProgramCodeText()));
+
+    }
+
+    @Test
+    public void createInterventionalStudyProtocolWithLegacyProgramCodeTest() throws Exception {
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
+        studyProtocolDTO.setProgramCodes(new ArrayList<ProgramCodeDTO>());
+        studyProtocolDTO.setProgramCodeText(StConverter.convertToSt("1;2"));
+        StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
+        overallStatusDTO.setIdentifier(null);
+        List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
+        List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
+        List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
+
+        List<DocumentDTO> documents = getStudyDocuments();
+
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
+        StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
+        StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
+
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
+        regAuthority.setIdentifier(null);
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+
+        Ii ii = bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
+                studyResourcingDTOs, documents, leadOrganizationDTO,
+                principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
+                siteIdentifiers, studyContactDTO, null, summary4OrganizationDTO, summary4StudyResourcing.get(0),
+                null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+        assertFalse(ISOUtil.isIiNull(ii));
+
+        studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
+        assertEquals(2, studyProtocolDTO.getProcessingPriority().getValue().intValue());
+        assertTrue(Arrays.asList(StringUtils.split(StConverter.convertToString(studyProtocolDTO.getProgramCodeText()), ";")).contains("1"));
+        assertTrue(Arrays.asList(StringUtils.split(StConverter.convertToString(studyProtocolDTO.getProgramCodeText()), ";")).contains("2"));
+        assertTrue(StringUtils.split(StConverter.convertToString(studyProtocolDTO.getProgramCodeText()), ";").length == 2);
 
     }
     
     @Test
     public void createAbbreviatedStudyProtocolTest() throws Exception {
-        InterventionalStudyProtocolDTO studyProtocolDTO = registerAbbreviatedTrial();        
+        InterventionalStudyProtocolDTO studyProtocolDTO = registerAbbreviatedTrial(null);
         assertEquals(2, studyProtocolDTO.getProcessingPriority().getValue().intValue());
+        assertNull(StConverter.convertToString(studyProtocolDTO.getProgramCodeText()));
+    }
 
-        
+    @Test
+    public void createAbbreviatedStudyProtocolWithLegacyProgramCodeTest() throws Exception {
+        InterventionalStudyProtocolDTO studyProtocolDTO = registerAbbreviatedTrial("1;2");
+        assertEquals(2, studyProtocolDTO.getProcessingPriority().getValue().intValue());
+        assertTrue(Arrays.asList(StringUtils.split(StConverter.convertToString(studyProtocolDTO.getProgramCodeText()), ";")).contains("1"));
+        assertTrue(Arrays.asList(StringUtils.split(StConverter.convertToString(studyProtocolDTO.getProgramCodeText()), ";")).contains("2"));
+        assertTrue(StringUtils.split(StConverter.convertToString(studyProtocolDTO.getProgramCodeText()), ";").length == 2);
     }
 
     /**
@@ -218,7 +271,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
      * @throws PAException
      * @throws URISyntaxException 
      */
-    private InterventionalStudyProtocolDTO registerAbbreviatedTrial()
+    private InterventionalStudyProtocolDTO registerAbbreviatedTrial(String legacyProgramCodes)
             throws PAException, URISyntaxException {
         InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
         
@@ -277,7 +330,11 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
         List<OrganizationDTO> collaborators = new ArrayList<OrganizationDTO>();
         collaborators.add(sponsorOrganizationDTO);
         
-        List<DocumentDTO> documents = getStudyDocuments();        
+        List<DocumentDTO> documents = getStudyDocuments();
+        if (StringUtils.isNotEmpty(legacyProgramCodes)) {
+            studyProtocolDTO.getProgramCodes().clear();
+            studyProtocolDTO.setProgramCodeText(StConverter.convertToSt(legacyProgramCodes));
+        }
         
         Ii ii = bean.createAbbreviatedStudyProtocol(studyProtocolDTO, nctID,
                 leadOrganizationDTO, leadOrganizationSiteIdentifierDTO,
@@ -1077,7 +1134,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
     }
     @Test
     public void amendTrialTestWithChangeMemoDoc() throws Exception {
-        Ii ii = registerTrial();
+        Ii ii = registerTrial("");
 
         createMilestones(ii);
         InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
@@ -1124,8 +1181,12 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
     }
 
 
-    protected Ii registerTrial() throws PAException {
+    protected Ii registerTrial(String legacyProgramCodes) throws PAException {
         InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
+        if(StringUtils.isNotEmpty(legacyProgramCodes)) {
+            studyProtocolDTO.setProgramCodeText(StConverter.convertToSt(legacyProgramCodes));
+            studyProtocolDTO.getProgramCodes().clear();
+        }
         StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
         overallStatusDTO.setIdentifier(null);
         List<StudyIndldeDTO> studyIndldeDTOs = getListOfINDs();
@@ -1177,7 +1238,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
 
     @Test
     public void amendTrialTestWithProtocolHighlightedDoc() throws Exception {
-        Ii ii = registerTrial();
+        Ii ii = registerTrial("");
 
         createMilestones(ii);
         InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
@@ -1268,7 +1329,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
 
     @Test
     public void amendTrialTestWithAddingOtherIdentifiers() throws Exception {
-        Ii ii = registerTrial();
+        Ii ii = registerTrial("");
 
         createMilestones(ii);
         InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
@@ -1316,7 +1377,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
     @Test
     public void amendTrialDoesNotResetCtroOverride() throws Exception {
         
-        Ii ii = registerTrial();
+        Ii ii = registerTrial("");
 
         createMilestones(ii);
         InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
@@ -1369,7 +1430,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
     @Test
     public void amendTrialDoesEraseCtroOverrideWithNullValue() throws Exception {
         
-        Ii ii = registerTrial();
+        Ii ii = registerTrial("");
 
         createMilestones(ii);
         InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
@@ -1424,7 +1485,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
     @Test
     public void amendTrialPreserveResultsReportingData() throws Exception {
         
-        Ii ii = registerTrial();
+        Ii ii = registerTrial("");
         
       
         
@@ -1546,7 +1607,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
     @Test
     public void amendTrialTestAmendingUser() throws Exception {
         
-        Ii ii = registerTrial();
+        Ii ii = registerTrial("");
 
         createMilestones(ii);
         InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
@@ -1601,7 +1662,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
     @Test
     public void amendTrialTestPO6172DuplicateGrantsHandledGracefully() throws Exception {
         
-        Ii ii = registerTrial();
+        Ii ii = registerTrial("");
 
         createMilestones(ii);
         InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
@@ -1666,7 +1727,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
     @Test
     public void amendTrialTestPO6172DuplicateINDsHandledGracefully() throws Exception {
         
-        Ii ii = registerTrial();
+        Ii ii = registerTrial("");
 
         createMilestones(ii);
         InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
@@ -1740,7 +1801,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
     @Test
     public void amendTrialTestPO6151() throws Exception {
         
-        Ii ii = registerTrial();
+        Ii ii = registerTrial("");
 
         createMilestones(ii);
         InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
@@ -1829,7 +1890,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
 
     @Test
     public void amendTrialTestMissingConditionallyRequiredDocs() throws Exception {
-        Ii ii = registerTrial();
+        Ii ii = registerTrial("");
 
         createMilestones(ii);
         InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
@@ -1860,13 +1921,57 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
                 summary4OrganizationDTO, summary4StudyResourcing.get(0), null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
     }
 
+
+
+    @Test
+    public void amendTrialWithLegacyProgramCodesTest() throws Exception {
+        Ii ii = registerTrial("1");
+
+        createMilestones(ii);
+        InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
+        assertTrue(StConverter.convertToString(studyProtocolDTO.getProgramCodeText()).equals("1"));
+        StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(ii);
+        overallStatusDTO.setIdentifier(null);
+        List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(ii);
+        List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(ii);
+        StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(ii);
+        studyProtocolDTO.setAmendmentDate(TsConverter.convertToTs(TestSchema.TODAY));
+
+        List<DocumentDTO> documents = getStudyDocuments();
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
+        StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
+        StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Validation Exception At least one is required: Change Memo Document or Protocol Highlighted Document.");
+
+        studyProtocolDTO.setProgramCodeText(StConverter.convertToSt("3;2"));
+        bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
+                Arrays.asList(documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
+                sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
+                summary4OrganizationDTO, summary4StudyResourcing.get(0), null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+
+        InterventionalStudyProtocolDTO studyProtocolDTO2 = studyProtocolService.getInterventionalStudyProtocol(ii);
+        assertTrue(Arrays.asList(StringUtils.split(StConverter.convertToString(studyProtocolDTO2.getProgramCodeText()), ";")).contains("3"));
+        assertTrue(Arrays.asList(StringUtils.split(StConverter.convertToString(studyProtocolDTO2.getProgramCodeText()), ";")).contains("2"));
+        assertTrue(StringUtils.split(StConverter.convertToString(studyProtocolDTO2.getProgramCodeText()), ";").length == 2);
+
+    }
+
+
     @Test
     public void unacceptedUpdateThenAmendTest() throws Exception {
         thrown.expect(PAException.class);
         thrown.expectMessage("Validation Exception A trial with unaccepted updates cannot be amended. Please contact"
                 + " the CTRO at ncictro@mail.nih.gov to have your trial's updates accepted.");
 
-        Ii ii = registerTrial();
+        Ii ii = registerTrial("");
 
         createMilestones(ii);
         InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
@@ -1956,7 +2061,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
 
     protected OrganizationDTO getLeadOrg() {
         OrganizationDTO leadOrganizationDTO = new OrganizationDTO();
-        leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
+        leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("222"));
         return leadOrganizationDTO;
     }
     
@@ -2005,7 +2110,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
     
     @Test
     public void updateAbbreviatedStudyProtocolTest() throws Exception {
-        InterventionalStudyProtocolDTO studyProtocolDTO = registerAbbreviatedTrial();  
+        InterventionalStudyProtocolDTO studyProtocolDTO = registerAbbreviatedTrial(null);
         studyProtocolDTO.setCtroOverride(BlConverter.convertToBl(true));
         studyProtocolService.updateStudyProtocol(studyProtocolDTO);
         PaHibernateUtil.getCurrentSession().flush();
@@ -2351,7 +2456,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
     @Test
     public void amendTrialCCROrgOvverideCtroFlag() throws Exception {
         
-        Ii ii = registerTrial();
+        Ii ii = registerTrial("");
 
         createMilestones(ii);
         InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);

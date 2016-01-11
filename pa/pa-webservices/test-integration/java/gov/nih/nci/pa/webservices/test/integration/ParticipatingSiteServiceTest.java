@@ -345,7 +345,13 @@ public final class ParticipatingSiteServiceTest extends AbstractRestServiceTest 
         }
 
         verifyBaseSiteInfo(ps);
+        verifyLegacyProgramCode(ps);
 
+    }
+
+    private void verifyLegacyProgramCode(ParticipatingSite ps) {
+        clickLinkAndWait("NCI Specific Information");
+        super.verifyLegacyProgramCode(ps.getProgramCode(), "summary4ProgramCode");
     }
 
     private void verifySiteUpdate(long siteID, ParticipatingSiteUpdate ps)

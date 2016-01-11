@@ -463,6 +463,19 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
 
     @Override
     public void assignProgramCodes(Long studyId, Long organizationPoID, List<String> programCodes) throws PAException {
-        //To change body of implemented methods use File | Settings | File Templates.
+
+    }
+
+    @Override
+    public void unAssignProgramCode(Long studyId, String programCode) throws PAException {
+
+    }
+
+    @Override
+    public void assignProgramCodesToTrials(List<Long> studyIds, Long familyPoId, List<String> programCodes) {
+    }
+
+    @Override
+    public void unassignProgramCodesFromTrials(List<Long> studyIds, List<String> programCodes) {
     }
 }

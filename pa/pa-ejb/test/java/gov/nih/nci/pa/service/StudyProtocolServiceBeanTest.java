@@ -520,6 +520,182 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 
     }
 
+
+
+    @Test
+    public void testUnAssignProgramCodesWhenOrgHasNoFamily() throws Exception {
+
+        //Given that a study is present
+        createStudyProtocols(1, PAConstants.DCP_ORG_NAME, "PO-9489-1", false);
+        Ii ii = new Ii();
+        ii.setRoot(IiConverter.DCP_STUDY_PROTOCOL_ROOT);
+        ii.setExtension("PO-9489-1");
+        StudyProtocolDTO spDTO = remoteEjb.getStudyProtocol(ii);
+        assertTrue(StringUtils.isEmpty(spDTO.getProgramCodeText().getValue()));
+        long studyPaId = Long.parseLong(spDTO.getIdentifier().getExtension());
+
+        //When I assign program code legacy data
+        remoteEjb.assignProgramCodes(studyPaId, -1L, Arrays.asList("1", "5"));
+
+        //Then it must get associated to study under program codeText field
+        StudyProtocolDTO spDTO2 = remoteEjb.getStudyProtocol(ii);
+        assertTrue(spDTO2.getProgramCodeText().getValue().contains("1"));
+        assertTrue(spDTO2.getProgramCodeText().getValue().contains("5"));
+
+        //When I unassin program codes
+        remoteEjb.unAssignProgramCode(studyPaId, "1");
+
+        //Then it should associate only unique results
+        StudyProtocolDTO spDTO3 = remoteEjb.getStudyProtocol(ii);
+        assertTrue(spDTO3.getProgramCodeText().getValue().contains("5"));
+        assertEquals(1, StringUtils.split(spDTO3.getProgramCodeText().getValue() , ";").length);
+
+    }
+
+    @Test
+    public void testUnAssignProgramCodesWhenOrgHasFamily() throws Exception {
+
+        //Given that the family and program codes are available.
+        TestSchema.createFamily(1L);
+        ProgramCodeDTO pgDto1 = new ProgramCodeDTO();
+        pgDto1.setActive(true);
+        pgDto1.setProgramName("test1");
+        pgDto1.setProgramCode("1");
+        ProgramCodeDTO pgDto2 = new ProgramCodeDTO();
+        pgDto2.setActive(true);
+        pgDto2.setProgramName("test2");
+        pgDto2.setProgramCode("5");
+
+        FamilyDTO familyDTO = new FamilyDTO(-1L);
+        familyDTO.getProgramCodes().add(pgDto1);
+        familyDTO.getProgramCodes().add(pgDto2);
+
+        when(familyProgramCodeService.getFamilyDTOByPoId(1L)).thenReturn(familyDTO);
+
+        //And a study is present
+        createStudyProtocols(1, PAConstants.DCP_ORG_NAME, "PO-9489-2", false);
+        Ii ii = new Ii();
+        ii.setRoot(IiConverter.DCP_STUDY_PROTOCOL_ROOT);
+        ii.setExtension("PO-9489-2");
+        StudyProtocolDTO spDTO = remoteEjb.getStudyProtocol(ii);
+        long studyPaId = Long.parseLong(spDTO.getIdentifier().getExtension());
+        //assert can be done on getProgramCodes after Lalit's code merging.
+
+        //When I assign program code legacy data
+        remoteEjb.assignProgramCodes(studyPaId, 1L, Arrays.asList("1", "5"));
+
+        //Then it must get associated to study under programCodes field
+        StudyProtocolDTO spDTO2 = remoteEjb.getStudyProtocol(ii);
+        //assert can be done on getProgramCodes after Lalit's code merging.
+        List<ProgramCodeDTO> programCodeDTOs = spDTO2.getProgramCodes();
+        assertEquals(2, programCodeDTOs.size());
+
+        //When I unassin program codes
+        remoteEjb.unAssignProgramCode(studyPaId, "1");
+
+        //Then it should associate only unique results
+        StudyProtocolDTO spDTO3 = remoteEjb.getStudyProtocol(ii);
+        programCodeDTOs = spDTO3.getProgramCodes();
+        assertEquals(1, programCodeDTOs.size());
+
+
+    }
+
+
+    @Test
+    public void testAssignProgramCodesToTrials() throws Exception {
+
+        //Given that the family and program codes are available.
+        TestSchema.createFamily(1L);
+        ProgramCodeDTO pgDto1 = new ProgramCodeDTO();
+        pgDto1.setActive(true);
+        pgDto1.setProgramName("test1");
+        pgDto1.setProgramCode("1");
+        ProgramCodeDTO pgDto2 = new ProgramCodeDTO();
+        pgDto2.setActive(true);
+        pgDto2.setProgramName("test2");
+        pgDto2.setProgramCode("5");
+
+        FamilyDTO familyDTO = new FamilyDTO(-1L);
+        familyDTO.getProgramCodes().add(pgDto1);
+        familyDTO.getProgramCodes().add(pgDto2);
+
+        when(familyProgramCodeService.getFamilyDTOByPoId(1L)).thenReturn(familyDTO);
+
+        //And a study is present
+        createStudyProtocols(1, PAConstants.DCP_ORG_NAME, "PO-9489-2", false);
+        Ii ii = new Ii();
+        ii.setRoot(IiConverter.DCP_STUDY_PROTOCOL_ROOT);
+        ii.setExtension("PO-9489-2");
+        StudyProtocolDTO spDTO = remoteEjb.getStudyProtocol(ii);
+        long studyPaId = Long.parseLong(spDTO.getIdentifier().getExtension());
+        //assert can be done on getProgramCodes after Lalit's code merging.
+
+        //When I assign program code legacy data
+        remoteEjb.assignProgramCodesToTrials(Arrays.asList(studyPaId), 1L, Arrays.asList("1", "5"));
+
+        //Then it must get associated to study under programCodes field
+        StudyProtocolDTO spDTO2 = remoteEjb.getStudyProtocol(ii);
+        //assert can be done on getProgramCodes after Lalit's code merging.
+        List<ProgramCodeDTO> programCodeDTOs = spDTO2.getProgramCodes();
+        assertEquals(2, programCodeDTOs.size());
+
+
+    }
+
+
+
+    @Test
+    public void testUnassignProgramCodesToTrials() throws Exception {
+
+        //Given that the family and program codes are available.
+        TestSchema.createFamily(1L);
+        ProgramCodeDTO pgDto1 = new ProgramCodeDTO();
+        pgDto1.setActive(true);
+        pgDto1.setProgramName("test1");
+        pgDto1.setProgramCode("1");
+        ProgramCodeDTO pgDto2 = new ProgramCodeDTO();
+        pgDto2.setActive(true);
+        pgDto2.setProgramName("test2");
+        pgDto2.setProgramCode("5");
+
+        FamilyDTO familyDTO = new FamilyDTO(-1L);
+        familyDTO.getProgramCodes().add(pgDto1);
+        familyDTO.getProgramCodes().add(pgDto2);
+
+        when(familyProgramCodeService.getFamilyDTOByPoId(1L)).thenReturn(familyDTO);
+
+        //And a study is present
+        createStudyProtocols(1, PAConstants.DCP_ORG_NAME, "PO-9489-2", false);
+        Ii ii = new Ii();
+        ii.setRoot(IiConverter.DCP_STUDY_PROTOCOL_ROOT);
+        ii.setExtension("PO-9489-2");
+        StudyProtocolDTO spDTO = remoteEjb.getStudyProtocol(ii);
+        long studyPaId = Long.parseLong(spDTO.getIdentifier().getExtension());
+        //assert can be done on getProgramCodes after Lalit's code merging.
+
+        //When I assign program code legacy data
+        remoteEjb.assignProgramCodesToTrials(Arrays.asList(studyPaId), 1L, Arrays.asList("1", "5"));
+
+        //Then it must get associated to study under programCodes field
+        StudyProtocolDTO spDTO2 = remoteEjb.getStudyProtocol(ii);
+        //assert can be done on getProgramCodes after Lalit's code merging.
+        List<ProgramCodeDTO> programCodeDTOs = spDTO2.getProgramCodes();
+        assertEquals(2, programCodeDTOs.size());
+
+
+        //When I unassin program codes
+        remoteEjb.unassignProgramCodesFromTrials(Arrays.asList(studyPaId), Arrays.asList("1"));
+
+        //Then it should associate only unique results
+        StudyProtocolDTO spDTO3 = remoteEjb.getStudyProtocol(ii);
+        programCodeDTOs = spDTO3.getProgramCodes();
+        assertEquals(1, programCodeDTOs.size());
+
+
+    }
+
+
     /**
      * @return
      * @throws URISyntaxException

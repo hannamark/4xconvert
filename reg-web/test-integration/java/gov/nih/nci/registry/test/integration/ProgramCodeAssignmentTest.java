@@ -1,15 +1,20 @@
 package gov.nih.nci.registry.test.integration;
 
-import gov.nih.nci.pa.enums.StudyContactRoleCode;
+import gov.nih.nci.pa.dto.FamilyDTO;
+import gov.nih.nci.pa.dto.OrgFamilyDTO;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PAUtil;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -104,6 +109,47 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
 
     @Test
+    public void testUnassignProgramCode() throws Exception {
+        accessMangeCodeAssignmentsScreen();
+
+        Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
+        dropdown.selectByVisibleText("National Cancer Institute");
+        TrialInfo trial1 = trials.get(1);
+        String trial1Title = trial1.title;
+        waitForElementToBecomeAvailable(
+                By.xpath("//table[@id='trialsTbl']/tbody//tr//td[2]"), 10);
+
+        selenium.type("cfProgramCode", "PG4");
+
+        //delete PG1 from trial 1
+        waitForElementToBecomeAvailable(By.id(trial1.id + "_PG1_a"), 5);
+        selenium.click(trial1.id + "_PG1_a");
+        waitForElementToBecomeAvailable(By.id(trial1.id + "_PG1_img"), 5);
+
+        //make sure that "Code unassigned" text appear and then disappear after few seconds
+        waitForElementToBecomeAvailable(By.id(trial1.id + "_PG1_span"), 5);
+
+        //make sure the dynamically added elements are removed from DOM
+        waitForElementToGoAway(By.id(trial1.id + "_PG1_img"), 5);
+        waitForElementToGoAway(By.id(trial1.id + "_PG1_span"), 5);
+        waitForElementToGoAway(By.id(trial1.id + "_PG1_a"), 5);
+
+        //refresh the search result and make sure PG1 from trial 4 no longer show up
+        dropdown = new Select(driver.findElement(By.id("familyPoId")));
+        dropdown.selectByIndex(0);
+        dropdown = new Select(driver.findElement(By.id("familyPoId")));
+        dropdown.selectByVisibleText("National Cancer Institute");
+
+        waitForElementToBecomeAvailable(
+                By.xpath("//table[@id='trialsTbl']/tbody//tr//td[2]"), 10);
+        selenium.type("cfProgramCode", "PG4");
+
+        waitForElementToGoAway(By.id(trial1.id + "_PG1_a"), 5);
+
+        logoutUser();
+    }
+
+    @Test
     public void testParticipation() throws Exception {
         accessMangeCodeAssignmentsScreen();
         Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
@@ -154,6 +200,94 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         selenium.isTextPresent("Showing 1 to 3 of 3 (filtered from 11 total entries)");
 
         logoutUser();
+    }
+
+
+    @Test
+    public void testFunnelFilter() throws Exception {
+
+        accessMangeCodeAssignmentsScreen();
+        //Then funnel filter is not visible when family is not selected
+        waitForElementToGoAway(By.id("fpgc-icon-a"), 0);
+
+
+        //when I change family
+        Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
+        dropdown.selectByVisibleText("National Cancer Institute");
+
+        //then I should see associated trials.
+        TrialInfo trial4 = trials.get(4);
+        waitForElementToBecomeAvailable(
+                By.xpath("//table[@id='trialsTbl']/tbody//tr[3]"), 10);
+
+        //And I see the funnel filter
+        waitForElementToBecomeAvailable(By.id("fpgc-icon-a"), 5);
+        clickAndWait("fpgc-icon-a");
+
+        //Then I filter by PG4 in funnel
+        pickMultiSelectOptions("fpgc-div", Arrays.asList("PG4"), Arrays.asList("PG1", "PG2", "PG3"));
+
+        //filter on trial 4
+        selenium.typeKeys("//div[@id='trialsTbl_filter']/descendant::label/descendant::input", trial4.nciID);
+        waitForElementToBecomeAvailable(
+                By.xpath(String.format("//table[@id='trialsTbl']/tbody//tr[@id='trial_%s']", trial4.id)), 5);
+
+        //click on the program-code dropdown
+        driver.findElement(By.id(trial4.id + "_tra")).click();
+
+        //select PG4
+        pickSelect2Item(trial4.id + "_trDiv", trial4.id + "_trSel", "Cancer Program4");
+        //indicator shows up
+        waitForElementToBecomeAvailable(By.id(trial4.id + "_PG4_img"), 5);
+
+        // indicator disappears
+        waitForElementToGoAway(By.id(trial4.id + "_PG4_img"), 10);
+
+        //then we should have PG4 as an option
+        waitForElementToBecomeAvailable(By.id(trial4.id + "_PG4_a"), 5);
+
+        logoutUser();
+    }
+
+    /**
+     * Will pick an option from select2
+     * @param containerId - the container where the s2 is
+     * @param selBoxId  - the id of the s2
+     * @param optionLabel - the option to select
+     */
+    protected void pickSelect2Item(String containerId, String selBoxId, String optionLabel) {
+        waitForElementToBecomeVisible(By.xpath(String.format("//div[@id='%s']", containerId)), 10);
+
+        driver.findElement(By.cssSelector("span.select2-selection__arrow")).click();
+        waitForElementToBecomeAvailable(By.xpath(String.format("//ul[@id='select2-%s-results']", selBoxId)), 5);
+        driver.findElement(By.xpath(String.format("//ul[@id='select2-%s-results']//li[text()='%s']", selBoxId, optionLabel))).click();
+
+    }
+
+    /**
+     * Will open the multislect and select few options and dselect others
+     *
+     * @param containerId    - the container where select is present
+     * @param optsToSelect   - to select
+     * @param optsToUnselect - to unslect
+     */
+    protected void pickMultiSelectOptions(String containerId, List<String> optsToSelect, List<String> optsToUnselect) {
+        String buttonXPath = String.format("//div[@id='%s']/div/button", containerId);
+        driver.findElement(By.xpath(buttonXPath)).click();
+        for (String opt : optsToSelect) {
+            WebElement el = driver.findElement(By.xpath(String.format("//div[@id='%s']//input[@value='%s' and @type='checkbox']", containerId, opt)));
+            if (!el.isSelected()) {
+                el.click();
+            }
+        }
+        for (String opt : optsToUnselect) {
+            WebElement el = driver.findElement(By.xpath(String.format("//div[@id='%s']//input[@value='%s' and @type='checkbox']", containerId, opt)));
+            if (el.isSelected()) {
+                el.click();
+            }
+        }
+        driver.findElement(By.xpath(buttonXPath)).click();
+
     }
 
     private void accessMangeCodeAssignmentsScreen() throws Exception {
@@ -227,8 +361,8 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
           addParticipatingSite(trial, "National Cancer Institute Division of Cancer Prevention", "ACTIVE");
           addSiteInvestigator(trial,  "National Cancer Institute Division of Cancer Prevention", "45" + i , "James",
                   "H", "Kennedy",  StudySiteContactRoleCode.SUB_INVESTIGATOR.name());
-           addSiteInvestigator(trial,  "National Cancer Institute Division of Cancer Prevention", "55" + i , "Sony",
-                   "K", "Abraham",  StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.name());
+           addSiteInvestigator(trial, "National Cancer Institute Division of Cancer Prevention", "55" + i, "Sony",
+                   "K", "Abraham", StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.name());
           trials.add(trial);
 
        }

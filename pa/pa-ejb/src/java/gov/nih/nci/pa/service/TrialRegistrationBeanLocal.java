@@ -592,8 +592,14 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             getPAServiceUtils().executeSql(updateAmendDate);
             
             studyProtocolService
-                    .updatePendingTrialAssociationsToActive(IiConverter
-                            .convertToLong(spIi));
+                    .updatePendingTrialAssociationsToActive(IiConverter.convertToLong(spIi));
+
+            //assign program codes PO-9521
+            assignProgramCodes(IiConverter.convertToLong(spIi), studyProtocolDTO, leadOrganizationDTO);
+
+            //assign program codes PO-9521
+            assignProgramCodes(IiConverter.convertToLong(spIi), studyProtocolDTO, leadOrganizationDTO);
+
             if ((StudySourceInterceptor.STUDY_SOURCE_CONTEXT.get() == StudySourceCode.GRID_SERVICE 
                     || StudySourceInterceptor.STUDY_SOURCE_CONTEXT
                     .get() == StudySourceCode.REST_SERVICE) 
@@ -1014,8 +1020,11 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                 unmatchedEmails = studyProtocolService.changeOwnership(spIi, owners);
             }  
             studyProtocolService
-                .updatePendingTrialAssociationsToActive(IiConverter
-                    .convertToLong(spIi));
+                .updatePendingTrialAssociationsToActive(IiConverter.convertToLong(spIi));
+
+            //assign program codes PO-9521
+            assignProgramCodes(IiConverter.convertToLong(spIi), studyProtocolDTO, leadOrganizationDTO);
+
             if ((StudySourceInterceptor.STUDY_SOURCE_CONTEXT.get() == StudySourceCode.GRID_SERVICE 
                     || StudySourceInterceptor.STUDY_SOURCE_CONTEXT
                     .get() == StudySourceCode.REST_SERVICE) 
@@ -1027,7 +1036,29 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             }
             return spIi;
     }
-    
+
+    /**
+     * Will assign program codes to the study protocol
+     *
+     * @param studyId  - the identifier of study
+     * @param studyDTO - the sutyprotocol dto
+     * @leadOrgDTO - the lead organization
+     * @throws PAException when there is an error
+     */
+    private void assignProgramCodes(Long studyId, StudyProtocolDTO studyDTO,
+                                    OrganizationDTO leadOrgDTO) throws PAException {
+
+        String pgcText = StConverter.convertToString(studyDTO.getProgramCodeText());
+
+        //determine legacy ?
+        boolean legacy = StringUtils.isNotEmpty(pgcText) && studyDTO.getProgramCodes() == null;
+        if (legacy) {
+            Long leadOrgPoId = IiConverter.convertToLong(leadOrgDTO.getIdentifier());
+            List<String> programCodes = Arrays.asList(pgcText.trim().split("\\s*;\\s*"));
+            studyProtocolService.assignProgramCodes(studyId, leadOrgPoId, programCodes);
+        }
+
+    }
 
     private void copyStudyResourcing(List<StudyResourcingDTO> studyResourcingDTOs) {
         if (CollectionUtils.isNotEmpty(studyResourcingDTOs)) {
@@ -1686,7 +1717,11 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             }
             studyProtocolService
                     .updatePendingTrialAssociationsToActive(IiConverter
-                            .convertToLong(spIi));         
+                            .convertToLong(spIi));
+
+            //assign program codes PO-9521
+            assignProgramCodes(IiConverter.convertToLong(spIi), studyProtocolDTO, leadOrganizationDTO);
+
             sendMail(CREATE, isBatchMode, spIi, unmatchedEmails, EMPTY_STR);
             
             return spIi;

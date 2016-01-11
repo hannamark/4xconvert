@@ -79,12 +79,20 @@
 package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.OrganizationalStructuralRole;
+import gov.nih.nci.pa.domain.StructuralRole;
+import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
+import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
@@ -184,17 +192,24 @@ public class ParticipatingSiteBeanLocalTest extends AbstractEjbTestCase {
 		addSite(mayoMN, TestSchema.studyProtocols.get(0));
 	}
 
-    private void addSite(OrganizationDTO org, StudyProtocol studyProtocol)
+    private ParticipatingSiteDTO addSite(OrganizationDTO org, StudyProtocol studyProtocol)
+            throws EntityValidationException, CurationException, PAException {
+           return addSite(org, studyProtocol, null);
+    }
+
+    private ParticipatingSiteDTO addSite(OrganizationDTO org, StudyProtocol studyProtocol, String pgCodes)
             throws EntityValidationException, CurationException, PAException {
         StudySiteDTO studySiteDTO = new StudySiteDTO();
+        if (StringUtils.isNotEmpty(pgCodes)) {
+            studySiteDTO.setProgramCodeText(StConverter.convertToSt(pgCodes));
+        }
         studySiteDTO.setAccrualDateRange(IvlConverter.convertTs()
                 .convertToIvl(
                         new Timestamp(new Date().getTime()
                                 - Long.valueOf("300000000")), null));
         studySiteDTO.setLocalStudyProtocolIdentifier(StConverter
                 .convertToSt(EnOnConverter.convertEnOnToString(org.getName())));
-        studySiteDTO
-                .setProgramCodeText(StConverter.convertToSt("PROGRAM CODE"));
+
         studySiteDTO.setStudyProtocolIdentifier(IiConverter
                 .convertToStudyProtocolIi(studyProtocol.getId()));
 
@@ -210,10 +225,48 @@ public class ParticipatingSiteBeanLocalTest extends AbstractEjbTestCase {
         PoRegistry.getHealthCareFacilityCorrelationService().createCorrelation(
                 hcf);
 
-        remoteEjb.createStudySiteParticipant(studySiteDTO, currentStatus,
-                hcf.getIdentifier().getItem().iterator().next())
-                .getIdentifier();
+        return remoteEjb.createStudySiteParticipant(studySiteDTO, currentStatus,
+                hcf.getIdentifier().getItem().iterator().next());
 
+    }
+
+    @Test
+    public void testLegacyProgramCode() throws Exception {
+
+        remoteEjb.setCorrUtils(new CorrelationUtils(){
+            @Override
+            public <T extends StructuralRole> T getStructuralRoleByIi(Ii isoIi) throws PAException {
+                OrganizationalStructuralRole s = null ;
+                try {
+
+                    s = (OrganizationalStructuralRole)Class.forName("gov.nih.nci.pa.domain.HealthCareFacility").newInstance();
+                    Organization o = new Organization();
+                    s.setOrganization(o);
+                    o.setIdentifier(IiConverter.convertToString(isoIi));
+                } catch (Exception e) {
+                   throw new PAException(e);
+                }
+                return (T)s;
+            }
+        });
+        //When I add a site
+        ParticipatingSiteDTO site = addSite(mayoMN, TestSchema.studyProtocols.get(1), "2;3");
+        String pgText = StConverter.convertToString(site.getProgramCodeText());
+        assertNotNull(pgText);
+        List<String> codes = Arrays.asList(StringUtils.split(pgText, ";"));
+        assertTrue(codes.contains("2"));
+        assertTrue(codes.contains("3"));
+
+
+        //And when I add site with program codes having space in it.
+
+        ParticipatingSiteDTO site1 = addSite(mayoFL, TestSchema.studyProtocols.get(2), "2; 3;4");
+        String pgText1 = StConverter.convertToString(site1.getProgramCodeText());
+        assertNotNull(pgText1);
+        List<String> codes1 = Arrays.asList(StringUtils.split(pgText1, ";"));
+        assertTrue(codes1.contains("2"));
+        assertTrue(codes1.contains("4"));
+        assertTrue(codes1.contains("3"));
     }
 
     @Test

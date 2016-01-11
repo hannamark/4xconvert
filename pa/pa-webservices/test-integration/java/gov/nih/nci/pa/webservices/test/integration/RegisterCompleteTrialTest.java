@@ -2,6 +2,7 @@ package gov.nih.nci.pa.webservices.test.integration;
 
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.webservices.types.AccrualDiseaseTerminology;
+import gov.nih.nci.pa.webservices.types.BaseTrialInformation;
 import gov.nih.nci.pa.webservices.types.CompleteTrialRegistration;
 import gov.nih.nci.pa.webservices.types.ExpandedAccessType;
 import gov.nih.nci.pa.webservices.types.GrantorCode;
@@ -201,6 +202,11 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
     @Test
     public void testRegisterFundedByNciGrant() throws Exception {
         registerAndVerify("/integration_register_complete_nci_grant.xml");
+    }
+
+    @Override
+    protected void verifyTrialStatus(BaseTrialInformation reg, TrialRegistrationConfirmation conf) {
+        super.verifyTrialStatus(reg, conf);    //To change body of overridden methods use File | Settings | File Templates.
     }
 
     @Test

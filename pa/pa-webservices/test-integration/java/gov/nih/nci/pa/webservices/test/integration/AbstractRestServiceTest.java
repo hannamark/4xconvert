@@ -63,6 +63,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.junit.Assert;
+import org.openqa.selenium.By;
 import org.xml.sax.SAXException;
 
 import com.dumbster.smtp.SmtpMessage;
@@ -395,7 +396,7 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
             SQLException {
 
         logInFindAndAcceptTrial(conf);
-
+        verifyLegacyProgramCode(reg.getProgramCode(), "programCodeText");
         verifyTrialIdentification(reg, conf);
         verifyDiseaseTerm(reg, conf);
         if (reg instanceof CompleteTrialRegistration) {
@@ -490,6 +491,20 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
                     "submitter-ci@example.com",
                     selenium.getText("xpath=//table[@id='row']//tr[1]//td[2]/a"));
         }
+
+    }
+
+    protected void verifyLegacyProgramCode(String inputPgCodeText, String fieldId) {
+        if (StringUtils.isNotEmpty(inputPgCodeText)) {
+            List<String> programCodes = Arrays.asList(StringUtils.split(inputPgCodeText, ";"));
+            String codeText = driver.findElement(By.id(fieldId)).getAttribute("value");
+            assertFalse("Unable to read program code text", StringUtils.isEmpty(codeText));
+
+            for (String pgc : StringUtils.split(codeText, ";")) {
+                assertTrue(programCodes.contains(pgc));
+            }
+        }
+
 
     }
 

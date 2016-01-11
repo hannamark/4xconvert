@@ -395,4 +395,30 @@ public interface StudyProtocolService {
      */
     void assignProgramCodes(Long studyId, Long organizationPoID, List<String> programCodes)
             throws PAException;
+
+
+    /**
+     * Will un-assign the given program codes to the study
+     * @param studyId - the study PA identifier
+     * @param programCode - a program codes
+     * @throws PAException - exception when there is an error.
+     */
+    void unAssignProgramCode(Long studyId, String programCode) throws PAException;
+
+    /**
+     * Will assign the program codes to the trial set
+     * @param studyIds - a list of trial ids
+     * @param familyPoId - the famailyPoId, where the progam codes are from
+     * @param programCodes - program codes
+     * @throws PAException - exception when there is an error.
+     */
+    void assignProgramCodesToTrials(List<Long> studyIds, Long familyPoId, List<String> programCodes) throws PAException;
+
+    /**
+     * Will unassign the program codes from trials set
+     * @param studyIds   - a list of trial ids
+     * @param programCodes  - the program codes
+     * @throws PAException - exception when there is an error.
+     */
+    void unassignProgramCodesFromTrials(List<Long> studyIds, List<String> programCodes) throws PAException;
 }

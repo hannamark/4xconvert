@@ -231,7 +231,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
 
     @EJB
     private FamilyProgramCodeServiceLocal familyProgramCodeService;
-    
+
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
 
     private StudyProtocolDTO getStudyProtocolById(Long id) throws PAException {
@@ -1578,6 +1578,18 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
 
 
     /**
+     * Will un-assign the given program codes to the study
+     *
+     * @param studyId     - the study PA identifier
+     * @param programCode - a program codes
+     * @throws PAException - exception when there is an error.
+     */
+    @Override
+    public void unAssignProgramCode(Long studyId, String programCode) throws PAException {
+         unassignProgramCodesFromTrials(Arrays.asList(studyId), Arrays.asList(programCode));
+    }
+
+    /**
      * Will assign the given program codes to the study
      *
      * @param studyId          - the study PA identifier
@@ -1589,19 +1601,23 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             throws PAException {
 
         //fetch the study
-        Session session = PaHibernateUtil.getCurrentSession();
-        StudyProtocol studyProtocol = (StudyProtocol) session.get(StudyProtocol.class, studyId);
-        if (studyProtocol == null) {
-            LOG.error("Unable to find study with the given identifier : " + studyId);
-            throw new PAException("Unable to load study protocol with id : " + studyId);
-        }
+        StudyProtocol studyProtocol = fetchStudyProtocol(studyId);
 
         List<OrgFamilyDTO> orgFamilyList = FamilyHelper.getByOrgId(organizationPoID);
 
         if (CollectionUtils.isEmpty(orgFamilyList)) {
+            Set<String> uniqueProgramCodes = new HashSet<String>();
+            if (StringUtils.isNotEmpty(studyProtocol.getProgramCodeText())) {
+                uniqueProgramCodes.addAll(Arrays.asList(studyProtocol.getProgramCodeText().split("\\s*;\\s*")));
+            }
 
-            Set<String> uniqueProgramCodes = new HashSet<String>(programCodes);
-            studyProtocol.setProgramCodeText(StringUtils.left(StringUtils.join(uniqueProgramCodes, ";"), ONE_THOUSAND));
+            String pgCodeText = studyProtocol.getProgramCodeText();
+            for (String pgCode : programCodes) {
+                if (uniqueProgramCodes.add(pgCode)) {
+                    pgCodeText = StringUtils.isEmpty(pgCodeText) ? pgCode : String.format("%s;%s", pgCodeText, pgCode);
+                }
+            }
+            studyProtocol.setProgramCodeText(StringUtils.left(pgCodeText, ONE_THOUSAND));
 
         } else {
 
@@ -1624,23 +1640,120 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             }
 
 
-            //find program codes to remove & to add
-            List<ProgramCode> toRemoveList = new ArrayList<ProgramCode>();
+            //find program codes to add
             for (ProgramCode pg : studyProtocol.getProgramCodes()) {
-                if (!validProgramCodeMap.containsKey(pg.getId())) {
-                    toRemoveList.add(pg);
-                } else {
+                if (validProgramCodeMap.containsKey(pg.getId())) {
                     validProgramCodeMap.remove(pg.getId());
                 }
             }
 
-            studyProtocol.getProgramCodes().removeAll(toRemoveList);
             if (!validProgramCodeMap.isEmpty()) {
                 studyProtocol.getProgramCodes().addAll(validProgramCodeMap.values());
             }
         }
 
-        session.update(studyProtocol);
+        PaHibernateUtil.getCurrentSession().update(studyProtocol);
+    }
+
+    /**
+     * Will assign program codes to trials
+     * @param studyIds - a list of trial ids
+     * @param familyPoId - the famailyPoId, where the progam codes are from
+     * @param programCodes - program codes
+     * @throws PAException - when there ia an error
+     */
+    @Override
+    public void assignProgramCodesToTrials(List<Long> studyIds, Long familyPoId, List<String> programCodes)
+            throws PAException {
+
+        List<Family> families = loadFamilies(Arrays.asList(familyPoId));
+        if (CollectionUtils.isEmpty(families)) {
+            LOG.error("Unable to find the family by poId: " + familyPoId);
+            throw new PAException("Unable to fetch family having poId : " + familyPoId);
+        }
+
+        Family family = families.get(0);
+        for (Long studyId : studyIds) {
+            StudyProtocol studyProtocol = fetchStudyProtocol(studyId);
+            for (String code : programCodes) {
+                ProgramCode p = family.findActiveProgramCodeByCode(code);
+                if (p == null) {
+                    LOG.error("Unable to find an active program code in family " + code);
+                    throw new PAException("Unable to find an active program code in family " + code);
+                }
+                studyProtocol.getProgramCodes().add(p);
+
+                //update legacy data if needed
+                String pgcText = studyProtocol.getProgramCodeText();
+                if (StringUtils.isNotEmpty(pgcText)) {
+                    Set<String> uniqueProgramCodes = new HashSet<String>();
+                    uniqueProgramCodes.addAll(Arrays.asList(studyProtocol.getProgramCodeText().split("\\s*;\\s*")));
+                    if (uniqueProgramCodes.add(p.getProgramCode())) {
+                        pgcText = String.format("%s;%s", pgcText, p.getProgramCode());
+                    }
+                    studyProtocol.setProgramCodeText(pgcText);
+                }
+
+                LOG.info("Added programCode:" + p.getProgramCode() + " to study [studyId:" + studyId + "]");
+            }
+
+            PaHibernateUtil.getCurrentSession().update(studyProtocol);
+        }
+
+    }
+
+    /**
+     * Will unassign program codes from trials
+     * @param studyIds   - a list of trial ids
+     * @param programCodes  - the program codes
+     * @throws PAException - when there is an error
+     */
+    @Override
+    public void unassignProgramCodesFromTrials(List<Long> studyIds, List<String> programCodes) throws PAException {
+           for (Long studyId: studyIds) {
+               StudyProtocol studyProtocol = fetchStudyProtocol(studyId);
+               for (String programCode: programCodes) {
+
+                   String pgcText = studyProtocol.getProgramCodeText();
+                   if (StringUtils.isNotEmpty(pgcText)) {
+                       List<String> validProgramCodes = new ArrayList<String>();
+                       for (String pgc : pgcText.trim().split("\\s*;\\s*")) {
+                           if (!StringUtils.equals(pgc, programCode)) {
+                               validProgramCodes.add(pgc);
+                           }
+                       }
+                       studyProtocol.setProgramCodeText(StringUtils.join(validProgramCodes, ";"));
+                   }
+
+                   if (CollectionUtils.isNotEmpty(studyProtocol.getProgramCodes())) {
+                       List<ProgramCode> list = new ArrayList<ProgramCode>();
+                       for (ProgramCode pg : studyProtocol.getProgramCodes()) {
+                           if (StringUtils.equalsIgnoreCase(pg.getProgramCode(), programCode)) {
+                               list.add(pg);
+                           }
+                       }
+                       studyProtocol.getProgramCodes().removeAll(list);
+                   }
+               }
+
+               PaHibernateUtil.getCurrentSession().update(studyProtocol);
+           }
+    }
+
+    /**
+     * Will load the study protocol object
+     * @param studyId the identifier of the study
+     * @return   a StudyProtocol
+     * @throws PAException  If study not present in DB
+     */
+    private StudyProtocol fetchStudyProtocol(Long studyId) throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        StudyProtocol studyProtocol = (StudyProtocol) session.get(StudyProtocol.class, studyId);
+        if (studyProtocol == null) {
+            LOG.error("Unable to find study with the given identifier : " + studyId);
+            throw new PAException("Unable to load study protocol with id : " + studyId);
+        }
+        return studyProtocol;
     }
 
     /**

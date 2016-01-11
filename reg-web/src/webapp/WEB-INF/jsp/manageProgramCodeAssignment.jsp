@@ -24,6 +24,7 @@
                 float: none !important;
                 text-align: center;
             }
+
         </style>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery.dataTables.min.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/dataTables.buttons.min.js'/>"></script>
@@ -31,6 +32,24 @@
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/buttons.html5.min.js'/>"></script>
 
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/manage.programcodes.js'/>"></script>
+        <script type="text/javascript" language="javascript">
+            document.observe("dom:loaded", function() {
+                <s:iterator var="p" value="familyDto.programCodes">
+                    <s:if test="active">
+                        allProgramCodes.push({
+                            id: <s:property value="id" /> ,
+                            code: '<s:property value="programCode" />',
+                            name: '<s:property value="programName" />',
+                            familyId: <s:property value="familyDto.id" />,
+                            familyPoId: <s:property value="familyDto.poId" />
+                        });
+                    </s:if>
+                </s:iterator>
+                refreshFilteredProgramCodes(jQuery);
+            });
+
+        </script>
+
 
     </head>
 <body>
@@ -70,7 +89,24 @@
                                         <th>Lead Organization</th>
                                         <th>Principal Investigator</th>
                                         <th>Trial Status</th>
-                                        <th>Program Code(s)</th>
+                                        <th>
+                                            Program Code(s)
+                                            <a name="fcpg-icon-loc"> </a>
+                                            <s:if test="familyDto">
+                                                <a id="fpgc-icon-a" href="#fcpg-icon-loc"><span id="fpgc-icon" class="glyphicon glyphicon-filter"></span></a>
+                                                <div id="fpgc-div" style="display:none;">
+                                                    <select id="fpgc-sel" multiple="multiple">
+                                                        <s:iterator var="p" value="familyDto.programCodes">
+                                                            <s:if test="active">
+                                                                <option id="fpgc-opt-<s:property value="id" />" value="<s:property value="programCode" />" selected="selected" ><s:property value="programName" /></option>
+                                                            </s:if>
+
+                                                        </s:iterator>
+                                                    </select>
+
+                                                </div>
+                                            </s:if>
+                                        </th>
                                     </tr>
                                     </thead>
                                 </table>
