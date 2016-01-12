@@ -123,16 +123,15 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
         //delete PG1 from trial 1
         waitForElementToBecomeAvailable(By.id(trial1.id + "_PG1_a"), 5);
-        selenium.click(trial1.id + "_PG1_a");
-        waitForElementToBecomeAvailable(By.id(trial1.id + "_PG1_img"), 5);
-
+        s.click(trial1.id + "_PG1_a");
+        
         //make sure that "Code unassigned" text appear and then disappear after few seconds
         waitForElementToBecomeAvailable(By.id(trial1.id + "_PG1_span"), 5);
 
         //make sure the dynamically added elements are removed from DOM
-        waitForElementToGoAway(By.id(trial1.id + "_PG1_img"), 5);
-        waitForElementToGoAway(By.id(trial1.id + "_PG1_span"), 5);
-        waitForElementToGoAway(By.id(trial1.id + "_PG1_a"), 5);
+        waitForElementToGoAway(By.id(trial1.id + "_PG1_img"), 10);
+        waitForElementToGoAway(By.id(trial1.id + "_PG1_span"), 10);
+        waitForElementToGoAway(By.id(trial1.id + "_PG1_a"), 10);
 
         //refresh the search result and make sure PG1 from trial 4 no longer show up
         dropdown = new Select(driver.findElement(By.id("familyPoId")));
@@ -237,8 +236,6 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
         //select PG4
         pickSelect2Item(trial4.id + "_trDiv", trial4.id + "_trSel", "Cancer Program4");
-        //indicator shows up
-        waitForElementToBecomeAvailable(By.id(trial4.id + "_PG4_img"), 5);
 
         // indicator disappears
         waitForElementToGoAway(By.id(trial4.id + "_PG4_img"), 10);
