@@ -780,9 +780,10 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
             pgcText = StringUtils.join(pgcText.trim().split("\\s*;\\s*"), ";");
             siteDTO.setProgramCodeText(StConverter.convertToSt(pgcText));
             Long studyId = IiConverter.convertToLong(siteDTO.getStudyProtocolIdentifier());
-            String paHealthCareFacilityId = IiConverter.convertToString(siteDTO.getHealthcareFacilityIi());
-            Ii paHcfIi = IiConverter.convertToPoHealthcareProviderIi(paHealthCareFacilityId);
-            HealthCareFacility hcf = getCorrUtils().getStructuralRoleByIi(paHcfIi);
+            Long paHealthCareFacilityId = IiConverter.convertToLong(siteDTO
+                    .getHealthcareFacilityIi());
+            HealthCareFacility hcf = (HealthCareFacility) PaHibernateUtil.getCurrentSession().get(
+                    HealthCareFacility.class, paHealthCareFacilityId);
             Long orgPoId = Long.parseLong(hcf.getOrganization().getIdentifier());
             List<String> programCodes = Arrays.asList(pgcText.split(";"));
             getStudyProtocolService().assignProgramCodes(studyId, orgPoId, programCodes);
