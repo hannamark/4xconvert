@@ -227,7 +227,7 @@ public final class ParticipatingSiteServiceTest extends AbstractRestServiceTest 
                 "utf-8"));
 
         ParticipatingSiteUpdate upd = readParticipatingSiteUpdateFromFile("/integration_ps_update.xml");
-        response = updateSiteByPoId(rConf, 3, upd);
+        response = updateSiteByPoId(rConf, 5, upd);
         verifyUpdateSiteResponse(response, siteID);
         verifySiteUpdate(siteID, upd);
 
@@ -245,7 +245,7 @@ public final class ParticipatingSiteServiceTest extends AbstractRestServiceTest 
                 "utf-8"));
 
         ParticipatingSiteUpdate upd = readParticipatingSiteUpdateFromFile("/integration_ps_update.xml");
-        response = updateSiteByCtepId(rConf, "DCP", upd);
+        response = updateSiteByCtepId(rConf, "CCR", upd);
         verifyUpdateSiteResponse(response, siteID);
         verifySiteUpdate(siteID, upd);
 

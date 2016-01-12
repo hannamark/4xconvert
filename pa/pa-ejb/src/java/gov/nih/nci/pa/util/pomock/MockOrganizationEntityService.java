@@ -129,6 +129,8 @@ public class MockOrganizationEntityService implements
             createOrg(org);
             if (createROs)
                 createRO(org, "RSB");
+            PO_ID_TO_CTEP_ID.put(
+                    IiConverter.convertToString(org.getIdentifier()), "CCR");
 
             org = new OrganizationDTO();
             org.setName(EnOnConverter.convertToEnOn("CT.Gov Dupe"));

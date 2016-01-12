@@ -774,19 +774,12 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
             siteDTO.setHealthcareFacilityIi(paHcfIi);
         }
         siteDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
+        
         //update program codes on legacy study - PO-9192
         String pgcText = StConverter.convertToString(siteDTO.getProgramCodeText());
         if (StringUtils.isNotEmpty(pgcText)) { //legacy
             pgcText = StringUtils.join(pgcText.trim().split("\\s*;\\s*"), ";");
-            siteDTO.setProgramCodeText(StConverter.convertToSt(pgcText));
-            Long studyId = IiConverter.convertToLong(siteDTO.getStudyProtocolIdentifier());
-            Long paHealthCareFacilityId = IiConverter.convertToLong(siteDTO
-                    .getHealthcareFacilityIi());
-            HealthCareFacility hcf = (HealthCareFacility) PaHibernateUtil.getCurrentSession().get(
-                    HealthCareFacility.class, paHealthCareFacilityId);
-            Long orgPoId = Long.parseLong(hcf.getOrganization().getIdentifier());
-            List<String> programCodes = Arrays.asList(pgcText.split(";"));
-            getStudyProtocolService().assignProgramCodes(studyId, orgPoId, programCodes);
+            siteDTO.setProgramCodeText(StConverter.convertToSt(pgcText));            
         }
 
         if (isCreate) {
@@ -803,7 +796,18 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
         }
         createStudySiteAccrualStatus(studySiteDTO.getIdentifier(), currentStatus);
 
-        return getStudySite(studySiteDTO.getIdentifier());        
+        final StudySite savedStudySite = getStudySite(studySiteDTO.getIdentifier());
+        
+        //update program codes on legacy study - PO-9192        
+        if (StringUtils.isNotEmpty(pgcText)) { //legacy
+            Long studyId = IiConverter.convertToLong(siteDTO.getStudyProtocolIdentifier());           
+            HealthCareFacility hcf = savedStudySite.getHealthCareFacility();
+            Long orgPoId = Long.parseLong(hcf.getOrganization().getIdentifier());
+            List<String> programCodes = Arrays.asList(pgcText.split(";"));
+            getStudyProtocolService().assignProgramCodes(studyId, orgPoId, programCodes);
+        }
+
+        return savedStudySite;        
     }
 
     @SuppressWarnings("deprecation")
