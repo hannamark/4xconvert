@@ -68,6 +68,26 @@ public final class ParticipatingSiteServiceTest extends AbstractRestServiceTest 
     }
 
     @Test
+    public void testAddSiteWithPrimaryContact() throws Exception {
+        final String xmlFile = "/integration_ps_with_pc_add.xml";
+        addSite(xmlFile);
+    }
+
+    @Test
+    public void testAddSiteWithPrimaryContactConflictingDesignation()
+            throws Exception {
+        final String xmlFile = "/integration_ps_with_pc_conflicting_designation.xml";
+        addSite(xmlFile);
+    }
+
+    @Test
+    public void testAddSiteWithExistingPersonAsPrimaryContact()
+            throws Exception {
+        final String xmlFile = "/integration_ps_with_pc_as_existing_person_add.xml";
+        addSite(xmlFile);
+    }
+
+    @Test
     public void testAddSite() throws Exception {
         final String xmlFile = "/integration_ps_add.xml";
         addSite(xmlFile);
@@ -176,6 +196,41 @@ public final class ParticipatingSiteServiceTest extends AbstractRestServiceTest 
         long siteID = Long.parseLong(EntityUtils.toString(response.getEntity(),
                 "utf-8"));
         ParticipatingSiteUpdate upd = readParticipatingSiteUpdateFromFile("/integration_ps_update.xml");
+        response = updateSite(siteID, upd);
+        verifyUpdateSiteResponse(response, siteID);
+        verifySiteUpdate(siteID, upd);
+
+    }
+
+    @Test
+    public void testUpdateSiteWithDifferentPrimaryContact() throws Exception {
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
+        makeAbbreviated(rConf);
+        ParticipatingSite newSite = readParticipatingSiteFromFile("/integration_ps_add.xml");
+        HttpResponse response = addSite("pa", rConf.getPaTrialID() + "",
+                newSite);
+        assertEquals(200, getReponseCode(response));
+        long siteID = Long.parseLong(EntityUtils.toString(response.getEntity(),
+                "utf-8"));
+        ParticipatingSiteUpdate upd = readParticipatingSiteUpdateFromFile("/integration_ps_update_with_primary_contact.xml");
+        response = updateSite(siteID, upd);
+        verifyUpdateSiteResponse(response, siteID);
+        verifySiteUpdate(siteID, upd);
+
+    }
+
+    @Test
+    public void testUpdateSiteWithDifferentPrimaryContactExistingPerson()
+            throws Exception {
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
+        makeAbbreviated(rConf);
+        ParticipatingSite newSite = readParticipatingSiteFromFile("/integration_ps_add.xml");
+        HttpResponse response = addSite("pa", rConf.getPaTrialID() + "",
+                newSite);
+        assertEquals(200, getReponseCode(response));
+        long siteID = Long.parseLong(EntityUtils.toString(response.getEntity(),
+                "utf-8"));
+        ParticipatingSiteUpdate upd = readParticipatingSiteUpdateFromFile("/integration_ps_update_with_primary_contact_existing_person.xml");
         response = updateSite(siteID, upd);
         verifyUpdateSiteResponse(response, siteID);
         verifySiteUpdate(siteID, upd);
@@ -351,7 +406,8 @@ public final class ParticipatingSiteServiceTest extends AbstractRestServiceTest 
 
     private void verifyLegacyProgramCode(ParticipatingSite ps) {
         clickLinkAndWait("NCI Specific Information");
-        super.verifyLegacyProgramCode(ps.getProgramCode(), "summary4ProgramCode");
+        super.verifyLegacyProgramCode(ps.getProgramCode(),
+                "summary4ProgramCode");
     }
 
     private void verifySiteUpdate(long siteID, ParticipatingSiteUpdate ps)
@@ -366,6 +422,7 @@ public final class ParticipatingSiteServiceTest extends AbstractRestServiceTest 
     /**
      * @param ps
      */
+    @SuppressWarnings("deprecation")
     private void verifyBaseSiteInfo(BaseParticipatingSite ps) {
         assertEquals(ps.getLocalTrialIdentifier(),
                 selenium.getValue("id=siteLocalTrialIdentifier"));
@@ -409,12 +466,38 @@ public final class ParticipatingSiteServiceTest extends AbstractRestServiceTest 
         }
 
         selenium.click("link=Contact");
-        if (ps.getInvestigator().get(0).isPrimaryContact()) {
+        if (ps.getInvestigator().get(0).isPrimaryContact()
+                && ps.getPrimaryContact() == null) {
             assertEquals(person.getExistingPerson().getPoID().toString(),
                     selenium.getValue("id=personContactWebDTO.selectedPersId"));
         } else {
-            assertEquals("",
-                    selenium.getValue("id=personContactWebDTO.selectedPersId"));
+            if (ps.getPrimaryContact() == null) {
+                assertEquals(
+                        "",
+                        selenium.getValue("id=personContactWebDTO.selectedPersId"));
+            } else {
+                if (ps.getPrimaryContact().getPerson().getNewPerson() != null) {
+                    assertEquals(ps.getPrimaryContact().getPerson()
+                            .getNewPerson().getFirstName(),
+                            s.getValue("personContactWebDTO.firstName"));
+                    assertEquals(ps.getPrimaryContact().getPerson()
+                            .getNewPerson().getLastName(),
+                            s.getValue("personContactWebDTO.lastName"));
+                } else {
+                    assertEquals(
+                            ps.getPrimaryContact().getPerson()
+                                    .getExistingPerson().getPoID().toString(),
+                            selenium.getValue("id=personContactWebDTO.selectedPersId"));
+                }
+                assertEquals(ps.getPrimaryContact().getContactDetails()
+                        .getContent().get(0).getValue(),
+                        s.getValue("personContactWebDTO.email"));
+                assertEquals(ps.getPrimaryContact().getContactDetails()
+                        .getContent().size() > 1 ? ps.getPrimaryContact()
+                        .getContactDetails().getContent().get(1).getValue()
+                        : "", s.getValue("personContactWebDTO.telephone"));
+
+            }
         }
     }
 
@@ -425,8 +508,6 @@ public final class ParticipatingSiteServiceTest extends AbstractRestServiceTest 
                         "select identifier from study_site order by identifier desc limit 1",
                         new ArrayHandler())[0];
     }
-
-   
 
     @SuppressWarnings("unchecked")
     protected HttpResponse updateSite(long siteID, ParticipatingSiteUpdate o)

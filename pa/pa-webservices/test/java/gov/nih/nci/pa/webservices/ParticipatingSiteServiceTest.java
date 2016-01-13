@@ -10,6 +10,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.dto.ParticipatingOrgDTO;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
@@ -37,6 +38,7 @@ import gov.nih.nci.pa.util.MockPoJndiServiceLocator;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.webservices.types.BaseParticipatingSite;
+import gov.nih.nci.pa.webservices.types.BaseParticipatingSite.PrimaryContact;
 import gov.nih.nci.pa.webservices.types.ObjectFactory;
 import gov.nih.nci.pa.webservices.types.ParticipatingSite;
 import gov.nih.nci.pa.webservices.types.ParticipatingSiteUpdate;
@@ -45,10 +47,12 @@ import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 
 import java.net.URL;
+import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -262,7 +266,7 @@ public class ParticipatingSiteServiceTest extends AbstractMockitoTest {
         captureAndVerifyArguments(reg);
 
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
     public final void testUpdateByCtepId() throws JAXBException, SAXException,
@@ -377,11 +381,13 @@ public class ParticipatingSiteServiceTest extends AbstractMockitoTest {
 
         verifyParticipatingSiteContactDTOList(ps,
                 participatingSiteContactDTOList.getValue());
+
     }
 
     private void verifyParticipatingSiteContactDTOList(
             BaseParticipatingSite ps, List<ParticipatingSiteContactDTO> list)
             throws NullifiedEntityException {
+        final PrimaryContact pc = ps.getPrimaryContact();
         for (int i = 0; i < ps.getInvestigator().size(); i++) {
             BaseParticipatingSite.Investigator inv = ps.getInvestigator()
                     .get(i);
@@ -396,7 +402,7 @@ public class ParticipatingSiteServiceTest extends AbstractMockitoTest {
                     .getScoperIdentifier().getExtension());
 
             StudySiteContactDTO studySiteContact = dto.getStudySiteContactDTO();
-            assertEquals(inv.isPrimaryContact(),
+            assertEquals(inv.isPrimaryContact() && pc == null,
                     BlConverter.convertToBool(studySiteContact
                             .getPrimaryIndicator()));
             assertEquals(inv.getRole(),
@@ -420,6 +426,38 @@ public class ParticipatingSiteServiceTest extends AbstractMockitoTest {
                                             .getPoID().toString()))
                             .getPostalAddress(),
                     studySiteContact.getPostalAddress());
+        }
+
+        if (pc != null) {
+            ParticipatingSiteContactDTO dto = list.get(list.size() - 1);
+            assertEquals(pc.getPerson().getExistingPerson().getPoID()
+                    .toString(), dto.getPersonDTO().getIdentifier()
+                    .getExtension());
+            assertEquals(pc.getPerson().getExistingPerson().getPoID()
+                    .toString(), dto.getAbstractPersonRoleDTO()
+                    .getPlayerIdentifier().getExtension());
+            assertEquals("2", dto.getAbstractPersonRoleDTO()
+                    .getScoperIdentifier().getExtension());
+
+            StudySiteContactDTO studySiteContact = dto.getStudySiteContactDTO();
+            assertTrue(BlConverter.convertToBool(studySiteContact
+                    .getPrimaryIndicator()));
+            assertEquals("Primary Contact",
+                    CdConverter.convertCdToString(studySiteContact
+                            .getRoleCode()));
+
+            final Iterator<Tel> iterator = studySiteContact
+                    .getTelecomAddresses().getItem().iterator();
+            assertEquals(
+                    "mailto:"
+                            + URLEncoder.encode(pc.getContactDetails()
+                                    .getContent().get(0).getValue()), iterator
+                            .next().getValue().toString());
+            assertEquals(
+                    "tel:"
+                            + URLEncoder.encode(pc.getContactDetails()
+                                    .getContent().get(1).getValue()), iterator
+                            .next().getValue().toString());
         }
     }
 

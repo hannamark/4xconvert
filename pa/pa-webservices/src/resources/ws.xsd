@@ -20,6 +20,26 @@
 	<import namespace="gov.nih.nci.po.webservices.types.trimmed"
 		schemaLocation="po.xsd" />
 
+	<element name="email">
+		<simpleType>
+			<restriction base="string">
+				<maxLength value="254" />
+				<pattern
+					value="[_\-a-zA-Z0-9\.\+]+@[a-zA-Z0-9](\.?[\-a-zA-Z0-9]*[a-zA-Z0-9])*" />
+			</restriction>
+		</simpleType>
+	</element>
+
+
+	<element name="phone">
+		<simpleType>
+			<restriction base="string">
+				<minLength value="1" />
+				<maxLength value="32" />
+			</restriction>
+		</simpleType>
+	</element>
+
 	<element name="clinicalTrialsDotGovTrialID">
 		<annotation>
 			<documentation>The format for the ClinicalTrials.gov registry number
@@ -42,6 +62,8 @@
 			</documentation>
 		</annotation>
 	</element>
+
+
 
 	<complexType name="TrialRegistrationConfirmation">
 		<annotation>
@@ -330,6 +352,21 @@
 					</restriction>
 				</simpleType>
 			</element>
+		</choice>
+	</complexType>
+
+	<complexType name="EmailOrPhone">
+		<annotation>
+			<documentation>
+				Email or phone or both.
+			</documentation>
+		</annotation>
+		<choice>
+			<sequence>
+				<element ref="tns:email" />
+				<element ref="tns:phone" minOccurs="0" />
+			</sequence>
+			<element ref="tns:phone" />
 		</choice>
 	</complexType>
 
@@ -1440,7 +1477,24 @@
 			<element name="recruitmentStatus" type="tns:RecruitmentStatus" />
 			<element name="recruitmentStatusDate" type="date" />
 			<element name="localTrialIdentifier" type="string" />
-			<element name="programCode" type="string" minOccurs="0" />
+			<element name="programCode" type="string" minOccurs="0">
+				<annotation>
+					<documentation>
+						Cancer Center Trials: Program codes that
+						are not on
+						the master list of the site's organization family will be ignored.
+						The
+						submission will not fail, however.
+
+						Non-Cancer Center Trials: Any
+						program codes specified within this element
+						will be ignored.
+
+						Please
+						contact CTRP analysts for additional information.
+					</documentation>
+				</annotation>
+			</element>
 			<element name="openedForAccrual" type="date" minOccurs="0">
 				<annotation>
 					<documentation>
@@ -1476,10 +1530,35 @@
 						<element name="primaryContact" type="boolean">
 							<annotation>
 								<documentation>Specifies whether or not this investigator should
+									also
 									be designated as the primary contact for the site.
 								</documentation>
 							</annotation>
 						</element>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="primaryContact" minOccurs="0">
+				<annotation>
+					<documentation>
+						This element allows you to specify a primary contact
+						for the site that is different from one of the site's
+						investigators.
+					</documentation>
+				</annotation>
+				<complexType>
+					<sequence>
+						<element name="person" type="tns:Person">
+							<annotation>
+								<documentation>
+									Use this element to specify a person that is the
+									site's primary contact. This can still be one of the
+									investigators or
+									a completely different person.
+								</documentation>
+							</annotation>
+						</element>
+						<element name="contactDetails" type="tns:EmailOrPhone" />
 					</sequence>
 				</complexType>
 			</element>
