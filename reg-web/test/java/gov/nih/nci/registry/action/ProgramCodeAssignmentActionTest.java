@@ -150,6 +150,41 @@ public class ProgramCodeAssignmentActionTest  extends AbstractRegWebTest {
         assertEquals(json, "{\"status\":\"ADDED\"}");
     }
 
+
+    @Test
+    public void testAssignProgramCodesToTrials() throws  Exception {
+        Field field = StreamResult.class.getDeclaredField("inputStream");
+        ReflectionUtils.makeAccessible(field);
+
+        action.setFamilyPoId(1L);
+        ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("studyProtocolList", "1");
+        ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("pgcList", "3");
+        when(FamilyHelper.getRelatedOrgsInFamily(1L)).thenReturn(Arrays.asList(1L, 2L));
+
+        StreamResult sr = action.assignProgramCodesToTrials();
+        InputStream is = (InputStream) field.get(sr);
+        String json = IOUtils.toString(is);
+        assertEquals(json, "{\"status\":\"ADDED\"}");
+    }
+
+
+    @Test
+    public void testUnassignProgramCodesToTrials() throws  Exception {
+        Field field = StreamResult.class.getDeclaredField("inputStream");
+        ReflectionUtils.makeAccessible(field);
+
+        action.setFamilyPoId(1L);
+        ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("studyProtocolList", "1");
+        ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("pgcList", "3");
+        when(FamilyHelper.getRelatedOrgsInFamily(1L)).thenReturn(Arrays.asList(1L, 2L));
+
+        StreamResult sr = action.unassignProgramCodesFromTrials();
+        InputStream is = (InputStream) field.get(sr);
+        String json = IOUtils.toString(is);
+        assertEquals(json, "{\"status\":\"REMOVED\"}");
+    }
+
+
     @Test
     public void testFindTrials() {
       try {

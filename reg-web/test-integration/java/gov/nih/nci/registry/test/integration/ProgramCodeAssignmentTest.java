@@ -1,10 +1,6 @@
 package gov.nih.nci.registry.test.integration;
 
-import gov.nih.nci.pa.dto.FamilyDTO;
-import gov.nih.nci.pa.dto.OrgFamilyDTO;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PAUtil;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
@@ -49,7 +45,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
     @Test
     public void testChangeFamily() throws Exception {
         //When I first access search screen
-        accessMangeCodeAssignmentsScreen();
+        accessManageCodeAssignmentsScreen();
         // I see empty table
         selenium.isTextPresent("Showing 0 to 0 of 0 entries");
 
@@ -94,7 +90,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
     @Test
     public void testVerifyExport() throws Exception {
-        accessMangeCodeAssignmentsScreen();
+        accessManageCodeAssignmentsScreen();
         Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
         dropdown.selectByVisibleText("National Cancer Institute");
         TrialInfo trial4 = trials.get(4);
@@ -110,7 +106,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
     @Test
     public void testUnassignProgramCode() throws Exception {
-        accessMangeCodeAssignmentsScreen();
+        accessManageCodeAssignmentsScreen();
 
         Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
         dropdown.selectByVisibleText("National Cancer Institute");
@@ -150,7 +146,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
     @Test
     public void testParticipation() throws Exception {
-        accessMangeCodeAssignmentsScreen();
+        accessManageCodeAssignmentsScreen();
         Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
         dropdown.selectByVisibleText("National Cancer Institute");
         TrialInfo trial4 = trials.get(4);
@@ -169,10 +165,168 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         logoutUser();
     }
 
+
+    @Test
+    public void testUnAssignMultipeAndAssignMultiple() throws Exception {
+        accessManageCodeAssignmentsScreen();
+        Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
+        dropdown.selectByVisibleText("National Cancer Institute");
+
+
+        //Initialli I see the buttons disabled
+        verifyAssignUnassignButtonState(false);
+        //When I click a row
+        clickTableRow(1);
+
+        //I see the buttons enabled
+        verifyAssignUnassignButtonState(true);
+
+        //When I deselect the row
+        clickTableRow(1);
+        //I see the buttons disabled
+        verifyAssignUnassignButtonState(false);
+
+        //Select 4 rows
+        clickTableRow(1);
+        clickTableRow(2);
+        clickTableRow(3);
+        clickTableRow(4);
+
+        //I see the buttons enabled
+        verifyAssignUnassignButtonState(true);
+
+        //Also I see PG2 in those rows
+        verifyTrialProgramCodeAssociation(1, true, "PG2");
+        verifyTrialProgramCodeAssociation(2, true, "PG2");
+        verifyTrialProgramCodeAssociation(3, true, "PG2");
+        verifyTrialProgramCodeAssociation(4, true, "PG2");
+
+        //click the Unassign button
+        clickAndWait("unassignPGCBtn");
+
+        //Then the dialog showup
+        waitForElementToBecomeVisible(By.id("pgc-mrm-dialog"), 5);
+
+        //on the popup select
+        pickMultiSelectOptions("pgc-mrm-sel-div", Arrays.asList("PG2"), Arrays.asList("PG1", "PG3", "PG4"));
+
+        //When I click Cancel
+        clickAndWait("pgc-mrm-dialog-cancel");
+
+        //Then the dialog closes
+        waitForElementToBecomeInvisible(By.id("pgc-mrm-dialog"), 5);
+
+        //the assign button is still enabled
+        verifyAssignUnassignButtonState(true);
+
+        //And I see PG2 in those rows
+        verifyTrialProgramCodeAssociation(1, true, "PG2");
+        verifyTrialProgramCodeAssociation(2, true, "PG2");
+        verifyTrialProgramCodeAssociation(3, true, "PG2");
+        verifyTrialProgramCodeAssociation(4, true, "PG2");
+
+        //click the Unassign button
+        clickAndWait("unassignPGCBtn");
+
+        //Then the dialog showup
+        waitForElementToBecomeVisible(By.id("pgc-mrm-dialog"), 5);
+
+        //on the popup select
+        pickMultiSelectOptions("pgc-mrm-sel-div", Arrays.asList("PG2"), Arrays.asList("PG1", "PG3", "PG4"));
+
+        //When I click OK
+        clickAndWait("pgc-mrm-dialog-ok");
+
+        //Then the dialog closes
+        waitForElementToBecomeInvisible(By.id("pgc-mrm-dialog"), 5);
+
+        //Then I see confirmation
+        waitForElementToBecomeVisible(By.id("pgcInfo"), 4);
+        selenium.isTextPresent("Program Codes were successfully unassigned");
+
+        //And I see the confirmation go away after 5 seconds
+        waitForElementToBecomeVisible(By.id("pgcInfo"), 10);
+
+
+        //Now I see PG2 no longer associated with those rows
+        verifyTrialProgramCodeAssociation(1, false, "PG2");
+        verifyTrialProgramCodeAssociation(2, false, "PG2");
+        verifyTrialProgramCodeAssociation(3, false, "PG2");
+        verifyTrialProgramCodeAssociation(4, false, "PG2");
+
+        //And I see the assign/unassign buttons disabled.
+        verifyAssignUnassignButtonState(false);
+
+        //Now select 2 rows
+        clickTableRow(3);
+        clickTableRow(4);
+
+        //the assign button is still enabled
+        verifyAssignUnassignButtonState(true);
+
+        //click the assign button
+        clickAndWait("assignPGCBtn");
+
+        //Then the dialog showup
+        waitForElementToBecomeVisible(By.id("pgc-madd-dialog"), 5);
+
+        //on the popup select
+        pickMultiSelectOptions("pgc-madd-sel-div", Arrays.asList("PG2"), Arrays.asList("PG1", "PG3", "PG4"));
+
+        //When I click Cancel
+        clickAndWait("pgc-madd-dialog-cancel");
+
+        //Then the dialog closes
+        waitForElementToBecomeInvisible(By.id("pgc-madd-dialog"), 5);
+
+        //the assign button is still enabled
+        verifyAssignUnassignButtonState(true);
+
+        //And still the trials are not associated with PG2
+        verifyTrialProgramCodeAssociation(3, false, "PG2");
+        verifyTrialProgramCodeAssociation(4, false, "PG2");
+
+        //click the assign button
+        clickAndWait("assignPGCBtn");
+
+        //Then the dialog showup
+        waitForElementToBecomeVisible(By.id("pgc-madd-dialog"), 5);
+
+        //on the popup select
+        pickMultiSelectOptions("pgc-madd-sel-div", Arrays.asList("PG2"), Arrays.asList("PG1", "PG3", "PG4"));
+
+        //When I click Cancel
+        clickAndWait("pgc-madd-dialog-ok");
+
+        //Then the dialog closes
+        waitForElementToBecomeInvisible(By.id("pgc-madd-dialog"), 5);
+
+        //Then I see confirmation
+        waitForElementToBecomeVisible(By.id("pgcInfo"), 4);
+        selenium.isTextPresent("Program Codes were successfully assigned");
+
+        //And I see the confirmation go away after 5 seconds
+        waitForElementToBecomeVisible(By.id("pgcInfo"), 10);
+
+        //Now I see PG2 no longer associated with first rows
+        verifyTrialProgramCodeAssociation(1, false, "PG2");
+        verifyTrialProgramCodeAssociation(2, false, "PG2");
+
+        //And PG2 is associated with the 3rd and 4th row
+        verifyTrialProgramCodeAssociation(3, true, "PG2");
+        verifyTrialProgramCodeAssociation(4, true, "PG2");
+
+        //the assign button is disabled
+        verifyAssignUnassignButtonState(false);
+
+
+        logoutUser();
+    }
+
     @Test
     public void testFilterByProgramCode() throws  Exception  {
 
-        accessMangeCodeAssignmentsScreen();
+        accessManageCodeAssignmentsScreen();
 
         //When I pass the program code filter parameter
         openAndWait("/registry/siteadmin/managePCAssignmentchangeFamily.action?pgcFilter=PG4");
@@ -205,7 +359,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
     @Test
     public void testFunnelFilter() throws Exception {
 
-        accessMangeCodeAssignmentsScreen();
+        accessManageCodeAssignmentsScreen();
         //Then funnel filter is not visible when family is not selected
         waitForElementToGoAway(By.id("fpgc-icon-a"), 0);
 
@@ -287,7 +441,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
     }
 
-    private void accessMangeCodeAssignmentsScreen() throws Exception {
+    private void accessManageCodeAssignmentsScreen() throws Exception {
         loginAndAcceptDisclaimer();
         waitForElementToBecomeVisible(By.linkText("Administration"), 2);
         hoverLink("Administration");
@@ -395,5 +549,25 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
 //        assertTrue(excel.exists());
         excel.delete();
+    }
+
+    //verify if the buttons are disabled or enabled.
+    private void verifyAssignUnassignButtonState(boolean enabled) {
+         assertTrue(driver.findElement(By.id("assignPGCBtn")).isEnabled() == enabled);
+         assertTrue(driver.findElement(By.id("unassignPGCBtn")).isEnabled() == enabled);
+         assertTrue(driver.findElement(By.id("replacePGCBtn")).isEnabled() == enabled);
+    }
+
+    private void clickTableRow(int rowNumber) {
+        By by = By.xpath("//table[@id='trialsTbl']/tbody/tr[" + rowNumber + "]");
+        waitForElementToBecomeAvailable(by, 5);
+        driver.findElement(by).click();
+    }
+
+
+    private void verifyTrialProgramCodeAssociation(int rowNumber, boolean present, String pg) {
+        By by = By.xpath("//table[@id='trialsTbl']/tbody/tr[" + rowNumber + "]/td[6]");
+        waitForElementToBecomeAvailable(by, 5);
+        assertTrue(driver.findElement(by).getText().contains(pg) == present);
     }
 }

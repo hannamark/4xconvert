@@ -24,6 +24,30 @@
                 float: none !important;
                 text-align: center;
             }
+            tr.selected > td {
+                background-color: #b0bed9 !important;
+            }
+            div#pgcDisclaimer {
+                padding-bottom: 15px;
+            }
+            .btn-group .dropdown-menu {
+                 left: 0;
+                 top:100%;
+            }
+            .dropdown-menu > .active > a {
+                background-color: ghostwhite;
+            }
+            a.fpgc {
+                color:white;
+                padding-left: 10px;
+            }
+            a.pgcssa {
+                padding-left: 2px;
+            }
+            a.pgcrm > span {
+                color:#d03b39;
+                padding-bottom: 3px;
+            }
 
         </style>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery.dataTables.min.js'/>"></script>
@@ -45,7 +69,7 @@
                         });
                     </s:if>
                 </s:iterator>
-                refreshFilteredProgramCodes(jQuery);
+                pgcinit(jQuery);
             });
 
         </script>
@@ -57,7 +81,17 @@
 	<div class="row">
 		<div class="col-md-12 ">
 			<h1 class="heading"><span><fmt:message key="pcassignment.heading"/></span></h1>
-		</div>
+
+            <div id="pgcErrors" class="alert alert-danger" style="display: none;" role="alert">
+                <i class="fa fa-exclamation"></i>  <b class="error">Error</b> processing:
+                <div id="pgcErrorMsg"></div>
+            </div>
+
+            <div id="pgcInfo" class="alert alert-success" style="display: none;" role="alert">
+                <div id="pgcInfoMsg"></div>
+            </div>
+
+        </div>
 		
 		<div class="col-md-12">
             <s:form id="changeFamilyFrm" action="managePCAssignmentchangeFamily.action" cssClass="form-horizontal">
@@ -93,7 +127,7 @@
                                             Program Code(s)
                                             <a name="fcpg-icon-loc"> </a>
                                             <s:if test="familyDto">
-                                                <a id="fpgc-icon-a" href="#fcpg-icon-loc"><span id="fpgc-icon" class="glyphicon glyphicon-filter"></span></a>
+                                                <a id="fpgc-icon-a" class="fpgc" href="#fcpg-icon-loc"><span id="fpgc-icon" class="glyphicon glyphicon-filter"></span></a>
                                                 <div id="fpgc-div" style="display:none;">
                                                     <select id="fpgc-sel" multiple="multiple">
                                                         <s:iterator var="p" value="familyDto.programCodes">
@@ -112,7 +146,35 @@
                                 </table>
                             </div>
 
+
                         </div>
+
+                        <div class="bottom no-border">
+
+                            <div id="pgcDisclaimer" class="text-left">
+                                Please select an action button to modify program code assignments for the selected trials in the table above.
+
+                            </div>
+                            <div class="btn-group">
+
+                                <button type="button" class="btn btn-icon multi" id="assignPGCBtn" onclick="assignMultiple(jQuery);">
+                                    <i class="fa fa-plus"></i>
+                                    Assign
+                                </button>
+                                <button type="button" class="btn btn-icon multi" id="unassignPGCBtn"
+                                        onclick="removeMultiple(jQuery);">
+                                    <i class="fa fa-minus"></i>
+                                    Unassign
+                                </button>
+                                <button type="button" class="btn btn-icon multi" id="replacePGCBtn"
+                                        onclick="replaceMultiple(jQuery);">
+                                    <i class="fa fa-exchange"></i>
+                                    Replace
+                                </button>
+                            </div>
+                        </div>
+
+
                     </div>
 
                    <s:hidden name="pgcFilter" id="pgcFilter"  value="%{#parameters.pgcFilter}" />
@@ -143,4 +205,59 @@
         </div>
     </div>
 </div>
+
+
+<div id="pgc-madd-dialog" title="Assign Program Codes" style="display: none;">
+
+    <div id="pgc-madd-Errors" class="alert alert-danger" style="display: none;" role="alert">
+        <i class="fa fa-exclamation"></i>  <b class="error">Error</b> processing:
+        <div id="pgc-madd-ErrorMsg"></div>
+    </div>
+
+    <p>
+        Please select program code(s) to assign to the select trial(s):
+        <div id="pgc-madd-indicator" style="display: none;">
+            <img src="${pageContext.request.contextPath}/images/loading.gif" alt="Progress Indicator." width="18" height="18" />
+        </div>
+    </p>
+    <div class="text-center" id="pgc-madd-sel-div">
+        <s:if test="familyDto">
+            <select id="pgc-madd-sel" multiple="multiple">
+                <s:iterator var="p" value="familyDto.programCodes">
+                    <s:if test="active">
+                        <option id="pgc-madd-opt-<s:property value="id" />" value="<s:property value="programCode" />"><s:property value="programName" /></option>
+                    </s:if>
+                </s:iterator>
+            </select>
+        </s:if>
+    </div>
+</div>
+
+
+<div id="pgc-mrm-dialog" title="Unassign Program Codes" style="display: none;">
+
+    <div id="pgc-mrm-Errors" class="alert alert-danger" style="display: none;" role="alert">
+        <i class="fa fa-exclamation"></i>  <b class="error">Error</b> processing:
+        <div id="pgc-mrm-ErrorMsg"></div>
+    </div>
+
+    <p>
+        Please select program code(s) to unassign from the select trial(s):
+    <div id="pgc-mrm-indicator" style="display: none;">
+        <img src="${pageContext.request.contextPath}/images/loading.gif" alt="Progress Indicator." width="18" height="18" />
+    </div>
+    </p>
+    <div class="text-center" id="pgc-mrm-sel-div">
+        <s:if test="familyDto">
+            <select id="pgc-mrm-sel" multiple="multiple">
+                <s:iterator var="p" value="familyDto.programCodes">
+                    <s:if test="active">
+                        <option id="pgc-mrm-opt-<s:property value="id" />" value="<s:property value="programCode" />"><s:property value="programName" /></option>
+                    </s:if>
+                </s:iterator>
+            </select>
+        </s:if>
+    </div>
+</div>
+
 </body>

@@ -54,6 +54,8 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
     private static final String UTF_8 = "UTF-8";
     private static final Logger LOG = Logger.getLogger(ProgramCodeAssignmentAction.class);
     private static final String IS_SITE_ADMIN = "isSiteAdmin";
+    private static final String ERROR_MSG_KEY = "msg";
+    private static final String AJAX_RETURN_SUCCESS_KEY = "status";
 
     private static final StudyStatusCode[] ACTIVE_PROTOCOL_STATUSES = new StudyStatusCode[]{ACTIVE, APPROVED,
             IN_REVIEW, ENROLLING_BY_INVITATION,
@@ -285,12 +287,13 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
         try {
             studyProtocolService.unAssignProgramCode(studyProtocolId, programCode);
             JSONObject root = new JSONObject();
-            root.put("status", "REMOVED");
+            root.put(AJAX_RETURN_SUCCESS_KEY, "REMOVED");
             return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
         } catch (PAException pae) {
             LOG.error("unassignProgramCode - studyProtocol:"
                     + getStudyProtocolId()
                     + "programCode:" + programCode);
+            ServletActionContext.getResponse().addHeader(ERROR_MSG_KEY, pae.getMessage());
             ServletActionContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST, pae.getMessage());
         }
         return null;
@@ -308,12 +311,76 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
             studyProtocolService.assignProgramCodesToTrials(Arrays.asList(studyProtocolId),
                     familyPoId, Arrays.asList(programCode));
             JSONObject root = new JSONObject();
-            root.put("status", "ADDED");
+            root.put(AJAX_RETURN_SUCCESS_KEY, "ADDED");
             return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
         } catch (PAException pae) {
             LOG.error("assignProgramCode - studyProtocol:"
                     + getStudyProtocolId()
                     + "programCode:" + programCode);
+            ServletActionContext.getResponse().addHeader(ERROR_MSG_KEY, pae.getMessage());
+            ServletActionContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST, pae.getMessage());
+        }
+        return null;
+    }
+
+
+    /**
+     *  Will assign program codes to the trials
+     * @return  StreamResult - the json object array
+     * @throws IOException - for encoding issues
+     */
+    public StreamResult assignProgramCodesToTrials() throws IOException {
+        String codes = ServletActionContext.getRequest().getParameter("pgcList");
+        String trialIds = ServletActionContext.getRequest().getParameter("studyProtocolList");
+
+        try {
+             List<Long> studyProtocolIds = new ArrayList<Long>();
+            for (String trialId : trialIds.split(",")) {
+                studyProtocolIds.add(Long.parseLong(trialId));
+            }
+
+            studyProtocolService.assignProgramCodesToTrials(studyProtocolIds,
+                    familyPoId, Arrays.asList(codes.split(",")));
+            JSONObject root = new JSONObject();
+            root.put(AJAX_RETURN_SUCCESS_KEY, "ADDED");
+            return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
+        } catch (PAException pae) {
+            LOG.error("assignProgramCodesToTrials - studyProtocolIds:"
+                    + trialIds
+                    + "programCodes:" + codes);
+            ServletActionContext.getResponse().addHeader(ERROR_MSG_KEY, pae.getMessage());
+            ServletActionContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST, pae.getMessage());
+        }
+        return null;
+    }
+
+
+
+    /**
+     *  Will unassign program codes from the trials
+     * @return  StreamResult - the json object array
+     * @throws IOException - for encoding issues
+     */
+    public StreamResult unassignProgramCodesFromTrials() throws IOException {
+        String codes = ServletActionContext.getRequest().getParameter("pgcList");
+        String trialIds = ServletActionContext.getRequest().getParameter("studyProtocolList");
+
+        try {
+            List<Long> studyProtocolIds = new ArrayList<Long>();
+            for (String trialId : trialIds.split(",")) {
+                studyProtocolIds.add(Long.parseLong(trialId));
+            }
+
+            studyProtocolService.unassignProgramCodesFromTrials(studyProtocolIds,
+                    Arrays.asList(codes.split(",")));
+            JSONObject root = new JSONObject();
+            root.put(AJAX_RETURN_SUCCESS_KEY, "REMOVED");
+            return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
+        } catch (PAException pae) {
+            LOG.error("unassignProgramCodesFromTrials - studyProtocolIds:"
+                    + trialIds
+                    + "programCodes:" + codes);
+            ServletActionContext.getResponse().addHeader(ERROR_MSG_KEY, pae.getMessage());
             ServletActionContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST, pae.getMessage());
         }
         return null;
@@ -323,9 +390,9 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
      * Will return the sites and investigators
      *
      * @return json having sites and investigators
-     * @throws UnsupportedEncodingException - when error
+     * @throws IOException - when error
      */
-    public StreamResult participation() throws UnsupportedEncodingException {
+    public StreamResult participation() throws IOException {
         JSONObject root = new JSONObject();
         JSONArray arr = new JSONArray();
         root.put("data", arr);
@@ -355,11 +422,13 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
                 }
             }
 
-
+            return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
         } catch (PAException pae) {
             LOG.error("error while checking my participation", pae);
+            ServletActionContext.getResponse().addHeader(ERROR_MSG_KEY, pae.getMessage());
+            ServletActionContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST, pae.getMessage());
         }
-        return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
+        return null;
     }
 
     private void populateTrials(JSONArray arr) {

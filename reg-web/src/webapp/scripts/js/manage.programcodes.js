@@ -12,10 +12,6 @@ var tmparr = [];
 var tmpS2Ds = [];
 var curS2Ctrl = null;
 
-document.observe("dom:loaded", function() {
-  pgcinit(jQuery);
-});
-
 
 // will remove program code currently associated with the given study
 function removeProgramCodeFromTrialMap($, sp, pgc) {
@@ -93,8 +89,17 @@ function showProgramCodeS2InRow($, sp) {
 
 }
 
-function pgcinit($) {
+// Will enable disable the assign/replace/remove buttons
+function toggleMultiButtons($, grayOut) {
 
+    $("button.multi").each(function(i, b){
+        $(b).prop('disabled', grayOut);
+    });
+}
+
+function pgcinit($) {
+    allProgramCodes.sort();
+    refreshFilteredProgramCodes($);
     $("#familyPoId").on('change', function(evt) {
         $("#changeFamilyFrm").submit();
     });
@@ -236,9 +241,25 @@ function pgcinit($) {
     } );
 
 
+
+    //initially disable the assign-remove-replace buttons
+    toggleMultiButtons($, true);
+
+    //click on row should select/deselct the row
+    $('#trialsTbl tbody').on('click', 'tr', function (evt) {
+        evt.preventDefault();
+        $(this).toggleClass('selected');
+
+        //enable disable assign-remove-replace button(s)
+        toggleMultiButtons($, $("tr.selected").length <= 0);
+    } );
+
     //initialize funnel select
     $("#fpgc-sel").multiselect({
+        nonSelectedText: 'Select Program Code(s)' ,
+        enableFiltering: true,
         dropRight: true,
+        filterPlaceholder: 'Search',
         onDropdownHide: function (evt) {
             $("#fpgc-div").hide();
             refreshFilteredProgramCodes($);
@@ -246,12 +267,124 @@ function pgcinit($) {
     });
 
 
+
+    //initialize the assign multiple popup multiselect
+    $("#pgc-madd-sel").multiselect({
+        nonSelectedText: 'Select Program Code(s)' ,
+        enableFiltering: true,
+        dropRight: false,
+        filterPlaceholder: 'Search'
+    });
+    $("#pgc-mrm-sel").multiselect({
+        nonSelectedText: 'Select Program Code(s)' ,
+        enableFiltering: true,
+        dropRight: false,
+        filterPlaceholder: 'Search'
+    });
+
     //handle click on funnel icon
     $("#fpgc-icon-a").on('click', function (evt) {
         evt.preventDefault();
         $("#fpgc-div").toggle();
     });
 
+}
+
+//will open up the dialog to show multiple PG selection for assignment
+function assignMultiple($) {
+   //cleanup
+   if ($('#pgc-madd-dialog').dialog("instance")) {
+       $('#pgc-madd-dialog').dialog("destroy");
+   }
+    $("#pgc-madd-indicator").hide();
+
+   //show dialog
+    $("#pgc-madd-dialog").dialog({
+        modal : true,
+        autoOpen : true,
+        width : $(window).width() * 0.5,
+        height : $(window).height() * 0.5,
+        buttons : [
+            {
+                id:"pgc-madd-dialog-ok",
+                text:"OK",
+                click: function() {
+                    handlePopuInteractions($, $('#pgc-madd-sel'),
+                        "pgc-madd",
+                        "managePCAssignmentassignProgramCodesToTrials.action",
+                        "Program Codes were successfully assigned",
+                        "assign");
+                }
+            },
+            {
+                id:'pgc-madd-dialog-cancel',
+                text:"Cancel",
+                click: function() {
+                    $("#pgc-madd-dialog").dialog("close");
+                }
+            }
+        ]
+    });
+
+}
+
+//will unassign program codes from multiple trials
+function removeMultiple($) {
+    //cleanup
+    if ($('#pgc-mrm-dialog').dialog("instance")) {
+        $('#pgc-mrm-dialog').dialog("destroy");
+    }
+    $('#pgc-mrm-indicator').hide();
+
+    //empty out select box and add only the ones available on the trials
+    $("#pgc-mrm-sel").empty();
+    tmparr = [];
+    $("#trialsTbl > tbody > tr.selected > td.pgctd > a.pg").each(function(i, a){
+        if (tmparr.indexOf($(a).attr("pc")) < 0) {
+            tmparr.push($(a).attr("pc"));
+        }
+    });
+    $(tmparr.sort()).each(function(i, p){
+        tmpS2Ds = $.grep(allProgramCodes, function(pgc, j){
+           return pgc.code == p;
+        });
+
+        if (tmpS2Ds.length > -1) {
+            $("#pgc-mrm-sel").append($("<option />",{value: tmpS2Ds[0].code, text: tmpS2Ds[0].name}));
+        }
+    });
+
+    //initialize the assign multiple popup multiselect
+    $("#pgc-mrm-sel").multiselect("rebuild");
+
+    //show dialog
+    $("#pgc-mrm-dialog").dialog({
+        modal : true,
+        autoOpen : true,
+        width : $(window).width() * 0.5,
+        height : $(window).height() * 0.5,
+        buttons : [
+            {
+                id:"pgc-mrm-dialog-ok",
+                text:"OK",
+                click: function() {
+                    handlePopuInteractions($, $('#pgc-mrm-sel'),
+                        "pgc-mrm",
+                        "managePCAssignmentunassignProgramCodesFromTrials.action",
+                        "Program Codes were successfully unassigned",
+                        "unassign");
+                }
+            },
+            {
+                id:"pgc-mrm-dialog-cancel",
+                text:"Cancel",
+                click: function() {
+                    $("#pgc-mrm-dialog").dialog("close");
+                }
+
+            }
+        ]
+    });
 }
 
 //will open participation dialog
@@ -270,18 +403,21 @@ function openParticipationDialog($) {
         modal : true,
         autoOpen : false,
         width : $(window).width() * 0.6,
-        buttons : {
-            "Close" : function() {
-                $(this).dialog("close");
+        buttons : [
+            {
+                id:'participation-close',
+                text: "Close",
+                click: function() {
+                    $(this).dialog("close");
+                }
             }
-        }
+        ]
     });
 
     //show dialog
     $("#dialog-participation").dialog('open');
 
     //reload data in table
-
     participationTable.ajax.reload();
 }
 
@@ -308,8 +444,9 @@ function unAssignProgramCode($, td, sp, pgc) {
                 $("#" + sp + "_" + pgc + "_span").remove();
             });
         })
-        .fail(function () {
+        .fail(function (jqXHR) {
             $('#' + sp + '_' + pgc + '_img').remove();
+            showAjaxErrorOnPage($,jqXHR.getResponseHeader('msg'));
         });
 }
 
@@ -344,10 +481,11 @@ function assignProgramCode($, s2, td, sp, pgc) {
                 //show the down arrow
                 $("#" + sp + "_tra").show();
             })
-            .fail(function () {
+            .fail(function (jqXHR) {
                 //remove indicator image and show the down arrow
                 $('#' + sp + '_' + pgc + '_img').remove();
                 $("#" + sp + "_tra").show();
+                showAjaxErrorOnPage($,jqXHR.getResponseHeader('msg'));
             });
 
 
@@ -355,10 +493,70 @@ function assignProgramCode($, s2, td, sp, pgc) {
         //show the down arrow
         $("#" + sp + "_tra").show();
     }
+}
+
+//will handle the user interactions on assign/unassign/replace multiple popups
+function handlePopuInteractions($, selBox, containerId, ajaxAction, msg, action) {
+    console.log(action + ": handlePopuInteractions [selBox val:" + selBox.val());
+    //check if there are any values selected
+    if (selBox.val()) {
+        tmparr = [];
+        $('tr.selected').each(function(i, tr){
+            tmparr.push($(tr).attr("id").split("_")[1]);
+        });
+
+        //show the indicator
+        $('#' +containerId+ "-indicator").show();
+
+        console.log(action + ": handlePopuInteractions [studyProtocolList:" +tmparr.join(',') +
+            ", pgcList:" + selBox.val().join(",") +
+            ", familyPoId:" +  $("#familyPoId").val() );
+
+        //invoke ajax function
+        $.post(ajaxAction,
+            {
+                "studyProtocolList": tmparr.join(','),
+                "pgcList": selBox.val().join(","),
+                "familyPoId": $("#familyPoId").val()
+            })
+            .done(function (data) {
+                //close the box
+                $('#' +containerId+ "-dialog").dialog("close");
+
+                //refresh the table
+                trailsTable.ajax.reload();
+                //show the info message
+                showInfoMessageOnPage($, msg);
+
+                //disable buttons
+                toggleMultiButtons($, true);
+
+            })
+            .fail(function (jqXHR) {
+                $(containerId + "-Errors").text(jqXHR.getResponseHeader('msg')) ;
+                $(containerId + "-Errors").show();
+            });
+    }  else {
+        //no values selected - just close the box
+        $('#' +containerId+ "-dialog").dialog("close");
+    }
+}
+
+// Will show the Ajax errors on the page
+function showAjaxErrorOnPage($, msg) {
+    $("#pgcErrorsMsg").text(msg);
+    $("#pgcErrors").show();
+    scroll(0, $("#pgcErrors").position().top);
+}
 
 
-
+// Will show the Ajax errors on the page
+function showInfoMessageOnPage($, msg) {
+    $("#pgcInfoMsg").text(msg);
+    $("#pgcInfo").show().delay(5000).hide("slow");
+    scroll(0, $("#pgcInfo").position().top);
 
 }
+
 
 
