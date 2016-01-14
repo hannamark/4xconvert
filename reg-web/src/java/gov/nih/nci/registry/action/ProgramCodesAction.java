@@ -7,6 +7,7 @@ import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.service.util.FamilyProgramCodeService;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
@@ -193,8 +194,8 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
     }
     
     private void populateProgramCodes(JSONArray arr) {
-        LOG.debug("populating program codes for [familyPOId : " + selectedDTOId + "]");
-        FamilyDTO familyDTO = familyProgramCodeService.getFamilyDTOByPoId(selectedDTOId);
+        LOG.debug("populating program codes for [familyPOId : " + poId + "]");
+        FamilyDTO familyDTO = familyProgramCodeService.getFamilyDTOByPoId(Long.parseLong(poId));
         if (familyDTO != null) {
             for (ProgramCodeDTO programCodeDTO : familyDTO.getProgramCodes()) {
                 JSONObject o = new JSONObject();
@@ -207,6 +208,38 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
         }
 
       }
+    
+    /**
+     * Creates a new program code 
+     * @throws IOException IO exception
+     * @return JSON String
+     */
+    
+    public StreamResult createProgramCode() throws IOException {
+        try {
+            LOG.debug("Creating and adding a new program code for [familyPOId : " + poId + "]");
+            JSONObject root = new JSONObject();
+            JSONArray arr = new JSONArray();
+            root.put("data", arr);
+            addProgramCode(arr);
+            return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
+        } catch (Exception e) {
+            return handleExceptionDuringAjax(e);
+        }
+    }
+    
+    private void addProgramCode(JSONArray arr) throws PAValidationException {
+        FamilyDTO familyDTO = familyProgramCodeService.getFamilyDTOByPoId(Long.parseLong(poId));
+        String programCode = request.getParameter("newProgramCode"); 
+        String programName = request.getParameter("newProgramName");
+        // create and add a new active program code to the family
+        ProgramCodeDTO programCodeDTO = new ProgramCodeDTO();
+        programCodeDTO.setProgramCode(programCode);
+        programCodeDTO.setProgramName(programName);
+        programCodeDTO.setActive(true);
+        familyProgramCodeService.createProgramCode(familyDTO, programCodeDTO);
+      }
+    
     
     private void findOrCreateFamilyAndAddToList(OrgFamilyDTO orgFamilyDTO) throws PAException, ParseException {
         FamilyDTO familyDTO = familyProgramCodeService.getFamilyDTOByPoId(orgFamilyDTO.getId());        

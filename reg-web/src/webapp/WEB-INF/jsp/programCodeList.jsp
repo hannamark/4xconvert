@@ -14,6 +14,28 @@
     </head>
 <body>
 <div class="container">
+    <!-- Program Codes Errors Modal -->
+    <div class="modal fade" id="programCodeErrorMessageModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Error</h4>
+          </div>
+          <div class="modal-body">
+            <div class="alert alert-danger" role="alert">
+              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" style="display:inline"></span>
+               <p id="programCodesErrorList" style="display:inline"></p>
+            </div>
+           
+          </div>
+          <div class="modal-footer">
+            <button id="cancelButton" type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <div class="row">
         <div class="col-md-12 ">
             <h1 class="heading"><span><fmt:message key="programcodes.master.list"/></span></h1>
@@ -66,20 +88,37 @@
                     <p class="text-success" id="reporting_flash" style="display:none;">Reporting period length saved.</p>
                 </div>
               </div>
-              <div class="col-md-12">
+              <div>
                 <hr />
+              </div>
+              <div>
+                 <table id="newProgramCodesRowTable" class="table table-bordered table-striped">
+                    <tbody>
+                        <td nowrap="nowrap" width="25%"><input type="text" name="newProgramCode" id="newProgramCode" value="" class="form-control"/> </td>
+                        <td nowrap="nowrap" width="50%"><input type="text" name="newProgramName" id="newProgramName" value="" class="form-control"/> </td>
+                        <td nowrap="nowrap" width="25%"><button type="button" class="btn btn-icon btn-primary" id="addProgramCodeButton" onclick="addProgramCode();"> 
+                            <i class="fa-plus"></i> Add Program Code </button> 
+                            <div id="program_code_progress_indicator_panel" style="display: none;">
+                                <img src="${pageContext.request.contextPath}/images/loading.gif" alt="Progress Indicator" width="18" height="18" />
+                            </div>
+                        </td>
+                    </tbody>
+                </table>
               </div> 
               <div class="table-header-wrap">
-                 <table id="programCodesTable" class="table table-bordered table-striped">
-                    <thead>
-                       <tr>
-                          <th nowrap="nowrap" width="25%">Program Code</th>
-                          <th nowrap="nowrap" width="50%">Program Name</th>
-                          <th nowrap="nowrap" width="25%" />
-                       </tr>
-                    </thead>
-                    <tbody />
-                 </table>
+                <div>
+                    <hr/>
+                </div>  
+                <table id="programCodesTable" class="table table-bordered table-striped">
+                   <thead>
+                      <tr>
+                         <th nowrap="nowrap" width="25%">Program Code</th>
+                         <th nowrap="nowrap" width="50%">Program Name</th>
+                         <th nowrap="nowrap" width="25%" />
+                      </tr>
+                   </thead>
+                   <tbody />
+                </table>
               </div>        
             </s:form>       
         </div>

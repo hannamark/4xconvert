@@ -69,6 +69,29 @@ public class ProgramCodesActionTest extends AbstractRegWebTest {
     }
     
     @Test
+    public void testCreateProgramCode() throws Exception {        
+        ProgramCodesAction action = getAction();
+        action.setSelectedDTOId(123456L);
+        assertTrue(action.createProgramCode() instanceof StreamResult);     
+        
+      try {
+
+          Field field = StreamResult.class.getDeclaredField("inputStream");
+          ReflectionUtils.makeAccessible(field);
+
+          StreamResult sr = action.createProgramCode();
+
+          InputStream is = (InputStream) field.get(sr);
+          String json = IOUtils.toString(is);
+          assertEquals("{\"data\":[]}", json);
+
+      } catch (Exception e) {
+          e.printStackTrace();
+          fail("should not throw exception");
+      }
+    }
+    
+    @Test
     public void testFetchProgramCodesForFamily() throws Exception {        
         ProgramCodesAction action = getAction();
         action.setSelectedDTOId(123456L);

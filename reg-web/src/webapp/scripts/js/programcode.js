@@ -1,4 +1,9 @@
 // used by programCodeList jsp file.
+var programCodeTable;
+
+document.observe("dom:loaded", function() {
+	loadProgramCodes(jQuery);
+	});
 jQuery(function() { 	        		
         	jQuery('#datetimepicker').datetimepicker().on('hide', function(e){
         		
@@ -60,10 +65,8 @@ function changeReportingPeriodLength(element) {
 	});        	
 }
 
-(function ($) {
-    $(function() {
-
-        var table = $('#programCodesTable').DataTable({
+function loadProgramCodes($) {
+    	programCodeTable = $('#programCodesTable').DataTable({
             "dom": 'lprftip<"row">B',
             "pagingType": "full_numbers",
             "order": [
@@ -91,7 +94,7 @@ function changeReportingPeriodLength(element) {
             "ajax": {
                 "url": "programCodesfetchProgramCodesForFamily.action",
                 "data": {
-                    "selectedDTOId": $("#selectedDTOId").val()
+                    "poId": jQuery("#poID").val()  
                 },
                 "type": "POST"
             },
@@ -106,6 +109,53 @@ function changeReportingPeriodLength(element) {
                 "targets": [1]
             }]
         });
-    });
-})(jQuery);
+        
+    }
 
+
+function addProgramCode(){
+	if (validateProgramCode()){
+		createNewProgramCode();
+	} 
+}
+
+function createNewProgramCode(){
+	    jQuery.ajax(
+		{
+			type : "POST",
+			url : 'programCodescreateProgramCode.action',
+			beforeSend: function () {
+				jQuery('#program_code_progress_indicator_panel').css('display', 'inline-block');
+	        },
+			data : {
+				poId : jQuery("#poID").val(),
+				newProgramCode : jQuery("#newProgramCode").val(),
+				newProgramName : jQuery("#newProgramName").val()
+			},
+		    success: function(result) {
+		    		jQuery('#program_code_progress_indicator_panel').hide();
+					programCodeTable.ajax.reload();
+		   },
+		   timeout : 30000
+		})			
+		.fail(
+			function(jqXHR,	textStatus,	errorThrown) {
+				jQuery('#program_code_progress_indicator_panel').hide();
+				$('programCodesErrorList').innerHTML = jqXHR
+				.getResponseHeader('msg');
+				jQuery("#programCodeErrorMessageModal").modal('show'); 
+		});        	
+
+	
+}
+
+
+function validateProgramCode(){
+	if(!jQuery('#newProgramCode').val()) {
+		$('programCodesErrorList').innerHTML = "Program code is required";
+		jQuery("#programCodeErrorMessageModal").modal('show'); 
+		return false;
+	}
+	
+	return true;
+}

@@ -3,6 +3,7 @@ package gov.nih.nci.registry.test.integration;
 import org.apache.commons.dbutils.QueryRunner;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 /**
  *Integration test for Manage Program Codes List screen.
@@ -31,24 +32,115 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         assertTrue(selenium.isTextPresent("Search:"));
         assertTrue(selenium.isTextPresent("Cancer Program1"));
         assertTrue(selenium.isTextPresent("PG1"));
-        // verify that program codes are sorted
+        //verify that program codes are sorted
         assertEquals("PG1",driver.findElement(By.xpath("//table[@id='programCodesTable']/tbody/tr[1]/td[1]")).getText());
         assertEquals("PG10",driver.findElement(By.xpath("//table[@id='programCodesTable']/tbody/tr[2]/td[1]")).getText());
         assertEquals("PG11",driver.findElement(By.xpath("//table[@id='programCodesTable']/tbody/tr[3]/td[1]")).getText());
         assertEquals("PG12",driver.findElement(By.xpath("//table[@id='programCodesTable']/tbody/tr[4]/td[1]")).getText());
         assertEquals("PG6",driver.findElement(By.xpath("//table[@id='programCodesTable']/tbody/tr[9]/td[1]")).getText());
-        assertEquals("PG7",driver.findElement(By.xpath("//table[@id='programCodesTable']/tbody/tr[10]/td[1]")).getText());
         // verify for INACTIVE program codes
         assertTrue(selenium.isTextPresent("(INACTIVE) Cancer Program2"));
         assertTrue(selenium.isTextPresent("(INACTIVE) Cancer Program6"));
         //verify pagination present
-        selenium.isTextPresent("Showing 1 to 10 of 12 ");
-      // filter program codes.
+        assertEquals("Showing 1 to 10 of 12",driver.findElement(By.id("programCodesTable_info")).getText());
+        // filter program codes.
         selenium.typeKeys("//div[@id='programCodesTable_filter']/descendant::label/descendant::input", "11");
-      //should see filtered data only
+        //should see filtered data only
         assertEquals("PG11",driver.findElement(By.xpath("//table[@id='programCodesTable']/tbody/tr/td[1]")).getText());
         assertEquals("Cancer Program11",driver.findElement(By.xpath("//table[@id='programCodesTable']/tbody/tr/td[2]")).getText());
         assertTrue(selenium.isTextPresent("Showing 1 to 1 of 1 (filtered from 12 total entries)"));
+        logoutUser();
+    }
+    
+    /**
+     * Test add new program code
+     * @throws Exception exception
+     */
+    @Test
+    @SuppressWarnings({"deprecation" })
+    public void testCreateNewProgramCode() throws Exception {
+        loginAndAcceptDisclaimer();
+        waitForElementToBecomeVisible(By.linkText("Administration"), 2);
+        hoverLink("Administration");
+        waitForElementToBecomeVisible(By.linkText("Program Codes"), 2);
+        assertTrue(selenium.isTextPresent("Program Codes"));
+        hoverLink("Program Codes");
+        assertTrue(selenium.isTextPresent("Manage Master List"));
+        recreateFamilies();
+        associateProgramCodesToFamilies();
+        clickAndWait("link=Manage Master List");
+        assertTrue(selenium.isTextPresent("Program Code"));
+        assertTrue(selenium.isTextPresent("Program Name"));
+        assertTrue(selenium.isTextPresent("Search:"));
+        assertTrue(selenium.isTextPresent("Cancer Program1"));
+        assertTrue(selenium.isTextPresent("PG1"));
+        assertEquals("Showing 1 to 10 of 12",driver.findElement(By.id("programCodesTable_info")).getText());
+        // verify that add programs button is present and enabled
+        WebElement addProgramCodebutton = driver.findElement(By.id("addProgramCodeButton"));
+        assertTrue(addProgramCodebutton.isEnabled());
+        assertTrue(driver.findElement(By.id("newProgramCode")).isDisplayed());
+        assertTrue(driver.findElement(By.id("newProgramName")).isDisplayed());
+        
+        // add new program code
+        selenium.typeKeys("//input[@id='newProgramCode']", "newly-added-program-code");
+        selenium.typeKeys("//input[@id='newProgramName']", "newly-added-program-name");
+        addProgramCodebutton.click();
+        waitForElementToBecomeInvisible(By.id("program_code_progress_indicator_panel"), 3);
+        
+        //test for newly added program code
+        assertTrue(selenium.isTextPresent("newly-added-program-code"));
+        assertTrue(selenium.isTextPresent("newly-added-program-name"));
+        
+        logoutUser();
+    }
+    
+    /**
+     * Test the program codes error scenarios
+     * @throws Exception exception
+     */
+    @Test
+    @SuppressWarnings({"deprecation" })
+    public void testProgramCodesCreateNewProgramCodeErrorScenarios() throws Exception {
+        loginAndAcceptDisclaimer();
+        waitForElementToBecomeVisible(By.linkText("Administration"), 2);
+        hoverLink("Administration");
+        waitForElementToBecomeVisible(By.linkText("Program Codes"), 2);
+        assertTrue(selenium.isTextPresent("Program Codes"));
+        hoverLink("Program Codes");
+        assertTrue(selenium.isTextPresent("Manage Master List"));
+        recreateFamilies();
+        associateProgramCodesToFamilies();
+        clickAndWait("link=Manage Master List");
+        assertTrue(selenium.isTextPresent("Program Code"));
+        assertTrue(selenium.isTextPresent("Program Name"));
+        assertTrue(selenium.isTextPresent("Search:"));
+        assertTrue(selenium.isTextPresent("Cancer Program1"));
+        assertTrue(selenium.isTextPresent("PG1"));
+        assertEquals("Showing 1 to 10 of 12", driver.findElement(By.id("programCodesTable_info")).getText());
+        // test for empty program code submission
+        WebElement addProgramCodebutton = driver.findElement(By.id("addProgramCodeButton"));
+        assertTrue(addProgramCodebutton.isEnabled());
+        assertTrue(driver.findElement(By.id("newProgramCode")).isDisplayed());
+        assertTrue(driver.findElement(By.id("newProgramName")).isDisplayed());
+        
+        addProgramCodebutton.click();
+        waitForElementToBecomeVisible(By.id("programCodeErrorMessageModal"), 2);
+        assertEquals("Error",driver.findElement(By.className("modal-title")).getText());;
+        assertTrue(selenium.isTextPresent("Program code is required"));
+        WebElement cancelButton = driver.findElement(By.id("cancelButton"));
+        cancelButton.click();
+        assertTrue(selenium.isTextPresent("Program Code"));
+        
+        //test for duplicate program code error
+         selenium.typeKeys("//input[@id='newProgramCode']", "PG1");
+         addProgramCodebutton.click();
+         waitForElementToBecomeVisible(By.id("programCodeErrorMessageModal"), 2);
+         assertEquals("Error",driver.findElement(By.className("modal-title")).getText());
+         assertTrue(selenium.isTextPresent("This program code already exists in the system."
+                 + " Please add another program code"));
+         cancelButton.click();
+         assertTrue(selenium.isTextPresent("Program Code"));
+        
         logoutUser();
     }
     
