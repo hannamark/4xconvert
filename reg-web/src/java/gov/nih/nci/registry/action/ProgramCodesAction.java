@@ -47,6 +47,8 @@ import com.opensymphony.xwork2.Preparable;
  * @author lalit-sb
  *
  */
+
+@SuppressWarnings({  "PMD.TooManyMethods" })
 public class ProgramCodesAction extends ActionSupport implements Preparable, ServletRequestAware, ServletResponseAware {
     
     private static final long serialVersionUID = 4866651110688880068L;    
@@ -221,14 +223,14 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
             JSONObject root = new JSONObject();
             JSONArray arr = new JSONArray();
             root.put("data", arr);
-            addProgramCode(arr);
+            addProgramCode();
             return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
         } catch (Exception e) {
             return handleExceptionDuringAjax(e);
         }
     }
     
-    private void addProgramCode(JSONArray arr) throws PAValidationException {
+    private void addProgramCode() throws PAValidationException {
         FamilyDTO familyDTO = familyProgramCodeService.getFamilyDTOByPoId(Long.parseLong(poId));
         String programCode = request.getParameter("newProgramCode"); 
         String programName = request.getParameter("newProgramName");
@@ -271,7 +273,7 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
 
     /**
      * Does bean injections
-     * @throws Exception exception
+     * @throws Exception on exception
      */
     @Override
     public void prepare() throws Exception {

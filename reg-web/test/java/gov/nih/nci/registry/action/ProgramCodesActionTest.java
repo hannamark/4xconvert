@@ -71,7 +71,7 @@ public class ProgramCodesActionTest extends AbstractRegWebTest {
     @Test
     public void testCreateProgramCode() throws Exception {        
         ProgramCodesAction action = getAction();
-        action.setSelectedDTOId(123456L);
+        action.setPoId("12345");
         assertTrue(action.createProgramCode() instanceof StreamResult);     
         
       try {
@@ -94,7 +94,7 @@ public class ProgramCodesActionTest extends AbstractRegWebTest {
     @Test
     public void testFetchProgramCodesForFamily() throws Exception {        
         ProgramCodesAction action = getAction();
-        action.setSelectedDTOId(123456L);
+        action.setPoId("12345");
         assertTrue(action.fetchProgramCodesForFamily() instanceof StreamResult);     
         
       try {

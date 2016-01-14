@@ -137,7 +137,8 @@ public class FamilyProgramCodeBeanLocal implements FamilyProgramCodeServiceLocal
      * Creates and inserts a new Program Code in db
      * @param familyDTO family dto
      * @param programCodeDTO programCodeDTO
-     * @return ProgramCodeDTO created programCodeDTO
+     * @return ProgramCodeDTO
+     * @throws PAValidationException if program code already exists
      */
 
     @Override
