@@ -1628,7 +1628,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
                 familyPoIds.add(orgFamilyDto.getId());
             }
 
-            List<Family> families = loadFamilies(familyPoIds);
+            List<Family> families = loadAllFamilies(familyPoIds);
             Map<Long, ProgramCode> validProgramCodeMap = new HashMap<Long, ProgramCode>();
             for (String pgCode : programCodes) {
                for (Family family : families) {
@@ -1666,39 +1666,47 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     public void assignProgramCodesToTrials(List<Long> studyIds, Long familyPoId, List<String> programCodes)
             throws PAException {
 
-        List<Family> families = loadFamilies(Arrays.asList(familyPoId));
-        if (CollectionUtils.isEmpty(families)) {
-            LOG.error("Unable to find the family by poId: " + familyPoId);
-            throw new PAException("Unable to fetch family having poId : " + familyPoId);
-        }
+        Family family = fetchFamily(familyPoId);
 
-        Family family = families.get(0);
         for (Long studyId : studyIds) {
             StudyProtocol studyProtocol = fetchStudyProtocol(studyId);
-            for (String code : programCodes) {
-                ProgramCode p = family.findActiveProgramCodeByCode(code);
-                if (p == null) {
-                    LOG.error("Unable to find an active program code in family " + code);
-                    throw new PAException("Unable to find an active program code in family " + code);
-                }
-                studyProtocol.getProgramCodes().add(p);
-
-                //update legacy data if needed
-                String pgcText = studyProtocol.getProgramCodeText();
-                if (StringUtils.isNotEmpty(pgcText)) {
-                    Set<String> uniqueProgramCodes = new HashSet<String>();
-                    uniqueProgramCodes.addAll(Arrays.asList(studyProtocol.getProgramCodeText().split("\\s*;\\s*")));
-                    if (uniqueProgramCodes.add(p.getProgramCode())) {
-                        pgcText = String.format("%s;%s", pgcText, p.getProgramCode());
-                    }
-                    studyProtocol.setProgramCodeText(pgcText);
-                }
-
-                LOG.info("Added programCode:" + p.getProgramCode() + " to study [studyId:" + studyId + "]");
-            }
-
+            addProgramCodesToStudyProtocol(studyProtocol, family, programCodes);
             PaHibernateUtil.getCurrentSession().update(studyProtocol);
         }
+
+    }
+
+    /**
+     * Will add the program codes to the given study protocol
+     * @param studyProtocol - a trial
+     * @param family  - the family
+     * @param programCodes - the program codes to add
+     * @throws PAException - when there is an error
+     */
+    private void addProgramCodesToStudyProtocol(StudyProtocol studyProtocol, Family family, List<String> programCodes)
+            throws PAException {
+        for (String code : programCodes) {
+            ProgramCode p = family.findActiveProgramCodeByCode(code);
+            if (p == null) {
+                LOG.error("Unable to find an active program code in family " + code);
+                throw new PAException("Unable to find an active program code in family " + code);
+            }
+            studyProtocol.getProgramCodes().add(p);
+
+            //update legacy data if needed
+            String pgcText = studyProtocol.getProgramCodeText();
+            if (StringUtils.isNotEmpty(pgcText)) {
+                Set<String> uniqueProgramCodes = new HashSet<String>();
+                uniqueProgramCodes.addAll(Arrays.asList(studyProtocol.getProgramCodeText().split("\\s*;\\s*")));
+                if (uniqueProgramCodes.add(p.getProgramCode())) {
+                    pgcText = String.format("%s;%s", pgcText, p.getProgramCode());
+                }
+                studyProtocol.setProgramCodeText(pgcText);
+            }
+
+            LOG.info("Added programCode:" + p.getProgramCode() + " to study [studyId:" + studyProtocol.getId() + "]");
+        }
+
 
     }
 
@@ -1712,32 +1720,68 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     public void unassignProgramCodesFromTrials(List<Long> studyIds, List<String> programCodes) throws PAException {
            for (Long studyId: studyIds) {
                StudyProtocol studyProtocol = fetchStudyProtocol(studyId);
-               for (String programCode: programCodes) {
-
-                   String pgcText = studyProtocol.getProgramCodeText();
-                   if (StringUtils.isNotEmpty(pgcText)) {
-                       List<String> validProgramCodes = new ArrayList<String>();
-                       for (String pgc : pgcText.trim().split("\\s*;\\s*")) {
-                           if (!StringUtils.equals(pgc, programCode)) {
-                               validProgramCodes.add(pgc);
-                           }
-                       }
-                       studyProtocol.setProgramCodeText(StringUtils.join(validProgramCodes, ";"));
-                   }
-
-                   if (CollectionUtils.isNotEmpty(studyProtocol.getProgramCodes())) {
-                       List<ProgramCode> list = new ArrayList<ProgramCode>();
-                       for (ProgramCode pg : studyProtocol.getProgramCodes()) {
-                           if (StringUtils.equalsIgnoreCase(pg.getProgramCode(), programCode)) {
-                               list.add(pg);
-                           }
-                       }
-                       studyProtocol.getProgramCodes().removeAll(list);
-                   }
-               }
-
+               removeProgramCodesFromStudyProtocol(studyProtocol, programCodes);
                PaHibernateUtil.getCurrentSession().update(studyProtocol);
            }
+    }
+
+    /**
+     * Will remove the given program codes if present from study protocol
+     * @param studyProtocol - a trial
+     * @param programCodes - list of program code to remove
+     * @return  List of program codes that actually removed
+     * @throws PAException - when there is an error
+     */
+    private List<String> removeProgramCodesFromStudyProtocol(StudyProtocol studyProtocol, List<String> programCodes)
+            throws PAException {
+        List<String> removed = new ArrayList<String>();
+        for (String programCode: programCodes) {
+
+            String pgcText = studyProtocol.getProgramCodeText();
+            if (StringUtils.isNotEmpty(pgcText)) {
+                List<String> validProgramCodes = new ArrayList<String>();
+                for (String pgc : pgcText.trim().split("\\s*;\\s*")) {
+                    if (!StringUtils.equals(pgc, programCode)) {
+                        validProgramCodes.add(pgc);
+                    }
+                }
+                studyProtocol.setProgramCodeText(StringUtils.join(validProgramCodes, ";"));
+            }
+
+            if (CollectionUtils.isNotEmpty(studyProtocol.getProgramCodes())) {
+                List<ProgramCode> list = new ArrayList<ProgramCode>();
+                for (ProgramCode pg : studyProtocol.getProgramCodes()) {
+                    if (StringUtils.equalsIgnoreCase(pg.getProgramCode(), programCode)) {
+                        list.add(pg);
+                        removed.add(pg.getProgramCode());
+                    }
+                }
+                studyProtocol.getProgramCodes().removeAll(list);
+            }
+        }
+        return removed;
+    }
+
+    /**
+     * Will replace programcodes
+     * @param studyIds - a list of trial ids
+     * @param familyPoId - the family PO Id
+     * @param programCode - a program code to replace
+     * @param programCodes - the program codes newly selected
+     * @throws PAException - when there is an error
+     */
+    @Override
+    public void replaceProgramCodesOnTrials(List<Long> studyIds, Long familyPoId,
+                                            String programCode, List<String> programCodes) throws PAException {
+        Family family = fetchFamily(familyPoId);
+        for (Long studyId : studyIds) {
+            StudyProtocol studyProtocol = fetchStudyProtocol(studyId);
+            if (!removeProgramCodesFromStudyProtocol(studyProtocol, Arrays.asList(programCode)).isEmpty()) {
+                 addProgramCodesToStudyProtocol(studyProtocol, family, programCodes);
+            }
+            PaHibernateUtil.getCurrentSession().update(studyProtocol);
+        }
+
     }
 
     /**
@@ -1761,11 +1805,28 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      * @param poIds
      * @return
      */
-    private List<Family> loadFamilies(List<Long> poIds) {
+    private List<Family> loadAllFamilies(List<Long> poIds) {
         return (List<Family>) PaHibernateUtil.getCurrentSession()
                 .createQuery("select f from Family f where f.poId in (:ids)")
                 .setParameterList("ids", poIds)
                 .list();
+    }
+
+    /**
+     * Will load the family from db based on POID
+     * @param familyPoId - the PO Id of family
+     * @return - Family
+     * @throws PAException - when there is an error
+     */
+    private Family fetchFamily(Long familyPoId) throws PAException {
+        List<Family> families = loadAllFamilies(Arrays.asList(familyPoId));
+        if (CollectionUtils.isEmpty(families)) {
+            LOG.error("Unable to find the family by poId: " + familyPoId);
+            throw new PAException("Unable to fetch family having poId : " + familyPoId);
+        }
+
+        Family family = families.get(0);
+        return family;
     }
 
 

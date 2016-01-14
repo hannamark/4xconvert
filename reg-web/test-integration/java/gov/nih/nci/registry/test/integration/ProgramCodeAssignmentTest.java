@@ -5,6 +5,7 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
@@ -93,6 +94,8 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         accessManageCodeAssignmentsScreen();
         Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
         dropdown.selectByVisibleText("National Cancer Institute");
+        changePageLength("25");
+
         TrialInfo trial4 = trials.get(4);
         String trial4Title = trial4.title;
         waitForElementToBecomeAvailable(
@@ -110,10 +113,9 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
         Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
         dropdown.selectByVisibleText("National Cancer Institute");
+        changePageLength("25");
         TrialInfo trial1 = trials.get(1);
-        String trial1Title = trial1.title;
-        waitForElementToBecomeAvailable(
-                By.xpath("//table[@id='trialsTbl']/tbody//tr//td[2]"), 10);
+
 
         selenium.type("cfProgramCode", "PG4");
 
@@ -149,6 +151,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         accessManageCodeAssignmentsScreen();
         Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
         dropdown.selectByVisibleText("National Cancer Institute");
+        changePageLength("25");
         TrialInfo trial4 = trials.get(4);
         String trial4Title = trial4.title;
         waitForElementToBecomeAvailable(
@@ -171,7 +174,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         accessManageCodeAssignmentsScreen();
         Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
         dropdown.selectByVisibleText("National Cancer Institute");
-
+        changePageLength("25");
 
         //Initialli I see the buttons disabled
         verifyAssignUnassignButtonState(false);
@@ -323,6 +326,101 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         logoutUser();
     }
 
+
+
+
+
+    @Test
+    public void testReplaceMultipeAndAssignMultiple() throws Exception {
+        accessManageCodeAssignmentsScreen();
+        Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
+        dropdown.selectByVisibleText("National Cancer Institute");
+        changePageLength("25");
+
+        //Select 4 rows
+        clickTableRow(1);
+        clickTableRow(2);
+        clickTableRow(3);
+        clickTableRow(4);
+
+        //I see the buttons enabled
+        verifyAssignUnassignButtonState(true);
+
+        //Also I see PG2 in those rows
+        verifyTrialProgramCodeAssociation(1, true, "PG2");
+        verifyTrialProgramCodeAssociation(2, true, "PG2");
+        verifyTrialProgramCodeAssociation(3, true, "PG2");
+        verifyTrialProgramCodeAssociation(4, true, "PG2");
+
+        //click the Replace button
+        clickAndWait("replacePGCBtn");
+
+        //Then the dialog showup
+        waitForElementToBecomeVisible(By.id("pgc-mrpl-dialog"), 5);
+
+        //on the popup select
+        pickMultiSelectOptions("pgc-mrpl-selone-div", Arrays.asList("PG2"), Arrays.asList("PG1", "PG3", "PG4"));
+
+        //When I click Cancel
+        clickAndWait("pgc-mrpl-dialog-cancel");
+
+        //Then the dialog closes
+        waitForElementToBecomeInvisible(By.id("pgc-mrpl-dialog"), 5);
+
+        //the assign button is still enabled
+        verifyAssignUnassignButtonState(true);
+
+        //And I see PG2 in those rows
+        verifyTrialProgramCodeAssociation(1, true, "PG2");
+        verifyTrialProgramCodeAssociation(2, true, "PG2");
+        verifyTrialProgramCodeAssociation(3, true, "PG2");
+        verifyTrialProgramCodeAssociation(4, true, "PG2");
+
+        //click the Replace button
+        clickAndWait("replacePGCBtn");
+
+        //Then the dialog showup
+        waitForElementToBecomeVisible(By.id("pgc-mrpl-dialog"), 5);
+
+        //on the popup select
+        pickMultiSelectOptions("pgc-mrpl-selone-div", Arrays.asList("PG2"), Arrays.asList("PG1", "PG3", "PG4"));
+        pickMultiSelectOptions("pgc-mrpl-seltwo-div", Arrays.asList("PG4"), Arrays.asList("PG1", "PG2", "PG3"));
+
+        //When I click OK
+        clickAndWait("pgc-mrpl-dialog-ok");
+
+        //Then the dialog closes
+        waitForElementToBecomeInvisible(By.id("pgc-mrpl-dialog"), 5);
+
+        //Then I see confirmation
+        waitForElementToBecomeVisible(By.id("pgcInfo"), 4);
+        selenium.isTextPresent("Program Code was successfully replaced");
+
+        //And I see the confirmation go away after 5 seconds
+        waitForElementToBecomeVisible(By.id("pgcInfo"), 10);
+
+
+        //Now I see PG2 no longer associated with those rows
+        verifyTrialProgramCodeAssociation(1, false, "PG2");
+        verifyTrialProgramCodeAssociation(2, false, "PG2");
+        verifyTrialProgramCodeAssociation(3, false, "PG2");
+        verifyTrialProgramCodeAssociation(4, false, "PG2");
+
+        //And I see PG4 in those rows
+        verifyTrialProgramCodeAssociation(1, true, "PG4");
+        verifyTrialProgramCodeAssociation(2, true, "PG4");
+        verifyTrialProgramCodeAssociation(3, true, "PG4");
+        verifyTrialProgramCodeAssociation(4, true, "PG4");
+
+
+
+        //And I see the assign/unassign buttons disabled.
+        verifyAssignUnassignButtonState(false);
+
+
+
+        logoutUser();
+    }
     @Test
     public void testFilterByProgramCode() throws  Exception  {
 
@@ -367,11 +465,9 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         //when I change family
         Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
         dropdown.selectByVisibleText("National Cancer Institute");
-
+        changePageLength("25");
         //then I should see associated trials.
         TrialInfo trial4 = trials.get(4);
-        waitForElementToBecomeAvailable(
-                By.xpath("//table[@id='trialsTbl']/tbody//tr[3]"), 10);
 
         //And I see the funnel filter
         waitForElementToBecomeAvailable(By.id("fpgc-icon-a"), 5);
@@ -426,16 +522,20 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         String buttonXPath = String.format("//div[@id='%s']/div/button", containerId);
         driver.findElement(By.xpath(buttonXPath)).click();
         for (String opt : optsToSelect) {
-            WebElement el = driver.findElement(By.xpath(String.format("//div[@id='%s']//input[@value='%s' and @type='checkbox']", containerId, opt)));
+            WebElement el = driver.findElement(By.xpath(String.format("//div[@id='%s']//input[@value='%s']", containerId, opt)));
             if (!el.isSelected()) {
                 el.click();
             }
         }
         for (String opt : optsToUnselect) {
-            WebElement el = driver.findElement(By.xpath(String.format("//div[@id='%s']//input[@value='%s' and @type='checkbox']", containerId, opt)));
-            if (el.isSelected()) {
-                el.click();
-            }
+           try {
+               WebElement el = driver.findElement(By.xpath(String.format("//div[@id='%s']//input[@value='%s']", containerId, opt)));
+               if (el.isSelected()) {
+                   el.click();
+               }
+           } catch (NoSuchElementException ignore) {
+
+           }
         }
         driver.findElement(By.xpath(buttonXPath)).click();
 
@@ -570,4 +670,13 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         waitForElementToBecomeAvailable(by, 5);
         assertTrue(driver.findElement(by).getText().contains(pg) == present);
     }
+
+
+    private void changePageLength(String number) {
+        waitForElementToBecomeAvailable(By.xpath("//table[@id='trialsTbl']/tbody/tr[1]"), 10);
+        Select s = new Select(driver.findElement(By.xpath("//select[@name='trialsTbl_length']")));
+        s.selectByVisibleText(number);
+        waitForElementToBecomeAvailable(By.xpath("//table[@id='trialsTbl']/tbody/tr[11]"), 10);
+    }
+
 }

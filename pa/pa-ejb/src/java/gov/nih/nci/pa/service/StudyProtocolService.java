@@ -421,4 +421,15 @@ public interface StudyProtocolService {
      * @throws PAException - exception when there is an error.
      */
     void unassignProgramCodesFromTrials(List<Long> studyIds, List<String> programCodes) throws PAException;
+
+    /**
+     * Will replace a program code with another in the specified trials
+     * @param studyIds - a list of trial ids
+     * @param familyPoId - a the PO id of family
+     * @param programCode - a program code to replace
+     * @param programCodes - the program codes newly selected
+     * @throws PAException  - exception when there is an error
+     */
+    void replaceProgramCodesOnTrials(List<Long> studyIds, Long familyPoId, String programCode,
+                                     List<String> programCodes) throws PAException;
 }

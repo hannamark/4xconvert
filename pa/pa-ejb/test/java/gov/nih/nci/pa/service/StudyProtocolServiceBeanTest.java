@@ -696,6 +696,80 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
     }
 
 
+
+    @Test
+    public void testReplaceProgramCodesToTrials() throws Exception {
+
+        //Given that the family and program codes are available.
+        TestSchema.createFamily(1L);
+        ProgramCodeDTO pgDto1 = new ProgramCodeDTO();
+        pgDto1.setActive(true);
+        pgDto1.setProgramName("test1");
+        pgDto1.setProgramCode("1");
+        ProgramCodeDTO pgDto2 = new ProgramCodeDTO();
+        pgDto2.setActive(true);
+        pgDto2.setProgramName("test2");
+        pgDto2.setProgramCode("5");
+        ProgramCodeDTO pgDto3 = new ProgramCodeDTO();
+        pgDto3.setActive(true);
+        pgDto3.setProgramName("test3");
+        pgDto3.setProgramCode("3");
+        ProgramCodeDTO pgDto4 = new ProgramCodeDTO();
+        pgDto4.setActive(true);
+        pgDto4.setProgramName("test4");
+        pgDto4.setProgramCode("4");
+
+        FamilyDTO familyDTO = new FamilyDTO(-1L);
+        familyDTO.getProgramCodes().add(pgDto1);
+        familyDTO.getProgramCodes().add(pgDto2);
+        familyDTO.getProgramCodes().add(pgDto3);
+        familyDTO.getProgramCodes().add(pgDto4);
+
+        when(familyProgramCodeService.getFamilyDTOByPoId(1L)).thenReturn(familyDTO);
+
+        //And a study is present
+        createStudyProtocols(1, PAConstants.DCP_ORG_NAME, "PO-9489-3", false);
+        Ii ii = new Ii();
+        ii.setRoot(IiConverter.DCP_STUDY_PROTOCOL_ROOT);
+        ii.setExtension("PO-9489-3");
+        StudyProtocolDTO spDTO = remoteEjb.getStudyProtocol(ii);
+        long studyPaId = Long.parseLong(spDTO.getIdentifier().getExtension());
+
+        //When I assign program code
+        remoteEjb.assignProgramCodesToTrials(Arrays.asList(studyPaId), 1L, Arrays.asList("1"));
+
+        //Then it must get associated to study under programCodes field
+        StudyProtocolDTO spDTO2 = remoteEjb.getStudyProtocol(ii);
+        List<ProgramCodeDTO> programCodeDTOs = spDTO2.getProgramCodes();
+        assertEquals(1, programCodeDTOs.size());
+
+        //when I replace program code 1 with 3 and 5
+        remoteEjb.replaceProgramCodesOnTrials(Arrays.asList(studyPaId), 1L, "1", Arrays.asList("3","5"));
+
+
+        //Then it must get associated to study under programCodes field
+        StudyProtocolDTO spDTO3 = remoteEjb.getStudyProtocol(ii);
+        programCodeDTOs = spDTO3.getProgramCodes();
+        assertEquals(2, programCodeDTOs.size());
+        assertTrue(Arrays.asList("3", "5").contains(programCodeDTOs.get(0).getProgramCode()));
+        assertTrue(Arrays.asList("3", "5").contains(programCodeDTOs.get(1).getProgramCode()));
+
+
+
+        //when I try to replace a non existing program code 1 with 4
+        remoteEjb.replaceProgramCodesOnTrials(Arrays.asList(studyPaId), 1L, "1", Arrays.asList("3","5"));
+
+        //Then it should do nothing
+        StudyProtocolDTO spDTO4 = remoteEjb.getStudyProtocol(ii);
+        programCodeDTOs = spDTO4.getProgramCodes();
+        assertEquals(2, programCodeDTOs.size());
+        assertEquals(2, programCodeDTOs.size());
+        assertTrue(Arrays.asList("3", "5").contains(programCodeDTOs.get(0).getProgramCode()));
+        assertTrue(Arrays.asList("3", "5").contains(programCodeDTOs.get(1).getProgramCode()));
+    }
+
+
+
     /**
      * @return
      * @throws URISyntaxException

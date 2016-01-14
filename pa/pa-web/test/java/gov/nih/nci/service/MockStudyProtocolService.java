@@ -478,4 +478,9 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
     @Override
     public void unassignProgramCodesFromTrials(List<Long> studyIds, List<String> programCodes) {
     }
+
+    @Override
+    public void replaceProgramCodesOnTrials(List<Long> studyIds,Long familyPoId,  String programCode, List<String> programCodes) throws PAException {
+
+    }
 }

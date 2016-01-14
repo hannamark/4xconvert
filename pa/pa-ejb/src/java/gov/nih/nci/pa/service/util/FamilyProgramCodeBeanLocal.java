@@ -139,6 +139,7 @@ public class FamilyProgramCodeBeanLocal implements FamilyProgramCodeServiceLocal
      * @param programCodeDTO programCodeDTO
      * @return ProgramCodeDTO
      * @throws PAValidationException if program code already exists
+     * @throws PAValidationException - when there is a validation error
      */
 
     @Override

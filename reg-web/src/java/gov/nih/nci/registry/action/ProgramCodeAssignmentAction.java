@@ -75,6 +75,11 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
     private String pgcFilter;
     private Long studyProtocolId;
 
+    //the following are used by assign, unassign, replace operations
+    private String studyProtocolIdListParam;
+    private String pgcParam;
+    private String pgcListParam;
+
     /**
      *  Will return the studyProtocolId
      * @return the studyProtocolId
@@ -172,6 +177,55 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
     public void setFamilyDto(FamilyDTO familyDto) {
         this.familyDto = familyDto;
     }
+
+    /**
+     * A commaseperated list of study ids
+     * @return  studyids
+     */
+    public String getStudyProtocolIdListParam() {
+        return studyProtocolIdListParam;
+    }
+
+    /**
+     * Set the list of studyids
+     * @param studyProtocolIdListParam the commaseperated list of studyIds
+     */
+    public void setStudyProtocolIdListParam(String studyProtocolIdListParam) {
+        this.studyProtocolIdListParam = studyProtocolIdListParam;
+    }
+
+    /**
+     * The program code
+     * @return the program code
+     */
+    public String getPgcParam() {
+        return pgcParam;
+    }
+
+    /**
+     * Sets the program code
+     * @param pgcParam - the program code
+     */
+    public void setPgcParam(String pgcParam) {
+        this.pgcParam = pgcParam;
+    }
+
+    /**
+     * Sets the list of program code
+     * @return the commaseperated list of program codes
+     */
+    public String getPgcListParam() {
+        return pgcListParam;
+    }
+
+    /**
+     * The program code list
+     * @param pgcListParam - the program codes comma seperated.
+     */
+    public void setPgcListParam(String pgcListParam) {
+        this.pgcListParam = pgcListParam;
+    }
+
     /**
      * @return ProtocolQueryServiceLocal
      */
@@ -283,16 +337,15 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
      * @throws IOException - for encoding issues
      */
     public StreamResult unassignProgramCode() throws IOException {
-        String programCode = ServletActionContext.getRequest().getParameter("pgc");
         try {
-            studyProtocolService.unAssignProgramCode(studyProtocolId, programCode);
+            studyProtocolService.unAssignProgramCode(studyProtocolId, getPgcParam());
             JSONObject root = new JSONObject();
             root.put(AJAX_RETURN_SUCCESS_KEY, "REMOVED");
             return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
         } catch (PAException pae) {
             LOG.error("unassignProgramCode - studyProtocol:"
                     + getStudyProtocolId()
-                    + "programCode:" + programCode);
+                    + "programCode:" + getPgcParam());
             ServletActionContext.getResponse().addHeader(ERROR_MSG_KEY, pae.getMessage());
             ServletActionContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST, pae.getMessage());
         }
@@ -306,17 +359,16 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
      * @throws IOException - for encoding issues
      */
     public StreamResult assignProgramCode() throws IOException {
-        String programCode = ServletActionContext.getRequest().getParameter("pgc");
         try {
             studyProtocolService.assignProgramCodesToTrials(Arrays.asList(studyProtocolId),
-                    familyPoId, Arrays.asList(programCode));
+                    familyPoId, Arrays.asList(getPgcParam()));
             JSONObject root = new JSONObject();
             root.put(AJAX_RETURN_SUCCESS_KEY, "ADDED");
             return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
         } catch (PAException pae) {
             LOG.error("assignProgramCode - studyProtocol:"
                     + getStudyProtocolId()
-                    + "programCode:" + programCode);
+                    + "programCode:" + getPgcParam());
             ServletActionContext.getResponse().addHeader(ERROR_MSG_KEY, pae.getMessage());
             ServletActionContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST, pae.getMessage());
         }
@@ -330,24 +382,22 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
      * @throws IOException - for encoding issues
      */
     public StreamResult assignProgramCodesToTrials() throws IOException {
-        String codes = ServletActionContext.getRequest().getParameter("pgcList");
-        String trialIds = ServletActionContext.getRequest().getParameter("studyProtocolList");
 
         try {
              List<Long> studyProtocolIds = new ArrayList<Long>();
-            for (String trialId : trialIds.split(",")) {
+            for (String trialId : getStudyProtocolIdListParam().split(",")) {
                 studyProtocolIds.add(Long.parseLong(trialId));
             }
 
             studyProtocolService.assignProgramCodesToTrials(studyProtocolIds,
-                    familyPoId, Arrays.asList(codes.split(",")));
+                    familyPoId, Arrays.asList(getPgcListParam().split(",")));
             JSONObject root = new JSONObject();
             root.put(AJAX_RETURN_SUCCESS_KEY, "ADDED");
             return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
         } catch (PAException pae) {
             LOG.error("assignProgramCodesToTrials - studyProtocolIds:"
-                    + trialIds
-                    + "programCodes:" + codes);
+                    + getStudyProtocolIdListParam()
+                    + "programCodes:" + getPgcListParam());
             ServletActionContext.getResponse().addHeader(ERROR_MSG_KEY, pae.getMessage());
             ServletActionContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST, pae.getMessage());
         }
@@ -355,31 +405,58 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
     }
 
 
-
     /**
-     *  Will unassign program codes from the trials
-     * @return  StreamResult - the json object array
+     * Will unassign program codes from the trials
+     *
+     * @return StreamResult - the json object array
      * @throws IOException - for encoding issues
      */
     public StreamResult unassignProgramCodesFromTrials() throws IOException {
-        String codes = ServletActionContext.getRequest().getParameter("pgcList");
-        String trialIds = ServletActionContext.getRequest().getParameter("studyProtocolList");
 
         try {
             List<Long> studyProtocolIds = new ArrayList<Long>();
-            for (String trialId : trialIds.split(",")) {
+            for (String trialId : getStudyProtocolIdListParam().split(",")) {
                 studyProtocolIds.add(Long.parseLong(trialId));
             }
 
             studyProtocolService.unassignProgramCodesFromTrials(studyProtocolIds,
-                    Arrays.asList(codes.split(",")));
+                    Arrays.asList(getPgcListParam().split(",")));
             JSONObject root = new JSONObject();
             root.put(AJAX_RETURN_SUCCESS_KEY, "REMOVED");
             return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
         } catch (PAException pae) {
             LOG.error("unassignProgramCodesFromTrials - studyProtocolIds:"
-                    + trialIds
-                    + "programCodes:" + codes);
+                    + getStudyProtocolIdListParam()
+                    + "programCodes:" + getPgcListParam());
+            ServletActionContext.getResponse().addHeader(ERROR_MSG_KEY, pae.getMessage());
+            ServletActionContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST, pae.getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * Will replace program codes on selected trials
+     *
+     * @return StreamResult - the json object array
+     * @throws IOException - for encoding issues
+     */
+    public StreamResult replaceProgramCodesInTrials() throws IOException {
+        try {
+            List<Long> studyProtocolIds = new ArrayList<Long>();
+            for (String trialId : getStudyProtocolIdListParam().split(",")) {
+                studyProtocolIds.add(Long.parseLong(trialId));
+            }
+
+            studyProtocolService.replaceProgramCodesOnTrials(studyProtocolIds,
+                    getFamilyPoId(), getPgcParam(), Arrays.asList(getPgcListParam().split(",")));
+            JSONObject root = new JSONObject();
+            root.put(AJAX_RETURN_SUCCESS_KEY, "REPLACED");
+            return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
+        } catch (PAException pae) {
+            LOG.error("replaceProgramCodesInTrials - studyProtocolIds:"
+                    + getStudyProtocolIdListParam()
+                    + ", programCodesFrom:" + getPgcParam()
+                    + ", programCodesTo:" + getPgcListParam());
             ServletActionContext.getResponse().addHeader(ERROR_MSG_KEY, pae.getMessage());
             ServletActionContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST, pae.getMessage());
         }

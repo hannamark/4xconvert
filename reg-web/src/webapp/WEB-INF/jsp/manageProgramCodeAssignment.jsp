@@ -260,4 +260,38 @@
     </div>
 </div>
 
+
+<div id="pgc-mrpl-dialog" title="Replace Program Code Assignments" style="display: none;">
+
+    <div id="pgc-mrpl-Errors" class="alert alert-danger" style="display: none;" role="alert">
+        <i class="fa fa-exclamation"></i>  <b class="error">Error</b> processing:
+        <div id="pgc-mrpl-ErrorMsg"></div>
+    </div>
+
+    <p>
+        Replace the assignment of the following program code. Only one program code can be replace at a time:
+    <div id="pgc-mrpl-indicator" style="display: none;">
+        <img src="${pageContext.request.contextPath}/images/loading.gif" alt="Progress Indicator." width="18" height="18" />
+    </div>
+    </p>
+    <div class="text-center" id="pgc-mrpl-selone-div">
+        <s:if test="familyDto">
+            <select id="pgc-mrpl-selone" size="2">
+            </select>
+        </s:if>
+    </div>
+    <p>with the following program code(s)</p>
+    <div class="text-center" id="pgc-mrpl-seltwo-div">
+        <s:if test="familyDto">
+            <select id="pgc-mrpl-seltwo" multiple="multiple">
+                <s:iterator var="p" value="familyDto.programCodes">
+                    <s:if test="active">
+                        <option value="<s:property value="programCode" />"><s:property value="programName" /></option>
+                    </s:if>
+                </s:iterator>
+            </select>
+        </s:if>
+    </div>
+</div>
+
 </body>
