@@ -53,6 +53,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         //when I change family
         Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
         dropdown.selectByVisibleText("National Cancer Institute");
+        changePageLength("25");
 
         //then I should see associated trials.
         TrialInfo trial4 = trials.get(4);
