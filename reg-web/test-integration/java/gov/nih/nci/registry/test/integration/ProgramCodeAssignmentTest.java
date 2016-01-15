@@ -435,7 +435,8 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         //Also when I change the filter options
         Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
         dropdown.selectByVisibleText("National Cancer Institute");
-
+        changePageLength("25");
+        
         //I should see that the original filter is preserved
         waitForElementToBecomeAvailable(
                 By.xpath("//table[@id='trialsTbl']/tbody//tr//td[text()='" + trials.get(0).title + "']"), 10);
