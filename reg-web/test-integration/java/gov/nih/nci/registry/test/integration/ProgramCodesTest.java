@@ -127,12 +127,12 @@ public class ProgramCodesTest extends AbstractRegistrySeleniumTest {
     protected void createProgramCode(String pcName, Long familyPoId, String programCode)
             throws SQLException {
         QueryRunner runner = new QueryRunner();
-        Integer pcID = (Integer) runner
-                .query(connection,
-                        "select identifier from program_code where program_code = '"+programCode+"'",
-                        new ArrayHandler())[0];
+        String sql = "select identifier from program_code where program_code = '"+programCode+"'";
+        Object[] pcID = runner.query(connection, sql,
+                new ArrayHandler());
+                       
         if (pcID == null) {
-            String sql = "insert into program_code (family_id, program_code,program_name,status_code) values (" +familyPoId+ ", '" +programCode+ "', '" +pcName+"','ACTIVE')";
+            sql = "insert into program_code (family_id, program_code,program_name,status_code) values (" +familyPoId+ ", '" +programCode+ "', '" +pcName+"','ACTIVE')";
             runner.update(connection, sql);
         }
     }
