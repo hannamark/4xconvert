@@ -1,8 +1,6 @@
 package gov.nih.nci.pa.service.util;
 
 
-
-
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.domain.Family;
 import gov.nih.nci.pa.domain.ProgramCode;
@@ -11,16 +9,23 @@ import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.exception.PAValidationException;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
+import org.hibernate.Query;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
-
-import org.hibernate.Query;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * FamilyProgramCodeBeanLocal
@@ -31,12 +36,75 @@ import org.hibernate.Query;
        PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class FamilyProgramCodeBeanLocal implements FamilyProgramCodeServiceLocal {
-    
+
+    private static final String PROGRAM_CODE_END_DATE_PROPERTY_NAME = "programcodes.reporting.default.end_date";
+    private static final String PROGRAM_CODE_LENGTH_PROPERTY_NAME = "programcodes.reporting.default.length";
     /**
      * DUPE_PROGRAM_CODE
      */
     public static final String DUPE_PROGRAM_CODE = "This program code already exists in the system."
             + " Please add another program code";
+
+    private static final Logger LOG = Logger.getLogger(FamilyProgramCodeBeanLocal.class);
+
+    @EJB
+    private LookUpTableServiceRemote lookUpTableService;
+
+    /**
+     * Will set the LookUpTableService
+     * @param lookUpTableService - lookup table service
+     */
+    public void setLookUpTableService(LookUpTableServiceRemote lookUpTableService) {
+        this.lookUpTableService = lookUpTableService;
+    }
+
+    /**
+     * Will creates family in PA based on PO
+     *
+     * @throws PAException when there is an error
+     */
+    @Override
+    public void populate() throws PAException {
+
+        String strPgcEndDate = lookUpTableService.
+                getPropertyValue(PROGRAM_CODE_END_DATE_PROPERTY_NAME);
+        String strPgcLength = lookUpTableService.
+                getPropertyValue(PROGRAM_CODE_LENGTH_PROPERTY_NAME);
+        Date endDate = PAUtil.dateStringToDate(strPgcEndDate);
+        Integer length = Integer.parseInt(strPgcLength);
+        LOG.info("Copying families into PA. [default EndDate:" + strPgcEndDate + ", default Length:" + length + "]");
+
+        List<gov.nih.nci.services.family.FamilyDTO> familiesInPoList = FamilyHelper.getAllFamilies();
+        LinkedHashMap<Long, FamilyDTO> index = new LinkedHashMap<Long, FamilyDTO>();
+        if (CollectionUtils.isNotEmpty(familiesInPoList)) {
+            for (gov.nih.nci.services.family.FamilyDTO f : familiesInPoList) {
+                Long poId = IiConverter.convertToLong(f.getIdentifier());
+                FamilyDTO dto = new FamilyDTO(null, poId, endDate, length);
+                dto.setName(EnOnConverter.convertEnOnToString(f.getName()));
+                index.put(poId, new FamilyDTO(null, poId, endDate, length));
+            }
+
+            //fetch all family poids from PA
+            List<Long> existingPoIds = PaHibernateUtil.getCurrentSession()
+                    .createQuery("select fm.poId from Family fm").list();
+
+            LOG.info(" Found [" + index.size() + "] families in PO and [" + existingPoIds.size() + "] families in PA");
+
+            for (Long poId : existingPoIds) {
+                index.remove(poId);
+            }
+
+            for (FamilyDTO dto : index.values()) {
+                FamilyDTO persisted = create(dto);
+                if (LOG.isInfoEnabled()) {
+                    LOG.info(String.format("Created PA family [id:%s, poID:%s,name:%s, length:%s, endDate:%s]",
+                            persisted.getId(), persisted.getPoId(), persisted.getName(),
+                            persisted.getReportingPeriodLength(), persisted.getReportingPeriodEndDate()));
+                }
+            }
+        }
+        LOG.info("Finished copying families[created:" + index.size() + "]");
+    }
 
     /**
      * Returns the associated Family DTO for a given family po id

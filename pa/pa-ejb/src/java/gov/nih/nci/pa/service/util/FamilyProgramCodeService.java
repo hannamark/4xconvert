@@ -4,6 +4,7 @@ package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.dto.FamilyDTO;
 import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.exception.PAValidationException;
 
 /**
@@ -44,4 +45,10 @@ public interface FamilyProgramCodeService {
     ProgramCodeDTO createProgramCode(FamilyDTO familyDTO, ProgramCodeDTO programCodeDTO) 
             throws PAValidationException;
 
+
+    /**
+     * Will copy new families in PO into PA.
+     * @throws PAException when there is an error
+     */
+    void populate() throws PAException;
 }

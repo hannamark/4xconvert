@@ -29,10 +29,15 @@ public class FamilyProgramCodeBeanLocalServiceTest extends AbstractEjbTestCase {
     public ExpectedException thrown = ExpectedException.none();
 
     FamilyProgramCodeBeanLocal bean;
+    MockLookUpTableServiceBean lookUpTableServiceRemote;
 
     @Before
     public void init() throws Exception {
         bean = (FamilyProgramCodeBeanLocal) getEjbBean(FamilyProgramCodeBeanLocal.class);
+        lookUpTableServiceRemote = new MockLookUpTableServiceBean();
+
+
+        bean.setLookUpTableService(lookUpTableServiceRemote);
         TestSchema.primeData();        
         PaHibernateUtil.getCurrentSession().flush();
 
@@ -82,6 +87,29 @@ public class FamilyProgramCodeBeanLocalServiceTest extends AbstractEjbTestCase {
        dto.setProgramCode("1");
        dto.setProgramName("Program Name1");
        bean.createProgramCode(familyDTO,dto);
+   }
+
+    @Test
+   public void testPopulate() throws Exception {
+        //Given there are two new records in PO  and 1 family in PA
+       int count1 = PaHibernateUtil.getCurrentSession().createQuery("select fm from Family fm").list().size();
+
+       //when I call populate
+       bean.populate();
+
+       //then the number of families should be 3
+       int count2 = PaHibernateUtil.getCurrentSession().createQuery("select fm from Family fm").list().size();
+
+        assertEquals(1, count1);
+        assertEquals(count2, count1 + 2);
+
+        //If populate is called again,
+        bean.populate();
+
+        //Then no new records are created
+        int count3 = PaHibernateUtil.getCurrentSession().createQuery("select fm from Family fm").list().size();
+        assertEquals(count2, count3) ;
+
    }
 
 }

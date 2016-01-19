@@ -461,4 +461,41 @@
             </job-data-map>
         </job-detail>
     </job>
+    <job>
+        <job-detail>
+            <name>populateFamilyFromPOJob</name>
+            <group>DEFAULT</group>
+            <job-class>gov.nih.nci.pa.util.EJBInvokerJob</job-class>
+            <volatility>false</volatility>
+            <durability>true</durability>
+            <recover>true</recover>
+            <job-data-map allows-transient-data="true">
+                <entry>
+                    <key>ejb</key>
+                    <value>FamilyProgramCodeBeanLocal</value>
+                </entry>
+                <entry>
+                    <key>interfaceName</key>
+                    <value>gov.nih.nci.pa.service.util.FamilyProgramCodeServiceLocal</value>
+                </entry>
+                <entry>
+                    <key>method</key>
+                    <value>populate</value>
+                </entry>
+            </job-data-map>
+        </job-detail>
+        <trigger>
+            <simple>
+                <name>populateFamilyFromPOJobTrigger</name>
+                <group>DEFAULT</group>
+                <description>Run once at startup</description>
+                <misfire-instruction>MISFIRE_INSTRUCTION_FIRE_ONCE_NOW</misfire-instruction>
+                <job-name>populateFamilyFromPOJob</job-name>
+                <job-group>DEFAULT</job-group>
+                <start-time>2016-01-17T12:00:00</start-time>
+                <repeat-count>0</repeat-count>
+                <repeat-interval>0</repeat-interval>
+            </simple>
+        </trigger>
+    </job>
 </quartz> 

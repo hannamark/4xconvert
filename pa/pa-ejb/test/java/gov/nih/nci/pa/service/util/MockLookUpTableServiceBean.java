@@ -119,7 +119,11 @@ public class MockLookUpTableServiceBean implements LookUpTableServiceRemote {
         }
         else if (name.equals("ctep.ccr.learOrgIds")) {
             return "NCICCR";
-        } else {
+        } else if (name.equals("programcodes.reporting.default.end_date")) {
+            return "12/31/2016";
+        } else if (name.equals("programcodes.reporting.default.length")) {
+           return "12";
+        }else {
             return value;
         }
     }

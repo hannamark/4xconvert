@@ -94,7 +94,7 @@ import org.junit.runners.Suite.SuiteClasses;
  * @author dkrylov
  */
 @RunWith(BatchingTestSuite.class)
-@SuiteClasses(value = { LoginTest.class, ParticipatingSiteTest.class,
+@SuiteClasses(value = { PopulateFamilyFromPOQuartzJobTriggerTest.class, LoginTest.class, ParticipatingSiteTest.class,
         ManageTrialOtherIdentifiersTest.class, TrialStatusTest.class,
         TrialStatusHistoryTest.class, RegulatoryInformationTest.class,
         AnatomicSiteTest.class, ArmTest.class, StudyOwnershipTest.class,
