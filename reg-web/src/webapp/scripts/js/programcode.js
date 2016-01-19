@@ -84,12 +84,15 @@ function loadProgramCodes($) {
             },
             "serverSide": false,
             "columns": [{
-                "data": "programCode"
+                "data": function(row,type,val,meta){
+                	return '<a href="#" class="mcapage" rel="' + row.programCode + '">' +row.programCode+ '</a>';
+                }
             }, {
                 "data": "programName"
             }, {
-                "data": "",
-                "defaultContent": ""
+                "data":function(row,type,val,meta){
+                	return '<a href="#"  title="Manage this Program Code\'s assignments to trials where members of your organization family are participants" class="fa fa-cog"   onclick="manageProgramCodes(\''+row.programCode+'\',\''+jQuery("#poID").val() +'\')" data-trigger="hover"></a>';
+                }
             }],
             "ajax": {
                 "url": "programCodesfetchProgramCodesForFamily.action",
@@ -109,9 +112,18 @@ function loadProgramCodes($) {
                 "targets": [1]
             }]
         });
-        
+    	$('#programCodesTable tbody').on('click', 'a.mcapage', function (evt) {
+            evt.preventDefault();
+            var curpgcfilter = $.attr(evt.target, 'rel');
+            document.forms[0].action = "managePCAssignmentexecute.action?pgcFilter="+curpgcfilter+"&familyPoId="+ jQuery("#poID").val() ;
+	        document.forms[0].submit();
+        });
     }
-
+    
+    function manageProgramCodes(programCode, selectedPID) {
+   	 document.forms[0].action = "managePCAssignmentexecute.action?pgcFilter="+programCode+"&familyPoId="+ selectedPID;
+        document.forms[0].submit();
+   }
 
 function addProgramCode(){
 	if (validateProgramCode()){

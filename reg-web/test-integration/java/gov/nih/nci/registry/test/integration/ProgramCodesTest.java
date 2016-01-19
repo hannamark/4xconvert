@@ -13,6 +13,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
+import gov.nih.nci.pa.domain.ProgramCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -104,6 +105,37 @@ public class ProgramCodesTest extends AbstractRegistrySeleniumTest {
         dropdown.selectByVisibleText("Family2");
     }  
     
+    public void testManageProgramCodes() throws Exception {
+        assignUserToGroup("abstractor-ci", "ProgramCodeAdministrator");
+        loginAndAcceptDisclaimer();
+        waitForElementToBecomeVisible(By.linkText("Administration"), 2);        
+        hoverLink("Administration");   
+        waitForElementToBecomeVisible(By.linkText("Program Codes"), 2);
+        assertTrue(selenium.isTextPresent("Program Codes"));        
+        hoverLink("Program Codes");
+        assertTrue(selenium.isTextPresent("Manage Master List"));
+        clickAndWait("link=Manage Master List");
+        Select dropdown = new Select(driver.findElement(By.id("selectedDTOId")));
+        createProgramCode("Cancer Program1",1L,"PG1");
+        dropdown.selectByVisibleText("Family1");
+        assertEquals("PG1",
+                selenium.getText("xpath=//table[@id='programCodesTable']/tbody/tr[1]/td[1]"));
+        clickAndWait("xpath=//table[@id='programCodesTable']/tbody/tr[1]/td[1]/a");
+        assertTrue(selenium.isTextPresent("Manage Program Code Assignments"));
+    }
+    
+    protected void createProgramCode(String pcName, Long familyPoId, String programCode)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        Integer pcID = (Integer) runner
+                .query(connection,
+                        "select identifier from program_code where program_code = '"+programCode+"'",
+                        new ArrayHandler())[0];
+        if (pcID == null) {
+            String sql = "insert into program_code (family_id, program_code,program_name,status_code) values (" +familyPoId+ ", '" +programCode+ "', '" +pcName+"','ACTIVE')";
+            runner.update(connection, sql);
+        }
+    }
     /**
      * Test the program codes menu items
      * @throws SQLException 
