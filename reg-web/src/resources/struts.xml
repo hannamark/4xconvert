@@ -246,6 +246,9 @@
                 <param name="parse">true</param>
                 <param name="trialAction">${trialAction}</param>
             </result>
+             <result name="ajaxResponse" type="stream">
+                <param name="inputName">ajaxResponseStream</param>
+            </result>
         </action>
         
         <action name="amendTrial*" class="gov.nih.nci.registry.action.AmendmentTrialAction" method="{1}">

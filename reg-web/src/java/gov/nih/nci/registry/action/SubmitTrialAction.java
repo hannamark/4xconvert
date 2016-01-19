@@ -79,10 +79,13 @@
 package gov.nih.nci.registry.action;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.dto.FamilyDTO;
+import gov.nih.nci.pa.dto.OrgFamilyDTO;
 import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
 import gov.nih.nci.pa.dto.ResponsiblePartyDTO;
 import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -97,6 +100,8 @@ import gov.nih.nci.pa.service.StudyProtocolStageServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.status.StatusDto;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
+import gov.nih.nci.pa.service.util.FamilyHelper;
+import gov.nih.nci.pa.service.util.FamilyProgramCodeService;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceLocal;
 import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
@@ -113,7 +118,10 @@ import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -121,6 +129,9 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.dispatcher.StreamResult;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import com.opensymphony.xwork2.Preparable;
@@ -132,7 +143,7 @@ import com.opensymphony.xwork2.Preparable;
  * @author Harsha
  *
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({ "PMD.TooManyMethods" })
 public class SubmitTrialAction extends AbstractBaseTrialAction implements Preparable {
     private static final long serialVersionUID = -7644860242308952142L;
     private static final Logger LOG = Logger.getLogger(SubmitTrialAction.class);
@@ -148,6 +159,11 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
     private Long id;
     private String sum4FundingCatCode;
     private String currentUser;
+    private String orgId;
+    private InputStream ajaxResponseStream;
+    private FamilyProgramCodeService familyProgramCodeService;
+    private long familyId;
+    
     
     /**
      * Default constructor.
@@ -174,6 +190,8 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
             getTrialDTO().setPrimaryPurposeAdditionalQualifierCode(PAUtil
                     .lookupPrimaryPurposeAdditionalQualifierCode(getTrialDTO().getPrimaryPurposeCode()));
         }
+        
+        familyProgramCodeService = PaRegistry.getProgramCodesFamilyService();
     }
 
     /**
@@ -349,6 +367,49 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
         ServletActionContext.getRequest().getSession().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
         return "review";
     }
+    
+    /**
+     * @return if Org belongs to any family
+     * @throws Exception exception 
+     */
+    public String isOrgBelongToFamily() throws Exception {
+        String result = "";
+        List<OrgFamilyDTO> familyList = FamilyHelper.getByOrgId(new Long(orgId));
+        if (familyList != null && !familyList.isEmpty()) {
+            result = familyList.get(0).getId() + "";
+        }
+        ajaxResponseStream = new ByteArrayInputStream(result.getBytes());
+        return "ajaxResponse";   
+    }
+    
+    /**
+     * Gets program codes for family 
+     * @throws UnsupportedEncodingException Unsupported encoding exception
+     * @return JSON String
+     */
+    
+    public StreamResult fetchProgramCodesForFamily() throws UnsupportedEncodingException {
+        JSONObject root = new JSONObject();
+        JSONArray arr = new JSONArray();
+        root.put("data", arr);
+        populateProgramCodes(arr);
+        return new StreamResult(new ByteArrayInputStream(root.toString().getBytes()));
+    }
+    
+    private void populateProgramCodes(JSONArray arr) {
+        LOG.debug("populating program codes for [familyPOId : " + familyId + "]");
+        FamilyDTO familyDTO = familyProgramCodeService.getFamilyDTOByPoId(familyId);
+        if (familyDTO != null) {
+       
+            for (ProgramCodeDTO programCodeDTO : familyDTO.getProgramCodes()) {
+                JSONObject o = new JSONObject();
+                o.put("id", programCodeDTO.getProgramCode());
+                o.put("text", programCodeDTO.getProgramCode() + " " + programCodeDTO.getProgramName());
+                arr.put(o);
+             }
+        }
+
+      }
 
 
     private void addSecondaryIdsToTrialDto() {
@@ -598,6 +659,63 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
     @Override
     public boolean isOpenSitesWarningRequired() {
         return false;
+    }
+
+    /**
+     * @return orgId
+     */
+    public String getOrgId() {
+        return orgId;
+    }
+
+    /**
+     * @param orgId orgId
+     */
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
+    }
+
+    /**
+     * @return ajaxResponseStream
+     */
+    public InputStream getAjaxResponseStream() {
+        return ajaxResponseStream;
+    }
+
+    /**
+     * @param ajaxResponseStream ajaxResponseStream
+     */
+    public void setAjaxResponseStream(InputStream ajaxResponseStream) {
+        this.ajaxResponseStream = ajaxResponseStream;
+    }
+
+    /**
+     * @return familyId
+     */
+    public long getFamilyId() {
+        return familyId;
+    }
+
+    /**
+     * @param familyId familyId
+     */
+    public void setFamilyId(long familyId) {
+        this.familyId = familyId;
+    }
+
+    /**
+     * @return familyProgramCodeService
+     */
+    public FamilyProgramCodeService getFamilyProgramCodeService() {
+        return familyProgramCodeService;
+    }
+
+    /**
+     * @param familyProgramCodeService familyProgramCodeService
+     */
+    public void setFamilyProgramCodeService(
+            FamilyProgramCodeService familyProgramCodeService) {
+        this.familyProgramCodeService = familyProgramCodeService;
     }
 
 }

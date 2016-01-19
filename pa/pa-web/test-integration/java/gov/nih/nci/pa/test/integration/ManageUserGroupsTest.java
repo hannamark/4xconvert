@@ -135,7 +135,7 @@ public class ManageUserGroupsTest extends AbstractPaSeleniumTest {
     }
 
     @SuppressWarnings("deprecation")
-    private void useSelect2ToPickAnOption(String id, String sendKeys,
+    public void useSelect2ToPickAnOption(String id, String sendKeys,
             String option) {
         WebElement sitesBox = driver.findElement(By
                 .xpath("//span[preceding-sibling::select[@id='" + id
@@ -160,7 +160,7 @@ public class ManageUserGroupsTest extends AbstractPaSeleniumTest {
     }
 
     @SuppressWarnings("deprecation")
-    private void useSelect2ToUnselectOption(String option) {
+    public void useSelect2ToUnselectOption(String option) {
         s.click("//li[@class='select2-selection__choice' and @title='" + option
                 + "']/span[@class='select2-selection__choice__remove']");
         assertFalse(s.isElementPresent(getXPathForSelectedOption(option)));
@@ -185,7 +185,7 @@ public class ManageUserGroupsTest extends AbstractPaSeleniumTest {
      * @param option
      */
     @SuppressWarnings("deprecation")
-    private void assertOptionSelected(String option) {
+    public void assertOptionSelected(String option) {
         assertTrue(s.isElementPresent(getXPathForSelectedOption(option)));
     }
 
@@ -193,13 +193,13 @@ public class ManageUserGroupsTest extends AbstractPaSeleniumTest {
      * @param option
      * @return
      */
-    private String getXPathForSelectedOption(String option) {
+    public String getXPathForSelectedOption(String option) {
         return "//li[@class='select2-selection__choice' and @title='" + option
                 + "']";
     }
 
     @SuppressWarnings("deprecation")
-    private void assertOptionNotSelected(String option) {
+    public void assertOptionNotSelected(String option) {
         assertFalse(s.isElementPresent(getXPathForSelectedOption(option)));
     }
 

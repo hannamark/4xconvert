@@ -380,57 +380,5 @@ public class TrialSearchTest extends AbstractTrialStatusTest {
 
     }
 
-    @SuppressWarnings("deprecation")
-    private void useSelect2ToUnselectOption(String option) {
-        s.click("//li[@class='select2-selection__choice' and @title='" + option
-                + "']/span[@class='select2-selection__choice__remove']");
-        assertFalse(s.isElementPresent(getXPathForSelectedOption(option)));
-
-    }
-
-    @SuppressWarnings("deprecation")
-    private void useSelect2ToPickAnOption(String id, String sendKeys,
-            String option) {
-        WebElement sitesBox = driver.findElement(By
-                .xpath("//span[preceding-sibling::select[@id='" + id
-                        + "']]//input[@type='search']"));
-        sitesBox.click();
-        boolean elementPresent = s.isElementPresent("select2-" + id
-                + "-results");
-        if (!elementPresent) {
-            // odd behavior in FF, click again.
-            sitesBox.click();
-            elementPresent = s.isElementPresent("select2-" + id + "-results");
-        }
-        assertTrue(elementPresent);
-        sitesBox.sendKeys(sendKeys);
-
-        By xpath = null;
-        xpath = By.xpath("//li[@role='treeitem' and text()='" + option + "']");
-        waitForElementToBecomeAvailable(xpath, 10);
-        driver.findElement(xpath).click();
-        assertOptionSelected(option);
-    }
-
-    /**
-     * @param option
-     */
-    @SuppressWarnings("deprecation")
-    private void assertOptionSelected(String option) {
-        assertTrue(s.isElementPresent(getXPathForSelectedOption(option)));
-    }
-
-    /**
-     * @param option
-     * @return
-     */
-    private String getXPathForSelectedOption(String option) {
-        return "//li[@class='select2-selection__choice' and @title='" + option
-                + "']";
-    }
-
-    @SuppressWarnings("deprecation")
-    private void assertOptionNotSelected(String option) {
-        assertFalse(s.isElementPresent(getXPathForSelectedOption(option)));
-    }
+   
 }

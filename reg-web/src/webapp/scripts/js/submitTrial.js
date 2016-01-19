@@ -53,6 +53,7 @@
       }
       
       function loadLeadOrgDiv() {
+    	  loadProgramCodes(orgid);
           $("trialDTO.leadOrganizationIdentifier").value = orgid;
           $('trialDTO.leadOrganizationNameField').innerHTML = chosenname;
           $('trialDTO.leadOrganizationName').value = chosenname;
@@ -113,11 +114,18 @@
       }
       
       function reviewProtocol () {
+    	  
+    	  var text = getProgramCodesValuesText();
+          jQuery("#trialDTO\\.programCodeText").val(text);  
+    
+    	  
           submitFirstForm("review", "submitTrialreview.action");
       }
       
       function partialSave() {
-          submitFirstForm(null, "submitTrialpartialSave.action");
+    	  var text = getProgramCodesValuesText();
+    	  jQuery("#trialDTO\\.programCodeText").val(text);  
+    	  submitFirstForm(null, "submitTrialpartialSave.action");
       }
       
       function cancelProtocol() {
@@ -328,6 +336,82 @@
               alert("Please enter a valid Other identifier to add");
           }
       }
-
       
+      function loadProgramCodes(selection ,selectValues) {
+    	jQuery('#programCodesLoad').show();
+      	var url = registryApp.contextPath+'/protected/submitTrialisOrgBelongToFamily.action?orgId='+selection;
+      	var programCodesUrl =registryApp.contextPath+'/protected/submitTrialfetchProgramCodesForFamily.action?familyId=';
+      	var isOrgHasFamily = false;
+      	jQuery.ajax({
+          	"method":"post",
+          	  "url": url,
+          	}).done(function(data, status) {
+          	  if(data!="") {
+          		  isOrgHasFamily = true;
+          		  //if Org has family then set program code to select2 else hide
+          		  jQuery('#programCodeBlock').show();
+          		  jQuery("#programCodesValues").empty();
+          		  
+          		  initProgramCodes('programCodesValues',[]);
+          		  
+          		  //get program codes for the family
+          		  programCodesUrl = programCodesUrl +data;  
+          		  jQuery.ajax({
+          		    "method":"post",
+          		   "url": programCodesUrl,
+          		    }).done(function(programCodeOptions, programCodeStatus) {
+          		    	 ("#programCodesValues").empty();
+          		    	 var obj =jQuery.parseJSON(programCodeOptions);
+          		    	initProgramCodes('programCodesValues',obj.data);
+          		    	
+          		    	if(selectValues!=undefined && selectValues!=null) {
+          		    		selectProgramCodes('programCodesValues',selectValues);
+          		    	 }
+          		    	 jQuery('#programCodesLoad').hide();
+                     }).fail(function(jqXHR, textStatus ) {
+                  	   jQuery('#programCodesLoad').hide();
+          		         jQuery("#programCodesValues").empty();
+          		         alert( "Error occured while loading program codes"+jqXHR.responseText );
+          		});
+                 } else {
+          		   jQuery("#programCodesValues").empty();
+          		   jQuery('#programCodeBlock').hide();
+          		   jQuery('#programCodesLoad').hide();
+          	 }
+          	}).fail(function(jqXHR, textStatus) {
+          		jQuery('#programCodesLoad').show();
+          		jQuery("#programCodesValues").empty();
+          		alert( "Error occured while loading program codes"+jqXHR.responseText );
+          	  });
+      }
+     
+function initProgramCodes(dropDownId, dataValue) {
+	jQuery("#"+dropDownId).select2({
+        placeholder: "Select program code",
+        data: dataValue
+  });
+}      
+   
+function getProgramCodesValuesText() {
+	var values = jQuery("#programCodesValues").val();
+	var text ="";
+	if(values !=null && values.length >0){
+		for(var count =0;count<values.length;count++) {
+			if(text==""){
+				text = values[count];
+			}
+			else {
+				text = text +";"+values[count];
+			}
+			
+		}
+	}
+	return text;
+}
+
+function selectProgramCodes(id,programCodeValues) {
+	var values = programCodeValues.split(";");
+	jQuery("#"+id).val(values);
+	jQuery("#"+id).trigger("change");
+}
   

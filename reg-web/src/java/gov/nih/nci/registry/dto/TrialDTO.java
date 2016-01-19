@@ -12,7 +12,9 @@ import gov.nih.nci.pa.service.status.StatusDto;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
@@ -92,8 +94,10 @@ public class TrialDTO extends BaseTrialDTO {
     private List<Ii> secondaryIdentifierList;
     private List<Ii> secondaryIdentifierAddList;
     private String assignedIdentifier;
+    private Map<String, String> programCodesMap = new HashMap<String, String>();
     
     private Collection<StatusDto> statusHistory = new ArrayList<StatusDto>();
+  
      
 
     /**
@@ -900,4 +904,21 @@ public class TrialDTO extends BaseTrialDTO {
         return new ArrayList<StatusDto>(getStatusHistory())
                 .get(getStatusHistory().size() - 1);
     }
+
+    /**
+     * @return programCodesMap
+     */
+    public Map<String, String> getProgramCodesMap() {
+        return programCodesMap;
+    }
+
+    /**
+     * @param programCodesMap programCodesMap
+     */
+    public void setProgramCodesMap(Map<String, String> programCodesMap) {
+        this.programCodesMap = programCodesMap;
+    }
+
+
+   
 }

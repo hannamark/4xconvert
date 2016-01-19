@@ -8,7 +8,7 @@
     
     <link href="<c:url value='/styles/jquery-datatables/css/jquery.dataTables.min.css'/>" rel="stylesheet" type="text/css" media="all" />    
     <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery.dataTables.min.js'/>"></script>
-    
+  
 <s:head/>
   
   <c:url value="/protected/submitTrial" var="backendUrlTemplate"/>  
@@ -29,14 +29,16 @@
   }
   
   function lookup4loadleadorg(selection, name) {
-        if(selection === undefined || selection == "") {
+	  if(selection === undefined || selection == "") {
             $('trialDTO.leadOrganizationNameField').innerHTML = 'Please Select Lead Organization';
             $("trialDTO.leadOrganizationIdentifier").value = '';
             $('trialDTO.leadOrganizationName').value = '';
         } else if(selection == -1) {
             showPopup("${lookupOrgUrl}",loadLeadOrgDiv, 'Select Lead Organization');
         } else if(selection > 0) {
-            $('trialDTO.leadOrganizationNameField').innerHTML = name;
+        	
+        	loadProgramCodes(selection);
+        	$('trialDTO.leadOrganizationNameField').innerHTML = name;
             $('trialDTO.leadOrganizationName').value = name;
             $("trialDTO.leadOrganizationIdentifier").value = selection;
         } else {
@@ -86,14 +88,21 @@
       }
       
       document.observe("dom:loaded", function() {
-                                         displayTrialStatusDefinition('trialDTO_statusCode');
+    	                                 displayTrialStatusDefinition('trialDTO_statusCode');
+    	                                 
                                          if($('trialDTO.leadOrganizationName').value) {
                                             $('trialDTO.leadOrganizationNameField').innerHTML = $('trialDTO.leadOrganizationName').value;
                                          }
                                          if($('trialDTO.sponsorName').value) {
                                             $('trialDTO.sponsorNameField').innerHTML = $('trialDTO.sponsorName').value;
                                          }
+                                         if($('trialDTO.leadOrganizationIdentifier').value) {
+                                        	 loadProgramCodes($('trialDTO.leadOrganizationIdentifier').value,
+                                        	 $('trialDTO.programCodeText').value);
+                                        	 
+                                         }
                                         
+                                         
                                      });
       
                  
@@ -179,7 +188,20 @@
                           <div id="loadOrgField">
                               <%@ include file="/WEB-INF/jsp/nodecorate/trialLeadOrganization.jsp" %>
                           </div>
-                      </div>                
+                          
+                          <div class="col-xs-10">
+                            <div align="center"  id ="programCodesLoad" style="display:none" >
+                                <img  src="${pageContext.request.contextPath}/images/loading.gif"
+                                />
+                                &nbsp;Loading...
+                                </div>
+                                
+                                
+                         </div>
+                          
+                                   
+                      </div>     
+                        
                       <div class="form-group">
                           <label for="trialDTO.piName" class="col-xs-4 control-label"><fmt:message key="submit.trial.principalInvestigator"/><span class="required">*</span></label>
                           <div id="loadPersField">
@@ -222,18 +244,22 @@
                                   <%@ include file="/WEB-INF/jsp/nodecorate/trialSummary4FundingSponsorSelector.jsp" %>
                               </div>                                    
                           </div>
-                          <div class="form-group">                               
+                          <div class="form-group" id="programCodeBlock" style="display:none" >                               
                               <label for="trialDTO.programCodeText" class="col-xs-4 control-label"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label>
-                              <div class="col-xs-4">
-                                  <s:textfield id="trialDTO.programCodeText" name="trialDTO.programCodeText"  maxlength="100" size="100"  cssClass="form-control"/>
-                                  <span class="alert-danger">
-                                      <s:fielderror>
-                                          <s:param>trialDTO.programCodeText</s:param>
-                                      </s:fielderror>
-                                  </span>
-                              </div>
-                              <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.summary_4_program_code" />"  data-placement="top" data-trigger="hover"></i>
-                          </div>
+                              <!-- As per new requirements we don't need to display program codes tex field at all -->
+                              
+                              <div class="col-xs-4" >
+                              <s:select size="2" multiple="true"  name="trialDTO.selectedProgramCodes" id="programCodesValues"  list="#{trialDTO.programCodesMap}"
+                                cssStyle="width:206px" />
+                                  <c:if test="${sessionScope.isSiteAdmin}">
+                                     &nbsp;&nbsp;<a href="../siteadmin/programCodesexecute.action">Manage Program Codes</a>
+                                 </c:if>
+                                
+                              </div>  
+                               <div class="col-xs-4" >
+                                <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.summary_4_program_code" />"  data-placement="top" data-trigger="hover"></i>
+                               </div>      
+                            </div>
                       </div>
                   </div>
               </div>
@@ -345,6 +371,7 @@
               <button type="button" class="btn btn-icon btn-default" onclick="cancelProtocol()"><i class="fa-times-circle"></i>Cancel</button>
             </div>
           <s:hidden name="uuidhidden"/>
+          <s:hidden id="trialDTO.programCodeText" name="trialDTO.programCodeText"/>
       </s:form>
 </body>
 </html>

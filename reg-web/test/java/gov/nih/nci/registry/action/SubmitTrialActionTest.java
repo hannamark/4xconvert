@@ -7,28 +7,39 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import gov.nih.nci.pa.dto.FamilyDTO;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
+import gov.nih.nci.pa.service.util.FamilyProgramCodeServiceLocal;
 import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.TrialUtil;
 
 import java.io.File;
+import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Date;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.dispatcher.StreamResult;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.util.ReflectionUtils;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
 
@@ -48,6 +59,7 @@ public class SubmitTrialActionTest extends AbstractHibernateTestCase{
         action.setServletRequest(ServletActionContext.getRequest());
         ServletActionContext.getRequest().getSession()
                 .setAttribute("statusHistoryList", new ArrayList<>());
+        action.setFamilyProgramCodeService(getProgramCodeServiceMock());
     }
     
     @Test
@@ -696,4 +708,62 @@ public class SubmitTrialActionTest extends AbstractHibernateTestCase{
         action.setSum4FundingCatCode("sum4FundingCatCode");
         assertNotNull(action.getSum4FundingCatCode());
     }
+    
+    @Test
+    public void testFetchProgramCodesForFamily() throws Exception {        
+       
+        action.setFamilyId(123456L);
+        assertTrue(action.fetchProgramCodesForFamily() instanceof StreamResult);     
+        
+      
+          Field field = StreamResult.class.getDeclaredField("inputStream");
+          ReflectionUtils.makeAccessible(field);
+
+          StreamResult sr = action.fetchProgramCodesForFamily();
+
+          InputStream is = (InputStream) field.get(sr);
+          String json = IOUtils.toString(is);
+          assertEquals("{\"data\":[{\"id\":\"PG1\",\"text\":\"PG1 Program Name1\"}]}", json);
+
+     
+    }
+    
+    private FamilyProgramCodeServiceLocal getProgramCodeServiceMock() {
+        final FamilyProgramCodeServiceLocal mock = mock(FamilyProgramCodeServiceLocal.class);
+        
+        FamilyDTO dto = new FamilyDTO(Long.valueOf("12345"), Long.valueOf("123456"), new Date(), 12);
+        createAndAddProgramCodes(dto);
+        
+        when(mock.getFamilyDTOByPoId(any(Long.class)))
+                .thenReturn(dto);
+                
+        when(mock.update(any(FamilyDTO.class)))
+                .thenReturn(dto);
+        
+        return mock;
+    }
+    
+    private void createAndAddProgramCodes(FamilyDTO familyDTO) {
+
+        ProgramCodeDTO pg1 = new ProgramCodeDTO();
+        pg1.setProgramName("Program Name1");
+        pg1.setProgramCode("PG1");
+        pg1.setActive(true);
+        familyDTO.getProgramCodes().add(pg1);
+    }
+    
+    @Test
+    public void testIsOrgBelongToFamily() throws Exception {
+        
+        action.setOrgId("1");
+        assertTrue(action.isOrgBelongToFamily() instanceof String);
+        
+        InputStream is = action.getAjaxResponseStream();
+        String result = IOUtils.toString(is);
+        assertTrue(result.equalsIgnoreCase("1"));
+        
+        
+    }
+
+    
 }

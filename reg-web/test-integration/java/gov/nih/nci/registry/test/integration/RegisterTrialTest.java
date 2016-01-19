@@ -126,6 +126,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
             // moment.
             return;
         }
+
         for (String cat : new String[] { "National",
                 "Externally Peer-Reviewed", "Institutional" }) {
             loginAndAcceptDisclaimer();
@@ -600,7 +601,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 getTrialConfValue("Data Table 4 Funding Sponsor Type:"));
         assertEquals("National Cancer Institute",
                 getTrialConfValue("Data Table 4 Funding Sponsor:"));
-        assertEquals("PG" + rand, getTrialConfValue("Program code:"));
+        //assertEquals("PG" + rand, getTrialConfValue("Program code:"));
 
         assertEquals("", selenium.getValue("trialDTO_statusCode"));
         assertEquals("", selenium.getValue("trialDTO_reason"));
@@ -978,6 +979,375 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         verifyTrialConfirmaionPage(rand, nciID, category);
 
     }
+    
+    /**
+     * Check if program code drop down shown for Org with Family
+     * @throws Exception
+     */
+    @Test
+    public void testIfProgramCodeDropDownShown() throws Exception {
+        
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+        
+        associateProgramCodes();
+        
+        loginAndAcceptDisclaimer();
+        hoverLink("Register Trial");
+        pause(500);
+        clickAndWait("link=National");
+        
+        moveElementIntoView(By.id("trialDTO.leadOrganizationNameField"));
+        hover(By.id("trialDTO.leadOrganizationNameField"));
+        clickAndWaitAjax("link=National Cancer Institute Division of Cancer Prevention (Your Affiliation)");
+        clickAndWaitAjax("id=programCodesValues");
+        moveElementIntoView(By.id("programCodesValues"));
+        useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
+        useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
+        
+    }
+    
+    /**
+     * Check if program codes not shown for Org without family
+     * @throws Exception
+     */
+    @Test
+    public void testIfProgramCodeDropNotDownShownForNonCancer() throws Exception {
+        
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+        
+        loginAndAcceptDisclaimer();
+        hoverLink("Register Trial");
+        pause(500);
+        clickAndWait("link=National");
+        
+        moveElementIntoView(By.id("trialDTO.leadOrganizationNameField"));
+       
+       
+        
+     // Select Lead Organization
+        moveElementIntoView(By.id("trialDTO.leadOrganizationNameField"));
+        hover(By.id("trialDTO.leadOrganizationNameField"));
+        clickAndWaitAjax("link=Search...");
+        waitForElementById("popupFrame", 60);
+        selenium.selectFrame("popupFrame");
+        waitForElementById("orgNameSearch", 30);
+        selenium.type("orgNameSearch", "NCI - Center for Cancer Research");
+        clickAndWaitAjax("id=search_organization_btn");
+        waitForElementById("row", 15);
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[9]/button");
+        waitForPageToLoad();
+        driver.switchTo().defaultContent();
+        moveElementIntoView(By.id("trialDTO.leadOrganizationNameField"));
+        
+        assertFalse(selenium.isVisible("//div[@id='programCodeBlock']"));
+        
+       
+    }
+    
+    /**
+     * Test if user is able to register trial with program codes
+     * @throws Exception
+     */
+    @Test
+    public void testRegisterTrialWithProgramCodes () throws Exception {
+        
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+        
+        associateProgramCodes();
+        String category ="National";
+        String rand = RandomStringUtils.randomNumeric(10);
+        String trialName ="Name"+rand;
+        String leadOrgTrialId ="Lead"+rand;
+        
+        loginAndAcceptDisclaimer();
+        hoverLink("Register Trial");
+        pause(500);
+        clickAndWait("link=National");
+        
+        populateRegisterNationalTrialScreen(trialName, leadOrgTrialId, rand,
+                category);
+        
+        clickAndWaitAjax("id=programCodesValues");
+        moveElementIntoView(By.id("programCodesValues"));
+        
+      //now populate program codes
+        useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
+        useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
+        
+        reviewAndSubmit();
+        
+        //check if trial is submitted successfully
+        //get the nci id for the trial
+        final String nciID = getLastNciId();
+        assertTrue(
+                "No success message found",
+                selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier "
+                        + nciID));
+        
+        //get trial id from nci Id
+        long trialId =(Long)getTrialIdByNciId(nciID);
+        
+        
+        //check if program codes are actually added in the database
+        long programCodeCount = getProgramCodesCount(trialId);
+        
+        assert programCodeCount==2;
+    }
+    
+    
+    /**
+     * Test if program code values are retained after user click on review and then edit again
+     * @throws Exception
+     */
+    @Test
+    public void testIfProgamCodesRetainedAfterReviewAndEdit() throws Exception {
+        
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+        
+        associateProgramCodes();
+        String category ="National";
+        String rand = RandomStringUtils.randomNumeric(10);
+        String trialName ="Name"+rand;
+        String leadOrgTrialId ="Lead"+rand;
+        
+        loginAndAcceptDisclaimer();
+        hoverLink("Register Trial");
+        pause(500);
+        clickAndWait("link=National");
+        
+        populateRegisterNationalTrialScreen(trialName, leadOrgTrialId, rand,
+                category);
+        
+        clickAndWaitAjax("id=programCodesValues");
+        moveElementIntoView(By.id("programCodesValues"));
+        
+      //now populate program codes
+        useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
+        useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
+        
+  
+        
+        clickAndWait("xpath=//button[text()='Review Trial']");
+        waitForElementById("reviewTrialForm", 20);
+        clickAndWait("xpath=//button[text()='Edit ']");
+        waitForPageToLoad();
+        
+        //check if program codes are retained
+        moveElementIntoView(By.id("programCodesValues"));
+        
+        assertOptionSelected("PG1 Cancer Program1");
+        assertOptionSelected("PG2 Cancer Program2");
+        
+       
+        
+
+    }
+    
+    /**
+     * Test if program code values are retained after there is error in final submit
+     * @throws Exception
+     */
+    @Test
+    public void testIfProgramCodesRetainedAfterErrorInFinalSubmit() throws Exception {
+        
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+        
+        associateProgramCodes();
+        String category ="National";
+        String rand = RandomStringUtils.randomNumeric(10);
+        String trialName ="Name"+rand;
+        String leadOrgTrialId ="Lead"+rand;
+        
+        loginAndAcceptDisclaimer();
+        hoverLink("Register Trial");
+        pause(500);
+        clickAndWait("link=National");
+        
+        populateRegisterNationalTrialScreen(trialName, leadOrgTrialId, rand,
+                category);
+        
+        clickAndWaitAjax("id=programCodesValues");
+        moveElementIntoView(By.id("programCodesValues"));
+        
+      //now populate program codes
+        useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
+        useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
+        
+  
+        
+        reviewAndSubmit();
+        
+        //now again register trial with same lead org identifier this will throw error
+        hoverLink("Register Trial");
+        pause(500);
+        clickAndWait("link=National");
+        
+        rand = RandomStringUtils.randomNumeric(10);
+        
+        populateRegisterNationalTrialScreen(trialName, leadOrgTrialId, rand,
+                category);
+        
+        clickAndWaitAjax("id=programCodesValues");
+        moveElementIntoView(By.id("programCodesValues"));
+        
+      //now populate program codes
+        useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
+        useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
+        
+        clickAndWait("xpath=//button[text()='Review Trial']");
+        waitForElementById("reviewTrialForm", 20);
+        clickAndWait("xpath=//button[text()='Submit']");
+        waitForPageToLoad();
+       
+        //check if there is error
+        assertTrue(
+        selenium.isTextPresent("A trial exists in the system with the same Lead Organization Trial Identifier for the selected Lead Organization"));
+        
+        //check if program codes are retained
+        moveElementIntoView(By.id("programCodesValues"));
+        
+        assertOptionSelected("PG1 Cancer Program1");
+        assertOptionSelected("PG2 Cancer Program2");
+        
+       
+        
+
+    }
+    
+    /**
+     * Test if program code values are retained if there is error in initial submit
+     */
+    @Test
+    public void testIfProgramCodeValuesRetainedAfterError() throws Exception{
+        
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+        
+        associateProgramCodes();
+        
+        loginAndAcceptDisclaimer();
+        hoverLink("Register Trial");
+        pause(500);
+        clickAndWait("link=National");
+        
+        moveElementIntoView(By.id("trialDTO.leadOrganizationNameField"));
+        hover(By.id("trialDTO.leadOrganizationNameField"));
+        clickAndWaitAjax("link=National Cancer Institute Division of Cancer Prevention (Your Affiliation)");
+        clickAndWaitAjax("id=programCodesValues");
+        moveElementIntoView(By.id("programCodesValues"));
+        useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
+        useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
+        
+        clickAndWait("xpath=//button[text()='Review Trial']");
+        
+        //there should be error because other fields are left blank
+        assertTrue(
+        selenium.isTextPresent("The form has errors and could not be submitted. Please check the fields highlighted below"));
+        
+        //check if program code values are retained
+        moveElementIntoView(By.id("programCodesValues"));
+        
+        assertOptionSelected("PG1 Cancer Program1");
+        assertOptionSelected("PG2 Cancer Program2");
+    }
+    
+    
+    /**
+     * Check if program code values are retained after user save trial as draft and then search again
+     * @throws Exception
+     */
+    public void testIfProgramCodeValuesAreRetainedAfterSaveDraft() throws Exception {
+        
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+        
+        associateProgramCodes();
+        loginAndAcceptDisclaimer();
+
+        String rand = RandomStringUtils.randomNumeric(10);
+        String title = "An Open-Label Study of Ruxolitinib " + rand;
+        String leadOrgTrialId = "LEAD" + rand;
+        deactivateTrialByLeadOrgId(leadOrgTrialId);
+        final String category = "National";
+        populateRegisterNationalTrialScreen(title, leadOrgTrialId, rand,
+                category);
+        
+        moveElementIntoView(By.id("programCodesValues"));
+        useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
+        useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
+        
+        clickAndWait("xpath=//button[text()='Save as Draft']");
+        final Number draftID = getLastDraftId();
+        
+        
+        hoverLink("Search");
+        clickAndWait("link=Clinical Trials");
+        waitForElementById("runSearchBtn", 30);
+        selenium.click("runSearchBtn");
+        clickAndWait("link=Saved Drafts");
+        assertTrue(selenium.isTextPresent(title));
+        assertTrue(selenium.isTextPresent(leadOrgTrialId));
+        clickAndWait("xpath=//a[@href='/registry/protected/submitTrialcompletePartialSubmission.action?studyProtocolId="
+                + draftID + "']/button");
+        
+        //check if program code values are retained
+        moveElementIntoView(By.id("programCodesValues"));
+        
+        assertOptionSelected("PG1 Cancer Program1");
+        assertOptionSelected("PG2 Cancer Program2");        
+    }
+    
+    private void associateProgramCodes() throws Exception {
+        QueryRunner qr = new QueryRunner();
+        qr.update(connection, "delete from program_code");
+        qr.update(connection, "insert into program_code (family_id, program_code, program_name, status_code) " +
+                "values (1,'PG1', 'Cancer Program1', 'ACTIVE')");
+        qr.update(connection, "insert into program_code (family_id, program_code, program_name, status_code) " +
+                "values (1,'PG2', 'Cancer Program2', 'ACTIVE')");
+        qr.update(connection, "insert into program_code ( family_id, program_code, program_name, status_code) " +
+                "values (1,'PG3', 'Cancer Program3', 'ACTIVE')");
+        qr.update(connection, "insert into program_code ( family_id, program_code, program_name, status_code) " +
+                "values (1,'PG4', 'Cancer Program4', 'ACTIVE')");
+    }
+    
+    
+    private long getProgramCodesCount(long trialId) throws SQLException {
+        
+        QueryRunner runner = new QueryRunner();
+        return (Long) runner
+                .query(connection,
+                        "select count(*) from study_program_code where study_protocol_id="+trialId
+                        +" and program_code_id in (select identifier from program_code where program_code in ('PG1','PG2'))" ,
+                        new ArrayHandler())[0];
+     
+    }
+    
     
     /**
      * @param body
@@ -1431,7 +1801,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 getTrialConfValue("Data Table 4 Funding Sponsor Type:"));
         assertEquals("National Cancer Institute",
                 getTrialConfValue("Data Table 4 Funding Sponsor/Source:"));
-        assertEquals("PG" + rand, getTrialConfValue("Program code:"));
+        //assertEquals("PG" + rand, getTrialConfValue("Program code:"));
 
         verifyTrialStatus(nciID, "Approved");
 
@@ -1638,5 +2008,10 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assertEquals(14, nciId.length());
         return nciId;
     }
+    
+    
+    
+   
+
 
 }
