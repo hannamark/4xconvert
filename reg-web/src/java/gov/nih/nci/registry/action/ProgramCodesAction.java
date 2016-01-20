@@ -4,8 +4,6 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.FamilyDTO;
 import gov.nih.nci.pa.dto.OrgFamilyDTO;
 import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
-import gov.nih.nci.pa.iso.util.EnOnConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.util.FamilyHelper;
@@ -118,28 +116,17 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
      * @throws PAException
      */
     private List<OrgFamilyDTO> getAllFamiliesDto() throws PAException {
-        List<OrgFamilyDTO> affiliatedFamilies = new ArrayList<OrgFamilyDTO>();
-        List<gov.nih.nci.services.family.FamilyDTO> families = FamilyHelper.getAllFamilies();
-        if (families != null) {
-          for (gov.nih.nci.services.family.FamilyDTO family : families) {
-              OrgFamilyDTO orgFamilyDto = new OrgFamilyDTO();
-              orgFamilyDto.setId(IiConverter.convertToLong(family.getIdentifier()));
-              orgFamilyDto.setName(EnOnConverter.convertEnOnToString(family.getName()));
-              affiliatedFamilies.add(orgFamilyDto);
-          }
-         if (affiliatedFamilies != null && !affiliatedFamilies.isEmpty()) {
-             Collections.sort(affiliatedFamilies, new Comparator<OrgFamilyDTO>() {
-                 @Override
-                 public int compare(OrgFamilyDTO o1, OrgFamilyDTO o2) {
-                     return StringUtils
-                             .defaultString(o1.getName())
-                             .compareTo(
-                                     StringUtils.defaultString(o2.getName()));
-                 }
-             });
-         }
-        }
-         return affiliatedFamilies;
+        List<OrgFamilyDTO> families = FamilyHelper.getAllFamilies();
+        Collections.sort(families, new Comparator<OrgFamilyDTO>() {
+            @Override
+            public int compare(OrgFamilyDTO o1, OrgFamilyDTO o2) {
+                return StringUtils
+                        .defaultString(o1.getName())
+                        .compareTo(
+                                StringUtils.defaultString(o2.getName()));
+            }
+        });
+        return families;
     }
     
     /**

@@ -1065,6 +1065,15 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         return id;
     }
 
+    protected void unassignUserFromGroup(String loginName, String group)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sqlTemplate = "delete from csm_user_group where user_id = " +
+                "(select user_id from csm_user where login_name = '%s') " +
+                "and group_id = (select group_id from csm_group where group_name='%s')";
+        runner.update(connection, String.format(sqlTemplate, loginName, group));
+    }
+
     protected void assignUserToGroup(String loginName, String group)
             throws SQLException {
         QueryRunner runner = new QueryRunner();
@@ -1074,6 +1083,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + group + "')  )";
         runner.update(connection, sql);
     }
+
 
     protected void assignUserToGroup(Number userID, String group)
             throws SQLException {

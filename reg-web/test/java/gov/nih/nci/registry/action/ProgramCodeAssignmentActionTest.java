@@ -15,6 +15,7 @@ import gov.nih.nci.pa.service.util.FamilyProgramCodeService;
 import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
+import gov.nih.nci.registry.util.Constants;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.struts2.ServletActionContext;
@@ -92,8 +93,26 @@ public class ProgramCodeAssignmentActionTest  extends AbstractRegWebTest {
     }
 
     @Test
-    public void testExecute() {
+    public void testExecute() throws Exception {
+
+        //Given that the user is not admin
+       MockHttpServletRequest req = (MockHttpServletRequest) ServletActionContext.getRequest();
+       req.setUserInRole(Constants.PROGRAM_CODE_ADMINISTRATOR, false);
+
+        //When I execute
        assertEquals("success", action.execute());
+
+        //I get only family affiliated to my org
+       assertEquals(1, action.getAffiliatedFamilies().size());
+
+       //When an admin executes it
+       req.setUserInRole(Constants.PROGRAM_CODE_ADMINISTRATOR, true);
+       assertEquals("success", action.execute());
+
+        //then I see more than one families
+       assertEquals(2, action.getAffiliatedFamilies().size());
+
+
     }
 
     @Test

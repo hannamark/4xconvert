@@ -5,6 +5,7 @@ import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.domain.Family;
 import gov.nih.nci.pa.domain.ProgramCode;
 import gov.nih.nci.pa.dto.FamilyDTO;
+import gov.nih.nci.pa.dto.OrgFamilyDTO;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -74,13 +75,13 @@ public class FamilyProgramCodeBeanLocal implements FamilyProgramCodeServiceLocal
         Integer length = Integer.parseInt(strPgcLength);
         LOG.info("Copying families into PA. [default EndDate:" + strPgcEndDate + ", default Length:" + length + "]");
 
-        List<gov.nih.nci.services.family.FamilyDTO> familiesInPoList = FamilyHelper.getAllFamilies();
+        List<OrgFamilyDTO> familiesInPoList = FamilyHelper.getAllFamilies();
         LinkedHashMap<Long, FamilyDTO> index = new LinkedHashMap<Long, FamilyDTO>();
         if (CollectionUtils.isNotEmpty(familiesInPoList)) {
-            for (gov.nih.nci.services.family.FamilyDTO f : familiesInPoList) {
-                Long poId = IiConverter.convertToLong(f.getIdentifier());
+            for (OrgFamilyDTO of : familiesInPoList) {
+                Long poId = of.getId();
                 FamilyDTO dto = new FamilyDTO(null, poId, endDate, length);
-                dto.setName(EnOnConverter.convertEnOnToString(f.getName()));
+                dto.setName(of.getName());
                 index.put(poId, new FamilyDTO(null, poId, endDate, length));
             }
 

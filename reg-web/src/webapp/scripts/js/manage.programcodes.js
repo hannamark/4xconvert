@@ -211,6 +211,7 @@ function pgcinit($) {
 
     if ($('#pgcFilter').val() !== '') {
         $('#cfProgramCode').val($('#pgcFilter').val());
+        $('#cfProgramCode').trigger($.Event("change"));
     }
 
     $('#trialsTbl tbody').on('click', 'a.pgcrm', function (evt) {

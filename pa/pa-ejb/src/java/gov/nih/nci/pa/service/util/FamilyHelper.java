@@ -88,10 +88,7 @@ public final class FamilyHelper {
             }
             Map<Ii, FamilyDTO> familyMap = PoRegistry.getFamilyService().getFamilies(famOrgRelIiList);
             for (FamilyDTO dto : familyMap.values()) {
-                OrgFamilyDTO family = new OrgFamilyDTO();
-                family.setId(IiConverter.convertToLong(dto.getIdentifier()));
-                family.setName(EnOnConverter.convertEnOnToString(dto.getName()));
-                result.add(family);
+                result.add(convert(dto));
             }
         } catch (TooManyResultsException e) {
             throw new PAException(e);
@@ -248,23 +245,27 @@ public final class FamilyHelper {
     
     /**
      * Get all families from PO
-     * @return List<FamilyDTO> List of all families
+     * @return List<OrgFamilyDTO> List of all families
      * @throws PAException exception thrown if any
      */
-    public static List<FamilyDTO> getAllFamilies() throws PAException { 
+    public static List<OrgFamilyDTO> getAllFamilies() throws PAException {
+
         FamilyDTO  familySearchCriteria = new FamilyDTO();
         familySearchCriteria.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
-        List<FamilyDTO> familyList = new ArrayList<FamilyDTO>();
+        List<OrgFamilyDTO> orgFamilyDTOList = new ArrayList<OrgFamilyDTO>();
+
         try {
-            familyList = PoRegistry.getFamilyService().search(familySearchCriteria, limit);
-            if (CollectionUtils.isEmpty(familyList)) {
-                return null;
+            List<FamilyDTO> familyList = PoRegistry.getFamilyService().search(familySearchCriteria, limit);
+            if (!CollectionUtils.isEmpty(familyList)) {
+                for (FamilyDTO family : familyList) {
+                    orgFamilyDTOList.add(convert(family));
+                }
             }
+            return orgFamilyDTOList;
         } catch (TooManyResultsException e) {
             throw new PAException(e);
         }
-        return familyList;
     }
     /**
      * Get family from PO using familyPOID
@@ -273,5 +274,17 @@ public final class FamilyHelper {
      */
     public static FamilyDTO getPOFamilyByPOID(Long familyPoID) {
         return PoRegistry.getFamilyService().getFamily(IiConverter.convertToIi(familyPoID));
+    }
+
+    /**
+     * Will transform FamilyDTO from PA to OrgFamilyDTO in PA.
+     * @param familyDTO
+     * @return
+     */
+    private static OrgFamilyDTO convert(FamilyDTO familyDTO) {
+        OrgFamilyDTO orgFamilyDto = new OrgFamilyDTO();
+        orgFamilyDto.setId(IiConverter.convertToLong(familyDTO.getIdentifier()));
+        orgFamilyDto.setName(EnOnConverter.convertEnOnToString(familyDTO.getName()));
+        return orgFamilyDto;
     }
 }

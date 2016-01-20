@@ -3,6 +3,7 @@ package gov.nih.nci.registry.test.integration;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -10,6 +11,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -48,12 +50,11 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         //When I first access search screen
         accessManageCodeAssignmentsScreen();
         // I see empty table
-        selenium.isTextPresent("Showing 0 to 0 of 0 entries");
+        assertTrue(selenium.isTextPresent("Showing 0 to 0 of 0 entries"));
 
         //when I change family
         Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
-        dropdown.selectByVisibleText("National Cancer Institute");
-        changePageLength("25");
+        dropdown.selectByIndex(1);
 
         //then I should see associated trials.
         TrialInfo trial4 = trials.get(4);
@@ -75,6 +76,34 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         logoutUser();
 
     }
+    /**
+     * Test changing family
+     * @throws Exception    - when error
+     */
+    @Test
+    public void testFamilyListOptions() throws Exception {
+        //Given that the user is not "ProgramCodeAdmin"
+        unassignUserFromGroup("abstractor-ci" , "ProgramCodeAdministrator");
+
+        //Then he should be able to access the families associated with org
+        accessManageCodeAssignmentsScreen();
+        Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
+        int size1 = dropdown.getOptions().size();
+        logoutUser();
+
+        //Given that the user is now granted ProgramCodeAdmin role
+        assignUserToGroup("abstractor-ci" , "ProgramCodeAdministrator");
+
+        //Then he must see all the families in PO
+        accessManageCodeAssignmentsScreen();
+        Select dropdown2 = new Select(driver.findElement(By.id("familyPoId")));
+        int size2 = dropdown2.getOptions().size();
+
+        //which is greater than the families his organization is associated with.
+        assertTrue(size2 > size1);
+        logoutUser();
+
+    }
 
     @Test
     public void testVerifyAcessPrivilege() {
@@ -86,7 +115,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
         //then I should get error page.
 
-        selenium.isTextPresent("403");
+        assertTrue(selenium.isTextPresent("403"));
         logoutUser();
     }
 
@@ -94,7 +123,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
     public void testVerifyExport() throws Exception {
         accessManageCodeAssignmentsScreen();
         Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
-        dropdown.selectByVisibleText("National Cancer Institute");
+        dropdown.selectByIndex(1);
         changePageLength("25");
 
         TrialInfo trial4 = trials.get(4);
@@ -113,7 +142,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         accessManageCodeAssignmentsScreen();
 
         Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
-        dropdown.selectByVisibleText("National Cancer Institute");
+        dropdown.selectByIndex(1);
         changePageLength("25");
         TrialInfo trial1 = trials.get(1);
 
@@ -136,7 +165,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         dropdown = new Select(driver.findElement(By.id("familyPoId")));
         dropdown.selectByIndex(0);
         dropdown = new Select(driver.findElement(By.id("familyPoId")));
-        dropdown.selectByVisibleText("National Cancer Institute");
+        dropdown.selectByIndex(1);
 
         waitForElementToBecomeAvailable(
                 By.xpath("//table[@id='trialsTbl']/tbody//tr//td[2]"), 10);
@@ -151,7 +180,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
     public void testParticipation() throws Exception {
         accessManageCodeAssignmentsScreen();
         Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
-        dropdown.selectByVisibleText("National Cancer Institute");
+        dropdown.selectByIndex(1);
         changePageLength("25");
         TrialInfo trial4 = trials.get(4);
         String trial4Title = trial4.title;
@@ -162,7 +191,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         waitForElementToBecomeVisible(By.xpath("//table[@id='participationTbl']"), 10);
         waitForElementToBecomeAvailable(
                 By.xpath("//table[@id='participationTbl']/tbody//tr//td[text()='National Cancer Institute Division of Cancer Prevention']"), 10);
-        selenium.isTextPresent("Abraham, Sony; Kennedy, James");
+        assertTrue(selenium.isTextPresent("Abraham, Sony; Kennedy, James"));
         selenium.click("xpath=//button/span[text()='Close']");
         waitForElementToBecomeInvisible(By.xpath("//table[@id='participationTbl']"), 10);
 
@@ -174,7 +203,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
     public void testUnAssignMultipeAndAssignMultiple() throws Exception {
         accessManageCodeAssignmentsScreen();
         Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
-        dropdown.selectByVisibleText("National Cancer Institute");
+        dropdown.selectByIndex(1);
         changePageLength("25");
 
         //Initialli I see the buttons disabled
@@ -246,7 +275,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
         //Then I see confirmation
         waitForElementToBecomeVisible(By.id("pgcInfo"), 4);
-        selenium.isTextPresent("Program Codes were successfully unassigned");
+        assertTrue(selenium.isTextPresent("Program Codes were successfully unassigned"));
 
         //And I see the confirmation go away after 5 seconds
         waitForElementToBecomeVisible(By.id("pgcInfo"), 10);
@@ -307,7 +336,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
         //Then I see confirmation
         waitForElementToBecomeVisible(By.id("pgcInfo"), 4);
-        selenium.isTextPresent("Program Codes were successfully assigned");
+        assertTrue(selenium.isTextPresent("Program Codes were successfully assigned"));
 
         //And I see the confirmation go away after 5 seconds
         waitForElementToBecomeVisible(By.id("pgcInfo"), 10);
@@ -333,9 +362,10 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
     @Test
     public void testReplaceMultipeAndAssignMultiple() throws Exception {
+
         accessManageCodeAssignmentsScreen();
         Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
-        dropdown.selectByVisibleText("National Cancer Institute");
+        dropdown.selectByIndex(1);
         changePageLength("25");
 
         //Select 4 rows
@@ -353,6 +383,11 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         verifyTrialProgramCodeAssociation(3, true, "PG2");
         verifyTrialProgramCodeAssociation(4, true, "PG2");
 
+        verifyTrialProgramCodeAssociation(1, false, "PG5");
+        verifyTrialProgramCodeAssociation(2, false, "PG5");
+        verifyTrialProgramCodeAssociation(3, false, "PG5");
+        verifyTrialProgramCodeAssociation(4, false, "PG5");
+
         //click the Replace button
         clickAndWait("replacePGCBtn");
 
@@ -360,7 +395,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         waitForElementToBecomeVisible(By.id("pgc-mrpl-dialog"), 5);
 
         //on the popup select
-        pickMultiSelectOptions("pgc-mrpl-selone-div", Arrays.asList("PG2"), Arrays.asList("PG1", "PG3", "PG4"));
+        pickMultiSelectOptions("pgc-mrpl-selone-div", Arrays.asList("PG2"), Arrays.asList("PG1", "PG3", "PG4", "PG5"));
 
         //When I click Cancel
         clickAndWait("pgc-mrpl-dialog-cancel");
@@ -377,6 +412,12 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         verifyTrialProgramCodeAssociation(3, true, "PG2");
         verifyTrialProgramCodeAssociation(4, true, "PG2");
 
+        verifyTrialProgramCodeAssociation(1, false, "PG5");
+        verifyTrialProgramCodeAssociation(2, false, "PG5");
+        verifyTrialProgramCodeAssociation(3, false, "PG5");
+        verifyTrialProgramCodeAssociation(4, false, "PG5");
+
+
         //click the Replace button
         clickAndWait("replacePGCBtn");
 
@@ -384,8 +425,8 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         waitForElementToBecomeVisible(By.id("pgc-mrpl-dialog"), 5);
 
         //on the popup select
-        pickMultiSelectOptions("pgc-mrpl-selone-div", Arrays.asList("PG2"), Arrays.asList("PG1", "PG3", "PG4"));
-        pickMultiSelectOptions("pgc-mrpl-seltwo-div", Arrays.asList("PG4"), Arrays.asList("PG1", "PG2", "PG3"));
+        pickMultiSelectOptions("pgc-mrpl-selone-div", Arrays.asList("PG2"), Arrays.asList("PG1", "PG3", "PG4", "PG5"));
+        pickMultiSelectOptions("pgc-mrpl-seltwo-div", Arrays.asList("PG5"), Arrays.asList("PG1", "PG2", "PG3", "PG4"));
 
         //When I click OK
         clickAndWait("pgc-mrpl-dialog-ok");
@@ -395,10 +436,10 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
         //Then I see confirmation
         waitForElementToBecomeVisible(By.id("pgcInfo"), 4);
-        selenium.isTextPresent("Program Code was successfully replaced");
+        assertTrue(selenium.isTextPresent("Program Code was successfully replaced"));
 
         //And I see the confirmation go away after 5 seconds
-        waitForElementToBecomeVisible(By.id("pgcInfo"), 10);
+        waitForElementToBecomeInvisible(By.id("pgcInfo"), 10);
 
 
         //Now I see PG2 no longer associated with those rows
@@ -408,10 +449,10 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         verifyTrialProgramCodeAssociation(4, false, "PG2");
 
         //And I see PG4 in those rows
-        verifyTrialProgramCodeAssociation(1, true, "PG4");
-        verifyTrialProgramCodeAssociation(2, true, "PG4");
-        verifyTrialProgramCodeAssociation(3, true, "PG4");
-        verifyTrialProgramCodeAssociation(4, true, "PG4");
+        verifyTrialProgramCodeAssociation(1, true, "PG5");
+        verifyTrialProgramCodeAssociation(2, true, "PG5");
+        verifyTrialProgramCodeAssociation(3, true, "PG5");
+        verifyTrialProgramCodeAssociation(4, true, "PG5");
 
 
 
@@ -427,21 +468,20 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
         accessManageCodeAssignmentsScreen();
 
-        //When I pass the program code filter parameter
-        openAndWait("/registry/siteadmin/managePCAssignmentchangeFamily.action?pgcFilter=PG4");
-
-        //Then I should see data filtered
-        selenium.isTextPresent("PG4");
-
         //Also when I change the filter options
         Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
-        dropdown.selectByVisibleText("National Cancer Institute");
-        changePageLength("25");
-        
+        String value = dropdown.getOptions().get(1).getAttribute("value");
+
+        //When I pass the program code filter parameter
+        openAndWait("/registry/siteadmin/managePCAssignmentchangeFamily.action?pgcFilter=PG4&familyPoId=" + value);
+
+        //Then I should see data filtered
+        assertTrue(selenium.isTextPresent("PG4"));
+
         //I should see that the original filter is preserved
         waitForElementToBecomeAvailable(
                 By.xpath("//table[@id='trialsTbl']/tbody//tr//td[text()='" + trials.get(0).title + "']"), 10);
-        selenium.isTextPresent("Showing 1 to 2 of 2 (filtered from 11 total entries)");
+        assertTrue(selenium.isTextPresent("Showing 1 to 2 of 2 (filtered from 11 total entries)"));
 
         //When a user changes the filter,
         selenium.type("cfProgramCode", "PG3");
@@ -450,7 +490,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         int last = trials.size() - 1;
         waitForElementToBecomeAvailable(
                 By.xpath("//table[@id='trialsTbl']/tbody//tr//td[text()='" + trials.get(last).title + "']"), 10);
-        selenium.isTextPresent("Showing 1 to 3 of 3 (filtered from 11 total entries)");
+        assertTrue(selenium.isTextPresent("Showing 1 to 3 of 3 (filtered from 11 total entries)"));
 
         logoutUser();
     }
@@ -466,7 +506,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
         //when I change family
         Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
-        dropdown.selectByVisibleText("National Cancer Institute");
+        dropdown.selectByIndex(1);
         changePageLength("25");
         //then I should see associated trials.
         TrialInfo trial4 = trials.get(4);
@@ -576,16 +616,14 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
                 "values (1,'PG3', 'Cancer Program3', 'ACTIVE')");
         qr.update(connection, "insert into program_code ( family_id, program_code, program_name, status_code) " +
                 "values (1,'PG4', 'Cancer Program4', 'ACTIVE')");
+        qr.update(connection, "insert into program_code ( family_id, program_code, program_name, status_code) " +
+                "values (1,'PG5', 'Cancer Program5', 'ACTIVE')");
+        qr.update(connection, "insert into program_code ( family_id, program_code, program_name, status_code) " +
+                "values (1,'PG6', 'Cancer Program6', 'ACTIVE')");
 
+        assignToAllStudiesProgramCode("PG1");
+        assignToAllStudiesProgramCode("PG2");
 
-        for (TrialInfo trial : trials) {
-            qr.update(connection, "insert into study_program_code " +
-                    "values((select identifier from program_code where program_code='PG1')," +
-                    trial.id + ")");
-            qr.update(connection, "insert into study_program_code " +
-                    "values((select identifier from program_code where program_code='PG2')," +
-                    trial.id + ")");
-        }
 
         //associate PG3 to first two and last trial
         qr.update(connection, "insert into study_program_code " +
@@ -605,6 +643,21 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         qr.update(connection, "insert into study_program_code " +
                 "values((select identifier from program_code where program_code='PG4')," +
                 trials.get(1).id + ")");
+    }
+
+    private void removeFromAllStudiesProgramCode(String code) throws SQLException {
+        QueryRunner qr = new QueryRunner();
+        qr.update(connection, "delete from study_program_code where program_code_id in (" +
+                "select identifier from program_code where program_code='" + code + "')");
+    }
+
+    private void assignToAllStudiesProgramCode(String code) throws SQLException {
+        QueryRunner qr = new QueryRunner();
+        for (TrialInfo trial : trials) {
+            qr.update(connection, "insert into study_program_code " +
+                    "values((select identifier from program_code where program_code='" + code + "')," +
+                    trial.id + ")");
+        }
     }
 
     private void recreateTrials() throws Exception {

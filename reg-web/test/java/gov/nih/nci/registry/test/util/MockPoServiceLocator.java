@@ -6,9 +6,14 @@ package gov.nih.nci.registry.test.util;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.registry.service.MockIdentifiedOrganizationCorrelationService;
 import gov.nih.nci.registry.service.MockIdentifiedPersonCorrelationService;
@@ -32,7 +37,9 @@ import gov.nih.nci.services.family.FamilyServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -75,7 +82,7 @@ public class MockPoServiceLocator implements PoServiceLocator {
      */
     @Override
     public ResearchOrganizationCorrelationServiceRemote getResearchOrganizationCorrelationService()  {
-        return roService ;
+        return roService;
     }
 
     /**
@@ -149,7 +156,16 @@ public class MockPoServiceLocator implements PoServiceLocator {
         results.put(IiConverter.convertToPoFamilyIi("1"), famDto);
        
         when(svc.getFamilies(any(Set.class))).thenReturn(results);
-        
+
+        List<FamilyDTO> families = new ArrayList<FamilyDTO>();
+        families.add(famDto);
+        families.add(famDto);
+
+       try{
+        when(svc.search(any(FamilyDTO.class), any(LimitOffset.class))).thenReturn(families);
+       } catch (Exception e) {
+           throw new RuntimeException(e);
+       }
         //MockFamilyService svc = new MockFamilyService();
         
         return svc;

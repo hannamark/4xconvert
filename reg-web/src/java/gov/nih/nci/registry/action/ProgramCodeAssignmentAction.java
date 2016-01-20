@@ -19,6 +19,8 @@ import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.registry.util.Constants;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.StreamResult;
@@ -32,6 +34,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static gov.nih.nci.pa.enums.StudyStatusCode.ACTIVE;
@@ -127,7 +131,10 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
      * @throws PAException - is thrown on any backend exception
      */
     private void loadAffiliatedFamilies(Long orgId) throws PAException {
-        setAffiliatedFamilies(FamilyHelper.getByOrgId(orgId));
+        boolean isProgramCodeAdmin = ServletActionContext.getRequest()
+                .isUserInRole(Constants.PROGRAM_CODE_ADMINISTRATOR);
+        List<OrgFamilyDTO> families = isProgramCodeAdmin ? fetchAllFamilies() : FamilyHelper.getByOrgId(orgId);
+        setAffiliatedFamilies(families);
     }
 
     /**
@@ -606,6 +613,26 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
     private boolean isSiteAdmin() {
         Object value =  ServletActionContext.getRequest().getSession().getAttribute(IS_SITE_ADMIN);
         return value != null && (boolean) value;
+    }
+
+
+    /**
+     * Get all family DTOs
+     * @return List<OrgFamilyDTO> List<OrgFamilyDTO>
+     * @throws PAException
+     */
+    private List<OrgFamilyDTO> fetchAllFamilies() throws PAException {
+        List<OrgFamilyDTO> families = FamilyHelper.getAllFamilies();
+        Collections.sort(families, new Comparator<OrgFamilyDTO>() {
+            @Override
+            public int compare(OrgFamilyDTO o1, OrgFamilyDTO o2) {
+                return StringUtils
+                        .defaultString(o1.getName())
+                        .compareTo(
+                                StringUtils.defaultString(o2.getName()));
+            }
+        });
+        return families;
     }
 
 }
