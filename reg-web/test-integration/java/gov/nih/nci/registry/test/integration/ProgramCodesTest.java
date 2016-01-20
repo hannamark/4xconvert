@@ -106,6 +106,8 @@ public class ProgramCodesTest extends AbstractRegistrySeleniumTest {
     }  
     
     public void testManageProgramCodes() throws Exception {
+    	createFamilies();
+        createProgramCode("Cancer Program1",1L,"PG1");
         assignUserToGroup("abstractor-ci", "ProgramCodeAdministrator");
         loginAndAcceptDisclaimer();
         waitForElementToBecomeVisible(By.linkText("Administration"), 2);        
@@ -116,8 +118,7 @@ public class ProgramCodesTest extends AbstractRegistrySeleniumTest {
         assertTrue(selenium.isTextPresent("Manage Master List"));
         clickAndWait("link=Manage Master List");
         Select dropdown = new Select(driver.findElement(By.id("selectedDTOId")));
-        createFamilies();
-        createProgramCode("Cancer Program1",1L,"PG1");
+        
         dropdown.selectByVisibleText("Family1");
         assertEquals("PG1",
                 selenium.getText("xpath=//table[@id='programCodesTable']/tbody/tr[1]/td[1]"));
