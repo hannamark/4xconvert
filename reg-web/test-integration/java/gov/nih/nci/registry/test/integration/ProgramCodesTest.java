@@ -116,6 +116,7 @@ public class ProgramCodesTest extends AbstractRegistrySeleniumTest {
         assertTrue(selenium.isTextPresent("Manage Master List"));
         clickAndWait("link=Manage Master List");
         Select dropdown = new Select(driver.findElement(By.id("selectedDTOId")));
+        createFamilies();
         createProgramCode("Cancer Program1",1L,"PG1");
         dropdown.selectByVisibleText("Family1");
         assertEquals("PG1",
@@ -135,6 +136,12 @@ public class ProgramCodesTest extends AbstractRegistrySeleniumTest {
             sql = "insert into program_code (family_id, program_code,program_name,status_code) values (" +familyPoId+ ", '" +programCode+ "', '" +pcName+"','ACTIVE')";
             runner.update(connection, sql);
         }
+    }
+    private void createFamilies() throws Exception {
+        QueryRunner qr = new QueryRunner();
+        qr.update(connection, "delete from family");
+        qr.update(connection, String.format("INSERT INTO family( identifier, po_id, " +
+                "rep_period_end, rep_period_len_months)VALUES (1, 1, '%s', 12)", date(180)));
     }
     /**
      * Test the program codes menu items
