@@ -676,6 +676,7 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
 
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testAmendDSPWarning() throws Exception {
         CompleteTrialRegistration reg = readCompleteTrialRegistrationFromFile("/integration_register_complete_success.xml");
@@ -695,7 +696,10 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
         trial.id = uConf.getPaTrialID();
         assertEquals("false", getTrialField(trial, "DELAYED_POSTING_INDICATOR")
                 .toString());
+        
+        waitForEmailsToArrive(5);
         assertEquals(5, server.getReceivedEmailSize());
+        
         Iterator<SmtpMessage> emailIter = server.getReceivedEmail();
         for (int i = 0; emailIter.hasNext(); i++) {
             SmtpMessage email = (SmtpMessage) emailIter.next();
