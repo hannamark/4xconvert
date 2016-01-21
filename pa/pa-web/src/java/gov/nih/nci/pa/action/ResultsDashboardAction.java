@@ -481,8 +481,7 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
             // Filter out all studies with lead org = NCI-CCR  
             if (PAConstants.CCR_ORG_NAME
                     .equalsIgnoreCase(studyProtocolQueryDTO
-                            .getLeadOrganizationName())
-                    || StringUtils.isNotBlank(studyProtocolQueryDTO.getCcrId())) {
+                            .getLeadOrganizationName())) {
                 continue;
 
             }
