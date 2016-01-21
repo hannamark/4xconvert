@@ -59,6 +59,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         //then I should see associated trials.
         TrialInfo trial4 = trials.get(4);
         String trial4Title = trial4.title;
+        changePageLength("25");
         waitForElementToBecomeAvailable(
                 By.xpath("//table[@id='trialsTbl']/tbody//tr//td[text()='" + trial4Title + "']"), 10);
 
