@@ -15,18 +15,22 @@ import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
+
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 /**
  * FamilyProgramCodeBeanLocal
@@ -215,8 +219,8 @@ public class FamilyProgramCodeBeanLocal implements FamilyProgramCodeServiceLocal
     public ProgramCodeDTO createProgramCode(FamilyDTO familyDTO, ProgramCodeDTO programCodeDTO)
             throws PAValidationException {
         Family family = getFamilyByPoId(familyDTO.getPoId());
-        ProgramCode domainProgramCode = convertProgramCodeToDomain(programCodeDTO);
         validateProgramCodeUniqueness(family, programCodeDTO.getProgramCode());
+        ProgramCode domainProgramCode = convertProgramCodeToDomain(programCodeDTO);
         domainProgramCode.setFamily(family);
         family.getProgramCodes().add(domainProgramCode);
         PaHibernateUtil.getCurrentSession().saveOrUpdate(domainProgramCode);
@@ -235,6 +239,10 @@ public class FamilyProgramCodeBeanLocal implements FamilyProgramCodeServiceLocal
     
     private ProgramCode convertProgramCodeToDomain(ProgramCodeDTO programCodeDTO) {
         ProgramCode programCode = new ProgramCode();
+        // program code DTO id will be null for new program codes but exists for db program codes
+        if (programCodeDTO.getId() != null) {
+            programCode.setId(programCodeDTO.getId());
+        }
         programCode.setProgramCode(programCodeDTO.getProgramCode());
         programCode.setProgramName(programCodeDTO.getProgramName());
         programCode.setStatusCode(programCodeDTO.isActive()? ActiveInactiveCode.ACTIVE 
@@ -249,5 +257,47 @@ public class FamilyProgramCodeBeanLocal implements FamilyProgramCodeServiceLocal
         programCodeDTO.setProgramCode(programCode.getProgramCode());
         programCodeDTO.setActive(programCode.getStatusCode() == ActiveInactiveCode.ACTIVE);
        return programCodeDTO;
+    }
+    
+    
+    /**
+     * Creates and inserts a new Program Code in db
+     * @param familyDTO family dto
+     * @param existingProgramCodeDTO the existing program code DTO
+     * @param updatedProgramCodeDTO the updated program code DTO
+     * @throws PAValidationException if if new program code DTO results in a duplicate
+     */
+
+    @Override
+    public void updateProgramCode(FamilyDTO familyDTO, ProgramCodeDTO existingProgramCodeDTO, 
+            ProgramCodeDTO updatedProgramCodeDTO) throws PAValidationException {
+        Family family = getFamilyByPoId(familyDTO.getPoId());
+        
+        ProgramCode existingDomainProgramCode = convertProgramCodeToDomain(existingProgramCodeDTO);
+        ProgramCode newDomainProgramCode = convertProgramCodeToDomain(updatedProgramCodeDTO);
+
+        // get the db program code by id
+        ProgramCode dbProgramCode = getDbProgramCodeById(existingDomainProgramCode.getId());
+        
+        // if an active program code changed, validate that it is unique in family
+        if (dbProgramCode.getStatusCode() == ActiveInactiveCode.ACTIVE && !StringUtils.equalsIgnoreCase(
+                existingProgramCodeDTO.getProgramCode(), updatedProgramCodeDTO.getProgramCode())) {
+            validateProgramCodeUniqueness(family, updatedProgramCodeDTO.getProgramCode());
+        }
+       
+        dbProgramCode.setProgramCode(newDomainProgramCode.getProgramCode());
+        dbProgramCode.setProgramName(newDomainProgramCode.getProgramName());
+        PaHibernateUtil.getCurrentSession().saveOrUpdate(dbProgramCode);
+
+    }
+    
+    /**
+     * @param id the program code identifier
+     *            name
+     * @return ProgramCode
+     */
+    private static ProgramCode getDbProgramCodeById(Long id) {
+        Session session = PaHibernateUtil.getCurrentSession();
+        return (ProgramCode) session.get(ProgramCode.class, id);
     }
 }

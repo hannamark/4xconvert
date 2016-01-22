@@ -4,6 +4,8 @@
 package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import gov.nih.nci.pa.dto.FamilyDTO;
 import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.service.PAException;
@@ -11,6 +13,8 @@ import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.util.AbstractEjbTestCase;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
+
+import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -35,7 +39,6 @@ public class FamilyProgramCodeBeanLocalServiceTest extends AbstractEjbTestCase {
     public void init() throws Exception {
         bean = (FamilyProgramCodeBeanLocal) getEjbBean(FamilyProgramCodeBeanLocal.class);
         lookUpTableServiceRemote = new MockLookUpTableServiceBean();
-
 
         bean.setLookUpTableService(lookUpTableServiceRemote);
         TestSchema.primeData();        
@@ -110,6 +113,97 @@ public class FamilyProgramCodeBeanLocalServiceTest extends AbstractEjbTestCase {
         int count3 = PaHibernateUtil.getCurrentSession().createQuery("select fm from Family fm").list().size();
         assertEquals(count2, count3) ;
 
+   }
+    
+    /**
+     * Test method for
+     * {@link gov.nih.nci.pa.service.util.FamilyProgramCodeBeanLocal#updateProgramCode(gov.nih.nci.pa.dto.FamilyDTO,
+     * gov.nih.nci.pa.iso.dto.ProgramCodeDTO,gov.nih.nci.pa.iso.dto.ProgramCodeDTO)}
+     * 
+     * @throws PAException
+     */
+   @Test
+   public final void testUpdateProgramCode() throws PAException {
+       FamilyDTO familyDTO = bean.getFamilyDTOByPoId(-1L);
+       assertEquals(6,familyDTO.getProgramCodes().size());
+       
+       String existingProgramCodeValue = "2";
+       // get existing program code
+       ProgramCodeDTO existingProgramCodeDTO = findProgramCodeGivenCode(familyDTO, existingProgramCodeValue);
+       assertNotNull(existingProgramCodeDTO);
+       
+       String nonExistingProgramCodeValue = "PG2";
+       String nonExistingProgramCodeName = "Updated Program Name";
+       assertNull(findProgramCodeGivenCode(familyDTO, nonExistingProgramCodeValue));
+       
+       ProgramCodeDTO changedProgramCodeDTO = new ProgramCodeDTO();
+       changedProgramCodeDTO.setProgramCode(nonExistingProgramCodeValue);
+       changedProgramCodeDTO.setProgramName(nonExistingProgramCodeName);
+       
+       bean.updateProgramCode(familyDTO, existingProgramCodeDTO, changedProgramCodeDTO);
+       
+       // re fetch updated familyDTO
+       familyDTO = bean.getFamilyDTOByPoId(-1L);
+       // assert same number of program codes are present in family
+       assertEquals(6,familyDTO.getProgramCodes().size());
+       // program code with old code value is no longer present 
+       assertNull(findProgramCodeGivenCode(familyDTO, existingProgramCodeValue));
+       // verify program code with new code value is present
+       ProgramCodeDTO savedProgramCodeDTO = findProgramCodeGivenCode(familyDTO, nonExistingProgramCodeValue);
+       assertNotNull(savedProgramCodeDTO);
+       
+       // assert program code id and status are same but code value and name got updated
+       assertEquals(existingProgramCodeDTO.getId(),savedProgramCodeDTO.getId());
+       assertEquals(existingProgramCodeDTO.isActive(),savedProgramCodeDTO.isActive());
+       assertEquals(nonExistingProgramCodeValue,savedProgramCodeDTO.getProgramCode());
+       assertEquals(nonExistingProgramCodeName,savedProgramCodeDTO.getProgramName());
+   }
+   
+   
+   /**
+    * Test method for
+    * {@link gov.nih.nci.pa.service.util.FamilyProgramCodeBeanLocal#updateProgramCode(gov.nih.nci.pa.dto.FamilyDTO,
+    * gov.nih.nci.pa.iso.dto.ProgramCodeDTO,gov.nih.nci.pa.iso.dto.ProgramCodeDTO)}
+    * 
+    * @throws PAException
+    */
+  @Test
+  public final void testUpdateProgramCodeDuplicateValidation() throws PAException {
+      
+      thrown.expect(PAValidationException.class);
+      thrown.expectMessage(FamilyProgramCodeBeanLocal.DUPE_PROGRAM_CODE);
+      
+      FamilyDTO familyDTO = bean.getFamilyDTOByPoId(-1L);
+      assertEquals(6,familyDTO.getProgramCodes().size());
+      
+      String existingProgramCodeValue = "2";
+      // get existing program code
+      ProgramCodeDTO existingProgramCodeDTO = findProgramCodeGivenCode(familyDTO, existingProgramCodeValue);
+      assertNotNull(existingProgramCodeDTO);
+      
+      String anotherExistingProgramCodeValue = "3";
+      assertNotNull(findProgramCodeGivenCode(familyDTO, anotherExistingProgramCodeValue));
+      
+      ProgramCodeDTO changedProgramCodeDTO = new ProgramCodeDTO();
+      changedProgramCodeDTO.setProgramCode(anotherExistingProgramCodeValue);
+      
+      // updating to an existing program code should throw PAValidation exception
+      
+      bean.updateProgramCode(familyDTO, existingProgramCodeDTO, changedProgramCodeDTO);
+  }
+   
+   
+   private ProgramCodeDTO findProgramCodeGivenCode(FamilyDTO familyDTO,String code){
+       Iterator<ProgramCodeDTO> iterator = familyDTO.getProgramCodes().iterator();
+       
+       while(iterator.hasNext()){
+           ProgramCodeDTO matchingProgramCodeDTO = iterator.next();
+           if(matchingProgramCodeDTO.getProgramCode().equalsIgnoreCase(code)){
+               return matchingProgramCodeDTO;
+           }
+       }
+       
+       return null;
    }
 
 }

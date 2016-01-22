@@ -44,6 +44,16 @@ public interface FamilyProgramCodeService {
      */
     ProgramCodeDTO createProgramCode(FamilyDTO familyDTO, ProgramCodeDTO programCodeDTO) 
             throws PAValidationException;
+    
+    /**
+     * Updates existing program code in family
+     * @param familyDTO family dto
+     * @param existingProgramCodeDTO existing program code DTO
+     * @param newProgramCodeDTO new program code DTO
+     * @throws PAValidationException if new program code DTO results in a duplicate
+     */
+    void updateProgramCode(FamilyDTO familyDTO, ProgramCodeDTO existingProgramCodeDTO, 
+            ProgramCodeDTO newProgramCodeDTO) throws PAValidationException;
 
 
     /**

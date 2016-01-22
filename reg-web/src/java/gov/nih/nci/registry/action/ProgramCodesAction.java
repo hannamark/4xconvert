@@ -188,7 +188,7 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
         if (familyDTO != null) {
             for (ProgramCodeDTO programCodeDTO : familyDTO.getProgramCodes()) {
                 JSONObject o = new JSONObject();
-                o.put("programCode", programCodeDTO.getId());
+                o.put("programCodeId", programCodeDTO.getId());
                 o.put("programName", programCodeDTO.getProgramName());
                 o.put("programCode", programCodeDTO.getProgramCode());
                 o.put("isActive", programCodeDTO.isActive());
@@ -257,6 +257,43 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
         response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
         return null;
     }
+    
+    /**
+     * Update program code 
+     * @throws IOException IO exception
+     * @return JSON String
+     */
+    
+    public StreamResult updateProgramCode() throws IOException {
+        try {
+            LOG.debug("Updating program code for [familyPOId : " + poId + "]");
+            JSONObject root = new JSONObject();
+            JSONArray arr = new JSONArray();
+            root.put("data", arr);
+            editProgramCode();
+            return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
+        } catch (Exception e) {
+            return handleExceptionDuringAjax(e);
+        }
+    }
+    
+    private void editProgramCode() throws PAValidationException {
+        FamilyDTO familyDTO = familyProgramCodeService.getFamilyDTOByPoId(Long.parseLong(poId));
+        
+        String currentProgramCodeValue = request.getParameter("currentProgramCode");
+        String currentProgramCodeId = request.getParameter("currentProgramCodeId");
+        ProgramCodeDTO currentProgramCodeDTO = new ProgramCodeDTO();
+        currentProgramCodeDTO.setId(Long.parseLong(currentProgramCodeId));
+        currentProgramCodeDTO.setProgramCode(currentProgramCodeValue);
+        
+        String updatedProgramCode = request.getParameter("updatedProgramCode");
+        String updatedProgramName = request.getParameter("updatedProgramName");
+        ProgramCodeDTO updatedProgramCodeDTO = new ProgramCodeDTO();
+        updatedProgramCodeDTO.setProgramCode(updatedProgramCode);
+        updatedProgramCodeDTO.setProgramName(updatedProgramName);
+        
+        familyProgramCodeService.updateProgramCode(familyDTO, currentProgramCodeDTO, updatedProgramCodeDTO);
+      }
 
     /**
      * Does bean injections

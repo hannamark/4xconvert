@@ -18,6 +18,9 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.StreamResult;
@@ -80,6 +83,39 @@ public class ProgramCodesActionTest extends AbstractRegWebTest {
           ReflectionUtils.makeAccessible(field);
 
           StreamResult sr = action.createProgramCode();
+
+          InputStream is = (InputStream) field.get(sr);
+          String json = IOUtils.toString(is);
+          assertEquals("{\"data\":[]}", json);
+
+      } catch (Exception e) {
+          e.printStackTrace();
+          fail("should not throw exception");
+      }
+    }
+    
+    @Test
+    public void testUpdateProgramCode() throws Exception {        
+        ProgramCodesAction action = getAction();
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        HttpServletResponse mockResponse = mock(HttpServletResponse.class);
+        action.setServletRequest(mockRequest);
+        action.setServletResponse(mockResponse);
+        
+        action.setPoId("12345");
+        when(mockRequest.getParameter("currentProgramCode")).thenReturn("PG1");
+        when(mockRequest.getParameter("currentProgramCodeId")).thenReturn("1");
+        when(mockRequest.getParameter("updatedProgramCode")).thenReturn("PG1-updated");
+        when(mockRequest.getParameter("updatedProgramName")).thenReturn("PG1 Name-updated");
+        
+        assertTrue(action.updateProgramCode() instanceof StreamResult);     
+        
+      try {
+
+          Field field = StreamResult.class.getDeclaredField("inputStream");
+          ReflectionUtils.makeAccessible(field);
+
+          StreamResult sr = action.updateProgramCode();
 
           InputStream is = (InputStream) field.get(sr);
           String json = IOUtils.toString(is);
@@ -182,5 +218,4 @@ public class ProgramCodesActionTest extends AbstractRegWebTest {
     protected MockHttpServletResponse getResponse() {
         return (MockHttpServletResponse) ServletActionContext.getResponse();
     }
-
 }

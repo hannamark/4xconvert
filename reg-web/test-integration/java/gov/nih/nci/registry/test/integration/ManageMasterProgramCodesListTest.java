@@ -1,5 +1,7 @@
 package gov.nih.nci.registry.test.integration;
 
+import gov.nih.nci.pa.service.util.FamilyProgramCodeBeanLocal;
+
 import org.apache.commons.dbutils.QueryRunner;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -139,7 +141,171 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
          assertTrue(selenium.isTextPresent("This program code already exists in the system."
                  + " Please add another program code"));
          cancelButton.click();
-         assertTrue(selenium.isTextPresent("Program Code"));
+        
+        logoutUser();
+    }
+    
+    /**
+     * Test updated program code
+     * @throws Exception exception
+     */
+    @Test
+    @SuppressWarnings({"deprecation" })
+    public void testUpdateProgramCode() throws Exception {
+        loginAndAcceptDisclaimer();
+        waitForElementToBecomeVisible(By.linkText("Administration"), 2);
+        hoverLink("Administration");
+        waitForElementToBecomeVisible(By.linkText("Program Codes"), 2);
+        assertTrue(selenium.isTextPresent("Program Codes"));
+        hoverLink("Program Codes");
+        assertTrue(selenium.isTextPresent("Manage Master List"));
+        recreateFamilies();
+        associateProgramCodesToFamilies();
+        clickAndWait("link=Manage Master List");
+        assertTrue(selenium.isTextPresent("Program Code"));
+        assertTrue(selenium.isTextPresent("Program Name"));
+        assertTrue(selenium.isTextPresent("Search:"));
+        assertTrue(selenium.isTextPresent("Cancer Program1"));
+        assertTrue(selenium.isTextPresent("PG1"));
+        assertEquals("Showing 1 to 10 of 12",driver.findElement(By.id("programCodesTable_info")).getText());
+        // verify that update programs button is present and enabled
+        WebElement updateProgramCodebutton = driver.findElement(By.cssSelector("button[rel='tooltip']"));
+        assertTrue(updateProgramCodebutton.isEnabled());
+        hover(updateProgramCodebutton);
+        String tooltiptext = updateProgramCodebutton.getAttribute("data-original-title");
+        assertEquals("Edit this Program <br> Code and Name",tooltiptext);
+        
+        // open the edit dialog and verify the contents
+        updateProgramCodebutton.click();
+        assertTrue(selenium.isTextPresent("Edit Program Code"));
+        assertTrue(selenium.isTextPresent("Organization Family of Affiliate Site: National Cancer Institute"));
+        assertTrue(selenium.isTextPresent("Program Code:*"));
+        assertTrue(selenium.isTextPresent("Program Name:"));
+        assertEquals("PG1",driver.findElement(By.id("updatedProgramCode")).getAttribute("value"));
+        assertEquals("Cancer Program1",driver.findElement(By.id("updatedProgramName")).getAttribute("value"));
+        
+        // test cancel the edit dialog
+        WebElement cancelButton = driver.findElement(By.xpath("//button/span[contains(text(),'Cancel')]"));
+        cancelButton.click();
+        assertTrue(selenium.isTextPresent("Program Code"));
+        
+        // re-open the edit dialog
+        updateProgramCodebutton.click();
+        // update program code and name
+        
+        WebElement programCodeInputField = driver.findElement(By.id("updatedProgramCode"));
+        programCodeInputField.clear();
+        
+        WebElement programNameInputField = driver.findElement(By.id("updatedProgramName"));
+        programNameInputField.clear();
+        
+        selenium.typeKeys("//input[@id='updatedProgramCode']", "PG1-updated");
+        selenium.typeKeys("//input[@id='updatedProgramName']", "Cancer Program1-updated");
+        WebElement saveButton = driver.findElement(By.xpath("//button/span[contains(text(),'Save')]"));
+        saveButton.click();
+        
+        //  verify confirmation dialog
+        assertTrue(selenium.isTextPresent("Confirm Program Code Modification"));
+        // test cancel the edit dialog
+        WebElement noButton = driver.findElement(By.xpath("//button/span[contains(text(),'No')]"));
+        noButton.click();
+        // program code not updated when confirmation dialog is cancelled
+        assertTrue(selenium.isTextPresent("PG1"));
+        assertTrue(selenium.isTextPresent("Cancer Program1"));
+        
+        //re-open the edit dialog
+        updateProgramCodebutton.click();
+        
+        // update program code and name again
+        programCodeInputField.clear();
+        programNameInputField.clear();
+        selenium.typeKeys("//input[@id='updatedProgramCode']", "PG1-updated");
+        selenium.typeKeys("//input[@id='updatedProgramName']", "Cancer Program1-updated");
+        saveButton.click();
+        
+        //  verify confirmation dialog
+        assertTrue(selenium.isTextPresent("Confirm Program Code Modification"));
+        // test confirmation the program code change by clicking on yes
+        WebElement yesButton = driver.findElement(By.xpath("//button/span[contains(text(),'Yes')]"));
+        yesButton.click();
+        Thread.sleep(2000);
+        
+        // both program code and name should have been updated
+        assertTrue(selenium.isTextPresent("PG1-updated"));
+        assertTrue(selenium.isTextPresent("Cancer Program1-updated"));
+        
+        // verify confirmation message is shown
+        assertTrue(selenium.isTextPresent("Program code has been successfully updated"));
+        
+        logoutUser();
+    }
+    
+    
+    /**
+     * Test updated program code error conditions
+     * @throws Exception exception
+     */
+    @Test
+    @SuppressWarnings({"deprecation" })
+    public void testUpdateProgramCodeErrorScenaiors() throws Exception {
+        loginAndAcceptDisclaimer();
+        waitForElementToBecomeVisible(By.linkText("Administration"), 2);
+        hoverLink("Administration");
+        waitForElementToBecomeVisible(By.linkText("Program Codes"), 2);
+        assertTrue(selenium.isTextPresent("Program Codes"));
+        hoverLink("Program Codes");
+        assertTrue(selenium.isTextPresent("Manage Master List"));
+        recreateFamilies();
+        associateProgramCodesToFamilies();
+        clickAndWait("link=Manage Master List");
+        assertTrue(selenium.isTextPresent("Program Code"));
+        assertTrue(selenium.isTextPresent("Program Name"));
+        assertTrue(selenium.isTextPresent("Search:"));
+        assertTrue(selenium.isTextPresent("Cancer Program1"));
+        assertTrue(selenium.isTextPresent("PG1"));
+        assertEquals("Showing 1 to 10 of 12",driver.findElement(By.id("programCodesTable_info")).getText());
+        // verify that update programs button is present and enabled
+        WebElement updateProgramCodebutton = driver.findElement(By.cssSelector("button[rel='tooltip']"));
+        assertTrue(updateProgramCodebutton.isEnabled());
+        hover(updateProgramCodebutton);
+        String tooltiptext = updateProgramCodebutton.getAttribute("data-original-title");
+        assertEquals("Edit this Program <br> Code and Name",tooltiptext);
+        
+     // open the edit dialog 
+        updateProgramCodebutton.click();
+        // clear program code and submit
+        WebElement programCodeInputField = driver.findElement(By.id("updatedProgramCode"));
+        programCodeInputField.clear();
+        
+       /* WebElement programNameInputField = driver.findElement(By.id("updatedProgramName"));
+        programNameInputField.clear();*/
+        
+        WebElement saveButton = driver.findElement(By.xpath("//button/span[contains(text(),'Save')]"));
+        saveButton.click();
+        
+        assertEquals("Error",driver.findElement(By.className("modal-title")).getText());;
+        assertTrue(selenium.isTextPresent("Program code is required"));
+        WebElement okButton = driver.findElement(By.id("cancelButton"));
+        okButton.click();
+        
+     // re-open the edit dialog and update program code to an existing value
+        updateProgramCodebutton.click();
+        // clear program code and submit
+        programCodeInputField.clear();
+        selenium.typeKeys("//input[@id='updatedProgramCode']", "PG3");
+        saveButton.click();
+        
+        //  verify confirmation dialog
+        assertTrue(selenium.isTextPresent("Confirm Program Code Modification"));
+        // test confirmation the program code change by clicking on yes
+        WebElement yesButton = driver.findElement(By.xpath("//button/span[contains(text(),'Yes')]"));
+        yesButton.click();
+        
+        Thread.sleep(2000);
+        
+        assertEquals("Error",driver.findElement(By.className("modal-title")).getText());;
+        assertTrue(selenium.isTextPresent(FamilyProgramCodeBeanLocal.DUPE_PROGRAM_CODE));
+        okButton.click();
         
         logoutUser();
     }

@@ -11,9 +11,23 @@
         <link href="<c:url value='/styles/jquery-datatables/css/jquery.dataTables.min.css'/>"
         rel="stylesheet" type="text/css" media="all" />
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery.dataTables.min.js'/>"></script>
+        <style>
+            #dialog-edit .row,#dialog-confirm .row {
+            padding-top: 5px;
+            }
+        
+            #dialog-edit .charcounter,#dialog-confirm .charcounter {
+                font-size: 75%;
+            }
+        </style>
     </head>
 <body>
 <div class="container">
+
+    <div class="alert alert-success confirm_msg" style="display: none;" id="programCodeUpdatedMessageDiv">
+          <strong>Message.</strong>&nbsp;<fmt:message key="programcode.updated"/>
+    </div>
+    
     <!-- Program Codes Errors Modal -->
     <div class="modal fade" id="programCodeErrorMessageModal">
       <div class="modal-dialog">
@@ -34,6 +48,44 @@
           </div>
         </div>
       </div>
+    </div>
+    
+    <div id="dialog-edit" title="Edit Program Code" style="display: none;">
+        <div class="container-fluid">
+            <p>Organization Family of Affiliate Site: <b>${selectedFamilyDTO.name}</b>
+            <div class="row">
+                <div class="col-xs-4" align="right">
+                    <label for="programCode" class="col-sm control-label"><fmt:message key="programcodes.program.code.label"/><span class="required">*</span></label>
+                </div>
+                <div class="col-xs-8">
+                    <s:textfield required="true" name="updatedProgramCode" id="updatedProgramCode" maxlength="64" size="32" cssClass="form-control" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-4" align="right">
+                    <label for="programName" class="col-sm control-label"><fmt:message key="programcodes.program.name.label"/></label>
+                </div>
+                <div class="col-xs-8">
+                     <s:textfield name="updatedProgramName" id="updatedProgramName" maxlength="64" size="32" cssClass="form-control" />
+                </div>
+            </div>
+           <div class="col-md-12">
+                <br />
+              </div> 
+            <p><b>Warning</b>: Modifying the program code value will cause <b>all trials</b> currently <br>
+               assigned to the old program code value to be reassigned to the new value. <br>
+               The old code value  will be permanently removed.</p>
+        </div>
+    </div>
+    
+    <div id="dialog-confirm" title="Confirm Program Code Modification" style="display: none;">
+        <div class="container-fluid">
+            <p>You have modified a program code. All trials currently <br>
+               assigned to the old program code will be reassigned to the new value.
+               The old code value  will be permanently removed.</p>
+              
+            <p>Are you sure you would like to proceed with this change?</p>
+        </div>
     </div>
     
     <div class="row">
