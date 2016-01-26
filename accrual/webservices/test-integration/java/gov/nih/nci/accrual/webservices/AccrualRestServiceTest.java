@@ -581,6 +581,37 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
 
         submitAndVerify(rConf, siteID, subjects, "/sites/" + siteID);
     }
+    
+    @Test
+    public final void testSubmitStudySubjectsWithLegacyCtepDiseaseCode()
+            throws ClientProtocolException, ParseException, JAXBException,
+            SAXException, SQLException, IOException,
+            DatatypeConfigurationException, java.text.ParseException {
+
+        baseURL = "http://" + TestProperties.getServerHostname() + ":"
+                + TestProperties.getServerPort() + "/services";
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
+        ParticipatingSite upd = readParticipatingSiteFromFile("/integration_ps_accruing_add.xml");
+        HttpResponse response = addSite("pa", rConf.getPaTrialID() + "", upd);
+        assertEquals(200, getReponseCode(response));
+        long siteID = Long.parseLong(EntityUtils.toString(response.getEntity(),
+                "utf-8"));
+        grantAccrualAccess("submitter-ci", siteID);
+        changeDiseaseTerm(rConf, "Legacy Codes - CTEP");
+
+        StudySubjects subjects = new ObjectFactory().createStudySubjects();
+        StudySubject subject = createSubject("SU001");
+
+        DiseaseCode dc = new DiseaseCode();
+        dc.setCodeSystem("Legacy Codes - CTEP");
+        dc.setValue("10028566");
+        subject.setDisease(dc);
+        
+        subjects.getStudySubject().add(subject);
+
+        submitAndVerify(rConf, siteID, subjects, "/sites/" + siteID);
+    }
+
 
     private void changeDiseaseTerm(TrialRegistrationConfirmation rConf,
             String string) throws SQLException {

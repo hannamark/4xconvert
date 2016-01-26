@@ -526,7 +526,8 @@
             <sql driver="${jdbc.driver}" url="${jdbc.url}" userid="${db.username}" password="${db.password}"
                 expandproperties="true" onerror="continue" autocommit="true">
                 <fileset dir="..">
-                    <include name="dbscripts/db-integration/postgresql/disease.sql"/>
+                	<include name="dbscripts/db-integration/postgresql/accrual_disease.sql"/>
+                    <include name="dbscripts/db-integration/postgresql/disease.sql"/>                	
                     <include name="pdq/scripts/intervention000.sql"/>
                     <include name="dbscripts/db-integration/postgresql/paCiBootstrapData.sql"/>
                 </fileset>

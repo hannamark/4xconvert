@@ -126,6 +126,7 @@
 							<enumeration value="ICD-O-3" />
 							<enumeration value="ICD10" />
 							<enumeration value="ICD9" />
+							<enumeration value="Legacy Codes - CTEP" />
 						</restriction>
 					</simpleType>
 				</attribute>
