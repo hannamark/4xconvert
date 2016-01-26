@@ -36,18 +36,18 @@
                     <%@ include file="/WEB-INF/jsp/nodecorate/trialSummary4FundingSponsorSelector.jsp" %>
                 </div>                                    
             </div>
-            <div class="form-group">                               
+            <div class="form-group" id="programCodeBlock" style="display:none">                               
                 <label for="trialDTO.programCodeText" class="col-xs-4 control-label"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label>
                 <div class="col-xs-4">
-                    <s:textfield id="trialDTO.programCodeText" name="trialDTO.programCodeText"  maxlength="100"  cssClass="form-control"/>
-                    <span class="alert-danger">
-                        <s:fielderror>
-                            <s:param>trialDTO.programCodeText</s:param>
-                        </s:fielderror>
-                    </span>
+                   <s:select size="2" multiple="true"  name="trialDTO.selectedProgramCodes" id="programCodesValues"  list="#{trialDTO.programCodesMap}"
+                                cssStyle="width:206px" />
+                                  <c:if test="${sessionScope.isSiteAdmin}">
+                                     &nbsp;&nbsp;<a href="../siteadmin/programCodesexecute.action">Manage Program Codes</a>
+                                 </c:if>
                 </div>
                 <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.summary_4_program_code"/>"  data-placement="top" data-trigger="hover"></i>
             </div>
+             <s:hidden id="trialDTO.programCodeText" name="trialDTO.programCodeText"/>
         </div>
     </div>
 </div>

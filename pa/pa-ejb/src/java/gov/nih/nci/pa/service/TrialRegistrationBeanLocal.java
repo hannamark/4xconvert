@@ -2070,6 +2070,9 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         if (!ISOUtil.isCdNull(studyProtocolDTO.getStudySource())) {
             createStudyProtocolDTO.setStudySource(studyProtocolDTO.getStudySource());
         }
+        
+        //set program codes
+        createStudyProtocolDTO.setProgramCodes(studyProtocolDTO.getProgramCodes());
         return createStudyProtocolDTO;
     }
 

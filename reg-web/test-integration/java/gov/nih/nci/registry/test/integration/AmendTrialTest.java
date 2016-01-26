@@ -644,6 +644,16 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
                 IRB_UPDATED_DOCUMENT).toURI()).toString());
         selenium.type("irbApproval", irbDocPath);
     }
+    
+    private void populateDt4Section()  throws Exception {
+        
+        selenium.select("trialDTO.summaryFourFundingCategoryCode", "label=National"  );
+        moveElementIntoView(By.id("trialDTO.summaryFourOrgName"));
+        hover(By.id("trialDTO.summaryFourOrgName"));
+        clickAndWaitAjax("xpath=//table[@id='dropdown-sum4Organization']//a[text()='National Cancer Institute']");
+        
+        
+    }
 
 
     /**
@@ -720,6 +730,319 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         driver.switchTo().defaultContent();
         assertEquals("2",
                 selenium.getValue("trialDTO.leadOrganizationIdentifier"));
+    }
+    
+    /**
+     * Check if program code drop down shown for Org with Family
+     * @throws Exception
+     */
+    @Test
+    public void testIfProgramCodesDisplayed() throws Exception{
+        
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+        
+        associateProgramCodes();
+        
+        TrialInfo info = createAcceptedTrial(false);
+        final String nciID = getLastNciId();
+        acceptTrialByNciIdWithGivenDWS(nciID, info.leadOrgID,
+                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
+                        .toString());
+        assignTrialOwner("abstractor-ci", info.id);
+
+        loginAndAcceptDisclaimer();
+
+        String rand = info.leadOrgID;
+        runSearchAndVerifySingleTrialResult("officialTitle", rand, info);
+        invokeAmendTrial();
+        
+        moveElementIntoView(By.id("trialDTO.leadOrganizationNameField"));
+        hover(By.id("trialDTO.leadOrganizationNameField"));
+        clickAndWaitAjax("link=National Cancer Institute Division of Cancer Prevention (Your Affiliation)");
+        clickAndWaitAjax("id=programCodesValues");
+        moveElementIntoView(By.id("programCodesValues"));
+        useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
+        useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
+        
+        
+    }
+    
+    
+    /**
+     * Check if program codes not shown for Org without family
+     * @throws Exception
+     */
+    public void testIfProgramCodesNotDisplayedIfOrgHasNoFamily() throws Exception {
+        
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+        
+        associateProgramCodes();
+        
+        TrialInfo info = createAcceptedTrial(false);
+        final String nciID = getLastNciId();
+        acceptTrialByNciIdWithGivenDWS(nciID, info.leadOrgID,
+                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
+                        .toString());
+        assignTrialOwner("abstractor-ci", info.id);
+
+        loginAndAcceptDisclaimer();
+
+        String rand = info.leadOrgID;
+        runSearchAndVerifySingleTrialResult("officialTitle", rand, info);
+        invokeAmendTrial();
+        
+        moveElementIntoView(By.id("trialDTO.leadOrganizationNameField"));
+        hover(By.id("trialDTO.leadOrganizationNameField"));
+        clickAndWaitAjax("link=Search...");
+        waitForElementById("popupFrame", 60);
+        selenium.selectFrame("popupFrame");
+        waitForElementById("orgNameSearch", 30);
+        selenium.type("orgNameSearch", "NCI - Center for Cancer Research");
+        clickAndWaitAjax("id=search_organization_btn");
+        waitForElementById("row", 15);
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[9]/button");
+        waitForPageToLoad();
+        driver.switchTo().defaultContent();
+        moveElementIntoView(By.id("trialDTO.leadOrganizationNameField"));
+        
+        assertFalse(selenium.isVisible("//div[@id='programCodeBlock']"));
+    }
+    
+    /**
+     * Test if programs codes are retained after amendment review and edit
+     * @throws Exception
+     */
+    public void testIfProgramCodesRetainedAfterReviewAndEdit() throws Exception {
+        
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+        
+        associateProgramCodes();
+        
+        TrialInfo info = createAcceptedTrial(false);
+        final String nciID = getLastNciId();
+        acceptTrialByNciIdWithGivenDWS(nciID, info.leadOrgID,
+                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
+                        .toString());
+        assignTrialOwner("abstractor-ci", info.id);
+
+        loginAndAcceptDisclaimer();
+
+        String rand = info.leadOrgID;
+        runSearchAndVerifySingleTrialResult("officialTitle", rand, info);
+        invokeAmendTrial();
+        
+        moveElementIntoView(By.id("trialDTO.leadOrganizationNameField"));
+        hover(By.id("trialDTO.leadOrganizationNameField"));
+        clickAndWaitAjax("link=National Cancer Institute Division of Cancer Prevention (Your Affiliation)");
+        clickAndWaitAjax("id=programCodesValues");
+        moveElementIntoView(By.id("programCodesValues"));
+        useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
+        useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
+      
+       
+        populateAmendTrialPage(info);
+        populateDt4Section(); 
+       
+        clickAndWait("xpath=//button[text()='Review Trial']");
+        waitForElementById("reviewTrialForm", 20);
+        clickAndWait("xpath=//button[text()='Edit ']");
+        waitForPageToLoad();
+        
+        //check if program codes are retained
+        moveElementIntoView(By.id("programCodesValues"));
+        
+        assertOptionSelected("PG1 Cancer Program1");
+        assertOptionSelected("PG2 Cancer Program2");
+    }
+    
+    
+    /** Test amendment of trial with program codes
+     * @throws Exception
+     */
+    public void testAmendTrialWithProgramCodes() throws Exception {
+        
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+        
+        associateProgramCodes();
+        
+        TrialInfo info = createAcceptedTrial(false);
+        final String nciID = getLastNciId();
+        acceptTrialByNciIdWithGivenDWS(nciID, info.leadOrgID,
+                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
+                        .toString());
+        assignTrialOwner("abstractor-ci", info.id);
+
+        loginAndAcceptDisclaimer();
+
+        String rand = info.leadOrgID;
+        runSearchAndVerifySingleTrialResult("officialTitle", rand, info);
+        invokeAmendTrial();
+        
+        moveElementIntoView(By.id("trialDTO.leadOrganizationNameField"));
+        hover(By.id("trialDTO.leadOrganizationNameField"));
+        clickAndWaitAjax("link=National Cancer Institute Division of Cancer Prevention (Your Affiliation)");
+        clickAndWaitAjax("id=programCodesValues");
+        moveElementIntoView(By.id("programCodesValues"));
+        useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
+        useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
+      
+       
+        populateAmendTrialPage(info);
+        populateDt4Section(); 
+       
+        clickAndWait("xpath=//button[text()='Review Trial']");
+        waitForElementById("reviewTrialForm", 20);
+        
+        clickAndWait("xpath=//button[text()='Submit']");
+        waitForPageToLoad();
+        assertTrue(selenium
+                .isTextPresent("The amendment to trial with the NCI Identifier "
+                        + nciID + " was successfully submitted."));
+        
+        //get trial id from nci Id
+        long trialId =(Long)getTrialIdByNciId(nciID);
+        
+        
+        //check if program codes are actually added in the database
+        long programCodeCount = getProgramCodesCount(trialId);
+        
+        assert programCodeCount==2;
+    }
+    
+    
+    /**
+     * Register a trial with program codes then send amendment and then 
+     * reject amendment and check if previous program codes are restored
+     * @throws Exception
+     */
+    public void testIfProgramCodesRestoredAfterRejection() throws Exception {
+        
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+        
+        associateProgramCodes();
+        
+       TrialInfo info = createAcceptedTrial(false);
+        
+        final String nciID = getLastNciId();
+        acceptTrialByNciIdWithGivenDWS(nciID, info.leadOrgID,
+                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
+                        .toString());
+        
+        
+        assignTrialOwner("abstractor-ci", info.id);
+        assignProgramCodesToTrial(info.id);
+
+        loginAndAcceptDisclaimer();
+
+        String rand = info.leadOrgID;
+        runSearchAndVerifySingleTrialResult("officialTitle", rand, info);
+        invokeAmendTrial();
+        
+        moveElementIntoView(By.id("trialDTO.leadOrganizationNameField"));
+        hover(By.id("trialDTO.leadOrganizationNameField"));
+        clickAndWaitAjax("link=National Cancer Institute Division of Cancer Prevention (Your Affiliation)");
+        clickAndWaitAjax("id=programCodesValues");
+        moveElementIntoView(By.id("programCodesValues"));
+        useSelect2ToPickAnOption("programCodesValues","PG3","PG3 Cancer Program3");
+        useSelect2ToPickAnOption("programCodesValues","PG4","PG4 Cancer Program4");
+      
+       
+        populateAmendTrialPage(info);
+        populateDt4Section(); 
+       
+        clickAndWait("xpath=//button[text()='Review Trial']");
+        waitForElementById("reviewTrialForm", 20);
+        
+        clickAndWait("xpath=//button[text()='Submit']");
+        waitForPageToLoad();
+        assertTrue(selenium
+                .isTextPresent("The amendment to trial with the NCI Identifier "
+                        + nciID + " was successfully submitted."));
+        
+        long trialId =(Long)getTrialIdByNciId(nciID);
+        
+        logoutUser();
+        logoutPA();
+        loginAsSuperAbstractor();
+        searchAndSelectTrial(info.title);
+        
+        acceptTrial();
+        
+        addMilestones();
+        
+     // Late reject trial amendment.
+        String action = "Reject This Amendment Only";
+        lateReject(action);
+        
+      //check if program codes are restored
+      long programCodeCount = getProgramCodesCount(trialId);
+      assert programCodeCount==2;
+        
+        
+    }
+    
+    private void recreateFamilies() throws Exception {
+        QueryRunner qr = new QueryRunner();
+        qr.update(connection, "delete from family");
+        qr.update(connection, String.format("INSERT INTO family( identifier, po_id, " +
+                "rep_period_end, rep_period_len_months)VALUES (1, 1, '%s', 12)", date(180)));
+    }
+
+    
+    private void associateProgramCodes() throws Exception {
+        recreateFamilies();
+        QueryRunner qr = new QueryRunner();
+        qr.update(connection, "delete from program_code");
+        qr.update(connection, "insert into program_code (family_id, program_code, program_name, status_code) " +
+                "values (1,'PG1', 'Cancer Program1', 'ACTIVE')");
+        qr.update(connection, "insert into program_code (family_id, program_code, program_name, status_code) " +
+                "values (1,'PG2', 'Cancer Program2', 'ACTIVE')");
+        qr.update(connection, "insert into program_code ( family_id, program_code, program_name, status_code) " +
+                "values (1,'PG3', 'Cancer Program3', 'ACTIVE')");
+        qr.update(connection, "insert into program_code ( family_id, program_code, program_name, status_code) " +
+                "values (1,'PG4', 'Cancer Program4', 'ACTIVE')");
+    }
+    
+    public void assignProgramCodesToTrial(long trailId) throws Exception {
+        
+        QueryRunner qr = new QueryRunner();
+        qr.update(connection, "insert into study_program_code " +
+                "values((select identifier from program_code where program_code='PG1')," +
+                trailId + ")");
+        qr.update(connection, "insert into study_program_code " +
+                "values((select identifier from program_code where program_code='PG2')," +
+                trailId + ")");
+    }
+    
+    private long getProgramCodesCount(long trialId) throws SQLException {
+        
+        QueryRunner runner = new QueryRunner();
+        return (Long) runner
+                .query(connection,
+                        "select count(*) from study_program_code where study_protocol_id="+trialId
+                        +" and program_code_id in (select identifier from program_code where program_code in ('PG1','PG2'))" ,
+                        new ArrayHandler())[0];
+     
     }
 
 }

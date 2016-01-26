@@ -346,6 +346,13 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
                 trialDTO.setSection801Indicator(null);
             }
             StudyProtocolDTO studyProtocolDTO = util.convertToStudyProtocolDTOForAmendment(trialDTO);
+            
+            //because we have already set program codes in program_code_text
+            //set the program codes list to blank otherwise in case of
+            //amendment reject previous values will not be restored
+            //TrialRegistrationBeanLocal method assignProgramCodes
+            studyProtocolDTO.setProgramCodes(null);
+            
             studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(currentUser));
             
             final List<StudyOverallStatusDTO> statusHistory = new ArrayList<StudyOverallStatusDTO>();

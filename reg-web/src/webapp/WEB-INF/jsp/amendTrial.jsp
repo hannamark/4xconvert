@@ -9,6 +9,7 @@
         <title><fmt:message key="amend.trial.page.title"/></title>
         <link href="<c:url value='/styles/jquery-datatables/css/jquery.dataTables.min.css'/>" rel="stylesheet" type="text/css" media="all" />    
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery.dataTables.min.js'/>"></script>
+        <script type="text/javascript" src="${scriptPath}/js/submitTrial.js"></script>
         <s:head/>
         
         <c:url value="/protected/amendTrial" var="backendUrlTemplate"/>  
@@ -67,6 +68,7 @@
                 } else if(selection == -1) {
                     showPopup("${lookupOrgUrl}",loadLeadOrgDiv, 'Select Lead Organization');
                 } else if(selection > 0) {
+                	loadProgramCodes(selection);
                     $('trialDTO.leadOrganizationNameField').innerHTML = name;
                     $('trialDTO.leadOrganizationName').value = name;
                     $("trialDTO.leadOrganizationIdentifier").value = selection;
@@ -132,6 +134,7 @@
             }
             
             function loadLeadOrgDiv() {
+            	loadProgramCodes(orgid);
                 $("trialDTO.leadOrganizationIdentifier").value = orgid;
                 $('trialDTO.leadOrganizationNameField').innerHTML = chosenname;
                 $('trialDTO.leadOrganizationName').value = chosenname;
@@ -181,6 +184,8 @@
             }
 
             function reviewProtocol () {
+            	var text = getProgramCodesValuesText();
+                jQuery("#trialDTO\\.programCodeText").val(text); 
                 submitFirstForm("save", "amendTrialreview.action");
                 showPopWin('${reviewProtocol}', 600, 200, '', 'Review Register Trial');
             }
@@ -391,6 +396,11 @@
             }
      
             document.observe("dom:loaded", function() {
+            	 if($('trialDTO.leadOrganizationIdentifier').value) {
+                     loadProgramCodes($('trialDTO.leadOrganizationIdentifier').value,
+                     $('trialDTO.programCodeText').value);
+                     
+                 }
                 displayTrialStatusDefinition('trialDTO_statusCode');
                 if($('trialDTO.leadOrganizationName').value) {
                    $('trialDTO.leadOrganizationNameField').innerHTML = $('trialDTO.leadOrganizationName').value;
@@ -398,6 +408,7 @@
                 if($('trialDTO.sponsorName').value) {
                    $('trialDTO.sponsorNameField').innerHTML = $('trialDTO.sponsorName').value;
                 }
+               
                
             });
             
@@ -489,6 +500,9 @@
                     <%@ include file="/WEB-INF/jsp/nodecorate/trialOtherIdsSection.jsp" %>
                     <%@ include file="/WEB-INF/jsp/nodecorate/amendDetailsSection.jsp" %>
                     <%@ include file="/WEB-INF/jsp/nodecorate/amendLeadOrganizationSection.jsp" %>
+                    
+                 
+                    
                     <s:if test="%{trialDTO.xmlRequired == true}">
                           <div id="sponsorDiv" style="display:''">
                               <%@ include file="/WEB-INF/jsp/nodecorate/trialResponsibleParty.jsp" %>

@@ -8,6 +8,15 @@
              <div id="loadOrgField">
                  <%@ include file="/WEB-INF/jsp/nodecorate/trialLeadOrganization.jsp" %>
              </div>
+                <div class="col-xs-10">
+                            <div align="center"  id ="programCodesLoad"  style="display:none" >
+                                <img  src="${pageContext.request.contextPath}/images/loading.gif"
+                                />
+                                &nbsp;Loading...
+                                </div>
+                                
+                                
+                         </div>
          </div>                
          <div class="form-group">
              <label for="trialDTO.piName" class="col-xs-4 control-label"><fmt:message key="submit.trial.principalInvestigator"/><span class="required">*</span></label>
