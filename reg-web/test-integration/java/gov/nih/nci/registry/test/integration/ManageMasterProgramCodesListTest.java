@@ -177,6 +177,7 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         
         // open the edit dialog and verify the contents
         updateProgramCodebutton.click();
+        pause(1000);
         assertTrue(selenium.isTextPresent("Edit Program Code"));
         assertTrue(selenium.isTextPresent("Organization Family of Affiliate Site: National Cancer Institute"));
         assertTrue(selenium.isTextPresent("Program Code:*"));
@@ -187,10 +188,12 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         // test cancel the edit dialog
         WebElement cancelButton = driver.findElement(By.xpath("//button/span[contains(text(),'Cancel')]"));
         cancelButton.click();
+        pause(1000);
         assertTrue(selenium.isTextPresent("Program Code"));
         
         // re-open the edit dialog
         updateProgramCodebutton.click();
+        pause(1000);
         // update program code and name
         
         WebElement programCodeInputField = driver.findElement(By.id("updatedProgramCode"));
@@ -203,18 +206,21 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         selenium.typeKeys("//input[@id='updatedProgramName']", "Cancer Program1-updated");
         WebElement saveButton = driver.findElement(By.xpath("//button/span[contains(text(),'Save')]"));
         saveButton.click();
+        pause(1000);
         
         //  verify confirmation dialog
         assertTrue(selenium.isTextPresent("Confirm Program Code Modification"));
         // test cancel the edit dialog
         WebElement noButton = driver.findElement(By.xpath("//button/span[contains(text(),'No')]"));
         noButton.click();
+        pause(1000);
         // program code not updated when confirmation dialog is cancelled
         assertTrue(selenium.isTextPresent("PG1"));
         assertTrue(selenium.isTextPresent("Cancer Program1"));
         
         //re-open the edit dialog
         updateProgramCodebutton.click();
+        pause(1000);
         
         // update program code and name again
         programCodeInputField.clear();
@@ -222,13 +228,14 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         selenium.typeKeys("//input[@id='updatedProgramCode']", "PG1-updated");
         selenium.typeKeys("//input[@id='updatedProgramName']", "Cancer Program1-updated");
         saveButton.click();
+        pause(1000);
         
         //  verify confirmation dialog
         assertTrue(selenium.isTextPresent("Confirm Program Code Modification"));
         // test confirmation the program code change by clicking on yes
         WebElement yesButton = driver.findElement(By.xpath("//button/span[contains(text(),'Yes')]"));
         yesButton.click();
-        Thread.sleep(2000);
+        pause(1000);
         
         // both program code and name should have been updated
         assertTrue(selenium.isTextPresent("PG1-updated"));
@@ -273,6 +280,7 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         
      // open the edit dialog 
         updateProgramCodebutton.click();
+        pause(1000);
         // clear program code and submit
         WebElement programCodeInputField = driver.findElement(By.id("updatedProgramCode"));
         programCodeInputField.clear();
@@ -282,18 +290,22 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         
         WebElement saveButton = driver.findElement(By.xpath("//button/span[contains(text(),'Save')]"));
         saveButton.click();
+        pause(1000);
         
         assertEquals("Error",driver.findElement(By.className("modal-title")).getText());;
         assertTrue(selenium.isTextPresent("Program code is required"));
         WebElement okButton = driver.findElement(By.id("cancelButton"));
         okButton.click();
+        pause(1000);
         
      // re-open the edit dialog and update program code to an existing value
         updateProgramCodebutton.click();
+        pause(1000);
         // clear program code and submit
         programCodeInputField.clear();
         selenium.typeKeys("//input[@id='updatedProgramCode']", "PG3");
         saveButton.click();
+        pause(1000);
         
         //  verify confirmation dialog
         assertTrue(selenium.isTextPresent("Confirm Program Code Modification"));
