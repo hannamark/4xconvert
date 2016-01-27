@@ -975,10 +975,15 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         
         clickAndWait("xpath=//button[text()='Submit']");
         waitForPageToLoad();
-/*        assertTrue(selenium
+        //wait additional time
+        pause(5000);
+        assertTrue(selenium
                 .isTextPresent("The amendment to trial with the NCI Identifier "
                         + nciID + " was successfully submitted."));
-  */      
+        
+        
+        
+        
         long trialId =(Long)getTrialIdByNciId(nciID);
         
         logoutUser();
