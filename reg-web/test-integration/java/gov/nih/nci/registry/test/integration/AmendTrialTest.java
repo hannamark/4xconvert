@@ -911,9 +911,9 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         
         clickAndWait("xpath=//button[text()='Submit']");
         waitForPageToLoad();
-/*        assertTrue(selenium
+        assertTrue(selenium
                 .isTextPresent("The amendment to trial with the NCI Identifier "
-                        + nciID + " was successfully submitted."));*/
+                        + nciID + " was successfully submitted."));
         
         //get trial id from nci Id
         long trialId =(Long)getTrialIdByNciId(nciID);
@@ -1015,7 +1015,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
 
     
     private void associateProgramCodes() throws Exception {
-        recreateFamilies();
+       // recreateFamilies();
         QueryRunner qr = new QueryRunner();
         qr.update(connection, "delete from program_code");
         qr.update(connection, "insert into program_code (family_id, program_code, program_name, status_code) " +
