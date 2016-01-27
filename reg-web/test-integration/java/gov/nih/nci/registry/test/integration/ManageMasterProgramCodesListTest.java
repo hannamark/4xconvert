@@ -231,10 +231,9 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         WebElement yesButton = driver.findElement(By.xpath("//button/span[contains(text(),'Yes')]"));
         yesButton.click();
         
-        waitForElementToBecomeAvailable(By.className("modal-title"), 20);
-        
         // both program code and name should have been updated
-        ((JavascriptExecutor) driver).executeScript("scroll(0,250);");
+        pause(1000);
+        ((JavascriptExecutor) driver).executeScript("scroll(0,100);");
         assertTrue(selenium.isTextPresent("PG1-updated"));
         assertTrue(selenium.isTextPresent("Cancer Program1-updated"));
         
@@ -287,9 +286,9 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         
         WebElement saveButton = driver.findElement(By.xpath("//button/span[contains(text(),'Save')]"));
         saveButton.click();
-        waitForElementToBecomeAvailable(By.className("modal-title"), 20);
+        waitForElementToBecomeVisible(By.className("modal-title"), 20);
         
-        assertEquals("Error",driver.findElement(By.className("modal-title")).getText());;
+        assertTrue(selenium.isTextPresent("Error"));
         assertTrue(selenium.isTextPresent("Program code is required"));
         WebElement okButton = driver.findElement(By.id("cancelButton"));
         okButton.click();
@@ -307,7 +306,6 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         WebElement yesButton = driver.findElement(By.xpath("//button/span[contains(text(),'Yes')]"));
         yesButton.click();
         
-      //  waitForElementToBecomeAvailable(By.className("modal-title"), 20);
         pause(1000);
         
         assertEquals("Error",driver.findElement(By.className("modal-title")).getText());;
