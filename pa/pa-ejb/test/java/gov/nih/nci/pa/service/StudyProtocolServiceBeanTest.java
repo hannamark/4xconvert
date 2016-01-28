@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.service;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
@@ -148,7 +149,9 @@ import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
+
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Rule;
@@ -157,6 +160,7 @@ import org.junit.rules.ExpectedException;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -219,6 +223,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         bean.setMailManagerService(mailManagerServiceLocal);
         bean.setProtocolQueryService(protocolQueryServiceLocal);
         bean.setFamilyProgramCodeService(familyProgramCodeService);
+        PaHibernateUtil.enableAudit();
     }
 
     @Test(expected = PAException.class)
@@ -441,8 +446,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 
     @Test
     public void testAssignProgramCodesWhenOrgHasNoFamily() throws Exception {
-
-
+        deleteAllRecords();
         //Given that a study is present
         createStudyProtocols(1, PAConstants.DCP_ORG_NAME, "PO-9581-1", false);
         Ii ii = new Ii();
@@ -469,7 +473,35 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         assertTrue(spDTO3.getProgramCodeText().getValue().contains("3"));
         assertTrue(spDTO3.getProgramCodeText().getValue().contains("5"));
         assertEquals(3, StringUtils.split(spDTO3.getProgramCodeText().getValue() , ";").length);
+        assertTrue(getAuditDetails("STUDY_PROTOCOL") >= 1);
+        assertTrue(getAuditLogDetails("programCodeText") >= 1);
 
+    }
+    private int getAuditDetails(String entityName) throws SQLException {
+        Session  session = PaHibernateUtil.getCurrentSession();
+        Query qry = session.createQuery("from AuditLogRecord where entityName = :entityName");
+        qry.setParameter("entityName", entityName);
+        int returnValue = qry.list().size();
+        session.flush();
+        return returnValue;
+    }
+    
+    private int getAuditLogDetails(String attribute) throws SQLException {
+         Session  session = PaHibernateUtil.getCurrentSession();
+         Query qry = session.createQuery("from AuditLogDetail where attribute = :attribute");
+         qry.setParameter("attribute", attribute);
+         int returnValue = qry.list().size();
+         session.flush();
+         return returnValue;
+    }
+    private void deleteAllRecords() throws SQLException {
+        Session  session = PaHibernateUtil.getCurrentSession();
+        Query qry = session.createSQLQuery("delete from auditlogdetail");
+        qry.executeUpdate();
+        
+         qry = session.createSQLQuery("delete from auditlogrecord");
+        qry.executeUpdate();
+        session.flush();
     }
     @Test
     public void testAssignProgramCodesWhenOrgHasFamily() throws Exception {
@@ -490,7 +522,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         familyDTO.getProgramCodes().add(pgDto2);
 
         when(familyProgramCodeService.getFamilyDTOByPoId(1L)).thenReturn(familyDTO);
-
+        deleteAllRecords();
         //And a study is present
         createStudyProtocols(1, PAConstants.DCP_ORG_NAME, "PO-9581-2", false);
         Ii ii = new Ii();
@@ -499,10 +531,11 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         StudyProtocolDTO spDTO = remoteEjb.getStudyProtocol(ii);
         long studyPaId = Long.parseLong(spDTO.getIdentifier().getExtension());
         //assert can be done on getProgramCodes after Lalit's code merging.
-
+        
         //When I assign program code legacy data
         remoteEjb.assignProgramCodes(studyPaId, 1L, Arrays.asList("1", "5"));
-
+        assertTrue(getAuditDetails("STUDY_PROTOCOL") >= 1);
+        assertTrue(getAuditLogDetails("programCodes") >= 1);
         //Then it must get associated to study under programCodes field
         StudyProtocolDTO spDTO2 = remoteEjb.getStudyProtocol(ii);
         //assert can be done on getProgramCodes after Lalit's code merging.
@@ -524,7 +557,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 
     @Test
     public void testUnAssignProgramCodesWhenOrgHasNoFamily() throws Exception {
-
+        deleteAllRecords();
         //Given that a study is present
         createStudyProtocols(1, PAConstants.DCP_ORG_NAME, "PO-9489-1", false);
         Ii ii = new Ii();
@@ -544,7 +577,8 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 
         //When I unassin program codes
         remoteEjb.unAssignProgramCode(studyPaId, "1");
-
+        assertTrue(getAuditDetails("STUDY_PROTOCOL") >= 1);
+        assertTrue(getAuditLogDetails("programCodeText") >= 1);
         //Then it should associate only unique results
         StudyProtocolDTO spDTO3 = remoteEjb.getStudyProtocol(ii);
         assertTrue(spDTO3.getProgramCodeText().getValue().contains("5"));
@@ -592,7 +626,6 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 
         //When I unassin program codes
         remoteEjb.unAssignProgramCode(studyPaId, "1");
-
         //Then it should associate only unique results
         StudyProtocolDTO spDTO3 = remoteEjb.getStudyProtocol(ii);
         programCodeDTOs = spDTO3.getProgramCodes();
@@ -604,7 +637,6 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 
     @Test
     public void testAssignProgramCodesToTrials() throws Exception {
-
         //Given that the family and program codes are available.
         TestSchema.createFamily(1L);
         ProgramCodeDTO pgDto1 = new ProgramCodeDTO();
@@ -621,7 +653,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         familyDTO.getProgramCodes().add(pgDto2);
 
         when(familyProgramCodeService.getFamilyDTOByPoId(1L)).thenReturn(familyDTO);
-
+        deleteAllRecords();
         //And a study is present
         createStudyProtocols(1, PAConstants.DCP_ORG_NAME, "PO-9489-2", false);
         Ii ii = new Ii();
@@ -630,16 +662,16 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         StudyProtocolDTO spDTO = remoteEjb.getStudyProtocol(ii);
         long studyPaId = Long.parseLong(spDTO.getIdentifier().getExtension());
         //assert can be done on getProgramCodes after Lalit's code merging.
-
+       
         //When I assign program code legacy data
         remoteEjb.assignProgramCodesToTrials(Arrays.asList(studyPaId), 1L, Arrays.asList("1", "5"));
-
         //Then it must get associated to study under programCodes field
         StudyProtocolDTO spDTO2 = remoteEjb.getStudyProtocol(ii);
         //assert can be done on getProgramCodes after Lalit's code merging.
         List<ProgramCodeDTO> programCodeDTOs = spDTO2.getProgramCodes();
         assertEquals(2, programCodeDTOs.size());
-
+        assertTrue(getAuditDetails("STUDY_PROTOCOL") >= 1);
+        assertTrue(getAuditLogDetails("programCodes") >= 1);
 
     }
 
@@ -664,7 +696,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         familyDTO.getProgramCodes().add(pgDto2);
 
         when(familyProgramCodeService.getFamilyDTOByPoId(1L)).thenReturn(familyDTO);
-
+        deleteAllRecords();
         //And a study is present
         createStudyProtocols(1, PAConstants.DCP_ORG_NAME, "PO-9489-2", false);
         Ii ii = new Ii();
@@ -686,7 +718,8 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 
         //When I unassin program codes
         remoteEjb.unassignProgramCodesFromTrials(Arrays.asList(studyPaId), Arrays.asList("1"));
-
+        assertTrue(getAuditDetails("STUDY_PROTOCOL") >= 1);
+        assertTrue(getAuditLogDetails("programCodes") >= 1);
         //Then it should associate only unique results
         StudyProtocolDTO spDTO3 = remoteEjb.getStudyProtocol(ii);
         programCodeDTOs = spDTO3.getProgramCodes();
@@ -726,7 +759,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         familyDTO.getProgramCodes().add(pgDto4);
 
         when(familyProgramCodeService.getFamilyDTOByPoId(1L)).thenReturn(familyDTO);
-
+        deleteAllRecords();
         //And a study is present
         createStudyProtocols(1, PAConstants.DCP_ORG_NAME, "PO-9489-3", false);
         Ii ii = new Ii();
@@ -746,7 +779,8 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         //when I replace program code 1 with 3 and 5
         remoteEjb.replaceProgramCodesOnTrials(Arrays.asList(studyPaId), 1L, "1", Arrays.asList("3","5"));
 
-
+        assertTrue(getAuditDetails("STUDY_PROTOCOL") >= 1);
+        assertTrue(getAuditLogDetails("programCodes") >= 1);
         //Then it must get associated to study under programCodes field
         StudyProtocolDTO spDTO3 = remoteEjb.getStudyProtocol(ii);
         programCodeDTOs = spDTO3.getProgramCodes();
