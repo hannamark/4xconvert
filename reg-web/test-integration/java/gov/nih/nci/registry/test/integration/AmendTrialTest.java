@@ -762,7 +762,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         
         moveElementIntoView(By.id("trialDTO.leadOrganizationNameField"));
         hover(By.id("trialDTO.leadOrganizationNameField"));
-        clickAndWaitAjax("link=National Cancer Institute Division of Cancer Prevention (Your Affiliation)");
+        clickAndWaitAjax("link=National Cancer Institute");
         clickAndWaitAjax("id=programCodesValues");
         moveElementIntoView(By.id("programCodesValues"));
         useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
@@ -896,7 +896,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         
         moveElementIntoView(By.id("trialDTO.leadOrganizationNameField"));
         hover(By.id("trialDTO.leadOrganizationNameField"));
-        clickAndWaitAjax("link=National Cancer Institute Division of Cancer Prevention (Your Affiliation)");
+        clickAndWaitAjax("link=National Cancer Institute");
         clickAndWaitAjax("id=programCodesValues");
         moveElementIntoView(By.id("programCodesValues"));
         useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
@@ -960,7 +960,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         
         moveElementIntoView(By.id("trialDTO.leadOrganizationNameField"));
         hover(By.id("trialDTO.leadOrganizationNameField"));
-        clickAndWaitAjax("link=National Cancer Institute Division of Cancer Prevention (Your Affiliation)");
+        clickAndWaitAjax("link=National Cancer Institute");
         clickAndWaitAjax("id=programCodesValues");
         moveElementIntoView(By.id("programCodesValues"));
         useSelect2ToPickAnOption("programCodesValues","PG3","PG3 Cancer Program3");
@@ -1019,13 +1019,13 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         QueryRunner qr = new QueryRunner();
         qr.update(connection, "delete from program_code");
         qr.update(connection, "insert into program_code (family_id, program_code, program_name, status_code) " +
-                "values (1,'PG1', 'Cancer Program1', 'ACTIVE')");
+                "values ((select identifier from family where po_id=1 ),'PG1', 'Cancer Program1', 'ACTIVE')");
         qr.update(connection, "insert into program_code (family_id, program_code, program_name, status_code) " +
-                "values (1,'PG2', 'Cancer Program2', 'ACTIVE')");
+                "values ((select identifier from family where po_id=1 ),'PG2', 'Cancer Program2', 'ACTIVE')");
         qr.update(connection, "insert into program_code ( family_id, program_code, program_name, status_code) " +
-                "values (1,'PG3', 'Cancer Program3', 'ACTIVE')");
+                "values ((select identifier from family where po_id=1 ),'PG3', 'Cancer Program3', 'ACTIVE')");
         qr.update(connection, "insert into program_code ( family_id, program_code, program_name, status_code) " +
-                "values (1,'PG4', 'Cancer Program4', 'ACTIVE')");
+                "values ((select identifier from family where po_id=1 ),'PG4', 'Cancer Program4', 'ACTIVE')");
     }
     
     public void assignProgramCodesToTrial(long trailId) throws Exception {
