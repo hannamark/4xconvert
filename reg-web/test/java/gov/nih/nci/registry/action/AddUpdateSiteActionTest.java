@@ -12,10 +12,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.dto.FamilyDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
@@ -28,6 +30,7 @@ import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.status.StatusTransitionService;
+import gov.nih.nci.pa.service.util.FamilyProgramCodeService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
@@ -42,10 +45,14 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.struts2.ServletActionContext;
@@ -54,6 +61,8 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import com.opensymphony.xwork2.ActionSupport;
+
+import javax.servlet.http.HttpSession;
 
 /**
  * @author Denis G. Krylov
@@ -71,10 +80,16 @@ public class AddUpdateSiteActionTest extends AbstractRegWebTest {
     private ProtocolQueryServiceLocal protocolQueryServiceLocal;
     private OrganizationEntityServiceRemote organizationEntityServiceRemote;
     private StatusTransitionService statusTransitionService;
+    private FamilyProgramCodeService familyProgramCodeService;
 
     private SubmittedOrganizationDTO existentSiteDTO;
     private ClinicalResearchStaffDTO researchStaffDTO;
     private HealthCareProviderDTO healthCareProviderDTO;
+    private FamilyDTO familyDTO;
+    private Set<ProgramCodeDTO> programCodes;
+    RegistryUser user;
+    StudyProtocolDTO studyDTO;
+    List<ProgramCodeDTO> masterPgcList;
 
     @Before
     public void before() throws PAException {
@@ -86,6 +101,7 @@ public class AddUpdateSiteActionTest extends AbstractRegWebTest {
         studyProtocolServiceLocal = mock(StudyProtocolServiceLocal.class);
         protocolQueryServiceLocal = mock(ProtocolQueryServiceLocal.class);
         statusTransitionService = mock(StatusTransitionService.class);
+        familyProgramCodeService = mock(FamilyProgramCodeService.class);
 
         StudySiteDTO studySiteDTO = new StudySiteDTO();
         studySiteDTO.setIdentifier(IiConverter.convertToStudySiteIi(1L));
@@ -102,7 +118,7 @@ public class AddUpdateSiteActionTest extends AbstractRegWebTest {
                 paServiceUtils.getHcpDTO(any(String.class), any(Ii.class),
                         any(String.class))).thenReturn(healthCareProviderDTO);
 
-        RegistryUser user = getRegistryUser();
+        user = getRegistryUser();
         when(registryUserServiceLocal.getUser(any(String.class))).thenReturn(
                 user);
 
@@ -144,17 +160,28 @@ public class AddUpdateSiteActionTest extends AbstractRegWebTest {
                 participatingSiteServiceLocal.getParticipatingSite(
                         any(Ii.class))).thenReturn(
                                 participatingSiteDTO);   
-        StudyProtocolDTO studyDTO = setupSpDto();
+        studyDTO = setupSpDto();
         when(
                 studyProtocolServiceLocal.getStudyProtocol(eq(IiConverter
                         .convertToStudyProtocolIi(1L)))).thenReturn(studyDTO);
         StudyProtocolQueryDTO queryDTO = new StudyProtocolQueryDTO();
         when(protocolQueryServiceLocal.getTrialSummaryByStudyProtocolId(1L)).thenReturn(
                 queryDTO);
-        
+
         organizationEntityServiceRemote = new MockOrganizationEntityService();
+        familyDTO = new FamilyDTO(1L);
+        programCodes = new HashSet<>();
+        familyDTO.setProgramCodes(programCodes);
+
+        programCodes.add(createProgramCode(1L, "PG1", "ProgramCode1"));
+        programCodes.add(createProgramCode(2L, "PG2", "ProgramCode2"));
+        programCodes.add(createProgramCode(3L, "PG3", "ProgramCode3"));
+        programCodes.add(createProgramCode(4L, "PG4", "ProgramCode4"));
+
+        when(familyProgramCodeService.getFamilyDTOByPoId(1L)).thenReturn(familyDTO);
 
     }
+
 
     /**
      * @return
@@ -204,6 +231,7 @@ public class AddUpdateSiteActionTest extends AbstractRegWebTest {
         action.setOrganizationService(organizationEntityServiceRemote);
         action.setStudyProtocolId("1");
         action.setStatusTransitionService(statusTransitionService);
+        action.setFamilyProgramCodeService(familyProgramCodeService);
         action.setServletRequest(ServletActionContext.getRequest());
     }
 
@@ -223,12 +251,32 @@ public class AddUpdateSiteActionTest extends AbstractRegWebTest {
     public void testView() throws PAException {
         prepareAction();
         String fwd = action.view();
+        HttpSession session = ServletActionContext.getRequest().getSession();
+
         assertEquals(existentSiteDTO, action.getSiteDTO());
         assertEquals(ActionSupport.SUCCESS, fwd);
+
+        assertEquals("true", String.valueOf(session.getAttribute("CANCER_TRIAL")));
+        assertEquals(
+                existentSiteDTO, session.getAttribute(TrialUtil.SESSION_TRIAL_SITE_ATTRIBUTE));
+    }
+
+
+    @Test
+    public void testViewNonCancerTrial() throws PAException {
+        prepareAction();
+        user.setAffiliatedOrganizationId(12L);
+        String fwd = action.view();
+
+        assertEquals(ActionSupport.SUCCESS, fwd);
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        assertEquals("false", String.valueOf(session.getAttribute("CANCER_TRIAL")));
+        assertNull(session.getAttribute("FAMILY_ID"));
+        assertTrue(((List) session.getAttribute("PGC_MASTER_LIST")).isEmpty());
+        assertTrue(((List) session.getAttribute("PGC_ID_LIST")).isEmpty());
         assertEquals(
                 existentSiteDTO,
-                ServletActionContext.getRequest().getSession()
-                        .getAttribute(TrialUtil.SESSION_TRIAL_SITE_ATTRIBUTE));
+                session.getAttribute(TrialUtil.SESSION_TRIAL_SITE_ATTRIBUTE));
     }
 
     @Test
@@ -383,5 +431,106 @@ public class AddUpdateSiteActionTest extends AbstractRegWebTest {
                 Arrays.asList("error.nullifiedInvestigator"));
 
     }
+
+    @Test
+    public void testAddSiteWithProgramCodes() throws Exception {
+        prepareAction();
+        //Given that a study exists with no previous program code association
+        prepareProgramCodes();
+        SubmittedOrganizationDTO newSiteDTO = new SubmittedOrganizationDTO();
+        PropertyUtils.copyProperties(newSiteDTO, existentSiteDTO);
+        newSiteDTO.setId(null);
+
+        action.setSiteDTO(newSiteDTO);
+
+        //When the user selects PG1, PG2 and PG3 from screen
+        action.setProgramCode("1,2,3");
+        String fwd = action.save();
+        assertEquals(ActionSupport.SUCCESS, fwd);
+        assertEquals(
+                action.getText("add.site.success"),
+                ServletActionContext.getRequest().getSession()
+                        .getAttribute(AddUpdateSiteAction.SUCCESS_MESSAGE_KEY));
+        assertFalse(action.hasActionErrors());
+        assertFalse(action.hasFieldErrors());
+
+        //Then PG1, PG2 and PG3 must be assigned to study
+
+        verify(studyProtocolServiceLocal, times(1)).assignProgramCodesToTrials(
+                Arrays.asList(1L), 1L, Arrays.asList("PG1", "PG2", "PG3")
+        );
+
+    }
+
+
+    @Test
+    public void testUpdateSiteWithProgramCodes() throws PAException {
+
+        prepareAction();
+
+        prepareProgramCodes();
+        //Given a study exists with program codes PG1 and PG2
+        studyDTO.setProgramCodes(Arrays.asList(masterPgcList.get(0), masterPgcList.get(1)));
+
+
+        action.setSiteDTO(existentSiteDTO);
+        //And user de-select PG2 and selects PG3
+        action.setProgramCode("1,3");
+        String fwd = action.save();
+        assertEquals(ActionSupport.SUCCESS, fwd);
+        assertEquals(
+                action.getText("add.site.updateSuccess"),
+                ServletActionContext.getRequest().getSession()
+                        .getAttribute(AddUpdateSiteAction.SUCCESS_MESSAGE_KEY));
+        assertFalse(action.hasActionErrors());
+        assertFalse(action.hasFieldErrors());
+
+        //Then PG2 is unassigned
+        verify(studyProtocolServiceLocal, times(1)).unassignProgramCodesFromTrials(
+                Arrays.asList(1L), Arrays.asList("PG2")
+        );
+
+        //And PG3 is assigned
+        verify(studyProtocolServiceLocal, times(1)).assignProgramCodesToTrials(
+                Arrays.asList(1L), 1L, Arrays.asList("PG3")
+        );
+
+
+    }
+
+    private void prepareProgramCodes() {
+        masterPgcList = new ArrayList<ProgramCodeDTO>();
+        masterPgcList.add(createProgramCode(1L, "PG1", "Program Code1"));
+        masterPgcList.add(createProgramCode(2L, "PG2", "Program Code2"));
+        masterPgcList.add(createProgramCode(3L, "PG3", "Program Code3"));
+        masterPgcList.add(createProgramCode(4L, "PG4", "Program Code4"));
+        List<Long> selectedPgcIdList = new ArrayList<Long>();
+        selectedPgcIdList.add(1L);
+        selectedPgcIdList.add(2L);
+        FamilyDTO f = new FamilyDTO(1L);
+        f.setProgramCodes(new HashSet<ProgramCodeDTO>(masterPgcList));
+        f.setId(1L);
+        Map<ProgramCodeDTO, FamilyDTO> pgcFamilyIndex = new LinkedHashMap<ProgramCodeDTO, FamilyDTO>();
+        for (ProgramCodeDTO p : f.getProgramCodes()) {
+            pgcFamilyIndex.put(p, f);
+        }
+        ServletActionContext
+                .getRequest()
+                .getSession().setAttribute("PGC_MASTER_LIST", masterPgcList);
+        ServletActionContext
+                .getRequest()
+                .getSession().setAttribute("PGC_ID_LIST", selectedPgcIdList);
+        ServletActionContext
+                .getRequest()
+                .getSession().setAttribute("PGC_FAMILY_INDEX", pgcFamilyIndex);
+        ServletActionContext
+                .getRequest()
+                .getSession().setAttribute("FAMILY_ID", 1L);
+        ServletActionContext
+                .getRequest()
+                .getSession().setAttribute("isSiteAdmin", true);
+
+    }
+
 
 }

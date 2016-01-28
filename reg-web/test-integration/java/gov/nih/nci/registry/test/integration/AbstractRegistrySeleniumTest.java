@@ -88,12 +88,14 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
+import org.apache.commons.dbutils.handlers.ArrayListHandler;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -841,4 +843,22 @@ public abstract class AbstractRegistrySeleniumTest extends
                 DateUtils.addDays(new Date(), offsetFromToday), "MM/dd/yyyy");
     }
 
+    protected void removeProgramCodesFromTrial(Long studyProtocolId) throws Exception {
+        QueryRunner runner = new QueryRunner();
+        runner.update(connection, "delete from study_program_code where study_protocol_id = " + studyProtocolId);
+    }
+
+    protected List<String> getProgramCodesByTrial(Long studyProtocolId) throws Exception {
+        QueryRunner runner = new QueryRunner();
+       List<Object[]> results = runner.query(connection, "select pc.program_code from program_code pc " +
+                "join study_program_code sp on sp.program_code_id = pc.identifier " +
+                "where sp.study_protocol_id = " + studyProtocolId, new ArrayListHandler());
+        List<String> list = new ArrayList<String>();
+        if (results != null) {
+            for (Object[] o : results) {
+                list.add(String.valueOf(o[0]));
+            }
+        }
+        return list;
+    }
 }

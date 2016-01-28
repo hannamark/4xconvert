@@ -1,11 +1,14 @@
 package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.dto.FamilyDTO;
+import gov.nih.nci.pa.dto.OrgFamilyDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -15,6 +18,7 @@ import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.status.json.TransitionFor;
 import gov.nih.nci.pa.service.status.json.TrialType;
 import gov.nih.nci.pa.service.util.FamilyHelper;
+import gov.nih.nci.pa.service.util.FamilyProgramCodeService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -31,7 +35,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,7 +66,11 @@ public class AddSitesAction extends StatusHistoryManagementAction {
 
     private static final String FAILURE_MESSAGE = "failureMessage";
     private static final int LIMIT = 100;
+    private static final String CANCER_TRIAL = "CANCER_TRIAL";
+    private static final String PROGRAM_CODES = "PROGRAM_CODES";
+
     static final String RESULTS_SESSION_KEY = "AddSitesAction.records";
+
 
     private SearchProtocolCriteria criteria = new SearchProtocolCriteria();
 
@@ -74,13 +85,17 @@ public class AddSitesAction extends StatusHistoryManagementAction {
     private StudySiteContactServiceLocal studySiteContactService;
     
     private ProtocolQueryServiceLocal protocolQueryService;
+    private FamilyProgramCodeService familyProgramCodeService;
 
     private PAServiceUtils paServiceUtils;
 
     private final List<AddSiteResult> summary = new ArrayList<AddSiteResult>();
     
     private List<StudyProtocolQueryDTO> records;
-    
+
+    private Map<ProgramCodeDTO, FamilyDTO> programCodeFamilyIndex = new HashMap<ProgramCodeDTO, FamilyDTO>();
+
+
     @SuppressWarnings("rawtypes")
     @Override
     protected final Class getStatusEnumClass() {       
@@ -173,6 +188,8 @@ public class AddSitesAction extends StatusHistoryManagementAction {
             return ERROR;
         }
 
+        loadProgramCodes();
+
         for (StudyProtocolQueryDTO trial : trials) {
             saveSitesData(trial);
         }
@@ -207,6 +224,15 @@ public class AddSitesAction extends StatusHistoryManagementAction {
                     registryUserService, studySiteContactService, this, trial
                             .getStudyProtocolId().toString(),
                     siteDTO.getSitePoId());
+            //populate the selected program code ids
+            helper.addAllToFamilyProgramCodeIndex(programCodeFamilyIndex);
+            String[] programCodes = getServletRequest().getParameterValues("trial_"
+                    + trial.getStudyProtocolId() + "_programCode");
+            if (programCodes != null && programCodes.length > 0) {
+                for (String strPgcId : programCodes) {
+                    helper.addToFinalProgramCodeIds(Long.parseLong(strPgcId));
+                }
+            }
             helper.addSite();
 
             summary.add(new AddSiteResult(trial, siteDTO, "SUCCESS"));
@@ -312,6 +338,7 @@ public class AddSitesAction extends StatusHistoryManagementAction {
             getServletRequest().getSession().setAttribute(RESULTS_SESSION_KEY,
                     getRecords());
             clearSessionLeftOvers();
+            prepareProgramCodes();
             return SUCCESS;
         } catch (PAException e) {
             LOG.error(e, e);
@@ -320,6 +347,39 @@ public class AddSitesAction extends StatusHistoryManagementAction {
             return ERROR;
         }
 
+    }
+
+    /**
+     * Will prepare the program codes for rendering in select box
+     * @throws PAException  - upon error
+     */
+    private void prepareProgramCodes() throws PAException {
+        loadProgramCodes();
+        Map<String, ProgramCodeDTO> pgcMap = new TreeMap<String, ProgramCodeDTO>();
+        boolean cancerTrial = false;
+        if (!programCodeFamilyIndex.isEmpty()) {
+            cancerTrial = true;
+            for (ProgramCodeDTO pgc : programCodeFamilyIndex.keySet()) {
+                pgcMap.put(pgc.getProgramCode(), pgc);
+            }
+        }
+
+        getServletRequest().setAttribute(CANCER_TRIAL, cancerTrial);
+        getServletRequest().setAttribute(PROGRAM_CODES, pgcMap);
+    }
+
+    /**
+     * Will load the program codes from database
+     * @throws PAException - up on error
+     */
+    private void loadProgramCodes()  throws PAException {
+        List<OrgFamilyDTO> ofList = FamilyHelper.getByOrgId(getRegistryUser().getAffiliatedOrganizationId());
+        for (OrgFamilyDTO of : ofList) {
+            FamilyDTO familyDTO = familyProgramCodeService.getFamilyDTOByPoId(of.getId());
+            for (ProgramCodeDTO pgc : familyDTO.getProgramCodes()) {
+                programCodeFamilyIndex.put(pgc, familyDTO);
+            }
+        }
     }
     
     /**
@@ -547,6 +607,7 @@ public class AddSitesAction extends StatusHistoryManagementAction {
         this.studySiteContactService = PaRegistry.getStudySiteContactService();
         this.protocolQueryService = PaRegistry.getCachingProtocolQueryService();
         this.paServiceUtils = new PAServiceUtils();
+        this.familyProgramCodeService = PaRegistry.getProgramCodesFamilyService();
     }
 
     /**
@@ -689,6 +750,11 @@ public class AddSitesAction extends StatusHistoryManagementAction {
         this.protocolQueryService = protocolQueryService;
     }
 
-  
-
+    /**
+     * Sets the FamilyProgramCodeService
+     * @param familyProgramCodeService - the Family Program Code service
+     */
+    public void setFamilyProgramCodeService(FamilyProgramCodeService familyProgramCodeService) {
+        this.familyProgramCodeService = familyProgramCodeService;
+    }
 }

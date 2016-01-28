@@ -13,12 +13,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.dto.FamilyDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
@@ -33,6 +35,7 @@ import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.status.StatusDto;
 import gov.nih.nci.pa.service.status.StatusTransitionService;
+import gov.nih.nci.pa.service.util.FamilyProgramCodeService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -48,7 +51,10 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -82,6 +88,9 @@ public class AddSitesActionTest extends AbstractRegWebTest {
     private StudyProtocolServiceLocal studyProtocolServiceLocal;
     private ProtocolQueryServiceLocal protocolQueryServiceLocal;
     private StatusTransitionService statusTransitionService;
+    private FamilyProgramCodeService familyProgramCodeService;
+    private FamilyDTO familyDTO;
+    private Set<ProgramCodeDTO> programCodes;
 
     private ClinicalResearchStaffDTO researchStaffDTO;
     private HealthCareProviderDTO healthCareProviderDTO;
@@ -100,6 +109,7 @@ public class AddSitesActionTest extends AbstractRegWebTest {
         studyProtocolServiceLocal = mock(StudyProtocolServiceLocal.class);
         protocolQueryServiceLocal = mock(ProtocolQueryServiceLocal.class);
         statusTransitionService = mock(StatusTransitionService.class);
+        familyProgramCodeService = mock(FamilyProgramCodeService.class);
 
         StudySiteDTO studySiteDTO = new StudySiteDTO();
         studySiteDTO.setIdentifier(IiConverter.convertToStudySiteIi(1L));
@@ -201,6 +211,18 @@ public class AddSitesActionTest extends AbstractRegWebTest {
                     }
                 });
 
+        familyDTO = new FamilyDTO(1L);
+        programCodes = new HashSet<>();
+        familyDTO.setProgramCodes(programCodes);
+
+        programCodes.add(createProgramCode(1L, "PG1", "ProgramCode1"));
+        programCodes.add(createProgramCode(2L, "PG2", "ProgramCode2"));
+        programCodes.add(createProgramCode(3L, "PG3", "ProgramCode3"));
+        programCodes.add(createProgramCode(4L, "PG4", "ProgramCode4"));
+
+        when(familyProgramCodeService.getFamilyDTOByPoId(1L)).thenReturn(familyDTO);
+
+
     }
 
     /**
@@ -244,6 +266,7 @@ public class AddSitesActionTest extends AbstractRegWebTest {
         action.setServletResponse(ServletActionContext.getResponse());
         action.setParticipatingOrgService(participatingOrgServiceLocal);
         action.setStatusTransitionService(statusTransitionService);
+        action.setFamilyProgramCodeService(familyProgramCodeService);
 
         setTextProvider(action);
 
@@ -399,6 +422,12 @@ public class AddSitesActionTest extends AbstractRegWebTest {
         assertTrue(CollectionUtils.isNotEmpty(queryDTO
                 .getOrgsThatCanBeAddedAsSite()));
         assertEquals(affiliation, queryDTO.getOrgsThatCanBeAddedAsSite().get(0));
+        assertTrue((boolean) ServletActionContext.getRequest().getAttribute("CANCER_TRIAL"));
+        Map<String, ProgramCodeDTO> pgMap = (Map<String, ProgramCodeDTO>) ServletActionContext.getRequest().getAttribute("PROGRAM_CODES");
+        assertNotNull(pgMap.get("PG1"));
+        assertNotNull(pgMap.get("PG2"));
+        assertNotNull(pgMap.get("PG3"));
+        assertNotNull(pgMap.get("PG4"));
 
     }
 
@@ -514,7 +543,8 @@ public class AddSitesActionTest extends AbstractRegWebTest {
         r.setupAddParameter("trial_1_site_0_org_poid", "1");
         r.setupAddParameter("trial_1_site_0_localID", "MN001");
         r.setupAddParameter("trial_1_site_0_pi_poid", "1");
-        
+        r.setupAddParameter("trial_1_programCode", new String[]{"2", "3", "4"});
+
         final ArrayList<StatusDto> statHistoryList = new ArrayList<StatusDto>();
         StatusDto stat = new StatusDto();
         stat.setStatusCode("ACTIVE");
@@ -545,6 +575,9 @@ public class AddSitesActionTest extends AbstractRegWebTest {
                         null,
                         StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR
                                 .getCode());
+        verify(studyProtocolServiceLocal, times(1)).assignProgramCodesToTrials(
+                Arrays.asList(1L), 1L, Arrays.asList("PG2", "PG3", "PG4")
+        );
         assertNull(ssDTO.getValue().getIdentifier().getExtension());
         assertEquals(IiConverter.convertToStudyProtocolIi(1L), ssDTO.getValue()
                 .getStudyProtocolIdentifier());

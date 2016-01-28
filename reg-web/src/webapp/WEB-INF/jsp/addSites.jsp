@@ -61,6 +61,10 @@ div.error,b.error {
     padding-top: 5px;
 }
 
+input.select2-search__field {
+    width: 80% !important;
+}
+
 </style>
 
 <script type="text/javascript" language="javascript"
@@ -93,6 +97,8 @@ div.error,b.error {
 		disableSorting();
 		$('plussign_'+spID).hide();
 		$('saveCancelDiv').show();
+        $('s1div_' + spID).show();
+        $('s2div_' + spID).show();
 		prepareSiteEntryRow(spID);
 		prepareSiteInformationFormControls(spID);
 		showPopover(spID);
@@ -536,7 +542,13 @@ div.error,b.error {
 					'aTargets' : [ 0 ]
 				} ]
 			});
-			
+
+            // enable multi-select on program-code-ids
+            $("select.s2pgc").select2({
+                templateResult : function(pg){
+                    return pg.title;
+                }
+            });
 
 			
 		});
@@ -644,8 +656,34 @@ div.error,b.error {
 										onclick="beginAddingSites(${trial.studyProtocolId})"
 										id="plussign_${trial.studyProtocolId}"
 										title="Click here to add sites to ${trial.nciIdentifier}"></i></td>
-									<td nowrap="nowrap"><c:out value="${trial.nciIdentifier}" /></td>
-									<td><c:out value="${trial.officialTitle}" /></td>
+									<td nowrap="nowrap">
+                                        <div  id="s1div_${trial.studyProtocolId}" style="display:none; width:100%;" >
+                                                <c:if test="${requestScope['CANCER_TRIAL']}">
+                                                <br />
+                                                <br />
+                                                </c:if>
+                                        </div>
+                                        <c:out value="${trial.nciIdentifier}" />
+                                    </td>
+									<td>
+                                        <div id="s2div_${trial.studyProtocolId}" style="display:none; width:100%;">
+                                           <c:if test="${requestScope['CANCER_TRIAL']}">
+                                               <div class="col-xs-6">
+                                                   <select id="pgc_${trial.studyProtocolId}" name="trial_${trial.studyProtocolId}_programCode" multiple="multiple"
+                                                           class="s2pgc" data-placeholder="Select Program Code(s)" style="width:80%;">
+                                                       <c:forEach var="entry" items="${requestScope['PROGRAM_CODES']}">
+                                                           <option value="${entry.value.id}" title="${entry.value.programCode} ${entry.value.programName}">${entry.value.programCode}</option>
+                                                       </c:forEach>
+                                                   </select>
+
+                                               </div>
+                                               <span class="col-xs-6">
+                                                       <fmt:message key="add.site.programCode.cancer.tooltip" />
+                                               </span>
+                                           </c:if>
+                                        </div>
+                                        <c:out value="${trial.officialTitle}" />
+                                    </td>
 								</tr>
 							</c:forEach>
 						</tbody>

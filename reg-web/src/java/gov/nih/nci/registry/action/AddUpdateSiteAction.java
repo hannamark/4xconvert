@@ -86,9 +86,12 @@ package gov.nih.nci.registry.action;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.dto.FamilyDTO;
+import gov.nih.nci.pa.dto.OrgFamilyDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -101,6 +104,8 @@ import gov.nih.nci.pa.service.status.StatusDto;
 import gov.nih.nci.pa.service.status.StatusTransitionService;
 import gov.nih.nci.pa.service.status.json.TransitionFor;
 import gov.nih.nci.pa.service.status.json.TrialType;
+import gov.nih.nci.pa.service.util.FamilyHelper;
+import gov.nih.nci.pa.service.util.FamilyProgramCodeService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
@@ -116,7 +121,9 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -133,7 +140,7 @@ import com.opensymphony.xwork2.Preparable;
  * 
  * @author Denis G. Krylov
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods", "PMD.TooManyFields" })
 public class AddUpdateSiteAction extends StatusHistoryManagementAction
         implements Preparable {
 
@@ -142,6 +149,14 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction
     private static final String SESSION_TRIAL_NCI_ID_ATTRIBUTE = "NCI_ID";
     private static final String SESSION_TRIAL_TITLE_ATTRIBUTE = "TITLE";
     private static final String SESSION_TRIAL_LEAD_ORG_IDENTIFIER_ATTRIBUTE = "LEAD_ORG_ID";
+    private static final String SESSION_CANCER_TRIAL_ATTRIBUTE = "CANCER_TRIAL";
+    private static final String SESSION_PGC_MASTER_LIST_ATTRIBUTE = "PGC_MASTER_LIST";
+    private static final String SESSION_PGC_ID_LIST_ATTRIBUTE = "PGC_ID_LIST";
+    private static final String SESSION_PGC_FAMILY_INDEX_ATTRIBUTE = "PGC_FAMILY_INDEX";
+    private static final String SESSION_FAMILY_ID_ATTRIBUTE = "FAMILY_ID";
+    private static final String SESSION_IS_SITE_ADMIN_ATTRIBUTE = "isSiteAdmin";
+    private static final String REQUEST_SITE_ADMIN_ATTRIBUTE = "SiteAdmin";
+
     private static final long serialVersionUID = -5720501246071254426L;
     private static final Logger LOG = Logger
             .getLogger(AddUpdateSiteAction.class);
@@ -159,11 +174,13 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction
     private ProtocolQueryServiceLocal protocolQueryService;
     private OrganizationEntityServiceRemote organizationService;
     private StatusTransitionService statusTransitionService;
+    private FamilyProgramCodeService familyProgramCodeService;
 
     private boolean addSitesMultiple = false;
     private boolean redirectToSummary;
     private String studyProtocolId;
     private String pickedSiteOrgPoId;
+    private String programCode;
 
     @SuppressWarnings("rawtypes")
     @Override
@@ -207,6 +224,7 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction
             prepareProtocolData();
             populateSiteDTO();
             setSiteDtoInSession();
+            prepareProgramCodeData();
 
             setAddSitesMultiple(StringUtils.isBlank(siteDTO.getId())
                     && getListOfSitesUserCanAdd().size() > 1);
@@ -257,7 +275,7 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction
                 .parseLong(studyProtocolId));
         StudyProtocolDTO spDTO = studyProtocolService
                 .getStudyProtocol(studyProtocolIi);
-        ServletActionContext.getRequest().getSession()
+        getServletRequest().getSession()
                 .setAttribute(Constants.TRIAL_SUMMARY, spDTO);
         StudyProtocolQueryDTO studyProtocolQueryDTO = new StudyProtocolQueryDTO();
         studyProtocolQueryDTO = protocolQueryService
@@ -280,6 +298,68 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction
                         studyProtocolQueryDTO.getLocalStudyProtocolIdentifier());
     }
 
+    private void prepareProgramCodeData() throws PAException {
+        StudyProtocolDTO spDTO = (StudyProtocolDTO) getServletRequest()
+                .getSession().getAttribute(Constants.TRIAL_SUMMARY);
+        List<OrgFamilyDTO> ofList = FamilyHelper.getByOrgId(Long.parseLong(getPickedSiteOrgPoId()));
+        List<ProgramCodeDTO> masterPgcList = new ArrayList<ProgramCodeDTO>();
+        List<Long> selectedPgcIdList = new ArrayList<Long>();
+        Map<ProgramCodeDTO, FamilyDTO> pgcFamilyIndex = new LinkedHashMap<ProgramCodeDTO, FamilyDTO>();
+        boolean cancerTrial = false;
+        FamilyDTO aFamily = null;
+        if (!ofList.isEmpty()) {
+            cancerTrial = true;
+            for (OrgFamilyDTO of : ofList) {
+                FamilyDTO family = familyProgramCodeService.getFamilyDTOByPoId(of.getId());
+                if (family != null) {
+                    for (ProgramCodeDTO pgc : family.getProgramCodes()) {
+                        if (pgc.isActive()) {
+                           pgcFamilyIndex.put(pgc, family);
+                            aFamily = family;
+                            masterPgcList.add(pgc);
+                        }
+
+                    }
+                }
+            }
+            if (CollectionUtils.isNotEmpty(spDTO.getProgramCodes())) {
+                for (ProgramCodeDTO p : spDTO.getProgramCodes()) {
+                    final ProgramCodeDTO thePgc = p;
+                    ProgramCodeDTO found = (ProgramCodeDTO) CollectionUtils.find(masterPgcList, new Predicate() {
+                        @Override
+                        public boolean evaluate(Object o) {
+                            return ((ProgramCodeDTO) o).getId().equals(thePgc.getId());
+                        }
+                    });
+                    if (found != null) {
+                        selectedPgcIdList.add(found.getId());
+                    }
+                }
+            }
+        }
+        programCode = StringUtils.join(selectedPgcIdList, ",");
+
+        getServletRequest()
+                .getSession().setAttribute(SESSION_PGC_MASTER_LIST_ATTRIBUTE, masterPgcList);
+        getServletRequest()
+                .getSession().setAttribute(SESSION_PGC_ID_LIST_ATTRIBUTE, selectedPgcIdList);
+        getServletRequest()
+                .getSession().setAttribute(SESSION_CANCER_TRIAL_ATTRIBUTE, cancerTrial);
+        getServletRequest()
+                .getSession().setAttribute(SESSION_PGC_FAMILY_INDEX_ATTRIBUTE, pgcFamilyIndex);
+        if (aFamily != null) {
+            getServletRequest()
+                    .getSession().setAttribute(SESSION_FAMILY_ID_ATTRIBUTE, aFamily.getId());
+        } else {
+            getServletRequest()
+                    .getSession().removeAttribute(SESSION_FAMILY_ID_ATTRIBUTE);
+        }
+        boolean isSiteAdmin = getServletRequest().isUserInRole(REQUEST_SITE_ADMIN_ATTRIBUTE);
+        getServletRequest()
+                .getSession().setAttribute(SESSION_IS_SITE_ADMIN_ATTRIBUTE, isSiteAdmin);
+
+    }
+
     /**
      * @return String
      */
@@ -291,6 +371,7 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction
             prepareProtocolData();
             populateSiteDTOBasedOnOrg(getPickedSiteOrgPoId());
             setSiteDtoInSession();
+            prepareProgramCodeData();
             return SUCCESS;
         } catch (Exception e) {
             addActionError(e.getMessage());
@@ -369,6 +450,7 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction
 
     String populateSiteDTO() throws PAException, NullifiedEntityException {
         String poOrgId = getUserAffiliationPoOrgId();
+        setPickedSiteOrgPoId(poOrgId);
         populateSiteDTOBasedOnOrg(poOrgId);
         return poOrgId;
     }
@@ -416,7 +498,7 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction
      * @throws PAException
      */
     private RegistryUser getRegistryUser() throws PAException {
-        String loginName = ServletActionContext.getRequest().getRemoteUser();
+        String loginName = getServletRequest().getRemoteUser();
         return registryUserService.getUser(loginName);
     }
 
@@ -427,7 +509,7 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction
      */
     public String save() {
         String fwd = ERROR;
-        final HttpSession session = ServletActionContext.getRequest()
+        final HttpSession session = getServletRequest()
                 .getSession();
         try {
             clearErrorsAndMessages();
@@ -442,6 +524,29 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction
                         studyProtocolService, getRegistryUser(),
                         registryUserService, studySiteContactService, this,
                         getStudyProtocolId(), poOrgId);
+
+                //populate the initial program code selection
+                List<Long> initialPgcList = (List<Long>) session.getAttribute(SESSION_PGC_ID_LIST_ATTRIBUTE);
+                if (CollectionUtils.isNotEmpty(initialPgcList)) {
+                    for (Long id : initialPgcList) {
+                        helper.addToInitialProgramCodeIds(id);
+                    }
+                }
+
+                //populate the currently selected list of program codes
+                if (StringUtils.isNotEmpty(programCode)) {
+                    for (String id : programCode.trim().split("\\s*,\\s*")) {
+                        helper.addToFinalProgramCodeIds(Long.parseLong(id));
+                    }
+                }
+
+                //populate the program code id to family po id mapping
+                Map<ProgramCodeDTO, FamilyDTO> map = (Map<ProgramCodeDTO, FamilyDTO>) session
+                                            .getAttribute(SESSION_PGC_FAMILY_INDEX_ATTRIBUTE);
+                if (map != null) {
+                    helper.addAllToFamilyProgramCodeIndex(map);
+                }
+
                 if (StringUtils.isNotBlank(siteDTO.getId())) {
                     // User might have deleted some of the existing site status
                     // records.
@@ -481,7 +586,7 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction
      * @return res
      */
     public String showWaitDialog() {
-        ServletActionContext.getRequest().setAttribute(
+        getServletRequest().setAttribute(
                 TrialUtil.SESSION_WAIT_MESSAGE_ATTRIBUTE,
                 getText("add.site.wait"));
         return WAIT;
@@ -522,6 +627,7 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction
         studySiteContactService = PaRegistry.getStudySiteContactService();
         organizationService = PoRegistry.getOrganizationEntityService();
         statusTransitionService = PaRegistry.getStatusTransitionService();
+        familyProgramCodeService = PaRegistry.getProgramCodesFamilyService();
     }
 
     /**
@@ -631,5 +737,29 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction
     public void setStatusTransitionService(
             StatusTransitionService statusTransitionService) {
         this.statusTransitionService = statusTransitionService;
+    }
+
+    /**
+     * Sets familyProgramCodeService
+     * @param familyProgramCodeService  the familyProgramCodeService
+     */
+    public void setFamilyProgramCodeService(FamilyProgramCodeService familyProgramCodeService) {
+        this.familyProgramCodeService = familyProgramCodeService;
+    }
+
+    /**
+     * Will get the program code Ids
+     * @return  programCode - a comma separated string of program code ID
+     */
+    public String getProgramCode() {
+        return programCode;
+    }
+
+    /**
+     * Set the program code
+     * @param programCode - a comma separated string of program code ID
+     */
+    public void setProgramCode(String programCode) {
+        this.programCode = programCode;
     }
 }

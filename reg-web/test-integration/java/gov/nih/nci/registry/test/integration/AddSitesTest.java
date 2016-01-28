@@ -185,6 +185,44 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
 
     }
 
+
+    @Test
+    public void testAddSiteWithProgramCode() throws Exception {
+        TrialInfo trial = createTrialAndBeginAddingSites();
+        removeProgramCodesFromTrial(trial.id);
+
+        // Select Investigator
+        searchAndSelectPerson(
+                By.id("trial_" + trial.id + "_site_0_pi_lookupBtn"), "John",
+                "Doe");
+        assertTrue(selenium.isTextPresent("Doe, John"));
+        assertEquals("1",
+                selenium.getValue("id=trial_" + trial.id + "_site_0_pi_poid"));
+
+        selenium.type("id=trial_" + trial.id + "_site_0_localID", "XYZ0001");
+
+        populateStatusHistory(trial);
+
+
+
+        //When I select PG1 and PG2
+        useSelect2ToPickAnOption("pgc_" + trial.id ,"PG1","PG1 Cancer Program1");
+        useSelect2ToPickAnOption("pgc_" + trial.id ,"PG2","PG2 Cancer Program2");
+
+        clickAndWait("id=saveBtn");
+        waitForElementById("summaryTable", WAIT_FOR_ELEMENT_TIMEOUT);
+
+        assertTrue(selenium.getText(
+                "xpath=//table[@id='summaryTable']/tbody/tr[1]//td[1]")
+                .contains(trial.nciID));
+
+        List<String> codes = getProgramCodesByTrial(trial.id);
+        assertFalse(codes.isEmpty());
+        assertTrue(codes.contains("PG1"));
+        assertTrue(codes.contains("PG2"));
+
+    }
+
     /**
      * @param trial
      */

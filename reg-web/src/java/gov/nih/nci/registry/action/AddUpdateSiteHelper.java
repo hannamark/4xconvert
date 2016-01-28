@@ -5,9 +5,11 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.dto.FamilyDTO;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
@@ -30,9 +32,15 @@ import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.opensymphony.xwork2.ValidationAware;
@@ -42,6 +50,7 @@ import com.opensymphony.xwork2.ValidationAware;
  * 
  */
 // CHECKSTYLE:OFF
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods", "PMD.TooManyFields" })
 public final class AddUpdateSiteHelper {
 
     private final PAServiceUtils paServiceUtil;
@@ -63,6 +72,10 @@ public final class AddUpdateSiteHelper {
     private final String studyProtocolId;
     
     private final String orgPoId;
+
+    private final List<Long> finalProgramCodeIds = new ArrayList<Long>();
+    private final List<Long> initialProgramCodeIds = new ArrayList<Long>();
+    private final Map<ProgramCodeDTO, FamilyDTO> programCodeFamilyIndex = new HashMap<ProgramCodeDTO, FamilyDTO>();
 
     /**
      * @param paServiceUtil
@@ -116,8 +129,9 @@ public final class AddUpdateSiteHelper {
             validationAware.addFieldError("organizationName", e.getMessage());
             throw new PAException(e);
         }
-
-        addInvestigator(studySiteID);
+        StudyProtocolDTO spDTO = loadStudyProtocolDTO();
+        updateProgramCodes(spDTO);
+        addInvestigator(spDTO, studySiteID);
         createSiteRecordOwnership(studySiteID, registryUser);
     }
     
@@ -129,7 +143,77 @@ public final class AddUpdateSiteHelper {
                 studySiteDTO, accrualStatusDTO, siteDTO.getStatusHistory())
                 .getIdentifier();
         clearInvestigatorsForPropTrialSite(studySiteID);
-        addInvestigator(studySiteID);
+        StudyProtocolDTO spDTO = loadStudyProtocolDTO();
+        updateProgramCodes(spDTO);
+        addInvestigator(spDTO, studySiteID);
+    }
+
+    private void updateProgramCodes(StudyProtocolDTO spDTO) throws PAException {
+
+        List<Long> studyIds = Arrays.asList(Long.parseLong(studyProtocolId));
+        Map<Long, ProgramCodeDTO> pgcIndex = new HashMap<Long, ProgramCodeDTO>();
+        for (ProgramCodeDTO pgc : programCodeFamilyIndex.keySet()) {
+            pgcIndex.put(pgc.getId(), pgc);
+        }
+
+        List<ProgramCodeDTO> programCodeDTOs = spDTO.getProgramCodes();
+        if (CollectionUtils.isEmpty(programCodeDTOs)) {
+
+            //add everything selected to study
+            //group program codes by family to reduce the number of service calls
+            Map<Long , List<String>> familyGroupIndex = new HashMap<Long, List<String>>();
+            for(Long pgcId : finalProgramCodeIds) {
+                ProgramCodeDTO pgc = pgcIndex.get(pgcId);
+                Long familyPoId = programCodeFamilyIndex.get(pgc).getPoId();
+                if (!familyGroupIndex.containsKey(familyPoId)) {
+                    familyGroupIndex.put(familyPoId, new ArrayList<String>());
+                }
+                familyGroupIndex.get(familyPoId).add(pgc.getProgramCode());
+            }
+            for (Map.Entry<Long, List<String>> entry : familyGroupIndex.entrySet())  {
+                if (CollectionUtils.isNotEmpty(entry.getValue())) {
+                    studyProtocolService.assignProgramCodesToTrials(studyIds, entry.getKey(), entry.getValue());
+                }
+            }
+
+
+
+        } else {
+            List<Long> toRemove = ListUtils.subtract(initialProgramCodeIds, finalProgramCodeIds);
+            if (CollectionUtils.isNotEmpty(toRemove)) {
+                List<String> programCodes = new ArrayList<String>();
+                for (Long pgcId : toRemove) {
+                    ProgramCodeDTO pgc = pgcIndex.get(pgcId);
+                    programCodes.add(pgc.getProgramCode());
+                }
+                studyProtocolService.unassignProgramCodesFromTrials(studyIds, programCodes);
+            }
+
+            List<Long> toAdd = ListUtils.subtract(finalProgramCodeIds, initialProgramCodeIds);
+            if (CollectionUtils.isNotEmpty(toAdd)) {
+                //group program codes by family to reduce the number of service calls
+                Map<Long , List<String>> familyGroupIndex = new HashMap<Long, List<String>>();
+                for(Long pgcId : toAdd) {
+                    ProgramCodeDTO pgc = pgcIndex.get(pgcId);
+                    Long familyPoId = programCodeFamilyIndex.get(pgc).getPoId();
+                    if (!familyGroupIndex.containsKey(familyPoId)) {
+                        familyGroupIndex.put(familyPoId, new ArrayList<String>());
+                    }
+                    familyGroupIndex.get(familyPoId).add(pgc.getProgramCode());
+                }
+                for (Map.Entry<Long, List<String>> entry : familyGroupIndex.entrySet())  {
+                    if (CollectionUtils.isNotEmpty(entry.getValue())) {
+                        studyProtocolService.assignProgramCodesToTrials(studyIds, entry.getKey(), entry.getValue());
+                    }
+                }
+            }
+        }
+
+
+
+
+
+
     }
     
     private void clearInvestigatorsForPropTrialSite(Ii ssIi) throws PAException {
@@ -158,10 +242,10 @@ public final class AddUpdateSiteHelper {
      * @param studySiteID
      * @throws PAException
      */
-    private void addInvestigator(Ii studySiteID) throws PAException {
+    private void addInvestigator(StudyProtocolDTO spDTO, Ii studySiteID) throws PAException {
         Ii investigatorIi = IiConverter.convertToPoPersonIi(siteDTO
                 .getInvestigatorId().toString());
-        addInvestigator(studySiteID, investigatorIi,
+        addInvestigator(spDTO, studySiteID, investigatorIi,
                 StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode(),
                 participatingSiteService.getParticipatingSite(studySiteID)
                         .getSiteOrgPoId());
@@ -211,17 +295,42 @@ public final class AddUpdateSiteHelper {
         return ssas;
     }
     
-    private void addInvestigator(Ii ssIi, Ii investigatorIi, String role,
+    private void addInvestigator(StudyProtocolDTO spDTO, Ii ssIi, Ii investigatorIi, String role,
             String poOrgId) throws PAException {
         ClinicalResearchStaffDTO crsDTO = paServiceUtil.getCrsDTO(
                 investigatorIi, poOrgId);
-        StudyProtocolDTO spDTO = studyProtocolService
-                .getStudyProtocol(IiConverter.convertToStudyProtocolIi(Long
-                        .parseLong(studyProtocolId)));
         HealthCareProviderDTO hcpDTO = paServiceUtil.getHcpDTO(spDTO
                 .getStudyProtocolType().getValue(), investigatorIi, poOrgId);
         participatingSiteService.addStudySiteInvestigator(ssIi, crsDTO, hcpDTO,
                 null, role);
     }
 
+    private StudyProtocolDTO loadStudyProtocolDTO() throws PAException {
+       return studyProtocolService
+               .getStudyProtocol(IiConverter.convertToStudyProtocolIi(Long.parseLong(studyProtocolId)));
+    }
+
+    /**
+     * Add to the initial program code ids
+     * @param id - a program code id
+     */
+    public void addToInitialProgramCodeIds(Long id) {
+        initialProgramCodeIds.add(id);
+    }
+
+    /**
+     * Add to the finally selected program code ids
+     * @param id - a program code id;
+     */
+    public void addToFinalProgramCodeIds(Long id) {
+        finalProgramCodeIds.add(id);
+    }
+
+    /**
+     * Add to family program code index
+     * @param map - a map indexing family and program codes
+     */
+    public void addAllToFamilyProgramCodeIndex(Map<ProgramCodeDTO, FamilyDTO> map) {
+        programCodeFamilyIndex.putAll(map);
+    }
 }

@@ -111,7 +111,15 @@ div.error,b.error {
     }
     
     (function($) {
-        $(function() {        	
+        $(function() {
+
+            // enable multi-select on program-code-ids
+            $("#programCode").select2({
+                templateResult : function(pg){
+                  return pg.title;
+                }
+            });
+
             var table = $('#siteStatusHistoryTable')
                     .DataTable(
                             {
@@ -518,19 +526,29 @@ div.error,b.error {
 						</div>
 						<s:hidden id="investigator.id" name="siteDTO.investigatorId" />
 					</div>
-
+                    <s:if test="#session.CANCER_TRIAL">
 					<div class="form-group row">
-						<label class="col-xs-4 control-label" for="programCode"> <fmt:message
-								key="add.site.programCode" /></label>
+						<label class="col-xs-4 control-label" for="programCode"> <fmt:message key="add.site.programCode" /></label>
 						<div class="col-xs-4">
-							<s:textfield id="programCode" name="siteDTO.programCode"
-								cssClass="form-control" />
+                            <select id="programCode" name="programCode" multiple="multiple"
+                                    class="form-control" data-placeholder="Select Program Code(s)" style="width:100%;">
+                                <c:forEach var="pgc" items="${sessionScope['PGC_MASTER_LIST']}">
+                                    <option value="${pgc.id}" ${fn:contains(sessionScope['PGC_ID_LIST'],pgc.id )? 'selected' : ''} title="${pgc.programCode} ${pgc.programName}">${pgc.programCode}</option>
+                                </c:forEach>
+                            </select>
+                            <c:if test="${sessionScope['isSiteAdmin']}">
+                                <a id="programCodesMasterList" href="javascript:void(0)" onclick="window.parent.submitXsrfForm('${pageContext.request.contextPath}/siteadmin/programCodesexecute.action?selectedDTOId=${sessionScope['FAMILY_ID']}');">Manage Program Codes</a>
+                            </c:if>
 							<span class="alert-danger"> <s:fielderror>
 									<s:param>programCode</s:param>
 								</s:fielderror>
 							</span>
 						</div>
+                        <span class="col-xs-4">
+                               <fmt:message key="add.site.programCode.cancer.tooltip" />
+                        </span>
 					</div>
+                    </s:if>
 					<div class="row">
 						<div class="col-xs-2">&nbsp;</div>
 						<div class="col-xs-8">

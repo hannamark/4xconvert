@@ -21,6 +21,7 @@ import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -646,4 +647,12 @@ public abstract class AbstractRegWebTest {
    }
 
 
+    protected ProgramCodeDTO createProgramCode(Long id, String code, String name) {
+        ProgramCodeDTO pg1 = new ProgramCodeDTO();
+        pg1.setProgramCode(code);
+        pg1.setProgramName(name);
+        pg1.setActive(true);
+        pg1.setId(id);
+        return pg1;
+    }
 }

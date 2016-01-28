@@ -85,10 +85,12 @@ package gov.nih.nci.registry.test.integration;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -128,6 +130,141 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         waitForPageToLoad();
         waitForTextToAppear(By.className("alert-success"),
                 "Message: Your site information has been updated.", 20);
+
+    }
+
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testAddProgramCode() throws Exception {
+        //Given a trial associated with DCP
+        TrialInfo info = createAndSelectTrial();
+        //And no program codes associated with the Trial
+        removeProgramCodesFromTrial(info.id);
+
+        //when I add a site and Program Code PG1
+        addMySiteAndVerify(info);
+
+        //Then I see in DATABASE PG1 associated with the study
+        List<String> codes = getProgramCodesByTrial(info.id);
+        assertTrue(codes.contains("PG1"));
+    }
+
+        @SuppressWarnings("deprecation")
+    @Test
+    public void testUpdateProgramCode() throws
+            Exception {
+        //Given a trial associated with DCP
+        TrialInfo info = createAndSelectTrial();
+
+        String siteCtepId = "DCP";
+        addSiteToTrial(info, siteCtepId, "In Review" , false);
+
+        //And the trial is not associated with Program Codes
+        removeProgramCodesFromTrial(info.id);
+
+        //When I search for the trial as abstractor
+        findInMyTrials();
+
+        //I must see update site option
+        invokeAction("Update My Site");
+
+        //And I see DCP as the site
+        waitForElementById("organizationName", 15);
+        assertEquals("National Cancer Institute Division of Cancer Prevention",
+                selenium.getValue("organizationName"));
+
+        //When I select PG1 and PG2
+        useSelect2ToPickAnOption("programCode","PG1","PG1 Cancer Program1");
+        useSelect2ToPickAnOption("programCode","PG2","PG2 Cancer Program2");
+
+        //and hit save
+        driver.findElement(By.xpath("//button[normalize-space(text())='Save']"))
+                .click();
+        driver.switchTo().defaultContent();
+        waitForPageToLoad();
+
+        //I see the message that the study site is updated
+        waitForTextToAppear(By.className("alert-success"),
+                "Message: Your site information has been updated.", 20);
+        assertTrue(selenium.isTextPresent("PG1"));
+        assertTrue(selenium.isTextPresent("PG2"));
+        //and PG3 is not present
+        assertFalse(selenium.isTextPresent("PG3"));
+
+        List<String> codes = getProgramCodesByTrial(info.id);
+        assertTrue(codes.size() == 2);
+        assertTrue(codes.contains("PG1"));
+        assertTrue(codes.contains("PG2"));
+
+        logoutUser();
+
+        //Now I login again again as abstractor
+        findInMyTrials();
+
+        //and click on update stie
+        invokeAction("Update My Site");
+
+        waitForElementById("organizationName", 15);
+        assertEquals("National Cancer Institute Division of Cancer Prevention",
+                selenium.getValue("organizationName"));
+        assertFalse(selenium.isTextPresent("Manage Program Codes"));
+
+        //add PG3 to the list of options
+        useSelect2ToPickAnOption("programCode","PG3","PG3 Cancer Program3");
+
+        //remove previously selected PG2
+        useSelect2ToUnselectOption("PG2 Cancer Program2");
+
+        //and hit save
+        driver.findElement(By.xpath("//button[normalize-space(text())='Save']"))
+                .click();
+        driver.switchTo().defaultContent();
+        waitForPageToLoad();
+
+        //I see the message that the study site is updated
+        waitForTextToAppear(By.className("alert-success"),
+                "Message: Your site information has been updated.", 20);
+
+        //And I see that PG1, PG3 associated with the trial/site
+        assertTrue(selenium.isTextPresent("PG1"));
+        assertTrue(selenium.isTextPresent("PG3"));
+
+        //And I see PG2 removed
+        assertFalse(selenium.isTextPresent("PG2"));
+
+        //And in the database I see PG1 and PG3
+        codes = getProgramCodesByTrial(info.id);
+        assertTrue(codes.size() == 2);
+        assertTrue(codes.contains("PG1"));
+        assertTrue(codes.contains("PG3"));
+
+        //and PG2 is no longer associated with study
+        assertFalse(codes.contains("PG2"));
+
+        logoutUser();
+
+        //Now login as user having site admin role
+        loginAsAbstractor();
+        handleDisclaimer(true);
+
+        //find the trial
+        accessTrialSearchScreen();
+        s.type("identifier", info.nciID);
+        selenium.click("runSearchBtn");
+        clickAndWait("link=All Trials");
+        waitForElementById("row", 20);
+
+        //and click on update stie
+        invokeAction("Update My Site");
+
+        waitForElementById("organizationName", 15);
+        assertEquals("National Cancer Institute Division of Cancer Prevention",
+                selenium.getValue("organizationName"));
+        assertTrue(selenium.isTextPresent("Manage Program Codes"));
+
+        logoutUser();
+
 
     }
 
@@ -199,7 +336,6 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         // Populate fields.
         s.type("localIdentifier", "DCP_SITE_U");
         pickInvestigator();
-        s.type("programCode", "DCP_PROGRAM_U");
 
         deleteStatus(info, 2);
         deleteStatus(info, 1);
@@ -232,8 +368,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[2]"));
         assertEquals("DCP_SITE_U",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[3]"));
-        assertEquals("DCP_PROGRAM_U",
-                selenium.getText("xpath=//table[@id='row']/tbody/tr/td[4]"));
+        assertTrue(selenium.isTextPresent("PG1"));
         assertEquals("Approved",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[5]"));
         assertEquals(today,
@@ -289,7 +424,8 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
 
         // Investigator.
         pickInvestigator();
-        s.type("programCode", "DCP_PROGRAM");
+        useSelect2ToPickAnOption("programCode","PG1","PG1 Cancer Program1");
+
         populateStatusHistory(info);
 
         s.click("xpath=//button/i[@class='fa-floppy-o']");
@@ -305,8 +441,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[2]"));
         assertEquals(localID,
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[3]"));
-        assertEquals("DCP_PROGRAM",
-                selenium.getText("xpath=//table[@id='row']/tbody/tr/td[4]"));
+        assertTrue(selenium.isTextPresent("PG1"));
         assertEquals("Approved",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[5]"));
         assertEquals(today,
@@ -347,7 +482,8 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         // Investigator.
         pickInvestigator();
 
-        s.type("programCode", "DCP_PROGRAM");
+        useSelect2ToPickAnOption("programCode","PG1","PG1 Cancer Program1");
+
 
         populateStatusHistory(info);
 
@@ -364,8 +500,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[2]"));
         assertEquals(localID,
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[3]"));
-        assertEquals("DCP_PROGRAM",
-                selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[4]"));
+        assertTrue(selenium.isTextPresent("PG1"));
         assertEquals("Approved",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[5]"));
         assertEquals(today,
@@ -676,7 +811,9 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         assertEquals("false",selenium.getValue("//input[@name='addSitesMultiple']"));
         assertEquals("Cancer Therapy Evaluation Program",
                 selenium.getValue("organizationName"));
-        selenium.type("programCode", "CTEP_PGCODE");
+
+        useSelect2ToPickAnOption("programCode","PG1","PG1 Cancer Program1");
+
         driver.findElement(By.xpath("//button[normalize-space(text())='Save']"))
                 .click();
         driver.switchTo().defaultContent();
@@ -688,11 +825,9 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
             // Make sure the right site got updated.
             assertEquals("Cancer Therapy Evaluation Program",
                     selenium.getText("//table[@id='row']/tbody/tr[2]/td[1]"));
-            assertEquals("CTEP_PGCODE",
-                    selenium.getText("//table[@id='row']/tbody/tr[2]/td[4]"));
+
         }
-        assertEquals("CTEP_PGCODE",
-                selenium.getText("//table[@id='row']/tbody/tr[2]/td[4]"));
+        assertTrue(selenium.isTextPresent("PG1"));
     }
 
     /**
