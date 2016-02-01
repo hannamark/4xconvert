@@ -37,7 +37,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         hoverLink("Program Codes");
         assertTrue(selenium.isTextPresent("Manage Master List"));
         assertTrue(selenium.isTextPresent("Manage Code Assignments"));
-        assertTrue(selenium.isTextPresent("Manage Accruals"));
+        assertFalse(selenium.isTextPresent("Manage Accruals"));
         logoutUser();
     }
 
