@@ -54,7 +54,22 @@ public interface FamilyProgramCodeService {
      */
     void updateProgramCode(FamilyDTO familyDTO, ProgramCodeDTO existingProgramCodeDTO, 
             ProgramCodeDTO newProgramCodeDTO) throws PAValidationException;
-
+    
+    /**
+     * Deletes existing program code in family
+     * @param familyDTO family DTO
+     * @param programCodeDTO program code DTO being deleted
+     * @throws PAValidationException program code doesn't exist 
+     */
+    void deleteProgramCode(FamilyDTO familyDTO, ProgramCodeDTO programCodeDTO) throws PAValidationException;
+    
+    /**
+     * Checks if a program code is associated to any trial
+     * @param programCodeDTO program code DTO object
+     * @return true if program code is associated with a trial, false otherwise
+     */
+    
+    Boolean isProgramCodeAssociatedWithATrial(ProgramCodeDTO programCodeDTO);
 
     /**
      * Will copy new families in PO into PA.

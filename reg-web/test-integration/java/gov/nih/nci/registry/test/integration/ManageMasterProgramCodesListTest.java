@@ -2,7 +2,12 @@ package gov.nih.nci.registry.test.integration;
 
 import gov.nih.nci.pa.service.util.FamilyProgramCodeBeanLocal;
 
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.ResultSetHandler;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -313,6 +318,88 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         okButton.click();
         
         logoutUser();
+    }
+    
+    /**
+     * Test delete unassigned program code
+     * @throws Exception exception
+     */
+    @Test
+    @SuppressWarnings({"deprecation" })
+    public void testDeleteProgramCode() throws Exception {
+        loginAndAcceptDisclaimer();
+        waitForElementToBecomeVisible(By.linkText("Administration"), 2);
+        hoverLink("Administration");
+        waitForElementToBecomeVisible(By.linkText("Program Codes"), 2);
+        assertTrue(selenium.isTextPresent("Program Codes"));
+        hoverLink("Program Codes");
+        assertTrue(selenium.isTextPresent("Manage Master List"));
+        recreateFamilies();
+        associateProgramCodesToFamilies();
+        clickAndWait("link=Manage Master List");
+        assertTrue(selenium.isTextPresent("Program Code"));
+        assertTrue(selenium.isTextPresent("Program Name"));
+        assertTrue(selenium.isTextPresent("Search:"));
+        assertTrue(selenium.isTextPresent("Cancer Program12"));
+        assertTrue(selenium.isTextPresent("PG12"));
+        assertEquals("Showing 1 to 10 of 12",driver.findElement(By.id("programCodesTable_info")).getText());
+        // verify that delete programs button is present and enabled
+        WebElement deleteProgramCodebutton = driver.findElement(By.id("deletePGCodeButton-PG12"));
+        assertTrue(deleteProgramCodebutton.isEnabled());
+        hover(deleteProgramCodebutton);
+        String tooltiptext = deleteProgramCodebutton.getAttribute("data-original-title");
+        assertEquals("Delete or <br> Inactivate this <br> Program Code",tooltiptext);
+        
+        // open the delete dialog and verify the contents
+        deleteProgramCodebutton.click();
+        waitForElementToBecomeAvailable(By.id("dialog-confirm-delete"), 15);
+        assertTrue(selenium.isTextPresent("Confirm Delete"));
+        assertTrue(selenium.isTextPresent("PG12 - Cancer Program12"));
+        assertTrue(selenium.isTextPresent("Please Confirm."));
+        // verify that program code exists in database
+        assertTrue(queryProgramCodesForDeletedCode("PG12").length > 0);
+        
+        // delete program code
+        WebElement deleteButton = driver.findElement(By.xpath("//button/span[contains(text(),'Delete')]"));
+        deleteButton.click();
+        
+        ((JavascriptExecutor) driver).executeScript("scroll(0, 150);");
+        // deleted program code should be removed from program code datatable
+        assertFalse(selenium.isTextPresent("PG12"));
+        assertFalse(selenium.isTextPresent("Cancer Program12"));
+        
+        // verify confirmation message is shown
+        ((JavascriptExecutor) driver).executeScript("scroll(0, -250);");
+        assertTrue(selenium.isTextPresent("Program code has been successfully deleted"));
+        
+        assertNull(queryProgramCodesForDeletedCode("PG12"));
+        
+        
+        logoutUser();
+    }
+    
+    private Object[] queryProgramCodesForDeletedCode(String programCode) throws Exception {
+        QueryRunner qr = new QueryRunner();
+        ResultSetHandler<Object[]> rsh = new ResultSetHandler<Object[]>() {
+            @Override
+            public Object[] handle(ResultSet resultSet) throws SQLException {
+             // return if result set empty
+             if( !resultSet.next()){
+                  return null;
+              }
+             ResultSetMetaData metaData = resultSet.getMetaData();
+             int cols = metaData.getColumnCount();
+             Object[] result = new Object[cols];
+
+             for (int i = 0; i < cols; i++) {
+                 result[i] = resultSet.getObject(i + 1);
+             }
+
+             return result;
+            }
+        };
+        Object[] resultsArray = qr.query(connection, "SELECT * FROM program_code WHERE program_code = ?", rsh, programCode);
+        return resultsArray;
     }
     
 

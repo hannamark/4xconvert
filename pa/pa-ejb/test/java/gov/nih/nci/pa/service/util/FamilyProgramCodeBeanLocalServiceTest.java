@@ -6,6 +6,8 @@ package gov.nih.nci.pa.service.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.dto.FamilyDTO;
 import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.service.PAException;
@@ -205,5 +207,106 @@ public class FamilyProgramCodeBeanLocalServiceTest extends AbstractEjbTestCase {
        
        return null;
    }
+   
+   
+   /**
+    * Test method for
+    * {@link gov.nih.nci.pa.service.util.FamilyProgramCodeBeanLocal#deleteProgramCode(gov.nih.nci.pa.dto.FamilyDTO,
+    * gov.nih.nci.pa.iso.dto.ProgramCodeDTO)}
+    * 
+    * @throws PAException
+    */
+  @Test
+  public final void testDeleteProgramCode() throws PAException {
+      // add a new program code which is not associated to any trial.
+      FamilyDTO familyDTO = bean.getFamilyDTOByPoId(-1L);
+      assertEquals(6,familyDTO.getProgramCodes().size());
+      ProgramCodeDTO dto = new ProgramCodeDTO();
+      String programCodeValue = "PG1";
+      dto.setProgramCode(programCodeValue);
+      dto.setProgramName("Program Name1");
+      bean.createProgramCode(familyDTO,dto);
+      
+      //verify that program code is successfully created and added to family
+      familyDTO = bean.getFamilyDTOByPoId(-1L);
+      assertEquals(7,familyDTO.getProgramCodes().size());
+      // get existing program code
+      ProgramCodeDTO existingProgramCodeDTO = findProgramCodeGivenCode(familyDTO, programCodeValue);
+      assertNotNull(existingProgramCodeDTO);
+      
+      assertFalse(bean.isProgramCodeAssociatedWithATrial(existingProgramCodeDTO));
+      
+      bean.deleteProgramCode(familyDTO, existingProgramCodeDTO);
+      // re fetch updated familyDTO
+      familyDTO = bean.getFamilyDTOByPoId(-1L);
+      assertNull(findProgramCodeGivenCode(familyDTO, programCodeValue));
+      assertEquals(6,familyDTO.getProgramCodes().size());
+  }
+  
+  /**
+   * Test method for
+   * {@link gov.nih.nci.pa.service.util.FamilyProgramCodeBeanLocal#deleteProgramCode(gov.nih.nci.pa.dto.FamilyDTO,
+   * gov.nih.nci.pa.iso.dto.ProgramCodeDTO)}
+   * 
+   * @throws PAException
+   */
+ @Test
+ public final void testDeleteProgramCodeErrorScenario() throws PAException {
+     
+     thrown.expect(PAValidationException.class);
+     thrown.expectMessage(FamilyProgramCodeBeanLocal.NOT_FOUND_PROGRAM_CODE);
+     
+     FamilyDTO familyDTO = bean.getFamilyDTOByPoId(-1L);
+     assertEquals(6,familyDTO.getProgramCodes().size());
+     
+     ProgramCodeDTO nonExistingProgramCodeDTO = new ProgramCodeDTO();
+     nonExistingProgramCodeDTO.setId(-1111L);
+     nonExistingProgramCodeDTO.setProgramCode("PG-nonexisting");
+     nonExistingProgramCodeDTO.setProgramName("Program Name-nonexisting");
+     
+     // verify program code doesn't exist
+     assertNull(findProgramCodeGivenCode(familyDTO, "PG-nonexisting"));
+    
+     bean.deleteProgramCode(familyDTO,nonExistingProgramCodeDTO);
+ }
+  
+  
+  /**
+   * Test method for
+   * {@link gov.nih.nci.pa.service.util.FamilyProgramCodeBeanLocal#isProgramCodeAssociatedWithATrial(gov.nih.nci.pa.iso.dto.ProgramCodeDTO)}
+   * 
+   * @throws PAException
+   */
+ @Test
+ public final void testIsProgramCodeAssociatedWithATrial() throws PAException {
+     
+     FamilyDTO familyDTO = bean.getFamilyDTOByPoId(-1L);
+     assertEquals(6,familyDTO.getProgramCodes().size());
+     
+     String existingProgramCodeValue = "2";
+     // get existing program code
+     ProgramCodeDTO existingProgramCodeDTO = findProgramCodeGivenCode(familyDTO, existingProgramCodeValue);
+     assertNotNull(existingProgramCodeDTO);
+     assertTrue(bean.isProgramCodeAssociatedWithATrial(existingProgramCodeDTO));
+     
+     
+     // add a new program code which is not associated to any trial.
+     assertEquals(6,familyDTO.getProgramCodes().size());
+     ProgramCodeDTO dto = new ProgramCodeDTO();
+     String programCodeValue = "PG1";
+     dto.setProgramCode(programCodeValue);
+     dto.setProgramName("Program Name1");
+     bean.createProgramCode(familyDTO,dto);
+     
+     //verify that program code is successfully created and added to family
+     familyDTO = bean.getFamilyDTOByPoId(-1L);
+     assertEquals(7,familyDTO.getProgramCodes().size());
+     
+     // get newly added program code
+     ProgramCodeDTO unassociatedProgramCodeDTO = findProgramCodeGivenCode(familyDTO, programCodeValue);
+     assertNotNull(unassociatedProgramCodeDTO);
+     
+     assertFalse(bean.isProgramCodeAssociatedWithATrial(unassociatedProgramCodeDTO));
+ }
 
 }

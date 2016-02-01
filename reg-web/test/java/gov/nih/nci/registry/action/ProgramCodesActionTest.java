@@ -128,6 +128,62 @@ public class ProgramCodesActionTest extends AbstractRegWebTest {
     }
     
     @Test
+    public void testDeleteProgramCode() throws Exception {        
+        ProgramCodesAction action = getAction();
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        action.setServletRequest(mockRequest);
+        
+        action.setPoId("12345");
+        when(mockRequest.getParameter("programCodeIdSelectedForDeletion")).thenReturn("1");
+        
+        assertTrue(action.deleteProgramCode() instanceof StreamResult);     
+        
+      try {
+
+          Field field = StreamResult.class.getDeclaredField("inputStream");
+          ReflectionUtils.makeAccessible(field);
+
+          StreamResult sr = action.deleteProgramCode();
+
+          InputStream is = (InputStream) field.get(sr);
+          String json = IOUtils.toString(is);
+          assertEquals("{\"data\":[]}", json);
+
+      } catch (Exception e) {
+          e.printStackTrace();
+          fail("should not throw exception");
+      }
+    }
+    
+    
+    @Test
+    public void testIsProgramCodeAssignedToATrial() throws Exception {        
+        ProgramCodesAction action = getAction();
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        action.setServletRequest(mockRequest);
+        
+        when(mockRequest.getParameter("programCodeIdSelectedForDeletion")).thenReturn("1");
+        
+        assertTrue(action.isProgramCodeAssignedToATrial() instanceof StreamResult);     
+        
+      try {
+
+          Field field = StreamResult.class.getDeclaredField("inputStream");
+          ReflectionUtils.makeAccessible(field);
+
+          StreamResult sr = action.isProgramCodeAssignedToATrial();
+
+          InputStream is = (InputStream) field.get(sr);
+          String json = IOUtils.toString(is);
+          assertEquals("{\"data\":[false]}", json);
+
+      } catch (Exception e) {
+          e.printStackTrace();
+          fail("should not throw exception");
+      }
+    }
+    
+    @Test
     public void testFetchProgramCodesForFamily() throws Exception {        
         ProgramCodesAction action = getAction();
         action.setPoId("12345");

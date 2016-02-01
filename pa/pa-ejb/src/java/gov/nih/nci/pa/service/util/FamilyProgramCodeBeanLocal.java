@@ -17,6 +17,7 @@ import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -49,6 +50,11 @@ public class FamilyProgramCodeBeanLocal implements FamilyProgramCodeServiceLocal
      */
     public static final String DUPE_PROGRAM_CODE = "This program code already exists in the system."
             + " Please add another program code";
+    
+    /**
+     * PROGRAM_CODE_NOT_FOUND
+     */
+    public static final String NOT_FOUND_PROGRAM_CODE = "This program code doesn't exist in the system.";
 
     private static final Logger LOG = Logger.getLogger(FamilyProgramCodeBeanLocal.class);
 
@@ -300,4 +306,58 @@ public class FamilyProgramCodeBeanLocal implements FamilyProgramCodeServiceLocal
         Session session = PaHibernateUtil.getCurrentSession();
         return (ProgramCode) session.get(ProgramCode.class, id);
     }
+    
+    /**
+     * Deletes a Program Code from db that is not associated to any trial 
+     * @param familyDTO family dto
+     * @param programCodeDTO the program code DTO
+     * @throws PAValidationException if program code is not found in the db
+     */
+    @Override
+    public void deleteProgramCode(FamilyDTO familyDTO, ProgramCodeDTO programCodeDTO) 
+            throws PAValidationException {
+        
+        ProgramCode domainProgramCode = convertProgramCodeToDomain(programCodeDTO);
+        
+        // get the db program code by id
+        ProgramCode dbProgramCode = getDbProgramCodeById(domainProgramCode.getId());
+        
+        if (dbProgramCode == null) {
+            throw new PAValidationException(NOT_FOUND_PROGRAM_CODE);
+        }
+        
+        // remove the program code association from family
+        Family family = getFamilyByPoId(familyDTO.getPoId());
+        
+        Iterator<ProgramCode> iterator = family.getProgramCodes().iterator();
+        while (iterator.hasNext()) {
+            ProgramCode programCode = iterator.next();
+            if (programCode.getId().equals(domainProgramCode.getId())) {
+                iterator.remove();
+            }
+        }
+       
+        // delete the program code from db
+        PaHibernateUtil.getCurrentSession().delete(dbProgramCode);
+        
+    }
+    
+    /**
+     * Finds whether a Program Code is associated to any trial 
+     * @param programCodeDTO the program code DTO
+     * @return true if program code is associated with a trial, false otherwise
+     */
+    @Override
+    public Boolean isProgramCodeAssociatedWithATrial(ProgramCodeDTO programCodeDTO) {
+        Query programCodeTrialQuery = PaHibernateUtil
+                .getCurrentSession()
+                .createQuery(
+                        "select pc from StudyProtocol sp join sp.programCodes pc where pc.id=:programCodeIdentifier");
+        
+        programCodeTrialQuery.setParameter("programCodeIdentifier", programCodeDTO.getId());        
+        
+        return (programCodeTrialQuery.uniqueResult() != null);
+    }
+    
+    
 }

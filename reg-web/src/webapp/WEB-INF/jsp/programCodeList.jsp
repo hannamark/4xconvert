@@ -28,6 +28,10 @@
           <strong>Message.</strong>&nbsp;<fmt:message key="programcode.updated"/>
     </div>
     
+    <div class="alert alert-success confirm_msg" style="display: none;" id="programCodeDeletedMessageDiv">
+          <strong>Message.</strong>&nbsp;<fmt:message key="programcode.deleted"/>
+    </div>
+    
     <!-- Program Codes Errors Modal -->
     <div class="modal fade" id="programCodeErrorMessageModal">
       <div class="modal-dialog">
@@ -85,6 +89,14 @@
                The old code value  will be permanently removed.</p>
               
             <p>Are you sure you would like to proceed with this change?</p>
+        </div>
+    </div>
+    
+    <div id="dialog-confirm-delete" title="Confirm Delete" style="display: none;">
+        <div>
+            <p>The following Program Code is not assigned to any trial,<br> and will be permanently deleted: </p>
+            <p id="programdCodeToBeDeleted"></p>
+           <p>Please Confirm.</p>
         </div>
     </div>
     

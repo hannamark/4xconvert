@@ -13,6 +13,7 @@ import gov.nih.nci.pa.service.util.RegistryUserService;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.util.Constants;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -55,6 +56,9 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
             .getLogger(ProgramCodesAction.class);
     
     private static final String UTF_8 = "UTF-8";
+    
+    // to address PMD error : The String literal "data" appears 5 times in this file
+    private static final String DATA = "data";   
     
     private List<FamilyDTO> familyDTOs = new ArrayList<>();    
     private FamilyDTO selectedFamilyDTO; 
@@ -177,7 +181,7 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
     public StreamResult fetchProgramCodesForFamily() throws UnsupportedEncodingException {
         JSONObject root = new JSONObject();
         JSONArray arr = new JSONArray();
-        root.put("data", arr);
+        root.put(DATA, arr);
         populateProgramCodes(arr);
         return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
     }
@@ -209,7 +213,7 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
             LOG.debug("Creating and adding a new program code for [familyPOId : " + poId + "]");
             JSONObject root = new JSONObject();
             JSONArray arr = new JSONArray();
-            root.put("data", arr);
+            root.put(DATA, arr);
             addProgramCode();
             return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
         } catch (Exception e) {
@@ -269,7 +273,7 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
             LOG.debug("Updating program code for [familyPOId : " + poId + "]");
             JSONObject root = new JSONObject();
             JSONArray arr = new JSONArray();
-            root.put("data", arr);
+            root.put(DATA, arr);
             editProgramCode();
             return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
         } catch (Exception e) {
@@ -294,7 +298,56 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
         
         familyProgramCodeService.updateProgramCode(familyDTO, currentProgramCodeDTO, updatedProgramCodeDTO);
       }
-
+    
+    /**
+     * Finds whether program code is associated with a trial
+     * @throws IOException IO exception
+     * @return JSON String
+     */
+    
+    public StreamResult isProgramCodeAssignedToATrial() throws IOException {
+        try {
+            JSONObject root = new JSONObject();
+            JSONArray arr = new JSONArray();
+            root.put(DATA, arr);
+            String programCodeIdToBeDeleted = request.getParameter("programCodeIdSelectedForDeletion");
+            ProgramCodeDTO programCodeDTO = new ProgramCodeDTO();
+            programCodeDTO.setId(Long.parseLong(programCodeIdToBeDeleted));
+            if (familyProgramCodeService.isProgramCodeAssociatedWithATrial(programCodeDTO)) {
+                arr.put(true);
+            } else {
+                arr.put(false);
+            }
+            return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
+        } catch (Exception e) {
+            return handleExceptionDuringAjax(e);
+        }
+    }
+    
+    /**
+     * Delete program code from db
+     * @throws IOException IO exception
+     * @return JSON String
+     */
+    
+    public StreamResult deleteProgramCode() throws IOException {
+        try {
+            LOG.debug("Deleting program code for [familyPOId : " + poId + "]");
+            JSONObject root = new JSONObject();
+            JSONArray arr = new JSONArray();
+            root.put(DATA, arr);
+            FamilyDTO familyDTO = familyProgramCodeService.getFamilyDTOByPoId(Long.parseLong(poId));
+            String currentProgramCodeId = request.getParameter("programCodeIdSelectedForDeletion");
+            ProgramCodeDTO currentProgramCodeDTO = new ProgramCodeDTO();
+            currentProgramCodeDTO.setId(Long.parseLong(currentProgramCodeId));
+            
+            familyProgramCodeService.deleteProgramCode(familyDTO, currentProgramCodeDTO);
+            return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
+        } catch (Exception e) {
+            return handleExceptionDuringAjax(e);
+        }
+    }
+    
     /**
      * Does bean injections
      * @throws Exception on exception
