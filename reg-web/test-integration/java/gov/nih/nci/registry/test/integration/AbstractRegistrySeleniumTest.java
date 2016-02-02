@@ -288,11 +288,11 @@ public abstract class AbstractRegistrySeleniumTest extends
 
         selenium.type("trialDTO.nctIdentifier", "NCT" + rand);
         final String nctID = "OTHER" + rand;
-        selenium.type("otherIdentifierOrg", nctID);
+        s.type("otherIdentifierOrg", nctID);
         clickAndWaitAjax("id=otherIdbtnid");
-        waitForElementById("otherIdentifierdiv", 30);
-        pause(1000);
-        assertTrue(selenium.isTextPresent(nctID));
+        waitForElementToBecomeVisible(
+                By.xpath("//div[@id='otherIdentifierdiv']//tr/td[normalize-space(text())='"
+                        + nctID + "']"), 15);
 
         selenium.type("trialDTO.officialTitle", trialName);
         selenium.select("trialDTO.phaseCode", "label=0");
@@ -349,7 +349,8 @@ public abstract class AbstractRegistrySeleniumTest extends
         selenium.type("trialDTO_primaryCompletionDate", oneYearFromToday);
         selenium.click("trialDTO_completionDateTypeAnticipated");
         selenium.type("trialDTO_completionDate", oneYearFromToday);
-        assertFalse(s.isElementPresent("xpath=//input[@type='radio' and @value='N/A']"));
+        assertFalse(s
+                .isElementPresent("xpath=//input[@type='radio' and @value='N/A']"));
 
         // IND/IDE
         moveElementIntoView(By.id("group3"));
@@ -376,13 +377,16 @@ public abstract class AbstractRegistrySeleniumTest extends
         moveElementIntoView(By.id("trialDTO.selectedRegAuth"));
         selenium.select("trialDTO.selectedRegAuth",
                 "label=Food and Drug Administration");
-        assertFalse(driver.findElement(By.id("trialDTO.delayedPostingIndicatorNo")).isDisplayed());
+        assertFalse(driver.findElement(
+                By.id("trialDTO.delayedPostingIndicatorNo")).isDisplayed());
         moveElementIntoView(By
                 .id("trialDTO.fdaRegulatoryInformationIndicatorYes"));
         selenium.click("trialDTO.fdaRegulatoryInformationIndicatorYes");
         selenium.click("trialDTO.section801IndicatorYes");
-        assertFalse(driver.findElement(By.id("trialDTO.delayedPostingIndicatorNo")).isEnabled());
-        assertTrue(driver.findElement(By.id("trialDTO.delayedPostingIndicatorNo")).isSelected());
+        assertFalse(driver.findElement(
+                By.id("trialDTO.delayedPostingIndicatorNo")).isEnabled());
+        assertTrue(driver.findElement(
+                By.id("trialDTO.delayedPostingIndicatorNo")).isSelected());
         selenium.click("trialDTO.dataMonitoringCommitteeAppointedIndicatorYes");
 
         // Add Protocol and IRB Document
@@ -587,8 +591,10 @@ public abstract class AbstractRegistrySeleniumTest extends
     }
 
     protected String getUIRowValue(String labeltxt) {
-        return driver.findElement(By.xpath("//div[@class='row']/span[@class='label'][normalize-space(.) = '"
-                + labeltxt + "']/following::span")).getText();
+        return driver
+                .findElement(
+                        By.xpath("//div[@class='row']/span[@class='label'][normalize-space(.) = '"
+                                + labeltxt + "']/following::span")).getText();
     }
 
     /**
@@ -638,7 +644,7 @@ public abstract class AbstractRegistrySeleniumTest extends
         clickAndWait("xpath=//a[text()='Clinical Trials']");
         waitForElementById("resetSearchBtn", 5);
     }
-    
+
     /**
      * @param fieldID
      * @param value
@@ -656,7 +662,7 @@ public abstract class AbstractRegistrySeleniumTest extends
         verifySingleTrialSearchResult(info);
 
     }
-    
+
     /**
      * @param info
      */
@@ -680,7 +686,6 @@ public abstract class AbstractRegistrySeleniumTest extends
         assertTrue(selenium
                 .isElementPresent("xpath=//table[@id='row']/tbody/tr[1]/td[10]//button[normalize-space(text())='Select Action']"));
     }
-
 
     /**
      * @param nciID
@@ -718,13 +723,13 @@ public abstract class AbstractRegistrySeleniumTest extends
      * @param params
      */
     protected final void submitTrialAndVerifyOpenSitesDialog(String[] params,
-            String buttonToClick , boolean isEarlierDay) {
-        
+            String buttonToClick, boolean isEarlierDay) {
+
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         calendar.add(Calendar.DAY_OF_MONTH, -1);
         String earlierDate = MONTH_DAY_YEAR_FMT.format(calendar.getTime());
-        
+
         s.click("xpath=//button[text()='" + buttonToClick + "']");
         waitForElementToBecomeVisible(By.id("dialog-opensites"), 10);
         assertEquals("The trial has open sites",
@@ -758,15 +763,16 @@ public abstract class AbstractRegistrySeleniumTest extends
                 s.getText("//table[@id='openSitesTable']/tbody/tr[1]/td[2]"));
         assertEquals(params[0],
                 s.getText("//table[@id='openSitesTable']/tbody/tr[1]/td[3]"));
-        if(!isEarlierDay) {
-            assertEquals(today,
-                    s.getText("//table[@id='openSitesTable']/tbody/tr[1]/td[4]"));    
+        if (!isEarlierDay) {
+            assertEquals(
+                    today,
+                    s.getText("//table[@id='openSitesTable']/tbody/tr[1]/td[4]"));
         } else {
-           
-            assertEquals(earlierDate,
-                    s.getText("//table[@id='openSitesTable']/tbody/tr[1]/td[4]"));    
+
+            assertEquals(
+                    earlierDate,
+                    s.getText("//table[@id='openSitesTable']/tbody/tr[1]/td[4]"));
         }
-        
 
         assertEquals("2",
                 s.getText("//table[@id='openSitesTable']/tbody/tr[2]/td[1]"));
@@ -774,12 +780,14 @@ public abstract class AbstractRegistrySeleniumTest extends
                 s.getText("//table[@id='openSitesTable']/tbody/tr[2]/td[2]"));
         assertEquals(params[1],
                 s.getText("//table[@id='openSitesTable']/tbody/tr[2]/td[3]"));
-        
-        if(!isEarlierDay) {
-        assertEquals(today,
-                s.getText("//table[@id='openSitesTable']/tbody/tr[2]/td[4]"));
+
+        if (!isEarlierDay) {
+            assertEquals(
+                    today,
+                    s.getText("//table[@id='openSitesTable']/tbody/tr[2]/td[4]"));
         } else {
-            assertEquals(earlierDate,
+            assertEquals(
+                    earlierDate,
                     s.getText("//table[@id='openSitesTable']/tbody/tr[2]/td[4]"));
         }
 
@@ -843,16 +851,23 @@ public abstract class AbstractRegistrySeleniumTest extends
                 DateUtils.addDays(new Date(), offsetFromToday), "MM/dd/yyyy");
     }
 
-    protected void removeProgramCodesFromTrial(Long studyProtocolId) throws Exception {
+    protected void removeProgramCodesFromTrial(Long studyProtocolId)
+            throws Exception {
         QueryRunner runner = new QueryRunner();
-        runner.update(connection, "delete from study_program_code where study_protocol_id = " + studyProtocolId);
+        runner.update(connection,
+                "delete from study_program_code where study_protocol_id = "
+                        + studyProtocolId);
     }
 
-    protected List<String> getProgramCodesByTrial(Long studyProtocolId) throws Exception {
+    protected List<String> getProgramCodesByTrial(Long studyProtocolId)
+            throws Exception {
         QueryRunner runner = new QueryRunner();
-       List<Object[]> results = runner.query(connection, "select pc.program_code from program_code pc " +
-                "join study_program_code sp on sp.program_code_id = pc.identifier " +
-                "where sp.study_protocol_id = " + studyProtocolId, new ArrayListHandler());
+        List<Object[]> results = runner
+                .query(connection,
+                        "select pc.program_code from program_code pc "
+                                + "join study_program_code sp on sp.program_code_id = pc.identifier "
+                                + "where sp.study_protocol_id = "
+                                + studyProtocolId, new ArrayListHandler());
         List<String> list = new ArrayList<String>();
         if (results != null) {
             for (Object[] o : results) {
