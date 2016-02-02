@@ -763,6 +763,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         moveElementIntoView(By.id("trialDTO.leadOrganizationNameField"));
         hover(By.id("trialDTO.leadOrganizationNameField"));
         clickAndWaitAjax("link=National Cancer Institute");
+        waitForElementToBecomeVisible(By.id("programCodesValues"), 10);
         clickAndWaitAjax("id=programCodesValues");
         moveElementIntoView(By.id("programCodesValues"));
         useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
