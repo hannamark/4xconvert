@@ -64,7 +64,7 @@
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/manage.programcodes.js'/>"></script>
         <script type="text/javascript" language="javascript">
             document.observe("dom:loaded", function() {
-                <s:iterator var="p" value="familyDto.programCodes">
+                <s:iterator var="p" value="familyDto.programCodesAsOrderedList">
                     <s:if test="active">
                         allProgramCodes.push({
                             id: <s:property value="id" /> ,
@@ -136,7 +136,7 @@
                                                 <a id="fpgc-icon-a" class="fpgc" href="#fcpg-icon-loc"><span id="fpgc-icon" class="glyphicon glyphicon-filter"></span></a>
                                                 <div id="fpgc-div" style="display:none;">
                                                     <select id="fpgc-sel" multiple="multiple">
-                                                        <s:iterator var="p" value="familyDto.programCodes">
+                                                        <s:iterator var="p" value="familyDto.programCodesAsOrderedList">
                                                             <s:if test="active">
                                                                 <option id="fpgc-opt-<s:property value="id" />" value="<s:property value="id" />" ><s:property value="programCode" /> <s:property value="programName" /></option>
                                                             </s:if>
@@ -229,7 +229,7 @@
     <div class="text-center" id="pgc-madd-sel-div">
         <s:if test="familyDto">
             <select id="pgc-madd-sel" multiple="multiple" style="width: 95%;"  data-placeholder="Select Program Code(s)">
-                <s:iterator var="p" value="familyDto.programCodes">
+                <s:iterator var="p" value="familyDto.programCodesAsOrderedList">
                     <s:if test="active">
                         <option id="pgc-madd-opt-<s:property value="id" />" value="<s:property value="programCode" />"><s:property value="programCode" /> <s:property value="programName" /></option>
                     </s:if>
@@ -256,7 +256,7 @@
     <div class="text-center" id="pgc-mrm-sel-div">
         <s:if test="familyDto">
             <select id="pgc-mrm-sel" multiple="multiple" style="width: 95%;" data-placeholder="Select Program Code(s)">
-                <s:iterator var="p" value="familyDto.programCodes">
+                <s:iterator var="p" value="familyDto.programCodesAsOrderedList">
                     <s:if test="active">
                         <option id="pgc-mrm-opt-<s:property value="id" />" value="<s:property value="programCode" />"><s:property value="programCode" /> <s:property value="programName" /></option>
                     </s:if>
@@ -290,7 +290,7 @@
     <div class="text-center" id="pgc-mrpl-seltwo-div">
         <s:if test="familyDto">
             <select id="pgc-mrpl-seltwo" multiple="multiple" style="width: 95%;"  data-placeholder="Select Program Code(s)">
-                <s:iterator var="p" value="familyDto.programCodes">
+                <s:iterator var="p" value="familyDto.programCodesAsOrderedList">
                     <s:if test="active">
                         <option value="<s:property value="programCode" />"><s:property value="programCode" /> <s:property value="programName" /></option>
                     </s:if>

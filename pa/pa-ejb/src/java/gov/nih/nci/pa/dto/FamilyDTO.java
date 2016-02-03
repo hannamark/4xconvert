@@ -4,8 +4,12 @@ import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import org.apache.commons.lang.time.DateUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -198,6 +202,22 @@ public class FamilyDTO implements Serializable {
      */
     public void setProgramCodes(Set<ProgramCodeDTO> programCodes) {
         this.programCodes = programCodes;
+    }
+
+    /**
+     * Will return the sorted set of program codes.
+     * @return list of program codes
+     */
+    public List<ProgramCodeDTO> getProgramCodesAsOrderedList() {
+        List<ProgramCodeDTO> list = new ArrayList<ProgramCodeDTO>(programCodes);
+        Collections.sort(list, new Comparator<ProgramCodeDTO>() {
+            @Override
+            public int compare(ProgramCodeDTO o1, ProgramCodeDTO o2) {
+                return o1.getProgramCode().compareTo(o2.getProgramCode());
+            }
+        });
+
+        return list;
     }
 
 }

@@ -518,8 +518,10 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         pgDto2.setProgramCode("5");
 
         FamilyDTO familyDTO = new FamilyDTO(-1L);
-        familyDTO.getProgramCodes().add(pgDto1);
         familyDTO.getProgramCodes().add(pgDto2);
+        familyDTO.getProgramCodes().add(pgDto1);
+        assertEquals(familyDTO.getProgramCodesAsOrderedList().get(0), pgDto1);
+        assertEquals(familyDTO.getProgramCodesAsOrderedList().get(1), pgDto2);
 
         when(familyProgramCodeService.getFamilyDTOByPoId(1L)).thenReturn(familyDTO);
         deleteAllRecords();
