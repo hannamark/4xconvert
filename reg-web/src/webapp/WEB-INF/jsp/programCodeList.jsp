@@ -108,18 +108,25 @@
             
             <s:form cssClass="form-horizontal" name="programCodeHeader" action="programCodes.action" id="programCodesHeaderForm">       
               <div class="form-group">
-                <label for="selectedFamily" class="col-sm-2 control-label"><fmt:message key="programcodes.organization.family.label"/></label>
-                <div class="col-sm-2">
-                <s:select name="selectedDTOId"
-                    id="selectedDTOId"
-                    cssClass="form-control" 
-                    list="familyDTOs" 
-                    listKey="id"
-                    listValue="name"
-                    value= "selectedFamilyDTO.id"  
-                    onchange="document.getElementById('programCodesHeaderForm').submit()"                   
-                />
-                </div>      
+                
+                 <c:choose>
+                    <c:when test="${sessionScope.programCodeAdmin}">
+                        <label class=" col-sm-2 control-label" for="selectedFamily"><fmt:message key="programcodes.organization.family.label"/></label>
+                        <div class="col-sm-2">
+                             <s:select name="selectedDTOId"
+                                id="selectedDTOId"
+                                cssClass="form-control" 
+                                list="familyDTOs" 
+                                listKey="id"
+                                listValue="name"
+                                value= "selectedFamilyDTO.id"  
+                                onchange="document.getElementById('programCodesHeaderForm').submit()"/>
+                        </div>     
+                    </c:when>
+                    <c:otherwise>
+                        <label class="control-label" style="width: 15.6667%;"for="selectedFamily"><fmt:message key="programcodes.organization.family.label"/></label> <b>&nbsp;&nbsp;${selectedFamilyDTO.name}</b>
+                    </c:otherwise>
+                </c:choose>
               </div>              
               <div class="col-md-12">
                 <hr />
@@ -130,7 +137,7 @@
                     <div id="datetimepicker" class="datetimepicker input-append">
                         <s:date name="selectedFamilyDTO.reportingPeriodEndDate" var="reportingPeriodDate" format="MM/dd/yyyy"/>                     
                         <s:textfield id="reportingPeriodEndDate" name="selectedFamilyDTO.reportingPeriodEndDate" data-format="MM/dd/yyyy" type="text" 
-                            cssClass="form-control" placeholder="mm/dd/yyyy" 
+                            cssClass="form-control" placeholder="mm/dd/yyyy" style="width:83px"
                             value="%{reportingPeriodDate}" />
                         <span class="add-on btn-default"><i class="fa-calendar"></i></span>
                         <p class="text-success" id="date_flash" style="display:none;">Reporting period end date saved.</p>
@@ -146,7 +153,7 @@
                                 '11':'11','12':'12','13':'13','14':'14','15':'15','16':'16','17':'17','18':'18','19':'19',
                                 '20':'20','21':'21','22':'22','23':'23','24':'24'}"
                             value="selectedFamilyDTO.reportingPeriodLength"
-                            cssClass="form-control"
+                            cssClass="form-control" style="width:51px"
                             onchange="changeReportingPeriodLength(this)"
                      />                 
                     <p class="text-success" id="reporting_flash" style="display:none;">Reporting period length saved.</p>
@@ -157,6 +164,13 @@
               </div>
               <div>
                  <table id="newProgramCodesRowTable" class="table table-bordered table-striped">
+                    <thead>
+                      <tr>
+                         <th nowrap="nowrap" width="25%">Program Code</th>
+                         <th nowrap="nowrap" width="50%">Program Name</th>
+                         <th nowrap="nowrap" width="25%" />
+                      </tr>
+                   </thead>
                     <tbody>
                         <td nowrap="nowrap" width="25%"><input type="text" name="newProgramCode" id="newProgramCode" value="" class="form-control"/> </td>
                         <td nowrap="nowrap" width="50%"><input type="text" name="newProgramName" id="newProgramName" value="" class="form-control"/> </td>

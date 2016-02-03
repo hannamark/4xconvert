@@ -114,7 +114,7 @@ function loadProgramCodes($) {
             },{
                "render": function(data, type, row, meta) {
                    return ' <button type=\"button\" id=\"editPGCodeButton\" title=\"Edit this Program <br> Code and Name\" rel=\"tooltip\" data-placement=\"top\" data-trigger=\"hover\"><i class=\"fa fa-pencil-square-o\"></i></button>' + '&nbsp;&nbsp;&nbsp;&nbsp;' + '<button type=\"button\" id=\"deletePGCodeButton-' + row.programCode + '\"' +
-                   'title=\"Delete or <br> Inactivate this <br> Program Code\" rel=\"tooltip\" data-placement=\"top\" data-trigger=\"hover\"><i class=\"fa fa-trash-o fa-lg\"></i></button>' + '&nbsp;&nbsp;&nbsp;&nbsp;' +'<a href="#"  title="Manage this Program Code\'s assignments to trials where members of your organization family are participants" class="fa fa-cog"   onclick="manageProgramCodes(\''+row.programCode+'\',\''+jQuery("#poID").val() +'\')" data-trigger="hover"></a>';
+                   'title=\"Delete or <br> Inactivate this <br> Program Code\" rel=\"tooltip\" data-placement=\"top\" data-trigger=\"hover\"><i class=\"fa fa-trash-o fa-lg\"></i></button>' + '&nbsp;&nbsp;&nbsp;&nbsp;' +'<a href="#"  title="Manage this Program Code\'s assignments to trials where members of your organization family are participants" class="fa fa-exchange"   onclick="manageProgramCodes(\''+row.programCode+'\',\''+jQuery("#poID").val() +'\')" data-trigger="hover"></a>';
                },
                "bSortable": false,
                "targets": [2]

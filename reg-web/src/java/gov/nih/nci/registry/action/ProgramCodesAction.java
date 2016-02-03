@@ -60,6 +60,8 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
     // to address PMD error : The String literal "data" appears 5 times in this file
     private static final String DATA = "data";   
     
+    private static final String IS_PROGRAM_CODE_ADMIN = "programCodeAdmin";   
+    
     private List<FamilyDTO> familyDTOs = new ArrayList<>();    
     private FamilyDTO selectedFamilyDTO; 
     
@@ -87,11 +89,15 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
     @Override
     public String execute() throws PAException, ParseException {   
         request = ServletActionContext.getRequest();
-        RegistryUser registryUser = registryUserService.getUser(request.getRemoteUser());    
-        boolean isProgramCodeAdmin = ServletActionContext.getRequest()
-                .isUserInRole(Constants.PROGRAM_CODE_ADMINISTRATOR);
+        
+        RegistryUser registryUser = registryUserService.getUser(request.getRemoteUser());  
+        if (request.getSession().getAttribute(IS_PROGRAM_CODE_ADMIN) == null) {
+            request.getSession().setAttribute(IS_PROGRAM_CODE_ADMIN, request
+                    .isUserInRole(Constants.PROGRAM_CODE_ADMINISTRATOR));
+        }
+
         List<OrgFamilyDTO> affiliatedFamilies = new ArrayList<OrgFamilyDTO>();
-        if (isProgramCodeAdmin) {
+        if ((Boolean) request.getSession().getAttribute(IS_PROGRAM_CODE_ADMIN)) {
             affiliatedFamilies = getAllFamiliesDto();
         } else {
             affiliatedFamilies = FamilyHelper.getByOrgId(registryUser.getAffiliatedOrganizationId());
