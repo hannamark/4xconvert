@@ -11,7 +11,22 @@ var trialProgramCodeMap = {};
 var tmparr = [];
 var tmpS2Ds = [];
 var curS2Ctrl = null;
+var maddS2Ctrl = null;
+var mrmS2Ctrl = null;
+var mrplS2Ctrl1 = null;
+var mrplS2Ctrl2 = null;
+var s2closing = false;
+var ellipsis_len = 50;
 
+function ellipsis(str, len) {
+    if(str) {
+        if (str.length > len) {
+            return str.substring(0, len) + "...";
+        }
+        return str;
+    }
+    return "...";
+}
 
 // will remove program code currently associated with the given study
 function removeProgramCodeFromTrialMap($, sp, pgc) {
@@ -56,7 +71,7 @@ function refreshFilteredProgramCodes($) {
 }
 
 function showProgramCodeS2InRow($, sp) {
-
+    console.log("refreshing s2 for trial: " + sp);
     //clear the content of select box
     $("#" + sp + "_trSel").empty();
 
@@ -69,21 +84,20 @@ function showProgramCodeS2InRow($, sp) {
     //creating data source for s2
     $(trialProgramCodeMap[sp]).each(function(i, p){
         tmparr.push(p.code);
-        console.log(" tmpS2Ds << [" + p.code + ", " + p.name + "disabled:true]") ;
-        tmpS2Ds.push({id: p.code, text: p.name, disabled:true});
+        console.log(" tmpS2Ds << [" + p.code + ", " + p.name + "removed:true]") ;
     });
 
-    $(filteredProgramCodes).each(function(i, p){
+    $(allProgramCodes).each(function(i, p){
         if ($.inArray(p.code, tmparr) < 0) {
-            console.log(" tmpS2Ds << [" + p.code + ", " + p.name + "disabled:false]") ;
-            tmpS2Ds.push({id: p.code, text: p.name});
+            console.log(" tmpS2Ds << [" + p.code + ", " + p.name + "added:true]") ;
+            tmpS2Ds.push({id: p.code, text: ellipsis(p.code + " " + p.name, ellipsis_len), title: p.code + " " + p.name});
         }
     });
 
     $("#" + sp + "_trDiv").show();
     return $("#" + sp + "_trSel").select2({
         data:tmpS2Ds,
-        placeholder: "Program Code(s)",
+        placeholder: "Pick Program Code",
         containerClass: sp + "_s2"
     });
 
@@ -98,7 +112,9 @@ function toggleMultiButtons($, grayOut) {
 }
 
 function pgcinit($) {
-    allProgramCodes.sort();
+    allProgramCodes.sort(function(a,b){
+        return a.code > b.code ? 1 : a.code < b.code ? -1 : 0;
+    });
     refreshFilteredProgramCodes($);
     $("#familyPoId").on('change', function(evt) {
         $("#changeFamilyFrm").submit();
@@ -145,6 +161,9 @@ function pgcinit($) {
             "type": "POST",
             "data": function ( d ) {
                 d.familyPoId = $("#familyPoId").val();
+                if ($("#fpgc-sel").val()) {
+                    d.pgcListParam = $.grep($("#fpgc-sel").val(), function(v){ return $.isNumeric(v);}).join(',');
+                }
             }
         },
         buttons: [
@@ -152,13 +171,15 @@ function pgcinit($) {
         ],
         "columns": [
             {width:"15%", data: "identifiers"},
-            {width: "34%", data: "title"},
+            {width: "36%", data:function(row, type, val, meta){
+               return "<div class='spt' title='" + row.title +"'>" + row.title + "</div>";
+            }},
             {width: "23%",data: function(row, type, val, meta){
                 return row.leadOrganizationName + "<br>" + '<a href="#" class="mypgp" rel="' + row.studyProtocolId + '">Show my participation</a>';
             }},
             {width: "15%",data: "piFullName"},
             {width: "5%",data: "trialStatus"},
-            {width:"8%",
+            {width:"6%",
                 orderable: false ,
                 className:"pgctd",
                 data: function ( row, type, val, meta ) {
@@ -169,7 +190,7 @@ function pgcinit($) {
                     });
 
                     snippet = snippet + '<a id="' + row.studyProtocolId + '_tra" href="#" class="pgcssa" rel="' + row.studyProtocolId +'"><span class="glyphicon glyphicon-chevron-down"></span></a>';
-                    snippet = snippet + '<div id="' + row.studyProtocolId + '_trDiv" class="pgcssd" style="display:none;"><select id="' + row.studyProtocolId + '_trSel" rel="' + row.studyProtocolId +'" ></select></div>';
+                    snippet = snippet + '<div id="' + row.studyProtocolId + '_trDiv" class="pgcssd" style="display:none;"><select id="' + row.studyProtocolId + '_trSel" rel="' + row.studyProtocolId +'" style="width:100%;"></select></div>';
                     return snippet;
                 }}
 
@@ -227,6 +248,11 @@ function pgcinit($) {
         curStudyProtocol = $.attr(this, 'rel');
         curS2Ctrl = showProgramCodeS2InRow($, curStudyProtocol);
         curS2Ctrl.on("select2:close", function(evt){
+           evt.preventDefault();
+           if (s2closing) {
+               return; //https://github.com/select2/select2/issues/3503
+           }
+
            curStudyProtocol = $.attr(this, 'rel');
            assignProgramCode($, this, $(this).parents("td"), curStudyProtocol, $(this).val());
         });
@@ -258,41 +284,52 @@ function pgcinit($) {
     //initialize funnel select
     $("#fpgc-sel").multiselect({
         nonSelectedText: 'Select Program Code(s)' ,
-        enableFiltering: true,
-        dropRight: true,
+        enableFiltering: false,
+        includeSelectAllOption: true,
+        selectAllText: 'Select/Deselect All',
+        dropUp: true,
+        dropRight:false,
         filterPlaceholder: 'Search',
         onDropdownHide: function (evt) {
             $("#fpgc-div").hide();
-            refreshFilteredProgramCodes($);
+            trailsTable.ajax.reload();
         }
     });
 
 
 
     //initialize the assign multiple popup multiselect
-    $("#pgc-madd-sel").multiselect({
-        nonSelectedText: 'Select Program Code(s)' ,
-        enableFiltering: true,
-        dropRight: false,
-        filterPlaceholder: 'Search'
-    });
-    $("#pgc-mrm-sel").multiselect({
-        nonSelectedText: 'Select Program Code(s)' ,
-        enableFiltering: true,
-        dropRight: false,
-        filterPlaceholder: 'Search'
+    maddS2Ctrl = $("#pgc-madd-sel").select2({
+        width:'100%',
+        containerClass: 'pp',
+        templateSelection : function(pg){
+            return pg.id;
+        }
     });
 
-    $("#pgc-mrpl-selone").multiselect({
-        nonSelectedText: 'Select Program Code'
+    mrmS2Ctrl = $("#pgc-mrm-sel").select2({
+        width:'100%',
+        containerClass: 'pp',
+        templateSelection : function(pg){
+            return pg.id;
+        }
     });
 
 
-    $("#pgc-mrpl-seltwo").multiselect({
-        nonSelectedText: 'Select Program Code(s)' ,
-        enableFiltering: true,
-        dropRight: false,
-        filterPlaceholder: 'Search'
+    mrplS2Ctrl1 = $("#pgc-mrpl-selone").select2({
+        width:'100%',
+        containerClass: 'pp',
+        templateSelection : function(pg){
+            return pg.id;
+        }
+    });
+
+    mrplS2Ctrl2 = $("#pgc-mrpl-seltwo").select2({
+        width:'100%',
+        containerClass: 'pp',
+        templateSelection : function(pg){
+            return pg.id;
+        }
     });
 
     //handle click on funnel icon
@@ -305,23 +342,56 @@ function pgcinit($) {
 
 //will open up the dialog to show multiple PG selection for assignment
 function assignMultiple($) {
+    console.log("In assign multiple");
    //cleanup
    if ($('#pgc-madd-dialog').dialog("instance")) {
        $('#pgc-madd-dialog').dialog("destroy");
    }
     $("#pgc-madd-indicator").hide();
+    $("#pgc-madd-sel").empty();
+    tmparr = [];
+    $("#trialsTbl > tbody > tr.selected > td.pgctd > a.pg").each(function(i, a){
+        if (tmparr.indexOf($(a).attr("pc")) < 0) {
+            tmparr.push($(a).attr("pc"));
+        }
+    });
+    console.log("tmparr:" + tmparr);
+    tmpS2Ds = [];
+    $(allProgramCodes).each(function(i, pgc){
+        if (tmparr.indexOf(pgc.code) < 0) {
+            tmpS2Ds.push(pgc);
+        }
+    });
+    console.log("tmpS2Ds:" + tmpS2Ds);
+    tmpS2Ds = tmpS2Ds.sort(function(a, b){
+       if (a < b) {
+           return -1;
+       }
+       return 1;
+    });
 
-   //show dialog
+    $(tmpS2Ds).each(function(i, pgc) {
+        $("#pgc-madd-sel").append($("<option />",{
+            value: pgc.code,
+            text: ellipsis(pgc.code + " " + pgc.name, ellipsis_len),
+            title:pgc.code + " " + pgc.name
+           }
+        ));
+    });
+
+
+    //show dialog
     $("#pgc-madd-dialog").dialog({
         modal : true,
         autoOpen : true,
-        width : $(window).width() * 0.5,
-        height : $(window).height() * 0.5,
+        width : $(window).width() * 0.3,
+        height : $(window).height() * 0.4,
         buttons : [
             {
                 id:"pgc-madd-dialog-ok",
                 text:"OK",
-                click: function() {
+                click: function(evt) {
+                    evt.preventDefault();
                     handlePopuInteractions($, $('#pgc-madd-sel').val(),[],
                         "pgc-madd",
                         "managePCAssignmentassignProgramCodesToTrials.action",
@@ -332,17 +402,23 @@ function assignMultiple($) {
             {
                 id:'pgc-madd-dialog-cancel',
                 text:"Cancel",
-                click: function() {
+                click: function(evt) {
+                    evt.preventDefault();
                     $("#pgc-madd-dialog").dialog("close");
                 }
             }
-        ]
+        ],
+        open:function() {
+            maddS2Ctrl.trigger("change");
+            maddS2Ctrl.trigger("updateResults");
+        }
     });
 
 }
 
 //will unassign program codes from multiple trials
 function removeMultiple($) {
+    console.log("In remove multiple");
     //cleanup
     if ($('#pgc-mrm-dialog').dialog("instance")) {
         $('#pgc-mrm-dialog').dialog("destroy");
@@ -363,24 +439,22 @@ function removeMultiple($) {
         });
 
         if (tmpS2Ds.length > -1) {
-            $("#pgc-mrm-sel").append($("<option />",{value: tmpS2Ds[0].code, text: tmpS2Ds[0].name}));
+            $("#pgc-mrm-sel").append($("<option />",{value: tmpS2Ds[0].code, text: ellipsis(tmpS2Ds[0].code + " " + tmpS2Ds[0].name,ellipsis_len), title:tmpS2Ds[0].code + " " +tmpS2Ds[0].name}));
         }
     });
-
-    //initialize the assign multiple popup multiselect
-    $("#pgc-mrm-sel").multiselect("rebuild");
 
     //show dialog
     $("#pgc-mrm-dialog").dialog({
         modal : true,
         autoOpen : true,
-        width : $(window).width() * 0.5,
-        height : $(window).height() * 0.5,
+        width : $(window).width() * 0.3,
+        height : $(window).height() * 0.4,
         buttons : [
             {
                 id:"pgc-mrm-dialog-ok",
                 text:"OK",
-                click: function() {
+                click: function(evt) {
+                    evt.preventDefault();
                     handlePopuInteractions($, $('#pgc-mrm-sel').val(), [],
                         "pgc-mrm",
                         "managePCAssignmentunassignProgramCodesFromTrials.action",
@@ -391,12 +465,18 @@ function removeMultiple($) {
             {
                 id:"pgc-mrm-dialog-cancel",
                 text:"Cancel",
-                click: function() {
+                click: function(evt) {
+                    evt.preventDefault();
                     $("#pgc-mrm-dialog").dialog("close");
                 }
 
             }
-        ]
+        ],
+        open:function() {
+            //initialize the assign multiple popup multiselect
+            mrmS2Ctrl.trigger("change");
+            mrmS2Ctrl.trigger("updateResults");
+        }
     });
 }
 
@@ -412,49 +492,35 @@ function replaceMultiple($) {
 
     //empty out first select box and add only the ones available on the trials
     $("#pgc-mrpl-selone").empty();
+    $("#pgc-mrpl-seltwo").empty();
     tmparr = [];
     $("#trialsTbl > tbody > tr.selected > td.pgctd > a.pg").each(function(i, a){
         if (tmparr.indexOf($(a).attr("pc")) < 0) {
             tmparr.push($(a).attr("pc"));
         }
     });
-    $(tmparr.sort()).each(function(i, p){
-        tmpS2Ds = $.grep(allProgramCodes, function(pgc, j){
-            return pgc.code == p;
-        });
-
-        if (tmpS2Ds.length > -1) {
-            $("#pgc-mrpl-selone").append($("<option />",{value: tmpS2Ds[0].code, text: tmpS2Ds[0].name}));
-        }
-    });
-
-    //initialize the first select box
-    $("#pgc-mrpl-selone").multiselect("rebuild");
-
-    //empty out second select box and enable only the ones not in trials
-    $("#pgc-mrpl-seltwo").empty();
     $(allProgramCodes).each(function(i, pgc){
-        if (tmparr.indexOf(pgc.code) > -1){
-            $("#pgc-mrpl-seltwo").append($("<option />",{value: pgc.code, text: pgc.name, disabled:true}));
-        } else {
-            $("#pgc-mrpl-seltwo").append($("<option />",{value: pgc.code, text: pgc.name}));
+        if (tmparr.indexOf(pgc.code) < 0) {
+            $("#pgc-mrpl-seltwo").append($("<option />",{value: pgc.code, text: ellipsis(pgc.code + " " + pgc.name, ellipsis_len), title:pgc.code + " " + pgc.name}));
+        }  else {
+            $("#pgc-mrpl-selone").append($("<option />",{value: pgc.code, text: ellipsis(pgc.code + " " + pgc.name, ellipsis_len), title:pgc.code + " " + pgc.name}));
+            $("#pgc-mrpl-seltwo").append($("<option />",{value: pgc.code, text: ellipsis(pgc.code + " " + pgc.name, ellipsis_len), disabled:true, title:pgc.code + " " + pgc.name}));
         }
     });
 
-    //initialize the second select box
-    $("#pgc-mrpl-seltwo").multiselect("rebuild");
 
    //show dialog
     $("#pgc-mrpl-dialog").dialog({
         modal : true,
         autoOpen : true,
-        width : $(window).width() * 0.5,
-        height : $(window).height() * 0.75,
+        width : $(window).width() * 0.3,
+        height : $(window).height() * 0.5,
         buttons : [
             {
                 id:"pgc-mrpl-dialog-ok",
                 text:"OK",
-                click: function() {
+                click: function(evt) {
+                    evt.preventDefault();
                     handlePopuInteractions($, $('#pgc-mrpl-seltwo').val(), [$('#pgc-mrpl-selone').val()],
                         "pgc-mrpl",
                         "managePCAssignmentreplaceProgramCodesInTrials.action",
@@ -465,13 +531,24 @@ function replaceMultiple($) {
             {
                 id:"pgc-mrpl-dialog-cancel",
                 text:"Cancel",
-                click: function() {
+                click: function(evt) {
+                    evt.preventDefault();
                     $("#pgc-mrpl-dialog").dialog("close");
                 }
 
             }
-        ]
+        ],
+        open:function() {
+            //initialize the first select box
+            mrplS2Ctrl1.trigger("change");
+            mrplS2Ctrl1.trigger("updateResults");
+            mrplS2Ctrl2.trigger("change");
+            mrplS2Ctrl2.trigger("updateResults");
+
+        }
     });
+
+
 }
 
 //will open participation dialog
@@ -494,7 +571,8 @@ function openParticipationDialog($) {
             {
                 id:'participation-close',
                 text: "Close",
-                click: function() {
+                click: function(evt) {
+                    evt.preventDefault();
                     $(this).dialog("close");
                 }
             }
@@ -540,6 +618,7 @@ function unAssignProgramCode($, td, sp, pgc) {
 
 //will assign the program-code for a specific trial
 function assignProgramCode($, s2, td, sp, pgc) {
+    s2closing = true;
     //destroy the select2 and hide the div
     if( $("#" + sp + "_trSel").hasClass("select2-hidden-accessible")) {
         $(s2).select2("destroy");
@@ -559,6 +638,7 @@ function assignProgramCode($, s2, td, sp, pgc) {
                 "familyPoId": $("#familyPoId").val()
             })
             .done(function (data) {
+                s2closing = false;
                 $('#' + sp + '_' + pgc + '_img').remove();
                 addProgramCodeToTrialMap($,sp, pgc);
                 //add the program code in the TD
@@ -569,6 +649,7 @@ function assignProgramCode($, s2, td, sp, pgc) {
                 $("#" + sp + "_tra").show();
             })
             .fail(function (jqXHR) {
+                s2closing = false;
                 //remove indicator image and show the down arrow
                 $('#' + sp + '_' + pgc + '_img').remove();
                 $("#" + sp + "_tra").show();
@@ -577,6 +658,7 @@ function assignProgramCode($, s2, td, sp, pgc) {
 
 
     }  else {
+        s2closing = false;
         //show the down arrow
         $("#" + sp + "_tra").show();
     }

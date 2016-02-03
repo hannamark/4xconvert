@@ -61,7 +61,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         String trial4Title = trial4.title;
         changePageLength("25");
         waitForElementToBecomeAvailable(
-                By.xpath("//table[@id='trialsTbl']/tbody//tr//td[text()='" + trial4Title + "']"), 10);
+                By.xpath("//table[@id='trialsTbl']/tbody//tr//td/div[text()='" + trial4Title + "']"), 10);
 
         TrialInfo trial3 = trials.get(3);
         //when I filter trial details.
@@ -69,10 +69,10 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
         //then I should see filtered set of trials
         waitForElementToGoAway(
-                By.xpath("//table[@id='trialsTbl']/tbody//tr//td[text()='" + trial4Title + "']"), 10);
+                By.xpath("//table[@id='trialsTbl']/tbody//tr//td/div[text()='" + trial4Title + "']"), 10);
 
         waitForElementToBecomeAvailable(
-                By.xpath("//table[@id='trialsTbl']/tbody//tr//td[text()='" + trial3.title + "']"), 10);
+                By.xpath("//table[@id='trialsTbl']/tbody//tr//td/div[text()='" + trial3.title + "']"), 10);
 
         logoutUser();
 
@@ -130,7 +130,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         TrialInfo trial4 = trials.get(4);
         String trial4Title = trial4.title;
         waitForElementToBecomeAvailable(
-                By.xpath("//table[@id='trialsTbl']/tbody//tr//td[text()='" + trial4Title + "']"), 10);
+                By.xpath("//table[@id='trialsTbl']/tbody//tr//td/div[text()='" + trial4Title + "']"), 10);
 
         verifyCSVExport();
         verifyExcelExport();
@@ -186,7 +186,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         TrialInfo trial4 = trials.get(4);
         String trial4Title = trial4.title;
         waitForElementToBecomeAvailable(
-                By.xpath("//table[@id='trialsTbl']/tbody//tr//td[text()='" + trial4Title + "']"), 10);
+                By.xpath("//table[@id='trialsTbl']/tbody//tr//td/div[text()='" + trial4Title + "']"), 10);
 
         clickLinkAndWait("Show my participation");
         waitForElementToBecomeVisible(By.xpath("//table[@id='participationTbl']"), 10);
@@ -242,7 +242,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         waitForElementToBecomeVisible(By.id("pgc-mrm-dialog"), 5);
 
         //on the popup select
-        pickMultiSelectOptions("pgc-mrm-sel-div", Arrays.asList("PG2"), Arrays.asList("PG1", "PG3", "PG4"));
+        useSelect2ToPickAnOption("pgc-mrm-sel", "PG2", "PG2 Cancer Program2");
 
         //When I click Cancel
         clickAndWait("pgc-mrm-dialog-cancel");
@@ -266,7 +266,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         waitForElementToBecomeVisible(By.id("pgc-mrm-dialog"), 5);
 
         //on the popup select
-        pickMultiSelectOptions("pgc-mrm-sel-div", Arrays.asList("PG2"), Arrays.asList("PG1", "PG3", "PG4"));
+        useSelect2ToPickAnOption("pgc-mrm-sel", "PG2", "PG2 Cancer Program2");
 
         //When I click OK
         clickAndWait("pgc-mrm-dialog-ok");
@@ -305,7 +305,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         waitForElementToBecomeVisible(By.id("pgc-madd-dialog"), 5);
 
         //on the popup select
-        pickMultiSelectOptions("pgc-madd-sel-div", Arrays.asList("PG2"), Arrays.asList("PG1", "PG3", "PG4"));
+        useSelect2ToPickAnOption("pgc-madd-sel", "PG2", "PG2 Cancer Program2");
 
         //When I click Cancel
         clickAndWait("pgc-madd-dialog-cancel");
@@ -327,7 +327,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         waitForElementToBecomeVisible(By.id("pgc-madd-dialog"), 5);
 
         //on the popup select
-        pickMultiSelectOptions("pgc-madd-sel-div", Arrays.asList("PG2"), Arrays.asList("PG1", "PG3", "PG4"));
+        useSelect2ToPickAnOption("pgc-madd-sel", "PG2", "PG2 Cancer Program2");
 
         //When I click Cancel
         clickAndWait("pgc-madd-dialog-ok");
@@ -396,7 +396,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         waitForElementToBecomeVisible(By.id("pgc-mrpl-dialog"), 5);
 
         //on the popup select
-        pickMultiSelectOptions("pgc-mrpl-selone-div", Arrays.asList("PG2"), Arrays.asList("PG1", "PG3", "PG4", "PG5"));
+        pickSelect2Item("pgc-mrpl-selone-div", "pgc-mrpl-selone", "PG2 Cancer Program2");
 
         //When I click Cancel
         clickAndWait("pgc-mrpl-dialog-cancel");
@@ -426,8 +426,8 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         waitForElementToBecomeVisible(By.id("pgc-mrpl-dialog"), 5);
 
         //on the popup select
-        pickMultiSelectOptions("pgc-mrpl-selone-div", Arrays.asList("PG2"), Arrays.asList("PG1", "PG3", "PG4", "PG5"));
-        pickMultiSelectOptions("pgc-mrpl-seltwo-div", Arrays.asList("PG5"), Arrays.asList("PG1", "PG2", "PG3", "PG4"));
+        pickSelect2Item("pgc-mrpl-selone-div", "pgc-mrpl-selone", "PG2 Cancer Program2");
+        useSelect2ToPickAnOption("pgc-mrpl-seltwo", "PG5", "PG5 Cancer Program5");
 
         //When I click OK
         clickAndWait("pgc-mrpl-dialog-ok");
@@ -481,16 +481,15 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
         //I should see that the original filter is preserved
         waitForElementToBecomeAvailable(
-                By.xpath("//table[@id='trialsTbl']/tbody//tr//td[text()='" + trials.get(0).title + "']"), 10);
+                By.xpath("//table[@id='trialsTbl']/tbody/tr[2]"), 10);
         assertTrue(selenium.isTextPresent("Showing 1 to 2 of 2 (filtered from 11 total entries)"));
 
         //When a user changes the filter,
         selenium.type("cfProgramCode", "PG3");
 
         //then I should see data filtered
-        int last = trials.size() - 1;
         waitForElementToBecomeAvailable(
-                By.xpath("//table[@id='trialsTbl']/tbody//tr//td[text()='" + trials.get(last).title + "']"), 10);
+                By.xpath("//table[@id='trialsTbl']/tbody/tr[3]"), 10);
         assertTrue(selenium.isTextPresent("Showing 1 to 3 of 3 (filtered from 11 total entries)"));
 
         logoutUser();
@@ -510,31 +509,50 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         dropdown.selectByIndex(1);
         changePageLength("25");
         //then I should see associated trials.
-        TrialInfo trial4 = trials.get(4);
+        TrialInfo trial1 = trials.get(1);
 
         //And I see the funnel filter
         waitForElementToBecomeAvailable(By.id("fpgc-icon-a"), 5);
+
+
+        //Then I filter by PG5 in funnel
         clickAndWait("fpgc-icon-a");
+        pickMultiSelectOptions("fpgc-div", Arrays.asList("5"), Arrays.asList("1", "2", "3", "4", "6"));
 
-        //Then I filter by PG4 in funnel
-        pickMultiSelectOptions("fpgc-div", Arrays.asList("PG4"), Arrays.asList("PG1", "PG2", "PG3"));
+        waitForElementToBecomeAvailable(By.xpath("//table[@id='trialsTbl']/tbody//td[text()='No data available in table']"), 5);
+        assertTrue(selenium.isTextPresent("Showing 0 to 0 of 0 entries"));
 
-        //filter on trial 4
-        selenium.typeKeys("//div[@id='trialsTbl_filter']/descendant::label/descendant::input", trial4.nciID);
+        //Now pick PG1 in the funnel
+        clickAndWait("fpgc-icon-a");
+        pickMultiSelectOptions("fpgc-div", Arrays.asList("multiselect-all"), new ArrayList<String>());
+
+        //filter on trial 1
         waitForElementToBecomeAvailable(
-                By.xpath(String.format("//table[@id='trialsTbl']/tbody//tr[@id='trial_%s']", trial4.id)), 5);
+                By.xpath(String.format("//table[@id='trialsTbl']/tbody//tr[@id='trial_%s']", trial1.id)), 5);
+        assertFalse(selenium.isTextPresent("Showing 0 to 0 of 0 entries"));
 
         //click on the program-code dropdown
-        driver.findElement(By.id(trial4.id + "_tra")).click();
+        driver.findElement(By.id(trial1.id + "_tra")).click();
 
-        //select PG4
-        pickSelect2Item(trial4.id + "_trDiv", trial4.id + "_trSel", "Cancer Program4");
+        //select PG5
+        pickSelect2Item(trial1.id + "_trDiv", trial1.id + "_trSel", "PG5 Cancer Program5");
 
         // indicator disappears
-        waitForElementToGoAway(By.id(trial4.id + "_PG4_img"), 10);
+        waitForElementToGoAway(By.id(trial1.id + "_PG5_img"), 10);
 
         //then we should have PG4 as an option
-        waitForElementToBecomeAvailable(By.id(trial4.id + "_PG4_a"), 5);
+        waitForElementToBecomeAvailable(By.id(trial1.id + "_PG5_a"), 5);
+
+
+        //Again pick PG5 in funnel
+        clickAndWait("fpgc-icon-a");
+        pickMultiSelectOptions("fpgc-div", Arrays.asList("multiselect-all"), Arrays.asList("1", "2", "3", "4", "6"));
+
+        //Now I should see only one record in table
+        TrialInfo trial2 = trials.get(2);
+        waitForElementToGoAway(
+                By.xpath(String.format("//table[@id='trialsTbl']/tbody//tr[@id='trial_%s']", trial2.id)), 5);
+        assertTrue(selenium.isTextPresent("Showing 1 to 1 of 1"));
 
         logoutUser();
     }
@@ -609,18 +627,18 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         QueryRunner qr = new QueryRunner();
         qr.update(connection, "delete from study_program_code");
         qr.update(connection, "delete from program_code");
-        qr.update(connection, "insert into program_code (family_id, program_code, program_name, status_code) " +
-                "values (1,'PG1', 'Cancer Program1', 'ACTIVE')");
-        qr.update(connection, "insert into program_code (family_id, program_code, program_name, status_code) " +
-                "values (1,'PG2', 'Cancer Program2', 'ACTIVE')");
-        qr.update(connection, "insert into program_code ( family_id, program_code, program_name, status_code) " +
-                "values (1,'PG3', 'Cancer Program3', 'ACTIVE')");
-        qr.update(connection, "insert into program_code ( family_id, program_code, program_name, status_code) " +
-                "values (1,'PG4', 'Cancer Program4', 'ACTIVE')");
-        qr.update(connection, "insert into program_code ( family_id, program_code, program_name, status_code) " +
-                "values (1,'PG5', 'Cancer Program5', 'ACTIVE')");
-        qr.update(connection, "insert into program_code ( family_id, program_code, program_name, status_code) " +
-                "values (1,'PG6', 'Cancer Program6', 'ACTIVE')");
+        qr.update(connection, "insert into program_code (identifier, family_id, program_code, program_name, status_code) " +
+                "values (1,1,'PG1', 'Cancer Program1', 'ACTIVE')");
+        qr.update(connection, "insert into program_code (identifier,family_id, program_code, program_name, status_code) " +
+                "values (2,1,'PG2', 'Cancer Program2', 'ACTIVE')");
+        qr.update(connection, "insert into program_code ( identifier,family_id, program_code, program_name, status_code) " +
+                "values (3,1,'PG3', 'Cancer Program3', 'ACTIVE')");
+        qr.update(connection, "insert into program_code ( identifier,family_id, program_code, program_name, status_code) " +
+                "values (4,1,'PG4', 'Cancer Program4', 'ACTIVE')");
+        qr.update(connection, "insert into program_code (identifier, family_id, program_code, program_name, status_code) " +
+                "values (5,1,'PG5', 'Cancer Program5', 'ACTIVE')");
+        qr.update(connection, "insert into program_code ( identifier,family_id, program_code, program_name, status_code) " +
+                "values (6,1,'PG6', 'Cancer Program6', 'ACTIVE')");
 
         assignToAllStudiesProgramCode("PG1");
         assignToAllStudiesProgramCode("PG2");

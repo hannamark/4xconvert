@@ -48,6 +48,12 @@
                 color:#d03b39;
                 padding-bottom: 3px;
             }
+            div.spt {
+               text-overflow: ellipsis;
+               overflow: hidden;
+               max-width: 36em;
+               white-space: nowrap;
+            }
 
         </style>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery.dataTables.min.js'/>"></script>
@@ -132,7 +138,7 @@
                                                     <select id="fpgc-sel" multiple="multiple">
                                                         <s:iterator var="p" value="familyDto.programCodes">
                                                             <s:if test="active">
-                                                                <option id="fpgc-opt-<s:property value="id" />" value="<s:property value="programCode" />" selected="selected" ><s:property value="programName" /></option>
+                                                                <option id="fpgc-opt-<s:property value="id" />" value="<s:property value="id" />" ><s:property value="programCode" /> <s:property value="programName" /></option>
                                                             </s:if>
 
                                                         </s:iterator>
@@ -222,10 +228,10 @@
     </p>
     <div class="text-center" id="pgc-madd-sel-div">
         <s:if test="familyDto">
-            <select id="pgc-madd-sel" multiple="multiple">
+            <select id="pgc-madd-sel" multiple="multiple" style="width: 95%;"  data-placeholder="Select Program Code(s)">
                 <s:iterator var="p" value="familyDto.programCodes">
                     <s:if test="active">
-                        <option id="pgc-madd-opt-<s:property value="id" />" value="<s:property value="programCode" />"><s:property value="programName" /></option>
+                        <option id="pgc-madd-opt-<s:property value="id" />" value="<s:property value="programCode" />"><s:property value="programCode" /> <s:property value="programName" /></option>
                     </s:if>
                 </s:iterator>
             </select>
@@ -249,10 +255,10 @@
     </p>
     <div class="text-center" id="pgc-mrm-sel-div">
         <s:if test="familyDto">
-            <select id="pgc-mrm-sel" multiple="multiple">
+            <select id="pgc-mrm-sel" multiple="multiple" style="width: 95%;" data-placeholder="Select Program Code(s)">
                 <s:iterator var="p" value="familyDto.programCodes">
                     <s:if test="active">
-                        <option id="pgc-mrm-opt-<s:property value="id" />" value="<s:property value="programCode" />"><s:property value="programName" /></option>
+                        <option id="pgc-mrm-opt-<s:property value="id" />" value="<s:property value="programCode" />"><s:property value="programCode" /> <s:property value="programName" /></option>
                     </s:if>
                 </s:iterator>
             </select>
@@ -274,19 +280,19 @@
         <img src="${pageContext.request.contextPath}/images/loading.gif" alt="Progress Indicator." width="18" height="18" />
     </div>
     </p>
-    <div class="text-center" id="pgc-mrpl-selone-div">
+    <div id="pgc-mrpl-selone-div">
         <s:if test="familyDto">
-            <select id="pgc-mrpl-selone" size="2">
+            <select id="pgc-mrpl-selone" style="width: 100%;">
             </select>
         </s:if>
     </div>
     <p>with the following program code(s)</p>
     <div class="text-center" id="pgc-mrpl-seltwo-div">
         <s:if test="familyDto">
-            <select id="pgc-mrpl-seltwo" multiple="multiple">
+            <select id="pgc-mrpl-seltwo" multiple="multiple" style="width: 95%;"  data-placeholder="Select Program Code(s)">
                 <s:iterator var="p" value="familyDto.programCodes">
                     <s:if test="active">
-                        <option value="<s:property value="programCode" />"><s:property value="programName" /></option>
+                        <option value="<s:property value="programCode" />"><s:property value="programCode" /> <s:property value="programName" /></option>
                     </s:if>
                 </s:iterator>
             </select>

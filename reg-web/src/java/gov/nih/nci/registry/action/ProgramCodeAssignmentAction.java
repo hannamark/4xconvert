@@ -2,6 +2,7 @@ package gov.nih.nci.registry.action;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.FamilyDTO;
 import gov.nih.nci.pa.dto.OrgFamilyDTO;
@@ -15,11 +16,13 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.service.util.FamilyProgramCodeService;
+import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.util.Constants;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -72,6 +75,7 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
     private RegistryUserServiceLocal registryUserService;
     private ParticipatingOrgServiceLocal participatingOrgService;
     private StudyProtocolServiceLocal studyProtocolService;
+    private PAOrganizationServiceRemote paOrganizationService;
 
     private List<OrgFamilyDTO> affiliatedFamilies;
     private Long familyPoId;
@@ -124,6 +128,13 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
         this.familyProgramCodeService = familyProgramCodeService;
     }
 
+    /**
+     * Sets the organization service
+     * @param paOrganizationService  - the organization service in PA
+     */
+    public void setPaOrganizationService(PAOrganizationServiceRemote paOrganizationService) {
+        this.paOrganizationService = paOrganizationService;
+    }
 
     /**
      * Will populate the affiliatedFamilies
@@ -290,6 +301,7 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
         registryUserService = PaRegistry.getRegistryUserService();
         participatingOrgService = PaRegistry.getParticipatingOrgService();
         studyProtocolService = PaRegistry.getStudyProtocolService();
+        paOrganizationService = PaRegistry.getPAOrganizationService();
     }
 
     /**
@@ -515,6 +527,27 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
         return null;
     }
 
+    /**
+     * Will reutrn the PA organization id, given the PO id of the organization
+     * @param poOrgIds - list of PO organization ID
+     * @return List of PA organization ID
+     * @throws PAException - on error
+     */
+    private List<Long> fetchOrganizationIds(List<Long> poOrgIds) throws PAException {
+        List<Long> orgIds = new ArrayList<Long>();
+        if (CollectionUtils.isNotEmpty(poOrgIds)) {
+            for (Long id : poOrgIds) {
+                Organization org = new Organization();
+                org.setIdentifier(id.toString());
+                Organization loaded = paOrganizationService.getOrganizationByIndetifers(org);
+                if (loaded != null) {
+                    orgIds.add(loaded.getId());
+                }
+            }
+        }
+        return orgIds;
+    }
+
     private void populateTrials(JSONArray arr) {
       LOG.debug("populating trials [familyPOId : " + familyPoId + "]");
       try {
@@ -526,9 +559,13 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
                       familyDto.getReportingPeriodEndDate(), ACTIVE_PROTOCOL_STATUSES);
               spQueryCriteria.setExcludeRejectProtocol(true);
               spQueryCriteria.setExcludeTerminatedTrials(true);
-              Long affliatedOrgId = getAffiliatedOrganizationId();
-              if (affliatedOrgId != null) {
-                spQueryCriteria.getParticipatingSiteIds().add(affliatedOrgId);
+              List<Long> orgPOIds = FamilyHelper.getRelatedOrgsInFamily(familyPoId);
+              List<Long> orgIds = fetchOrganizationIds(orgPOIds);
+              spQueryCriteria.getParticipatingSiteIds().addAll(orgIds);
+              if (StringUtils.isNotEmpty(pgcListParam)) {
+                  for (String p :  StringUtils.split(pgcListParam, ",")) {
+                      spQueryCriteria.getProgramCodeIds().add(Long.parseLong(p));
+                  }
               }
 
               List<StudyProtocolQueryDTO> trials = protocolQueryService.getStudyProtocolByCriteria(spQueryCriteria,
@@ -540,7 +577,8 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
                  o.put("title", trial.getOfficialTitle());
                  o.put("identifiers", trial.getAllIdentifiersAsString());
                  o.put("leadOrganizationName", trial.getLeadOrganizationName());
-                 o.put("piFullName", trial.getPiFullName());
+                 o.put("piFullName", StringUtils.equals("null", trial.getPiFullName()) ? ""
+                         : StringUtils.trimToEmpty(trial.getPiFullName()));
                  o.put("trialStatus", trial.getStudyStatusCode().getDisplayName());
                  o.put("DT_RowId", "trial_" + trial.getStudyProtocolId());
 
