@@ -33,7 +33,8 @@ public class ProgramCodesTest extends AbstractRegistrySeleniumTest {
 		String loginName = RandomStringUtils.randomAlphabetic(12).toLowerCase();
         Number userID = createCSMUser(loginName);
         createRegistryUser(userID);
-        assignUserToGroup(userID, "Submitter");                
+        assignUserToGroup(userID, "Submitter"); 
+        assignUserToGroup(userID, "ProgramCodeAdministrator");
         login(loginName, "pass");
         handleDisclaimer(true);
         
@@ -56,13 +57,13 @@ public class ProgramCodesTest extends AbstractRegistrySeleniumTest {
         switchReportingPeriodLength("5");         
         
         // switching to next family. DTO changes.
-        switchFamily("Family Two");
+        switchFamily("Family2");
         Select dropdown = new Select(driver.findElement(By.id("reportingPeriodLength")));
         WebElement option =  dropdown.getFirstSelectedOption();        
         assertEquals("12", option.getText());        
         
         // Back to recently changed family
-        switchFamily("Family One");                        
+        switchFamily("Family1");                        
         Select dropdown2 = new Select(driver.findElement(By.id("reportingPeriodLength")));
         WebElement option2 =  dropdown2.getFirstSelectedOption();   
         assertEquals("5", option2.getText());       
