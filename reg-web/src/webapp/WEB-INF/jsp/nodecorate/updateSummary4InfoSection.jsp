@@ -21,9 +21,19 @@
         </s:iterator>
     </div>
 </div>
-<div class="form-group">
+<div class="form-group" id="programCodeBlock" style="display:none">
     <label class="col-xs-4 control-label ro-field-label"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label>
-    <div class="col-xs-4"><s:property value="trialDTO.programCodeText"/></div></div>
+    <div class="col-xs-4">
+     <div class="col-xs-16" >
+                     <s:select size="2" multiple="true"  name="trialDTO.selectedProgramCodes" id="programCodesValues"  list="#{trialDTO.programCodesMap}"
+                        cssStyle="width:206px" />
+                      <c:if test="${sessionScope.isSiteAdmin}">
+                       &nbsp;&nbsp;<a href="../siteadmin/programCodesexecute.action">Manage Program Codes</a>
+                     </c:if>
+                 </div>  
+    </div>
 </div>
 </div>
 </div>
+</div>
+ 

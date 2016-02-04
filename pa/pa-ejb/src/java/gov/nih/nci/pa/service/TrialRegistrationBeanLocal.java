@@ -597,8 +597,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             //assign program codes PO-9521
             assignProgramCodes(IiConverter.convertToLong(spIi), studyProtocolDTO, leadOrganizationDTO);
 
-            //assign program codes PO-9521
-            assignProgramCodes(IiConverter.convertToLong(spIi), studyProtocolDTO, leadOrganizationDTO);
+          
 
             if ((StudySourceInterceptor.STUDY_SOURCE_CONTEXT.get() == StudySourceCode.GRID_SERVICE 
                     || StudySourceInterceptor.STUDY_SOURCE_CONTEXT
@@ -2072,7 +2071,18 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         }
         
         //set program codes
-        createStudyProtocolDTO.setProgramCodes(studyProtocolDTO.getProgramCodes());
+        if (studyProtocolDTO.getProgramCodes() != null) {
+            createStudyProtocolDTO.setProgramCodes(studyProtocolDTO.getProgramCodes());    
+        } else if (studyProtocolDTO.getProgramCodeText() != null) {
+          //dont delete existing program codes
+            createStudyProtocolDTO.setProgramCodes(studyProtocolDTO.getProgramCodes());  
+        }
+        
+        if (studyProtocolDTO.getProgramCodeText() != null) {
+            createStudyProtocolDTO.setProgramCodeText(studyProtocolDTO.getProgramCodeText());
+        }
+        
+        
         return createStudyProtocolDTO;
     }
 
@@ -2579,11 +2589,17 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         try {
             TrialUpdatesRecorder.reset();
             
+            
+            
+            
+            
             Ii spIi = updateStudy(studyProtocolDTO, overallStatusDTO, null,
                     studyResourcingDTOs, documentDTOs,
                     studySiteAccrualStatusDTOs, studySiteDTOs);           
             
             List<DocumentDTO> savedDocs = saveDocuments(documentDTOs, spIi);
+            
+            //update proram code                    
                         
             // do not send the mail when its batch mode
             final String updatesList = createInboxProcessingComments(spIi, savedDocs);
@@ -2669,6 +2685,18 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                 TrialUpdatesRecorder.ACCRUAL_DISEASE_TERMINOLOGY_UPDATED);
         spDTO.setAccrualDiseaseCodeSystem(newAccrualDiseaseCodeSystem);
         
+        if (studyProtocolDTO.getProgramCodes() != null) {
+            spDTO.setProgramCodes(studyProtocolDTO.getProgramCodes());
+        } 
+        //make sure not delete existing code in case of legacy
+        if (studyProtocolDTO.getProgramCodes() == null) {
+            if (studyProtocolDTO.getProgramCodeText() != null) {
+                spDTO.setProgramCodeText(studyProtocolDTO.getProgramCodeText());
+                spDTO.setProgramCodes(studyProtocolDTO.getProgramCodes());
+            }
+        }
+        
+        
         updateStudyProtocol(spDTO);
         
         // Grants
@@ -2696,6 +2724,28 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             TrialUpdatesRecorder.recordUpdate(currentStatus,
                     TrialUpdatesRecorder.STATUS_DATES_UPDATED);
         }
+        
+        StudySiteDTO ssCriteriaDTO = new StudySiteDTO();
+        ssCriteriaDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        ssCriteriaDTO.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
+        List<StudySiteDTO> studySiteDtos = paServiceUtils.getStudySite(ssCriteriaDTO, true);
+        StudySiteDTO studySiteDTO = PAUtil.getFirstObj(studySiteDtos);
+        if (studySiteDTO != null) {
+        OrganizationDTO leadOrgDto = new OrganizationDTO();
+        long identifier = IiConverter.convertToLong(studySiteDTO.getIdentifier());
+        Organization organization = studySiteService.getOrganizationByStudySiteId(identifier);
+        if (organization != null) {
+            leadOrgDto.setIdentifier(
+                    IiConverter.convertToPoOrganizationIi(organization.getIdentifier()));
+        }
+       
+        //update program code
+        assignProgramCodes(IiConverter.convertToLong(spIi), studyProtocolDTO, leadOrgDto);
+        }  
+        TrialUpdatesRecorder.recordUpdate(studyProtocolDTO.getProgramCodeText()
+                , spDTO.getProgramCodeText()
+                , TrialUpdatesRecorder.PROGRAM_CODE_CHANGED);
+
         return spIi;
     }
 

@@ -14,6 +14,12 @@
     <div class="col-xs-4">
         <s:property value="trialDTO.leadOrganizationName"/>
     </div>
+      <div class="col-xs-10">
+         <div align="center"  id ="programCodesLoad" style="display:none;" >
+           <img  src="${pageContext.request.contextPath}/images/loading.gif"/>
+                                &nbsp;Loading...
+        </div>
+     </div>
 </div>
 <div class="form-group">
 	<label class="col-xs-4 control-label ro-field-label">

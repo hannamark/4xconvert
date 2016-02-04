@@ -8,7 +8,8 @@
     <head>
         <title><fmt:message key="update.trial.page.title"/></title>
             <link href="<c:url value='/styles/jquery-datatables/css/jquery.dataTables.min.css'/>" rel="stylesheet" type="text/css" media="all" />    
-            <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery.dataTables.min.js'/>"></script>        
+            <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery.dataTables.min.js'/>"></script>
+            <script type="text/javascript" src="${scriptPath}/js/submitTrial.js"></script>        
         <s:head/>
         <c:url value="/protected/updateTrial" var="backendUrlTemplate"/>          
         <c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
@@ -38,6 +39,8 @@
             });
 
             function reviewProtocolUpdate() {
+            	var text = getProgramCodesValuesText();
+            	jQuery("#trialDTO\\.programCodeText").val(text);  
                 submitFirstForm("save", "updateTrialreviewUpdate.action");
                 showPopWin('${reviewProtocolUrl}', 600, 200, '', 'Review Register Trial');
             }
@@ -168,8 +171,14 @@
             }
         
             document.observe("dom:loaded", function() {
-                                               displayTrialStatusDefinition('trialDTO_statusCode');
-                                           });
+             displayTrialStatusDefinition('trialDTO_statusCode');
+             if($('trialDTO.leadOrganizationIdentifier').value) {
+                 loadProgramCodes($('trialDTO.leadOrganizationIdentifier').value,
+                 $('trialDTO.programCodeText').value);
+                 
+             }
+            	  
+          });
         </script>
     </head>
     <body>

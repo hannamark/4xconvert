@@ -459,7 +459,13 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             updateId = studyProtocolIi;
 
             List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
-            studyIdentifierDTOs.add(util.convertToNCTStudySiteDTO(trialDTO, null));        
+            studyIdentifierDTOs.add(util.convertToNCTStudySiteDTO(trialDTO, null));  
+            
+            //because we have already set program codes in program_code_text
+            //set the program codes list to blank otherwise in case of
+            //amendment reject previous values will not be restored
+            //TrialRegistrationBeanLocal method assignProgramCodes
+            spDTO.setProgramCodes(null);
             
             // call the service to invoke the update method
             trialRegistrationService.update(spDTO, statusHistory, studyIdentifierDTOs, null, 

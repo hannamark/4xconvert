@@ -100,6 +100,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import com.dumbster.smtp.SmtpMessage;
+import com.thoughtworks.selenium.webdriven.commands.WaitForPageToLoad;
 
 /**
  * Searches, adds participating site and Updates trial in Registry.
@@ -298,8 +299,9 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
         assertTrue(body.contains("<p><b>Update Information:</b><br>Trial Start Date Type was updated.Trial Start Date was updated.</p>"));
     }
     
+    
     @Test
-    public void testProgramCodeAfterUpdateTrial() throws SQLException, URISyntaxException, InterruptedException {
+    public void testIfProgramCodesNotDisplayedForOrgWithNoFamily() throws Exception {
         if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
             // PhantomJS keeps crashing on Linux CI box. No idea why at the
             // moment.
@@ -307,17 +309,9 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
         }
 
         TrialInfo info = createAcceptedTrial(false);
-        
         final String nciID = getLastNciId();
         
-        addNonCASummaryFour(info.id, "abstractor-ci");
-        
         loginToPAAndAddSite(info);
-        // Update programcode
-        QueryRunner runner = new QueryRunner();
-        String sql = "update study_site set program_code_text='ProgramCodeFromDatabase' where functional_code ='TREATING_SITE' and study_protocol_identifier="
-                + info.id;
-        runner.update(connection, sql);
 
         acceptTrialByNciIdWithGivenDWS(nciID, info.leadOrgID,
                 DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
@@ -327,29 +321,184 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
         loginAndAcceptDisclaimer();
 
         String rand = info.leadOrgID;
-        runSearchAndVerifySingleTrialResult("officialTitle", rand, info);        
+        runSearchAndVerifySingleTrialResult("officialTitle", rand, info);
+        
+        
+        
+        invokeUpdateTrial();
+        waitForPageToLoad();
+        assertFalse(selenium.isVisible("//div[@id='programCodeBlock']"));
+        //assertFalse(selenium.isElementPresent("//div[@id='programCodeBlock']"));
+    }
+    
+    @Test
+    public void testIfProgramCodesDisplayedForOrgWithFamily() throws Exception {
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+        
+        associateProgramCodes();
+        TrialInfo info = createAcceptedTrial(false,"National Cancer Institute");
+        final String nciID = getLastNciId();
+        
+        loginToPAAndAddSite(info);
 
-        invokeUpdateTrial(); 
+        acceptTrialByNciIdWithGivenDWS(nciID, info.leadOrgID,
+                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
+                        .toString());
+        assignTrialOwner("abstractor-ci", info.id);
+
+        loginAndAcceptDisclaimer();
+
+        String rand = info.leadOrgID;
+        runSearchAndVerifySingleTrialResult("officialTitle", rand, info,"National Cancer Institute");
+        
+        
+        
+        invokeUpdateTrial(true);
+        waitForPageToLoad();
+        waitForElementById("programCodesValues", 60);
+        
+        clickAndWaitAjax("id=programCodesValues");
+        moveElementIntoView(By.id("programCodesValues"));
+        useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
+        useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
+
+    }
+    
+    @Test
+    public void testIfProgramsCodesRetainedAfterReviewAndEdit() throws Exception {
+        
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+        
+        associateProgramCodes();
+        TrialInfo info = createAcceptedTrial(false,"National Cancer Institute");
+        addSummaryFour(info.id, "abstractor-ci");
+        final String nciID = getLastNciId();
+        
+        loginToPAAndAddSite(info);
+
+        acceptTrialByNciIdWithGivenDWS(nciID, info.leadOrgID,
+                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
+                        .toString());
+        assignTrialOwner("abstractor-ci", info.id);
+
+        loginAndAcceptDisclaimer();
+
+        String rand = info.leadOrgID;
+        runSearchAndVerifySingleTrialResult("officialTitle", rand, info,"National Cancer Institute");
+        
+        
+        
+        invokeUpdateTrial(true);
+        waitForPageToLoad();
+        waitForElementById("programCodesValues", 60);
+        
+        clickAndWaitAjax("id=programCodesValues");
+        moveElementIntoView(By.id("programCodesValues"));
+        useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
+        useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
+        
+        clickAndWait("xpath=//button[text()='Review Trial']");
         waitForPageToLoad();
         
-        String protocolDocPath = (new File(ClassLoader.getSystemResource(
-                PROTOCOL_DOCUMENT).toURI()).toString());
-        String irbDocPath = (new File(ClassLoader.getSystemResource(
-                IRB_DOCUMENT).toURI()).toString());
-        selenium.type("protocolDoc", protocolDocPath);
-        selenium.type("irbApproval", irbDocPath);        
+        clickAndWait("xpath=//button[text()='Edit ']");
+        waitForPageToLoad();
         
-        String programCodebeforeUpdate = getProgramCodePartcipatingSite(info);
-       
-        //Trial Abstraction Error
+        //check if program codes are retained
+        moveElementIntoView(By.id("programCodesValues"));
+        
+        assertOptionSelected("PG1 Cancer Program1");
+        assertOptionSelected("PG2 Cancer Program2");
+        
+    }
+    
+    @Test
+    public void testSubmitUpdateProgramCodes() throws Exception {
+        
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+        
+        associateProgramCodes();
+        TrialInfo info = createAcceptedTrial(false,"National Cancer Institute");
+        addSummaryFour(info.id, "abstractor-ci");
+        final String nciID = getLastNciId();
+        
+        loginToPAAndAddSite(info);
+
+        acceptTrialByNciIdWithGivenDWS(nciID, info.leadOrgID,
+                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
+                        .toString());
+        assignTrialOwner("abstractor-ci", info.id);
+
+        loginAndAcceptDisclaimer();
+
+        String rand = info.leadOrgID;
+        runSearchAndVerifySingleTrialResult("officialTitle", rand, info,"National Cancer Institute");
+        
+        
+        
+        invokeUpdateTrial(true);
+        waitForPageToLoad();
+        waitForElementById("programCodesValues", 60);
+        
+        clickAndWaitAjax("id=programCodesValues");
+        moveElementIntoView(By.id("programCodesValues"));
+        useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
+        useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
+        
         clickAndWait("xpath=//button[text()='Review Trial']");
+        waitForPageToLoad();
         
         clickAndWait("xpath=//button[text()='Submit']");
-       
-        String programAfterUpdate = getProgramCodePartcipatingSite(info);
+        waitForPageToLoad();
+        assertTrue(selenium
+                .isTextPresent("The trial update with the NCI Identifier "
+                        + nciID + " was successfully submitted."));
         
-        assertEquals(programCodebeforeUpdate, programAfterUpdate);
+        //get trial id from nci Id
+        long trialId =(Long)getTrialIdByNciId(nciID);
+        
+        
+        //check if program codes are actually added in the database
+        long programCodeCount = getProgramCodesCount(trialId);
+        
+        assert programCodeCount==2;
+        
     }
+    private void associateProgramCodes() throws Exception {
+       
+         QueryRunner qr = new QueryRunner();
+         qr.update(connection, "delete from program_code");
+         qr.update(connection, "insert into program_code (family_id, program_code, program_name, status_code) " +
+                 "values ((select identifier from family where po_id=1 ),'PG1', 'Cancer Program1', 'ACTIVE')");
+         qr.update(connection, "insert into program_code (family_id, program_code, program_name, status_code) " +
+                 "values ((select identifier from family where po_id=1 ),'PG2', 'Cancer Program2', 'ACTIVE')");
+         qr.update(connection, "insert into program_code ( family_id, program_code, program_name, status_code) " +
+                 "values ((select identifier from family where po_id=1 ),'PG3', 'Cancer Program3', 'ACTIVE')");
+         qr.update(connection, "insert into program_code ( family_id, program_code, program_name, status_code) " +
+                 "values ((select identifier from family where po_id=1 ),'PG4', 'Cancer Program4', 'ACTIVE')");
+     }
+    private long getProgramCodesCount(long trialId) throws SQLException {
+        
+        QueryRunner runner = new QueryRunner();
+        return (Long) runner
+                .query(connection,
+                        "select count(*) from study_program_code where study_protocol_id="+trialId
+                        +" and program_code_id in (select identifier from program_code where program_code in ('PG1','PG2'))" ,
+                        new ArrayHandler())[0];
+     
+    }
+    
 
     private String getProgramCodePartcipatingSite(TrialInfo info) throws SQLException {
         QueryRunner runner = new QueryRunner();
@@ -420,7 +569,7 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
      * @param info
      */
     protected void runSearchAndVerifySingleTrialResult(String fieldID,
-            String value, TrialInfo info) {
+            String value, TrialInfo info,String...orgName) {
 
         accessTrialSearchScreen();
         selenium.type(fieldID, value);
@@ -428,14 +577,14 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
         selenium.click("runSearchBtn");
         clickAndWait("link=All Trials");
         waitForElementById("row", 10);
-        verifySingleTrialSearchResult(info);
+        verifySingleTrialSearchResult(info,orgName);
 
     }
 
     /**
      * @param info
      */
-    protected void verifySingleTrialSearchResult(TrialInfo info) {
+    protected void verifySingleTrialSearchResult(TrialInfo info,String...orgName) {
         assertEquals(
                 info.nciID,
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[1]/a"));
@@ -443,8 +592,14 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[2]"));
         assertEquals("Approved",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[3]"));
-        assertEquals("ClinicalTrials.gov",
-                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[4]"));
+        if(orgName!=null && orgName.length>0) {
+            assertEquals(orgName[0],
+                    selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[4]"));
+        } else {
+            assertEquals("ClinicalTrials.gov",
+                    selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[4]"));
+                
+        }
         assertEquals(info.leadOrgID,
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[5]"));
         assertEquals("Doe, John",
@@ -456,16 +611,18 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
                 .isElementPresent("xpath=//table[@id='row']/tbody/tr[1]/td[10]//button[normalize-space(text())='Select Action']"));
     }
 
-    private void invokeUpdateTrial() {
+    private void invokeUpdateTrial(boolean...isLeadOrgDifferent) {
         final By selectActionBtn = By
                 .xpath("//table[@id='row']/tbody/tr[1]/td[10]//button[normalize-space(text())='Select Action']");
         moveElementIntoView(selectActionBtn);
         driver.findElement(selectActionBtn).click();
         driver.findElement(By.xpath("//li/a[normalize-space(text())='Update']"))
                 .click();
-
-        assertEquals("1",
-                selenium.getValue("trialDTO.leadOrganizationIdentifier"));
+        if (isLeadOrgDifferent == null) {
+            assertEquals("1",
+                    selenium.getValue("trialDTO.leadOrganizationIdentifier"));
+                
+        }
         assertFalse(s
                 .isElementPresent("xpath=//input[@type='radio' and @value='N/A']"));
     }

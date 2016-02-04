@@ -760,7 +760,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     }
 
     protected TrialInfo createSubmittedTrial(boolean isAbbr,
-            boolean skipDocuments) throws SQLException {
+            boolean skipDocuments, String...orgName) throws SQLException {
         TrialInfo info = new TrialInfo();
 
         // trimming uuid if length greater than 30 characters as this is used
@@ -816,7 +816,12 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         assignNciId(info);
         addDWS(info, "SUBMITTED");
         addMilestone(info, "SUBMISSION_RECEIVED");
-        addLeadOrg(info, "ClinicalTrials.gov");
+        if(orgName!=null && orgName.length>0) {
+            addLeadOrg(info, orgName[0]);
+        } else{
+            addLeadOrg(info, "ClinicalTrials.gov");    
+        }
+        
         addPI(info, "1");
         addSOS(info, "IN_REVIEW", yday_midnight());
         addSOS(info, "APPROVED");
@@ -1236,10 +1241,23 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         addMilestone(info, "SUBMISSION_ACCEPTED");
         return info;
     }
+    
+    protected TrialInfo createAcceptedTrial(boolean isAbbreviated,
+            boolean skipDocuments,String orgName) throws SQLException {
+        TrialInfo info = createSubmittedTrial(isAbbreviated, skipDocuments,orgName);
+        addDWS(info, "ACCEPTED");
+        addMilestone(info, "SUBMISSION_ACCEPTED");
+        return info;
+    }
 
     protected TrialInfo createAcceptedTrial(boolean isAbbreviated)
             throws SQLException {
         return createAcceptedTrial(isAbbreviated, false);
+    }
+    
+    protected TrialInfo createAcceptedTrial(boolean isAbbreviated,String orgName)
+            throws SQLException {
+        return createAcceptedTrial(isAbbreviated, false,orgName);
     }
 
     /**

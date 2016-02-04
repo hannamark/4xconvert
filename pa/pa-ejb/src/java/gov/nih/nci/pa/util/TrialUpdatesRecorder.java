@@ -117,6 +117,11 @@ public final class TrialUpdatesRecorder {
     
     /** Accrual disease terminology system message. */
     public static final String ACCRUAL_DISEASE_TERMINOLOGY_UPDATED = "Accrual Disease Terminology was updated.";
+    
+    /**
+     * program code changed message
+     */
+    public static final String PROGRAM_CODE_CHANGED = "Program codes updated";
 
     private TrialUpdatesRecorder() {
     }
