@@ -722,7 +722,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         moveElementIntoView(poIDElement);
         selenium.type("orgPOIdSearch", "2");
         clickAndWaitAjax("search_organization_btn");
-        assertTrue(selenium.isTextPresent("One item found.1"));
+        assertTrue(selenium.isTextPresent("One item found"));
 
         moveElementIntoView(By.xpath("//table[@id='row']/tbody/tr/td/button"));
         selenium.click("//table[@id='row']/tbody/tr/td/button");
