@@ -2,12 +2,15 @@ package gov.nih.nci.registry.test.integration;
 
 import gov.nih.nci.pa.service.util.FamilyProgramCodeBeanLocal;
 
+import java.io.File;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -376,6 +379,61 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         
         
         logoutUser();
+    }
+    
+    @Test
+    public void testVerifyExport() throws Exception {
+        loginAndAcceptDisclaimer();
+        waitForElementToBecomeVisible(By.linkText("Administration"), 2);
+        hoverLink("Administration");
+        waitForElementToBecomeVisible(By.linkText("Program Codes"), 2);
+        assertTrue(selenium.isTextPresent("Program Codes"));
+        hoverLink("Program Codes");
+        assertTrue(selenium.isTextPresent("Manage Master List"));
+        recreateFamilies();
+        associateProgramCodesToFamilies();
+        clickAndWait("link=Manage Master List");
+        assertTrue(selenium.isTextPresent("Program Code"));
+        assertTrue(selenium.isTextPresent("Program Name"));
+        assertTrue(selenium.isTextPresent("Search:"));
+        assertTrue(selenium.isTextPresent("Cancer Program12"));
+        assertTrue(selenium.isTextPresent("PG12"));
+        assertEquals("Showing 1 to 10 of 12",driver.findElement(By.id("programCodesTable_info")).getText());
+        
+        // verify that csv and excel buttons
+        verifyCSVExport();
+        verifyExcelExport();
+        logoutUser();
+    }
+    
+    private void verifyCSVExport() throws  Exception {
+        File csv = new File(downloadDir, "Manage Program Codes.csv");
+        if (csv.exists()) csv.delete();
+        assertFalse(csv.exists());
+        clickLinkAndWait("CSV");
+        pause(5000);
+        assertTrue(csv.exists());
+        List<String> lines = FileUtils.readLines(csv);
+        assertTrue((lines.size() - 1) == 12);
+        for (int i=1;i<13;i++) {
+                assertTrue(lines.get(i).startsWith("\"PG"));
+         }
+        assertEquals("\"PG1\",\"Cancer Program1\"", lines.get(1));
+        assertEquals("\"PG10\",\"(INACTIVE) Cancer Program10\"", lines.get(2));
+        assertEquals("\"PG5\",\"Cancer Program5\"", lines.get(8));
+        assertEquals("\"PG6\",\"(INACTIVE) Cancer Program6\"", lines.get(9));
+        
+        if (csv.exists()) csv.delete();
+    }
+
+
+    private void verifyExcelExport() throws Exception  {
+        File excel = new File(downloadDir, "Manage Program Codes.xlsx");
+        if (excel.exists()) excel.delete();
+        assertFalse(excel.exists());
+        clickLinkAndWait("Excel");
+        pause(5000);
+        excel.delete();
     }
     
     private Object[] queryProgramCodesForDeletedCode(String programCode) throws Exception {

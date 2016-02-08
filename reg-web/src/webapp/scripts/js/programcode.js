@@ -91,7 +91,7 @@ function loadProgramCodes($) {
                 "data": "programName"
             }, {
                 "data":function(row,type,val,meta){
-                	return '<a href="#"  title="Manage this Program Code\'s assignments to trials where members of your organization family are participants" class="fa fa-cog"   onclick="manageProgramCodes(\''+row.programCode+'\',\''+jQuery("#poID").val() +'\')" data-trigger="hover"></a>';
+                	return '<a href="#"  title="Manage this Program Code\'s assignments to trials where members of your organization family are participants" class="fa fa-exchange"   onclick="manageProgramCodes(\''+row.programCode+'\',\''+jQuery("#poID").val() +'\')" data-trigger="hover"></a>';
                 }
             }],
             "ajax": {
@@ -101,6 +101,19 @@ function loadProgramCodes($) {
                 },
                 "type": "POST"
             },
+            buttons: [ {
+                extend: 'excelHtml5',
+                exportOptions: {
+                    columns: [ 0, 1]
+                }
+            },
+            {
+                extend: 'csv',
+                exportOptions: {
+                    columns: [ 0, 1]
+                }
+            }
+                  ],
             "columnDefs": [{
                 "render": function(data, type, full) {
                     if (full.isActive === false) {
@@ -114,7 +127,7 @@ function loadProgramCodes($) {
             },{
                "render": function(data, type, row, meta) {
                    return ' <button type=\"button\" id=\"editPGCodeButton\" title=\"Edit this Program <br> Code and Name\" rel=\"tooltip\" data-placement=\"top\" data-trigger=\"hover\"><i class=\"fa fa-pencil-square-o\"></i></button>' + '&nbsp;&nbsp;&nbsp;&nbsp;' + '<button type=\"button\" id=\"deletePGCodeButton-' + row.programCode + '\"' +
-                   'title=\"Delete or <br> Inactivate this <br> Program Code\" rel=\"tooltip\" data-placement=\"top\" data-trigger=\"hover\"><i class=\"fa fa-trash-o fa-lg\"></i></button>' + '&nbsp;&nbsp;&nbsp;&nbsp;' +'<a href="#"  title="Manage this Program Code\'s assignments to trials where members of your organization family are participants" class="fa fa-exchange"   onclick="manageProgramCodes(\''+row.programCode+'\',\''+jQuery("#poID").val() +'\')" data-trigger="hover"></a>';
+                   'title=\"Delete or <br> Inactivate this <br> Program Code\" rel=\"tooltip\" data-placement=\"top\" data-trigger=\"hover\"><i class=\"fa fa-trash-o fa-lg\"></i></button>' + '&nbsp;&nbsp;&nbsp;&nbsp;' +'<button type=\"button\"  title="Manage this Program Code\'s <br> assignments to trials where <br> members of your organization <br> family are participants" rel=\"tooltip\" data-placement=\"top\" data-trigger=\"hover\" onclick="manageProgramCodes(\''+row.programCode+'\',\''+jQuery("#poID").val() +'\')" data-trigger="hover"><i class=\"fa fa-exchange\"></i></button>';
                },
                "bSortable": false,
                "targets": [2]
@@ -154,6 +167,7 @@ function loadProgramCodes($) {
 			.dialog(
 					{
 						modal : true,
+						resizable: false,
 						autoOpen : false,
 						width : 540,
 						buttons :    {
@@ -218,6 +232,7 @@ function loadProgramCodes($) {
 			.dialog(
 					{
 						modal : true,
+						resizable: false,
 						autoOpen : false,
 						width : 460,
 						buttons :    {
@@ -270,6 +285,7 @@ function loadProgramCodes($) {
 			.dialog(
 					{
 						modal : true,
+						resizable: false,
 						autoOpen : false,
 						width : 420,
 						buttons :    {

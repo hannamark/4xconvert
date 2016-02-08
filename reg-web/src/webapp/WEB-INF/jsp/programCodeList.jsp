@@ -10,7 +10,13 @@
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/programcode.js'/>"></script>        
         <link href="<c:url value='/styles/jquery-datatables/css/jquery.dataTables.min.css'/>"
         rel="stylesheet" type="text/css" media="all" />
+        <link href="<c:url value='/styles/jquery-datatables/css/buttons.dataTables.min.css'/>"
+        rel="stylesheet" type="text/css" media="all" />
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery.dataTables.min.js'/>"></script>
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery.dataTables.min.js'/>"></script>
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/dataTables.buttons.min.js'/>"></script>
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jszip.min.js'/>"></script>
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/buttons.html5.min.js'/>"></script>
         <style>
             #dialog-edit .row,#dialog-confirm .row {
             padding-top: 5px;
@@ -124,7 +130,7 @@
                         </div>     
                     </c:when>
                     <c:otherwise>
-                        <label class="control-label" style="width: 15.6667%;"for="selectedFamily"><fmt:message key="programcodes.organization.family.label"/></label> <b>&nbsp;&nbsp;${selectedFamilyDTO.name}</b>
+                        <label class="control-label" style="width: 15.6667%;" for="selectedFamily"><fmt:message key="programcodes.organization.family.label"/></label> <b>&nbsp;&nbsp;${selectedFamilyDTO.name}</b>
                     </c:otherwise>
                 </c:choose>
               </div>              
@@ -144,7 +150,7 @@
                     </div>
                 </div>              
                 <s:hidden id="poID" value="%{selectedFamilyDTO.poId}" />
-                <label for="programCodeLength" class="col-sm-2 control-label"><fmt:message key="programcodes.reporting.period.length.label"/></label>
+                <label for="programCodeLength" class="col-sm-3 control-label"><fmt:message key="programcodes.reporting.period.length.label"/></label>
                 <div class="col-sm-2">
                     <s:select
                             id = "reportingPeriodLength"            
