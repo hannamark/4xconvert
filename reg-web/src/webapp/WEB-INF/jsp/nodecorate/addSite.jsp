@@ -81,6 +81,12 @@ div.error,b.error {
 #siteStatusTable td {
 	border: 0px solid #DDDDDD !important;
 }
+li.select2-results__option {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 32em;
+    white-space: nowrap;
+}
 </style>
 
 <script type="text/javascript" language="javascript">
@@ -533,7 +539,7 @@ div.error,b.error {
                             <select id="programCode" name="programCode" multiple="multiple"
                                     class="form-control" data-placeholder="Select Program Code(s)" style="width:100%;">
                                 <c:forEach var="pgc" items="${sessionScope['PGC_MASTER_LIST']}">
-                                    <option value="${pgc.id}" ${fn:contains(sessionScope['PGC_ID_LIST'],pgc.id )? 'selected' : ''} title="${pgc.programCode} ${pgc.programName}">${pgc.programCode}</option>
+                                    <option value="${pgc.id}" ${fn:contains(sessionScope['PGC_ID_LIST'],pgc.id )? 'selected' : ''} title="${pgc.programCode} - ${pgc.programName}">${pgc.programCode}</option>
                                 </c:forEach>
                             </select>
                             <c:if test="${sessionScope['isSiteAdmin']}">

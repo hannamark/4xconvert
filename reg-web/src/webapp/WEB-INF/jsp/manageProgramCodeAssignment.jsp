@@ -44,6 +44,9 @@
             a.pgcssa {
                 padding-left: 2px;
             }
+            a.pgcrm {
+                white-space: nowrap;
+            }
             a.pgcrm > span {
                 color:#d03b39;
                 padding-bottom: 3px;
@@ -53,6 +56,38 @@
                overflow: hidden;
                max-width: 36em;
                white-space: nowrap;
+            }
+            label.checkbox {
+                text-overflow: ellipsis;
+                overflow: hidden;
+                max-width: 12em;
+                white-space: nowrap;
+            }
+            li.select2-results__option {
+                text-overflow: ellipsis;
+                overflow: hidden;
+                max-width: 12em;
+                white-space: nowrap;
+            }
+            ul#select2-pgc-mrm-sel-results > li.select2-results__option {
+                max-width: 24em;
+            }
+            ul#select2-pgc-madd-sel-results > li.select2-results__option {
+                max-width: 24em;
+            }
+            ul#select2-pgc-mrpl-selone-results > li.select2-results__option {
+                max-width: 24em;
+            }
+            ul#select2-pgc-mrpl-seltwo-results > li.select2-results__option {
+                max-width: 24em;
+            }
+
+            li.select2-selection__choice > span.select2-selection__choice__remove {
+                right: 3px !important;
+                left: inherit !important;
+                color:#d03b39 !important;
+                padding-left:2px;
+                float:right;
             }
 
         </style>
@@ -103,9 +138,17 @@
             <s:form id="changeFamilyFrm" action="managePCAssignmentchangeFamily.action" cssClass="form-horizontal">
                 <div class="form-group">
                     <label for="familyPoId" class="col-sm-2 control-label"><fmt:message key="programcodes.organization.family.label"/></label>
-                    <div class="col-sm-2">
-                        <s:select id="familyPoId" name="familyPoId" list="affiliatedFamilies" cssClass="form-control" headerKey="" headerValue="--Select--" listKey="id" listValue="name" />
-                    </div>
+
+                        <s:if test="programCodeAdmin">
+                            <div class="col-sm-2">
+                                <s:select id="familyPoId" name="familyPoId" list="affiliatedFamilies" cssClass="form-control fn-sb" headerKey="" headerValue="--Select--" listKey="id" listValue="name" />
+                            </div>
+                        </s:if>
+                        <s:else>
+                           <s:hidden id="familyPoId" name="familyPoId" />
+                            <div class="fn-txt txt-val col-sm-6"><s:property value="familyDto.name"/></div>
+                        </s:else>
+
                 </div>
                 <div class="col-md-12">
                     <hr />
@@ -138,7 +181,7 @@
                                                     <select id="fpgc-sel" multiple="multiple">
                                                         <s:iterator var="p" value="familyDto.programCodesAsOrderedList">
                                                             <s:if test="active">
-                                                                <option id="fpgc-opt-<s:property value="id" />" value="<s:property value="id" />" ><s:property value="programCode" /> <s:property value="programName" /></option>
+                                                                <option id="fpgc-opt-<s:property value="id" />" value="<s:property value="id" />" title='<s:property value="programCode" /> - <s:property value="programName" />'><s:property value="programCode" /> - <s:property value="programName" /></option>
                                                             </s:if>
 
                                                         </s:iterator>
@@ -231,7 +274,7 @@
             <select id="pgc-madd-sel" multiple="multiple" style="width: 95%;"  data-placeholder="Select Program Code(s)">
                 <s:iterator var="p" value="familyDto.programCodesAsOrderedList">
                     <s:if test="active">
-                        <option id="pgc-madd-opt-<s:property value="id" />" value="<s:property value="programCode" />"><s:property value="programCode" /> <s:property value="programName" /></option>
+                        <option id="pgc-madd-opt-<s:property value="id" />" value="<s:property value="programCode" />"><s:property value="programCode" /> - <s:property value="programName" /></option>
                     </s:if>
                 </s:iterator>
             </select>
@@ -258,7 +301,7 @@
             <select id="pgc-mrm-sel" multiple="multiple" style="width: 95%;" data-placeholder="Select Program Code(s)">
                 <s:iterator var="p" value="familyDto.programCodesAsOrderedList">
                     <s:if test="active">
-                        <option id="pgc-mrm-opt-<s:property value="id" />" value="<s:property value="programCode" />"><s:property value="programCode" /> <s:property value="programName" /></option>
+                        <option id="pgc-mrm-opt-<s:property value="id" />" value="<s:property value="programCode" />"><s:property value="programCode" /> - <s:property value="programName" /></option>
                     </s:if>
                 </s:iterator>
             </select>
@@ -292,7 +335,7 @@
             <select id="pgc-mrpl-seltwo" multiple="multiple" style="width: 95%;"  data-placeholder="Select Program Code(s)">
                 <s:iterator var="p" value="familyDto.programCodesAsOrderedList">
                     <s:if test="active">
-                        <option value="<s:property value="programCode" />"><s:property value="programCode" /> <s:property value="programName" /></option>
+                        <option value="<s:property value="programCode" />"><s:property value="programCode" /> - <s:property value="programName" /></option>
                     </s:if>
                 </s:iterator>
             </select>

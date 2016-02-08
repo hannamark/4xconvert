@@ -3,7 +3,6 @@ package gov.nih.nci.registry.test.integration;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -88,8 +87,11 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
         //Then he should be able to access the families associated with org
         accessManageCodeAssignmentsScreen();
-        Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
-        int size1 = dropdown.getOptions().size();
+        //select box for family is not rendered
+        assertFalse(isFamilySelectBoxRendered());
+        //family name is rendered as text
+        assertTrue(isFamilyNameRendered());
+
         logoutUser();
 
         //Given that the user is now granted ProgramCodeAdmin role
@@ -97,14 +99,20 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
         //Then he must see all the families in PO
         accessManageCodeAssignmentsScreen();
+
+        //family name is not rendered as text
+        assertFalse(isFamilyNameRendered());
+
+
         Select dropdown2 = new Select(driver.findElement(By.id("familyPoId")));
-        int size2 = dropdown2.getOptions().size();
+        int size = dropdown2.getOptions().size();
 
         //which is greater than the families his organization is associated with.
-        assertTrue(size2 > size1);
+        assertTrue(size > 1);
         logoutUser();
 
     }
+
 
     @Test
     public void testVerifyAcessPrivilege() {
@@ -611,10 +619,26 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         clickAndWait("link=Manage Code Assignments");
         recreateFamilies();
         recreateTrials();
-        waitForElementToBecomeAvailable(
-                By.xpath("//table[@id='trialsTbl']/tbody//tr//td[text()='No data available in table']"), 10);
+
     }
 
+    private boolean isFamilySelectBoxRendered() {
+        try {
+            driver.findElement(By.cssSelector(".fn-sb"));
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isFamilyNameRendered() {
+        try {
+            driver.findElement(By.cssSelector(".fn-txt"));
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+        return true;
+    }
 
     private void recreateFamilies() throws Exception {
         QueryRunner qr = new QueryRunner();

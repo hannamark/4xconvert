@@ -142,10 +142,17 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
      * @throws PAException - is thrown on any backend exception
      */
     private void loadAffiliatedFamilies(Long orgId) throws PAException {
-        boolean isProgramCodeAdmin = ServletActionContext.getRequest()
-                .isUserInRole(Constants.PROGRAM_CODE_ADMINISTRATOR);
-        List<OrgFamilyDTO> families = isProgramCodeAdmin ? fetchAllFamilies() : FamilyHelper.getByOrgId(orgId);
+        List<OrgFamilyDTO> families = isProgramCodeAdmin() ? fetchAllFamilies() : FamilyHelper.getByOrgId(orgId);
         setAffiliatedFamilies(families);
+    }
+
+    /**
+     * Checks if the logged-in user is a program code administrator
+     * @return true if program code admin, false otherwise
+     */
+    public boolean isProgramCodeAdmin() {
+        return ServletActionContext.getRequest()
+                .isUserInRole(Constants.PROGRAM_CODE_ADMINISTRATOR);
     }
 
     /**
@@ -614,6 +621,7 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
             if (isSiteAdmin()) {
                 Long affiliagedOrgId = getAffiliatedOrganizationId();
                 loadAffiliatedFamilies(affiliagedOrgId);
+                selectDefaultFamilyPoId();
                 loadFamily();
                 returnPage = SUCCESS;
             }
@@ -627,10 +635,31 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
     }
 
     /**
+     * Will select the default family PO ID for non-program code Admins
+     */
+    private void selectDefaultFamilyPoId() {
+        if (!isProgramCodeAdmin() && CollectionUtils.isNotEmpty(affiliatedFamilies)) {
+           familyPoId = affiliatedFamilies.get(0).getId();
+        }
+    }
+
+    /**
      * Loads the family from database
      */
     private void loadFamily() {
-        familyDto = familyPoId != null ? familyProgramCodeService.getFamilyDTOByPoId(familyPoId) : null;
+        if (familyPoId == null) {
+            return;
+        }
+        familyDto = familyProgramCodeService.getFamilyDTOByPoId(familyPoId);
+
+        if (CollectionUtils.isNotEmpty(affiliatedFamilies)) {
+            for (OrgFamilyDTO of : affiliatedFamilies) {
+                if (of.getId().equals(familyPoId)) {
+                    familyDto.setName(of.getName());
+                }
+            }
+        }
+
     }
 
     /**

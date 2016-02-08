@@ -10,23 +10,13 @@ var filteredProgramCodes = [];
 var trialProgramCodeMap = {};
 var tmparr = [];
 var tmpS2Ds = [];
+var fnlMsCtrl = null;
 var curS2Ctrl = null;
 var maddS2Ctrl = null;
 var mrmS2Ctrl = null;
 var mrplS2Ctrl1 = null;
 var mrplS2Ctrl2 = null;
 var s2closing = false;
-var ellipsis_len = 50;
-
-function ellipsis(str, len) {
-    if(str) {
-        if (str.length > len) {
-            return str.substring(0, len) + "...";
-        }
-        return str;
-    }
-    return "...";
-}
 
 // will remove program code currently associated with the given study
 function removeProgramCodeFromTrialMap($, sp, pgc) {
@@ -44,7 +34,7 @@ function removeProgramCodeFromTrialMap($, sp, pgc) {
 function addProgramCodeToTrialMap($, sp, pgc) {
     $(allProgramCodes).each(function(i, p){
         if (p.code == pgc) {
-            console.log("pushing : " + p.code + " ==" +  pgc);
+//            console.log("pushing : " + p.code + " ==" +  pgc);
             trialProgramCodeMap[sp].push(p);
         }
     });
@@ -54,24 +44,18 @@ function addProgramCodeToTrialMap($, sp, pgc) {
 //will refresh the program codes currently selected in the funnel filter
 function refreshFilteredProgramCodes($) {
     filteredProgramCodes = [];
-    console.log("filteredProgramCodes < []") ;
     if ($("#fpgc-sel").val()) {
        $($("#fpgc-sel").val()).each(function(i, pgc){
-           console.log(" pgc [ " + pgc + "]") ;
             $(allProgramCodes).each(function(i, p) {
-                console.log("    check [ " + pgc + ", " + p.code + "]") ;
                 if (pgc == p.code) {
-                    console.log("filteredProgramCodes <<[" + p.code + "]") ;
                     filteredProgramCodes.push(p);
                 }
             });
         });
     }
-    console.log("filteredProgramCodes :" + filteredProgramCodes);
 }
 
 function showProgramCodeS2InRow($, sp) {
-    console.log("refreshing s2 for trial: " + sp);
     //clear the content of select box
     $("#" + sp + "_trSel").empty();
 
@@ -79,26 +63,23 @@ function showProgramCodeS2InRow($, sp) {
     tmparr = [];
 
     $("#" + sp + "_tra").hide();
-    console.log(" tmpS2Ds < []") ;
 
     //creating data source for s2
     $(trialProgramCodeMap[sp]).each(function(i, p){
         tmparr.push(p.code);
-        console.log(" tmpS2Ds << [" + p.code + ", " + p.name + "removed:true]") ;
+//        console.log(" tmpS2Ds << [" + p.code + ", " + p.name + "removed:true]") ;
     });
 
     $(allProgramCodes).each(function(i, p){
         if ($.inArray(p.code, tmparr) < 0) {
-            console.log(" tmpS2Ds << [" + p.code + ", " + p.name + "added:true]") ;
-            tmpS2Ds.push({id: p.code, text: ellipsis(p.code + " " + p.name, ellipsis_len), title: p.code + " " + p.name});
+            tmpS2Ds.push({id: p.code, text: p.code + " - " + p.name, title: p.code + " - " + p.name});
         }
     });
 
     $("#" + sp + "_trDiv").show();
     return $("#" + sp + "_trSel").select2({
         data:tmpS2Ds,
-        placeholder: "Pick Program Code",
-        containerClass: sp + "_s2"
+        placeholder: "Pick Program Code"
     });
 
 }
@@ -112,9 +93,7 @@ function toggleMultiButtons($, grayOut) {
 }
 
 function pgcinit($) {
-    allProgramCodes.sort(function(a,b){
-        return a.code > b.code ? 1 : a.code < b.code ? -1 : 0;
-    });
+
     refreshFilteredProgramCodes($);
     $("#familyPoId").on('change', function(evt) {
         $("#changeFamilyFrm").submit();
@@ -282,7 +261,7 @@ function pgcinit($) {
     } );
 
     //initialize funnel select
-    $("#fpgc-sel").multiselect({
+    fnlMsCtrl = $("#fpgc-sel").multiselect({
         nonSelectedText: 'Select Program Code(s)' ,
         enableFiltering: false,
         includeSelectAllOption: true,
@@ -291,8 +270,11 @@ function pgcinit($) {
         dropRight:false,
         filterPlaceholder: 'Search',
         onDropdownHide: function (evt) {
-            $("#fpgc-div").hide();
-            trailsTable.ajax.reload();
+            if ($("#fpgc-sel").val()) {
+                trailsTable.ajax.reload();
+            } else {
+                $("#fpgc-div").hide();
+            }
         }
     });
 
@@ -335,7 +317,18 @@ function pgcinit($) {
     //handle click on funnel icon
     $("#fpgc-icon-a").on('click', function (evt) {
         evt.preventDefault();
-        $("#fpgc-div").toggle();
+        if ($("#fpgc-div").is(':hidden')) {
+            $("#fpgc-div").show();
+        } else {
+            if (!$("#fpgc-sel").val()) {
+                $("#fpgc-div").hide();
+            }
+        }
+    });
+
+    //minor logic on the funnel multi-select
+    $("label.checkbox").each(function(i, el){
+        $(el).attr('title', $(el).text());
     });
 
 }
@@ -355,14 +348,14 @@ function assignMultiple($) {
             tmparr.push($(a).attr("pc"));
         }
     });
-    console.log("tmparr:" + tmparr);
+//    console.log("tmparr:" + tmparr);
     tmpS2Ds = [];
     $(allProgramCodes).each(function(i, pgc){
         if (tmparr.indexOf(pgc.code) < 0) {
             tmpS2Ds.push(pgc);
         }
     });
-    console.log("tmpS2Ds:" + tmpS2Ds);
+//    console.log("tmpS2Ds:" + tmpS2Ds);
     tmpS2Ds = tmpS2Ds.sort(function(a, b){
        if (a < b) {
            return -1;
@@ -373,8 +366,8 @@ function assignMultiple($) {
     $(tmpS2Ds).each(function(i, pgc) {
         $("#pgc-madd-sel").append($("<option />",{
             value: pgc.code,
-            text: ellipsis(pgc.code + " " + pgc.name, ellipsis_len),
-            title:pgc.code + " " + pgc.name
+            text: pgc.code + " - " + pgc.name,
+            title:pgc.code + " - " + pgc.name
            }
         ));
     });
@@ -384,7 +377,8 @@ function assignMultiple($) {
     $("#pgc-madd-dialog").dialog({
         modal : true,
         autoOpen : true,
-        width : $(window).width() * 0.3,
+        resizable: false,
+        width : $(window).width() * 0.25,
         height : $(window).height() * 0.4,
         buttons : [
             {
@@ -439,7 +433,7 @@ function removeMultiple($) {
         });
 
         if (tmpS2Ds.length > -1) {
-            $("#pgc-mrm-sel").append($("<option />",{value: tmpS2Ds[0].code, text: ellipsis(tmpS2Ds[0].code + " " + tmpS2Ds[0].name,ellipsis_len), title:tmpS2Ds[0].code + " " +tmpS2Ds[0].name}));
+            $("#pgc-mrm-sel").append($("<option />",{value: tmpS2Ds[0].code, text: tmpS2Ds[0].code + " - " + tmpS2Ds[0].name, title:tmpS2Ds[0].code + " - " + tmpS2Ds[0].name}));
         }
     });
 
@@ -447,7 +441,8 @@ function removeMultiple($) {
     $("#pgc-mrm-dialog").dialog({
         modal : true,
         autoOpen : true,
-        width : $(window).width() * 0.3,
+        resizable: false,
+        width : $(window).width() * 0.25,
         height : $(window).height() * 0.4,
         buttons : [
             {
@@ -501,10 +496,10 @@ function replaceMultiple($) {
     });
     $(allProgramCodes).each(function(i, pgc){
         if (tmparr.indexOf(pgc.code) < 0) {
-            $("#pgc-mrpl-seltwo").append($("<option />",{value: pgc.code, text: ellipsis(pgc.code + " " + pgc.name, ellipsis_len), title:pgc.code + " " + pgc.name}));
+            $("#pgc-mrpl-seltwo").append($("<option />",{value: pgc.code, text: pgc.code + " - " + pgc.name, title:pgc.code + " - " + pgc.name}));
         }  else {
-            $("#pgc-mrpl-selone").append($("<option />",{value: pgc.code, text: ellipsis(pgc.code + " " + pgc.name, ellipsis_len), title:pgc.code + " " + pgc.name}));
-            $("#pgc-mrpl-seltwo").append($("<option />",{value: pgc.code, text: ellipsis(pgc.code + " " + pgc.name, ellipsis_len), disabled:true, title:pgc.code + " " + pgc.name}));
+            $("#pgc-mrpl-selone").append($("<option />",{value: pgc.code, text: pgc.code + " - " + pgc.name, title:pgc.code + " - " + pgc.name}));
+            $("#pgc-mrpl-seltwo").append($("<option />",{value: pgc.code, text: pgc.code + " - " + pgc.name, disabled:true, title:pgc.code + " - " + pgc.name}));
         }
     });
 
@@ -513,7 +508,8 @@ function replaceMultiple($) {
     $("#pgc-mrpl-dialog").dialog({
         modal : true,
         autoOpen : true,
-        width : $(window).width() * 0.3,
+        resizable: false,
+        width : $(window).width() * 0.25,
         height : $(window).height() * 0.5,
         buttons : [
             {

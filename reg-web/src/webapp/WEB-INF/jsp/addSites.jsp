@@ -64,6 +64,12 @@ div.error,b.error {
 input.select2-search__field {
     width: 80% !important;
 }
+li.select2-results__option {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 35em;
+    white-space: nowrap;
+}
 
 </style>
 
@@ -672,7 +678,7 @@ input.select2-search__field {
                                                    <select id="pgc_${trial.studyProtocolId}" name="trial_${trial.studyProtocolId}_programCode" multiple="multiple"
                                                            class="s2pgc" data-placeholder="Select Program Code(s)" style="width:80%;">
                                                        <c:forEach var="entry" items="${requestScope['PROGRAM_CODES']}">
-                                                           <option value="${entry.value.id}" title="${entry.value.programCode} ${entry.value.programName}">${entry.value.programCode}</option>
+                                                           <option value="${entry.value.id}" title="${entry.value.programCode} - ${entry.value.programName}">${entry.value.programCode}</option>
                                                        </c:forEach>
                                                    </select>
 
