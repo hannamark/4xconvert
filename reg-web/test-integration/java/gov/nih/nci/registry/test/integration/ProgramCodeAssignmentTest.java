@@ -207,6 +207,112 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         logoutUser();
     }
 
+    @Test
+    public void testAssignMultiple() throws  Exception {
+
+        //Go to manage screen
+        accessManageCodeAssignmentsScreen();
+
+        //delete all program codes from studies
+        removeFromAllStudiesProgramCodes();
+
+        //pick family1
+        Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
+        dropdown.selectByIndex(1);
+        changePageLength("25");
+
+        clickTableRow(1);
+        //click the assign button
+        clickAndWait("assignPGCBtn");
+
+        //Then the dialog showup
+        waitForElementToBecomeVisible(By.id("pgc-madd-dialog"), 5);
+
+        //on the popup select
+        useSelect2ToPickAnOption("pgc-madd-sel", "PG2", "PG2 - Cancer Program2");
+
+        //When I click Cancel
+        clickAndWait("pgc-madd-dialog-ok");
+
+        //Then the dialog closes
+        waitForElementToBecomeInvisible(By.id("pgc-madd-dialog"), 5);
+
+        //Then I see confirmation
+        waitForElementToBecomeVisible(By.id("pgcInfo"), 4);
+        assertTrue(selenium.isTextPresent("Program Codes were successfully assigned"));
+
+        //And I see the confirmation go away after 5 seconds
+        waitForElementToBecomeVisible(By.id("pgcInfo"), 10);
+
+        //Now I see PG2 associated with first trial
+        verifyTrialProgramCodeAssociation(1, true, "PG2");
+
+        clickTableRow(1);
+        clickTableRow(2);
+
+        //click the assign button
+        clickAndWait("assignPGCBtn");
+
+        //Then the dialog showup
+        waitForElementToBecomeVisible(By.id("pgc-madd-dialog"), 5);
+
+        //on the popup select
+        useSelect2ToPickAnOption("pgc-madd-sel", "PG2", "PG2 - Cancer Program2");
+
+        //When I click Cancel
+        clickAndWait("pgc-madd-dialog-ok");
+
+        //Then the dialog closes
+        waitForElementToBecomeInvisible(By.id("pgc-madd-dialog"), 5);
+
+        //Then I see confirmation
+        waitForElementToBecomeVisible(By.id("pgcInfo"), 4);
+        assertTrue(selenium.isTextPresent("Program Codes were successfully assigned"));
+
+        //And I see the confirmation go away after 5 seconds
+        waitForElementToBecomeVisible(By.id("pgcInfo"), 10);
+
+        //Now I see PG2 associated with first trial
+        verifyTrialProgramCodeAssociation(1, true, "PG2");
+        verifyTrialProgramCodeAssociation(2, true, "PG2");
+
+        clickTableRow(1);
+        clickTableRow(2);
+
+        //click the assign button
+        clickAndWait("assignPGCBtn");
+
+        //Then the dialog showup
+        waitForElementToBecomeVisible(By.id("pgc-madd-dialog"), 5);
+
+        //verify that select box has no PG2
+        hasNoSelect2Option("pgc-madd-sel", "PG2", "No results found");
+
+        logoutUser();
+    }
+
+
+    @SuppressWarnings("deprecation")
+    public void hasNoSelect2Option(String id, String sendKeys, String option) {
+        WebElement sitesBox = driver.findElement(By
+                .xpath("//span[preceding-sibling::select[@id='" + id
+                        + "']]//input[@type='search']"));
+        sitesBox.click();
+        boolean elementPresent = s.isElementPresent("select2-" + id
+                + "-results");
+        if (!elementPresent) {
+            // odd behavior in FF, click again.
+            sitesBox.click();
+            elementPresent = s.isElementPresent("select2-" + id + "-results");
+        }
+        assertTrue(elementPresent);
+        sitesBox.sendKeys(sendKeys);
+
+        By xpath = null;
+        xpath = By.xpath("//li[@role='treeitem' and text()='" + option + "']");
+        waitForElementToBecomeAvailable(xpath, 10);
+        assertTrue(driver.findElement(xpath).isDisplayed());
+    }
 
     @Test
     public void testUnAssignMultipeAndAssignMultiple() throws Exception {
@@ -694,10 +800,9 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
                 trials.get(1).id + ")");
     }
 
-    private void removeFromAllStudiesProgramCode(String code) throws SQLException {
+    private void removeFromAllStudiesProgramCodes() throws SQLException {
         QueryRunner qr = new QueryRunner();
-        qr.update(connection, "delete from study_program_code where program_code_id in (" +
-                "select identifier from program_code where program_code='" + code + "')");
+        qr.update(connection, "delete from study_program_code");
     }
 
     private void assignToAllStudiesProgramCode(String code) throws SQLException {

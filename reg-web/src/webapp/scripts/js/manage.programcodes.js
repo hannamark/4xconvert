@@ -10,6 +10,7 @@ var filteredProgramCodes = [];
 var trialProgramCodeMap = {};
 var tmparr = [];
 var tmpS2Ds = [];
+var tmpSelectTrs = null;
 var fnlMsCtrl = null;
 var curS2Ctrl = null;
 var maddS2Ctrl = null;
@@ -344,25 +345,23 @@ function assignMultiple($) {
     $("#pgc-madd-indicator").hide();
     $("#pgc-madd-sel").empty();
     tmparr = [];
-    $("#trialsTbl > tbody > tr.selected > td.pgctd > a.pg").each(function(i, a){
-        if (tmparr.indexOf($(a).attr("pc")) < 0) {
-            tmparr.push($(a).attr("pc"));
-        }
-    });
-//    console.log("tmparr:" + tmparr);
     tmpS2Ds = [];
     $(allProgramCodes).each(function(i, pgc){
-        if (tmparr.indexOf(pgc.code) < 0) {
+        tmparr[pgc.code.toString()] = 0;
+    });
+
+    tmpSelectTrs = $("#trialsTbl > tbody > tr.selected");
+    $(tmpSelectTrs).each(function(i, tr){
+        $("tr#" + tr.id + " > td.pgctd > a.pg").each(function(i, a){
+            tmparr[$(a).attr("pc").toString()] = tmparr[$(a).attr("pc").toString()] + 1;
+        });
+    });
+    $(allProgramCodes).each(function(i, pgc){
+        if (tmparr[pgc.code.toString()] < tmpSelectTrs.length ) {
             tmpS2Ds.push(pgc);
         }
     });
 //    console.log("tmpS2Ds:" + tmpS2Ds);
-    tmpS2Ds = tmpS2Ds.sort(function(a, b){
-       if (a < b) {
-           return -1;
-       }
-       return 1;
-    });
 
     $(tmpS2Ds).each(function(i, pgc) {
         $("#pgc-madd-sel").append($("<option />",{
