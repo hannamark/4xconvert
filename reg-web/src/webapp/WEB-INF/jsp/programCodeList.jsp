@@ -82,9 +82,9 @@
            <div class="col-md-12">
                 <br />
               </div> 
-            <p><b>Warning</b>: Modifying the program code value will cause <b>all trials</b> currently <br>
-               assigned to the old program code value to be reassigned to the new value. <br>
-               The old code value  will be permanently removed.</p>
+            <p><b>Warning</b>: Modifying the program code will cause <b>all trials</b> currently <br>
+               assigned to the old program code to be reassigned to the new <br>
+               program code. The old code will be permanently removed.</p>
         </div>
     </div>
     
@@ -100,9 +100,9 @@
     
     <div id="dialog-confirm-delete" title="Confirm Delete" style="display: none;">
         <div>
-            <p>The following Program Code is not assigned to any trial,<br> and will be permanently deleted: </p>
+            <p>The following program code is not assigned to any trial,<br> and will be permanently deleted: </p>
             <p id="programdCodeToBeDeleted"></p>
-           <p>Please Confirm.</p>
+           <p>Please confirm.</p>
         </div>
     </div>
     
