@@ -358,7 +358,7 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         waitForElementToBecomeAvailable(By.id("dialog-confirm-delete"), 15);
         assertTrue(selenium.isTextPresent("Confirm Delete"));
         assertTrue(selenium.isTextPresent("PG12 - Cancer Program12"));
-        assertTrue(selenium.isTextPresent("Please Confirm."));
+        assertTrue(selenium.isTextPresent("Please confirm."));
         // verify that program code exists in database
         assertTrue(queryProgramCodesForDeletedCode("PG12").length > 0);
         
