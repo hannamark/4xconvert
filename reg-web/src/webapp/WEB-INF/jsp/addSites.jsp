@@ -61,14 +61,23 @@ div.error,b.error {
     padding-top: 5px;
 }
 
-input.select2-search__field {
-    width: 80% !important;
-}
 li.select2-results__option {
     text-overflow: ellipsis;
     overflow: hidden;
     max-width: 35em;
     white-space: nowrap;
+}
+td.pi > span {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+    width: 100%;
+    display: inline-block;
+    height: 34px;
+}
+
+table.sr-table > tbody > tr > td {
+    padding: 2px;
 }
 
 </style>
@@ -103,7 +112,6 @@ li.select2-results__option {
 		disableSorting();
 		$('plussign_'+spID).hide();
 		$('saveCancelDiv').show();
-        $('s1div_' + spID).show();
         $('s2div_' + spID).show();
 		prepareSiteEntryRow(spID);
 		prepareSiteInformationFormControls(spID);
@@ -545,7 +553,7 @@ li.select2-results__option {
 
 				"aoColumnDefs" : [ {
 					'bSortable' : false,
-					'aTargets' : [ 0 ]
+					'aTargets' : [ 0,3 ]
 				} ]
 			});
 
@@ -653,6 +661,7 @@ li.select2-results__option {
 								<th id="th1" nowrap="nowrap"><a>Trial Identifier<i
 										class="fa-sort"></i></a></th>
 								<th id="th2"><a>Trial Title<i class="fa-sort"></i></a></th>
+                                <th id="th3"><a>Program Code(s)<i class="fa fa-question-circle" title='<fmt:message key="add.site.programCode.cancer.tooltip" />'></i></a></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -663,32 +672,23 @@ li.select2-results__option {
 										id="plussign_${trial.studyProtocolId}"
 										title="Click here to add sites to ${trial.nciIdentifier}"></i></td>
 									<td nowrap="nowrap">
-                                        <div  id="s1div_${trial.studyProtocolId}" style="display:none; width:100%;" >
-                                                <c:if test="${requestScope['CANCER_TRIAL']}">
-                                                <br />
-                                                <br />
-                                                </c:if>
-                                        </div>
                                         <c:out value="${trial.nciIdentifier}" />
                                     </td>
 									<td>
-                                        <div id="s2div_${trial.studyProtocolId}" style="display:none; width:100%;">
-                                           <c:if test="${requestScope['CANCER_TRIAL']}">
-                                               <div class="col-xs-6">
-                                                   <select id="pgc_${trial.studyProtocolId}" name="trial_${trial.studyProtocolId}_programCode" multiple="multiple"
-                                                           class="s2pgc" data-placeholder="Select Program Code(s)" style="width:80%;">
-                                                       <c:forEach var="entry" items="${requestScope['PROGRAM_CODES']}">
-                                                           <option value="${entry.value.id}" title="${entry.value.programCode} - ${entry.value.programName}">${entry.value.programCode}</option>
-                                                       </c:forEach>
-                                                   </select>
-
-                                               </div>
-                                               <span class="col-xs-6">
-                                                       <fmt:message key="add.site.programCode.cancer.tooltip" />
-                                               </span>
-                                           </c:if>
-                                        </div>
                                         <c:out value="${trial.officialTitle}" />
+                                    </td>
+                                    <td class="pgc">
+                                        <div id="s2div_${trial.studyProtocolId}" style="display:none; max-width: 160px; ">
+                                            <c:if test="${requestScope['CANCER_TRIAL']}">
+                                                <select id="pgc_${trial.studyProtocolId}" name="trial_${trial.studyProtocolId}_programCode" multiple="multiple"
+                                                        class="s2pgc" data-placeholder="Select Program Code(s)" >
+                                                    <c:forEach var="entry" items="${requestScope['PROGRAM_CODES']}">
+                                                        <option value="${entry.value.id}" title="${entry.value.programCode} - ${entry.value.programName}">${entry.value.programCode}</option>
+                                                    </c:forEach>
+                                                </select>
+                                            </c:if>
+                                        </div>
+
                                     </td>
 								</tr>
 							</c:forEach>
@@ -766,7 +766,7 @@ li.select2-results__option {
 												</option>
 											</c:forEach>
 									</select></td>
-									<td valign="middle"><span
+									<td valign="middle" class="pi"><span
 										id="trial_${trial.studyProtocolId}_site_${stat.index}_pi_name">
 											<i style="font-style: italic;">Not Selected</i>
 									</span> <input type="hidden"
@@ -804,10 +804,10 @@ li.select2-results__option {
                                             <div class="row">
                                                 <div class="col-xs-10">
 										            <div class="table-header-wrap">
-										                <table class="table no-border">										                    
+										                <table  class="sr-table table no-border">
 										                        <tr>
 										                            <td nowrap="nowrap"><label
-                                                                        for="trial_%{#attr.trial.studyProtocolId}_site_%{#attr.stat.index}_status">Site Recruitment Status<span
+                                                                        for="trial_${trial.studyProtocolId}_site_${stat.index}_status">Site Recruitment Status<span
                                                                         class="required">*</span></label></td>
 										                            <td nowrap="nowrap"><label
 										                                for="trial_${trial.studyProtocolId}_site_${stat.index}_statusDate">Site Recruitment Status Date<span

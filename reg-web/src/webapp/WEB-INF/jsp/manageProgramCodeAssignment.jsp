@@ -234,10 +234,10 @@
 	</div>
 </div>
 
-<div id="dialog-participation" title="Participating sites"
+<div id="dialog-participation" title="Participating Sites"
      style="display: none;">
     <p>
-		<span class="pgcpSite"></span> Participating Sites:
+		<span class="pgcpSite"></span> participating sites:
     </p>
     <div>
         <div class="table-header-wrap">
@@ -318,7 +318,7 @@
     </div>
 
     <p>
-        Replace the assignment of the following program code. Only one program code can be replace at a time:
+        Only one program code can be replace at a time. Select the program code that you want to replace:
     <div id="pgc-mrpl-indicator" style="display: none;">
         <img src="${pageContext.request.contextPath}/images/loading.gif" alt="Progress Indicator." width="18" height="18" />
     </div>
@@ -329,7 +329,7 @@
             </select>
         </s:if>
     </div>
-    <p>with the following program code(s)</p>
+    <p>Select one or more target program codes:</p>
     <div class="text-center" id="pgc-mrpl-seltwo-div">
         <s:if test="familyDto">
             <select id="pgc-mrpl-seltwo" multiple="multiple" style="width: 95%;"  data-placeholder="Select Program Code(s)">

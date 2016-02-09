@@ -86,7 +86,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         unassignUserFromGroup("abstractor-ci" , "ProgramCodeAdministrator");
 
         //Then he should be able to access the families associated with org
-        accessManageCodeAssignmentsScreen();
+        loginAndGoToManageProgramCodeScreen();
         //select box for family is not rendered
         assertFalse(isFamilySelectBoxRendered());
         //family name is rendered as text
@@ -250,7 +250,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         waitForElementToBecomeVisible(By.id("pgc-mrm-dialog"), 5);
 
         //on the popup select
-        useSelect2ToPickAnOption("pgc-mrm-sel", "PG2", "PG2 Cancer Program2");
+        useSelect2ToPickAnOption("pgc-mrm-sel", "PG2", "PG2 - Cancer Program2");
 
         //When I click Cancel
         clickAndWait("pgc-mrm-dialog-cancel");
@@ -274,7 +274,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         waitForElementToBecomeVisible(By.id("pgc-mrm-dialog"), 5);
 
         //on the popup select
-        useSelect2ToPickAnOption("pgc-mrm-sel", "PG2", "PG2 Cancer Program2");
+        useSelect2ToPickAnOption("pgc-mrm-sel", "PG2", "PG2 - Cancer Program2");
 
         //When I click OK
         clickAndWait("pgc-mrm-dialog-ok");
@@ -313,7 +313,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         waitForElementToBecomeVisible(By.id("pgc-madd-dialog"), 5);
 
         //on the popup select
-        useSelect2ToPickAnOption("pgc-madd-sel", "PG2", "PG2 Cancer Program2");
+        useSelect2ToPickAnOption("pgc-madd-sel", "PG2", "PG2 - Cancer Program2");
 
         //When I click Cancel
         clickAndWait("pgc-madd-dialog-cancel");
@@ -335,7 +335,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         waitForElementToBecomeVisible(By.id("pgc-madd-dialog"), 5);
 
         //on the popup select
-        useSelect2ToPickAnOption("pgc-madd-sel", "PG2", "PG2 Cancer Program2");
+        useSelect2ToPickAnOption("pgc-madd-sel", "PG2", "PG2 - Cancer Program2");
 
         //When I click Cancel
         clickAndWait("pgc-madd-dialog-ok");
@@ -404,7 +404,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         waitForElementToBecomeVisible(By.id("pgc-mrpl-dialog"), 5);
 
         //on the popup select
-        pickSelect2Item("pgc-mrpl-selone-div", "pgc-mrpl-selone", "PG2 Cancer Program2");
+        pickSelect2Item("pgc-mrpl-selone-div", "pgc-mrpl-selone", "PG2 - Cancer Program2");
 
         //When I click Cancel
         clickAndWait("pgc-mrpl-dialog-cancel");
@@ -434,8 +434,8 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         waitForElementToBecomeVisible(By.id("pgc-mrpl-dialog"), 5);
 
         //on the popup select
-        pickSelect2Item("pgc-mrpl-selone-div", "pgc-mrpl-selone", "PG2 Cancer Program2");
-        useSelect2ToPickAnOption("pgc-mrpl-seltwo", "PG5", "PG5 Cancer Program5");
+        pickSelect2Item("pgc-mrpl-selone-div", "pgc-mrpl-selone", "PG2 - Cancer Program2");
+        useSelect2ToPickAnOption("pgc-mrpl-seltwo", "PG5", "PG5 - Cancer Program5");
 
         //When I click OK
         clickAndWait("pgc-mrpl-dialog-ok");
@@ -543,7 +543,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         driver.findElement(By.id(trial1.id + "_tra")).click();
 
         //select PG5
-        pickSelect2Item(trial1.id + "_trDiv", trial1.id + "_trSel", "PG5 Cancer Program5");
+        pickSelect2Item(trial1.id + "_trDiv", trial1.id + "_trSel", "PG5 - Cancer Program5");
 
         // indicator disappears
         waitForElementToGoAway(By.id(trial1.id + "_PG5_img"), 10);
@@ -611,6 +611,13 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
     }
 
     private void accessManageCodeAssignmentsScreen() throws Exception {
+        unassignUserFromGroup("abstractor-ci" , "ProgramCodeAdministrator");
+        assignUserToGroup("abstractor-ci" , "ProgramCodeAdministrator");
+        loginAndGoToManageProgramCodeScreen();
+
+    }
+
+    private void loginAndGoToManageProgramCodeScreen() throws Exception {
         loginAndAcceptDisclaimer();
         waitForElementToBecomeVisible(By.linkText("Administration"), 2);
         hoverLink("Administration");
@@ -619,7 +626,6 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         clickAndWait("link=Manage Code Assignments");
         recreateFamilies();
         recreateTrials();
-
     }
 
     private boolean isFamilySelectBoxRendered() {
@@ -719,7 +725,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
     }
 
     private void verifyCSVExport() throws  Exception {
-        File csv = new File(downloadDir, "Manage Program Code Assignments.csv");
+        File csv = new File(downloadDir, "program_code_assignments.csv");
         if (csv.exists()) csv.delete();
         assertFalse(csv.exists());
         clickLinkAndWait("CSV");
@@ -739,7 +745,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
 
     private void verifyExcelExport() throws Exception  {
-        File excel = new File(downloadDir, "Manage Program Code Assignments.xlsx");
+        File excel = new File(downloadDir, "program_code_assignments.xlsx");
         if (excel.exists()) excel.delete();
         assertFalse(excel.exists());
         clickLinkAndWait("Excel");

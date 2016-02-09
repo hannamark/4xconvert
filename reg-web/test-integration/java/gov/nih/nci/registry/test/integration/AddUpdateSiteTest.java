@@ -175,8 +175,8 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 selenium.getValue("organizationName"));
 
         //When I select PG1 and PG2
-        useSelect2ToPickAnOption("programCode","PG1","PG1 Cancer Program1");
-        useSelect2ToPickAnOption("programCode","PG2","PG2 Cancer Program2");
+        useSelect2ToPickAnOption("programCode","PG1","PG1 - Cancer Program1");
+        useSelect2ToPickAnOption("programCode","PG2","PG2 - Cancer Program2");
 
         //and hit save
         driver.findElement(By.xpath("//button[normalize-space(text())='Save']"))
@@ -211,10 +211,10 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         assertFalse(selenium.isTextPresent("Manage Program Codes"));
 
         //add PG3 to the list of options
-        useSelect2ToPickAnOption("programCode","PG3","PG3 Cancer Program3");
+        useSelect2ToPickAnOption("programCode","PG3","PG3 - Cancer Program3");
 
         //remove previously selected PG2
-        useSelect2ToUnselectOption("PG2 Cancer Program2");
+        useSelect2ToUnselectOption("PG2 - Cancer Program2");
 
         //and hit save
         driver.findElement(By.xpath("//button[normalize-space(text())='Save']"))
@@ -424,7 +424,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
 
         // Investigator.
         pickInvestigator();
-        useSelect2ToPickAnOption("programCode","PG1","PG1 Cancer Program1");
+        useSelect2ToPickAnOption("programCode","PG1","PG1 - Cancer Program1");
 
         populateStatusHistory(info);
 
@@ -482,7 +482,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         // Investigator.
         pickInvestigator();
 
-        useSelect2ToPickAnOption("programCode","PG1","PG1 Cancer Program1");
+        useSelect2ToPickAnOption("programCode","PG1","PG1 - Cancer Program1");
 
 
         populateStatusHistory(info);
@@ -812,7 +812,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         assertEquals("Cancer Therapy Evaluation Program",
                 selenium.getValue("organizationName"));
 
-        useSelect2ToPickAnOption("programCode","PG1","PG1 Cancer Program1");
+        useSelect2ToPickAnOption("programCode","PG1","PG1 - Cancer Program1");
 
         driver.findElement(By.xpath("//button[normalize-space(text())='Save']"))
                 .click();

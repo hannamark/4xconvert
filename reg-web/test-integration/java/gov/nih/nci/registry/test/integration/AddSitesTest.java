@@ -206,8 +206,8 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
 
 
         //When I select PG1 and PG2
-        useSelect2ToPickAnOption("pgc_" + trial.id ,"PG1","PG1 Cancer Program1");
-        useSelect2ToPickAnOption("pgc_" + trial.id ,"PG2","PG2 Cancer Program2");
+        useSelect2ToPickAnOption("pgc_" + trial.id ,"PG1","PG1 - Cancer Program1");
+        useSelect2ToPickAnOption("pgc_" + trial.id ,"PG2","PG2 - Cancer Program2");
 
         clickAndWait("id=saveBtn");
         waitForElementById("summaryTable", WAIT_FOR_ELEMENT_TIMEOUT);

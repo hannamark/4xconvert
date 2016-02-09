@@ -79,7 +79,7 @@ function showProgramCodeS2InRow($, sp) {
     $("#" + sp + "_trDiv").show();
     return $("#" + sp + "_trSel").select2({
         data:tmpS2Ds,
-        placeholder: "Pick Program Code"
+        placeholder: "Program Code"
     });
 
 }
@@ -146,7 +146,8 @@ function pgcinit($) {
             }
         },
         buttons: [
-            'csv', 'excel'
+            {extend: 'csv', extension:'.csv', filename:'program_code_assignments'},
+            {extend: 'excelHtml5', extension:'.xlsx', filename:'program_code_assignments', title: 'Program Code Assignments'}
         ],
         "columns": [
             {width:"15%", data: "identifiers"},
@@ -702,6 +703,7 @@ function handlePopuInteractions($, pgcListParamOne, pgcListParamTwo, containerId
                 $('#' +containerId+ "-dialog").dialog("close");
 
                 //refresh the table
+                trailsTable.clear();
                 trailsTable.ajax.reload();
                 //show the info message
                 showInfoMessageOnPage($, msg);
@@ -733,7 +735,6 @@ function showInfoMessageOnPage($, msg) {
     $("#pgcInfoMsg").text(msg);
     $("#pgcInfo").show().delay(5000).hide("slow");
     scroll(0, $("#pgcInfo").position().top);
-
 }
 
 
