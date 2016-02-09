@@ -90,7 +90,7 @@
     
     <div id="dialog-confirm" title="Confirm Program Code Modification" style="display: none;">
         <div class="container-fluid">
-            <p>You have modified a program code. All trials currently <br>
+            <p>You are about to modify a program code value. All trials currently <br>
                assigned to the old program code will be reassigned to the new value.
                The old code value  will be permanently removed.</p>
               

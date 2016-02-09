@@ -234,7 +234,7 @@ function loadProgramCodes($) {
 						modal : true,
 						resizable: false,
 						autoOpen : false,
-						width : 460,
+						width : 476,
 						buttons :    {
 							"Yes" : function() {
 								$(this).dialog("close");
