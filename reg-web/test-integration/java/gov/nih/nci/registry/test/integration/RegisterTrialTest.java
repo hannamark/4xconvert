@@ -1005,8 +1005,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         clickAndWaitAjax("link=National Cancer Institute Division of Cancer Prevention (Your Affiliation)");
         clickAndWaitAjax("id=programCodesValues");
         moveElementIntoView(By.id("programCodesValues"));
-        useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
-        useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
+        useSelect2ToPickAnOption("programCodesValues","PG1","PG1-Cancer Program1");
+        useSelect2ToPickAnOption("programCodesValues","PG2","PG2-Cancer Program2");
         
     }
     
@@ -1083,8 +1083,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         moveElementIntoView(By.id("programCodesValues"));
         
       //now populate program codes
-        useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
-        useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
+        useSelect2ToPickAnOption("programCodesValues","PG1","PG1-Cancer Program1");
+        useSelect2ToPickAnOption("programCodesValues","PG2","PG2-Cancer Program2");
         
         reviewAndSubmit();
         
@@ -1138,8 +1138,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         moveElementIntoView(By.id("programCodesValues"));
         
       //now populate program codes
-        useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
-        useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
+        useSelect2ToPickAnOption("programCodesValues","PG1","PG1-Cancer Program1");
+        useSelect2ToPickAnOption("programCodesValues","PG2","PG2-Cancer Program2");
         
   
         
@@ -1151,8 +1151,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         //check if program codes are retained
         moveElementIntoView(By.id("programCodesValues"));
         
-        assertOptionSelected("PG1 Cancer Program1");
-        assertOptionSelected("PG2 Cancer Program2");
+        assertOptionSelected("PG1-Cancer Program1");
+        assertOptionSelected("PG2-Cancer Program2");
         
        
         
@@ -1190,8 +1190,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         moveElementIntoView(By.id("programCodesValues"));
         
       //now populate program codes
-        useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
-        useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
+        useSelect2ToPickAnOption("programCodesValues","PG1","PG1-Cancer Program1");
+        useSelect2ToPickAnOption("programCodesValues","PG2","PG2-Cancer Program2");
         
   
         
@@ -1211,8 +1211,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         moveElementIntoView(By.id("programCodesValues"));
         
       //now populate program codes
-        useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
-        useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
+        useSelect2ToPickAnOption("programCodesValues","PG1","PG1-Cancer Program1");
+        useSelect2ToPickAnOption("programCodesValues","PG2","PG2-Cancer Program2");
         
         clickAndWait("xpath=//button[text()='Review Trial']");
         waitForElementById("reviewTrialForm", 20);
@@ -1226,8 +1226,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         //check if program codes are retained
         moveElementIntoView(By.id("programCodesValues"));
         
-        assertOptionSelected("PG1 Cancer Program1");
-        assertOptionSelected("PG2 Cancer Program2");
+        assertOptionSelected("PG1-Cancer Program1");
+        assertOptionSelected("PG2-Cancer Program2");
         
        
         
@@ -1258,8 +1258,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         clickAndWaitAjax("link=National Cancer Institute Division of Cancer Prevention (Your Affiliation)");
         clickAndWaitAjax("id=programCodesValues");
         moveElementIntoView(By.id("programCodesValues"));
-        useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
-        useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
+        useSelect2ToPickAnOption("programCodesValues","PG1","PG1-Cancer Program1");
+        useSelect2ToPickAnOption("programCodesValues","PG2","PG2-Cancer Program2");
         
         clickAndWait("xpath=//button[text()='Review Trial']");
         
@@ -1270,8 +1270,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         //check if program code values are retained
         moveElementIntoView(By.id("programCodesValues"));
         
-        assertOptionSelected("PG1 Cancer Program1");
-        assertOptionSelected("PG2 Cancer Program2");
+        assertOptionSelected("PG1-Cancer Program1");
+        assertOptionSelected("PG2-Cancer Program2");
     }
     
     
@@ -1299,8 +1299,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 category);
         
         moveElementIntoView(By.id("programCodesValues"));
-        useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
-        useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
+        useSelect2ToPickAnOption("programCodesValues","PG1","PG1-Cancer Program1");
+        useSelect2ToPickAnOption("programCodesValues","PG2","PG2-Cancer Program2");
         
         clickAndWait("xpath=//button[text()='Save as Draft']");
         final Number draftID = getLastDraftId();
@@ -1319,8 +1319,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         //check if program code values are retained
         moveElementIntoView(By.id("programCodesValues"));
         
-        assertOptionSelected("PG1 Cancer Program1");
-        assertOptionSelected("PG2 Cancer Program2");        
+        assertOptionSelected("PG1-Cancer Program1");
+        assertOptionSelected("PG2-Cancer Program2");        
     }
     
     private void associateProgramCodes() throws Exception {

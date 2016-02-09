@@ -723,7 +723,7 @@ public class SubmitTrialActionTest extends AbstractHibernateTestCase{
 
           InputStream is = (InputStream) field.get(sr);
           String json = IOUtils.toString(is);
-          assertEquals("{\"data\":[{\"id\":\"PG1\",\"text\":\"PG1 Program Name1\"}]}", json);
+          assertEquals("{\"data\":[{\"id\":\"PG1\",\"title\":\"PG1-Program Name1\",\"text\":\"PG1-Program Name1\"}]}", json);
 
      
     }

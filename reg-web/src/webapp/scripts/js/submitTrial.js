@@ -114,12 +114,7 @@
       }
       
       function reviewProtocol () {
-    	  
-    	  var text = getProgramCodesValuesText();
-          jQuery("#trialDTO\\.programCodeText").val(text);  
-    
-    	  
-          submitFirstForm("review", "submitTrialreview.action");
+    	  submitFirstForm("review", "submitTrialreview.action");
       }
       
       function partialSave() {
@@ -388,8 +383,22 @@
 function initProgramCodes(dropDownId, dataValue) {
 	jQuery("#"+dropDownId).select2({
         placeholder: "Select program code",
-        data: dataValue
+        data: dataValue,
+        templateSelection : function(pg){
+            return pg.id;
+        }
   });
+	
+	
+	var ts = 0;
+	jQuery(".select2-hidden-accessible").on("select2:unselect", function (e) { 
+    	ts = e.timeStamp;
+    }).on("select2:opening", function (e) { 
+        if (e.timeStamp - ts < 100) {                	
+        	e.preventDefault();
+        }
+    });
+	  
 }      
    
 function getProgramCodesValuesText() {

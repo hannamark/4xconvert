@@ -36,7 +36,6 @@
         } else if(selection == -1) {
             showPopup("${lookupOrgUrl}",loadLeadOrgDiv, 'Select Lead Organization');
         } else if(selection > 0) {
-        	
         	loadProgramCodes(selection);
         	$('trialDTO.leadOrganizationNameField').innerHTML = name;
             $('trialDTO.leadOrganizationName').value = name;
@@ -97,8 +96,26 @@
                                             $('trialDTO.sponsorNameField').innerHTML = $('trialDTO.sponsorName').value;
                                          }
                                          if($('trialDTO.leadOrganizationIdentifier').value) {
+                                                                                	 
+                                        	 var values = jQuery("#tempProgramCodeValues").val();
+                                        	 var programCodeText ="";
+                                        	 if(values!=null && values!=undefined) {
+                                        	 for(var i=0;i<values.length;i++) {
+                                        		 if(i==0) {
+                                        			 programCodeText = values[i];
+                                        		 }
+                                        		 else {
+                                        			 programCodeText = programCodeText +";"+values[i];      			
+                                        		 }
+                                        	 }
+                                        	 } 
+                                        	 //in case retrive from draft
+                                        	 else if (jQuery('#programCodeTextValue').val()!=null) {
+                                        		 programCodeText = jQuery('#programCodeTextValue').val();
+                                        	 }
+                                        	
                                         	 loadProgramCodes($('trialDTO.leadOrganizationIdentifier').value,
-                                        	 $('trialDTO.programCodeText').value);
+                                        	 programCodeText);
                                         	 
                                          }
                                         
@@ -109,6 +126,21 @@
       Event.observe(window, "load", setDisplayBasedOnTrialType);
   
   </script>
+  <style>
+  li.select2-results__option {
+               text-overflow: ellipsis;
+               overflow: hidden;
+               max-width: 395px;
+               white-space: nowrap;
+}
+ li.select2-selection__choice > span.select2-selection__choice__remove {
+               right: 3px !important;
+               left: inherit !important;
+               color:#d03b39 !important;
+               padding-left:2px;
+               float:right;
+ }
+  </style>
 </head>
 <body>
 <!-- main content begins-->
@@ -116,6 +148,8 @@
   <p>Use this form to register trials with the NCI Clinical Trials Reporting Program. Required fields are marked by asterisks (<span class="required">*</span>).</p>
   <c:set var="topic" scope="request" value="submittrial"/>
   
+  
+
       <reg-web:failureMessage/>
       <s:form cssClass="form-horizontal" role="form" name="submitTrial" method="POST" enctype="multipart/form-data">
           <s:token/>
@@ -245,20 +279,26 @@
                               </div>                                    
                           </div>
                           <div class="form-group" id="programCodeBlock" style="display:none" >                               
-                              <label for="trialDTO.programCodeText" class="col-xs-4 control-label"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label>
+                              <label for="trialDTO.programCodesList" class="col-xs-4 control-label"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label>
                               <!-- As per new requirements we don't need to display program codes tex field at all -->
                               
                               <div class="col-xs-4" >
-                              <s:select size="2" multiple="true"  name="trialDTO.selectedProgramCodes" id="programCodesValues"  list="#{trialDTO.programCodesMap}"
-                                cssStyle="width:206px" />
-                                  <c:if test="${sessionScope.isSiteAdmin}">
-                                     &nbsp;&nbsp;<a href="../siteadmin/programCodesexecute.action">Manage Program Codes</a>
-                                 </c:if>
+                              <s:select size="2" multiple="true"  name="trialDTO.programCodesList" id="programCodesValues"  list="#{trialDTO.programCodesMap}"
+                                cssClass="form-control" />
+                                 
                                 
                               </div>  
-                               <div class="col-xs-4" >
-                                <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.summary_4_program_code" />"  data-placement="top" data-trigger="hover"></i>
-                               </div>      
+                                <div class="col-xs-4" >
+                               <c:if test="${sessionScope.isSiteAdmin}">
+                                     <a  style ="vertical-align:middle!important" href="../siteadmin/programCodesexecute.action">Manage Program Codes</a>
+                                     <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.summary_4_program_code" />"  data-placement="top" data-trigger="hover"></i>
+                                 </c:if>
+                                  <c:if test="${sessionScope.isSiteAdmin==false}">
+                                   <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.summary_4_program_code" />"  data-placement="top" data-trigger="hover"></i>
+                                  </c:if>
+                                </div>
+                                 
+                                   
                             </div>
                       </div>
                   </div>
@@ -364,6 +404,7 @@
           <div id="uploadDocDiv">
               <%@ include file="/WEB-INF/jsp/nodecorate/uploadDocuments.jsp" %>
           </div>
+        
          </div>
           <div class="align-center button-row">
               <button type="button" class="btn btn-icon btn-primary" onclick="partialSave()"><i class="fa-floppy-o"></i>Save as Draft</button>
@@ -371,7 +412,13 @@
               <button type="button" class="btn btn-icon btn-default" onclick="cancelProtocol()"><i class="fa-times-circle"></i>Cancel</button>
             </div>
           <s:hidden name="uuidhidden"/>
-          <s:hidden id="trialDTO.programCodeText" name="trialDTO.programCodeText"/>
+            <select id="tempProgramCodeValues" multiple="true" size ="2" style="display:none" >
+           <c:forEach items="${trialDTO.programCodesList}" var="element"> 
+           <option value="${element}" selected >${element}</option>                              
+          </c:forEach>
+        
+         </select>
+          <s:hidden id="programCodeTextValue" name="trialDTO.programCodeText"/>
       </s:form>
 </body>
 </html>

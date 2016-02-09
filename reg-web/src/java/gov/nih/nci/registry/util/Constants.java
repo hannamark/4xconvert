@@ -240,4 +240,9 @@ public class Constants {
      * PROGRAM_CODE_ADMINISTRATOR
      */
     public static final String PROGRAM_CODE_ADMINISTRATOR = "ProgramCodeAdministrator";
+    
+    /**
+     * PROGRAM_CODES_LIST
+     */
+    public static final String PROGRAM_CODES_LIST = "programCodesLis";
 }

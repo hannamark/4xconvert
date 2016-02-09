@@ -76,6 +76,7 @@ public class TrialDTO extends BaseTrialDTO {
     private List<TrialIndIdeDTO> indIdeUpdateDtos;
     private List<TrialFundingWebDTO> fundingAddDtos;
     private List<TrialIndIdeDTO> indIdeAddDtos;
+    private List<String> programCodesList;
     private String lst;
     private String selectedRegAuth;
 
@@ -115,6 +116,7 @@ public class TrialDTO extends BaseTrialDTO {
         xmlRequired = true;
         secondaryIdentifierList = new ArrayList<Ii>();
         secondaryIdentifierAddList = new ArrayList<Ii>();
+        programCodesList = new ArrayList<String>();
     }
 
     /**
@@ -917,6 +919,20 @@ public class TrialDTO extends BaseTrialDTO {
      */
     public void setProgramCodesMap(Map<String, String> programCodesMap) {
         this.programCodesMap = programCodesMap;
+    }
+
+    /**
+     * @return programCodesList
+     */
+    public List<String> getProgramCodesList() {
+        return programCodesList;
+    }
+
+    /**
+     * @param programCodesList programCodesList
+     */ 
+    public void setProgramCodesList(List<String> programCodesList) {
+        this.programCodesList = programCodesList;
     }
 
 

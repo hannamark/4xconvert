@@ -126,6 +126,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -143,7 +144,8 @@ import com.opensymphony.xwork2.Preparable;
  * @author Harsha
  *
  */
-@SuppressWarnings({ "PMD.TooManyMethods" })
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.InefficientStringBuffering",
+    "PMD.CollapsibleIfStatements", "PMD.AvoidDeeplyNestedIfStmts" })
 public class SubmitTrialAction extends AbstractBaseTrialAction implements Preparable {
     private static final long serialVersionUID = -7644860242308952142L;
     private static final Logger LOG = Logger.getLogger(SubmitTrialAction.class);
@@ -241,6 +243,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
             
             StudyProtocolDTO studyProtocolDTO = util.convertToStudyProtocolDTO(trialDTO);
             studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(currentUser));
+           
             List<StudyOverallStatusDTO> statusHistory = util.convertStatusHistory(trialDTO);
 
             List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());
@@ -265,9 +268,17 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
                 partyDTO = util.convertToResponsiblePartyDTO(trialDTO);
             }
             
+            
+            
             List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos(), null);
             List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
             StudyRegulatoryAuthorityDTO studyRegAuthDTO = util.getStudyRegAuth(null, trialDTO);
+            
+            //set program code text to null sometimes this is populated in case 
+            //where user is saved trial as draft make sure this value is never saved
+            studyProtocolDTO.setProgramCodeText(null);
+            
+            assignProgramCodes(trialDTO , studyProtocolDTO);
 
             Ii studyProtocolIi = trialRegistrationService
                     .createCompleteInterventionalStudyProtocol(
@@ -296,6 +307,32 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
             return ERROR;
         }
         return REDIRECT_TO_SEARCH;
+    }
+    
+    private void assignProgramCodes(TrialDTO trialDTO, StudyProtocolDTO studyProtocolDTO) {
+      //if program code are set then fetch corresponding DTO
+        if (!CollectionUtils.isEmpty(trialDTO.getProgramCodesList())) {
+            if (ServletActionContext.getRequest().
+                    getSession().getAttribute(Constants.PROGRAM_CODES_LIST) != null) {
+      
+            List<ProgramCodeDTO> allProgramCodes = (List<ProgramCodeDTO>) 
+                    ServletActionContext.getRequest().
+                    getSession().getAttribute(Constants.PROGRAM_CODES_LIST);
+            List<ProgramCodeDTO> studyProgramCodeList = new ArrayList<ProgramCodeDTO>();
+            
+            if (!CollectionUtils.isEmpty(allProgramCodes)) {
+                for (ProgramCodeDTO programCodeDTO : allProgramCodes) {
+                    if (trialDTO.getProgramCodesList().contains(
+                            programCodeDTO.getProgramCode())) {
+                        studyProgramCodeList.add(programCodeDTO);
+                    }
+                }
+            }
+            if (!CollectionUtils.isEmpty(studyProgramCodeList)) {
+                studyProtocolDTO.setProgramCodes(studyProgramCodeList);
+            }
+        }
+        }  
     }
 
     @SuppressWarnings("deprecation")
@@ -393,6 +430,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
         JSONArray arr = new JSONArray();
         root.put("data", arr);
         populateProgramCodes(arr);
+        
         return new StreamResult(new ByteArrayInputStream(root.toString().getBytes()));
     }
     
@@ -400,13 +438,28 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
         LOG.debug("populating program codes for [familyPOId : " + familyId + "]");
         FamilyDTO familyDTO = familyProgramCodeService.getFamilyDTOByPoId(familyId);
         if (familyDTO != null) {
-       
-            for (ProgramCodeDTO programCodeDTO : familyDTO.getProgramCodes()) {
+            
+            List<ProgramCodeDTO> programCodesList = new ArrayList<ProgramCodeDTO>();
+            programCodesList = familyDTO.getProgramCodesAsOrderedList();
+             
+            for (ProgramCodeDTO programCodeDTO : familyDTO.getProgramCodesAsOrderedList()) {
                 JSONObject o = new JSONObject();
                 o.put("id", programCodeDTO.getProgramCode());
-                o.put("text", programCodeDTO.getProgramCode() + " " + programCodeDTO.getProgramName());
+                o.put("text", programCodeDTO.getProgramCode() + "-" + programCodeDTO.getProgramName());
+                o.put("title", programCodeDTO.getProgramCode() + "-" + programCodeDTO.getProgramName());
                 arr.put(o);
              }
+            
+            if (!CollectionUtils.isEmpty(programCodesList)) {
+                ServletActionContext.getRequest().
+                getSession().removeAttribute(Constants.PROGRAM_CODES_LIST);
+                ServletActionContext.getRequest().
+                getSession().setAttribute(Constants.PROGRAM_CODES_LIST, programCodesList);
+             
+            }
+                
+                
+            
         }
 
       }
@@ -501,12 +554,31 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
             trialDTO.setStatusHistory(getStatusHistoryFromSession());
             addSecondaryIdsToTrialDto();
             validateDocuments();          
-            trialDTO.setDocDtos(getTrialDocuments());                      
+            trialDTO.setDocDtos(getTrialDocuments());  
+            
+          //set program codes values in program codes text
+            if (trialDTO.getProgramCodesList() != null 
+                    && trialDTO.getProgramCodesList().size() > 0) {
+                StringBuffer programCodesText = new StringBuffer();
+                for (int i = 0; i < trialDTO.getProgramCodesList().size(); i++) {
+                    if (i == 0) {
+                        programCodesText.append(trialDTO.getProgramCodesList().get(i));
+                    } else {
+                        programCodesText.append(';');
+                        programCodesText.append(trialDTO.getProgramCodesList().get(i));
+                    }
+                }
+                trialDTO.setProgramCodeText(programCodesText.toString());
+            }
+            
             setTrialDTO((TrialDTO) trialUtil.saveDraft(trialDTO));
             ServletActionContext.getRequest().setAttribute("protocolId", trialDTO.getStudyProtocolId());
             ServletActionContext.getRequest().setAttribute("partialSubmission", "submit");
             ServletActionContext.getRequest().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.SECONDARY_IDENTIFIERS_LIST);
+            
+            
+            
         } catch (PAException e) {
             LOG.error(e.getMessage());
             addActionError(RegistryUtil.removeExceptionFromErrMsg(e.getMessage()));
@@ -547,6 +619,8 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
             ServletActionContext.getRequest().getSession().setAttribute(Constants.SECONDARY_IDENTIFIERS_LIST,
                     trialDTO.getSecondaryIdentifierList());
             ServletActionContext.getRequest().getSession().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
+             
+            
             setPageFrom("submitTrial");
             setDocumentsInSession(trialDTO);
         } catch (PAException e) {

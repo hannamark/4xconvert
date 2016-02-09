@@ -242,17 +242,25 @@
                             </c:if>
                             
                             <c:if test="${trialDTO.propritaryTrialIndicator != null && trialDTO.propritaryTrialIndicator == 'No'}">
-                                <c:if test="${trialDTO.programCodeText != ''}">
+                             
                                     <c:if test="${empty trialDTO.summaryFourOrgIdentifiers}">
-                                        <reg-web:titleRowDiv titleKey="view.trial.Summary4Information"/>
+                                    <reg-web:titleRowDiv titleKey="view.trial.Summary4Information"/>
                                     </c:if>
                                     <div class="row form-horizontal details">
                                     <reg-web:valueRowDiv labelKey="studyProtocol.summaryFourPrgCode" noLabelTag="true">
-                                        <c:out value="${trialDTO.programCodeText}"/>
+                                    <table>
+                                    <c:if test="${not empty trialDTO.programCodesList}">
+                                        <c:forEach items="${trialDTO.programCodesList}" var="element"> 
+                                        <tr>
+                                         <td>${element}</td>
+      								     </tr>
+										</c:forEach>
+									</c:if>	
+								   </table>		
                                     </reg-web:valueRowDiv>
                                     
                                     </div>
-                                </c:if>
+                               
                                 <%@ include file="/WEB-INF/jsp/nodecorate/viewStatusSection.jsp" %>
                             </c:if>
                             <c:if test="${trialDTO.propritaryTrialIndicator != null && trialDTO.propritaryTrialIndicator == 'Yes'}">

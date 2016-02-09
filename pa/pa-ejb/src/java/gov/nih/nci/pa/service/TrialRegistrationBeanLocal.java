@@ -2073,15 +2073,9 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         //set program codes
         if (studyProtocolDTO.getProgramCodes() != null) {
             createStudyProtocolDTO.setProgramCodes(studyProtocolDTO.getProgramCodes());    
-        } else if (studyProtocolDTO.getProgramCodeText() != null) {
-          //dont delete existing program codes
-            createStudyProtocolDTO.setProgramCodes(studyProtocolDTO.getProgramCodes());  
         }
         
-        if (studyProtocolDTO.getProgramCodeText() != null) {
-            createStudyProtocolDTO.setProgramCodeText(studyProtocolDTO.getProgramCodeText());
-        }
-        
+      
         
         return createStudyProtocolDTO;
     }

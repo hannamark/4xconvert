@@ -329,7 +329,7 @@ public abstract class AbstractRegistrySeleniumTest extends
         // Select Funding Sponsor
         hover(By.id("trialDTO.summaryFourOrgName"));
         clickAndWaitAjax("xpath=//table[@id='dropdown-sum4Organization']//a[text()='National Cancer Institute']");
-        selenium.type("trialDTO.programCodeText", "PG" + rand);
+        //selenium.type("trialDTO.programCodeText", "PG" + rand);
 
         // Grants
         moveElementIntoView(By.id("nciGrantfalse"));
