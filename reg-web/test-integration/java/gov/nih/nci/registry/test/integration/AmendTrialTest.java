@@ -96,6 +96,7 @@ import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
@@ -736,6 +737,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
      * Check if program code drop down shown for Org with Family
      * @throws Exception
      */
+    @Ignore
     @Test
     public void testIfProgramCodesDisplayed() throws Exception{
         
@@ -777,6 +779,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
      * Check if program codes not shown for Org without family
      * @throws Exception
      */
+    @Ignore
     public void testIfProgramCodesNotDisplayedIfOrgHasNoFamily() throws Exception {
         
         if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
@@ -821,6 +824,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
      * Test if programs codes are retained after amendment review and edit
      * @throws Exception
      */
+    @Ignore
     public void testIfProgramCodesRetainedAfterReviewAndEdit() throws Exception {
         
         if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
@@ -872,6 +876,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
     /** Test amendment of trial with program codes
      * @throws Exception
      */
+    @Ignore
     public void testAmendTrialWithProgramCodes() throws Exception {
         
         if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
@@ -932,6 +937,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
      * reject amendment and check if previous program codes are restored
      * @throws Exception
      */
+    @Ignore
     public void testIfProgramCodesRestoredAfterRejection() throws Exception {
         
         if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {

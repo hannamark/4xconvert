@@ -95,6 +95,7 @@ import java.util.List;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.lang.SystemUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -330,7 +331,7 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
         assertFalse(selenium.isVisible("//div[@id='programCodeBlock']"));
         //assertFalse(selenium.isElementPresent("//div[@id='programCodeBlock']"));
     }
-    
+    @Ignore
     @Test
     public void testIfProgramCodesDisplayedForOrgWithFamily() throws Exception {
         if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
@@ -367,7 +368,7 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
         useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
 
     }
-    
+    @Ignore
     @Test
     public void testIfProgramsCodesRetainedAfterReviewAndEdit() throws Exception {
         
@@ -418,7 +419,7 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
         assertOptionSelected("PG2 Cancer Program2");
         
     }
-    
+    @Ignore
     @Test
     public void testSubmitUpdateProgramCodes() throws Exception {
         
