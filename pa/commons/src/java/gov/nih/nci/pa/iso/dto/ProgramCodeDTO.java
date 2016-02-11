@@ -75,5 +75,13 @@ public class ProgramCodeDTO implements Serializable {
      */
     public void setActive(boolean active) {
         this.active = active;
-    }    
+    }
+
+    /**
+     * Will return the display name
+     * @return - the display name
+     */
+    public String getDisplayName() {
+        return String.format("%s - %s", programCode, programName);
+    }
 }

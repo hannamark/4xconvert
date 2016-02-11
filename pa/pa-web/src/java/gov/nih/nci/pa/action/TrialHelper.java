@@ -68,6 +68,7 @@ import org.apache.struts2.ServletActionContext;
  * @author Vrushali
  *
  */
+@SuppressWarnings({ "PMD.ExcessiveClassLength", "PMD.TooManyMethods" })
 public class TrialHelper {
     private static final String SI = "si";
     private static final String PI = "pi";
@@ -275,6 +276,10 @@ public class TrialHelper {
         if (!ISOUtil.isBlNull(spDTO.getCtgovXmlRequiredIndicator())) {
             gtdDTO.setCtGovXmlRequired(spDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue());
         }
+        if (CollectionUtils.isNotEmpty(spDTO.getProgramCodes())) {
+            gtdDTO.getProgramCodes().addAll(spDTO.getProgramCodes());
+        }
+
     }
 
     private void copyLO(Organization o, GeneralTrialDesignWebDTO gtdDTO) {
@@ -395,6 +400,7 @@ public class TrialHelper {
         spDTO.setAcronym(StConverter.convertToSt(gtdDTO.getAcronym()));
         spDTO.setKeywordText(StConverter.convertToSt(StringUtils.left(gtdDTO.getKeywordText(), KEYWORD)));
         spDTO.setProgramCodeText(StConverter.convertToSt(StringUtils.left(gtdDTO.getProgramCodeText(), PG_CODE_LEN)));
+        spDTO.setProgramCodes(gtdDTO.getProgramCodes());
         if (gtdDTO.getSubmissionNumber() > 1) {
             spDTO.setAmendmentReasonCode(CdConverter.convertStringToCd(gtdDTO.getAmendmentReasonCode()));
         }

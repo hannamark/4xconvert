@@ -20,6 +20,7 @@
             var contactPhone;
             var selectedName;    
             var orgname;
+            var ts = 0;
             
             jQuery(function() {
                 setFocusToFirstControl();
@@ -55,6 +56,23 @@
                     }
                     form.submit();
                 });
+
+                jQuery("#programCodeIds").select2({
+                    templateResult : function(pg){
+                        return pg.title;
+                    },
+                    width: '200px'
+                });
+
+
+                jQuery(".select2-hidden-accessible").on("select2:unselect",function (e) {
+                    ts = e.timeStamp;
+                }).on("select2:opening", function (e) {
+                    if (e.timeStamp - ts < 100) {
+                        e.preventDefault();
+                    }
+                });
+
             });
         
             function setorgid(orgIdentifier, name) {
@@ -165,6 +183,22 @@
 
         
         </script>
+        <style type="text/css">
+            li.select2-results__option {
+                text-overflow: ellipsis;
+                overflow: hidden;
+                max-width: 35em;
+                white-space: nowrap;
+            }
+
+            li.select2-selection__choice > span.select2-selection__choice__remove {
+                right: 3px !important;
+                left: inherit !important;
+                color:#d03b39 !important;
+                padding-left:2px;
+                float:right;
+            }
+        </style>
     </head>
     <body>
         <c:set var="topic" scope="request" value="validatetrial"/>
@@ -256,10 +290,19 @@
                             <%@ include file="/WEB-INF/jsp/nodecorate/displaySummary4FundingSponsor.jsp" %>
                         </div> 
                     </pa:valueRow>
-                    <pa:valueRow labelFor="programCodeText" labelKey="studyProtocol.summaryFourPrgCode">
-                        <s:textfield id="programCodeText" name="gtdDTO.programCodeText"  maxlength="100" size="100" cssStyle="width:200px" />
-                        <pa:fieldError fieldName="gtdDTO.programCodeText"/>
-                    </pa:valueRow>
+                    <s:if test="cancerTrial">
+                        <pa:valueRow labelFor="programCodeIds" labelKey="studyProtocol.summaryFourPrgCode">
+                            <s:select id="programCodeIds" name="programCodeIds"
+                                      value="programCodeIds"
+                                      list="programCodeList"
+                                      listKey="id"
+                                      listValue="programCode"
+                                      listTitle="displayName"
+                                      multiple="true" />
+                            <pa:fieldError fieldName="programCodeIds"/>
+                        </pa:valueRow>
+                    </s:if>
+
                     <s:if test="gtdDTO.submissionNumber > 1">
                         <pa:titleRow titleKey="trialValidation.amendmentInfo"/>
                         <pa:valueRow labelFor="amendmentReasonCode" labelKey="studyProtocol.amendmentReasonCodeValues" required="true">

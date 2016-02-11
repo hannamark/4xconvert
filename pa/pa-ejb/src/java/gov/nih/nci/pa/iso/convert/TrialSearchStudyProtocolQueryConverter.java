@@ -87,6 +87,7 @@ import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.ProgramCode;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyCheckout;
 import gov.nih.nci.pa.domain.StudyContact;
@@ -98,9 +99,11 @@ import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.dto.MilestoneDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
@@ -195,6 +198,19 @@ public class TrialSearchStudyProtocolQueryConverter extends BaseStudyProtocolQue
         if (studyProtocol.getSubmitingOrganization() != null) {
             studyProtocolDto.setSubmitterOrgId(Long.valueOf(studyProtocol.getSubmitingOrganization().getIdentifier()));
             studyProtocolDto.setSubmitterOrgName(studyProtocol.getSubmitingOrganization().getName());
+        }
+
+        if (CollectionUtils.isNotEmpty(studyProtocol.getProgramCodes())) {
+            for (ProgramCode programCode : studyProtocol.getProgramCodes()) {
+
+                ProgramCodeDTO programCodeDTO = new ProgramCodeDTO();
+                programCodeDTO.setProgramCode(programCode.getProgramCode());
+                programCodeDTO.setProgramName(programCode.getProgramName());
+                programCodeDTO.setId(programCode.getId());
+                programCodeDTO.setActive(programCode.getStatusCode() == ActiveInactiveCode.ACTIVE);
+
+                studyProtocolDto.getProgramCodes().add(programCodeDTO);
+            }
         }
         return studyProtocolDto;
     }

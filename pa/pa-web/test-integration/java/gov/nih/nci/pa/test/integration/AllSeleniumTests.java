@@ -110,7 +110,7 @@ import org.junit.runners.Suite.SuiteClasses;
         ResultsReportingActionsTakenTest.class, TwitterTest.class,
         DashboardMenuTest.class, RssOwnershipTest.class,
         ManageUserGroupsTest.class, AbstractionValidationTest.class, ResultsAbstractorRoleActionsTest.class,
-        ParticipatingSiteCloseTest.class, TrialFundingTest.class
+        ParticipatingSiteCloseTest.class, TrialFundingTest.class, TrialValidationTest.class
 
 })
 public class AllSeleniumTests {

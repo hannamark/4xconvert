@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -147,6 +148,7 @@ public class GeneralTrialDesignWebDTO implements Serializable { // NOPMD
     private List<Ii> otherIdentifiers = new ArrayList<Ii>();
     private Ii nonOtherIdentifiers = new Ii();
     private String rejectionReasonCode;
+    private List<ProgramCodeDTO> programCodes = new ArrayList<ProgramCodeDTO>();
 
 
     /**
@@ -862,6 +864,20 @@ public class GeneralTrialDesignWebDTO implements Serializable { // NOPMD
             String responsiblePersonAffiliationOrgId) {
         this.responsiblePersonAffiliationOrgId = responsiblePersonAffiliationOrgId;
     }
-    
 
+    /**
+     * Gets the programCodes list
+     * @return the programCodes  list
+     */
+    public List<ProgramCodeDTO> getProgramCodes() {
+        return programCodes;
+    }
+
+    /**
+     * Sets the  programCodes
+     * @param programCodes  the programCodes list
+     */
+    public void setProgramCodes(List<ProgramCodeDTO> programCodes) {
+        this.programCodes = programCodes;
+    }
 }

@@ -83,12 +83,15 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.dto.FamilyDTO;
 import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
+import gov.nih.nci.pa.dto.OrgFamilyDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.SummaryFourSponsorsWebDTO;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.RejectionReasonCode;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -97,6 +100,8 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
+import gov.nih.nci.pa.service.util.FamilyHelper;
+import gov.nih.nci.pa.service.util.FamilyProgramCodeService;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
@@ -118,12 +123,16 @@ import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -135,6 +144,7 @@ import com.opensymphony.xwork2.Preparable;
 * @author Naveen AMiruddin
 *
 */
+@SuppressWarnings({ "PMD.ExcessiveClassLength", "PMD.TooManyMethods", "PMD.TooManyFields" })
 public class TrialValidationAction extends AbstractGeneralTrialDesignAction implements Preparable {
 
     private static final long serialVersionUID = -6587531774808791496L;
@@ -152,12 +162,21 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
     private ProtocolQueryServiceLocal protocolQueryService;
     private TrialRegistrationServiceLocal trialRegistrationService;
     private RegistryUserService registryUserService;
+    private FamilyProgramCodeService familyProgramCodeService;
+
     private CorrelationUtilsRemote correlationUtils = new CorrelationUtils();
    
     private OrganizationDTO selectedLeadOrg;
     private List<PaPersonDTO> persons = new ArrayList<PaPersonDTO>();
     private List<Country> countryList = new ArrayList<Country>();
+    private List<ProgramCodeDTO> programCodeList = new ArrayList<ProgramCodeDTO>();
     private long studyProtocolIdentifier;
+
+    private List<Long> programCodeIds;
+    private boolean cancerTrial;
+
+    private boolean pgLoadComplete = false;
+
 
     private static final Logger LOG = Logger.getLogger(TrialValidationAction.class);
 
@@ -178,6 +197,7 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
         protocolQueryService = PaRegistry.getProtocolQueryService();
         trialRegistrationService = PaRegistry.getTrialRegistrationService();
         registryUserService = PaRegistry.getRegistryUserService();
+        familyProgramCodeService = PaRegistry.getProgramCodesFamilyService();
         if (gtdDTO != null) {
             gtdDTO.setPrimaryPurposeAdditionalQualifierCode(PAUtil.lookupPrimaryPurposeAdditionalQualifierCode(gtdDTO
                 .getPrimaryPurposeCode()));
@@ -193,6 +213,8 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
             Ii studyProtocolIi = (Ii) session.getAttribute(Constants.STUDY_PROTOCOL_II);
             TrialHelper helper = new TrialHelper();
             gtdDTO = helper.getTrialDTO(studyProtocolIi, "validation");
+            loadProgramCodes();
+            syncProgramCodes();
             session.setAttribute(Constants.OTHER_IDENTIFIERS_LIST, gtdDTO.getOtherIdentifiers());
             session.setAttribute("nctIdentifier", gtdDTO.getNctIdentifier());
             session.setAttribute("nciIdentifier", gtdDTO.getAssignedIdentifier());
@@ -348,6 +370,76 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
     }
 
     /**
+     * Will load the program codes from database
+     *
+     * @throws PAException - up on error
+     */
+    protected void loadProgramCodes() throws PAException {
+        //do not reload in current request processing flow (as save internally calls query)
+        if (pgLoadComplete) {
+            return;
+        }
+
+        HashMap<Long, ProgramCodeDTO> programCodeIndex = new HashMap<Long, ProgramCodeDTO>();
+
+        //find the families of the lead organization
+        List<OrgFamilyDTO> ofList = FamilyHelper.getByOrgId(Long.parseLong(gtdDTO.getLeadOrganizationIdentifier()));
+        for (OrgFamilyDTO of : ofList) {
+            FamilyDTO familyDTO = familyProgramCodeService.getFamilyDTOByPoId(of.getId());
+            for (ProgramCodeDTO pgc : familyDTO.getProgramCodes()) {
+                if (pgc.isActive()) {
+                    programCodeIndex.put(pgc.getId(), pgc);
+                }
+            }
+        }
+
+        //also add the program codes accumulated on the study from other sites
+        for (ProgramCodeDTO pgc : gtdDTO.getProgramCodes()) {
+            programCodeIndex.put(pgc.getId(), pgc);
+        }
+
+        setCancerTrial(!programCodeIndex.isEmpty());
+        programCodeList.addAll(programCodeIndex.values());
+        Collections.sort(programCodeList, new Comparator<ProgramCodeDTO>() {
+            @Override
+            public int compare(ProgramCodeDTO o1, ProgramCodeDTO o2) {
+                return o1.getProgramCode().compareTo(o2.getProgramCode());
+            }
+        });
+
+
+        pgLoadComplete = true;
+    }
+
+    /**
+     * Will sync the selected program code ids
+     */
+    protected void syncProgramCodes() {
+        programCodeIds = new ArrayList<Long>();
+        for (ProgramCodeDTO pgc : gtdDTO.getProgramCodes()) {
+            programCodeIds.add(pgc.getId());
+        }
+    }
+
+    /**
+     * Will bind the program codes
+     */
+    protected void bindProgramCodes() {
+        gtdDTO.getProgramCodes().clear();
+        if (CollectionUtils.isEmpty(programCodeIds)) {
+            return;
+        }
+
+        for (Long pgcId : programCodeIds) {
+            for (ProgramCodeDTO pgc : programCodeList) {
+                if (pgc.getId().equals(pgcId)) {
+                    gtdDTO.getProgramCodes().add(pgc);
+                }
+            }
+        }
+    }
+
+    /**
      * Creates the milestones.
      *
      * @param msc the msc
@@ -371,6 +463,8 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
     private void save(String operation) throws PAException, NullifiedEntityException, NullifiedRoleException {
         HttpSession session = ServletActionContext.getRequest().getSession();
         Ii studyProtocolIi = (Ii) session.getAttribute(Constants.STUDY_PROTOCOL_II);
+        loadProgramCodes();
+        bindProgramCodes();
         trialHelper.saveTrial(studyProtocolIi, gtdDTO, "Validation");
         if (StringUtils.equalsIgnoreCase(operation, "accept")) {
             createMilestones(MilestoneCode.SUBMISSION_ACCEPTED);
@@ -770,7 +864,14 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
         this.trialRegistrationService = trialRegistrationService;
     }
 
-    
+    /**
+     * Will set the family programcode service
+     * @param familyProgramCodeService  the service class
+     */
+    public void setFamilyProgramCodeService(FamilyProgramCodeService familyProgramCodeService) {
+        this.familyProgramCodeService = familyProgramCodeService;
+    }
+
     private Long getRssUserID() {
         try {
             RegistryUser regUser = registryUserService
@@ -811,5 +912,58 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
      */
     public void setRegistryUserService(RegistryUserService registryUserService) {
         this.registryUserService = registryUserService;
+    }
+
+    /**
+     * The ids of the program codes that were selected
+     *
+     * @return list having program code ids
+     */
+    public List<Long> getProgramCodeIds() {
+        return programCodeIds;
+    }
+
+    /**
+     * Sets the ids of the program codes
+     *
+     * @param programCodeIds - list of program code ids
+     */
+    public void setProgramCodeIds(List<Long> programCodeIds) {
+        this.programCodeIds = programCodeIds;
+    }
+
+    /**
+     * Will return the valid program codes
+     *
+     * @return - valid program codes
+     */
+    public List<ProgramCodeDTO> getProgramCodeList() {
+        return programCodeList;
+    }
+
+    /**
+     * Will set the valid program codes
+     * @param programCodeList - valid program codes
+     */
+    public void setProgramCodeList(List<ProgramCodeDTO> programCodeList) {
+        this.programCodeList = programCodeList;
+    }
+
+    /**
+     * Sets if cancerTrial or not
+     *
+     * @return - true if cancer trial
+     */
+    public boolean isCancerTrial() {
+        return cancerTrial;
+    }
+
+    /**
+     * Sets cancer trial
+     *
+     * @param cancerTrial - true if cancer trial
+     */
+    public void setCancerTrial(boolean cancerTrial) {
+        this.cancerTrial = cancerTrial;
     }
 }

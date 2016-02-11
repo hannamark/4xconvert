@@ -19,11 +19,14 @@ import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.dto.FamilyDTO;
 import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.FamilyProgramCodeService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.RegistryUserService;
 import gov.nih.nci.pa.util.Constants;
@@ -35,6 +38,7 @@ import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,7 +46,10 @@ public class TrialValidationActionTest extends AbstractPaActionTest {
 
     private final TrialValidationAction trialValidationAction = new TrialValidationAction();
     RegistryUserService regUserSvc = mock(RegistryUserService.class);
+    FamilyProgramCodeService familyProgramCodeService = mock(FamilyProgramCodeService.class);
     RegistryUser regUser = new RegistryUser();
+    FamilyDTO familyDto;
+
 
     /**
      * Initialization method.
@@ -68,7 +75,20 @@ public class TrialValidationActionTest extends AbstractPaActionTest {
         regUser.setId(1L);
         when(regUserSvc.getUser(anyString())).thenReturn(regUser);
 
+        familyDto = new FamilyDTO(1L);
+        for (int i =0; i < 3; i++) {
+            ProgramCodeDTO pgc = new ProgramCodeDTO();
+            pgc.setActive(true);
+            pgc.setId(i + 1L);
+            pgc.setProgramName("Program Code " + i);
+            pgc.setProgramCode("PG" + i);
+            familyDto.getProgramCodes().add(pgc);
+        }
+
+        when(familyProgramCodeService.getFamilyDTOByPoId(1L)).thenReturn(familyDto);
+
         trialValidationAction.setRegistryUserService(regUserSvc);
+        trialValidationAction.setFamilyProgramCodeService(familyProgramCodeService);
         trialValidationAction.setTrialHelper(trialHelper);
     }
 
@@ -275,5 +295,42 @@ public class TrialValidationActionTest extends AbstractPaActionTest {
         trialValidationAction.getGtdDTO().setSubmissionNumber(1);
         assertEquals("edit", trialValidationAction.accept());
         assertTrue(trialValidationAction.getFieldErrors().containsKey("gtdDTO.phaseCode"));
+    }
+
+    @Test
+    public void testLoadAndBindProgramCodes() throws Exception {
+        GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
+        gtdDTO.setLeadOrganizationIdentifier("1");
+        trialValidationAction.setGtdDTO(gtdDTO);
+        trialValidationAction.loadProgramCodes();
+        assertFalse(trialValidationAction.getProgramCodeList().isEmpty());
+        assertTrue(gtdDTO.getProgramCodes().isEmpty());
+
+        trialValidationAction.setProgramCodeIds(Arrays.asList(1L, 2L));
+        trialValidationAction.bindProgramCodes();
+        assertFalse(gtdDTO.getProgramCodes().isEmpty());
+
+    }
+
+
+    @Test
+    public void testLoadAndSync() throws Exception {
+        GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
+        gtdDTO.setLeadOrganizationIdentifier("1");
+        trialValidationAction.setGtdDTO(gtdDTO);
+        trialValidationAction.loadProgramCodes();
+        assertFalse(trialValidationAction.getProgramCodeList().isEmpty());
+        assertTrue(gtdDTO.getProgramCodes().isEmpty());
+        assertTrue(CollectionUtils.isEmpty(trialValidationAction.getProgramCodeIds()));
+        ProgramCodeDTO pgc = new ProgramCodeDTO();
+        pgc.setActive(true);
+        pgc.setId(1L);
+        pgc.setProgramName("Program Code 1");
+        pgc.setProgramCode("PG1");
+        gtdDTO.setProgramCodes(Arrays.asList(pgc));
+
+        trialValidationAction.syncProgramCodes();
+        assertFalse(trialValidationAction.getProgramCodeIds().isEmpty());
+
     }
 }
