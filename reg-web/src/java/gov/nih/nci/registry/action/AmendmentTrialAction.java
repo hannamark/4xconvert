@@ -81,6 +81,7 @@ package gov.nih.nci.registry.action;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.ResponsiblePartyDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -129,6 +130,7 @@ import com.opensymphony.xwork2.Preparable;
  *
  * @author Vrushali
  */
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.TooManyFields" })
 public class AmendmentTrialAction extends AbstractBaseTrialAction implements Preparable {
 
     private static final long serialVersionUID = 613144140270457242L;
@@ -347,11 +349,8 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
             }
             StudyProtocolDTO studyProtocolDTO = util.convertToStudyProtocolDTOForAmendment(trialDTO);
             
-            //because we have already set program codes in program_code_text
-            //set the program codes list to blank otherwise in case of
-            //amendment reject previous values will not be restored
-            //TrialRegistrationBeanLocal method assignProgramCodes
-            studyProtocolDTO.setProgramCodes(null);
+            //this should never be populated as per new implementation
+            studyProtocolDTO.setProgramCodeText(null);
             
             studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(currentUser));
             
@@ -392,6 +391,14 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
             if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
                 studyRegAuthDTO = util.getStudyRegAuth(null, trialDTO);
             }
+            
+            util.assignProgramCodes(trialDTO , studyProtocolDTO);
+            //check user is actually removed program codes
+            if (trialDTO.getProgramCodesList() != null 
+                && trialDTO.getProgramCodesList().size() == 0) {
+                studyProtocolDTO.setProgramCodes(new ArrayList<ProgramCodeDTO>());
+            }
+            
             amendId =
                     trialRegistrationService.amend(studyProtocolDTO, statusHistory, studyIndldeDTOs,
                                                    studyResourcingDTOs, documentDTOs, leadOrgDTO,

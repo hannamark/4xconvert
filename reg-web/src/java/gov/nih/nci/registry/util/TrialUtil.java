@@ -12,6 +12,7 @@ import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyFundingStageDTO;
@@ -69,7 +70,8 @@ import org.apache.struts2.ServletActionContext;
  *
  * @author vrushali
  */
-@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength"
+    , "PMD.CollapsibleIfStatements", "PMD.AvoidDeeplyNestedIfStmts" })
 public class TrialUtil extends TrialConvertUtils {
 
     private CorrelationUtilsRemote correlationUtils;
@@ -400,6 +402,18 @@ public class TrialUtil extends TrialConvertUtils {
         trialDTO.setIndIdeUpdateDtos(trialDTO.getIndIdeDtos());
         copyDcpIdentifier(studyProtocolIi, trialDTO);
         copyCtepIdentifier(studyProtocolIi, trialDTO);
+        copyProgramCodes(trialDTO, spDTO);
+    }
+    
+    private void copyProgramCodes(TrialDTO trialDTO, StudyProtocolDTO studyProtocolDTO) {
+        if (!CollectionUtils.isEmpty(studyProtocolDTO.getProgramCodes())) {
+            List<String> programCodesList = new ArrayList<String>();
+            for (ProgramCodeDTO programCodeDTO :studyProtocolDTO.getProgramCodes()) {
+                programCodesList.add(programCodeDTO.getProgramCode());
+            }
+            trialDTO.setProgramCodesList(programCodesList);
+        }
+        
     }
 
     /**
@@ -933,6 +947,39 @@ public class TrialUtil extends TrialConvertUtils {
                 ii.setRoot(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT);
             }
         }
+    }
+    
+    
+    /**
+     * assign program codes to studyProtocolDTO
+     * @param trialDTO trialDTO
+     * @param studyProtocolDTO studyProtocolDTO
+     */
+    public void assignProgramCodes(TrialDTO trialDTO, StudyProtocolDTO studyProtocolDTO) {
+      //if program code are set then fetch corresponding DTO
+        if (!CollectionUtils.isEmpty(trialDTO.getProgramCodesList())) {
+            if (ServletActionContext.getRequest().
+                    getSession().getAttribute(Constants.PROGRAM_CODES_LIST) != null) {
+      
+            List<ProgramCodeDTO> allProgramCodes = (List<ProgramCodeDTO>) 
+                    ServletActionContext.getRequest().
+                    getSession().getAttribute(Constants.PROGRAM_CODES_LIST);
+            List<ProgramCodeDTO> studyProgramCodeList = new ArrayList<ProgramCodeDTO>();
+            
+            if (!CollectionUtils.isEmpty(allProgramCodes)) {
+                for (ProgramCodeDTO programCodeDTO : allProgramCodes) {
+                    if (trialDTO.getProgramCodesList().contains(
+                            programCodeDTO.getProgramCode())) {
+                        studyProgramCodeList.add(programCodeDTO);
+                    }
+                }
+            }
+            if (!CollectionUtils.isEmpty(studyProgramCodeList)) {
+                studyProtocolDTO.setProgramCodes(studyProgramCodeList);
+            }
+        }
+        }  
+        
     }
 
     /**

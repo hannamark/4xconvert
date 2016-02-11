@@ -331,7 +331,6 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
         assertFalse(selenium.isVisible("//div[@id='programCodeBlock']"));
         //assertFalse(selenium.isElementPresent("//div[@id='programCodeBlock']"));
     }
-    @Ignore
     @Test
     public void testIfProgramCodesDisplayedForOrgWithFamily() throws Exception {
         if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
@@ -364,11 +363,11 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
         
         clickAndWaitAjax("id=programCodesValues");
         moveElementIntoView(By.id("programCodesValues"));
-        useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
-        useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
+        useSelect2ToPickAnOption("programCodesValues","PG1","PG1-Cancer Program1");
+        useSelect2ToPickAnOption("programCodesValues","PG2","PG2-Cancer Program2");
 
     }
-    @Ignore
+   
     @Test
     public void testIfProgramsCodesRetainedAfterReviewAndEdit() throws Exception {
         
@@ -403,8 +402,8 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
         
         clickAndWaitAjax("id=programCodesValues");
         moveElementIntoView(By.id("programCodesValues"));
-        useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
-        useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
+        useSelect2ToPickAnOption("programCodesValues","PG1","PG1-Cancer Program1");
+        useSelect2ToPickAnOption("programCodesValues","PG2","PG2-Cancer Program2");
         
         clickAndWait("xpath=//button[text()='Review Trial']");
         waitForPageToLoad();
@@ -415,11 +414,11 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
         //check if program codes are retained
         moveElementIntoView(By.id("programCodesValues"));
         
-        assertOptionSelected("PG1 Cancer Program1");
-        assertOptionSelected("PG2 Cancer Program2");
+        assertOptionSelected("PG1-Cancer Program1");
+        assertOptionSelected("PG2-Cancer Program2");
         
     }
-    @Ignore
+    
     @Test
     public void testSubmitUpdateProgramCodes() throws Exception {
         
@@ -454,8 +453,8 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
         
         clickAndWaitAjax("id=programCodesValues");
         moveElementIntoView(By.id("programCodesValues"));
-        useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
-        useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
+        useSelect2ToPickAnOption("programCodesValues","PG1","PG1-Cancer Program1");
+        useSelect2ToPickAnOption("programCodesValues","PG2","PG2-Cancer Program2");
         
         clickAndWait("xpath=//button[text()='Review Trial']");
         waitForPageToLoad();

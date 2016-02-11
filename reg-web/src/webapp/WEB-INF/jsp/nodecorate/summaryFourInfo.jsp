@@ -39,15 +39,21 @@
             <div class="form-group" id="programCodeBlock" style="display:none">                               
                 <label for="trialDTO.programCodeText" class="col-xs-4 control-label"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label>
                 <div class="col-xs-4">
-                   <s:select size="2" multiple="true"  name="trialDTO.selectedProgramCodes" id="programCodesValues"  list="#{trialDTO.programCodesMap}"
-                                cssStyle="width:206px" />
-                                  <c:if test="${sessionScope.isSiteAdmin}">
-                                     &nbsp;&nbsp;<a href="../siteadmin/programCodesexecute.action">Manage Program Codes</a>
-                                 </c:if>
+                   <s:select size="2" multiple="true"  name="trialDTO.programCodesList" id="programCodesValues"  list="#{trialDTO.programCodesMap}"
+                                cssClass="form-control"  />
+                                 
                 </div>
-                <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.summary_4_program_code"/>"  data-placement="top" data-trigger="hover"></i>
+                 <div class="col-xs-4" >
+                  <c:if test="${sessionScope.isSiteAdmin}">
+                  <a  style ="vertical-align:middle!important" href="../siteadmin/programCodesexecute.action">Manage Program Codes</a>
+                  <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.summary_4_program_code" />"  data-placement="top" data-trigger="hover"></i>
+                  </c:if>
+                   <c:if test="${sessionScope.isSiteAdmin==false}">
+                   <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.summary_4_program_code" />"  data-placement="top" data-trigger="hover"></i>
+                   </c:if>
+                  </div>
+                
             </div>
-             <s:hidden id="trialDTO.programCodeText" name="trialDTO.programCodeText"/>
         </div>
     </div>
 </div>

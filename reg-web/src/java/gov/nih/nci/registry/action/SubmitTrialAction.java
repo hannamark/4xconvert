@@ -278,7 +278,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
             //where user is saved trial as draft make sure this value is never saved
             studyProtocolDTO.setProgramCodeText(null);
             
-            assignProgramCodes(trialDTO , studyProtocolDTO);
+            util.assignProgramCodes(trialDTO , studyProtocolDTO);
 
             Ii studyProtocolIi = trialRegistrationService
                     .createCompleteInterventionalStudyProtocol(
@@ -308,32 +308,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
         }
         return REDIRECT_TO_SEARCH;
     }
-    
-    private void assignProgramCodes(TrialDTO trialDTO, StudyProtocolDTO studyProtocolDTO) {
-      //if program code are set then fetch corresponding DTO
-        if (!CollectionUtils.isEmpty(trialDTO.getProgramCodesList())) {
-            if (ServletActionContext.getRequest().
-                    getSession().getAttribute(Constants.PROGRAM_CODES_LIST) != null) {
-      
-            List<ProgramCodeDTO> allProgramCodes = (List<ProgramCodeDTO>) 
-                    ServletActionContext.getRequest().
-                    getSession().getAttribute(Constants.PROGRAM_CODES_LIST);
-            List<ProgramCodeDTO> studyProgramCodeList = new ArrayList<ProgramCodeDTO>();
-            
-            if (!CollectionUtils.isEmpty(allProgramCodes)) {
-                for (ProgramCodeDTO programCodeDTO : allProgramCodes) {
-                    if (trialDTO.getProgramCodesList().contains(
-                            programCodeDTO.getProgramCode())) {
-                        studyProgramCodeList.add(programCodeDTO);
-                    }
-                }
-            }
-            if (!CollectionUtils.isEmpty(studyProgramCodeList)) {
-                studyProtocolDTO.setProgramCodes(studyProgramCodeList);
-            }
-        }
-        }  
-    }
+   
 
     @SuppressWarnings("deprecation")
     private void deleteSavedDraft() throws PAException {

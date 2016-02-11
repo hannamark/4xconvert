@@ -39,9 +39,7 @@
             });
 
             function reviewProtocolUpdate() {
-            	var text = getProgramCodesValuesText();
-            	jQuery("#trialDTO\\.programCodeText").val(text);  
-                submitFirstForm("save", "updateTrialreviewUpdate.action");
+            	submitFirstForm("save", "updateTrialreviewUpdate.action");
                 showPopWin('${reviewProtocolUrl}', 600, 200, '', 'Review Register Trial');
             }
             
@@ -173,13 +171,40 @@
             document.observe("dom:loaded", function() {
              displayTrialStatusDefinition('trialDTO_statusCode');
              if($('trialDTO.leadOrganizationIdentifier').value) {
+            	 var values = jQuery("#tempProgramCodeValues").val();
+                 var programCodeText ="";
+                 if(values!=null && values!=undefined) {
+                 for(var i=0;i<values.length;i++) {
+                     if(i==0) {
+                         programCodeText = values[i];
+                     }
+                     else {
+                         programCodeText = programCodeText +";"+values[i];                  
+                     }
+                 }
+                 } 
                  loadProgramCodes($('trialDTO.leadOrganizationIdentifier').value,
-                 $('trialDTO.programCodeText').value);
+                		 programCodeText);
                  
              }
             	  
           });
         </script>
+        <style>
+         li.select2-results__option {
+               text-overflow: ellipsis;
+               overflow: hidden;
+               max-width: 395px;
+               white-space: nowrap;
+        }
+        li.select2-selection__choice > span.select2-selection__choice__remove {
+               right: 3px !important;
+               left: inherit !important;
+               color:#d03b39 !important;
+               padding-left:2px;
+               float:right;
+        }
+       </style>
     </head>
     <body>
         <!-- main content begins-->
@@ -231,7 +256,12 @@
 			      <button type="button" class="btn btn-icon btn-primary review" onclick="reviewProtocolUpdate()"><i class="fa-floppy-o"></i>Review Trial</button>
 			      <button type="button" class="btn btn-icon btn-default" onclick="cancelProtocol()"><i class="fa-times-circle"></i>Cancel</button>
 		    	</div>
-            </s:form>
+		    	  <select id="tempProgramCodeValues" multiple="true" size ="2" style="display:none" >
+                     <c:forEach items="${trialDTO.programCodesList}" var="element"> 
+                    <option value="${element}" selected >${element}</option>     
+                    </c:forEach>
+                    </select>  
+                    </s:form>
         <div id="general_trial_errors_container" style="display: none;">
             <span class="info">
                 The following errors may not be related to the update you are trying to submit, but rather may indicate a general problem

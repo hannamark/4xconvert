@@ -123,6 +123,7 @@ import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -2679,18 +2680,11 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                 TrialUpdatesRecorder.ACCRUAL_DISEASE_TERMINOLOGY_UPDATED);
         spDTO.setAccrualDiseaseCodeSystem(newAccrualDiseaseCodeSystem);
         
+        List<ProgramCodeDTO> programCodeDTOList = spDTO.getProgramCodes();
+        
         if (studyProtocolDTO.getProgramCodes() != null) {
-            spDTO.setProgramCodes(studyProtocolDTO.getProgramCodes());
+             spDTO.setProgramCodes(studyProtocolDTO.getProgramCodes());
         } 
-        //make sure not delete existing code in case of legacy
-        if (studyProtocolDTO.getProgramCodes() == null) {
-            if (studyProtocolDTO.getProgramCodeText() != null) {
-                spDTO.setProgramCodeText(studyProtocolDTO.getProgramCodeText());
-                spDTO.setProgramCodes(studyProtocolDTO.getProgramCodes());
-            }
-        }
-        
-        
         updateStudyProtocol(spDTO);
         
         // Grants
@@ -2736,10 +2730,15 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         //update program code
         assignProgramCodes(IiConverter.convertToLong(spIi), studyProtocolDTO, leadOrgDto);
         }  
+     
+        TrialUpdatesRecorder.recordUpdate(studyProtocolDTO.getProgramCodes()
+                , programCodeDTOList
+                , TrialUpdatesRecorder.PROGRAM_CODE_CHANGED);
+        
+        //If someone updates program_code_text field make sure to capture this as well
         TrialUpdatesRecorder.recordUpdate(studyProtocolDTO.getProgramCodeText()
                 , spDTO.getProgramCodeText()
                 , TrialUpdatesRecorder.PROGRAM_CODE_CHANGED);
-
         return spIi;
     }
 

@@ -10,6 +10,7 @@ import static org.apache.commons.lang.StringUtils.trim;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
@@ -20,6 +21,8 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -325,6 +328,47 @@ public final class TrialUpdatesRecorder {
      */
     public static String getRecordedUpdates() {
         return join(holder.get(), SEPARATOR);
+    }
+    
+    /**
+     * @param original original
+     * @param updated updated
+     * @param msg msg
+     */
+    @SuppressWarnings("rawtypes")
+    public static void recordUpdate(List<ProgramCodeDTO> original, 
+            List<ProgramCodeDTO> updated,
+            String msg) {
+        int sizeBefore = original != null ? original.size() : 0;
+        int sizeAfter = updated != null ? updated.size() : 0;
+        if (sizeBefore != sizeAfter) {
+            add(msg);
+        } else {
+          if (original != null && updated != null) {
+            //even if size is equal actual collection might be different
+              String originalText = getProgramCodeText(original);
+              String updatedText = getProgramCodeText(updated);
+              if (!originalText.equals(updatedText)) {
+                  add(msg);
+              }
+          } 
+        }
+    }
+    
+    private static String getProgramCodeText(List<ProgramCodeDTO> programCodesList) {
+        StringBuffer result = new StringBuffer();
+        
+        Collections.sort(programCodesList, new Comparator<ProgramCodeDTO>() {
+            @Override
+            public int compare(ProgramCodeDTO o1, ProgramCodeDTO o2) {
+                return o1.getProgramCode().compareTo(o2.getProgramCode());
+            }
+        });
+        
+        for (ProgramCodeDTO programCodeDTO:programCodesList) {
+            result.append(programCodeDTO.getProgramCode());
+        }
+        return result.toString();
     }
 
 }

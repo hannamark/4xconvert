@@ -6,6 +6,7 @@ import gov.nih.nci.pa.enums.CodedEnumHelper;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -71,6 +72,7 @@ import com.opensymphony.xwork2.util.Element;
  *
  * @author Vrushali
  */
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.TooManyFields" })
 public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     private static final long serialVersionUID = -1295113563440080699L;
@@ -460,13 +462,19 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
             List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
             studyIdentifierDTOs.add(util.convertToNCTStudySiteDTO(trialDTO, null));  
+          
+            //this should never be populated as per new implementation
+            spDTO.setProgramCodeText(null);
             
-            //because we have already set program codes in program_code_text
-            //set the program codes list to blank otherwise in case of
-            //amendment reject previous values will not be restored
-            //TrialRegistrationBeanLocal method assignProgramCodes
-            spDTO.setProgramCodes(null);
+            util.assignProgramCodes(trialDTO , spDTO);
+            //check user is actually removed program codes
+            if (trialDTO.getProgramCodesList() != null 
+                && trialDTO.getProgramCodesList().size() == 0) {
+                spDTO.setProgramCodes(new ArrayList<ProgramCodeDTO>());
+            }
             
+            
+          
             // call the service to invoke the update method
             trialRegistrationService.update(spDTO, statusHistory, studyIdentifierDTOs, null, 
                     studyResourcingDTOs, documentDTOs, null, null, null, null, null, 

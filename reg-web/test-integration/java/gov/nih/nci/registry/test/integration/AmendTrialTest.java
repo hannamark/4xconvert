@@ -737,7 +737,6 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
      * Check if program code drop down shown for Org with Family
      * @throws Exception
      */
-    @Ignore
     @Test
     public void testIfProgramCodesDisplayed() throws Exception{
         
@@ -768,8 +767,8 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         waitForElementToBecomeVisible(By.id("programCodesValues"), 10);
         clickAndWaitAjax("id=programCodesValues");
         moveElementIntoView(By.id("programCodesValues"));
-        useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
-        useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
+        useSelect2ToPickAnOption("programCodesValues","PG1","PG1-Cancer Program1");
+        useSelect2ToPickAnOption("programCodesValues","PG2","PG2-Cancer Program2");
         
         
     }
@@ -779,7 +778,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
      * Check if program codes not shown for Org without family
      * @throws Exception
      */
-    @Ignore
+    @Test
     public void testIfProgramCodesNotDisplayedIfOrgHasNoFamily() throws Exception {
         
         if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
@@ -824,7 +823,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
      * Test if programs codes are retained after amendment review and edit
      * @throws Exception
      */
-    @Ignore
+    @Test
     public void testIfProgramCodesRetainedAfterReviewAndEdit() throws Exception {
         
         if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
@@ -853,8 +852,8 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         clickAndWaitAjax("link=National Cancer Institute Division of Cancer Prevention (Your Affiliation)");
         clickAndWaitAjax("id=programCodesValues");
         moveElementIntoView(By.id("programCodesValues"));
-        useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
-        useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
+        useSelect2ToPickAnOption("programCodesValues","PG1","PG1-Cancer Program1");
+        useSelect2ToPickAnOption("programCodesValues","PG2","PG2-Cancer Program2");
       
        
         populateAmendTrialPage(info);
@@ -868,15 +867,15 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         //check if program codes are retained
         moveElementIntoView(By.id("programCodesValues"));
         
-        assertOptionSelected("PG1 Cancer Program1");
-        assertOptionSelected("PG2 Cancer Program2");
+        assertOptionSelected("PG1-Cancer Program1");
+        assertOptionSelected("PG2-Cancer Program2");
     }
     
     
     /** Test amendment of trial with program codes
      * @throws Exception
      */
-    @Ignore
+   @Test
     public void testAmendTrialWithProgramCodes() throws Exception {
         
         if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
@@ -905,8 +904,8 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         clickAndWaitAjax("link=National Cancer Institute");
         clickAndWaitAjax("id=programCodesValues");
         moveElementIntoView(By.id("programCodesValues"));
-        useSelect2ToPickAnOption("programCodesValues","PG1","PG1 Cancer Program1");
-        useSelect2ToPickAnOption("programCodesValues","PG2","PG2 Cancer Program2");
+        useSelect2ToPickAnOption("programCodesValues","PG1","PG1-Cancer Program1");
+        useSelect2ToPickAnOption("programCodesValues","PG2","PG2-Cancer Program2");
       
        
         populateAmendTrialPage(info);
@@ -937,7 +936,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
      * reject amendment and check if previous program codes are restored
      * @throws Exception
      */
-    @Ignore
+   @Test
     public void testIfProgramCodesRestoredAfterRejection() throws Exception {
         
         if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
@@ -970,8 +969,8 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         clickAndWaitAjax("link=National Cancer Institute");
         clickAndWaitAjax("id=programCodesValues");
         moveElementIntoView(By.id("programCodesValues"));
-        useSelect2ToPickAnOption("programCodesValues","PG3","PG3 Cancer Program3");
-        useSelect2ToPickAnOption("programCodesValues","PG4","PG4 Cancer Program4");
+        useSelect2ToPickAnOption("programCodesValues","PG3","PG3-Cancer Program3");
+        useSelect2ToPickAnOption("programCodesValues","PG4","PG4-Cancer Program4");
       
        
         populateAmendTrialPage(info);

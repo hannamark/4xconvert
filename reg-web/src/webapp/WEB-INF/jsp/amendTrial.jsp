@@ -184,9 +184,7 @@
             }
 
             function reviewProtocol () {
-            	var text = getProgramCodesValuesText();
-                jQuery("#trialDTO\\.programCodeText").val(text); 
-                submitFirstForm("save", "amendTrialreview.action");
+            	submitFirstForm("save", "amendTrialreview.action");
                 showPopWin('${reviewProtocol}', 600, 200, '', 'Review Register Trial');
             }
             
@@ -397,8 +395,22 @@
      
             document.observe("dom:loaded", function() {
             	 if($('trialDTO.leadOrganizationIdentifier').value) {
+            		 
+            		 var values = jQuery("#tempProgramCodeValues").val();
+                     var programCodeText ="";
+                     if(values!=null && values!=undefined) {
+                     for(var i=0;i<values.length;i++) {
+                         if(i==0) {
+                             programCodeText = values[i];
+                         }
+                         else {
+                             programCodeText = programCodeText +";"+values[i];                  
+                         }
+                     }
+                     } 
+            		 
                      loadProgramCodes($('trialDTO.leadOrganizationIdentifier').value,
-                     $('trialDTO.programCodeText').value);
+                    		 programCodeText);
                      
                  }
                 displayTrialStatusDefinition('trialDTO_statusCode');
@@ -429,6 +441,21 @@
             Event.observe(window, "load", setDisplayBasedOnTrialType);
             Event.observe(window, "load", disableTrialTypeChangeRadios);
         </script>
+        <style>
+        li.select2-results__option {
+               text-overflow: ellipsis;
+               overflow: hidden;
+               max-width: 395px;
+               white-space: nowrap;
+        }
+        li.select2-selection__choice > span.select2-selection__choice__remove {
+               right: 3px !important;
+               left: inherit !important;
+               color:#d03b39 !important;
+               padding-left:2px;
+               float:right;
+        }
+        </style>
     </head>
     <body>
         <!-- main content begins-->
@@ -652,6 +679,11 @@
             </div>
                 
                 <s:hidden name="uuidhidden"/>
+                <select id="tempProgramCodeValues" multiple="true" size ="2" style="display:none" >
+           <c:forEach items="${trialDTO.programCodesList}" var="element"> 
+           <option value="${element}" selected >${element}</option>                              
+          </c:forEach>
+        
             </s:form>
     </body>
 </html>
