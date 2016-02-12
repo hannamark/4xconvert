@@ -784,7 +784,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + "blinding_schema_code,design_configuration_code,number_of_intervention_groups,study_classification_code,bio_specimen_description,"
                 + "bio_specimen_retention_code,sampling_method_code,number_of_groups,study_model_code,study_model_other_text,time_perspective_code,"
                 + "time_perspective_other_text,study_population_description,date_last_created,date_last_updated,status_code,status_date,"
-                + "amendment_number,amendment_date,amendment_reason_code,submission_number,parent_protocol_identifier,program_code_text,"
+                + "amendment_number,amendment_date,amendment_reason_code,submission_number,parent_protocol_identifier,"
                 + "min_target_accrual_num,proprietary_trial_indicator,ctgov_xml_required_indicator,user_last_created_id,user_last_updated_id,"
                 + "phase_additional_qualifier_code,primary_purpose_additional_qualifier_code,completion_date,completion_date_type_code,"
                 + "study_subtype_code,comments,processing_priority,assigned_user_id,ctro_override,secondary_purpose_other_text,nci_grant,"
@@ -804,7 +804,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + "false,null,'Scientific Description','InterventionalStudyProtocol','RANDOMIZED_CONTROLLED_TRIAL',"
                 + "null,null,null,null,'OPEN','PARALLEL',1,'EFFICACY',null,null,null,1,null,null,null,null,null,"
                 + "{ts '2014-04-16 12:18:50.572'},null,'ACTIVE',{ts '2013-04-16 12:18:50.572'},null,"
-                + "null,null,1,null,'" + info.uuid + "',60," + isAbbr
+                + "null,null,1,null,60," + isAbbr
                 + ",false," + info.csmUserID + ",null,null,null,"
                 + "{ts '2018-04-16 12:18:50.572'},'ANTICIPATED',null,null,2,"
                 + info.csmUserID + ",false,null,false,null,null,'OTHER', 1);";

@@ -433,11 +433,8 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
         addSummaryFour(info.id, "abstractor-ci");
         final String nciID = getLastNciId();
         
-        loginToPAAndAddSite(info);
+        
 
-        acceptTrialByNciIdWithGivenDWS(nciID, info.leadOrgID,
-                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
-                        .toString());
         assignTrialOwner("abstractor-ci", info.id);
 
         loginAndAcceptDisclaimer();
@@ -474,7 +471,128 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
         
         assert programCodeCount==2;
         
+        //test if program code update message appeared
+        logoutUser();
+        logoutPA();
+        loginAsSuperAbstractor();
+        searchAndSelectTrial(info.title);
+        
+        
+        clickAndWait("link=Trial History");
+        openAndWait("/pa/protected/trialHistory.action?activeTab=updates&nciID="
+                + info.nciID);
+        
+        assertTrue(selenium.isTextPresent("Program codes updated"));
+        
+        //somehow click on acknowledge does not work in selenium may be javascript alert asking user to confirm
+        //do you want to acknowledge this update
+        //clickAndWait("xpath=//table[@id='row']/tbody/tr[1]/td[3]/a");
+        
+        //delete this update so that for next use case it does not show up
+        acknowledgeThisUpdate(trialId);
+        
+        //delete program code see if this produces update message
+        logoutPA();
+        
+        loginAndAcceptDisclaimer();
+
+        rand = info.leadOrgID;
+        runSearchAndVerifySingleTrialResult("officialTitle", rand, info,"National Cancer Institute");
+        
+        
+        
+        invokeUpdateTrial(true);
+        waitForPageToLoad();
+        waitForElementById("programCodesValues", 60);
+        
+        waitForElementById("programCodesValues", 60);
+        
+        clickAndWaitAjax("id=programCodesValues");
+        moveElementIntoView(By.id("programCodesValues"));
+        useSelect2ToUnselectOption("PG1-Cancer Program1");
+        useSelect2ToUnselectOption("PG2-Cancer Program2");
+        
+        clickAndWait("xpath=//button[text()='Review Trial']");
+        waitForPageToLoad();
+        
+        clickAndWait("xpath=//button[text()='Submit']");
+        waitForPageToLoad();
+        assertTrue(selenium
+                .isTextPresent("The trial update with the NCI Identifier "
+                        + nciID + " was successfully submitted."));
+        
+        //get trial id from nci Id
+        trialId =(Long)getTrialIdByNciId(nciID);
+        
+        
+        //check if program codes are actually deleted in the database
+        programCodeCount = getProgramCodesCount(trialId);
+        
+        assert programCodeCount==0;
+        
+        //test if program code update message appeared
+        logoutUser();
+        logoutPA();
+        loginAsSuperAbstractor();
+        searchAndSelectTrial(info.title);
+        
+        
+        clickAndWait("link=Trial History");
+        openAndWait("/pa/protected/trialHistory.action?activeTab=updates&nciID="
+                + info.nciID);
+        
+        assertTrue(selenium.isTextPresent("Program codes updated"));
+        
+         
+   }
+    
+/**
+ * Update trial and don't update program code check if no program code update message is displayed 
+ */
+@Test    
+ public void testIfNoProgramCodeUpdateMessage() throws Exception {
+    if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+        // PhantomJS keeps crashing on Linux CI box. No idea why at the
+        // moment.
+        return;
     }
+    
+    TrialInfo info = createAcceptedTrial(false,"National Cancer Institute");
+    addSummaryFour(info.id, "abstractor-ci");
+    final String nciID = getLastNciId();
+    
+    assignTrialOwner("abstractor-ci", info.id);
+
+    loginAndAcceptDisclaimer();
+
+    String rand = info.leadOrgID;
+    runSearchAndVerifySingleTrialResult("officialTitle", rand, info,"National Cancer Institute");
+    
+    invokeUpdateTrial(true);
+    waitForPageToLoad();
+    clickAndWait("xpath=//button[text()='Review Trial']");
+    waitForPageToLoad();
+    
+    clickAndWait("xpath=//button[text()='Submit']");
+    waitForPageToLoad();
+    assertTrue(selenium
+            .isTextPresent("The trial update with the NCI Identifier "
+                    + nciID + " was successfully submitted."));
+    
+    
+    logoutUser();
+    logoutPA();
+    loginAsSuperAbstractor();
+    searchAndSelectTrial(info.title);
+    
+    
+    clickAndWait("link=Trial History");
+    openAndWait("/pa/protected/trialHistory.action?activeTab=updates&nciID="
+            + info.nciID);
+    
+    assertFalse(selenium.isTextPresent("Program codes updated"));
+    
+ }
     private void associateProgramCodes() throws Exception {
        
          QueryRunner qr = new QueryRunner();
@@ -497,6 +615,13 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
                         +" and program_code_id in (select identifier from program_code where program_code in ('PG1','PG2'))" ,
                         new ArrayHandler())[0];
      
+    }
+    
+    private void acknowledgeThisUpdate(long trialId) throws Exception {
+        
+        QueryRunner qr = new QueryRunner();
+        qr.update(connection, "delete from study_inbox where study_protocol_identifier="+trialId);
+        
     }
     
 
