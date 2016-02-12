@@ -752,7 +752,7 @@ public RegulatoryInformationServiceLocal getRegulatoryInformationService() {
     }
 
 	@Override
-	public FamilyProgramCodeService getProgramCodesFamilyService() {		
+	public FamilyProgramCodeService getProgramCodesFamilyService() {
 		return mock(FamilyProgramCodeService.class);
 	}
 }

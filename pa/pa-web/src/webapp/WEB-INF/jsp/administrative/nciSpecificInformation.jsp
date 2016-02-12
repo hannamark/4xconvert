@@ -13,7 +13,8 @@
         <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
         <c:url value="/protected/popupOrglookuporgs.action" var="lookupUrl"/>
-        <script type="text/javascript" language="javascript">    
+        <script type="text/javascript" language="javascript">
+            var ts = 0;
             
             // this function is called from body onload in main.jsp (decorator)
             function callOnloadFunctions() {
@@ -95,9 +96,43 @@
             	    Event.observe($('summary4TypeCode'), "change", 
                         filterConsortiaCategoryList);
             	}
+
+
+                jQuery("#programCodeIds").select2({
+                    templateResult : function(pg){
+                        return pg.title;
+                    },
+                    width: '200px'
+                });
+
+
+                jQuery(".select2-hidden-accessible").on("select2:unselect",function (e) {
+                    ts = e.timeStamp;
+                }).on("select2:opening", function (e) {
+                    if (e.timeStamp - ts < 100) {
+                        e.preventDefault();
+                    }
+                });
+
             });
                 
         </script>
+        <style type="text/css">
+            li.select2-results__option {
+                text-overflow: ellipsis;
+                overflow: hidden;
+                max-width: 35em;
+                white-space: nowrap;
+            }
+
+            li.select2-selection__choice > span.select2-selection__choice__remove {
+                right: 3px !important;
+                left: inherit !important;
+                color:#d03b39 !important;
+                padding-left:2px;
+                float:right;
+            }
+        </style>
     </head>
     <body>
         <h1><fmt:message key="nciSpecificInformation.title" /></h1>
@@ -182,20 +217,30 @@
                         </td>                                  
                     </tr>      
                     </c:if>
-                    
-                    <tr>
-                        <td scope="row" class="label">
-                            <label for="summary4ProgramCode"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label>
-                        </td>
-                        <td class="value">
-                            <s:textfield id="summary4ProgramCode" name="nciSpecificInformationWebDTO.programCodeText"  maxlength="100" size="100"  cssStyle="width:200px" />
-                            <span class="formErrorMsg">
-                                <s:fielderror>
-                                    <s:param>nciSpecificInformationWebDTO.programCodeText</s:param>
-                                </s:fielderror>                            
-                            </span>
-                        </td>
-                    </tr>
+
+                    <s:if test="cancerTrial">
+                        <tr>
+                            <td scope="row" class="label">
+                                <label for="programCodeIds"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label>
+                            </td>
+                            <td class="value">
+                                    <s:select id="programCodeIds" name="programCodeIds"
+                                          value="programCodeIds"
+                                          list="programCodeList"
+                                          listKey="id"
+                                          listValue="programCode"
+                                          listTitle="displayName"
+                                          multiple="true" />
+                                    <span class="formErrorMsg">
+                                        <s:fielderror>
+                                            <s:param>programCodeIds</s:param>
+                                        </s:fielderror>
+                                    </span>
+                            </td>
+                        </tr>
+                    </s:if>
+
+
                     
                     <s:if test="%{#request.displayXmlFlag}"> 
                     <tr>

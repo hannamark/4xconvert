@@ -386,6 +386,9 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
         List<OrgFamilyDTO> ofList = FamilyHelper.getByOrgId(Long.parseLong(gtdDTO.getLeadOrganizationIdentifier()));
         for (OrgFamilyDTO of : ofList) {
             FamilyDTO familyDTO = familyProgramCodeService.getFamilyDTOByPoId(of.getId());
+            if (familyDTO == null) {
+                continue;
+            }
             for (ProgramCodeDTO pgc : familyDTO.getProgramCodes()) {
                 if (pgc.isActive()) {
                     programCodeIndex.put(pgc.getId(), pgc);

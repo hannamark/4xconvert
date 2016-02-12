@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.dto;
 
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -98,6 +100,7 @@ public class NCISpecificInformationWebDTO implements Serializable {
     private String consortiaTrialCategoryCode;
     private List<SummaryFourSponsorsWebDTO> summary4Sponsors = new ArrayList<SummaryFourSponsorsWebDTO>();
     private String ctroOverideFlagComments;
+    private List<ProgramCodeDTO> programCodes = new ArrayList<ProgramCodeDTO>();
 
     /**
      * 
@@ -200,6 +203,23 @@ public class NCISpecificInformationWebDTO implements Serializable {
      */
     public void setCtroOverideFlagComments(String ctroOverideFlagComments) {
         this.ctroOverideFlagComments = ctroOverideFlagComments;
+    }
+
+
+    /**
+     * Gets the programCodes list
+     * @return the programCodes  list
+     */
+    public List<ProgramCodeDTO> getProgramCodes() {
+        return programCodes;
+    }
+
+    /**
+     * Sets the  programCodes
+     * @param programCodes  the programCodes list
+     */
+    public void setProgramCodes(List<ProgramCodeDTO> programCodes) {
+        this.programCodes = programCodes;
     }
 
 }

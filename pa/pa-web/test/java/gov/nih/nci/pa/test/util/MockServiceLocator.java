@@ -261,6 +261,7 @@ public class MockServiceLocator implements ServiceLocator {
     private final LookUpTableServiceRemote lookUpService = new MockLookUpTableServiceBean();
     private final StudyIndldeServiceLocal studyIndIdeService = new MockStudyIndIdeService();
     private final TSRReportGeneratorServiceRemote tsrReportGeneratorService = new MockTSRReportGeneratorService();
+    private FamilyProgramCodeService familyProgramCodeService;
 
     /**
      * @return mock service
@@ -1067,6 +1068,9 @@ public class MockServiceLocator implements ServiceLocator {
 
 	@Override
 	public FamilyProgramCodeService getProgramCodesFamilyService() {
-		return Mockito.mock(FamilyProgramCodeService.class);
+        if (familyProgramCodeService == null) {
+            familyProgramCodeService =  Mockito.mock(FamilyProgramCodeService.class);
+        }
+		return  familyProgramCodeService;
 	}  
 }

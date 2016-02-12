@@ -254,7 +254,7 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
     }
 
     /**
-     * @param file
+     * @param orgEntity
      * @return
      * @throws UnsupportedEncodingException
      * @throws IOException
@@ -396,7 +396,7 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
             SQLException {
 
         logInFindAndAcceptTrial(conf);
-        verifyLegacyProgramCode(reg.getProgramCode(), "programCodeText");
+
         verifyTrialIdentification(reg, conf);
         verifyDiseaseTerm(reg, conf);
         if (reg instanceof CompleteTrialRegistration) {
@@ -491,20 +491,6 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
                     "submitter-ci@example.com",
                     selenium.getText("xpath=//table[@id='row']//tr[1]//td[2]/a"));
         }
-
-    }
-
-    protected void verifyLegacyProgramCode(String inputPgCodeText, String fieldId) {
-        if (StringUtils.isNotEmpty(inputPgCodeText)) {
-            List<String> programCodes = Arrays.asList(StringUtils.split(inputPgCodeText, ";"));
-            String codeText = driver.findElement(By.id(fieldId)).getAttribute("value");
-            assertFalse("Unable to read program code text", StringUtils.isEmpty(codeText));
-
-            for (String pgc : StringUtils.split(codeText, ";")) {
-                assertTrue(programCodes.contains(pgc));
-            }
-        }
-
 
     }
 
@@ -840,8 +826,6 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
         verifyOrganizationPoId(
                 reg.getSummary4FundingSponsor().get(0),
                 selenium.getValue("id=nciSpecificInformationWebDTO.summary4Sponsors[0].orgId"));
-        assertEquals(StringUtils.defaultString(reg.getProgramCode()),
-                selenium.getValue("id=summary4ProgramCode"));
 
     }
 

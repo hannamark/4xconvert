@@ -82,13 +82,16 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.dto.FamilyDTO;
 import gov.nih.nci.pa.dto.NCISpecificInformationWebDTO;
+import gov.nih.nci.pa.dto.OrgFamilyDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.SummaryFourSponsorsWebDTO;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -98,6 +101,8 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.lov.ConsortiaTrialCategoryCode;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.FamilyHelper;
+import gov.nih.nci.pa.service.util.FamilyProgramCodeService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.Constants;
@@ -108,6 +113,8 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -146,6 +153,11 @@ public class NCISpecificInformationAction extends ActionSupport {
     private PAServiceUtils paServiceUtil = new PAServiceUtils();    
     private static final int MAX_CTRO_OVERRIDE_COMMENTS_SIZE = 1000;
     private ProtocolQueryServiceLocal queryServiceLocal;
+    private FamilyProgramCodeService familyProgramCodeService;
+    private List<ProgramCodeDTO> programCodeList = new ArrayList<ProgramCodeDTO>();
+
+    private List<Long> programCodeIds;
+    private boolean cancerTrial;
 
     /**
      * @return result
@@ -167,6 +179,8 @@ public class NCISpecificInformationAction extends ActionSupport {
             List<StudyResourcingDTO> studyResourcingDTO = PaRegistry.getStudyResourcingService()
                 .getSummary4ReportedResourcing(studyProtocolIi);
             nciSpecificInformationWebDTO = setNCISpecificDTO(studyProtocolDTO, studyResourcingDTO);
+            loadProgramCodes();
+            syncProgramCodes();
             
             //keep existing database logic as it is this mean false value should be shown as true in UI
             //and true value will be shown as false in UI
@@ -213,7 +227,7 @@ public class NCISpecificInformationAction extends ActionSupport {
     }
 
     /**
-     * @param org
+     * @param poId
      * @return
      * @throws PAException
      */
@@ -259,6 +273,10 @@ public class NCISpecificInformationAction extends ActionSupport {
         }
         // Step2 : retrieve the studyprotocol
         StudyResourcingDTO srDTO = new StudyResourcingDTO();
+
+            //load program codes
+            loadProgramCodes();
+            bindProgramCodes();
        
             // Step 0 : get the studyprotocol from database
             
@@ -267,6 +285,9 @@ public class NCISpecificInformationAction extends ActionSupport {
             spDTO.setAccrualReportingMethodCode(CdConverter.convertToCd(AccrualReportingMethodCode
                     .getByCode(nciSpecificInformationWebDTO.getAccrualReportingMethodCode())));
             spDTO.setProgramCodeText(StConverter.convertToSt(nciSpecificInformationWebDTO.getProgramCodeText()));
+
+            //copy program codes into studyProtocolDTO
+            spDTO.setProgramCodes(nciSpecificInformationWebDTO.getProgramCodes());
             
             //keep existing database logic as it is this means false value shown in UI should be passed and true
             //and true value should be passed as false
@@ -428,13 +449,12 @@ public class NCISpecificInformationAction extends ActionSupport {
         if (spDTO.getAccrualReportingMethodCode() != null) {
             nciSpDTO.setAccrualReportingMethodCode(spDTO.getAccrualReportingMethodCode().getCode());
         }
-        if (spDTO.getProgramCodeText() != null) {
-            nciSpDTO.setProgramCodeText(StConverter.convertToString(spDTO.getProgramCodeText()));
-        }
         nciSpDTO.setCtroOverride(BlConverter.convertToBoolean(spDTO.getCtroOverride()));
         nciSpDTO.setConsortiaTrialCategoryCode(CdConverter.convertCdToString(spDTO.getConsortiaTrialCategoryCode()));
         nciSpDTO.setCtroOverideFlagComments(spDTO.getCtroOverideFlagComments());
-        
+        if (CollectionUtils.isNotEmpty(spDTO.getProgramCodes())) {
+            nciSpDTO.setProgramCodes(spDTO.getProgramCodes());
+        }
         
     }
 
@@ -492,6 +512,80 @@ public class NCISpecificInformationAction extends ActionSupport {
         }
         nciSpecificInformationWebDTO.getSummary4Sponsors().addAll(summary4SponsorsList);
         return DISPLAY_ORG_FLD;
+    }
+
+    /**
+     * Will load the program codes from database
+     *
+     * @throws PAException - up on error
+     */
+    protected void loadProgramCodes() throws PAException {
+        familyProgramCodeService = PaRegistry.getProgramCodesFamilyService();
+
+        StudyProtocolQueryDTO trialSummaryDto = (StudyProtocolQueryDTO) ServletActionContext
+                .getRequest()
+                .getSession()
+                .getAttribute(Constants.TRIAL_SUMMARY);
+
+        HashMap<Long, ProgramCodeDTO> programCodeIndex = new HashMap<Long, ProgramCodeDTO>();
+
+        //find the families of the lead organization
+        List<OrgFamilyDTO> ofList = FamilyHelper.getByOrgId(trialSummaryDto.getLeadOrganizationPOId());
+        for (OrgFamilyDTO of : ofList) {
+            FamilyDTO familyDTO = familyProgramCodeService.getFamilyDTOByPoId(of.getId());
+            if (familyDTO == null) {
+                continue;
+            }
+            for (ProgramCodeDTO pgc : familyDTO.getProgramCodes()) {
+                if (pgc.isActive()) {
+                    programCodeIndex.put(pgc.getId(), pgc);
+                }
+            }
+        }
+
+        //also add the program codes accumulated on the study from other sites
+        for (ProgramCodeDTO pgc : nciSpecificInformationWebDTO.getProgramCodes()) {
+            programCodeIndex.put(pgc.getId(), pgc);
+        }
+
+        setCancerTrial(!programCodeIndex.isEmpty());
+        programCodeList.addAll(programCodeIndex.values());
+        Collections.sort(programCodeList, new Comparator<ProgramCodeDTO>() {
+            @Override
+            public int compare(ProgramCodeDTO o1, ProgramCodeDTO o2) {
+                return o1.getProgramCode().compareTo(o2.getProgramCode());
+            }
+        });
+
+
+    }
+
+    /**
+     * Will sync the selected program code ids
+     */
+    protected void syncProgramCodes() {
+        programCodeIds = new ArrayList<Long>();
+        for (ProgramCodeDTO pgc : nciSpecificInformationWebDTO.getProgramCodes()) {
+            programCodeIds.add(pgc.getId());
+        }
+    }
+
+    /**
+     * Will bind the program codes
+     */
+    protected void bindProgramCodes() {
+        nciSpecificInformationWebDTO.getProgramCodes().clear();
+        if (CollectionUtils.isEmpty(programCodeIds)) {
+            return;
+        }
+
+        for (Long pgcId : programCodeIds) {
+            for (ProgramCodeDTO pgc : programCodeList) {
+                if (pgc.getId().equals(pgcId)) {
+                    nciSpecificInformationWebDTO.getProgramCodes().add(pgc);
+                }
+            }
+        }
     }
 
     /**
@@ -560,5 +654,66 @@ public class NCISpecificInformationAction extends ActionSupport {
     public void setPaServiceUtil(PAServiceUtils paServiceUtil) {
         this.paServiceUtil = paServiceUtil;
     }
-    
+
+    /**
+     * Will set the family programcode service
+     * @param familyProgramCodeService  the service class
+     */
+    public void setFamilyProgramCodeService(FamilyProgramCodeService familyProgramCodeService) {
+        this.familyProgramCodeService = familyProgramCodeService;
+    }
+
+    /**
+     * The ids of the program codes that were selected
+     *
+     * @return list having program code ids
+     */
+    public List<Long> getProgramCodeIds() {
+        return programCodeIds;
+    }
+
+    /**
+     * Sets the ids of the program codes
+     *
+     * @param programCodeIds - list of program code ids
+     */
+    public void setProgramCodeIds(List<Long> programCodeIds) {
+        this.programCodeIds = programCodeIds;
+    }
+
+    /**
+     * Will return the valid program codes
+     *
+     * @return - valid program codes
+     */
+    public List<ProgramCodeDTO> getProgramCodeList() {
+        return programCodeList;
+    }
+
+    /**
+     * Will set the valid program codes
+     * @param programCodeList - valid program codes
+     */
+    public void setProgramCodeList(List<ProgramCodeDTO> programCodeList) {
+        this.programCodeList = programCodeList;
+    }
+
+    /**
+     * Sets if cancerTrial or not
+     *
+     * @return - true if cancer trial
+     */
+    public boolean isCancerTrial() {
+        return cancerTrial;
+    }
+
+    /**
+     * Sets cancer trial
+     *
+     * @param cancerTrial - true if cancer trial
+     */
+    public void setCancerTrial(boolean cancerTrial) {
+        this.cancerTrial = cancerTrial;
+    }
+
 }
