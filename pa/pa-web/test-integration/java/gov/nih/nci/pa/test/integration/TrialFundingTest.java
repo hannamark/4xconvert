@@ -57,6 +57,7 @@ public class TrialFundingTest extends AbstractTrialStatusTest {
         ((WebElement) driver.findElement(By.name("nciGrant"))).click();
         waitForElementToBecomeVisible(By.id("ncigrantmessagediv"), 5);
         assertTrue(selenium.isTextPresent("Value updated to Yes"));
+        pause(5000);
         assertTrue(getNciGrant(trial) == true);
     }
 
