@@ -137,6 +137,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
     @SuppressWarnings("deprecation")
     @Test
     public void testAddProgramCode() throws Exception {
+        setupFamilies();
         //Given a trial associated with DCP
         TrialInfo info = createAndSelectTrial();
         //And no program codes associated with the Trial
@@ -154,6 +155,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
     @Test
     public void testUpdateProgramCode() throws
             Exception {
+        setupFamilies();
         //Given a trial associated with DCP
         TrialInfo info = createAndSelectTrial();
 
