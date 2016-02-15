@@ -332,18 +332,7 @@
                         </div>
                     </div>
                    
-                    <div class="form-group">
-                        <label for="trialDTO.siteProgramCodeText" class="col-xs-4 control-label"><fmt:message key="submit.proprietary.trial.sitePrgCode"/></label>
-                        <div class="col-xs-4">
-                        <s:textfield id="trialDTO.siteProgramCodeText" name="trialDTO.siteProgramCodeText"  maxlength="100" size="100" cssClass="form-control" />
-                        <span class="formErrorMsg">
-                            <s:fielderror>
-                                <s:param>trialDTO.siteProgramCodeText</s:param>
-                            </s:fielderror>
-                        </span>
-                         </div>
-                         <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='<fmt:message key="tooltip.summary_4_site_program_code"/>'  data-placement="top" data-trigger="hover"></i>
-                    </div>
+                   
                 </div>
                 </div>
                 </div>    

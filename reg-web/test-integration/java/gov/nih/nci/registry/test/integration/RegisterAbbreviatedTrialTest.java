@@ -135,6 +135,13 @@ public class RegisterAbbreviatedTrialTest extends AbstractRegistrySeleniumTest {
                         + "Date Closed for Accrual must be a valid date for Administratively Complete."));
 
     }
+    
+    @Test
+    public void testIfPrgroamCodesNotDisplayed() throws Exception {
+        loginAndAcceptDisclaimer();
+        openAndWait("/registry/protected/submitProprietaryTrial.action?sum4FundingCatCode=Industrial");
+        assertFalse(selenium.isElementPresent("id='trialDTO.siteProgramCodeText'"));
+    }
 
     /**
      * 
