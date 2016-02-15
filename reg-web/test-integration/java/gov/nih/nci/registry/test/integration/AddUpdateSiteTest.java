@@ -105,6 +105,14 @@ import org.openqa.selenium.By;
 @SuppressWarnings("deprecation")
 public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
 
+
+    @Override
+    public void setUp() throws  Exception {
+        super.setUp();
+        setupFamilies();
+    }
+
+
     @SuppressWarnings("deprecation")
     @Test
     public void testPO8268_SingleSiteFromFamily() throws URISyntaxException,
@@ -137,14 +145,13 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
     @SuppressWarnings("deprecation")
     @Test
     public void testAddProgramCode() throws Exception {
-        setupFamilies();
         //Given a trial associated with DCP
         TrialInfo info = createAndSelectTrial();
         //And no program codes associated with the Trial
         removeProgramCodesFromTrial(info.id);
 
         //when I add a site and Program Code PG1
-        addMySiteAndVerify(info);
+        addMySiteAndVerify(info, true);
 
         //Then I see in DATABASE PG1 associated with the study
         List<String> codes = getProgramCodesByTrial(info.id);
@@ -155,7 +162,6 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
     @Test
     public void testUpdateProgramCode() throws
             Exception {
-        setupFamilies();
         //Given a trial associated with DCP
         TrialInfo info = createAndSelectTrial();
 
@@ -308,7 +314,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         // User can add more than 1 org as site, in this case the Pick Site
         // selection screen appears first
         TrialInfo info = createAndSelectTrial();
-        addMySiteAndVerify(info);
+        addMySiteAndVerify(info, false);
 
     }
 
@@ -328,7 +334,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
     @Test
     public void testUpdateMySite() throws URISyntaxException, SQLException {
         TrialInfo info = createAndSelectTrial();
-        addMySiteAndVerify(info);
+        addMySiteAndVerify(info, false);
         logoutUser();
 
         findInMyTrials();
@@ -370,7 +376,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[2]"));
         assertEquals("DCP_SITE_U",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[3]"));
-        assertTrue(selenium.isTextPresent("PG1"));
+
         assertEquals("Approved",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[5]"));
         assertEquals(today,
@@ -388,7 +394,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
      * @param info
      * @throws SQLException
      */
-    private void addMySiteAndVerify(TrialInfo info) throws SQLException {
+    private void addMySiteAndVerify(TrialInfo info, boolean addProgramCode) throws SQLException {
 
         assignTrialOwner("submitter-ci", info.id);
         findInMyTrials();
@@ -443,7 +449,6 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[2]"));
         assertEquals(localID,
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[3]"));
-        assertTrue(selenium.isTextPresent("PG1"));
         assertEquals("Approved",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[5]"));
         assertEquals(today,
@@ -814,9 +819,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         assertEquals("Cancer Therapy Evaluation Program",
                 selenium.getValue("organizationName"));
 
-        useSelect2ToPickAnOption("programCode","PG1","PG1 - Cancer Program1");
-
-        driver.findElement(By.xpath("//button[normalize-space(text())='Save']"))
+           driver.findElement(By.xpath("//button[normalize-space(text())='Save']"))
                 .click();
         driver.switchTo().defaultContent();
         waitForPageToLoad();
@@ -829,7 +832,6 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                     selenium.getText("//table[@id='row']/tbody/tr[2]/td[1]"));
 
         }
-        assertTrue(selenium.isTextPresent("PG1"));
     }
 
     /**
