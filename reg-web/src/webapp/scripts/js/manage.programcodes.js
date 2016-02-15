@@ -19,6 +19,15 @@ var mrplS2Ctrl1 = null;
 var mrplS2Ctrl2 = null;
 var s2closing = false;
 
+function idfy(code) {
+   return code.split(' ').join('_');
+}
+function pgcDisplayName(code, name) {
+    if (name) {
+        return code + " - " + name;
+    }
+    return code;
+}
 // will remove program code currently associated with the given study
 function removeProgramCodeFromTrialMap($, sp, pgc) {
     tmparr = [];
@@ -73,7 +82,7 @@ function showProgramCodeS2InRow($, sp) {
 
     $(allProgramCodes).each(function(i, p){
         if ($.inArray(p.code, tmparr) < 0) {
-            tmpS2Ds.push({id: p.code, text: p.code + " - " + p.name, title: p.code + " - " + p.name});
+            tmpS2Ds.push({id: p.code, text: pgcDisplayName(p.code, p.name), title: pgcDisplayName(p.code, p.name)});
         }
     });
 
@@ -166,7 +175,7 @@ function pgcinit($) {
                 data: function ( row, type, val, meta ) {
                     var snippet = "";
                     $(row.programCodes).each(function(i,pc) {
-                        snippet = snippet +  '<a id="' + row.studyProtocolId + '_' + pc.code +'_a" href="#" rel="' + row.studyProtocolId + '" pc="' +  pc.code + '" class="pg btn-xs pgcrm ">' + pc.code + ' <span class="pg glyphicon glyphicon-remove"></span></a> ';
+                        snippet = snippet +  '<a id="' + row.studyProtocolId + '_' + idfy(pc.code) +'_a" href="#" rel="' + row.studyProtocolId + '" pc="' +  pc.code + '" class="pg btn-xs pgcrm ">' + pc.code + ' <span class="pg glyphicon glyphicon-remove"></span></a> ';
 
                     });
 
@@ -366,8 +375,8 @@ function assignMultiple($) {
     $(tmpS2Ds).each(function(i, pgc) {
         $("#pgc-madd-sel").append($("<option />",{
             value: pgc.code,
-            text: pgc.code + " - " + pgc.name,
-            title:pgc.code + " - " + pgc.name
+            text: pgcDisplayName(pgc.code, pgc.name),
+            title: pgcDisplayName(pgc.code, pgc.name)
            }
         ));
     });
@@ -433,7 +442,7 @@ function removeMultiple($) {
         });
 
         if (tmpS2Ds.length > -1) {
-            $("#pgc-mrm-sel").append($("<option />",{value: tmpS2Ds[0].code, text: tmpS2Ds[0].code + " - " + tmpS2Ds[0].name, title:tmpS2Ds[0].code + " - " + tmpS2Ds[0].name}));
+            $("#pgc-mrm-sel").append($("<option />",{value: tmpS2Ds[0].code, text: pgcDisplayName(tmpS2Ds[0].code, tmpS2Ds[0].name), title: pgcDisplayName(tmpS2Ds[0].code, tmpS2Ds[0].name) }));
         }
     });
 
@@ -496,10 +505,10 @@ function replaceMultiple($) {
     });
     $(allProgramCodes).each(function(i, pgc){
         if (tmparr.indexOf(pgc.code) < 0) {
-            $("#pgc-mrpl-seltwo").append($("<option />",{value: pgc.code, text: pgc.code + " - " + pgc.name, title:pgc.code + " - " + pgc.name}));
+            $("#pgc-mrpl-seltwo").append($("<option />",{value: pgc.code, text: pgcDisplayName(pgc.code, pgc.name), title: pgcDisplayName(pgc.code, pgc.name)}));
         }  else {
-            $("#pgc-mrpl-selone").append($("<option />",{value: pgc.code, text: pgc.code + " - " + pgc.name, title:pgc.code + " - " + pgc.name}));
-            $("#pgc-mrpl-seltwo").append($("<option />",{value: pgc.code, text: pgc.code + " - " + pgc.name, disabled:true, title:pgc.code + " - " + pgc.name}));
+            $("#pgc-mrpl-selone").append($("<option />",{value: pgc.code, text: pgcDisplayName(pgc.code, pgc.name), title: pgcDisplayName(pgc.code, pgc.name)}));
+            $("#pgc-mrpl-seltwo").append($("<option />",{value: pgc.code, text:pgcDisplayName(pgc.code, pgc.name), disabled:true, title: pgcDisplayName(pgc.code, pgc.name)}));
         }
     });
 
@@ -586,8 +595,8 @@ function openParticipationDialog($) {
 function unAssignProgramCode($, td, sp, pgc) {
 
     //insert indicator
-    $(td).append('<img id="' + sp + "_" + pgc + '_img" src="../images/loading.gif"/>');
-    $(td).append('<span id="' + sp + "_" + pgc + '_span" style ="display:none;" class="info">Code unassigned</span>');
+    $(td).append('<img id="' + sp + "_" + idfy(pgc) + '_img" src="../images/loading.gif"/>');
+    $(td).append('<span id="' + sp + "_" + idfy(pgc) + '_span" style ="display:none;" class="info">Code unassigned</span>');
 
     //call ajax function
     $.post("managePCAssignmentunassignProgramCode.action",
@@ -596,17 +605,17 @@ function unAssignProgramCode($, td, sp, pgc) {
             "pgcParam": pgc
         })
         .done(function (data) {
-            $('#' + sp + '_' + pgc + '_a').remove();
-            $('#' + sp + '_' + pgc + '_img').remove();
+            $('#' + sp + '_' + idfy(pgc) + '_a').remove();
+            $('#' + sp + '_' + idfy(pgc) + '_img').remove();
             removeProgramCodeFromTrialMap($,sp, pgc);
             //show confirmation
-            $("#" + sp + "_" + pgc + "_span").show();
-            $("#" + sp + "_" + pgc + "_span").delay(3000).hide('slow', function () {
-                $("#" + sp + "_" + pgc + "_span").remove();
+            $("#" + sp + "_" + idfy(pgc) + "_span").show();
+            $("#" + sp + "_" + idfy(pgc) + "_span").delay(3000).hide('slow', function () {
+                $("#" + sp + "_" + idfy(pgc) + "_span").remove();
             });
         })
         .fail(function (jqXHR) {
-            $('#' + sp + '_' + pgc + '_img').remove();
+            $('#' + sp + '_' + idfy(pgc) + '_img').remove();
             showAjaxErrorOnPage($,jqXHR.getResponseHeader('msg'));
         });
 }
@@ -624,7 +633,7 @@ function assignProgramCode($, s2, td, sp, pgc) {
 
     if (pgc) {
         //show ajax indicator
-        $(td).append('<img id="' + sp + "_" + pgc + '_img" src="../images/loading.gif"/>');
+        $(td).append('<img id="' + sp + "_" + idfy(pgc) + '_img" src="../images/loading.gif"/>');
 
         //invoke ajax function
         $.post("managePCAssignmentassignProgramCode.action",
@@ -635,19 +644,19 @@ function assignProgramCode($, s2, td, sp, pgc) {
             })
             .done(function (data) {
                 s2closing = false;
-                $('#' + sp + '_' + pgc + '_img').remove();
+                $('#' + sp + '_' + idfy(pgc) + '_img').remove();
                 addProgramCodeToTrialMap($,sp, pgc);
                 //add the program code in the TD
-                $('<a id="' + sp + '_' + pgc +'_a" href="#" rel="' + sp + '" pc="' +  pgc + '" class="pg btn-xs pgcrm ">' + pgc + ' <span class="pg glyphicon glyphicon-remove"></span></a> ').insertBefore("#" + sp + "_tra");
+                $('<a id="' + sp + '_' + idfy(pgc) +'_a" href="#" rel="' + sp + '" pc="' +  pgc + '" class="pg btn-xs pgcrm ">' + pgc + ' <span class="pg glyphicon glyphicon-remove"></span></a> ').insertBefore("#" + sp + "_tra");
                 //remove the indicator image
-                $('#' + sp + '_' + pgc + '_img').remove();
+                $('#' + sp + '_' + idfy(pgc) + '_img').remove();
                 //show the down arrow
                 $("#" + sp + "_tra").show();
             })
             .fail(function (jqXHR) {
                 s2closing = false;
                 //remove indicator image and show the down arrow
-                $('#' + sp + '_' + pgc + '_img').remove();
+                $('#' + sp + '_' + idfy(pgc) + '_img').remove();
                 $("#" + sp + "_tra").show();
                 showAjaxErrorOnPage($,jqXHR.getResponseHeader('msg'));
             });

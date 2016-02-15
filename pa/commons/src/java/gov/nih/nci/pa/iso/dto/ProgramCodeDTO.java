@@ -82,6 +82,9 @@ public class ProgramCodeDTO implements Serializable {
      * @return - the display name
      */
     public String getDisplayName() {
+        if (programName == null || programName.equals("")) {
+            return programCode;
+        }
         return String.format("%s - %s", programCode, programName);
     }
 }

@@ -346,8 +346,6 @@ public class TrialSearchTest extends AbstractRegistrySeleniumTest {
         assertEquals(trialsAsList.get(10).leadOrgID,
                 getTrialConfValue("Lead Organization Trial Identifier:"));
         assertEquals(trialsAsList.get(10).title, getTrialConfValue("Title:"));
-        assertEquals(trialsAsList.get(10).uuid,
-                getTrialConfValue("Program code:"));
 
     }
 

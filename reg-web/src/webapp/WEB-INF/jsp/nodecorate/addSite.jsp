@@ -87,6 +87,13 @@ li.select2-results__option {
     max-width: 32em;
     white-space: nowrap;
 }
+li.select2-selection__choice > span.select2-selection__choice__remove {
+    right: 3px !important;
+    left: inherit !important;
+    color:#d03b39 !important;
+    padding-left:2px;
+    float:right;
+}
 </style>
 
 <script type="text/javascript" language="javascript">
@@ -539,7 +546,7 @@ li.select2-results__option {
                             <select id="programCode" name="programCode" multiple="multiple"
                                     class="form-control" data-placeholder="Select Program Code(s)" style="width:100%;">
                                 <c:forEach var="pgc" items="${sessionScope['PGC_MASTER_LIST']}">
-                                    <option value="${pgc.id}" ${fn:contains(sessionScope['PGC_ID_LIST'],pgc.id )? 'selected' : ''} title="${pgc.programCode} - ${pgc.programName}">${pgc.programCode}</option>
+                                    <option value="${pgc.id}" ${fn:contains(sessionScope['PGC_ID_LIST'],pgc.id )? 'selected' : ''} title="${pgc.displayName}">${pgc.programCode}</option>
                                 </c:forEach>
                             </select>
                             <c:if test="${sessionScope['isSiteAdmin']}">

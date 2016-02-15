@@ -80,6 +80,14 @@ table.sr-table > tbody > tr > td {
     padding: 2px;
 }
 
+li.select2-selection__choice > span.select2-selection__choice__remove {
+    right: 3px !important;
+    left: inherit !important;
+    color:#d03b39 !important;
+    padding-left:2px;
+    float:right;
+}
+
 </style>
 
 <script type="text/javascript" language="javascript"
@@ -683,7 +691,7 @@ table.sr-table > tbody > tr > td {
                                                 <select id="pgc_${trial.studyProtocolId}" name="trial_${trial.studyProtocolId}_programCode" multiple="multiple"
                                                         class="s2pgc" data-placeholder="Select Program Code(s)" >
                                                     <c:forEach var="entry" items="${requestScope['PROGRAM_CODES']}">
-                                                        <option value="${entry.value.id}" title="${entry.value.programCode} - ${entry.value.programName}">${entry.value.programCode}</option>
+                                                        <option value="${entry.value.id}" title="${entry.value.displayName}">${entry.value.programCode}</option>
                                                     </c:forEach>
                                                 </select>
                                             </c:if>

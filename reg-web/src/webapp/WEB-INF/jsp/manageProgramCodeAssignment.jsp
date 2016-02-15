@@ -156,7 +156,7 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label"><fmt:message key="programcodes.reporting.end.date.label"/></label>
                     <div class="col-sm-2 txt-val"><s:date name="familyDto.reportingPeriodEndDate" format="MM/dd/yyyy"/></div>
-                    <label class="col-sm-2 control-label"><fmt:message key="programcodes.reporting.period.length.label"/></label>
+                    <label class="col-sm-3 control-label"><fmt:message key="programcodes.reporting.period.length.label"/></label>
                     <div class="col-sm-2 txt-val"><s:property value="familyDto.reportingPeriodLength"/> </div>
                 </div>
                 <div class="col-md-12">
@@ -181,7 +181,7 @@
                                                     <select id="fpgc-sel" multiple="multiple">
                                                         <s:iterator var="p" value="familyDto.programCodesAsOrderedList">
                                                             <s:if test="active">
-                                                                <option id="fpgc-opt-<s:property value="id" />" value="<s:property value="id" />" title='<s:property value="programCode" /> - <s:property value="programName" />'><s:property value="programCode" /> - <s:property value="programName" /></option>
+                                                                <option id="fpgc-opt-<s:property value="id" />" value="<s:property value="id" />" title='<s:property value="displayName" />'><s:property value="displayName" /></option>
                                                             </s:if>
 
                                                         </s:iterator>
@@ -237,7 +237,7 @@
 <div id="dialog-participation" title="Participating Sites"
      style="display: none;">
     <p>
-		<span class="pgcpSite"></span> participating sites:
+		<span class="pgcpSite"></span> Participating sites:
     </p>
     <div>
         <div class="table-header-wrap">
@@ -274,7 +274,7 @@
             <select id="pgc-madd-sel" multiple="multiple" style="width: 95%;"  data-placeholder="Select Program Code(s)">
                 <s:iterator var="p" value="familyDto.programCodesAsOrderedList">
                     <s:if test="active">
-                        <option id="pgc-madd-opt-<s:property value="id" />" value="<s:property value="programCode" />"><s:property value="programCode" /> - <s:property value="programName" /></option>
+                        <option id="pgc-madd-opt-<s:property value="id" />" value="<s:property value="programCode" />"><s:property value="displayName" /></option>
                     </s:if>
                 </s:iterator>
             </select>
@@ -301,7 +301,7 @@
             <select id="pgc-mrm-sel" multiple="multiple" style="width: 95%;" data-placeholder="Select Program Code(s)">
                 <s:iterator var="p" value="familyDto.programCodesAsOrderedList">
                     <s:if test="active">
-                        <option id="pgc-mrm-opt-<s:property value="id" />" value="<s:property value="programCode" />"><s:property value="programCode" /> - <s:property value="programName" /></option>
+                        <option id="pgc-mrm-opt-<s:property value="id" />" value="<s:property value="programCode" />"><s:property value="displayName" /></option>
                     </s:if>
                 </s:iterator>
             </select>
@@ -318,7 +318,7 @@
     </div>
 
     <p>
-        Only one program code can be replace at a time. Select the program code that you want to replace:
+        Only one program code can be replaced at a time. Select the program code that you want to replace:
     <div id="pgc-mrpl-indicator" style="display: none;">
         <img src="${pageContext.request.contextPath}/images/loading.gif" alt="Progress Indicator." width="18" height="18" />
     </div>
@@ -335,7 +335,7 @@
             <select id="pgc-mrpl-seltwo" multiple="multiple" style="width: 95%;"  data-placeholder="Select Program Code(s)">
                 <s:iterator var="p" value="familyDto.programCodesAsOrderedList">
                     <s:if test="active">
-                        <option value="<s:property value="programCode" />"><s:property value="programCode" /> - <s:property value="programName" /></option>
+                        <option value="<s:property value="programCode" />"><s:property value="displayName" /></option>
                     </s:if>
                 </s:iterator>
             </select>
