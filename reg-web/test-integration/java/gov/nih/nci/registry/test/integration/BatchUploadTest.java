@@ -89,6 +89,7 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Iterator;
 
 import org.apache.commons.dbutils.QueryRunner;
@@ -103,6 +104,39 @@ import com.dumbster.smtp.SmtpMessage;
  * @author dkrylov
  */
 public class BatchUploadTest extends AbstractRegistrySeleniumTest {
+    
+    @Override
+    public void setUp() throws Exception {     
+        super.setUp();
+        setupFamilies();
+    }
+
+    @SuppressWarnings({ "deprecation", "rawtypes" })
+    @Test
+    public void testRegisterCancerCenterTrialWithProgramCodes()
+            throws Exception {
+
+        final String trialDataFileName = "batch_new_registration_cancer_center_program_codes.xls";
+        TrialInfo trial = registerFromBatchFile(trialDataFileName);
+        assertEquals(getTrialProgramCodes(trial),
+                Arrays.asList(new String[] { "PG1", "PG6" }));
+    }
+
+    @SuppressWarnings({ "deprecation", "rawtypes" })
+    @Test
+    public void testRegisterNonCancerCenterTrialWithProgramCodes()
+            throws Exception {
+
+        final String trialDataFileName = "batch_new_registration_non_cancer_center_program_codes.xls";
+        TrialInfo trial = registerFromBatchFile(trialDataFileName);
+        assertEquals(getTrialProgramCodes(trial),
+                Arrays.asList(new String[] {}));
+        assertEquals(
+                "The following program code value was submitted but not recorded: XYZ;PG1;PG6;PG7."
+                        + " Starting in version 4.3.1, CTRP no longer records program codes for trials"
+                        + " lead by a non designated cancer center organization.",
+                getTrialField(trial, "comments"));
+    }
 
     @SuppressWarnings({ "deprecation", "rawtypes" })
     @Test
@@ -142,7 +176,6 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
                 DateUtils.parseDate("06/04/13", new String[] { "MM/dd/yy" })));
 
     }
-    
 
     /**
      * @throws SQLException
@@ -152,6 +185,22 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
     @SuppressWarnings("deprecation")
     private void registerNewTrialAndVerify() throws SQLException,
             URISyntaxException, ParseException {
+
+        final String trialDataFileName = "batch_new_registration.xls";
+
+        registerFromBatchFile(trialDataFileName);
+
+        verifyLegacyProgramCode("PG00034", "PG00035");
+    }
+
+    /**
+     * @param trialDataFileName
+     * @throws SQLException
+     * @throws URISyntaxException
+     * @throws ParseException
+     */
+    private TrialInfo registerFromBatchFile(final String trialDataFileName)
+            throws SQLException, URISyntaxException, ParseException {
         loginAndAcceptDisclaimer();
 
         String leadOrgTrialId = "FKTESTING_23";
@@ -160,7 +209,6 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
 
         restartEmailServer();
 
-        final String trialDataFileName = "batch_new_registration.xls";
         submitBatchFile(trialDataFileName);
 
         Number trialID = waitForTrialToRegister(leadOrgTrialId, 60);
@@ -174,8 +222,9 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
         assertTrue(DateUtils.isSameDay(getCurrentTrialStatus(trial).statusDate,
                 DateUtils.parseDate("06/03/13", new String[] { "MM/dd/yy" })));
         verifyEmailSentByBatchProcessing();
-        verifyLegacyProgramCode("PG00034", "PG00035");
+        return trial;
     }
+
     /**
      * @throws SQLException
      * @throws URISyntaxException
@@ -183,7 +232,7 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
      */
     @SuppressWarnings("deprecation")
     private void registerNewTrialWithDSPAndVerify() throws SQLException,
-    URISyntaxException, ParseException {
+            URISyntaxException, ParseException {
         loginAndAcceptDisclaimer();
 
         String leadOrgTrialId = "FKTESTING_23";
@@ -205,9 +254,11 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
         assertEquals("APPROVED", getCurrentTrialStatus(trial).statusCode);
         assertTrue(DateUtils.isSameDay(getCurrentTrialStatus(trial).statusDate,
                 DateUtils.parseDate("06/03/13", new String[] { "MM/dd/yy" })));
-        assertEquals("false", getTrialField(trial, "DELAYED_POSTING_INDICATOR").toString());
+        assertEquals("false", getTrialField(trial, "DELAYED_POSTING_INDICATOR")
+                .toString());
         verifyEmailSentByBatchProcessingDSP();
     }
+
     /**
      * @param server
      * @throws SQLException
@@ -232,53 +283,55 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
                         new ArrayHandler())[0];
         verifyBody(loggedBody);
     }
+
     /**
-    * @param server
-    * @throws SQLException
-    */
-   @SuppressWarnings("rawtypes")
-   private void verifyEmailSentByBatchProcessingDSP() throws SQLException {
-       assertEquals(2, server.getReceivedEmailSize());
-       Iterator<SmtpMessage> emailIter = server.getReceivedEmail();
-       for (int i=0 ; emailIter.hasNext(); i++) {
-           SmtpMessage email = (SmtpMessage) emailIter.next();
-           String body = email.getBody();
-           System.out.println(body);
-           if (i==1) {
-              verifyBodyDSPWarning(body);
-           } else {
-           verifyBodyDSPCTRO(body);
-           }
-       }
-       
-       
-       // Ensure same info was written into email log table.
-       pause(3000);
-       QueryRunner runner = new QueryRunner();
-       String loggedBody = (String) runner
-               .query(connection,
-                       "SELECT body FROM email_log INNER JOIN email_attachment ON email_log.identifier=email_attachment.email_id "
-                               + "WHERE outcome='SUCCESS' "
-                               + "ORDER BY date_sent desc LIMIT 1",
-                       new ArrayHandler())[0];
-       verifyBodyDSPWarning(loggedBody);
-   }
+     * @param server
+     * @throws SQLException
+     */
+    @SuppressWarnings("rawtypes")
+    private void verifyEmailSentByBatchProcessingDSP() throws SQLException {
+        assertEquals(2, server.getReceivedEmailSize());
+        Iterator<SmtpMessage> emailIter = server.getReceivedEmail();
+        for (int i = 0; emailIter.hasNext(); i++) {
+            SmtpMessage email = (SmtpMessage) emailIter.next();
+            String body = email.getBody();
+            System.out.println(body);
+            if (i == 1) {
+                verifyBodyDSPWarning(body);
+            } else {
+                verifyBodyDSPCTRO(body);
+            }
+        }
 
-   private void verifyLegacyProgramCode(String... pgcodes) {
-       accessTrialSearchScreen();
-       selenium.type("officialTitle",
-               "PHASE II TRIAL OF LOW-DOSE METHOTREXATE AND IODINE I 131 TOSITUMOMAB FOR PREVIOUSLY UNTREATED, ADVANCED-STAGE, FOLLICULAR LYMPHOMA");
-       selenium.click("runSearchBtn");
-       clickAndWait("link=All Trials");
-       waitForElementById("row", 10);
-       driver.findElement(By.xpath("//table[@id='row']/tbody/tr[1]/td[1]/a")).click();
-       waitForPageToLoad();
-       for (String c : pgcodes) {
-           selenium.isTextPresent(c);
-       }
+        // Ensure same info was written into email log table.
+        pause(3000);
+        QueryRunner runner = new QueryRunner();
+        String loggedBody = (String) runner
+                .query(connection,
+                        "SELECT body FROM email_log INNER JOIN email_attachment ON email_log.identifier=email_attachment.email_id "
+                                + "WHERE outcome='SUCCESS' "
+                                + "ORDER BY date_sent desc LIMIT 1",
+                        new ArrayHandler())[0];
+        verifyBodyDSPWarning(loggedBody);
+    }
 
-       selenium.isTextPresent("PG00035");
-   }
+    private void verifyLegacyProgramCode(String... pgcodes) {
+        accessTrialSearchScreen();
+        selenium.type(
+                "officialTitle",
+                "PHASE II TRIAL OF LOW-DOSE METHOTREXATE AND IODINE I 131 TOSITUMOMAB FOR PREVIOUSLY UNTREATED, ADVANCED-STAGE, FOLLICULAR LYMPHOMA");
+        selenium.click("runSearchBtn");
+        clickAndWait("link=All Trials");
+        waitForElementById("row", 10);
+        driver.findElement(By.xpath("//table[@id='row']/tbody/tr[1]/td[1]/a"))
+                .click();
+        waitForPageToLoad();
+        for (String c : pgcodes) {
+            selenium.isTextPresent(c);
+        }
+
+        selenium.isTextPresent("PG00035");
+    }
 
     /**
      * @param body
@@ -291,24 +344,24 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
                 .contains(
                         "<td><b>Number of trials registered successfully: </b></td><td>1</td>"));
     }
-    
+
     /**
      * @param body
      */
     private void verifyBodyDSPCTRO(final String body) {
-        assertTrue(body.contains(
-                "The following trial(s) were submitted with the value of the Delayed Posting Indicator set to \"Yes\":"));
-        assertTrue(body.contains(
-                        "<p>The following warning message was sent to the submitter:</p><br>Submitter: Abstractor User"
+        assertTrue(body
+                .contains("The following trial(s) were submitted with the value of the Delayed Posting Indicator set to \"Yes\":"));
+        assertTrue(body
+                .contains("<p>The following warning message was sent to the submitter:</p><br>Submitter: Abstractor User"
                         + " <br>Submitting Organization: National Cancer Institute Division of Cancer Prevention"));
     }
-    
+
     /**
      * @param body
      */
     private void verifyBodyDSPWarning(final String body) {
-        assertTrue(body.contains(
-                "WARNING:</b> The file submitted contains one or more trial where the Delayed Posting Indicator value is set to \"Yes\""));
+        assertTrue(body
+                .contains("WARNING:</b> The file submitted contains one or more trial where the Delayed Posting Indicator value is set to \"Yes\""));
     }
 
     /**
@@ -364,8 +417,7 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
                 By.xpath("//button[normalize-space(text())='Upload Trials']"),
                 5);
     }
-    
-    
+
     @SuppressWarnings({ "deprecation", "rawtypes" })
     @Test
     public void testAmendTrial() throws Exception {
@@ -373,8 +425,7 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
         registerNewTrialAndVerify();
 
         changeNciId(getLastNciId(), "NCI-2015-99999");
-        TrialInfo info = acceptTrialByNciId("NCI-2015-99999",
-                leadOrgTrialId);
+        TrialInfo info = acceptTrialByNciId("NCI-2015-99999", leadOrgTrialId);
         prepareTrialForAmendment(info);
         logoutUser();
 
@@ -391,15 +442,12 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
 
         TrialInfo trial = new TrialInfo();
         trial.id = trialID.longValue();
-        assertEquals("APPROVED",
-                getCurrentTrialStatus(trial).statusCode);
+        assertEquals("APPROVED", getCurrentTrialStatus(trial).statusCode);
         assertEquals(null, getTrialField(trial, "DELAYED_POSTING_INDICATOR"));
         verifyLegacyProgramCode("PG0022");
     }
 
-
-    private void prepareTrialForAmendment(TrialInfo ti)
-            throws SQLException {
+    private void prepareTrialForAmendment(TrialInfo ti) throws SQLException {
         for (MilestoneCode code : MilestoneCode.ADMIN_SEQ) {
             addMilestone(ti, code.name());
         }
@@ -414,7 +462,7 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
         addDWS(ti,
                 DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.name());
     }
-    
+
     /**
      * @param server
      * @throws SQLException
@@ -423,18 +471,17 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
     private void verifyEmailSentByBatchProcessingAmendDSP() throws SQLException {
         assertEquals(2, server.getReceivedEmailSize());
         Iterator<SmtpMessage> emailIter = server.getReceivedEmail();
-        for (int i=0 ; emailIter.hasNext(); i++) {
+        for (int i = 0; emailIter.hasNext(); i++) {
             SmtpMessage email = (SmtpMessage) emailIter.next();
             String body = email.getBody();
             System.out.println(body);
-            if (i==1) {
-               verifyAmendBodyDSPWarning(body);
+            if (i == 1) {
+                verifyAmendBodyDSPWarning(body);
             } else {
-            verifyAmendBodyDSPCTRO(body);
+                verifyAmendBodyDSPCTRO(body);
             }
         }
-        
-        
+
         // Ensure same info was written into email log table.
         pause(3000);
         QueryRunner runner = new QueryRunner();
@@ -446,26 +493,25 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
                         new ArrayHandler())[0];
         verifyAmendBodyDSPWarning(loggedBody);
     }
-    
+
     /**
      * @param body
      */
     private void verifyAmendBodyDSPCTRO(final String body) {
-        assertTrue(body.contains(
-                "The following trial(s) were submitted with the value of the Delayed Posting Indicator set to \"Yes\":"));
-        assertTrue(body.contains(
-                        "<p>The following warning message was sent to the submitter:</p><br>Submitter: Abstractor User"
+        assertTrue(body
+                .contains("The following trial(s) were submitted with the value of the Delayed Posting Indicator set to \"Yes\":"));
+        assertTrue(body
+                .contains("<p>The following warning message was sent to the submitter:</p><br>Submitter: Abstractor User"
                         + " <br>Submitting Organization: National Cancer Institute Division of Cancer Prevention"));
     }
-    
+
     /**
      * @param body
      */
     private void verifyAmendBodyDSPWarning(final String body) {
-        assertTrue(body.contains(
-                "WARNING:</b> The file submitted contains amendments for one or more trial where the "
-                + "value of the Delayed Posting Indicator is different than that stored in CTRP for that trial"));
+        assertTrue(body
+                .contains("WARNING:</b> The file submitted contains amendments for one or more trial where the "
+                        + "value of the Delayed Posting Indicator is different than that stored in CTRP for that trial"));
     }
-
 
 }
