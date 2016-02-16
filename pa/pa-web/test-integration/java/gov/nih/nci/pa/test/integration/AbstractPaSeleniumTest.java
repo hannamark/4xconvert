@@ -97,6 +97,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -760,7 +761,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     }
 
     protected TrialInfo createSubmittedTrial(boolean isAbbr,
-            boolean skipDocuments, String...orgName) throws SQLException {
+            boolean skipDocuments, String... orgName) throws SQLException {
         TrialInfo info = new TrialInfo();
 
         // trimming uuid if length greater than 30 characters as this is used
@@ -804,8 +805,8 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + "false,null,'Scientific Description','InterventionalStudyProtocol','RANDOMIZED_CONTROLLED_TRIAL',"
                 + "null,null,null,null,'OPEN','PARALLEL',1,'EFFICACY',null,null,null,1,null,null,null,null,null,"
                 + "{ts '2014-04-16 12:18:50.572'},null,'ACTIVE',{ts '2013-04-16 12:18:50.572'},null,"
-                + "null,null,1,null,60," + isAbbr
-                + ",false," + info.csmUserID + ",null,null,null,"
+                + "null,null,1,null,60," + isAbbr + ",false," + info.csmUserID
+                + ",null,null,null,"
                 + "{ts '2018-04-16 12:18:50.572'},'ANTICIPATED',null,null,2,"
                 + info.csmUserID + ",false,null,false,null,null,'OTHER', 1);";
         runner.update(connection, protocolInsertSQL);
@@ -816,12 +817,12 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         assignNciId(info);
         addDWS(info, "SUBMITTED");
         addMilestone(info, "SUBMISSION_RECEIVED");
-        if(orgName!=null && orgName.length>0) {
+        if (orgName != null && orgName.length > 0) {
             addLeadOrg(info, orgName[0]);
-        } else{
-            addLeadOrg(info, "ClinicalTrials.gov");    
+        } else {
+            addLeadOrg(info, "ClinicalTrials.gov");
         }
-        
+
         addPI(info, "1");
         addSOS(info, "IN_REVIEW", yday_midnight());
         addSOS(info, "APPROVED");
@@ -1073,9 +1074,9 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     protected void unassignUserFromGroup(String loginName, String group)
             throws SQLException {
         QueryRunner runner = new QueryRunner();
-        String sqlTemplate = "delete from csm_user_group where user_id = " +
-                "(select user_id from csm_user where login_name = '%s') " +
-                "and group_id = (select group_id from csm_group where group_name='%s')";
+        String sqlTemplate = "delete from csm_user_group where user_id = "
+                + "(select user_id from csm_user where login_name = '%s') "
+                + "and group_id = (select group_id from csm_group where group_name='%s')";
         runner.update(connection, String.format(sqlTemplate, loginName, group));
     }
 
@@ -1088,7 +1089,6 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + group + "')  )";
         runner.update(connection, sql);
     }
-
 
     protected void assignUserToGroup(Number userID, String group)
             throws SQLException {
@@ -1241,10 +1241,11 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         addMilestone(info, "SUBMISSION_ACCEPTED");
         return info;
     }
-    
+
     protected TrialInfo createAcceptedTrial(boolean isAbbreviated,
-            boolean skipDocuments,String orgName) throws SQLException {
-        TrialInfo info = createSubmittedTrial(isAbbreviated, skipDocuments,orgName);
+            boolean skipDocuments, String orgName) throws SQLException {
+        TrialInfo info = createSubmittedTrial(isAbbreviated, skipDocuments,
+                orgName);
         addDWS(info, "ACCEPTED");
         addMilestone(info, "SUBMISSION_ACCEPTED");
         return info;
@@ -1254,10 +1255,10 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
             throws SQLException {
         return createAcceptedTrial(isAbbreviated, false);
     }
-    
-    protected TrialInfo createAcceptedTrial(boolean isAbbreviated,String orgName)
-            throws SQLException {
-        return createAcceptedTrial(isAbbreviated, false,orgName);
+
+    protected TrialInfo createAcceptedTrial(boolean isAbbreviated,
+            String orgName) throws SQLException {
+        return createAcceptedTrial(isAbbreviated, false, orgName);
     }
 
     /**
@@ -1813,6 +1814,27 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         return list;
     }
 
+    /**
+     * @param sql
+     * @return
+     * @throws SQLException
+     */
+    protected List<String> getTrialProgramCodes(TrialInfo trial)
+            throws SQLException {
+        final String sql = "select program_code from program_code pc inner join study_program_code spc on spc.program_code_id=pc.identifier "
+                + " inner join study_protocol sp on sp.identifier=spc.study_protocol_id where sp.identifier="
+                + (trial.id != null ? trial.id : getTrialIdByNciId(trial.nciID))
+                + " ORDER BY program_code ASC";
+        List<String> list = new ArrayList<>();
+        QueryRunner runner = new QueryRunner();
+        final List<Object[]> results = runner.query(connection, sql,
+                new ArrayListHandler());
+        for (Object[] row : results) {
+            list.add((String) row[0]);
+        }
+        return list;
+    }
+
     protected TrialStatus getCurrentTrialStatus(TrialInfo trial)
             throws SQLException {
         final List<TrialStatus> trialStatusHistory = getTrialStatusHistory(trial);
@@ -1922,15 +1944,14 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
 
     }
 
-    protected void addSiteInvestigator(TrialInfo trial, String siteOrgName, String invPoId,
-                                       String firstName, String middleName,
-                                       String lastName, String role) throws SQLException {
+    protected void addSiteInvestigator(TrialInfo trial, String siteOrgName,
+            String invPoId, String firstName, String middleName,
+            String lastName, String role) throws SQLException {
         Number paID = findPersonByPoId(invPoId);
-        if(paID == null) {
+        if (paID == null) {
             createPerson(invPoId, firstName, middleName, lastName, "Mr.", "I");
             paID = findPersonByPoId(invPoId);
         }
-
 
         QueryRunner runner = new QueryRunner();
 
@@ -1938,14 +1959,13 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         Number hcpID = findOrCreateHcp(paID, siteOrgName);
         Number siteID = findParticipatingSite(trial, siteOrgName);
 
-
-        String invSql = "insert into study_site_contact " +
-                "(identifier, role_code, primary_indicator, study_protocol_identifier, " +
-                "status_code,status_date_range_low, healthcare_provider_identifier," +
-                "clinical_research_staff_identifier, study_site_identifier) values(" +
-                "(SELECT NEXTVAL('HIBERNATE_SEQUENCE'))," +
-                "'" + role +"', false," + trial.id + ", 'PENDING'," + today() + "," + hcpID
-                + "," + crsID + "," + siteID + ")";
+        String invSql = "insert into study_site_contact "
+                + "(identifier, role_code, primary_indicator, study_protocol_identifier, "
+                + "status_code,status_date_range_low, healthcare_provider_identifier,"
+                + "clinical_research_staff_identifier, study_site_identifier) values("
+                + "(SELECT NEXTVAL('HIBERNATE_SEQUENCE'))," + "'" + role
+                + "', false," + trial.id + ", 'PENDING'," + today() + ","
+                + hcpID + "," + crsID + "," + siteID + ")";
         runner.update(connection, invSql);
 
     }
@@ -2292,6 +2312,42 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         runner.update(connection, sql);
     }
 
+    protected void setupFamilies() throws Exception {
+        QueryRunner runner = new QueryRunner();
+        runner.update(connection, "delete from family");
+        for (int i : new int[] { 1, 2 }) {
+            long count = (Long) runner.query(connection,
+                    "select count(identifier) from family where po_id = " + i,
+                    new ArrayHandler())[0];
+            if (count <= 0) {
+                Calendar c = Calendar.getInstance();
+                c.add(Calendar.MONTH, 12);
+                String endDate = new SimpleDateFormat("yyyy-MM-dd").format(c
+                        .getTime());
+                runner.update(connection, String.format(
+                        "INSERT INTO family(po_id, rep_period_end, rep_period_len_months) "
+                                + "VALUES (%s, '%s', %s)", i, endDate, 12));
+            }
+            Integer familyId = (Integer) runner.query(connection,
+                    "select identifier from family where po_id = " + i,
+                    new ArrayHandler())[0];
+
+            runner.update(connection,
+                    "DELETE FROM program_code where family_id = " + familyId);
+            for (int j : new int[] { 1, 2, 3, 4, 5, 6 }) {
+                runner.update(connection, String.format(
+                        "INSERT INTO program_code(family_id, program_code, program_name, status_code) "
+                                + "VALUES (%s, '%s', '%s', '%s')", familyId,
+                        "PG" + j, "Cancer Program" + j, "ACTIVE"));
+            }
+            runner.update(connection, String.format(
+                    "INSERT INTO program_code(family_id, program_code, program_name, status_code) "
+                            + "VALUES (%s, '%s', '%s', '%s')", familyId, "PG7",
+                    "Cancer Program7", "INACTIVE"));
+
+        }
+    }
+
     protected void moveElementIntoView(By by) {
         WebElement element = driver.findElement(by);
         Point p = element.getLocation();
@@ -2332,7 +2388,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         if (!isPhantomJS())
             driver.switchTo().parentFrame();
     }
-    
+
     protected void log(String msg) {
         System.out.println(new Date().toLocaleString() + ": " + msg);
     }
@@ -2447,7 +2503,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     public static void main(String[] args) {
         randomPort();
     }
-    
+
     @SuppressWarnings("deprecation")
     public void useSelect2ToPickAnOption(String id, String sendKeys,
             String option) {
@@ -2479,6 +2535,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     public void assertOptionSelected(String option) {
         assertTrue(s.isElementPresent(getXPathForSelectedOption(option)));
     }
+
     @SuppressWarnings("deprecation")
     public void useSelect2ToUnselectOption(String option) {
         s.click("//li[@class='select2-selection__choice' and @title='" + option
@@ -2487,7 +2544,6 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
 
     }
 
-    
     /**
      * @param option
      * @return

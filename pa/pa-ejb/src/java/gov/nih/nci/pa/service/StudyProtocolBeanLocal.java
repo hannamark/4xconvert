@@ -1617,7 +1617,17 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
                     pgCodeText = StringUtils.isEmpty(pgCodeText) ? pgCode : String.format("%s;%s", pgCodeText, pgCode);
                 }
             }
-            studyProtocol.setProgramCodeText(StringUtils.left(pgCodeText, ONE_THOUSAND));
+            studyProtocol.setProgramCodeText(StringUtils.left(pgCodeText,
+                    ONE_THOUSAND));
+            studyProtocol
+                    .setComments((StringUtils.isBlank(studyProtocol
+                            .getComments()) ? "" : " ")
+                            + "The following program code value was submitted "
+                            + "but not recorded: "
+                            + StringUtils.join(programCodes, ";")
+                            + ". "
+                            + "Starting in version 4.3.1, CTRP no longer records program codes for trials lead by a "
+                            + "non designated cancer center organization.");
 
         } else {
 

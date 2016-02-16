@@ -330,7 +330,7 @@ public abstract class AbstractRegistrySeleniumTest extends
         // Select Funding Sponsor
         hover(By.id("trialDTO.summaryFourOrgName"));
         clickAndWaitAjax("xpath=//table[@id='dropdown-sum4Organization']//a[text()='National Cancer Institute']");
-        //selenium.type("trialDTO.programCodeText", "PG" + rand);
+        // selenium.type("trialDTO.programCodeText", "PG" + rand);
 
         // Grants
         moveElementIntoView(By.id("nciGrantfalse"));
@@ -878,32 +878,4 @@ public abstract class AbstractRegistrySeleniumTest extends
         return list;
     }
 
-
-
-    protected void setupFamilies() throws Exception {
-        QueryRunner runner = new QueryRunner();
-        runner.update(connection, "delete from family");
-        for (int i : new int[]{1, 2} ) {
-            long count = (Long) runner.query(connection, "select count(identifier) from family where po_id = " + i,
-                    new ArrayHandler())[0];
-            if (count <= 0) {
-                Calendar c = Calendar.getInstance();
-                c.add(Calendar.MONTH, 12);
-                String endDate = new SimpleDateFormat("yyyy-MM-dd").format(c.getTime());
-                runner.update(connection,
-                        String.format("INSERT INTO family(po_id, rep_period_end, rep_period_len_months) " +
-                                "VALUES (%s, '%s', %s)", i, endDate, 12));
-            }
-           Integer familyId = (Integer) runner.query(connection, "select identifier from family where po_id = " + i,
-                    new ArrayHandler())[0];
-
-            runner.update(connection, "DELETE FROM program_code where family_id = " + familyId);
-            for (int j : new int[]{1,2,3,4,5,6}) {
-                runner.update(connection,
-                        String.format("INSERT INTO program_code(family_id, program_code, program_name, status_code) " +
-                                "VALUES (%s, '%s', '%s', '%s')", familyId, "PG" + j, "Cancer Program" + j, "ACTIVE"));
-            }
-
-        }
-    }
 }

@@ -20,6 +20,7 @@ import gov.nih.nci.pa.webservices.types.TrialStatusCode;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 
@@ -45,7 +46,33 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
 
     public void setUp() throws Exception {
         super.setUp("/trials/complete");
+        setupFamilies();
         deactivateAllTrials();
+    }
+
+    @Test
+    public void testRegisterCancerCenterTrialWithProgramCodes()
+            throws Exception {
+        TrialInfo trial = registerAndVerify("/integration_register_cancer_center_with_program_codes.xml");
+        // PG1;PGXYZ; PG6 ;PG7 -- PGXYZ is non existent; PG7 is inactive. Thus,
+        // only PG1 and PG6 must be assigned.
+        assertEquals(getTrialProgramCodes(trial),
+                Arrays.asList(new String[] { "PG1", "PG6" }));
+    }
+
+    @Test
+    public void testRegisterNonCancerCenterTrialWithProgramCodes()
+            throws Exception {
+        TrialInfo trial = registerAndVerify("/integration_register_non_cancer_center_with_program_codes.xml");
+        // PG1;PGXYZ; PG6 ;PG7 -- PGXYZ is non existent; PG7 is inactive. Thus,
+        // only PG1 and PG6 must be assigned.
+        assertEquals(getTrialProgramCodes(trial),
+                Arrays.asList(new String[] {}));
+        assertEquals(
+                "The following program code value was submitted but not recorded: PG1;PGXYZ;PG6;PG7."
+                        + " Starting in version 4.3.1, CTRP no longer records program codes for trials"
+                        + " lead by a non designated cancer center organization.",
+                getTrialField(trial, "comments"));
     }
 
     @Test
@@ -205,8 +232,11 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
     }
 
     @Override
-    protected void verifyTrialStatus(BaseTrialInformation reg, TrialRegistrationConfirmation conf) {
-        super.verifyTrialStatus(reg, conf);    //To change body of overridden methods use File | Settings | File Templates.
+    protected void verifyTrialStatus(BaseTrialInformation reg,
+            TrialRegistrationConfirmation conf) {
+        super.verifyTrialStatus(reg, conf); // To change body of overridden
+                                            // methods use File | Settings |
+                                            // File Templates.
     }
 
     @Test
@@ -378,7 +408,7 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
         verifyResponseHasFailure(code, expectedErrMsg, response);
     }
 
-    private void registerAndVerify(String file) throws SQLException,
+    private TrialInfo registerAndVerify(String file) throws SQLException,
             ClientProtocolException, ParseException, IOException,
             JAXBException, SAXException {
         CompleteTrialRegistration reg = readCompleteTrialRegistrationFromFile(file);
@@ -413,6 +443,7 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
                 }
             }
         }
+        return trial;
     }
 
     /**
