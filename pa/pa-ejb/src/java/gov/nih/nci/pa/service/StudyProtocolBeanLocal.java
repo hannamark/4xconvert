@@ -1620,8 +1620,10 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             studyProtocol.setProgramCodeText(StringUtils.left(pgCodeText,
                     ONE_THOUSAND));
             studyProtocol
-                    .setComments((StringUtils.isBlank(studyProtocol
-                            .getComments()) ? "" : " ")
+                    .setComments(StringUtils.defaultString(studyProtocol
+                            .getComments())
+                            + (StringUtils.isBlank(studyProtocol.getComments()) ? ""
+                                    : " ")
                             + "The following program code value was submitted "
                             + "but not recorded: "
                             + StringUtils.join(programCodes, ";")

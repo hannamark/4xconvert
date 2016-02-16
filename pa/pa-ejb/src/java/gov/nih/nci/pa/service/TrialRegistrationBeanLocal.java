@@ -496,7 +496,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             
             List<DocumentDTO> resultsReportingDocuments = new ArrayList<DocumentDTO>();
             copyResultsReportingDocuments(resultsReportingDocuments, spIi);
-
             
             // This will get us current protocol records with amendment applied on top of it.
             studyProtocolDTO = getStudyProtocolForCreateOrAmend(studyProtocolDTO, AMENDMENT);
@@ -595,10 +594,14 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             studyProtocolService
                     .updatePendingTrialAssociationsToActive(IiConverter.convertToLong(spIi));
 
-            //assign program codes PO-9521
-            assignProgramCodes(IiConverter.convertToLong(spIi), studyProtocolDTO, leadOrganizationDTO);
-
-          
+            // Determine if this is a call from the code that is not aware of
+            // the new program codes model.
+            // assign program codes PO-9521
+            if (StringUtils.isNotBlank(StConverter
+                    .convertToString(studyProtocolDTO.getProgramCodeText()))) {
+                doLegacyProgramCodeSupport(IiConverter.convertToLong(spIi),
+                        studyProtocolDTO, leadOrganizationDTO);
+            }
 
             if ((StudySourceInterceptor.STUDY_SOURCE_CONTEXT.get() == StudySourceCode.GRID_SERVICE 
                     || StudySourceInterceptor.STUDY_SOURCE_CONTEXT
@@ -1039,25 +1042,46 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
 
     /**
      * Will assign program codes to the study protocol
-     *
-     * @param studyId  - the identifier of study
-     * @param studyDTO - the sutyprotocol dto
+     * 
+     * @param studyId
+     *            - the identifier of study
+     * @param studyDTO
+     *            - the sutyprotocol dto
      * @leadOrgDTO - the lead organization
-     * @throws PAException when there is an error
+     * @throws PAException
+     *             when there is an error
      */
     private void assignProgramCodes(Long studyId, StudyProtocolDTO studyDTO,
-                                    OrganizationDTO leadOrgDTO) throws PAException {
+            OrganizationDTO leadOrgDTO) throws PAException {
 
-        String pgcText = StConverter.convertToString(studyDTO.getProgramCodeText());
+        String pgcText = StConverter.convertToString(studyDTO
+                .getProgramCodeText());
 
-        //determine legacy ?
-        boolean legacy = StringUtils.isNotEmpty(pgcText) && studyDTO.getProgramCodes() == null;
+        // determine legacy ?
+        boolean legacy = StringUtils.isNotEmpty(pgcText)
+                && studyDTO.getProgramCodes() == null;
         if (legacy) {
-            Long leadOrgPoId = IiConverter.convertToLong(leadOrgDTO.getIdentifier());
-            List<String> programCodes = Arrays.asList(pgcText.trim().split("\\s*;\\s*"));
-            studyProtocolService.assignProgramCodes(studyId, leadOrgPoId, programCodes);
+            doLegacyProgramCodeSupport(studyId, studyDTO, leadOrgDTO);
         }
 
+    }
+
+    /**
+     * @param studyId
+     * @param studyDTO
+     * @param leadOrgDTO
+     * @throws PAException
+     */
+    private void doLegacyProgramCodeSupport(Long studyId,
+            StudyProtocolDTO studyDTO, OrganizationDTO leadOrgDTO)
+            throws PAException {
+        Long leadOrgPoId = IiConverter.convertToLong(leadOrgDTO
+                .getIdentifier());
+        List<String> programCodes = Arrays.asList(StConverter
+                .convertToString(studyDTO.getProgramCodeText()).trim()
+                .split("\\s*;\\s*"));
+        studyProtocolService.assignProgramCodes(studyId, leadOrgPoId,
+                programCodes);
     }
 
     private void copyStudyResourcing(List<StudyResourcingDTO> studyResourcingDTOs) {

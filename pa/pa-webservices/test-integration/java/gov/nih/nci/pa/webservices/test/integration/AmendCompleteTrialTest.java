@@ -2,6 +2,7 @@ package gov.nih.nci.pa.webservices.test.integration;
 
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 import gov.nih.nci.pa.webservices.types.BaseTrialInformation;
 import gov.nih.nci.pa.webservices.types.CompleteTrialAmendment;
 import gov.nih.nci.pa.webservices.types.CompleteTrialRegistration;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
@@ -51,6 +53,7 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
     @SuppressWarnings("deprecation")
     public void setUp() throws Exception {
         super.setUp("/trials/complete");
+        setupFamilies();
         deactivateAllTrials();
     }
 
@@ -201,18 +204,19 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
         info.uuid = info.leadOrgID;
         logoutPA();
         selectTrialInPA(info);
-        addSiteToTrial(info, "DCP", "In Review" , true);
-        addSiteToTrial(info, "CTEP", "Active" , true);
-        addSiteToTrial(info, "NCI", "Withdrawn" , true);
+        addSiteToTrial(info, "DCP", "In Review", true);
+        addSiteToTrial(info, "CTEP", "Active", true);
+        addSiteToTrial(info, "NCI", "Withdrawn", true);
 
         // Amend
         restartEmailServer();
         CompleteTrialAmendment upd = readCompleteTrialAmendmentFromFile("/integration_amend_complete_trial_closed.xml");
         GregorianCalendar c = new GregorianCalendar();
         c.setTime(new Date());
-        XMLGregorianCalendar trialStatusDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+        XMLGregorianCalendar trialStatusDate = DatatypeFactory.newInstance()
+                .newXMLGregorianCalendar(c);
         upd.setTrialStatusDate(trialStatusDate);
-        
+
         HttpResponse response = amendTrialFromJAXBElement("pa",
                 rConf.getPaTrialID() + "", upd);
         TrialRegistrationConfirmation uConf = processTrialRegistrationResponseAndDoBasicVerification(response);
@@ -291,6 +295,58 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
                         + "</p><p>Thank you for ensuring accurate Trial and Participating Site Statuses and Dates in the Clinical"
                         + " Trials Reporting Program.</p>".replaceAll("\\s+",
                                 " ").replaceAll(">\\s+", ">"), body);
+
+    }
+
+    @Test
+    public void testAmendCancerCenterTrialWithProgramCodes() throws Exception {
+        TrialRegistrationConfirmation rConf = register("/integration_register_cancer_center_with_program_codes.xml");
+        TrialInfo trial = new TrialInfo();
+        trial.id = rConf.getPaTrialID();
+
+        addDummyCtepDcpToTrial();
+        prepareTrialForAmendment(rConf);
+
+        // Assign a code from a different family to the trial to verify it does
+        // not get erased.
+        assignProgramCode(trial, 2, "PG3");
+
+        CompleteTrialAmendment upd = readCompleteTrialAmendmentFromFile("/integration_amend_cancer_center_with_program_codes.xml");
+        HttpResponse response = amendTrialFromJAXBElement("pa",
+                rConf.getPaTrialID() + "", upd);
+        TrialRegistrationConfirmation uConf = processTrialRegistrationResponseAndDoBasicVerification(response);
+        assertEquals(rConf.getPaTrialID(), uConf.getPaTrialID());
+        assertEquals(rConf.getNciTrialID(), uConf.getNciTrialID());
+
+        // Ensure program codes from original submission and amendment merge.
+        assertEquals(Arrays.asList(new String[] { "PG1", "PG2", "PG3", "PG4",
+                "PG6" }), getTrialProgramCodes(trial));
+
+    }
+
+    @Test
+    public void testAmendNonCancerCenterTrialWithProgramCodes()
+            throws Exception {
+        TrialRegistrationConfirmation rConf = register("/integration_register_non_cancer_center_with_program_codes.xml");
+        TrialInfo trial = new TrialInfo();
+        trial.id = rConf.getPaTrialID();
+
+        addDummyCtepDcpToTrial();
+        prepareTrialForAmendment(rConf);
+
+        CompleteTrialAmendment upd = readCompleteTrialAmendmentFromFile("/integration_amend_non_cancer_center_with_program_codes.xml");
+        HttpResponse response = amendTrialFromJAXBElement("pa",
+                rConf.getPaTrialID() + "", upd);
+        TrialRegistrationConfirmation uConf = processTrialRegistrationResponseAndDoBasicVerification(response);
+        assertEquals(rConf.getPaTrialID(), uConf.getPaTrialID());
+        assertEquals(rConf.getNciTrialID(), uConf.getNciTrialID());
+
+        // Ensure program codes from original submission and amendment merge.
+        assertEquals(Arrays.asList(new String[] {}),
+                getTrialProgramCodes(trial));
+        assertEquals(
+                "The following program code value was submitted but not recorded: PG1;PGXYZ;PG6;PG7. Starting in version 4.3.1, CTRP no longer records program codes for trials lead by a non designated cancer center organization. The following program code value was submitted but not recorded: ABC;PG2;PG4;PG6;PG7. Starting in version 4.3.1, CTRP no longer records program codes for trials lead by a non designated cancer center organization.",
+                getTrialField(trial, "comments"));
 
     }
 
@@ -696,10 +752,10 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
         trial.id = uConf.getPaTrialID();
         assertEquals("false", getTrialField(trial, "DELAYED_POSTING_INDICATOR")
                 .toString());
-        
+
         waitForEmailsToArrive(5);
         assertEquals(5, server.getReceivedEmailSize());
-        
+
         Iterator<SmtpMessage> emailIter = server.getReceivedEmail();
         for (int i = 0; emailIter.hasNext(); i++) {
             SmtpMessage email = (SmtpMessage) emailIter.next();
