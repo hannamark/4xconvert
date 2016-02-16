@@ -104,11 +104,38 @@ import com.dumbster.smtp.SmtpMessage;
  * @author dkrylov
  */
 public class BatchUploadTest extends AbstractRegistrySeleniumTest {
-    
+
     @Override
-    public void setUp() throws Exception {     
+    public void setUp() throws Exception {
         super.setUp();
         setupFamilies();
+    }
+
+    @SuppressWarnings({ "deprecation", "rawtypes" })
+    @Test
+    public void testAmendCancerCenterTrialWithProgramCodes() throws Exception {
+        String leadOrgTrialId = "FKTESTING_23";
+        String trialDataFileName = "batch_new_registration_cancer_center_program_codes.xls";
+        TrialInfo trial = registerFromBatchFile(trialDataFileName);
+
+        changeNciId(getLastNciId(), "NCI-2015-99999");
+        TrialInfo info = acceptTrialByNciId("NCI-2015-99999", leadOrgTrialId);
+        prepareTrialForAmendment(info);
+        logoutUser();
+
+        loginAndAcceptDisclaimer();
+        accessBatchUploadScreen();
+
+        trialDataFileName = "batch_amend_cancer_center.xls";
+        restartEmailServer();
+        submitBatchFile(trialDataFileName);
+
+        Number trialID = waitForTrialToRegister(leadOrgTrialId, 60);
+        waitForEmailToArriveAndStopServer(1);
+        verifyEmailSentByBatchProcessing();
+        assertEquals(getTrialProgramCodes(trial),
+                Arrays.asList(new String[] { "PG1", "PG5", "PG6" }));
+
     }
 
     @SuppressWarnings({ "deprecation", "rawtypes" })
@@ -120,6 +147,37 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
         TrialInfo trial = registerFromBatchFile(trialDataFileName);
         assertEquals(getTrialProgramCodes(trial),
                 Arrays.asList(new String[] { "PG1", "PG6" }));
+    }
+
+    @SuppressWarnings({ "deprecation", "rawtypes" })
+    @Test
+    public void testAmendNonCancerCenterTrialWithProgramCodes()
+            throws Exception {
+        String leadOrgTrialId = "FKTESTING_23";
+        String trialDataFileName = "batch_new_registration_non_cancer_center_program_codes.xls";
+        TrialInfo trial = registerFromBatchFile(trialDataFileName);
+
+        changeNciId(getLastNciId(), "NCI-2015-99999");
+        TrialInfo info = acceptTrialByNciId("NCI-2015-99999", leadOrgTrialId);
+        prepareTrialForAmendment(info);
+        logoutUser();
+
+        loginAndAcceptDisclaimer();
+        accessBatchUploadScreen();
+
+        trialDataFileName = "batch_amend_non_cancer_center.xls";
+        restartEmailServer();
+        submitBatchFile(trialDataFileName);
+
+        Number trialID = waitForTrialToRegister(leadOrgTrialId, 60);
+        waitForEmailToArriveAndStopServer(1);
+        verifyEmailSentByBatchProcessing();
+        assertEquals(getTrialProgramCodes(trial),
+                Arrays.asList(new String[] {}));
+        assertEquals(
+                "The following program code value was submitted but not recorded: XYZ;PG1;PG6;PG7. Starting in version 4.3.1, CTRP no longer records program codes for trials lead by a non designated cancer center organization. The following program code value was submitted but not recorded: PG5. Starting in version 4.3.1, CTRP no longer records program codes for trials lead by a non designated cancer center organization.",
+                getTrialField(trial, "comments"));
+
     }
 
     @SuppressWarnings({ "deprecation", "rawtypes" })
