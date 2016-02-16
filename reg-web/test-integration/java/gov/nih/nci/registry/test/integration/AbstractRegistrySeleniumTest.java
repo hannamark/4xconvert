@@ -882,6 +882,7 @@ public abstract class AbstractRegistrySeleniumTest extends
 
     protected void setupFamilies() throws Exception {
         QueryRunner runner = new QueryRunner();
+        runner.update(connection, "delete from family");
         for (int i : new int[]{1, 2} ) {
             long count = (Long) runner.query(connection, "select count(identifier) from family where po_id = " + i,
                     new ArrayHandler())[0];

@@ -195,10 +195,6 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         //I see the message that the study site is updated
         waitForTextToAppear(By.className("alert-success"),
                 "Message: Your site information has been updated.", 20);
-        assertTrue(selenium.isTextPresent("PG1"));
-        assertTrue(selenium.isTextPresent("PG2"));
-        //and PG3 is not present
-        assertFalse(selenium.isTextPresent("PG3"));
 
         List<String> codes = getProgramCodesByTrial(info.id);
         assertTrue(codes.size() == 2);
@@ -234,12 +230,6 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         waitForTextToAppear(By.className("alert-success"),
                 "Message: Your site information has been updated.", 20);
 
-        //And I see that PG1, PG3 associated with the trial/site
-        assertTrue(selenium.isTextPresent("PG1"));
-        assertTrue(selenium.isTextPresent("PG3"));
-
-        //And I see PG2 removed
-        assertFalse(selenium.isTextPresent("PG2"));
 
         //And in the database I see PG1 and PG3
         codes = getProgramCodesByTrial(info.id);
@@ -506,8 +496,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         assertEquals("Doe,John",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[2]"));
         assertEquals(localID,
-                selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[3]"));
-        assertTrue(selenium.isTextPresent("PG1"));
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[3]"));        
         assertEquals("Approved",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[5]"));
         assertEquals(today,
