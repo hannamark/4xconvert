@@ -160,16 +160,6 @@
                                 </reg-web:valueRowDiv>
                                 </div>
                             </c:if>
-                            <c:if test="${fn:trim(trialDTO.siteProgramCodeText) != ''}">
-                                <c:if test="${empty trialDTO.summaryFourOrgIdentifiers}">
-                                    <reg-web:titleRowDiv titleKey="view.trial.Summary4Information"/>
-                                </c:if>
-                                <div class="row form-horizontal details">
-	                                <reg-web:valueRowDiv labelKey="studyProtocol.summaryFourPrgCode" noLabelTag="true">
-	                                    <c:out value="${trialDTO.siteProgramCodeText}"/>
-	                                </reg-web:valueRowDiv>
-                                </div>
-                            </c:if>
                             <reg-web:titleRowDiv titleKey="view.trial.statusDates"/>
                             <div class="row form-horizontal details">
 	                            <reg-web:valueRowDiv labelKey="view.trial.siteRecruitmentStatus" noLabelTag="true">

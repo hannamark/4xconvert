@@ -137,7 +137,6 @@
                                     <display:column title="Organization Name" property="name"  headerClass="sortable"/>
                                     <display:column title="Site Principal Investigator" property="investigator"  headerClass="sortable"/>
                                     <display:column title="Local Trial<br/> Identifier" property="siteLocalTrialIdentifier"  headerClass="sortable"/>
-                                    <display:column title="Program Code" property="programCode"  headerClass="sortable"/>
                                     <display:column title="Current Site<br/> Recruitment Status" property="recruitmentStatus"  headerClass="sortable"/>
                                     <display:column title="Current Site<br/> Recruitment Status Date" property="recruitmentStatusDate"  headerClass="sortable"/>
                                     <display:column title="Date Opened <br/>for Accrual" property="dateOpenedforAccrual"  headerClass="sortable"/>
