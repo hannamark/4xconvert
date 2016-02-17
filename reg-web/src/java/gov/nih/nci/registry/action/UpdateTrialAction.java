@@ -466,12 +466,18 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             //this should never be populated as per new implementation
             spDTO.setProgramCodeText(null);
             
+            List<ProgramCodeDTO> oldProgramCodesList = new ArrayList<ProgramCodeDTO>();
+            oldProgramCodesList = spDTO.getProgramCodes();
+            
             util.assignProgramCodes(trialDTO , spDTO);
             //check user is actually removed program codes
             if (trialDTO.getProgramCodesList() != null 
                 && trialDTO.getProgramCodesList().size() == 0) {
                 spDTO.setProgramCodes(new ArrayList<ProgramCodeDTO>());
             }
+            
+            //retain program codes from different family as it is
+            util.assignAdditionalProgramCodes(oldProgramCodesList, spDTO);
             
             
           

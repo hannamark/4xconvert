@@ -956,17 +956,22 @@ public class TrialUtil extends TrialConvertUtils {
      * @param studyProtocolDTO studyProtocolDTO
      */
     public void assignProgramCodes(TrialDTO trialDTO, StudyProtocolDTO studyProtocolDTO) {
+        
+        List<ProgramCodeDTO> allProgramCodes = (List<ProgramCodeDTO>) 
+                ServletActionContext.getRequest().
+                getSession().getAttribute(Constants.PROGRAM_CODES_LIST);
+        List<ProgramCodeDTO> studyProgramCodeList = new ArrayList<ProgramCodeDTO>();
+        
       //if program code are set then fetch corresponding DTO
         if (!CollectionUtils.isEmpty(trialDTO.getProgramCodesList())) {
             if (ServletActionContext.getRequest().
                     getSession().getAttribute(Constants.PROGRAM_CODES_LIST) != null) {
       
-            List<ProgramCodeDTO> allProgramCodes = (List<ProgramCodeDTO>) 
-                    ServletActionContext.getRequest().
-                    getSession().getAttribute(Constants.PROGRAM_CODES_LIST);
-            List<ProgramCodeDTO> studyProgramCodeList = new ArrayList<ProgramCodeDTO>();
+          
             
             if (!CollectionUtils.isEmpty(allProgramCodes)) {
+                
+                //get old family id
                 for (ProgramCodeDTO programCodeDTO : allProgramCodes) {
                     if (trialDTO.getProgramCodesList().contains(
                             programCodeDTO.getProgramCode())) {
@@ -974,12 +979,56 @@ public class TrialUtil extends TrialConvertUtils {
                     }
                 }
             }
+            
+            
             if (!CollectionUtils.isEmpty(studyProgramCodeList)) {
                 studyProtocolDTO.setProgramCodes(studyProgramCodeList);
             }
         }
         }  
         
+        
+        
+        
+    }
+    
+    /**
+     * * There can be other program codes that belongs to different family 
+     * and already associated to trial.We are not showing such program codes
+     * in update/amend screen.But when such update/amendment is saved
+     * we need to retain those program codes
+     * following logic is doing that
+     * @param oldProgramCodesList oldProgramCodesList
+     * @param studyProtocolDTO studyProtocolDTO
+     */
+    public void assignAdditionalProgramCodes(List<ProgramCodeDTO> oldProgramCodesList,
+            StudyProtocolDTO studyProtocolDTO)  {
+        if (!CollectionUtils.isEmpty(oldProgramCodesList)) {
+            
+            List<ProgramCodeDTO> allProgramCodes = (List<ProgramCodeDTO>) 
+                    ServletActionContext.getRequest().
+                    getSession().getAttribute(Constants.PROGRAM_CODES_LIST);
+            List<Long> familyProgramCodesList = new ArrayList<Long>();
+                 
+                 List<ProgramCodeDTO> additionalProgramCodesList = new ArrayList<ProgramCodeDTO>();
+                 
+                 if (!CollectionUtils.isEmpty(allProgramCodes)) {
+                     for (ProgramCodeDTO programCodeDTO : allProgramCodes) {
+                         familyProgramCodesList.add(programCodeDTO.getId());
+                     }
+                 }
+                 
+                 for (ProgramCodeDTO programCodeDTO :oldProgramCodesList) {
+                     if (!familyProgramCodesList.contains(programCodeDTO.getId())) {
+                         additionalProgramCodesList.add(programCodeDTO);
+                     }
+                 }
+                 if (!CollectionUtils.isEmpty(additionalProgramCodesList)
+                      && studyProtocolDTO.getProgramCodes() != null) {
+                     studyProtocolDTO.getProgramCodes().addAll(additionalProgramCodesList);
+                 }
+                 
+             }
     }
 
     /**

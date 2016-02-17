@@ -392,12 +392,16 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
                 studyRegAuthDTO = util.getStudyRegAuth(null, trialDTO);
             }
             
+            List<ProgramCodeDTO> oldProgramCodesList = new ArrayList<ProgramCodeDTO>();
+            oldProgramCodesList = studyProtocolDTO.getProgramCodes();
             util.assignProgramCodes(trialDTO , studyProtocolDTO);
             //check user is actually removed program codes
             if (trialDTO.getProgramCodesList() != null 
                 && trialDTO.getProgramCodesList().size() == 0) {
                 studyProtocolDTO.setProgramCodes(new ArrayList<ProgramCodeDTO>());
             }
+          //retain program codes from different family as it is
+            util.assignAdditionalProgramCodes(oldProgramCodesList, studyProtocolDTO);
             
             amendId =
                     trialRegistrationService.amend(studyProtocolDTO, statusHistory, studyIndldeDTOs,

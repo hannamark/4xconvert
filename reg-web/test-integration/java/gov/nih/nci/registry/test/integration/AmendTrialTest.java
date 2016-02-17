@@ -1011,6 +1011,69 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         
         
     }
+   
+   /**
+    * Test if Amendment does not overwrite program codes associated with trial
+    * and belongs to other family
+    * @throws Exception
+    */
+   @Test
+   public void testIfProgramCodesForOtherFamilyNotChanged() throws Exception {
+       if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+           // PhantomJS keeps crashing on Linux CI box. No idea why at the
+           // moment.
+           return;
+       }
+       
+       associateProgramCodes();
+       
+       TrialInfo info = createAcceptedTrial(false);
+       final String nciID = getLastNciId();
+       acceptTrialByNciIdWithGivenDWS(nciID, info.leadOrgID,
+               DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
+                       .toString());
+       assignTrialOwner("abstractor-ci", info.id);
+       
+       //associate program code from other family to trial
+       associateProgramCodeToTrial(info.id);
+
+       loginAndAcceptDisclaimer();
+
+       String rand = info.leadOrgID;
+       runSearchAndVerifySingleTrialResult("officialTitle", rand, info);
+       invokeAmendTrial();
+       
+       moveElementIntoView(By.id("trialDTO.leadOrganizationNameField"));
+       hover(By.id("trialDTO.leadOrganizationNameField"));
+       clickAndWaitAjax("link=National Cancer Institute");
+       clickAndWaitAjax("id=programCodesValues");
+       moveElementIntoView(By.id("programCodesValues"));
+       useSelect2ToPickAnOption("programCodesValues","PG1","PG1-Cancer Program1");
+       useSelect2ToPickAnOption("programCodesValues","PG2","PG2-Cancer Program2");
+     
+      
+       populateAmendTrialPage(info);
+       populateDt4Section(); 
+      
+       clickAndWait("xpath=//button[text()='Review Trial']");
+       waitForElementById("reviewTrialForm", 20);
+       
+       clickAndWait("xpath=//button[text()='Submit']");
+       waitForPageToLoad();
+       assertTrue(selenium
+               .isTextPresent("The amendment to trial with the NCI Identifier "
+                       + nciID + " was successfully submitted."));
+       
+       //get trial id from nci Id
+       long trialId =(Long)getTrialIdByNciId(nciID);
+       
+       
+       //check if program codes are actually added in the database
+       long programCodeCount = getProgramCodesCountForOtherFamily(trialId);
+       
+       assert programCodeCount==3;
+       
+   }
     
     private void recreateFamilies() throws Exception {
         QueryRunner qr = new QueryRunner();
@@ -1032,6 +1095,24 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
                 "values ((select identifier from family where po_id=1 ),'PG3', 'Cancer Program3', 'ACTIVE')");
         qr.update(connection, "insert into program_code ( family_id, program_code, program_name, status_code) " +
                 "values ((select identifier from family where po_id=1 ),'PG4', 'Cancer Program4', 'ACTIVE')");
+        qr.update(connection, "insert into program_code ( family_id, program_code, program_name, status_code) " +
+                "values ((select identifier from family where po_id=2 ),'PG5', 'Cancer Program4', 'ACTIVE')");
+    }
+    
+private long getProgramCodesCountForOtherFamily(long trialId) throws SQLException {
+        
+        QueryRunner runner = new QueryRunner();
+        return (Long) runner
+                .query(connection,
+                        "select count(*) from study_program_code where study_protocol_id="+trialId
+                        +" and program_code_id in (select identifier from program_code where program_code in ('PG1','PG2','PG5'))" ,
+                        new ArrayHandler())[0];
+     
+    }
+    
+    private void associateProgramCodeToTrial(long trialId) throws Exception {
+        QueryRunner qr = new QueryRunner();
+        qr.update(connection, "insert into study_program_code values((select identifier from program_code where program_code='PG5'),"+trialId+")");
     }
     
     public void assignProgramCodesToTrial(long trailId) throws Exception {
