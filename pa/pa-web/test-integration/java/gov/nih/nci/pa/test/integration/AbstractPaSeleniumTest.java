@@ -1819,12 +1819,23 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
      * @return
      * @throws SQLException
      */
-    protected List<String> getTrialProgramCodes(TrialInfo trial)
+    protected List<String> getTrialProgramCodes(final TrialInfo trial)
+            throws SQLException {
+        final Number trialID = trial.id != null ? trial.id
+                : getTrialIdByNciId(trial.nciID);
+        return getTrialProgramCodes(trialID);
+    }
+
+    /**
+     * @param trialID
+     * @return
+     * @throws SQLException
+     */
+    protected List<String> getTrialProgramCodes(final Number trialID)
             throws SQLException {
         final String sql = "select program_code from program_code pc inner join study_program_code spc on spc.program_code_id=pc.identifier "
                 + " inner join study_protocol sp on sp.identifier=spc.study_protocol_id where sp.identifier="
-                + (trial.id != null ? trial.id : getTrialIdByNciId(trial.nciID))
-                + " ORDER BY program_code ASC";
+                + trialID + " ORDER BY program_code ASC";
         List<String> list = new ArrayList<>();
         QueryRunner runner = new QueryRunner();
         final List<Object[]> results = runner.query(connection, sql,

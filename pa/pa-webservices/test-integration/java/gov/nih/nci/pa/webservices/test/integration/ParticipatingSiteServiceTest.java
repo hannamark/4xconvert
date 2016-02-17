@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.pa.webservices.test.integration;
 
+import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 import gov.nih.nci.pa.webservices.types.BaseParticipatingSite;
 import gov.nih.nci.pa.webservices.types.ObjectFactory;
 import gov.nih.nci.pa.webservices.types.ParticipatingSite;
@@ -16,6 +17,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -49,6 +51,51 @@ public final class ParticipatingSiteServiceTest extends AbstractRestServiceTest 
     public void setUp() throws Exception {
         super.setUp("/trials/nci/NCI-2014-00496/sites");
         deactivateAllTrials();
+        setupFamilies();
+    }
+
+    @Test
+    public void testAddCancerCenterSiteWithProgramCodes() throws Exception {
+        final String xmlFile = "/integration_ps_add_cancer_center.xml";
+        TrialRegistrationConfirmation rConf = register("/integration_register_cancer_center_with_program_codes.xml");
+        makeAbbreviated(rConf);
+        ParticipatingSite upd = readParticipatingSiteFromFile(xmlFile);
+        HttpResponse response = addSite("pa", rConf.getPaTrialID() + "", upd);
+        assertEquals(200, getReponseCode(response));
+        assertEquals(TEXT_PLAIN, getResponseContentType(response));
+        assertEquals("", response.getFirstHeader("Set-Cookie").getValue());
+
+        TrialInfo trial = new TrialInfo();
+        trial.id = rConf.getPaTrialID();
+        assignProgramCode(trial, 2, "PG4");
+        assertEquals(
+                Arrays.asList(new String[] { "PG1", "PG3", "PG4", "PG6" }),
+                getTrialProgramCodes(trial));
+
+        long siteID = Long.parseLong(EntityUtils.toString(response.getEntity(),
+                "utf-8"));
+        verifySite(rConf, siteID, upd);
+
+    }
+
+    @Test
+    public void testAddNonCancerCenterSiteWithProgramCodes() throws Exception {
+        final String xmlFile = "/integration_ps_add_non_cancer_center.xml";
+        TrialRegistrationConfirmation rConf = register("/integration_register_cancer_center_with_program_codes.xml");
+        makeAbbreviated(rConf);
+        ParticipatingSite upd = readParticipatingSiteFromFile(xmlFile);
+        HttpResponse response = addSite("pa", rConf.getPaTrialID() + "", upd);
+        assertEquals(200, getReponseCode(response));
+        assertEquals(TEXT_PLAIN, getResponseContentType(response));
+        assertEquals("", response.getFirstHeader("Set-Cookie").getValue());
+
+        assertEquals(Arrays.asList(new String[] { "PG1", "PG6" }),
+                getTrialProgramCodes(rConf.getPaTrialID()));
+
+        long siteID = Long.parseLong(EntityUtils.toString(response.getEntity(),
+                "utf-8"));
+        verifySite(rConf, siteID, upd);
+
     }
 
     @Test
@@ -400,12 +447,19 @@ public final class ParticipatingSiteServiceTest extends AbstractRestServiceTest 
         }
 
         verifyBaseSiteInfo(ps);
-        verifyLegacyProgramCode(ps);
+        verifyLegacyProgramCode(ps, rConf);
 
     }
 
-    private void verifyLegacyProgramCode(ParticipatingSite ps) {
+    @SuppressWarnings("deprecation")
+    private void verifyLegacyProgramCode(ParticipatingSite ps,
+            TrialRegistrationConfirmation rConf) throws SQLException {
         clickLinkAndWait("NCI Specific Information");
+        for (String code : getTrialProgramCodes(rConf.getPaTrialID())) {
+            assertTrue(s
+                    .isElementPresent("xpath=//li[@class='select2-selection__choice' and normalize-space(text())='"
+                            + code + "']"));
+        }
     }
 
     private void verifySiteUpdate(long siteID, ParticipatingSiteUpdate ps)
