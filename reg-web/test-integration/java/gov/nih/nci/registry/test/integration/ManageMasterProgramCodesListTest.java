@@ -59,7 +59,7 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         //should see filtered data only
         assertEquals("PG11",driver.findElement(By.xpath("//table[@id='programCodesTable']/tbody/tr/td[1]")).getText());
         assertEquals("Cancer Program11",driver.findElement(By.xpath("//table[@id='programCodesTable']/tbody/tr/td[2]")).getText());
-        assertTrue(selenium.isTextPresent("Showing 1 to 1 of 1 (filtered from 12 total entries)"));
+        assertTrue(selenium.isElementPresent("xpath=//div[normalize-space(text())='Showing 1 to 1 of 1 (filtered from 12 total entries)']"));
         logoutUser();
     }
     
