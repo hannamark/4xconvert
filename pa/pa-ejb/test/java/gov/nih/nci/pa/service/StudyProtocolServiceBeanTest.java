@@ -461,20 +461,17 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 
         //Then it must get associated to study under program codeText field
         StudyProtocolDTO spDTO2 = remoteEjb.getStudyProtocol(ii);
-        assertTrue(spDTO2.getProgramCodeText().getValue().contains("1"));
-        assertTrue(spDTO2.getProgramCodeText().getValue().contains("5"));
+        assertTrue(ISOUtil.isStNull(spDTO2.getProgramCodeText()));
+        assertEquals("Comments The following program code value was submitted but not recorded: 1;5. Starting in version 4.3.1, CTRP no longer records program codes for trials lead by a non designated cancer center organization.", StConverter.convertToString(spDTO2.getComments()));
 
         //When I reassociate the study with program codes list having duplicates
         remoteEjb.assignProgramCodes(studyPaId, -1L, Arrays.asList("1", "3", "3", "5"));
 
         //Then it should associate only unique results
         StudyProtocolDTO spDTO3 = remoteEjb.getStudyProtocol(ii);
-        assertTrue(spDTO3.getProgramCodeText().getValue().contains("1"));
-        assertTrue(spDTO3.getProgramCodeText().getValue().contains("3"));
-        assertTrue(spDTO3.getProgramCodeText().getValue().contains("5"));
-        assertEquals(3, StringUtils.split(spDTO3.getProgramCodeText().getValue() , ";").length);
+        assertTrue(ISOUtil.isStNull(spDTO3.getProgramCodeText()));        
         assertTrue(getAuditDetails("STUDY_PROTOCOL") >= 1);
-        assertTrue(getAuditLogDetails("programCodeText") >= 1);
+        assertTrue(getAuditLogDetails("comments") >= 1);
 
     }
     private int getAuditDetails(String entityName) throws SQLException {
@@ -574,17 +571,16 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 
         //Then it must get associated to study under program codeText field
         StudyProtocolDTO spDTO2 = remoteEjb.getStudyProtocol(ii);
-        assertTrue(spDTO2.getProgramCodeText().getValue().contains("1"));
-        assertTrue(spDTO2.getProgramCodeText().getValue().contains("5"));
+        assertTrue(ISOUtil.isStNull(spDTO2.getProgramCodeText()));
 
         //When I unassin program codes
         remoteEjb.unAssignProgramCode(studyPaId, "1");
         assertTrue(getAuditDetails("STUDY_PROTOCOL") >= 1);
-        assertTrue(getAuditLogDetails("programCodeText") >= 1);
+        assertTrue(getAuditLogDetails("comments") >= 1);
         //Then it should associate only unique results
         StudyProtocolDTO spDTO3 = remoteEjb.getStudyProtocol(ii);
-        assertTrue(spDTO3.getProgramCodeText().getValue().contains("5"));
-        assertEquals(1, StringUtils.split(spDTO3.getProgramCodeText().getValue() , ";").length);
+        assertTrue(ISOUtil.isStNull(spDTO3.getProgramCodeText()));
+        
 
     }
 

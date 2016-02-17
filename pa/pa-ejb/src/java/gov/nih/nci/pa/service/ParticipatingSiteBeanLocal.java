@@ -803,7 +803,7 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
             Long studyId = IiConverter.convertToLong(siteDTO.getStudyProtocolIdentifier());           
             HealthCareFacility hcf = savedStudySite.getHealthCareFacility();
             Long orgPoId = Long.parseLong(hcf.getOrganization().getIdentifier());
-            List<String> programCodes = Arrays.asList(pgcText.split(";"));
+            List<String> programCodes = Arrays.asList(pgcText.split("\\s*;\\s*"));
             getStudyProtocolService().assignProgramCodes(studyId, orgPoId, programCodes);
         }
 

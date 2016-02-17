@@ -1606,19 +1606,6 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         List<OrgFamilyDTO> orgFamilyList = FamilyHelper.getByOrgId(organizationPoID);
 
         if (CollectionUtils.isEmpty(orgFamilyList)) {
-            Set<String> uniqueProgramCodes = new HashSet<String>();
-            if (StringUtils.isNotEmpty(studyProtocol.getProgramCodeText())) {
-                uniqueProgramCodes.addAll(Arrays.asList(studyProtocol.getProgramCodeText().split("\\s*;\\s*")));
-            }
-
-            String pgCodeText = studyProtocol.getProgramCodeText();
-            for (String pgCode : programCodes) {
-                if (uniqueProgramCodes.add(pgCode)) {
-                    pgCodeText = StringUtils.isEmpty(pgCodeText) ? pgCode : String.format("%s;%s", pgCodeText, pgCode);
-                }
-            }
-            studyProtocol.setProgramCodeText(StringUtils.left(pgCodeText,
-                    ONE_THOUSAND));
             studyProtocol
                     .setComments(StringUtils.defaultString(studyProtocol
                             .getComments())
@@ -1704,21 +1691,8 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
                 throw new PAException("Unable to find an active program code in family " + code);
             }
             studyProtocol.getProgramCodes().add(p);
-
-            //update legacy data if needed
-            String pgcText = studyProtocol.getProgramCodeText();
-            if (StringUtils.isNotEmpty(pgcText)) {
-                Set<String> uniqueProgramCodes = new HashSet<String>();
-                uniqueProgramCodes.addAll(Arrays.asList(studyProtocol.getProgramCodeText().split("\\s*;\\s*")));
-                if (uniqueProgramCodes.add(p.getProgramCode())) {
-                    pgcText = String.format("%s;%s", pgcText, p.getProgramCode());
-                }
-                studyProtocol.setProgramCodeText(pgcText);
-            }
-
             LOG.info("Added programCode:" + p.getProgramCode() + " to study [studyId:" + studyProtocol.getId() + "]");
         }
-
 
     }
 
