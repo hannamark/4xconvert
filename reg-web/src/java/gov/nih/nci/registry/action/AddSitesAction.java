@@ -21,6 +21,7 @@ import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.service.util.FamilyProgramCodeService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
+import gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.CacheUtils;
@@ -36,6 +37,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -68,6 +70,7 @@ public class AddSitesAction extends StatusHistoryManagementAction {
     private static final int LIMIT = 100;
     private static final String CANCER_TRIAL = "CANCER_TRIAL";
     private static final String PROGRAM_CODES = "PROGRAM_CODES";
+    private static final String TRIAL_PROGRAM_CODES = "TRIAL_PROGRAM_CODES";
 
     static final String RESULTS_SESSION_KEY = "AddSitesAction.records";
 
@@ -364,8 +367,11 @@ public class AddSitesAction extends StatusHistoryManagementAction {
             }
         }
 
+        Map<Long, List<Long>> indexMap = initializeTrialProgramCodeIndex();
+
         getServletRequest().setAttribute(CANCER_TRIAL, cancerTrial);
         getServletRequest().setAttribute(PROGRAM_CODES, pgcMap);
+        getServletRequest().setAttribute(TRIAL_PROGRAM_CODES, indexMap);
     }
 
     /**
@@ -380,6 +386,19 @@ public class AddSitesAction extends StatusHistoryManagementAction {
                 programCodeFamilyIndex.put(pgc, familyDTO);
             }
         }
+    }
+
+    private Map<Long, List<Long>> initializeTrialProgramCodeIndex() {
+        Map<Long, List<Long>> indexMap = new LinkedHashMap<Long, List<Long>>();
+        if (CollectionUtils.isNotEmpty(getRecords())) {
+            for (StudyProtocolQueryDTO study : getRecords()) {
+                indexMap.put(study.getStudyProtocolId(), new ArrayList<Long>());
+                for (ProgramCodeDTO pgc : study.getProgramCodes()) {
+                    indexMap.get(study.getStudyProtocolId()).add(pgc.getId());
+                }
+            }
+        }
+        return indexMap;
     }
     
     /**
@@ -403,7 +422,7 @@ public class AddSitesAction extends StatusHistoryManagementAction {
             CacheUtils.removeItemFromCache(CacheUtils.getSearchResultsCache(), spQueryCriteria.getUniqueCriteriaKey());
         }        
         records = protocolQueryService
-                .getStudyProtocolByCriteria(spQueryCriteria);
+                .getStudyProtocolByCriteria(spQueryCriteria, new ProtocolQueryPerformanceHints[0]);
         if (CollectionUtils.isNotEmpty(records)) {            
             Collections.sort(records, new Comparator<StudyProtocolQueryDTO>() {
                 public int compare(StudyProtocolQueryDTO o1, StudyProtocolQueryDTO o2) {

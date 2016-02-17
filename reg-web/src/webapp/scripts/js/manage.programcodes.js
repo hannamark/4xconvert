@@ -1,5 +1,4 @@
 // used by ProgramCodeAssignmentAction jsp files.
-var cfrow = "";
 var programCodeColumn = 5;
 var trailsTable;
 var participationTable;
@@ -18,6 +17,7 @@ var mrmS2Ctrl = null;
 var mrplS2Ctrl1 = null;
 var mrplS2Ctrl2 = null;
 var s2closing = false;
+var ts = 0;
 
 function idfy(code) {
    return code.split(' ').join('_');
@@ -156,19 +156,19 @@ function pgcinit($) {
             }
         },
         buttons: [
-            {extend: 'csv', extension:'.csv', filename:'program_code_assignments'},
-            {extend: 'excelHtml5', extension:'.xlsx', filename:'program_code_assignments', title: 'Program Code Assignments'}
+            {extend: 'excel',filename:'program_code_assignments', title: 'Program Code Assignments'},
+            {extend: 'csv', extension:'.csv', filename:'program_code_assignments'}
         ],
         "columns": [
-            {width:"15%", data: "identifiers"},
+            {width:"15%", data: "identifiers", className:"scol"},
             {width: "36%", data:function(row, type, val, meta){
-               return "<div class='spt' title='" + row.title +"'>" + row.title + "</div>";
+               return "<div class='spt scol' title='" + row.title +"'>" + row.title + "</div>";
             }},
             {width: "23%",data: function(row, type, val, meta){
-                return row.leadOrganizationName + "<br>" + '<a href="#" class="mypgp" rel="' + row.studyProtocolId + '">Show my participation</a>';
+                return "<div class='scol'>" + row.leadOrganizationName + "<br>" + '<a href="#" class="mypgp" rel="' + row.studyProtocolId + '">Show my participation</a></div>';
             }},
-            {width: "15%",data: "piFullName"},
-            {width: "5%",data: "trialStatus"},
+            {width: "15%",data: "piFullName" , className:'scol'},
+            {width: "5%",data: "trialStatus",  className: 'scol'},
             {width:"6%",
                 orderable: false ,
                 className:"pgctd",
@@ -195,35 +195,12 @@ function pgcinit($) {
 
     });
 
-    //insert a row above the table
-    if (trailsTable.columns()[0]) {
-
-        $(trailsTable.columns()[0].each(function(i, c){
-            cfrow += '<td class="cf">';
-            if(c == programCodeColumn) {
-                cfrow += '<input type="text" id="cfProgramCode" class="cf" placeholder="Filter..." rel="' + c + '" />';
-
-            }
-            cfrow += ' </td>';
-
-        }));
-
-    }
-    cfrow = '<tr class="cf">' + cfrow + '</tr>';
-
-    //add few filter elements on the table
-    $('#trialsTbl').find("thead").prepend(cfrow);
-
     // Apply the search
     $('input.cf').on('keyup change', function () {
         trailsTable.columns($(this).attr("rel")).search(this.value).draw();
         $('#pgcFilter').val(this.value);
     } );
 
-    if ($('#pgcFilter').val() !== '') {
-        $('#cfProgramCode').val($('#pgcFilter').val());
-        $('#cfProgramCode').trigger($.Event("change"));
-    }
 
     $('#trialsTbl tbody').on('click', 'a.pgcrm', function (evt) {
         evt.preventDefault();
@@ -281,9 +258,8 @@ function pgcinit($) {
         dropRight:false,
         filterPlaceholder: 'Search',
         onDropdownHide: function (evt) {
-            if ($("#fpgc-sel").val()) {
-                trailsTable.ajax.reload();
-            } else {
+            trailsTable.ajax.reload();
+            if (!$("#fpgc-sel").val()) {
                 $("#fpgc-div").hide();
             }
         }
@@ -325,6 +301,15 @@ function pgcinit($) {
         }
     });
 
+    //to handle select2 delete open issue
+    $(".select2-hidden-accessible").on("select2:unselect",function (e) {
+        ts = e.timeStamp;
+    }).on("select2:opening", function (e) {
+        if (e.timeStamp - ts < 100) {
+            e.preventDefault();
+        }
+    });
+
     //handle click on funnel icon
     $("#fpgc-icon-a").on('click', function (evt) {
         evt.preventDefault();
@@ -341,6 +326,11 @@ function pgcinit($) {
     $("label.checkbox").each(function(i, el){
         $(el).attr('title', $(el).text());
     });
+
+    //show the select box if there is value in pgcFilter
+    if ($("#fpgc-sel").val()) {
+        $("#fpgc-div").show();
+    }
 
 }
 
@@ -596,7 +586,6 @@ function unAssignProgramCode($, td, sp, pgc) {
 
     //insert indicator
     $(td).append('<img id="' + sp + "_" + idfy(pgc) + '_img" src="../images/loading.gif"/>');
-    $(td).append('<span id="' + sp + "_" + idfy(pgc) + '_span" style ="display:none;" class="info">Code unassigned</span>');
 
     //call ajax function
     $.post("managePCAssignmentunassignProgramCode.action",
@@ -610,9 +599,6 @@ function unAssignProgramCode($, td, sp, pgc) {
             removeProgramCodeFromTrialMap($,sp, pgc);
             //show confirmation
             $("#" + sp + "_" + idfy(pgc) + "_span").show();
-            $("#" + sp + "_" + idfy(pgc) + "_span").delay(3000).hide('slow', function () {
-                $("#" + sp + "_" + idfy(pgc) + "_span").remove();
-            });
         })
         .fail(function (jqXHR) {
             $('#' + sp + '_' + idfy(pgc) + '_img').remove();

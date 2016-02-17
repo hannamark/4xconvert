@@ -89,6 +89,21 @@
                 padding-left:2px;
                 float:right;
             }
+            .table-responsive {
+                overflow-x: visible;
+                overflow-y: visible;
+                border:none;
+            }
+            div.dataTables_filter {
+                padding-top: 5px;
+            }
+            div.dataTables_length {
+                padding-top: 5px;
+                padding-left: 5px;
+            }
+            .scol {
+                cursor: pointer;
+            }
 
         </style>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery.dataTables.min.js'/>"></script>
@@ -161,8 +176,8 @@
                 </div>
                 <div class="col-md-12">
                     <hr />
-                    <div id="trials" class="table-wrapper">
-                        <div class="table-responsive">
+                    <div id="trials" class="">
+                        <div class="table-responsive table-wrapper">
                             <div id="row_wrapper" class="dataTables_wrapper no-footer">
                                 <table id="trialsTbl" class="table table-striped table-bordered">
                                     <thead>
@@ -181,9 +196,13 @@
                                                     <select id="fpgc-sel" multiple="multiple">
                                                         <s:iterator var="p" value="familyDto.programCodesAsOrderedList">
                                                             <s:if test="active">
-                                                                <option id="fpgc-opt-<s:property value="id" />" value="<s:property value="id" />" title='<s:property value="displayName" />'><s:property value="displayName" /></option>
+                                                                <s:if test='programCodeId == id'>
+                                                                    <option id="fpgc-opt-<s:property value="id" />" value="<s:property value="id" />" title='<s:property value="displayName" />' selected ><s:property value="displayName" /></option>
+                                                                </s:if>
+                                                                <s:else>
+                                                                    <option id="fpgc-opt-<s:property value="id" />" value="<s:property value="id" />" title='<s:property value="displayName" />'><s:property value="displayName" /></option>
+                                                                </s:else>
                                                             </s:if>
-
                                                         </s:iterator>
                                                     </select>
 

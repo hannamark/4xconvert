@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyVararg;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -38,6 +39,7 @@ import gov.nih.nci.pa.service.status.StatusTransitionService;
 import gov.nih.nci.pa.service.util.FamilyProgramCodeService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
+import gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.registry.action.AddSitesAction.AddSiteResult;
@@ -178,9 +180,10 @@ public class AddSitesActionTest extends AbstractRegWebTest {
         when(protocolQueryServiceLocal.getTrialSummaryByStudyProtocolId(1L))
                 .thenReturn(queryDTO);
         when(
-                protocolQueryServiceLocal
-                        .getStudyProtocolByCriteria(any(StudyProtocolQueryCriteria.class)))
-                .thenAnswer(new Answer<List<StudyProtocolQueryDTO>>() {
+                protocolQueryServiceLocal.getStudyProtocolByCriteria(
+                        any(StudyProtocolQueryCriteria.class),
+                        new ProtocolQueryPerformanceHints[0])
+        ).thenAnswer(new Answer<List<StudyProtocolQueryDTO>>() {
                     @Override
                     public List<StudyProtocolQueryDTO> answer(
                             InvocationOnMock invocation) throws Throwable {
@@ -198,13 +201,13 @@ public class AddSitesActionTest extends AbstractRegWebTest {
 
                         if ("Title".equals(criteria.getOfficialTitle())
                                 && "NCI-2009-00001".equals(criteria
-                                        .getAnyTypeIdentifier())
+                                .getAnyTypeIdentifier())
                                 && Boolean.TRUE.equals(criteria
-                                        .isExcludeRejectProtocol())
+                                .isExcludeRejectProtocol())
                                 && "p".equalsIgnoreCase(criteria
-                                        .getTrialCategory())
+                                .getTrialCategory())
                                 && dws.equals(criteria
-                                        .getDocumentWorkflowStatusCodes())) {
+                                .getDocumentWorkflowStatusCodes())) {
                             list.add(queryDTO);
                         }
                         return list;
@@ -343,8 +346,9 @@ public class AddSitesActionTest extends AbstractRegWebTest {
         Mockito.reset(protocolQueryServiceLocal);
         when(
                 protocolQueryServiceLocal
-                        .getStudyProtocolByCriteria(any(StudyProtocolQueryCriteria.class)))
-                .thenAnswer(new Answer<List<StudyProtocolQueryDTO>>() {
+                        .getStudyProtocolByCriteria(any(StudyProtocolQueryCriteria.class),
+                                new ProtocolQueryPerformanceHints[0])
+        ).thenAnswer(new Answer<List<StudyProtocolQueryDTO>>() {
                     @Override
                     public List<StudyProtocolQueryDTO> answer(
                             InvocationOnMock invocation) throws Throwable {

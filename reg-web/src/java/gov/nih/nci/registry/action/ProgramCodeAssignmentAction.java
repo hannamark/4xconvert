@@ -80,8 +80,8 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
     private List<OrgFamilyDTO> affiliatedFamilies;
     private Long familyPoId;
     private FamilyDTO familyDto;
-    private String pgcFilter;
     private Long studyProtocolId;
+    private Long programCodeId;
 
     //the following are used by assign, unassign, replace operations
     private String studyProtocolIdListParam;
@@ -171,21 +171,6 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
         this.familyPoId = familyPoId;
     }
 
-    /**
-     * The program code filter
-     * @return - the pgcFilter
-     */
-    public String getPgcFilter() {
-        return pgcFilter;
-    }
-
-    /**
-     * The program code filter
-     * @param pgcFilter - the program code filter
-     */
-    public void setPgcFilter(String pgcFilter) {
-        this.pgcFilter = pgcFilter;
-    }
 
     /**
      * The FamilyDto
@@ -296,6 +281,22 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
      */
     public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
         this.studyProtocolService = studyProtocolService;
+    }
+
+    /**
+     * Gets the program code id
+     * @return - program code id
+     */
+    public Long getProgramCodeId() {
+        return programCodeId;
+    }
+
+    /**
+     * Sets the program code id
+     * @param programCodeId - program code id
+     */
+    public void setProgramCodeId(Long programCodeId) {
+        this.programCodeId = programCodeId;
     }
 
     /**

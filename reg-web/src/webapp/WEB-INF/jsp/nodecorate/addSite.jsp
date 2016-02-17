@@ -101,6 +101,7 @@ li.select2-selection__choice > span.select2-selection__choice__remove {
     var backendUrlTemplate = '${backendUrlTemplate}';
     var deleteImg = '${pageContext.request.contextPath}/images/ico_delete.gif';
     var runValidationsOnInitialLoad = new Boolean('${not empty ssID}').valueOf();
+    var ts = 0;
 	
 	function addSite() {
 		$('addSiteForm').submit();
@@ -130,6 +131,14 @@ li.select2-selection__choice > span.select2-selection__choice__remove {
             $("#programCode").select2({
                 templateResult : function(pg){
                   return pg.title;
+                }
+            });
+            //to handle select2 delete open issue
+            $(".select2-hidden-accessible").on("select2:unselect",function (e) {
+                ts = e.timeStamp;
+            }).on("select2:opening", function (e) {
+                if (e.timeStamp - ts < 100) {
+                    e.preventDefault();
                 }
             });
 

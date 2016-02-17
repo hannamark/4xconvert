@@ -99,7 +99,7 @@ li.select2-selection__choice > span.select2-selection__choice__remove {
 <script type="text/javascript" language="javascript">
 	var backendUrlTemplate = '${backendUrlTemplate}';
 	var deleteImg = '${pageContext.request.contextPath}/images/ico_delete.gif';
-
+    var ts = 0;
 	function resetSearch() {
 		$('identifier').value = '';
 		$('officialTitle').value = '';
@@ -572,6 +572,14 @@ li.select2-selection__choice > span.select2-selection__choice__remove {
                 }
             });
 
+            //to handle select2 delete open issue
+            $(".select2-hidden-accessible").on("select2:unselect",function (e) {
+                ts = e.timeStamp;
+            }).on("select2:opening", function (e) {
+                if (e.timeStamp - ts < 100) {
+                    e.preventDefault();
+                }
+            });
 			
 		});
 	}(jQuery));
@@ -669,7 +677,7 @@ li.select2-selection__choice > span.select2-selection__choice__remove {
 								<th id="th1" nowrap="nowrap"><a>Trial Identifier<i
 										class="fa-sort"></i></a></th>
 								<th id="th2"><a>Trial Title<i class="fa-sort"></i></a></th>
-                                <th id="th3"><a>Program Code(s)<i class="fa fa-question-circle" title='<fmt:message key="add.site.programCode.cancer.tooltip" />'></i></a></th>
+                                <th id="th3"><a>Program Code(ss)<i class="fa fa-question-circle" title='<fmt:message key="add.site.programCode.cancer.tooltip" />'></i></a></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -691,7 +699,7 @@ li.select2-selection__choice > span.select2-selection__choice__remove {
                                                 <select id="pgc_${trial.studyProtocolId}" name="trial_${trial.studyProtocolId}_programCode" multiple="multiple"
                                                         class="s2pgc" data-placeholder="Select Program Code(s)" >
                                                     <c:forEach var="entry" items="${requestScope['PROGRAM_CODES']}">
-                                                        <option value="${entry.value.id}" title="${entry.value.displayName}">${entry.value.programCode}</option>
+                                                        <option value="${entry.value.id}" title="${entry.value.displayName}" ${ fn:contains(requestScope['TRIAL_PROGRAM_CODES'][trial.studyProtocolId], entry.value.id)? 'selected' : ''} >${entry.value.programCode}</option>
                                                     </c:forEach>
                                                 </select>
                                             </c:if>

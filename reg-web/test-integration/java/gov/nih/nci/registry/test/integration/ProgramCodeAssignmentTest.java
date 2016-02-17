@@ -156,14 +156,10 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         TrialInfo trial1 = trials.get(1);
 
 
-        selenium.type("cfProgramCode", "PG4");
-
         //delete PG1 from trial 1
         waitForElementToBecomeAvailable(By.id(trial1.id + "_PG1_a"), 5);
         s.click(trial1.id + "_PG1_a");
-        
-        //make sure that "Code unassigned" text appear and then disappear after few seconds
-        waitForElementToBecomeAvailable(By.id(trial1.id + "_PG1_span"), 5);
+
 
         //make sure the dynamically added elements are removed from DOM
         waitForElementToGoAway(By.id(trial1.id + "_PG1_img"), 10);
@@ -178,7 +174,6 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
         waitForElementToBecomeAvailable(
                 By.xpath("//table[@id='trialsTbl']/tbody//tr//td[2]"), 10);
-        selenium.type("cfProgramCode", "PG4");
 
         waitForElementToGoAway(By.id(trial1.id + "_PG1_a"), 5);
 
@@ -588,7 +583,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         String value = dropdown.getOptions().get(1).getAttribute("value");
 
         //When I pass the program code filter parameter
-        openAndWait("/registry/siteadmin/managePCAssignmentchangeFamily.action?pgcFilter=PG4&familyPoId=" + value);
+        openAndWait("/registry/siteadmin/managePCAssignmentchangeFamily.action?programCodeId=4&familyPoId=" + value);
 
         //Then I should see data filtered
         assertTrue(selenium.isTextPresent("PG4"));
@@ -596,15 +591,16 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         //I should see that the original filter is preserved
         waitForElementToBecomeAvailable(
                 By.xpath("//table[@id='trialsTbl']/tbody/tr[2]"), 10);
-        assertTrue(selenium.isTextPresent("Showing 1 to 2 of 2 (filtered from 11 total entries)"));
+        assertTrue(selenium.isTextPresent("Showing 1 to 2 of 2"));
 
         //When a user changes the filter,
-        selenium.type("cfProgramCode", "PG3");
+        openAndWait("/registry/siteadmin/managePCAssignmentchangeFamily.action?programCodeId=3&familyPoId=" + value);
+
 
         //then I should see data filtered
         waitForElementToBecomeAvailable(
                 By.xpath("//table[@id='trialsTbl']/tbody/tr[3]"), 10);
-        assertTrue(selenium.isTextPresent("Showing 1 to 3 of 3 (filtered from 11 total entries)"));
+        assertTrue(selenium.isTextPresent("Showing 1 to 3 of 3"));
 
         logoutUser();
     }
@@ -654,13 +650,13 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         // indicator disappears
         waitForElementToGoAway(By.id(trial1.id + "_PG5_img"), 10);
 
-        //then we should have PG4 as an option
+        //then we should have PG5 as an option
         waitForElementToBecomeAvailable(By.id(trial1.id + "_PG5_a"), 5);
 
 
         //Again pick PG5 in funnel
         clickAndWait("fpgc-icon-a");
-        pickMultiSelectOptions("fpgc-div", Arrays.asList("multiselect-all"), Arrays.asList("1", "2", "3", "4", "6"));
+        pickMultiSelectOptions("fpgc-div", Arrays.asList("5"), Arrays.asList("1", "2", "3", "4", "6"));
 
         //Now I should see only one record in table
         TrialInfo trial2 = trials.get(2);
@@ -668,6 +664,23 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
                 By.xpath(String.format("//table[@id='trialsTbl']/tbody//tr[@id='trial_%s']", trial2.id)), 5);
         assertTrue(selenium.isTextPresent("Showing 1 to 1 of 1"));
 
+
+        //Now pick PG6 in funnel
+        clickAndWait("fpgc-icon-a");
+        pickMultiSelectOptions("fpgc-div", Arrays.asList("6"), Arrays.asList("1", "2", "3", "4", "5"));
+        waitForElementToBecomeAvailable(By.xpath("//table[@id='trialsTbl']/tbody//td[text()='No data available in table']"), 5);
+        assertTrue(selenium.isTextPresent("Showing 0 to 0 of 0 entries"));
+
+        //Now deselect every thing in funnel
+        clickAndWait("fpgc-icon-a");
+        pickMultiSelectOptions("fpgc-div", Arrays.asList("multiselect-all"), new ArrayList<String>()); //select all
+        clickAndWait("fpgc-icon-a");
+        pickMultiSelectOptions("fpgc-div", Arrays.asList("multiselect-all"), new ArrayList<String>()); //deselect all
+        waitForElementToGoAway(By.xpath("//table[@id='trialsTbl']/tbody//td[text()='No data available in table']"), 5);
+
+        //then table should be refreshed
+        waitForElementToBecomeAvailable(By.xpath("//table[@id='trialsTbl']/tbody/tr[3]"), 5);
+        assertTrue(selenium.isTextPresent("Showing 1 to 11 of 11"));
         logoutUser();
     }
 
@@ -757,6 +770,8 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         qr.update(connection, "delete from family");
         qr.update(connection, String.format("INSERT INTO family( identifier, po_id, " +
                 "rep_period_end, rep_period_len_months)VALUES (1, 1, '%s', 12)", date(180)));
+        qr.update(connection, String.format("INSERT INTO family( identifier, po_id, " +
+                "rep_period_end, rep_period_len_months)VALUES (2, 2, '%s', 12)", date(180)));
     }
 
     private void associateProgramCodes() throws Exception {

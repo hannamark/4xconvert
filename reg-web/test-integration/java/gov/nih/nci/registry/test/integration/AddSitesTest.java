@@ -130,7 +130,7 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
     }
 
     @Test
-    public void testAddSite() throws SQLException {
+    public void testAddSite() throws Exception {
         TrialInfo trial = createTrialAndBeginAddingSites();
 
         // Select Investigator
@@ -189,8 +189,11 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
     @Test
     public void testAddSiteWithProgramCode() throws Exception {
         TrialInfo trial = createTrialAndBeginAddingSites();
-        removeProgramCodesFromTrial(trial.id);
 
+
+        List<String> codes = getProgramCodesByTrial(trial.id);
+        assertEquals(2, codes.size());
+        System.out.println(codes);
         // Select Investigator
         searchAndSelectPerson(
                 By.id("trial_" + trial.id + "_site_0_pi_lookupBtn"), "John",
@@ -203,11 +206,16 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
 
         populateStatusHistory(trial);
 
-
+        //I see that PG3 & PG4 is already selected
+        assertOptionSelected("PG3 - Cancer Program3");
+        assertOptionSelected("PG4 - Cancer Program4");
 
         //When I select PG1 and PG2
         useSelect2ToPickAnOption("pgc_" + trial.id ,"PG1","PG1 - Cancer Program1");
         useSelect2ToPickAnOption("pgc_" + trial.id ,"PG2","PG2 - Cancer Program2");
+
+        //And unselect PG4
+        useSelect2ToUnselectOption("PG4 - Cancer Program4");
 
         clickAndWait("id=saveBtn");
         waitForElementById("summaryTable", WAIT_FOR_ELEMENT_TIMEOUT);
@@ -216,10 +224,16 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
                 "xpath=//table[@id='summaryTable']/tbody/tr[1]//td[1]")
                 .contains(trial.nciID));
 
-        List<String> codes = getProgramCodesByTrial(trial.id);
+        //When I check the program codes associated with the trial
+        codes = getProgramCodesByTrial(trial.id);
         assertFalse(codes.isEmpty());
+        //And I see PG1, PG2, PG3 associated with trial
         assertTrue(codes.contains("PG1"));
         assertTrue(codes.contains("PG2"));
+        assertTrue(codes.contains("PG3"));
+
+        //Also I see that PG4 is still present, as study site will only add new entries.
+        assertTrue(codes.contains("PG4"));
 
     }
 
@@ -377,11 +391,14 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
      * @return
      * @throws SQLException
      */
-    private TrialInfo createTrialAndBeginAddingSites() throws SQLException {
+    private TrialInfo createTrialAndBeginAddingSites() throws Exception {
         goToAddSitesScreen();
 
         deactivateAllTrials();
         TrialInfo trial = createAcceptedTrial(true);
+        removeProgramCodesFromTrial(trial.id);
+        assignProgramCode(trial, 1, "PG3");
+        assignProgramCode(trial, 1, "PG4");
 
         selenium.type("id=identifier", trial.nciID);
         clickAndWait("id=runSearchBtn");
@@ -412,7 +429,7 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
     }
 
     @Test
-    public void testAddSiteNothingEntered() throws SQLException {
+    public void testAddSiteNothingEntered() throws Exception {
         TrialInfo trial = createTrialAndBeginAddingSites();
         clickAndWait("id=saveBtn");
         waitForPageToLoad();
@@ -421,7 +438,7 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
     }
 
     @Test
-    public void testAddSiteValidationMissingFields() throws SQLException {
+    public void testAddSiteValidationMissingFields() throws Exception {
         TrialInfo trial = createTrialAndBeginAddingSites();
         selenium.type("id=trial_" + trial.id + "_site_0_localID", "XYZ0001");
         clickAndWait("id=saveBtn");

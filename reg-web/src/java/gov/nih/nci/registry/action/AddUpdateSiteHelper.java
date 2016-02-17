@@ -312,22 +312,29 @@ public final class AddUpdateSiteHelper {
 
     /**
      * Add to the initial program code ids
+     *
      * @param id - a program code id
      */
     public void addToInitialProgramCodeIds(Long id) {
-        initialProgramCodeIds.add(id);
+        if (initialProgramCodeIds.indexOf(id) < 0) {
+            initialProgramCodeIds.add(id);
+        }
     }
 
     /**
      * Add to the finally selected program code ids
+     *
      * @param id - a program code id;
      */
     public void addToFinalProgramCodeIds(Long id) {
-        finalProgramCodeIds.add(id);
+        if (finalProgramCodeIds.indexOf(id) < 0) {
+            finalProgramCodeIds.add(id);
+        }
     }
 
     /**
      * Add to family program code index
+     *
      * @param map - a map indexing family and program codes
      */
     public void addAllToFamilyProgramCodeIndex(Map<ProgramCodeDTO, FamilyDTO> map) {
