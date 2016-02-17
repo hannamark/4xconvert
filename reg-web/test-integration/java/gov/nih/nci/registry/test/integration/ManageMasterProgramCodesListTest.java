@@ -55,7 +55,8 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         //verify pagination present
         assertEquals("Showing 1 to 10 of 12",driver.findElement(By.id("programCodesTable_info")).getText());
         // filter program codes.
-        selenium.typeKeys("//div[@id='programCodesTable_filter']/descendant::label/descendant::input", "11");
+        selenium.typeKeys("//div[@id='programCodesTable_filter']/descendant::label/descendant::input", "PG11");
+        pause(2000);
         //should see filtered data only
         assertEquals("PG11",driver.findElement(By.xpath("//table[@id='programCodesTable']/tbody/tr/td[1]")).getText());
         assertEquals("Cancer Program11",driver.findElement(By.xpath("//table[@id='programCodesTable']/tbody/tr/td[2]")).getText());
