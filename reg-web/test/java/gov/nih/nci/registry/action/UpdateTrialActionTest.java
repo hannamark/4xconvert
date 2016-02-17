@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -235,6 +236,8 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         session.setAttribute(Constants.REG_AUTH_LIST, new ArrayList<RegulatoryAuthOrgDTO>());
         session.setAttribute(Constants.GRANT_ADD_LIST, new ArrayList<TrialFundingWebDTO>());
         session.setAttribute(Constants.INDIDE_ADD_LIST, new ArrayList<TrialIndIdeDTO>());
+       
+        
         action.setTrialDTO(getMockTrialDTO());
         action.getTrialDTO().setDataMonitoringCommitteeAppointedIndicator("dataMonitoringIndicator");
         action.getTrialDTO().setDelayedPostingIndicator("delayedPostingIndicator");
@@ -462,11 +465,55 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         MockHttpSession session = new MockHttpSession();
         TrialDTO tDto = getMockTrialDTO();
         tDto.setIdentifier("1");
+        
+        List<String> programCodesList = new ArrayList<String>();
+        programCodesList.add("PG1");
+        programCodesList.add("PG2");
+        tDto.setProgramCodesList(programCodesList);
+        
         session.setAttribute("trialDTO", tDto);
+        
+        
+        
+        List<ProgramCodeDTO> allProgramCodeList = new ArrayList<ProgramCodeDTO>();
+        ProgramCodeDTO programCodeDTO = new ProgramCodeDTO();
+        programCodeDTO.setId(1l);
+        programCodeDTO.setProgramCode("PG1");
+        programCodeDTO.setProgramName("Program Code 1");
+        programCodeDTO.setActive(true);
+        allProgramCodeList.add(programCodeDTO);
+        
+        programCodeDTO = new ProgramCodeDTO();
+        programCodeDTO.setId(2l);
+        programCodeDTO.setProgramCode("PG2");
+        programCodeDTO.setProgramName("Program Code 2");
+        programCodeDTO.setActive(true);
+        allProgramCodeList.add(programCodeDTO);
+        
+        programCodeDTO = new ProgramCodeDTO();
+        programCodeDTO.setId(3l);
+        programCodeDTO.setProgramCode("PG3");
+        programCodeDTO.setProgramName("Program Code 3");
+        programCodeDTO.setActive(true);
+        allProgramCodeList.add(programCodeDTO);
+        
+        programCodeDTO = new ProgramCodeDTO();
+        programCodeDTO.setId(4l);
+        programCodeDTO.setProgramCode("PG4");
+        programCodeDTO.setProgramName("Program Code 4");
+        programCodeDTO.setActive(true);
+        allProgramCodeList.add(programCodeDTO);
+        
+        
+        
+        session.setAttribute(Constants.PROGRAM_CODES_LIST, allProgramCodeList);
+        
         request.setSession(session);
         ServletActionContext.setRequest(request);
         action.setServletRequest(request);
         action.setInitialStatusHistory(action.getTrialDTO().getStatusHistory());
+        
+       
         assertEquals("redirect_to_search", action.update());
         request = new MockHttpServletRequest();
         session = new MockHttpSession();
