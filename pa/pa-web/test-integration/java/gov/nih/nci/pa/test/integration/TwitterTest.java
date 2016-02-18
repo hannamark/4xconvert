@@ -48,7 +48,8 @@ import twitter4j.conf.ConfigurationBuilder;
 @Batch(number = 3)
 public class TwitterTest extends AbstractTrialStatusTest {
 
-    private static final int TWEET_WAIT_TIME_SECONDS = 30;
+    private static final int TWEET_WAIT_TIME_SECONDS = SystemUtils.IS_OS_LINUX ? 60
+            : 30;
     private static final int TWEET_STATUS_RECHECK_WAIT_TIME = 5000;
     private static final int ON_OFF_SWITCH_RECHECK_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 10000
             : 5000;
