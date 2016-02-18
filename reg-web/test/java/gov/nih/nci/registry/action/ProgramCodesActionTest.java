@@ -205,6 +205,62 @@ public class ProgramCodesActionTest extends AbstractRegWebTest {
           fail("should not throw exception");
       }
     }
+    
+    @Test
+    public void testGetStudyProtocolsAssociatedToAProgramCode() throws Exception {        
+        ProgramCodesAction action = getAction();
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        action.setServletRequest(mockRequest);
+        
+        action.setPoId("12345");
+        when(mockRequest.getParameter("programCodeIdSelectedForDeletion")).thenReturn("1");
+        
+        assertTrue(action.getStudyProtocolsAssociatedToAProgramCode() instanceof StreamResult);     
+        
+      try {
+
+          Field field = StreamResult.class.getDeclaredField("inputStream");
+          ReflectionUtils.makeAccessible(field);
+
+          StreamResult sr = action.getStudyProtocolsAssociatedToAProgramCode();
+
+          InputStream is = (InputStream) field.get(sr);
+          String json = IOUtils.toString(is);
+          assertEquals("{\"data\":[]}", json);
+
+      } catch (Exception e) {
+          e.printStackTrace();
+          fail("should not throw exception");
+      }
+    }
+    
+    @Test
+    public void testInactivateProgramCode() throws Exception {        
+        ProgramCodesAction action = getAction();
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        action.setServletRequest(mockRequest);
+        
+        action.setPoId("12345");
+        when(mockRequest.getParameter("programCodeIdSelectedForInactivation")).thenReturn("1");
+        
+        assertTrue(action.inactivateProgramCode() instanceof StreamResult);     
+        
+      try {
+
+          Field field = StreamResult.class.getDeclaredField("inputStream");
+          ReflectionUtils.makeAccessible(field);
+
+          StreamResult sr = action.inactivateProgramCode();
+
+          InputStream is = (InputStream) field.get(sr);
+          String json = IOUtils.toString(is);
+          assertEquals("{\"data\":[]}", json);
+
+      } catch (Exception e) {
+          e.printStackTrace();
+          fail("should not throw exception");
+      }
+    }
 	
 	private ProgramCodesAction getAction() throws Exception {
 		ProgramCodesAction action = new ProgramCodesAction();

@@ -7,6 +7,7 @@ import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.exception.PAValidationException;
 
+
 /**
  * FamilyProgramCodeService
  * @author lalit
@@ -76,4 +77,11 @@ public interface FamilyProgramCodeService {
      * @throws PAException when there is an error
      */
     void populate() throws PAException;
+    
+    /**
+     * Inactivates existing program code in family
+     * @param programCodeDTO program code DTO being inactivated
+     * @throws PAValidationException program code doesn't exist 
+     */
+    void inactivateProgramCode(ProgramCodeDTO programCodeDTO) throws PAValidationException;
 }

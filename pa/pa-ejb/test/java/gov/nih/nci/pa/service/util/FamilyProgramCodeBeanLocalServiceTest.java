@@ -4,11 +4,14 @@
 package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.pa.domain.Family;
+import gov.nih.nci.pa.domain.ProgramCode;
 import gov.nih.nci.pa.dto.FamilyDTO;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.exception.PAValidationException;
@@ -18,6 +21,7 @@ import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.Iterator;
 
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -209,6 +213,20 @@ public class FamilyProgramCodeBeanLocalServiceTest extends AbstractEjbTestCase {
    }
    
    
+   private ProgramCode findDomainProgramCodeGivenCode(Family family,String code){
+       Iterator<ProgramCode> iterator = family.getProgramCodes().iterator();
+       
+       while(iterator.hasNext()){
+           ProgramCode matchingProgramCode = iterator.next();
+           if(matchingProgramCode.getProgramCode().equalsIgnoreCase(code)){
+               return matchingProgramCode;
+           }
+       }
+       
+       return null;
+   }
+   
+   
    /**
     * Test method for
     * {@link gov.nih.nci.pa.service.util.FamilyProgramCodeBeanLocal#deleteProgramCode(gov.nih.nci.pa.dto.FamilyDTO,
@@ -308,5 +326,43 @@ public class FamilyProgramCodeBeanLocalServiceTest extends AbstractEjbTestCase {
      
      assertFalse(bean.isProgramCodeAssociatedWithATrial(unassociatedProgramCodeDTO));
  }
+ 
+ /**
+  * Test method for
+  * {@link gov.nih.nci.pa.service.util.FamilyProgramCodeBeanLocal#inactivateProgramCode(gov.nih.nci.pa.iso.dto.ProgramCodeDTO)}
+  * 
+  * @throws PAException
+  */
+@Test
+public final void testInactivateProgramCode() throws PAException {
+    
+    FamilyDTO familyDTO = bean.getFamilyDTOByPoId(-1L);
+    assertEquals(6,familyDTO.getProgramCodes().size());
+    
+    String existingProgramCodeValue = "2";
+    // get existing program code
+    ProgramCodeDTO existingProgramCodeDTO = findProgramCodeGivenCode(familyDTO, existingProgramCodeValue);
+    assertNotNull(existingProgramCodeDTO);
+    assertTrue(bean.isProgramCodeAssociatedWithATrial(existingProgramCodeDTO));
+    ProgramCode dbProgramCode = getDbProgramCodeById(existingProgramCodeDTO.getId());
+    assertEquals(ActiveInactiveCode.ACTIVE,dbProgramCode.getStatusCode());
+    
+    bean.inactivateProgramCode(existingProgramCodeDTO);
+    //refetch db program code
+    dbProgramCode = getDbProgramCodeById(existingProgramCodeDTO.getId());
+    
+    assertEquals(ActiveInactiveCode.INACTIVE,dbProgramCode.getStatusCode());
+    
+}
+
+/**
+ * @param id the program code identifier
+ *            name
+ * @return ProgramCode
+ */
+private static ProgramCode getDbProgramCodeById(Long id) {
+    Session session = PaHibernateUtil.getCurrentSession();
+    return (ProgramCode) session.get(ProgramCode.class, id);
+}
 
 }

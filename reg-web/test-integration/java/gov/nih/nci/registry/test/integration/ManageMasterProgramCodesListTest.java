@@ -1,11 +1,13 @@
 package gov.nih.nci.registry.test.integration;
 
+import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.service.util.FamilyProgramCodeBeanLocal;
 
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.dbutils.QueryRunner;
@@ -20,6 +22,8 @@ import org.openqa.selenium.WebElement;
  *Integration test for Manage Program Codes List screen.
  */
 public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumTest {
+    
+    private List<TrialInfo> trials = new ArrayList<TrialInfo>();
 
     /**
      * Test the program codes menu items
@@ -437,6 +441,80 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         excel.delete();
     }
     
+    /**
+     * Test inactivate unassigned program code
+     * @throws Exception exception
+     */
+    @Test
+    @SuppressWarnings({"deprecation" })
+    public void testInactivateProgramCode() throws Exception {
+        loginAndAcceptDisclaimer();
+        waitForElementToBecomeVisible(By.linkText("Administration"), 2);
+        hoverLink("Administration");
+        waitForElementToBecomeVisible(By.linkText("Program Codes"), 2);
+        assertTrue(selenium.isTextPresent("Program Codes"));
+        hoverLink("Program Codes");
+        assertTrue(selenium.isTextPresent("Manage Master List"));
+        recreateFamilies();
+        recreateTrials();
+        clickAndWait("link=Manage Master List");
+        assertTrue(selenium.isTextPresent("Program Code"));
+        assertTrue(selenium.isTextPresent("Program Name"));
+        assertTrue(selenium.isTextPresent("Search:"));
+        assertTrue(selenium.isTextPresent("Cancer Program12"));
+        assertTrue(selenium.isTextPresent("PG12"));
+        assertEquals("Showing 1 to 10 of 12",driver.findElement(By.id("programCodesTable_info")).getText());
+        // verify that delete programs button is present and enabled
+        WebElement deleteProgramCodebutton = driver.findElement(By.id("deletePGCodeButton-PG12"));
+        assertTrue(deleteProgramCodebutton.isEnabled());
+        hover(deleteProgramCodebutton);
+        String tooltiptext = deleteProgramCodebutton.getAttribute("data-original-title");
+        assertEquals("Delete or <br> Inactivate this <br> Program Code",tooltiptext);
+        
+        // open the delete dialog and verify the contents
+        deleteProgramCodebutton.click();
+        waitForElementToBecomeAvailable(By.id("dialog-inactivate-program-code"), 15);
+        assertTrue(selenium.isTextPresent("Inactivate Program Code Confirmation"));
+        assertTrue(selenium.isTextPresent("PG12 - Cancer Program12"));
+        assertTrue(selenium.isTextPresent("Inactivating this program code will:"));
+        ((JavascriptExecutor) driver).executeScript("scroll(0, document.body.scrollHeight);");
+       
+
+      //  assertTrue(selenium.isTextPresent("xpath=//div[normalize-space(text())='Showing 1 to 5 of 11']"));
+        assertTrue(selenium.isTextPresent("Are you sure you would like to proceed with this action?"));
+        // verify that program code exists in database
+        assertTrue(queryProgramCodesForDeletedCode("PG12").length > 0);
+        
+        // clicking on No should close the dialog.
+        findButtonsWithTextAndClick("No");
+        deleteProgramCodebutton.click();
+        
+        // test clicking on yes to inactivate program code
+        findButtonsWithTextAndClick("Yes");
+        
+        // verify that inactivated program code is not deleted
+        assertNotNull(queryProgramCodesForDeletedCode("PG12"));
+        
+        // test inactivated program code should have (INACTIVE) prepended in the program name
+        assertTrue(selenium.isTextPresent("PG12"));
+        assertTrue(selenium.isTextPresent("(INACTIVE) Cancer Program12"));
+        
+        // verify confirmation message is shown
+        ((JavascriptExecutor) driver).executeScript("scroll(0, -250);");
+        assertTrue(selenium.isTextPresent("Program code has been successfully inactivated"));
+        
+        logoutUser();
+    }
+    
+    private void findButtonsWithTextAndClick(String text) {
+        List<WebElement> buttons = driver.findElements(By.tagName("button"));
+        for (WebElement button : buttons) {
+            if (button.getText().equalsIgnoreCase(text)) {
+                button.click();
+            }
+        }
+    }
+    
     private Object[] queryProgramCodesForDeletedCode(String programCode) throws Exception {
         QueryRunner qr = new QueryRunner();
         ResultSetHandler<Object[]> rsh = new ResultSetHandler<Object[]>() {
@@ -467,6 +545,34 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         qr.update(connection, "delete from family");
         qr.update(connection, String.format("INSERT INTO family( identifier, po_id, " +
                 "rep_period_end, rep_period_len_months)VALUES (1, 1, '%s', 12)", date(180)));
+    }
+    
+    private void recreateTrials() throws Exception {
+        deactivateAllTrials();
+        for (int i = 1; i <= 11; i++) {
+           TrialInfo trial =  createAcceptedTrial();
+           addParticipatingSite(trial, "National Cancer Institute Division of Cancer Prevention", "ACTIVE");
+           addSiteInvestigator(trial,  "National Cancer Institute Division of Cancer Prevention", "45" + i , "James",
+                   "H", "Kennedy",  StudySiteContactRoleCode.SUB_INVESTIGATOR.name());
+            addSiteInvestigator(trial, "National Cancer Institute Division of Cancer Prevention", "55" + i, "Sony",
+                    "K", "Abraham", StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.name());
+           trials.add(trial);
+
+        }
+        QueryRunner qr = new QueryRunner();
+        qr.update(connection, "delete from study_program_code");
+        associateProgramCodesToFamilies();
+        assignToAllStudiesProgramCode("PG12");
+        assignToAllStudiesProgramCode("PG2");
+     }
+    
+    private void assignToAllStudiesProgramCode(String code) throws SQLException {
+        QueryRunner qr = new QueryRunner();
+        for (TrialInfo trial : trials) {
+            qr.update(connection, "insert into study_program_code " +
+                    "values((select identifier from program_code where program_code='" + code + "')," +
+                    trial.id + ")");
+        }
     }
 
     private void associateProgramCodesToFamilies() throws Exception {

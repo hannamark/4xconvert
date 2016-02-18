@@ -1,5 +1,6 @@
 // used by programCodeList jsp file.
 var programCodeTable;
+var programCodeTrialsTable;
 
 document.observe("dom:loaded", function() {
 	loadProgramCodes(jQuery);
@@ -323,6 +324,44 @@ function loadProgramCodes($) {
 							}
 						}
 					});
+    		$("#dialog-inactivate-program-code")
+			.dialog(
+					{
+						modal : true,
+						resizable: false,
+						autoOpen : false,
+						width : 863,
+						buttons :    {
+							"Yes" : function() {
+								$(this).dialog("close");
+								$
+										.ajax(
+												{
+													type : "POST",
+													url : 'programCodesinactivateProgramCode.action',
+													data : {
+														poId : jQuery("#poID").val(),
+														programCodeIdSelectedForInactivation : $("#dialog-inactivate-program-code").data('programCodeIdToBeInactivated')
+													},
+													timeout : 30000
+												})
+										.done(
+												function() {
+													  showProgramCodeInactivatedFlashMessage();
+													  programCodeTable.ajax.reload();
+												})
+										.fail(
+												function(jqXHR,textStatus,errorThrown) {
+													jQuery('#programCodesErrorList').html(jqXHR.getResponseHeader('msg'));
+													jQuery("#programCodeErrorMessageModal").modal('show'); 
+												});
+
+							},
+							"No" : function() {
+								$(this).dialog("close");
+							}
+						}
+					});
     		
     }
     
@@ -366,6 +405,51 @@ function createNewProgramCode(){
 
 }
 
+
+function loadTrialsAssociatedToProgramCode(programCode) {
+	programCodeTrialsTable = jQuery('#trialsAssociatedToProgramCodes').DataTable( {
+		 "dom": 'lprftip<"row">',
+	       "pagingType": "full_numbers",
+	       "order": [[ 0, "desc" ]],
+	       "oLanguage": {
+	           "sInfo": "Showing _START_ to _END_ of _TOTAL_",
+	           "sLengthMenu": "Show _MENU_",
+	           "oPaginate": {
+	               "sFirst": "<<",
+	               "sPrevious": "<",
+	               "sNext": ">",
+	               "sLast": ">>"
+	           }
+	       },
+	       pageLength:5,       
+	       serverSide: false,
+	       columns: [{
+	           "data": "nciIdentifier"
+	       }, {
+	           "data": "title"
+	       }, {
+	           "data" : "leadOrganizationName"
+	       }, {
+	           "data": "principalInvestigatorName"
+	       }, {
+	           "data" : "statusCode"
+	       }, {
+	           "data" : "trialProgramCodes"
+	       }],
+	       ajax: {
+	           url: "programCodesgetStudyProtocolsAssociatedToAProgramCode.action",
+	           type:"POST",
+	           data: function(d) {
+	               d.programCodeIdSelectedForDeletion  = programCode;
+	           }
+	       },
+	       sProcessing: "Loading...",
+	       processing:true
+	   });
+
+}
+
+
 function handleDeleteProgramCode(programCodeId, programCode, programName){
     jQuery.ajax(
 	{
@@ -379,6 +463,17 @@ function handleDeleteProgramCode(programCodeId, programCode, programName){
 		    	jQuery("#dialog-confirm-delete").data('programCodeIdToBeDeleted', programCodeId);
 		    	jQuery('#programdCodeToBeDeleted').html('&nbsp;&nbsp;&nbsp;&nbsp;<b>' + programCode+ ' - ' + programName + '</b>');
 		    	jQuery("#dialog-confirm-delete").dialog('open');
+	    	} else {
+	    		
+	    		jQuery("#dialog-inactivate-program-code").data('programCodeIdToBeInactivated', programCodeId);
+	    		jQuery('#programdCodeToBeInactivated').html('<ul style="list-style-type:none"><li><b>' + programCode+ ' - ' + programName + '</b></li></ul>');
+	    		jQuery("#dialog-inactivate-program-code").dialog('open');
+	    		if ( jQuery.fn.dataTable.isDataTable( '#trialsAssociatedToProgramCodes' ) ) {
+	    		    programCodeTrialsTable.destroy();
+	    		}
+	    		
+	    		loadTrialsAssociatedToProgramCode(programCodeId);
+	    		
 	    	}
 	   },
 	   timeout : 30000
@@ -417,3 +512,14 @@ function showProgramCodeDeletedFlashMessage() {
 		  jQuery("#programCodeDeletedMessageDiv").hide('blind', {}, 500);
 	    }, 5000);
 }
+
+function showProgramCodeInactivatedFlashMessage() {
+	jQuery('#programCodeInactivatedMessageDiv').effect("highlight", {}, 3000);
+	  setTimeout(function() {
+		  jQuery("#programCodeInactivatedMessageDiv").hide('blind', {}, 500);
+	    }, 5000);
+}
+
+
+
+

@@ -3,12 +3,16 @@ package gov.nih.nci.registry.action;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.FamilyDTO;
 import gov.nih.nci.pa.dto.OrgFamilyDTO;
+import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.service.util.FamilyProgramCodeService;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
+import gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserService;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -352,6 +356,83 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
         } catch (Exception e) {
             return handleExceptionDuringAjax(e);
         }
+    }
+    
+    /**
+     * Inactivate program code from db
+     * @throws IOException IO exception
+     * @return JSON String
+     */
+    
+    public StreamResult inactivateProgramCode() throws IOException {
+        try {
+            LOG.debug("Inactivating program code for [familyPOId : " + poId + "]");
+            JSONObject root = new JSONObject();
+            JSONArray arr = new JSONArray();
+            root.put(DATA, arr);
+            String currentProgramCodeId = request.getParameter("programCodeIdSelectedForInactivation");
+            ProgramCodeDTO currentProgramCodeDTO = new ProgramCodeDTO();
+            currentProgramCodeDTO.setId(Long.parseLong(currentProgramCodeId));
+            
+            familyProgramCodeService.inactivateProgramCode(currentProgramCodeDTO);
+            return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
+        } catch (Exception e) {
+            return handleExceptionDuringAjax(e);
+        }
+    }
+    
+    /**
+     * Gets study protocols associated to a program code
+     * @throws IOException IO exception
+     * @return JSON String
+     */
+    
+    public StreamResult getStudyProtocolsAssociatedToAProgramCode() throws IOException {
+        try {
+            LOG.debug("Deleting program code for [familyPOId : " + poId + "]");
+            JSONObject root = new JSONObject();
+            JSONArray arr = new JSONArray();
+            root.put(DATA, arr);
+            populateStudyProtocolDTOs(arr);
+            return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
+        } catch (Exception e) {
+            return handleExceptionDuringAjax(e);
+        }
+    }
+    
+    private void populateStudyProtocolDTOs(JSONArray array) {
+        String currentProgramCodeId = request.getParameter("programCodeIdSelectedForDeletion");
+        ProgramCodeDTO currentProgramCodeDTO = new ProgramCodeDTO();
+        currentProgramCodeDTO.setId(Long.parseLong(currentProgramCodeId));
+        
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.getProgramCodeIds().add(currentProgramCodeDTO.getId());
+        ProtocolQueryServiceLocal protocolQueryServiceLocal = PaRegistry.getProtocolQueryService();
+        List<StudyProtocolQueryDTO> list = new ArrayList<StudyProtocolQueryDTO>();
+        try {
+            ProtocolQueryPerformanceHints[] performanceHintsArray = {ProtocolQueryPerformanceHints.
+                    SKIP_ALTERNATE_TITLES, ProtocolQueryPerformanceHints.SKIP_LAST_UPDATER_INFO,
+                    ProtocolQueryPerformanceHints.SKIP_OTHER_IDENTIFIERS};
+            list = protocolQueryServiceLocal.getStudyProtocolByCriteria(criteria, performanceHintsArray);
+        } catch (PAException e) {
+            e.printStackTrace();
+        }
+        
+        for (StudyProtocolQueryDTO dto : list) {
+            JSONObject object = new JSONObject();
+            object.put("nciIdentifier", dto.getNciIdentifier());
+            object.put("leadOrganizationName", dto.getLeadOrganizationName());
+            object.put("statusCode", dto.getStudyStatusCode().getCode());
+            object.put("principalInvestigatorName", dto.getPiFullName());
+            object.put("title", dto.getOfficialTitle());
+            List<String> trialProgramCodes = new ArrayList<String>();
+            for (ProgramCodeDTO programCodeDTo : dto.getProgramCodes()) {
+                trialProgramCodes.add(programCodeDTo.getProgramCode());
+            }
+            object.put("trialProgramCodes", trialProgramCodes.toArray());
+            array.put(object);
+        }
+        
     }
     
     /**

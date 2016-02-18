@@ -38,6 +38,11 @@
           <strong>Message.</strong>&nbsp;<fmt:message key="programcode.deleted"/>
     </div>
     
+    <div class="alert alert-success confirm_msg" style="display: none;" id="programCodeInactivatedMessageDiv">
+          <strong>Message.</strong>&nbsp;<fmt:message key="programcode.inactivated"/>
+    </div>
+    
+    
     <!-- Program Codes Errors Modal -->
     <div class="modal fade" id="programCodeErrorMessageModal">
       <div class="modal-dialog">
@@ -85,6 +90,46 @@
             <p><b>Warning</b>: Modifying the program code will cause <b>all trials</b> currently <br>
                assigned to the old program code to be reassigned to the new <br>
                program code. The old code will be permanently removed.</p>
+        </div>
+    </div>
+    
+    <div id="dialog-inactivate-program-code" title="Inactivate Program Code Confirmation" style="display: none;">
+        <div class="container-fluid">
+            <p>The following program code is assigned to one or more trial(s):
+            <p id="programdCodeToBeInactivated"></p>
+            
+            <p>Inactivating this program code will:
+            <ul style="list-style-type:none">
+              <li>- Unassign it from all trials  that were active during  the reporting period (see list below), and</li>
+              <li>- Make it no longer available to assign to trials</li>
+            </ul>
+             
+            <p>Note that only trials that were active at any time during the reporting period will be affected. 
+            The reporting  period for your center is 1/1/2015 to 12/31/2015.
+             
+             <div class="table-header-wrap">
+                <div>
+                    <hr/>
+                </div>  
+                <table id="trialsAssociatedToProgramCodes" class="table table-bordered table-striped">
+                   <thead>
+                      <tr>
+                         <th nowrap="nowrap" width="15%">Trial ID(s)</th>
+                         <th nowrap="nowrap" width="30%">Title</th>
+                         <th nowrap="nowrap" width="20%">Lead Organization</th>
+                         <th nowrap="nowrap" width="13%">Principal Investigator</th>
+                         <th nowrap="nowrap" width="12%">Trial Status</th>
+                         <th nowrap="nowrap" width="10%">Program Code(s)</th>
+                      </tr>
+                   </thead>
+                   <tbody />
+                </table>
+              </div>
+              <div>
+                  <hr/>
+              </div>  
+             
+            <p>Are you sure you would like to proceed with this action?</p>
         </div>
     </div>
     

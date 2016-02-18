@@ -358,6 +358,23 @@ public class FamilyProgramCodeBeanLocal implements FamilyProgramCodeServiceLocal
         
         return (programCodeTrialQuery.uniqueResult() != null);
     }
+
+    @Override
+    public void inactivateProgramCode(ProgramCodeDTO programCodeDTO) throws PAValidationException {
+        ProgramCode domainProgramCode = convertProgramCodeToDomain(programCodeDTO);
+        
+        // get the db program code by id
+        ProgramCode dbProgramCode = getDbProgramCodeById(domainProgramCode.getId());
+        
+        if (dbProgramCode == null) {
+            throw new PAValidationException(NOT_FOUND_PROGRAM_CODE);
+        }
+        
+        // inactivate the program code in db
+        dbProgramCode.setStatusCode(ActiveInactiveCode.INACTIVE);
+        PaHibernateUtil.getCurrentSession().saveOrUpdate(dbProgramCode);
+        
+    }
     
     
 }
