@@ -109,6 +109,13 @@ import com.dumbster.smtp.SmtpMessage;
  */
 @SuppressWarnings("deprecation")
 public class AmendTrialTest extends AbstractRegistrySeleniumTest {
+    
+    @Override
+    public void setUp() throws Exception {
+        // TODO Auto-generated method stub
+        super.setUp();
+        setupFamilies();
+    }
 
     @SuppressWarnings("deprecation")
     @Test
@@ -764,8 +771,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         moveElementIntoView(By.id("trialDTO.leadOrganizationNameField"));
         hover(By.id("trialDTO.leadOrganizationNameField"));
         clickAndWaitAjax("link=National Cancer Institute");
-        waitForElementToBecomeVisible(By.id("programCodesValues"), 15);
-        clickAndWaitAjax("id=programCodesValues");
+        waitForElementToBecomeClickable(By.id("programCodesValues"), 15);        
         moveElementIntoView(By.id("programCodesValues"));
         useSelect2ToPickAnOption("programCodesValues","PG1","PG1-Cancer Program1");
         useSelect2ToPickAnOption("programCodesValues","PG2","PG2-Cancer Program2");
