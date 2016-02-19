@@ -174,6 +174,7 @@ public class TrialValidationActionTest extends AbstractPaActionTest {
      */
     @Test
     public void testUpdate() throws PAException {
+        trialValidationAction.getGtdDTO().setLeadOrganizationIdentifier("1");
         assertEquals("edit", trialValidationAction.update());
         GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
         gtdDTO.setProprietarytrialindicator(Boolean.TRUE.toString());
@@ -243,6 +244,7 @@ public class TrialValidationActionTest extends AbstractPaActionTest {
      */
     @Test
     public void testReject() throws PAException {
+        trialValidationAction.getGtdDTO().setLeadOrganizationIdentifier("1");
         assertEquals("edit", trialValidationAction.reject());
         GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
         gtdDTO.setProprietarytrialindicator(Boolean.TRUE.toString());
@@ -278,6 +280,7 @@ public class TrialValidationActionTest extends AbstractPaActionTest {
     public void testEnforceBusinessRules() throws PAException {
         // reject for proprietary trial where phase,purpose and NCT is null
         GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
+        gtdDTO.setLeadOrganizationIdentifier("1");
         gtdDTO.setCommentText("rejectcommentText");
         gtdDTO.setProprietarytrialindicator(Boolean.TRUE.toString());
         trialValidationAction.setGtdDTO(gtdDTO);
