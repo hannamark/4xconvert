@@ -19,7 +19,7 @@ import java.util.Date;
  * 
  * @author josephb2
  */
-@Batch(number = 1)
+@Batch(number = 2)
 public class TrialValidationTest extends AbstractTrialStatusTest {
 
     public void setUp()  throws  Exception {

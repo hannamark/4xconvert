@@ -169,7 +169,10 @@ public class GeneralTrialDesignAction extends AbstractGeneralTrialDesignAction {
         HttpServletRequest request = ServletActionContext.getRequest();
         HttpSession session = request.getSession();
         Ii studyProtocolIi = (Ii) session.getAttribute(Constants.STUDY_PROTOCOL_II);
+        
         TrialHelper helper = new TrialHelper();
+        gtdDTO.setProgramCodes(PaRegistry.getStudyProtocolService()
+                .getStudyProtocol(studyProtocolIi).getProgramCodes());
         helper.saveTrial(studyProtocolIi, gtdDTO, "Abstraction");
         StudyProtocolQueryDTO studyProtocolQueryDTO = PaRegistry.getProtocolQueryService()
             .getTrialSummaryByStudyProtocolId(Long.valueOf(studyProtocolIi.getExtension()));

@@ -1850,7 +1850,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
             String code) throws SQLException {
         QueryRunner runner = new QueryRunner();
         String sql = "INSERT INTO study_program_code (program_code_id, study_protocol_id) "
-                + "VALUES ((select identifier from program_code where status_code='ACTIVE' and program_code='"
+                + "VALUES ((select identifier from program_code where program_code='"
                 + code
                 + "' and family_id=(select identifier from family where po_id="
                 + familyPoId + ")), " + trial.id + ")";

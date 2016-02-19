@@ -94,7 +94,8 @@ import org.junit.runners.Suite.SuiteClasses;
  * @author dkrylov
  */
 @RunWith(BatchingTestSuite.class)
-@SuiteClasses(value = { PopulateFamilyFromPOQuartzJobTriggerTest.class, LoginTest.class, ParticipatingSiteTest.class,
+@SuiteClasses(value = { PopulateFamilyFromPOQuartzJobTriggerTest.class,
+        LoginTest.class, ParticipatingSiteTest.class,
         ManageTrialOtherIdentifiersTest.class, TrialStatusTest.class,
         TrialStatusHistoryTest.class, RegulatoryInformationTest.class,
         AnatomicSiteTest.class, ArmTest.class, StudyOwnershipTest.class,
@@ -106,11 +107,14 @@ import org.junit.runners.Suite.SuiteClasses;
         TrialOnHoldTest.class, ResultsReportingDocumentTest.class,
         UnRejectTrialTest.class, ResultsReportingCoversheetTest.class,
         ResultsDashboardTest.class, TrialViewTest.class,
-        ResultsReportingStudyContactsTest.class, NCISpecificInformationTest.class,
+        ResultsReportingStudyContactsTest.class,
+        NCISpecificInformationTest.class,
         ResultsReportingActionsTakenTest.class, TwitterTest.class,
         DashboardMenuTest.class, RssOwnershipTest.class,
-        ManageUserGroupsTest.class, AbstractionValidationTest.class, ResultsAbstractorRoleActionsTest.class,
-        ParticipatingSiteCloseTest.class, TrialFundingTest.class, TrialValidationTest.class
+        ManageUserGroupsTest.class, AbstractionValidationTest.class,
+        ResultsAbstractorRoleActionsTest.class,
+        ParticipatingSiteCloseTest.class, TrialFundingTest.class,
+        TrialValidationTest.class, GeneralTrialDetailsTest.class
 
 })
 public class AllSeleniumTests {
