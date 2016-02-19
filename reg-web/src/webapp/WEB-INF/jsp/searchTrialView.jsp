@@ -240,6 +240,9 @@
                         <reg-web:valueRowDiv labelKey="view.trial.accrual.disease.term" noLabelTag="true">
                             <c:out value="${requestScope.trialSummary.accrualDiseaseCodeSystem.value}"/>
                         </reg-web:valueRowDiv>
+                        <reg-web:valueRowDiv labelKey="studyProtocol.summaryFourPrgCode" noLabelTag="true">
+                            <c:out value="${requestScope.trialSummary.programCodesAsString}"/>
+                        </reg-web:valueRowDiv>
                         </div>
                          <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null
                                      || requestScope.trialSummary.proprietaryTrialIndicator.value == 'false'}">
@@ -329,16 +332,6 @@
                                 </reg-web:valueRowDiv>        
                             </div>                    
                         </c:if>
-                        <c:if test="${requestScope.trialSummary.programCodeText.value != null}">
-                            <c:if test="${empty requestScope.trialDTO.summaryFourOrgIdentifiers}">
-                                <reg-web:titleRowDiv titleKey="view.trial.Summary4Information"/>
-                            </c:if>
-                            <div class="row form-horizontal details">
-                            <reg-web:valueRowDiv labelKey="studyProtocol.summaryFourPrgCode" noLabelTag="true">
-                                <c:out value="${requestScope.trialSummary.programCodeText.value}"/>
-                            </reg-web:valueRowDiv>
-                            </div>
-                        </c:if>
                         <c:if test="${requestScope.participatingSitesList != null && fn:length(requestScope.participatingSitesList) > 0}">
                             <reg-web:titleRowDiv titleKey="view.trial.participatingSites"/>
                             <div class="row form-horizontal details">
@@ -346,7 +339,6 @@
                                   <display:column escapeXml="true" title="Organization Name" property="name"  headerClass="sortable"/>
                                   <display:column escapeXml="true" title="Site Principal Investigator" property="investigator"  headerClass="sortable"/>
                                   <display:column escapeXml="true" title="Local Trial<br/> Identifier" property="siteLocalTrialIdentifier"  headerClass="sortable"/>
-                                  <display:column escapeXml="true" title="Program Code" property="programCode"  headerClass="sortable"/>
                                   <display:column title="Current Site<br/> Recruitment Status" property="recruitmentStatus"  headerClass="sortable"/>
                                   <display:column title="Current Site<br/> Recruitment Status Date" property="recruitmentStatusDate"  headerClass="sortable"/>
                                   <display:column title="Date Opened <br/>for Accrual" property="dateOpenedforAccrual"  headerClass="sortable"/>

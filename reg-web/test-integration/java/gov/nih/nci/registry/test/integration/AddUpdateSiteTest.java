@@ -152,6 +152,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
 
         //when I add a site and Program Code PG1
         addMySiteAndVerify(info, true);
+        assertTrue(selenium.isTextPresent("PG1"));
 
         //Then I see in DATABASE PG1 associated with the study
         List<String> codes = getProgramCodesByTrial(info.id);
@@ -368,9 +369,9 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[3]"));
 
         assertEquals("Approved",
-                selenium.getText("xpath=//table[@id='row']/tbody/tr/td[5]"));
+                selenium.getText("xpath=//table[@id='row']/tbody/tr/td[4]"));
         assertEquals(today,
-                selenium.getText("xpath=//table[@id='row']/tbody/tr/td[6]"));
+                selenium.getText("xpath=//table[@id='row']/tbody/tr/td[5]"));
 
         // Status history.
         verifySiteStatusHistory(info, "DCP_SITE_U");
@@ -440,9 +441,9 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         assertEquals(localID,
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[3]"));
         assertEquals("Approved",
-                selenium.getText("xpath=//table[@id='row']/tbody/tr/td[5]"));
+                selenium.getText("xpath=//table[@id='row']/tbody/tr/td[4]"));
         assertEquals(today,
-                selenium.getText("xpath=//table[@id='row']/tbody/tr/td[6]"));
+                selenium.getText("xpath=//table[@id='row']/tbody/tr/td[5]"));
 
         verifySiteStatusHistory(info, localID);
     }
@@ -498,9 +499,9 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         assertEquals(localID,
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[3]"));        
         assertEquals("Approved",
-                selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[5]"));
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[4]"));
         assertEquals(today,
-                selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[6]"));
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[5]"));
 
         verifySiteStatusHistory(info, localID);
 

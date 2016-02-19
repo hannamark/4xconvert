@@ -24,6 +24,9 @@
 	padding-right: 3px;
 }
 
+table#siteStatusHistoryTable {
+    width: 100% !important;
+}
 #siteStatusHistoryTable td:nth-child(3) {
     white-space: pre-wrap;
 }
@@ -555,7 +558,9 @@ li.select2-selection__choice > span.select2-selection__choice__remove {
                             <select id="programCode" name="programCode" multiple="multiple"
                                     class="form-control" data-placeholder="Select Program Code(s)" style="width:100%;">
                                 <c:forEach var="pgc" items="${sessionScope['PGC_MASTER_LIST']}">
-                                    <option value="${pgc.id}" ${fn:contains(sessionScope['PGC_ID_LIST'],pgc.id )? 'selected' : ''} title="${pgc.displayName}">${pgc.programCode}</option>
+                                    <c:if test="${pgc.active}">
+                                        <option value="${pgc.id}" ${fn:contains(sessionScope['PGC_ID_LIST'],pgc.id )? 'selected' : ''} title="${pgc.displayName}">${pgc.programCode}</option>
+                                    </c:if>
                                 </c:forEach>
                             </select>
                             <c:if test="${sessionScope['isSiteAdmin']}">

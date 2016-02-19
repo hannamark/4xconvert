@@ -88,6 +88,10 @@ li.select2-selection__choice > span.select2-selection__choice__remove {
     float:right;
 }
 
+th#th3 {
+    padding-right: 20px;
+}
+
 </style>
 
 <script type="text/javascript" language="javascript"
@@ -677,7 +681,7 @@ li.select2-selection__choice > span.select2-selection__choice__remove {
 								<th id="th1" nowrap="nowrap"><a>Trial Identifier<i
 										class="fa-sort"></i></a></th>
 								<th id="th2"><a>Trial Title<i class="fa-sort"></i></a></th>
-                                <th id="th3"><a>Program Code(ss)<i class="fa fa-question-circle" title='<fmt:message key="add.site.programCode.cancer.tooltip" />'></i></a></th>
+                                <th id="th3"><a>Program Code(s)<i class="fa fa-question-circle pgchelp" title='<fmt:message key="add.site.programCode.cancer.tooltip" />'></i></a></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -699,7 +703,9 @@ li.select2-selection__choice > span.select2-selection__choice__remove {
                                                 <select id="pgc_${trial.studyProtocolId}" name="trial_${trial.studyProtocolId}_programCode" multiple="multiple"
                                                         class="s2pgc" data-placeholder="Select Program Code(s)" >
                                                     <c:forEach var="entry" items="${requestScope['PROGRAM_CODES']}">
-                                                        <option value="${entry.value.id}" title="${entry.value.displayName}" ${ fn:contains(requestScope['TRIAL_PROGRAM_CODES'][trial.studyProtocolId], entry.value.id)? 'selected' : ''} >${entry.value.programCode}</option>
+                                                        <c:if test="${entry.value.active}">
+                                                            <option value="${entry.value.id}" title="${entry.value.displayName}" ${ fn:contains(requestScope['TRIAL_PROGRAM_CODES'][trial.studyProtocolId], entry.value.id)? 'selected' : ''} >${entry.value.programCode}</option>
+                                                        </c:if>
                                                     </c:forEach>
                                                 </select>
                                             </c:if>

@@ -89,6 +89,7 @@ import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.StudyProcessingError;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -986,6 +987,24 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
      */
     public void setProgramCodes(List<ProgramCodeDTO> programCodesDTO) {
         this.programCodes = programCodesDTO;
+    }
+
+    /**
+     * Will return the program codes as semicolon separated string.
+     * @return a string representing progam codes.
+     */
+    public String getProgramCodesAsString() {
+        StringBuilder sb = new StringBuilder();
+        if (CollectionUtils.isNotEmpty(getProgramCodes())) {
+            for (ProgramCodeDTO pgc : getProgramCodes()) {
+                if (sb.length() > 0) {
+                    sb.append("; ");
+                }
+                sb.append(pgc.getProgramCode());
+            }
+       }
+       return sb.toString();
+
     }
     
 }

@@ -150,7 +150,7 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         //test for duplicate program code error
          selenium.typeKeys("//input[@id='newProgramCode']", "PG1");
          addProgramCodebutton.click();
-         waitForElementToBecomeVisible(By.id("programCodeErrorMessageModal"), 2);
+         waitForElementToBecomeVisible(By.id("programCodeErrorMessageModal"), 10);
          assertEquals("Error",driver.findElement(By.className("modal-title")).getText());
          assertTrue(selenium.isTextPresent("This program code already exists in the system."
                  + " Please add another program code"));

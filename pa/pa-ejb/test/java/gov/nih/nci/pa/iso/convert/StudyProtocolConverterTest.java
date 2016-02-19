@@ -337,6 +337,7 @@ public class StudyProtocolConverterTest extends AbstractHibernateTestCase {
    private void assertProgramCodes(StudyProtocol sp, StudyProtocolDTO spDTO) {
        assertNotNull(sp.getProgramCodes());
        assertNotNull(spDTO.getProgramCodes());
+       assertEquals("Code1; Code2", spDTO.getProgramCodesAsString());
        assertEquals(sp.getProgramCodes().size(), 
                spDTO.getProgramCodes().size());
        Iterator<ProgramCode> itr = sp.getProgramCodes().iterator();
