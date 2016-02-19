@@ -862,14 +862,12 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 selenium.getText("//table[@id='row']/tbody/tr/td[2]"));
         assertEquals("XYZ0000001",
                 selenium.getText("//table[@id='row']/tbody/tr/td[3]"));
-       // assertEquals("PGCODE",
-         //       selenium.getText("//table[@id='row']/tbody/tr/td[4]"));
         assertEquals("In Review",
-                selenium.getText("//table[@id='row']/tbody/tr/td[5]"));
+                selenium.getText("//table[@id='row']/tbody/tr/td[4]"));
         assertEquals("09/25/2014",
-                selenium.getText("//table[@id='row']/tbody/tr/td[6]"));
+                selenium.getText("//table[@id='row']/tbody/tr/td[5]"));
+        assertEquals("", selenium.getText("//table[@id='row']/tbody/tr/td[6]"));
         assertEquals("", selenium.getText("//table[@id='row']/tbody/tr/td[7]"));
-        assertEquals("", selenium.getText("//table[@id='row']/tbody/tr/td[8]"));
 
     }
 
