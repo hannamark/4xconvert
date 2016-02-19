@@ -5,35 +5,37 @@ var programCodeTrialsTable;
 document.observe("dom:loaded", function() {
 	loadProgramCodes(jQuery);
 	});
+
+function dateChangeHandler() {
+	var selectedDate = jQuery("#datetimepicker :input").val();
+	var poId = jQuery("#poID").val();        		
+		
+	jQuery.ajax(
+		{
+			type : "POST",
+			url : 'programCodesajaxChangeDate.action',
+			data : {
+				reportingDate : selectedDate,
+				poId : poId
+			},
+			success: function(result){
+			jQuery('#date_flash').delay(100).fadeIn('normal', function() {
+    	    jQuery(this).delay(2500).fadeOut();
+    	});
+    },
+	timeout : 30000
+})			
+.fail(
+	function(jqXHR,
+		textStatus,
+	errorThrown) {
+	alert(jqXHR
+			.getResponseHeader('msg'));
+});
+}
+
 jQuery(function() { 	        		
-        	jQuery('#datetimepicker').datetimepicker().on('hide', function(e){
-        		
-       		var selectedDate = jQuery("#datetimepicker :input").val();
-       		var poId = jQuery("#poID").val();        		
-        		
-      		jQuery.ajax(
-				{
-					type : "POST",
-					url : 'programCodesajaxChangeDate.action',
-					data : {
-						reportingDate : selectedDate,
-						poId : poId
-					},
-					success: function(result){
-					jQuery('#date_flash').delay(100).fadeIn('normal', function() {
-               	    jQuery(this).delay(2500).fadeOut();
-               	});
-	        },
-			timeout : 30000
-		})			
-		.fail(
-			function(jqXHR,
-				textStatus,
-			errorThrown) {
- 			alert(jqXHR
- 					.getResponseHeader('msg'));
- 		});
-   	});        	
+        	jQuery('#datetimepicker').datetimepicker().on('hide', dateChangeHandler).on('change', dateChangeHandler);  
  });
 
 

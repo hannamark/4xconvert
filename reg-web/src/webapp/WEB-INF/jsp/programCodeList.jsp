@@ -163,10 +163,11 @@
                  <c:choose>
                     <c:when test="${sessionScope.programCodeAdmin}">
                         <label class=" col-sm-2 control-label" for="selectedFamily"><fmt:message key="programcodes.organization.family.label"/></label>
-                        <div class="col-sm-2">
+                        <div class="col-sm-6">
                              <s:select name="selectedDTOId"
                                 id="selectedDTOId"
                                 cssClass="form-control" 
+                                style="width:auto;max-width:90%;"
                                 list="familyDTOs" 
                                 listKey="id"
                                 listValue="name"
