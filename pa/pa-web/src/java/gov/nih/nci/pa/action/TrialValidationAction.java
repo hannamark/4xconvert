@@ -229,9 +229,11 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
     /**
      *
      * @return String
+     * @throws PAException  PAException
      */
-    public String update() {
+    public String update() throws PAException {
         final HttpServletRequest req = ServletActionContext.getRequest();
+        loadProgramCodes();
         enforceBusinessRules("");
         if (hasFieldErrors()) {
             req.setAttribute(
@@ -252,10 +254,12 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
     /**
      *
      * @return String
+     * @throws PAException PAException
      */
     @SuppressWarnings("deprecation")
-    public String accept() {
+    public String accept() throws PAException {
         final HttpServletRequest req = ServletActionContext.getRequest();
+        loadProgramCodes();
         enforceBusinessRules("");
         // check if submission number is greater than 1 then it is amend
         if (gtdDTO.getSubmissionNumber() > 1 && StringUtils.isEmpty(gtdDTO.getAmendmentReasonCode())) {
@@ -286,9 +290,11 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
     /**
      *
      * @return String
+     * @throws PAException PAException
      */
-    public String reject() {
+    public String reject() throws PAException {
         final HttpServletRequest req = ServletActionContext.getRequest();
+        loadProgramCodes();
         enforceBusinessRules(REJECT_OPERATION);
         if (hasFieldErrors()) {
             req.setAttribute(
@@ -465,8 +471,7 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
 
     private void save(String operation) throws PAException, NullifiedEntityException, NullifiedRoleException {
         HttpSession session = ServletActionContext.getRequest().getSession();
-        Ii studyProtocolIi = (Ii) session.getAttribute(Constants.STUDY_PROTOCOL_II);
-        loadProgramCodes();
+        Ii studyProtocolIi = (Ii) session.getAttribute(Constants.STUDY_PROTOCOL_II);       
         bindProgramCodes();
         trialHelper.saveTrial(studyProtocolIi, gtdDTO, "Validation");
         if (StringUtils.equalsIgnoreCase(operation, "accept")) {
