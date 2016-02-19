@@ -54,7 +54,7 @@ public class TwitterTest extends AbstractTrialStatusTest {
     private static final int ON_OFF_SWITCH_RECHECK_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 10000
             : 5000;
     private static final int FIRST_RUN_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 45000
-            : 6000;
+            : 5000;
     private static final int SCHEDULING_CHANGES_PICK_UP_TIME = SystemUtils.IS_OS_LINUX ? 20000
             : 10000;
     private static final int CANCER_GOV_TIMEOUT = 60000;
@@ -273,7 +273,7 @@ public class TwitterTest extends AbstractTrialStatusTest {
         };
         log("Disabling tweeting...");
         setPaProperty("twitter.enabled", "false");
-        Thread.sleep(FIRST_RUN_WAIT_TIME);
+        Thread.sleep(FIRST_RUN_WAIT_TIME * 2);
         log("Creating a trial...");
         TrialInfo trial = setupCompleteTrial("ABSTRACTION_VERIFIED_RESPONSE",
                 "ACTIVE", modifier);
