@@ -591,7 +591,9 @@ div.error,b.error {
 				</div>
 
 				<div class="table-header-wrap">
-					<table class="table table-bordered" id="trialStatusHistoryTable">
+				<!-- I think this table width is not shown because 
+				of jQuery version update hence manually set it to 100% -->
+					<table class="table table-bordered" id="trialStatusHistoryTable" style="width:100%!important">
 						<thead>
 							<tr>
 								<th nowrap="nowrap">Status Date</th>

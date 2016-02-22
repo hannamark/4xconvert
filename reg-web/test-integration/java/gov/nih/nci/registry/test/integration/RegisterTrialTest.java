@@ -1093,7 +1093,10 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 "No success message found",
                 selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier "
                         + nciID));
+        assertTrue(selenium.isTextPresent("PG1"));
+        assertTrue(selenium.isTextPresent("PG2"));
         
+         
         //get trial id from nci Id
         long trialId =(Long)getTrialIdByNciId(nciID);
         

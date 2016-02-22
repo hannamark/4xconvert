@@ -44,16 +44,16 @@
                 <reg-web:failureMessage/>
                 <c:if test="${showVerifyButton or showAddMySite}">
                   <div class="align-left button-row">
-                  	<c:if test="${showVerifyButton}">
+                    <c:if test="${showVerifyButton}">
                         <s:url id="viewUrl" namespace="/protected" action="trialDataVerificationview"/>
-			      		<s:a onclick="javascript:viewAction('%{viewUrl}');"  href="javascript:void(0)"><button type="button" class="btn btn-icon btn-primary"><i class="fa-floppy-o"></i>Verify Trial Data</button></s:a>
-			      	</c:if>
-			      	<c:if test="${showAddMySite}"> 
-			     		<s:url id="addMySiteUrl" action="addSitepopupview">
+                        <s:a onclick="javascript:viewAction('%{viewUrl}');"  href="javascript:void(0)"><button type="button" class="btn btn-icon btn-primary"><i class="fa-floppy-o"></i>Verify Trial Data</button></s:a>
+                    </c:if>
+                    <c:if test="${showAddMySite}"> 
+                        <s:url id="addMySiteUrl" action="addSitepopupview">
                                 <s:param name="studyProtocolId"><c:out value= "${requestScope.trialIdentifier}"/></s:param>
                         </s:url>
                         <s:a onclick="showPopup('%{addMySiteUrl}', '', 'Add Participating Site');" onkeypress="showPopup('%{addMySiteUrl}', '', 'Add Participating Site');"  href="javascript:void(0)"><button type="button" class="btn btn-icon btn-primary"><i class="fa-plus"></i>Add My Site</button></s:a>
-			        </c:if>
+                    </c:if>
                   </div>
                </c:if>
             
@@ -204,13 +204,13 @@
                         </c:if>
                         <c:if test="${trialSummary.studyProtocolType.value=='InterventionalStudyProtocol' || trialSummary.studyProtocolType.value=='Interventional'}">
                             <c:set var="otherSecPurpose" scope="request" value="${false}"/>
-	                        <reg-web:valueRowDiv labelKey="view.trial.secondaryPurpose">           
-	                           <c:forEach items="${requestScope.trialSummary.secondaryPurposes.item}" var="st">
-	                               <c:out value="${st.value}"/><br/>
-	                               <c:set var="otherSecPurpose" scope="request" value="${otherSecPurpose==false?(st.value=='Other'):true}"/>
-	                           </c:forEach>
-	                        </reg-web:valueRowDiv>
-	                        <c:if test="${otherSecPurpose}">
+                            <reg-web:valueRowDiv labelKey="view.trial.secondaryPurpose">           
+                               <c:forEach items="${requestScope.trialSummary.secondaryPurposes.item}" var="st">
+                                   <c:out value="${st.value}"/><br/>
+                                   <c:set var="otherSecPurpose" scope="request" value="${otherSecPurpose==false?(st.value=='Other'):true}"/>
+                               </c:forEach>
+                            </reg-web:valueRowDiv>
+                            <c:if test="${otherSecPurpose}">
                                 <reg-web:valueRowDiv labelKey="view.trial.secOtherPurposeText" noLabelTag="true">
                                     <c:out value="${requestScope.trialSummary.secondaryPurposeOtherText.value}"/>
                                 </reg-web:valueRowDiv>
@@ -239,9 +239,6 @@
                         </c:if>
                         <reg-web:valueRowDiv labelKey="view.trial.accrual.disease.term" noLabelTag="true">
                             <c:out value="${requestScope.trialSummary.accrualDiseaseCodeSystem.value}"/>
-                        </reg-web:valueRowDiv>
-                        <reg-web:valueRowDiv labelKey="studyProtocol.summaryFourPrgCode" noLabelTag="true">
-                            <c:out value="${requestScope.trialSummary.programCodesAsString}"/>
                         </reg-web:valueRowDiv>
                         </div>
                          <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null
@@ -332,6 +329,24 @@
                                 </reg-web:valueRowDiv>        
                             </div>                    
                         </c:if>
+                       <c:if test="${not empty trialDTO.programCodesList}">
+                            <c:if test="${empty requestScope.trialDTO.summaryFourOrgIdentifiers}">
+                                <reg-web:titleRowDiv titleKey="view.trial.Summary4Information"/>
+                            </c:if>
+                            <div class="row form-horizontal details">
+                            <reg-web:valueRowDiv labelKey="studyProtocol.summaryFourPrgCode" noLabelTag="true">
+                               <table>
+                                 <c:forEach items="${trialDTO.programCodesList}" var="element"> 
+                                  <tr>
+                                    <td>${element}</td>
+                                  </tr>
+                                 </c:forEach>
+                                </table> 
+                            </reg-web:valueRowDiv>
+                            </div>
+                        </c:if>
+
+
                         <c:if test="${requestScope.participatingSitesList != null && fn:length(requestScope.participatingSitesList) > 0}">
                             <reg-web:titleRowDiv titleKey="view.trial.participatingSites"/>
                             <div class="row form-horizontal details">
