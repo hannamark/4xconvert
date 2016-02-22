@@ -507,6 +507,9 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         //on the popup select
         pickSelect2Item("pgc-mrpl-selone-div", "pgc-mrpl-selone", "PG2 - Cancer Program2");
 
+        //makesure that PG2 is disabled in second select box
+        verifyDisabledSelect2Item("pgc-mrpl-seltwo-div", "pgc-mrpl-seltwo", "PG2 - Cancer Program2");
+
         //When I click Cancel
         clickAndWait("pgc-mrpl-dialog-cancel");
 
@@ -697,6 +700,23 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         waitForElementToBecomeAvailable(By.xpath(String.format("//ul[@id='select2-%s-results']", selBoxId)), 5);
         driver.findElement(By.xpath(String.format("//ul[@id='select2-%s-results']//li[text()='%s']", selBoxId, optionLabel))).click();
 
+    }
+
+    @SuppressWarnings("deprecation")
+    protected void verifyDisabledSelect2Item(String containerId, String selBoxId, String optionLabel) {
+
+        waitForElementToBecomeVisible(By.xpath(String.format("//div[@id='%s']", containerId)), 10);
+        WebElement sitesBox = driver.findElement(By
+                .xpath("//span[preceding-sibling::select[@id='" + selBoxId + "']]//input[@type='search']"));
+        sitesBox.click();
+        boolean elementPresent = s.isElementPresent("select2-" + selBoxId + "-results");
+        if (!elementPresent) {
+            // odd behavior in FF, click again.
+            sitesBox.click();
+            elementPresent = s.isElementPresent("select2-" + selBoxId + "-results");
+        }
+        assertTrue(elementPresent);
+        driver.findElement(By.xpath(String.format("//ul[@id='select2-%s-results']//li[text()='%s' and @aria-disabled='true']", selBoxId, optionLabel)));
     }
 
     /**

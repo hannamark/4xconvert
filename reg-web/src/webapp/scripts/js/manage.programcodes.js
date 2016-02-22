@@ -291,6 +291,14 @@ function pgcinit($) {
         templateSelection : function(pg){
             return pg.id;
         }
+    }).on("change", function(e) {
+        $("#pgc-mrpl-seltwo > option").each(function(i, o) {
+            $(o).prop('disabled', false);
+            if (o.value == $(e.target).val()) {
+                $(o).prop('disabled', true);
+            }
+        });
+        mrplS2Ctrl2.val("").trigger('change');
     });
 
     mrplS2Ctrl2 = $("#pgc-mrpl-seltwo").select2({
@@ -494,12 +502,10 @@ function replaceMultiple($) {
         }
     });
     $(allProgramCodes).each(function(i, pgc){
-        if (tmparr.indexOf(pgc.code) < 0) {
-            $("#pgc-mrpl-seltwo").append($("<option />",{value: pgc.code, text: pgcDisplayName(pgc.code, pgc.name), title: pgcDisplayName(pgc.code, pgc.name)}));
-        }  else {
+        if (tmparr.indexOf(pgc.code) >= 0) {
             $("#pgc-mrpl-selone").append($("<option />",{value: pgc.code, text: pgcDisplayName(pgc.code, pgc.name), title: pgcDisplayName(pgc.code, pgc.name)}));
-            $("#pgc-mrpl-seltwo").append($("<option />",{value: pgc.code, text:pgcDisplayName(pgc.code, pgc.name), disabled:true, title: pgcDisplayName(pgc.code, pgc.name)}));
         }
+        $("#pgc-mrpl-seltwo").append($("<option />",{value: pgc.code, text: pgcDisplayName(pgc.code, pgc.name), title: pgcDisplayName(pgc.code, pgc.name)}));
     });
 
 

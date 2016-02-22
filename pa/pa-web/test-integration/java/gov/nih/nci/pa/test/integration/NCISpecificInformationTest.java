@@ -11,6 +11,8 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.Select;
 
 /**
  * 
@@ -47,6 +49,7 @@ public class NCISpecificInformationTest extends AbstractPaSeleniumTest {
         //Given that a trial exist in submitted state
         deactivateAllTrials();
         TrialInfo trial = createAcceptedTrial(true, false, "National Cancer Institute");
+        assignProgramCode(trial, 1, "PG1");
 
         // When I login as super abstractor  & select the trial
         selectTrialInPA(trial);
@@ -56,8 +59,24 @@ public class NCISpecificInformationTest extends AbstractPaSeleniumTest {
         //Then I see program codes
         assertTrue(selenium.isTextPresent("Program Code:"));
 
+        Select reportingMethodBox = new Select(driver.findElement(By.id("accrualReportingMethodCode")));
+        reportingMethodBox.selectByIndex(0);
+
+        //And save
+        clickAndWait("link=Save");
+
+
+        //I still see program codes
+        assertTrue(selenium.isTextPresent("Program Code:"));
+
+        //and PG1 is still selected
+        assertOptionSelected("PG1 - ProgramCode1");
+
+        //change reporting method
+        reportingMethodBox = new Select(driver.findElement(By.id("accrualReportingMethodCode")));
+        reportingMethodBox.selectByIndex(1);
+
         //Then I select PG1 and PG2
-        useSelect2ToPickAnOption("programCodeIds", "PG1", "PG1 - ProgramCode1");
         useSelect2ToPickAnOption("programCodeIds", "PG2", "PG2 - ProgramCode2");
 
         //And save

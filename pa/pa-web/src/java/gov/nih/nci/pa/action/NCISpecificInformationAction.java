@@ -267,6 +267,9 @@ public class NCISpecificInformationAction extends ActionSupport {
             addFieldError("nciSpecificInformationWebDTO.ctroOverideFlagComments",
                     getText("error.studyProtocol.ctroOverideFlagComments.length"));
         }
+        //load program codes
+        loadProgramCodes();
+
         if (hasFieldErrors()) {
             ServletActionContext.getRequest().setAttribute("displayXmlFlag", displayXmlFlag);         
             return ERROR;
@@ -274,8 +277,7 @@ public class NCISpecificInformationAction extends ActionSupport {
         // Step2 : retrieve the studyprotocol
         StudyResourcingDTO srDTO = new StudyResourcingDTO();
 
-            //load program codes
-            loadProgramCodes();
+            //bind
             bindProgramCodes();
        
             // Step 0 : get the studyprotocol from database
