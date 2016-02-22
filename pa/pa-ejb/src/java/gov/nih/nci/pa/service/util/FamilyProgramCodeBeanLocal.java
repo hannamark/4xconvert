@@ -6,7 +6,9 @@ import gov.nih.nci.pa.domain.Family;
 import gov.nih.nci.pa.domain.ProgramCode;
 import gov.nih.nci.pa.dto.FamilyDTO;
 import gov.nih.nci.pa.dto.OrgFamilyDTO;
+import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -343,20 +345,31 @@ public class FamilyProgramCodeBeanLocal implements FamilyProgramCodeServiceLocal
     }
     
     /**
-     * Finds whether a Program Code is associated to any trial 
-     * @param programCodeDTO the program code DTO
+     * Finds whether a Program Code is associated to any trial
+     * 
+     * @param programCodeDTO
+     *            the program code DTO
      * @return true if program code is associated with a trial, false otherwise
      */
     @Override
-    public Boolean isProgramCodeAssociatedWithATrial(ProgramCodeDTO programCodeDTO) {
-        Query programCodeTrialQuery = PaHibernateUtil
+    public Boolean isProgramCodeAssociatedWithATrial(
+            ProgramCodeDTO programCodeDTO) {
+        Query q = PaHibernateUtil
                 .getCurrentSession()
                 .createQuery(
-                        "select pc from StudyProtocol sp join sp.programCodes pc where pc.id=:programCodeIdentifier");
-        
-        programCodeTrialQuery.setParameter("programCodeIdentifier", programCodeDTO.getId());        
-        
-        return (programCodeTrialQuery.uniqueResult() != null);
+                        "select pc from StudyProtocol sp join sp.documentWorkflowStatuses as dws "
+                                + "join sp.programCodes pc where pc.id=:programCodeIdentifier "
+                                + "and sp.statusCode=:statusCode "
+                                + "and dws.statusCode !=:rejected and "
+                                + "dws.statusCode !=:terminated and dws.currentlyActive = true");
+
+        q.setParameter("programCodeIdentifier", programCodeDTO.getId());
+        q.setParameter("statusCode", ActStatusCode.ACTIVE);
+        q.setParameter("rejected", DocumentWorkflowStatusCode.REJECTED);
+        q.setParameter("terminated",
+                DocumentWorkflowStatusCode.SUBMISSION_TERMINATED);
+
+        return (q.uniqueResult() != null);
     }
 
     @Override

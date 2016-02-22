@@ -8,10 +8,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.Family;
 import gov.nih.nci.pa.domain.ProgramCode;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.FamilyDTO;
+import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.exception.PAValidationException;
@@ -287,6 +291,90 @@ public class FamilyProgramCodeBeanLocalServiceTest extends AbstractEjbTestCase {
     
      bean.deleteProgramCode(familyDTO,nonExistingProgramCodeDTO);
  }
+ 
+    @Test
+    public final void testInactiveTrialCodeAssociationIgnored()
+            throws PAException {
+
+        Session s = PaHibernateUtil.getCurrentSession();
+        final StudyProtocol sp = TestSchema.studyProtocols.get(0);
+        DocumentWorkflowStatus dws = TestSchema
+                .createDocumentWorkflowStatus(sp);
+        s.save(dws);
+        s.flush();
+
+        FamilyDTO familyDTO = bean.getFamilyDTOByPoId(-1L);
+        String existingProgramCodeValue = "2";
+        ProgramCodeDTO existingProgramCodeDTO = findProgramCodeGivenCode(
+                familyDTO, existingProgramCodeValue);
+        assertTrue(bean
+                .isProgramCodeAssociatedWithATrial(existingProgramCodeDTO));
+
+        s.createSQLQuery(
+                "update study_protocol set status_code='INACTIVE' where identifier="
+                        + sp.getId()).executeUpdate();
+        s.flush();
+
+        assertFalse(bean
+                .isProgramCodeAssociatedWithATrial(existingProgramCodeDTO));
+
+    }
+ 
+    @Test
+    public final void testTerminatedTrialCodeAssociationIgnored()
+            throws PAException {
+
+        Session s = PaHibernateUtil.getCurrentSession();
+        DocumentWorkflowStatus dws = TestSchema
+                .createDocumentWorkflowStatus(TestSchema.studyProtocols.get(0));
+        s.save(dws);
+        s.flush();
+
+        FamilyDTO familyDTO = bean.getFamilyDTOByPoId(-1L);
+        String existingProgramCodeValue = "2";
+        ProgramCodeDTO existingProgramCodeDTO = findProgramCodeGivenCode(
+                familyDTO, existingProgramCodeValue);
+        assertTrue(bean
+                .isProgramCodeAssociatedWithATrial(existingProgramCodeDTO));
+
+        dws = TestSchema.createDocumentWorkflowStatus(TestSchema.studyProtocols
+                .get(0));
+        dws.setStatusCode(DocumentWorkflowStatusCode.SUBMISSION_TERMINATED);
+        s.save(dws);
+        s.flush();
+
+        assertFalse(bean
+                .isProgramCodeAssociatedWithATrial(existingProgramCodeDTO));
+
+    }
+ 
+    @Test
+    public final void testRejectedTrialCodeAssociationIgnored()
+            throws PAException {
+
+        Session s = PaHibernateUtil.getCurrentSession();
+        DocumentWorkflowStatus dws = TestSchema
+                .createDocumentWorkflowStatus(TestSchema.studyProtocols.get(0));
+        s.save(dws);
+        s.flush();
+
+        FamilyDTO familyDTO = bean.getFamilyDTOByPoId(-1L);
+        String existingProgramCodeValue = "2";
+        ProgramCodeDTO existingProgramCodeDTO = findProgramCodeGivenCode(
+                familyDTO, existingProgramCodeValue);
+        assertTrue(bean
+                .isProgramCodeAssociatedWithATrial(existingProgramCodeDTO));
+
+        dws = TestSchema.createDocumentWorkflowStatus(TestSchema.studyProtocols
+                .get(0));
+        dws.setStatusCode(DocumentWorkflowStatusCode.REJECTED);
+        s.save(dws);
+        s.flush();
+
+        assertFalse(bean
+                .isProgramCodeAssociatedWithATrial(existingProgramCodeDTO));
+
+    }
   
   
   /**
@@ -297,6 +385,12 @@ public class FamilyProgramCodeBeanLocalServiceTest extends AbstractEjbTestCase {
    */
  @Test
  public final void testIsProgramCodeAssociatedWithATrial() throws PAException {
+     
+     
+        Session s = PaHibernateUtil.getCurrentSession();
+        s.save(TestSchema
+                .createDocumentWorkflowStatus(TestSchema.studyProtocols.get(0)));
+        s.flush();
      
      FamilyDTO familyDTO = bean.getFamilyDTOByPoId(-1L);
      assertEquals(6,familyDTO.getProgramCodes().size());
@@ -335,6 +429,11 @@ public class FamilyProgramCodeBeanLocalServiceTest extends AbstractEjbTestCase {
   */
 @Test
 public final void testInactivateProgramCode() throws PAException {
+    
+    Session s = PaHibernateUtil.getCurrentSession();
+    s.save(TestSchema
+            .createDocumentWorkflowStatus(TestSchema.studyProtocols.get(0)));
+    s.flush();
     
     FamilyDTO familyDTO = bean.getFamilyDTOByPoId(-1L);
     assertEquals(6,familyDTO.getProgramCodes().size());
