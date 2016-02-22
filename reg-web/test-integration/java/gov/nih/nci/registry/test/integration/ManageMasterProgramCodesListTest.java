@@ -8,11 +8,13 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -32,13 +34,7 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
     @Test
     @SuppressWarnings({"deprecation" })
     public void testProgramCodesDataTableWithFilteringPagingAndSorting() throws Exception {
-        loginAndAcceptDisclaimer();
-        waitForElementToBecomeVisible(By.linkText("Administration"), 2);
-        hoverLink("Administration");
-        waitForElementToBecomeVisible(By.linkText("Program Codes"), 2);
-        assertTrue(selenium.isTextPresent("Program Codes"));
-        hoverLink("Program Codes");
-        assertTrue(selenium.isTextPresent("Manage Master List"));
+        loginAndHoverLink();
         recreateFamilies();
         associateProgramCodesToFamilies();
         clickAndWait("link=Manage Master List");
@@ -75,13 +71,7 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
     @Test
     @SuppressWarnings({"deprecation" })
     public void testCreateNewProgramCode() throws Exception {
-        loginAndAcceptDisclaimer();
-        waitForElementToBecomeVisible(By.linkText("Administration"), 2);
-        hoverLink("Administration");
-        waitForElementToBecomeVisible(By.linkText("Program Codes"), 2);
-        assertTrue(selenium.isTextPresent("Program Codes"));
-        hoverLink("Program Codes");
-        assertTrue(selenium.isTextPresent("Manage Master List"));
+        loginAndHoverLink();
         recreateFamilies();
         associateProgramCodesToFamilies();
         clickAndWait("link=Manage Master List");
@@ -117,13 +107,7 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
     @Test
     @SuppressWarnings({"deprecation" })
     public void testProgramCodesCreateNewProgramCodeErrorScenarios() throws Exception {
-        loginAndAcceptDisclaimer();
-        waitForElementToBecomeVisible(By.linkText("Administration"), 2);
-        hoverLink("Administration");
-        waitForElementToBecomeVisible(By.linkText("Program Codes"), 2);
-        assertTrue(selenium.isTextPresent("Program Codes"));
-        hoverLink("Program Codes");
-        assertTrue(selenium.isTextPresent("Manage Master List"));
+        loginAndHoverLink();
         recreateFamilies();
         associateProgramCodesToFamilies();
         clickAndWait("link=Manage Master List");
@@ -166,13 +150,7 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
     @Test
     @SuppressWarnings({"deprecation" })
     public void testUpdateProgramCode() throws Exception {
-        loginAndAcceptDisclaimer();
-        waitForElementToBecomeVisible(By.linkText("Administration"), 2);
-        hoverLink("Administration");
-        waitForElementToBecomeVisible(By.linkText("Program Codes"), 2);
-        assertTrue(selenium.isTextPresent("Program Codes"));
-        hoverLink("Program Codes");
-        assertTrue(selenium.isTextPresent("Manage Master List"));
+        loginAndHoverLink();
         recreateFamilies();
         associateProgramCodesToFamilies();
         clickAndWait("link=Manage Master List");
@@ -264,13 +242,7 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
     @Test
     @SuppressWarnings({"deprecation" })
     public void testUpdateProgramCodeErrorScenaiors() throws Exception {
-        loginAndAcceptDisclaimer();
-        waitForElementToBecomeVisible(By.linkText("Administration"), 2);
-        hoverLink("Administration");
-        waitForElementToBecomeVisible(By.linkText("Program Codes"), 2);
-        assertTrue(selenium.isTextPresent("Program Codes"));
-        hoverLink("Program Codes");
-        assertTrue(selenium.isTextPresent("Manage Master List"));
+        loginAndHoverLink();
         recreateFamilies();
         associateProgramCodesToFamilies();
         clickAndWait("link=Manage Master List");
@@ -335,13 +307,7 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
     @Test
     @SuppressWarnings({"deprecation" })
     public void testDeleteProgramCode() throws Exception {
-        loginAndAcceptDisclaimer();
-        waitForElementToBecomeVisible(By.linkText("Administration"), 2);
-        hoverLink("Administration");
-        waitForElementToBecomeVisible(By.linkText("Program Codes"), 2);
-        assertTrue(selenium.isTextPresent("Program Codes"));
-        hoverLink("Program Codes");
-        assertTrue(selenium.isTextPresent("Manage Master List"));
+        loginAndHoverLink();
         recreateFamilies();
         associateProgramCodesToFamilies();
         clickAndWait("link=Manage Master List");
@@ -388,13 +354,7 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
     
     @Test
     public void testVerifyExport() throws Exception {
-        loginAndAcceptDisclaimer();
-        waitForElementToBecomeVisible(By.linkText("Administration"), 2);
-        hoverLink("Administration");
-        waitForElementToBecomeVisible(By.linkText("Program Codes"), 2);
-        assertTrue(selenium.isTextPresent("Program Codes"));
-        hoverLink("Program Codes");
-        assertTrue(selenium.isTextPresent("Manage Master List"));
+        loginAndHoverLink();
         recreateFamilies();
         associateProgramCodesToFamilies();
         clickAndWait("link=Manage Master List");
@@ -441,13 +401,75 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         excel.delete();
     }
     
-    /**
-     * Test inactivate unassigned program code
-     * @throws Exception exception
-     */
     @Test
-    @SuppressWarnings({"deprecation" })
-    public void testInactivateProgramCode() throws Exception {
+    @SuppressWarnings({ "deprecation" })
+    public void testAssociationsToRejectedAndTerminatedTrialsIgnored()
+            throws Exception {
+        
+        verifyAssociationsToTrialsWithGivenDWSIgnoredWhenDeleting("REJECTED");
+        verifyAssociationsToTrialsWithGivenDWSIgnoredWhenDeleting("SUBMISSION_TERMINATED");
+    }
+
+    /**
+     * @param status
+     * @throws SQLException
+     * @throws Exception
+     */
+    private void verifyAssociationsToTrialsWithGivenDWSIgnoredWhenDeleting(
+            final String status) throws SQLException, Exception {
+        deactivateAllTrials();
+        super.setupFamilies();
+
+        TrialInfo trial = createAcceptedTrial();
+        addParticipatingSite(trial,
+                "National Cancer Institute Division of Cancer Prevention",
+                "ACTIVE");
+        addSiteInvestigator(trial,
+                "National Cancer Institute Division of Cancer Prevention",
+                "451", "James", "H", "Kennedy",
+                StudySiteContactRoleCode.SUB_INVESTIGATOR.name());
+        addSiteInvestigator(trial,
+                "National Cancer Institute Division of Cancer Prevention",
+                "551", "Sony", "K", "Abraham",
+                StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.name());
+        assignProgramCode(trial, 1, "PG1");       
+        addDWS(trial, status);
+
+        accessManageMasterListScreen();
+
+        // verify that delete programs button is present and enabled
+        WebElement deleteProgramCodebutton = driver.findElement(By
+                .id("deletePGCodeButton-PG1"));
+        assertTrue(deleteProgramCodebutton.isEnabled());
+        deleteProgramCodebutton.click();
+        waitForElementToBecomeAvailable(By.id("dialog-confirm-delete"), 15);
+        assertTrue(selenium.isTextPresent("Confirm Delete"));
+        assertTrue(selenium.isTextPresent("PG1 - Cancer Program1"));
+        assertTrue(selenium.isTextPresent("Please confirm."));
+        
+        // delete program code
+        WebElement deleteButton = driver.findElement(By.xpath("//button/span[contains(text(),'Delete')]"));
+        deleteButton.click();
+        pause(SystemUtils.IS_OS_LINUX ? 10000 : 2000);
+        assertEquals(Arrays.asList(new String[] {}), getTrialProgramCodes(trial));
+        logoutUser();
+    }
+
+    /**
+     * @throws Exception
+     */
+    private void accessManageMasterListScreen() throws Exception {
+        loginAndHoverLink();       
+        clickAndWait("link=Manage Master List");
+        assertTrue(selenium.isTextPresent("Program Code"));
+        assertTrue(selenium.isTextPresent("Program Name"));
+        assertTrue(selenium.isTextPresent("Search:"));
+    }
+
+    /**
+     * 
+     */
+    private void loginAndHoverLink() {
         loginAndAcceptDisclaimer();
         waitForElementToBecomeVisible(By.linkText("Administration"), 2);
         hoverLink("Administration");
@@ -455,12 +477,18 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         assertTrue(selenium.isTextPresent("Program Codes"));
         hoverLink("Program Codes");
         assertTrue(selenium.isTextPresent("Manage Master List"));
+    }
+    
+    /**
+     * Test inactivate unassigned program code
+     * @throws Exception exception
+     */
+    @Test
+    @SuppressWarnings({"deprecation" })
+    public void testInactivateProgramCode() throws Exception {
         recreateFamilies();
         recreateTrials();
-        clickAndWait("link=Manage Master List");
-        assertTrue(selenium.isTextPresent("Program Code"));
-        assertTrue(selenium.isTextPresent("Program Name"));
-        assertTrue(selenium.isTextPresent("Search:"));
+        accessManageMasterListScreen();
         assertTrue(selenium.isTextPresent("Cancer Program12"));
         assertTrue(selenium.isTextPresent("PG12"));
         assertEquals("Showing 1 to 10 of 12",driver.findElement(By.id("programCodesTable_info")).getText());

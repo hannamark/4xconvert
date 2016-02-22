@@ -406,6 +406,8 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
         currentProgramCodeDTO.setId(Long.parseLong(currentProgramCodeId));
         
         StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setExcludeRejectProtocol(true);
+        criteria.setExcludeTerminatedTrials(true);
         criteria.getProgramCodeIds().add(currentProgramCodeDTO.getId());
         ProtocolQueryServiceLocal protocolQueryServiceLocal = PaRegistry.getProtocolQueryService();
         List<StudyProtocolQueryDTO> list = new ArrayList<StudyProtocolQueryDTO>();
