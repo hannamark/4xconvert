@@ -152,8 +152,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
 
         //when I add a site and Program Code PG1
         addMySiteAndVerify(info, true);
-        assertTrue(selenium.isTextPresent("PG1"));
-
+        
         //Then I see in DATABASE PG1 associated with the study
         List<String> codes = getProgramCodesByTrial(info.id);
         assertTrue(codes.contains("PG1"));
