@@ -423,4 +423,11 @@ function selectProgramCodes(id,programCodeValues) {
 	jQuery("#"+id).val(values);
 	jQuery("#"+id).trigger("change");
 }
+
+function showManageProgramCodes() {
+	var url = registryApp.contextPath+'/siteadmin/programCodesexecute.action';
+	if (confirm("Do you want to leave the Register Trial page and lose any unsaved data?")) {
+		window.location =url;
+	}
+}
   

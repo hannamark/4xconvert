@@ -290,7 +290,7 @@
                               </div>  
                                 <div class="col-xs-4" >
                                <c:if test="${sessionScope.isSiteAdmin}">
-                                     <a  style ="vertical-align:middle!important" href="../siteadmin/programCodesexecute.action">Manage Program Codes</a>
+                                     <a  style ="vertical-align:middle!important" href="javascript:void();" onclick="showManageProgramCodes();">Manage Program Codes</a>
                                      <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.summary_4_program_code" />"  data-placement="top" data-trigger="hover"></i>
                                  </c:if>
                                   <c:if test="${sessionScope.isSiteAdmin==false}">

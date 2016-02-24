@@ -419,10 +419,12 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
              
             for (ProgramCodeDTO programCodeDTO : familyDTO.getProgramCodesAsOrderedList()) {
                 JSONObject o = new JSONObject();
+                if (programCodeDTO.isActive()) {
                 o.put("id", programCodeDTO.getProgramCode());
                 o.put("text", programCodeDTO.getProgramCode() + "-" + programCodeDTO.getProgramName());
                 o.put("title", programCodeDTO.getProgramCode() + "-" + programCodeDTO.getProgramName());
                 arr.put(o);
+                }
              }
             
             if (!CollectionUtils.isEmpty(programCodesList)) {
