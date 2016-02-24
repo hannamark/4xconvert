@@ -161,7 +161,7 @@ function pgcinit($) {
         ],
         "columns": [
             {width:"15%", data: "identifiers", className:"scol"},
-            {width: "36%", data:function(row, type, val, meta){
+            {width: "24%", data:function(row, type, val, meta){
                return "<div class='spt scol' title='" + row.title +"'>" + row.title + "</div>";
             }},
             {width: "23%",data: function(row, type, val, meta){
@@ -169,7 +169,7 @@ function pgcinit($) {
             }},
             {width: "15%",data: "piFullName" , className:'scol'},
             {width: "5%",data: "trialStatus",  className: 'scol'},
-            {width:"6%",
+            {width:"18%",
                 orderable: false ,
                 className:"pgctd",
                 data: function ( row, type, val, meta ) {

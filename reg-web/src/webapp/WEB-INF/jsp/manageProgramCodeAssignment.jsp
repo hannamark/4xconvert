@@ -104,6 +104,9 @@
             .scol {
                 cursor: pointer;
             }
+            .glyphicon {
+              z-index: 20;
+            }
 
         </style>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery.dataTables.min.js'/>"></script>
