@@ -546,7 +546,7 @@ public class NCISpecificInformationAction extends ActionSupport {
         }
 
         //also add the program codes accumulated on the study from other sites
-        for (ProgramCodeDTO pgc : nciSpecificInformationWebDTO.getProgramCodes()) {
+        for (ProgramCodeDTO pgc : trialSummaryDto.getProgramCodes()) {
             programCodeIndex.put(pgc.getId(), pgc);
         }
 

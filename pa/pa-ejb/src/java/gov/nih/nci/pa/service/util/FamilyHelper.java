@@ -273,7 +273,7 @@ public final class FamilyHelper {
      * @return FamilyDTO FamilyDTO
      */
     public static FamilyDTO getPOFamilyByPOID(Long familyPoID) {
-        return PoRegistry.getFamilyService().getFamily(IiConverter.convertToIi(familyPoID));
+        return PoRegistry.getFamilyService().getFamily(IiConverter.convertToPoFamilyIi(familyPoID.toString()));
     }
 
     /**
