@@ -1,9 +1,9 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 
-<div class="col-xs-8">
+<div class="col-xs-8" style="padding-top: 7px">
 <s:set var="sponsorOrgs" value="@gov.nih.nci.registry.util.FilterOrganizationUtil@getSponsorOrganization()" />
 <s:hidden id="trialDTO.sponsorName" name="trialDTO.sponsorName"/>
-<div class="collapse navbar-collapse organization-dropdown">
+<div class="collapse navbar-collapse organization-dropdown" style="padding-left:0px;">
         <div class="nav navbar-nav" style="width: 100%;">
           <div class="active dropdown"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" id="trialDTO.sponsorNameField">Please Select the Sponsor Organization <b class="caret"></b></a>  
             <table class="dropdown-menu" id="dropdown-sponsorOrganization">

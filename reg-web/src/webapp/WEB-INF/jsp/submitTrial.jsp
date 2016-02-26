@@ -274,31 +274,29 @@
                           </div>
                           <div class="form-group">
                               <label id="trialDTO.summaryFourOrgNameTR" for="trialDTO.summaryFourOrgName" class="col-xs-4 control-label"><fmt:message key="update.proprietary.trial.summary4Sponsor"/><span class="required">*</span></label>
-                              <div class="col-xs-8">
+                              <div class="col-xs-6" style="padding-top: 7px">
                                   <%@ include file="/WEB-INF/jsp/nodecorate/trialSummary4FundingSponsorSelector.jsp" %>
-                              </div>                                    
+                              </div>   
+                              
                           </div>
-                          <div class="form-group" id="programCodeBlock" style="display:none" >                               
+                           <div class="form-group" id="programCodeBlock" style="display:none" >                               
                               <label for="trialDTO.programCodesList" class="col-xs-4 control-label"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label>
                               <!-- As per new requirements we don't need to display program codes tex field at all -->
                               
                               <div class="col-xs-4" >
                               <s:select size="2" multiple="true"  name="trialDTO.programCodesList" id="programCodesValues"  list="#{trialDTO.programCodesMap}"
                                 cssClass="form-control" />
-                                 
                                 
                               </div>  
-                                <div class="col-xs-4" >
+                                <div class="col-xs-4"  >
                                <c:if test="${sessionScope.isSiteAdmin}">
-                                     <a  style ="vertical-align:middle!important" href="javascript:void();" onclick="showManageProgramCodes();">Manage Program Codes</a>
-                                     <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.summary_4_program_code" />"  data-placement="top" data-trigger="hover"></i>
+                                     <a  style="display: inline-block;padding: 6px;border-bottom:none!important;" href="javascript:void();" onclick="showManageProgramCodes();">Manage Program Codes</a>
+                                     <i  class="fa-question-circle help-text" style="vertical-align: -5px;" id="popover" rel="popover" data-content="<fmt:message key="tooltip.summary_4_program_code" />"  data-placement="top" data-trigger="hover"></i>
                                  </c:if>
                                   <c:if test="${sessionScope.isSiteAdmin==false}">
-                                   <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.summary_4_program_code" />"  data-placement="top" data-trigger="hover"></i>
+                                   <i class="fa-question-circle help-text"  id="popover" rel="popover" data-content="<fmt:message key="tooltip.summary_4_program_code" />"  data-placement="top" data-trigger="hover"></i>
                                   </c:if>
                                 </div>
-                                 
-                                   
                             </div>
                       </div>
                   </div>

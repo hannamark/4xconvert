@@ -1,9 +1,9 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<div class="col-xs-8">
+<div class="col-xs-8" style="padding-top: 7px">
 <s:set name="leadOrgs" value="@gov.nih.nci.registry.util.FilterOrganizationUtil@getLeadOrganization()" />
 <s:hidden id="trialDTO.leadOrganizationIdentifier" name="trialDTO.leadOrganizationIdentifier"/>
 <s:hidden id="trialDTO.leadOrganizationName" name="trialDTO.leadOrganizationName"/>
-<div class="collapse navbar-collapse organization-dropdown">
+<div class="collapse navbar-collapse organization-dropdown" style="padding-left:0px;">
         <div class="nav navbar-nav" style="width: 100%;">
           <div class="active dropdown"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" id="trialDTO.leadOrganizationNameField">Please Select the Lead Organization <b class="caret"></b></a>  
             <table class="dropdown-menu" id="dropdown-leadOrganization">
