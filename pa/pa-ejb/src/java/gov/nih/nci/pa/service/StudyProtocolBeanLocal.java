@@ -1607,6 +1607,12 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         List<OrgFamilyDTO> orgFamilyList = FamilyHelper.getByOrgId(organizationPoID);
 
         if (CollectionUtils.isEmpty(orgFamilyList)) {
+
+            List<String> codes = new ArrayList<String>();
+            for (ProgramCodeDTO pgc : programCodes) {
+                codes.add(pgc.getProgramCode());
+            }
+
             studyProtocol
                     .setComments(StringUtils.defaultString(studyProtocol
                             .getComments())
@@ -1614,7 +1620,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
                                     : " ")
                             + "The following program code value was submitted "
                             + "but not recorded: "
-                            + StringUtils.join(programCodes, ";")
+                            + StringUtils.join(codes, ";")
                             + ". "
                             + "Starting in version 4.3.1, CTRP no longer records program codes for trials lead by a "
                             + "non designated cancer center organization.");
