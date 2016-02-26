@@ -153,6 +153,7 @@ public class ProgramCodesTest extends AbstractRegistrySeleniumTest {
     }
 
 
+
     @Test
     public void testProgramCodeDeletionWithActiveTrialAssociation() throws Exception {
 
@@ -356,6 +357,54 @@ public class ProgramCodesTest extends AbstractRegistrySeleniumTest {
 
     }
 
+
+    @Test
+    public void testProgramCodeClickFilterListingInManageAssignmentPage() throws Exception {
+
+        deactivateAllTrials();
+        deleteAllExistingFamilies();
+        removeFromAllStudiesProgramCodes();
+        createFamilies();
+
+        //go to master list
+        loginAndGoToMasterListPage();
+        //add two new families
+        addProgramCode("A1", "Apple 1");
+        addProgramCode("A2", "Apple 2");
+
+        //Then there will be 2 program codes in database
+        assertEquals(2, getCountOfProgramCode(1L));
+
+        //now create a trial and associate program code A1
+        TrialInfo trial1 = createAcceptedTrial();
+        addParticipatingSite(trial1, "National Cancer Institute Division of Cancer Prevention", "ACTIVE");
+        assignProgramCode(trial1, 1, "A1");
+
+        //and create another trial and associate program code A2
+        TrialInfo trial2 = createAcceptedTrial();
+        addParticipatingSite(trial2, "National Cancer Institute Division of Cancer Prevention", "ACTIVE");
+        assignProgramCode(trial2, 1, "A2");
+
+        //When I click click on manage button of A1
+        selenium.click("managePGCodeButton-A1");
+        waitForPageToLoad();
+
+        //Then I should see the trial-1 in the table  and not trial2
+        assertTrue(selenium.isTextPresent(trial1.title));
+        assertFalse(selenium.isTextPresent(trial2.title));
+
+        //Then I come back to manage list screen
+        accessManageMasterListScreen();
+        waitForPageToLoad();
+
+        //this time click on manage button of A2
+        selenium.click("managePGCodeButton-A2");
+        waitForPageToLoad();
+
+        //Then I should see the trial-2 in the table  and not trial-1
+        assertTrue(selenium.isTextPresent(trial2.title));
+        assertFalse(selenium.isTextPresent(trial1.title));
+    }
 
 
     private void loginAndGoToMasterListPage() throws Exception {

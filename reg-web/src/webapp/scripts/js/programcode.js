@@ -92,7 +92,7 @@ function loadProgramCodes($) {
             "serverSide": false,
             "columns": [{
                 "data": function(row,type,val,meta){
-                	return '<a href="#" class="mcapage" rel="' + row.programCode + '">' +row.programCode+ '</a>';
+                	return '<a href="#" class="mcapage" rel="' + row.programCodeId + '">' +row.programCode+ '</a>';
                 }
             }, {
                 "data": "programName"
@@ -136,7 +136,7 @@ function loadProgramCodes($) {
                    return ' <button type="button" id="editPGCodeButton-' + idfy(row.programCode)+
                        '" title="Edit this Program <br> Code and Name" rel="tooltip" data-placement="top" data-trigger="hover"><i class="fa fa-pencil-square-o"></i></button>' +
                        '&nbsp;&nbsp;&nbsp;&nbsp;' +
-                        '<button type="button" id="deletePGCodeButton-'
+                        '<button type="button" id="deletePGCodeButton-' +
                        idfy(row.programCode) + '"' +
                        'title="Delete or <br> Inactivate this <br> Program Code" rel="tooltip" data-placement="top" data-trigger="hover"><i class="fa fa-trash-o fa-lg"></i></button>' +
                        '&nbsp;&nbsp;&nbsp;&nbsp;' +
@@ -160,7 +160,7 @@ function loadProgramCodes($) {
     	$('#programCodesTable tbody').on('click', 'a.mcapage', function (evt) {
             evt.preventDefault();
             var curpgcfilter = $.attr(evt.target, 'rel');
-            document.forms[0].action = "managePCAssignmentexecute.action?pgcFilter="+curpgcfilter+"&familyPoId="+ jQuery("#poID").val() ;
+            document.forms[0].action = "managePCAssignmentexecute.action?programCodeId="+curpgcfilter+"&familyPoId="+ jQuery("#poID").val() ;
 	        document.forms[0].submit();
         });
     	

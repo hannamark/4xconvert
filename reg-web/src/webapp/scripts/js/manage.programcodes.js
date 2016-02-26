@@ -17,6 +17,7 @@ var mrmS2Ctrl = null;
 var mrplS2Ctrl1 = null;
 var mrplS2Ctrl2 = null;
 var s2closing = false;
+var curFamilyPoId;
 var ts = 0;
 
 function idfy(code) {
@@ -65,6 +66,15 @@ function refreshFilteredProgramCodes($) {
     }
 }
 
+function isProgramCodeInCurrentFamily(pgcId) {
+    for (var i = 0; i < allProgramCodes.length; i++) {
+        if (allProgramCodes[i].familyPoId == curFamilyPoId && allProgramCodes[i].id == pgcId) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function showProgramCodeS2InRow($, sp) {
     //clear the content of select box
     $("#" + sp + "_trSel").empty();
@@ -76,12 +86,15 @@ function showProgramCodeS2InRow($, sp) {
 
     //creating data source for s2
     $(trialProgramCodeMap[sp]).each(function(i, p){
-        tmparr.push(p.code);
+        tmparr.push(p.id);
 //        console.log(" tmpS2Ds << [" + p.code + ", " + p.name + "removed:true]") ;
     });
 
     $(allProgramCodes).each(function(i, p){
-        if ($.inArray(p.code, tmparr) < 0) {
+        if (curFamilyPoId != p.familyPoId) {
+            return;
+        }
+        if ($.inArray(p.id, tmparr) < 0) {
             tmpS2Ds.push({id: p.code, text: pgcDisplayName(p.code, p.name), title: pgcDisplayName(p.code, p.name)});
         }
     });
@@ -108,6 +121,8 @@ function pgcinit($) {
     $("#familyPoId").on('change', function(evt) {
         $("#changeFamilyFrm").submit();
     });
+
+    curFamilyPoId = $("#familyPoId").val();
 
     participationTable = $('#participationTbl').DataTable( {
         "dom": 't',
@@ -175,8 +190,9 @@ function pgcinit($) {
                 data: function ( row, type, val, meta ) {
                     var snippet = "";
                     $(row.programCodes).each(function(i,pc) {
-                        snippet = snippet +  '<a id="' + row.studyProtocolId + '_' + idfy(pc.code) +'_a" href="#" rel="' + row.studyProtocolId + '" pc="' +  pc.code + '" class="pg btn-xs pgcrm ">' + pc.code + ' <span class="pg glyphicon glyphicon-remove"></span></a> ';
-
+                        if (isProgramCodeInCurrentFamily(pc.id)) {
+                            snippet = snippet +  '<a id="' + row.studyProtocolId + '_' + idfy(pc.code) +'_a" href="#" rel="' + row.studyProtocolId + '" pc="' +  pc.code + '" class="pg btn-xs pgcrm ">' + pc.code + ' <span class="pg glyphicon glyphicon-remove"></span></a> ';
+                        }
                     });
 
                     snippet = snippet + '<a id="' + row.studyProtocolId + '_tra" href="#" class="pgcssa" rel="' + row.studyProtocolId +'"><span class="glyphicon glyphicon-chevron-down"></span></a>';

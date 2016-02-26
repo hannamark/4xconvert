@@ -147,6 +147,52 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
 
     @Test
+    public void testVerifyProgramCodeFamilyFiltering() throws Exception {
+
+
+
+        //Given trials are associated with PG1 of family1 and VA1 of family2
+        accessManageCodeAssignmentsScreen();
+        TrialInfo trial4 = trials.get(4);
+        String trial4Title = trial4.title;
+
+        //Choose family 1
+        Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
+        dropdown.selectByIndex(1);
+        changePageLength("25");
+
+        //Then table to refreshes
+
+        waitForElementToBecomeAvailable(
+                By.xpath("//table[@id='trialsTbl']/tbody//tr//td/div[text()='" + trial4Title + "']"), 10);
+
+        //Filter by trial 4
+        selenium.typeKeys("//div[@id='trialsTbl_filter']/descendant::label/descendant::input", trial4.nciID);
+
+        //Then I see PG1 and not VA1
+        assertTrue(selenium.isTextPresent("PG1"));
+        assertFalse(selenium.isTextPresent("VA1"));
+
+        //When I choose family 2
+        dropdown = new Select(driver.findElement(By.id("familyPoId")));
+        dropdown.selectByIndex(2);
+        changePageLength("25");
+
+        //Then table refreshes
+        waitForElementToBecomeAvailable(
+                By.xpath("//table[@id='trialsTbl']/tbody//tr//td/div[text()='" + trial4Title + "']"), 10);
+
+        //Filter by trial 4
+        selenium.typeKeys("//div[@id='trialsTbl_filter']/descendant::label/descendant::input", trial4.nciID);
+
+        //Then I see VA1 and not PG1
+        assertTrue(selenium.isTextPresent("VA1"));
+        assertFalse(selenium.isTextPresent("PG1"));
+
+        logoutUser();
+    }
+
+    @Test
     public void testUnassignProgramCode() throws Exception {
         accessManageCodeAssignmentsScreen();
 
@@ -798,21 +844,19 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         QueryRunner qr = new QueryRunner();
         qr.update(connection, "delete from study_program_code");
         qr.update(connection, "delete from program_code");
-        qr.update(connection, "insert into program_code (identifier, family_id, program_code, program_name, status_code) " +
-                "values (1,1,'PG1', 'Cancer Program1', 'ACTIVE')");
+        for (int i = 1; i <= 6; i++) {
+            qr.update(connection, String.format("insert into program_code (identifier, family_id, program_code, program_name, status_code) " +
+                    "values (%1$s,%2$s,'PG%1$s', 'Cancer Program%1$s', 'ACTIVE')", i, 1));
+        }
+
         qr.update(connection, "insert into program_code (identifier,family_id, program_code, program_name, status_code) " +
-                "values (2,1,'PG2', 'Cancer Program2', 'ACTIVE')");
+                "values (7,2,'VA1', 'VA Program1', 'ACTIVE')");
         qr.update(connection, "insert into program_code ( identifier,family_id, program_code, program_name, status_code) " +
-                "values (3,1,'PG3', 'Cancer Program3', 'ACTIVE')");
-        qr.update(connection, "insert into program_code ( identifier,family_id, program_code, program_name, status_code) " +
-                "values (4,1,'PG4', 'Cancer Program4', 'ACTIVE')");
-        qr.update(connection, "insert into program_code (identifier, family_id, program_code, program_name, status_code) " +
-                "values (5,1,'PG5', 'Cancer Program5', 'ACTIVE')");
-        qr.update(connection, "insert into program_code ( identifier,family_id, program_code, program_name, status_code) " +
-                "values (6,1,'PG6', 'Cancer Program6', 'ACTIVE')");
+                "values (8,2,'VA2', 'VA Program2', 'ACTIVE')");
 
         assignToAllStudiesProgramCode("PG1");
         assignToAllStudiesProgramCode("PG2");
+        assignToAllStudiesProgramCode("VA1");
 
 
         //associate PG3 to first two and last trial
