@@ -203,7 +203,7 @@
                         <td scope="row" class="label">
                             <label for="nciSpecificInformationWebDTO.consortiaTrialCategoryCode"><fmt:message key="studyProtocol.consortiaTrialCategoryCode"/></label>
                         </td>                        
-                        <td class="value">                            
+                        <td class="value">                           
                             <s:select headerKey="" headerValue="Yes"
                                   id="nciSpecificInformationWebDTO.consortiaTrialCategoryCode"
                                   name="nciSpecificInformationWebDTO.consortiaTrialCategoryCode"
@@ -224,6 +224,7 @@
                                 <label for="programCodeIds"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label>
                             </td>
                             <td class="value">
+                               <table><tr><td>
                                     <s:select id="programCodeIds" name="programCodeIds"
                                           value="programCodeIds"
                                           list="programCodeList"
@@ -236,7 +237,15 @@
                                             <s:param>programCodeIds</s:param>
                                         </s:fielderror>
                                     </span>
+                                    </td>
+                                    <td class="info">
+                                   
+                            Only Program Codes of the Lead Organization Family are displayed. Use the Registration Application to view or modify a
+                             different Family's program codes, if it participates on this trial.
+                           </td>
+                            </tr></table> 
                             </td>
+                            
                         </tr>
                     </s:if>
 

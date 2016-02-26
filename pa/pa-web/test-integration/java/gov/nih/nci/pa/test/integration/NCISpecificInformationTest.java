@@ -58,7 +58,7 @@ public class NCISpecificInformationTest extends AbstractPaSeleniumTest {
         clickAndWait("link=NCI Specific Information");
         //Then I see program codes
         assertTrue(selenium.isTextPresent("Program Code:"));
-
+        assertTrue(selenium.isTextPresent("Only Program Codes of the Lead Organization Family are displayed."));
         Select reportingMethodBox = new Select(driver.findElement(By.id("accrualReportingMethodCode")));
         reportingMethodBox.selectByIndex(0);
 
