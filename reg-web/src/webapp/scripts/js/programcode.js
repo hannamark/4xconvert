@@ -1,11 +1,15 @@
 // used by programCodeList jsp file.
 var programCodeTable;
 var programCodeTrialsTable;
+var currentPOId;
 
 document.observe("dom:loaded", function() {
 	loadProgramCodes(jQuery);
 	});
 
+function idfy(code) {
+    return code.split(' ').join('_');
+}
 function dateChangeHandler() {
 	var selectedDate = jQuery("#datetimepicker :input").val();
 	var poId = jQuery("#poID").val();        		
@@ -129,8 +133,19 @@ function loadProgramCodes($) {
                 "targets": [1]
             },{
                "render": function(data, type, row, meta) {
-                   return ' <button type=\"button\" id=\"editPGCodeButton\" title=\"Edit this Program <br> Code and Name\" rel=\"tooltip\" data-placement=\"top\" data-trigger=\"hover\"><i class=\"fa fa-pencil-square-o\"></i></button>' + '&nbsp;&nbsp;&nbsp;&nbsp;' + '<button type=\"button\" id=\"deletePGCodeButton-' + row.programCode + '\"' +
-                   'title=\"Delete or <br> Inactivate this <br> Program Code\" rel=\"tooltip\" data-placement=\"top\" data-trigger=\"hover\"><i class=\"fa fa-trash-o fa-lg\"></i></button>' + '&nbsp;&nbsp;&nbsp;&nbsp;' +'<button type=\"button\"  title="Manage this Program Code\'s <br> assignments to trials where <br> members of your organization <br> family are participants" rel=\"tooltip\" data-placement=\"top\" data-trigger=\"hover\" onclick="manageProgramCodes(\''+row.programCodeId+'\',\''+jQuery("#poID").val() +'\')" data-trigger="hover"><i class=\"fa fa-exchange\"></i></button>';
+                   return ' <button type="button" id="editPGCodeButton-' + idfy(row.programCode)+
+                       '" title="Edit this Program <br> Code and Name" rel="tooltip" data-placement="top" data-trigger="hover"><i class="fa fa-pencil-square-o"></i></button>' +
+                       '&nbsp;&nbsp;&nbsp;&nbsp;' +
+                        '<button type="button" id="deletePGCodeButton-'
+                       idfy(row.programCode) + '"' +
+                       'title="Delete or <br> Inactivate this <br> Program Code" rel="tooltip" data-placement="top" data-trigger="hover"><i class="fa fa-trash-o fa-lg"></i></button>' +
+                       '&nbsp;&nbsp;&nbsp;&nbsp;' +
+                       '<button type="button"  id="managePGCodeButton-' +
+                       idfy(row.programCode) +
+                       '" title="Manage this Program Code\'s <br> assignments to trials where <br> members of your organization <br> family are participants" rel="tooltip" data-placement="top" data-trigger="hover" onclick="manageProgramCodes(' +
+                       row.programCodeId +',' +
+                       jQuery("#poID").val() +
+                       ')" data-trigger="hover"><i class="fa fa-exchange"></i></button>';
                },
                "bSortable": false,
                "targets": [2]
@@ -173,61 +188,71 @@ function loadProgramCodes($) {
 						resizable: false,
 						autoOpen : false,
 						width : 540,
-						buttons :    {
-							"Save" : function() {
-								$(this).dialog("close");
-								if(!jQuery('#updatedProgramCode').val()){
-									jQuery('#programCodesErrorList').html("Program code is required");
-									jQuery("#programCodeErrorMessageModal").modal('show'); 
-									return;
-								} else if($("#dialog-edit").data('currentProgramCode') != $('#updatedProgramCode').val()){
-									$("#dialog-confirm").data('currentProgramCode', $("#dialog-edit").data('currentProgramCode'));
-							 	    $("#dialog-confirm").data('currentProgramCodeId', $("#dialog-edit").data('currentProgramCodeId'));
-									$("#dialog-confirm").dialog('open');
-									return;
-								}
-								jQuery('#program_code_progress_indicator_panel').css('display', 'inline-block');
-								$
-										.ajax(
-												{
-													type : "POST",
-													url : 'programCodesupdateProgramCode.action',
-													data : {
-														updatedProgramCode : $('#updatedProgramCode').val(),
-														updatedProgramName : $('#updatedProgramName').val(),
-														poId : jQuery("#poID").val(),
-														currentProgramCode :  $("#dialog-edit").data('currentProgramCode'),
-														currentProgramCodeId : $("#dialog-edit").data('currentProgramCodeId')
-													},
-													timeout : 30000
-												})
-										.always(function() {
-											jQuery('#program_code_progress_indicator_panel').hide();
-										})
-										.done(
-												function() {
-													  $('tr.selected').find('td:nth-child(1)').html('<a href="#" class="mcapage" rel="' + $('#updatedProgramCode').val() + '">' +$('#updatedProgramCode').val()+ '</a>');
-													  $('tr.selected').find('td:nth-child(2)').html($('#updatedProgramName').val());
-													  
-													  $('#programCodesTable tbody tr').each(function(){
-														  $(this).removeClass("selected");
-													  });
-													  showProgramCodeUpdatedFlashMessage();
-												})
-										.fail(
-												function(jqXHR,textStatus,errorThrown) {
-													 $('#programCodesTable tbody tr').each(function(){
-														  $(this).removeClass("selected");
-													  });
-													jQuery('#programCodesErrorList').html(jqXHR.getResponseHeader('msg'));
-													jQuery("#programCodeErrorMessageModal").modal('show'); 
-												});
+                        buttons:[
+                            {
+                                id: "dialog-edit-btn-save",
+                                text:"Save",
+                                click:function(evt) {
+                                    $(this).dialog("close");
+                                    if(!jQuery('#updatedProgramCode').val()){
+                                        jQuery('#programCodesErrorList').html("Program code is required");
+                                        jQuery("#programCodeErrorMessageModal").modal('show');
+                                        return;
+                                    } else if($("#dialog-edit").data('currentProgramCode') != $('#updatedProgramCode').val()){
+                                        $("#dialog-confirm").data('currentProgramCode', $("#dialog-edit").data('currentProgramCode'));
+                                        $("#dialog-confirm").data('currentProgramCodeId', $("#dialog-edit").data('currentProgramCodeId'));
+                                        $("#dialog-confirm").dialog('open');
+                                        return;
+                                    }
+                                    jQuery('#program_code_progress_indicator_panel').css('display', 'inline-block');
+                                    $
+                                        .ajax(
+                                        {
+                                            type : "POST",
+                                            url : 'programCodesupdateProgramCode.action',
+                                            data : {
+                                                updatedProgramCode : $('#updatedProgramCode').val(),
+                                                updatedProgramName : $('#updatedProgramName').val(),
+                                                poId : jQuery("#poID").val(),
+                                                currentProgramCode :  $("#dialog-edit").data('currentProgramCode'),
+                                                currentProgramCodeId : $("#dialog-edit").data('currentProgramCodeId')
+                                            },
+                                            timeout : 30000
+                                        })
+                                        .always(function() {
+                                            jQuery('#program_code_progress_indicator_panel').hide();
+                                        })
+                                        .done(
+                                        function() {
+                                            $('tr.selected').find('td:nth-child(1)').html('<a href="#" class="mcapage" rel="' + $('#updatedProgramCode').val() + '">' +$('#updatedProgramCode').val()+ '</a>');
+                                            $('tr.selected').find('td:nth-child(2)').html($('#updatedProgramName').val());
 
-							},
-							"Cancel" : function() {
-								$(this).dialog("close");
-							}
-						}
+                                            $('#programCodesTable tbody tr').each(function(){
+                                                $(this).removeClass("selected");
+                                            });
+                                            showProgramCodeUpdatedFlashMessage();
+                                        })
+                                        .fail(
+                                        function(jqXHR,textStatus,errorThrown) {
+                                            $('#programCodesTable tbody tr').each(function(){
+                                                $(this).removeClass("selected");
+                                            });
+                                            jQuery('#programCodesErrorList').html(jqXHR.getResponseHeader('msg'));
+                                            jQuery("#programCodeErrorMessageModal").modal('show');
+                                        });
+
+                                }
+                            },
+                            {
+                                id: "dialog-edit-btn-cancel",
+                                text: "Cancel",
+                                click: function(evt) {
+                                    $(this).dialog("close");
+                                }
+
+                            }
+                        ]
+
 					});
     		
 
@@ -238,50 +263,59 @@ function loadProgramCodes($) {
 						resizable: false,
 						autoOpen : false,
 						width : 476,
-						buttons :    {
-							"Yes" : function() {
-								$(this).dialog("close");
-								jQuery('#program_code_progress_indicator_panel').css('display', 'inline-block');
-								$
-										.ajax(
-												{
-													type : "POST",
-													url : 'programCodesupdateProgramCode.action',
-													data : {
-														updatedProgramCode : $('#updatedProgramCode').val(),
-														updatedProgramName : $('#updatedProgramName').val(),
-														poId : jQuery("#poID").val(),
-														currentProgramCode :  $("#dialog-confirm").data('currentProgramCode'),
-														currentProgramCodeId : $("#dialog-confirm").data('currentProgramCodeId')
-													},
-													timeout : 30000
-												})
-										.always(function() {
-											jQuery('#program_code_progress_indicator_panel').hide();
-										})
-										.done(
-												function() {
-													  $('tr.selected').find('td:nth-child(1)').html('<a href="#" class="mcapage" rel="' + $('#updatedProgramCode').val() + '">' + $('#updatedProgramCode').val()+ '</a>');
-													  $('tr.selected').find('td:nth-child(2)').html($('#updatedProgramName').val());
-													  $('#programCodesTable tbody tr').each(function(){
-														  $(this).removeClass("selected");
-													  });
-													  showProgramCodeUpdatedFlashMessage();
-												})
-										.fail(
-												function(jqXHR,textStatus,errorThrown) {
-													 $('#programCodesTable tbody tr').each(function(){
-														  $(this).removeClass("selected");
-													  });
-													jQuery('#programCodesErrorList').html(jqXHR.getResponseHeader('msg'));
-													jQuery("#programCodeErrorMessageModal").modal('show'); 
-												});
+                        buttons: [
+                            {
+                               id:"dialog-confirm-btn-yes",
+                               text:"Yes",
+                               click: function(evt) {
+                                   $(this).dialog("close");
+                                   jQuery('#program_code_progress_indicator_panel').css('display', 'inline-block');
+                                   $
+                                       .ajax(
+                                       {
+                                           type : "POST",
+                                           url : 'programCodesupdateProgramCode.action',
+                                           data : {
+                                               updatedProgramCode : $('#updatedProgramCode').val(),
+                                               updatedProgramName : $('#updatedProgramName').val(),
+                                               poId : jQuery("#poID").val(),
+                                               currentProgramCode :  $("#dialog-confirm").data('currentProgramCode'),
+                                               currentProgramCodeId : $("#dialog-confirm").data('currentProgramCodeId')
+                                           },
+                                           timeout : 30000
+                                       })
+                                       .always(function() {
+                                           jQuery('#program_code_progress_indicator_panel').hide();
+                                       })
+                                       .done(
+                                       function() {
+                                           $('tr.selected').find('td:nth-child(1)').html('<a href="#" class="mcapage" rel="' + $('#updatedProgramCode').val() + '">' + $('#updatedProgramCode').val()+ '</a>');
+                                           $('tr.selected').find('td:nth-child(2)').html($('#updatedProgramName').val());
+                                           $('#programCodesTable tbody tr').each(function(){
+                                               $(this).removeClass("selected");
+                                           });
+                                           showProgramCodeUpdatedFlashMessage();
+                                       })
+                                       .fail(
+                                       function(jqXHR,textStatus,errorThrown) {
+                                           $('#programCodesTable tbody tr').each(function(){
+                                               $(this).removeClass("selected");
+                                           });
+                                           jQuery('#programCodesErrorList').html(jqXHR.getResponseHeader('msg'));
+                                           jQuery("#programCodeErrorMessageModal").modal('show');
+                                       });
 
-							},
-							"No" : function() {
-								$(this).dialog("close");
-							}
-						}
+                               }
+                            },
+                            {
+                              id:"dialog-confirm-btn-no",
+                              text: "No",
+                              click: function(evt) {
+                                  $(this).dialog("close");
+                              }
+                            }
+                        ]
+
 					});
     		
     		$("#dialog-confirm-delete")
@@ -291,40 +325,46 @@ function loadProgramCodes($) {
 						resizable: false,
 						autoOpen : false,
 						width : 420,
-						buttons :    {
-							"Delete" : function() {
-								$(this).dialog("close");
-								$
-										.ajax(
-												{
-													type : "POST",
-													url : 'programCodesdeleteProgramCode.action',
-													data : {
-													    poId: $("#poID").val(), 
-														programCodeIdSelectedForDeletion : $("#dialog-confirm-delete").data('programCodeIdToBeDeleted')
-													},
-													timeout : 30000
-												})
-										.done(
-												function() {
-													$('#programdCodeToBeDeleted').empty();
-													programCodeTable.row('tr.selected').remove().draw();
-													showProgramCodeDeletedFlashMessage();
-												})
-										.fail(
-												function(jqXHR,textStatus,errorThrown) {
-													 $('#programCodesTable tbody tr').each(function(){
-														  $(this).removeClass("selected");
-													  });
-													$('#programCodesErrorList').html(jqXHR.getResponseHeader('msg'));
-													$("#programCodeErrorMessageModal").modal('show'); 
-												});
-
-							},
-							"Cancel" : function() {
-								$(this).dialog("close");
-							}
-						}
+                        buttons :[
+                            {
+                                id:"dialog-confirm-delete-btn-delete",
+                                text:"Delete",
+                                click:function(evt) {
+                                    $(this).dialog("close");
+                                    $.ajax({
+                                                type : "POST",
+                                                url : 'programCodesdeleteProgramCode.action',
+                                                data : {
+                                                    poId: $("#poID").val(),
+                                                    programCodeIdSelectedForDeletion : $("#dialog-confirm-delete").data('programCodeIdToBeDeleted')
+                                                },
+                                                timeout : 30000
+                                            }
+                                    ).done(
+                                            function() {
+                                                $('#programdCodeToBeDeleted').empty();
+                                                programCodeTable.row('tr.selected').remove().draw();
+                                                showProgramCodeDeletedFlashMessage();
+                                            }
+                                    ).fail(
+                                            function(jqXHR,textStatus,errorThrown) {
+                                                $('#programCodesTable tbody tr').each(function(){
+                                                    $(this).removeClass("selected");
+                                                });
+                                                $('#programCodesErrorList').html(jqXHR.getResponseHeader('msg'));
+                                                $("#programCodeErrorMessageModal").modal('show');
+                                            }
+                                    );
+                                }
+                            },
+                            {
+                                id:"dialog-confirm-delete-btn-cancel",
+                                text:"Cancel",
+                                click: function(evt) {
+                                    $(this).dialog("close");
+                                }
+                            }
+                        ]
 					});
     		$("#dialog-inactivate-program-code")
 			.dialog(
@@ -333,36 +373,47 @@ function loadProgramCodes($) {
 						resizable: false,
 						autoOpen : false,
 						width : 863,
-						buttons :    {
-							"Yes" : function() {
-								$(this).dialog("close");
-								$
-										.ajax(
-												{
-													type : "POST",
-													url : 'programCodesinactivateProgramCode.action',
-													data : {
-														poId : jQuery("#poID").val(),
-														programCodeIdSelectedForInactivation : $("#dialog-inactivate-program-code").data('programCodeIdToBeInactivated')
-													},
-													timeout : 30000
-												})
-										.done(
-												function() {
-													  showProgramCodeInactivatedFlashMessage();
-													  programCodeTable.ajax.reload();
-												})
-										.fail(
-												function(jqXHR,textStatus,errorThrown) {
-													jQuery('#programCodesErrorList').html(jqXHR.getResponseHeader('msg'));
-													jQuery("#programCodeErrorMessageModal").modal('show'); 
-												});
+                        buttons: [
+                            {
+                                id:"dialog-inactivate-program-code-btn-yes",
+                                text:"Yes",
+                                click:function(evt){
 
-							},
-							"No" : function() {
-								$(this).dialog("close");
-							}
-						}
+                                    $(this).dialog("close");
+                                    $
+                                        .ajax(
+                                        {
+                                            type : "POST",
+                                            url : 'programCodesinactivateProgramCode.action',
+                                            data : {
+                                                poId : jQuery("#poID").val(),
+                                                programCodeIdSelectedForDeletion : $("#dialog-inactivate-program-code").data('programCodeIdToBeInactivated')
+                                            },
+                                            timeout : 30000
+                                        })
+                                        .done(
+                                        function() {
+                                            showProgramCodeInactivatedFlashMessage();
+                                            programCodeTable.ajax.reload();
+                                        })
+                                        .fail(
+                                        function(jqXHR,textStatus,errorThrown) {
+                                            jQuery('#programCodesErrorList').html(jqXHR.getResponseHeader('msg'));
+                                            jQuery("#programCodeErrorMessageModal").modal('show');
+                                        });
+                                }
+
+                            },
+                            {
+                              id: "dialog-inactivate-program-code-btn-no",
+                              text: "No",
+                              click: function(evt) {
+                                  $(this).dialog("close");
+                              }
+
+                            }
+                        ]
+
 					});
     		
     }
@@ -443,6 +494,7 @@ function loadTrialsAssociatedToProgramCode(programCode) {
 	           type:"POST",
 	           data: function(d) {
 	               d.programCodeIdSelectedForDeletion  = programCode;
+                   d.poId = jQuery("#poID").val();
 	           }
 	       },
 	       sProcessing: "Loading...",
@@ -453,12 +505,14 @@ function loadTrialsAssociatedToProgramCode(programCode) {
 
 
 function handleDeleteProgramCode(programCodeId, programCode, programName){
+    currentPOId = jQuery("#poID").val();
     jQuery.ajax(
 	{
 		type : "POST",
 		url : 'programCodesisProgramCodeAssignedToATrial.action',
 		data : {
-			programCodeIdSelectedForDeletion : programCodeId
+			programCodeIdSelectedForDeletion : programCodeId,
+            poId: currentPOId
 		},
 	    success: function(result) {
 	    	if(jQuery.parseJSON(result).data[0] === false) {

@@ -365,7 +365,9 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
      */
     public StreamResult unassignProgramCode() throws IOException {
         try {
-            studyProtocolService.unAssignProgramCode(studyProtocolId, getPgcParam());
+            loadFamily();
+            ProgramCodeDTO programCode = familyDto.findProgramCodeDTOByCode(pgcParam);
+            studyProtocolService.unAssignProgramCode(studyProtocolId, programCode);
             JSONObject root = new JSONObject();
             root.put(AJAX_RETURN_SUCCESS_KEY, "REMOVED");
             return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
@@ -387,8 +389,10 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
      */
     public StreamResult assignProgramCode() throws IOException {
         try {
+            loadFamily();
+            ProgramCodeDTO programCode = familyDto.findProgramCodeDTOByCode(pgcParam);
             studyProtocolService.assignProgramCodesToTrials(Arrays.asList(studyProtocolId),
-                    familyPoId, Arrays.asList(getPgcParam()));
+                    familyPoId, Arrays.asList(programCode));
             JSONObject root = new JSONObject();
             root.put(AJAX_RETURN_SUCCESS_KEY, "ADDED");
             return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
@@ -411,13 +415,21 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
     public StreamResult assignProgramCodesToTrials() throws IOException {
 
         try {
+            //studies
              List<Long> studyProtocolIds = new ArrayList<Long>();
             for (String trialId : getStudyProtocolIdListParam().split(",")) {
                 studyProtocolIds.add(Long.parseLong(trialId));
             }
+            //program codes
+            loadFamily();
+            List<ProgramCodeDTO> programCodes = new ArrayList<ProgramCodeDTO>();
+            for (String code: getPgcListParam().split(",")) {
+                ProgramCodeDTO programCode = familyDto.findProgramCodeDTOByCode(code);
+                programCodes.add(programCode);
+            }
 
-            studyProtocolService.assignProgramCodesToTrials(studyProtocolIds,
-                    familyPoId, Arrays.asList(getPgcListParam().split(",")));
+            //assign
+            studyProtocolService.assignProgramCodesToTrials(studyProtocolIds, familyPoId, programCodes);
             JSONObject root = new JSONObject();
             root.put(AJAX_RETURN_SUCCESS_KEY, "ADDED");
             return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
@@ -445,9 +457,15 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
             for (String trialId : getStudyProtocolIdListParam().split(",")) {
                 studyProtocolIds.add(Long.parseLong(trialId));
             }
+            //program codes
+            loadFamily();
+            List<ProgramCodeDTO> programCodes = new ArrayList<ProgramCodeDTO>();
+            for (String code: getPgcListParam().split(",")) {
+                ProgramCodeDTO programCode = familyDto.findProgramCodeDTOByCode(code);
+                programCodes.add(programCode);
+            }
 
-            studyProtocolService.unassignProgramCodesFromTrials(studyProtocolIds,
-                    Arrays.asList(getPgcListParam().split(",")));
+            studyProtocolService.unassignProgramCodesFromTrials(studyProtocolIds, programCodes);
             JSONObject root = new JSONObject();
             root.put(AJAX_RETURN_SUCCESS_KEY, "REMOVED");
             return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
@@ -473,9 +491,16 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
             for (String trialId : getStudyProtocolIdListParam().split(",")) {
                 studyProtocolIds.add(Long.parseLong(trialId));
             }
-
-            studyProtocolService.replaceProgramCodesOnTrials(studyProtocolIds,
-                    getFamilyPoId(), getPgcParam(), Arrays.asList(getPgcListParam().split(",")));
+            //program codes
+            loadFamily();
+            List<ProgramCodeDTO> programCodes = new ArrayList<ProgramCodeDTO>();
+            for (String code: getPgcListParam().split(",")) {
+                ProgramCodeDTO programCode = familyDto.findProgramCodeDTOByCode(code);
+                programCodes.add(programCode);
+            }
+            ProgramCodeDTO programCode = familyDto.findProgramCodeDTOByCode(pgcParam);
+            studyProtocolService.replaceProgramCodesOnTrials(studyProtocolIds, getFamilyPoId(), programCode,
+                    programCodes);
             JSONObject root = new JSONObject();
             root.put(AJAX_RETURN_SUCCESS_KEY, "REPLACED");
             return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));

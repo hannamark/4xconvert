@@ -1,38 +1,36 @@
 package gov.nih.nci.registry.action;
 
+import static gov.nih.nci.pa.enums.StudyStatusCode.ACTIVE;
+import static gov.nih.nci.pa.enums.StudyStatusCode.APPROVED;
+import static gov.nih.nci.pa.enums.StudyStatusCode.ENROLLING_BY_INVITATION;
+import static gov.nih.nci.pa.enums.StudyStatusCode.IN_REVIEW;
+import static gov.nih.nci.pa.enums.StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL;
+import static gov.nih.nci.pa.enums.StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION;
+import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_ALTERNATE_TITLES;
+import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_OTHER_IDENTIFIERS;
+import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_LAST_UPDATER_INFO;
+
+import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.Preparable;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.FamilyDTO;
 import gov.nih.nci.pa.dto.OrgFamilyDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.service.util.FamilyProgramCodeService;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
-import gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserService;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.util.Constants;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -42,8 +40,20 @@ import org.apache.struts2.interceptor.ServletResponseAware;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.opensymphony.xwork2.ActionSupport;
-import com.opensymphony.xwork2.Preparable;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Program codes
@@ -58,6 +68,11 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
     
     private static final Logger LOG = Logger
             .getLogger(ProgramCodesAction.class);
+
+    private static final StudyStatusCode[] ACTIVE_PROTOCOL_STATUSES = new StudyStatusCode[]{ACTIVE, APPROVED,
+            IN_REVIEW, ENROLLING_BY_INVITATION,
+            TEMPORARILY_CLOSED_TO_ACCRUAL,
+            TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION};
     
     private static final String UTF_8 = "UTF-8";
     
@@ -67,10 +82,11 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
     private static final String IS_PROGRAM_CODE_ADMIN = "programCodeAdmin";   
     
     private List<FamilyDTO> familyDTOs = new ArrayList<>();    
-    private FamilyDTO selectedFamilyDTO; 
-    
+    private FamilyDTO selectedFamilyDTO;
+
+    private StudyProtocolServiceLocal studyProtocolService;
     private FamilyProgramCodeService familyProgramCodeService;
-    
+    private ProtocolQueryServiceLocal protocolQueryService;
 
     private RegistryUserService registryUserService;    
 
@@ -79,10 +95,11 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
     private HttpServletRequest request;
     private HttpServletResponse response;
     
-    private String poId;
+    private Long poId;
     private String reportingLength;
     private String reportingDate;
-    private Long selectedDTOId;    
+    private Long selectedDTOId;
+    private Long programCodeIdSelectedForDeletion;
 
     /**
      * execute
@@ -151,16 +168,23 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
      */
     public StreamResult ajaxChangeDate() throws ParseException, IOException {        
         try {            
-            FamilyDTO familyDTO = familyProgramCodeService.getFamilyDTOByPoId(Long.parseLong(poId));        
-            familyDTO.setReportingPeriodEndDate(new 
+            loadFamily();
+            selectedFamilyDTO.setReportingPeriodEndDate(new
                     SimpleDateFormat(PAUtil.DATE_FORMAT, Locale.getDefault()).parse(reportingDate));
-            familyProgramCodeService.update(familyDTO);            
+            familyProgramCodeService.update(selectedFamilyDTO);
         
             return new StreamResult(new ByteArrayInputStream(new JSONObject()
                 .toString().getBytes(UTF_8)));
         } catch (Exception e) {
             return handleExceptionDuringAjax(e);
         }            
+    }
+
+    /**
+     * Will load the family
+     */
+    private void loadFamily() {
+        selectedFamilyDTO = poId == null ? null : familyProgramCodeService.getFamilyDTOByPoId(poId);
     }
     
     /**
@@ -171,9 +195,9 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
      */
     public StreamResult ajaxChangeLength() throws ParseException, IOException {        
         try {                        
-            FamilyDTO familyDTO = familyProgramCodeService.getFamilyDTOByPoId(Long.parseLong(poId));        
-            familyDTO.setReportingPeriodLength(Integer.parseInt(reportingLength));
-            familyProgramCodeService.update(familyDTO);            
+            loadFamily();
+            selectedFamilyDTO.setReportingPeriodLength(Integer.parseInt(reportingLength));
+            familyProgramCodeService.update(selectedFamilyDTO);
             
             return new StreamResult(new ByteArrayInputStream(new JSONObject()
                     .toString().getBytes(UTF_8)));
@@ -198,9 +222,9 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
     
     private void populateProgramCodes(JSONArray arr) {
         LOG.debug("populating program codes for [familyPOId : " + poId + "]");
-        FamilyDTO familyDTO = familyProgramCodeService.getFamilyDTOByPoId(Long.parseLong(poId));
-        if (familyDTO != null) {
-            for (ProgramCodeDTO programCodeDTO : familyDTO.getProgramCodes()) {
+        loadFamily();
+        if (selectedFamilyDTO != null) {
+            for (ProgramCodeDTO programCodeDTO : selectedFamilyDTO.getProgramCodes()) {
                 JSONObject o = new JSONObject();
                 o.put("programCodeId", programCodeDTO.getId());
                 o.put("programName", programCodeDTO.getProgramName());
@@ -232,7 +256,7 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
     }
     
     private void addProgramCode() throws PAValidationException {
-        FamilyDTO familyDTO = familyProgramCodeService.getFamilyDTOByPoId(Long.parseLong(poId));
+        loadFamily();
         String programCode = request.getParameter("newProgramCode"); 
         String programName = request.getParameter("newProgramName");
         // create and add a new active program code to the family
@@ -240,13 +264,14 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
         programCodeDTO.setProgramCode(programCode);
         programCodeDTO.setProgramName(programName);
         programCodeDTO.setActive(true);
-        familyProgramCodeService.createProgramCode(familyDTO, programCodeDTO);
+        familyProgramCodeService.createProgramCode(selectedFamilyDTO, programCodeDTO);
       }
     
     
     private void findOrCreateFamilyAndAddToList(OrgFamilyDTO orgFamilyDTO) throws PAException, ParseException {
-        FamilyDTO familyDTO = familyProgramCodeService.getFamilyDTOByPoId(orgFamilyDTO.getId());        
-        if (familyDTO == null) {            
+        poId = orgFamilyDTO.getId();
+        loadFamily();
+        if (selectedFamilyDTO == null) {
             String defaultDate = lookUpTableServiceRemote.
                     getPropertyValue("programcodes.reporting.default.end_date");
             String defaultLength = lookUpTableServiceRemote.
@@ -259,8 +284,8 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
             newFamilyDTO.setName(orgFamilyDTO.getName());    
             familyDTOs.add(newFamilyDTO);
         } else {
-            familyDTO.setName(orgFamilyDTO.getName());
-            familyDTOs.add(familyDTO);
+            selectedFamilyDTO.setName(orgFamilyDTO.getName());
+            familyDTOs.add(selectedFamilyDTO);
         }
     }
     
@@ -292,7 +317,7 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
     }
     
     private void editProgramCode() throws PAValidationException {
-        FamilyDTO familyDTO = familyProgramCodeService.getFamilyDTOByPoId(Long.parseLong(poId));
+        loadFamily();
         
         String currentProgramCodeValue = request.getParameter("currentProgramCode");
         String currentProgramCodeId = request.getParameter("currentProgramCodeId");
@@ -306,7 +331,7 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
         updatedProgramCodeDTO.setProgramCode(updatedProgramCode);
         updatedProgramCodeDTO.setProgramName(updatedProgramName);
         
-        familyProgramCodeService.updateProgramCode(familyDTO, currentProgramCodeDTO, updatedProgramCodeDTO);
+        familyProgramCodeService.updateProgramCode(selectedFamilyDTO, currentProgramCodeDTO, updatedProgramCodeDTO);
       }
     
     /**
@@ -320,18 +345,22 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
             JSONObject root = new JSONObject();
             JSONArray arr = new JSONArray();
             root.put(DATA, arr);
-            String programCodeIdToBeDeleted = request.getParameter("programCodeIdSelectedForDeletion");
-            ProgramCodeDTO programCodeDTO = new ProgramCodeDTO();
-            programCodeDTO.setId(Long.parseLong(programCodeIdToBeDeleted));
-            if (familyProgramCodeService.isProgramCodeAssociatedWithATrial(programCodeDTO)) {
-                arr.put(true);
-            } else {
-                arr.put(false);
-            }
+            arr.put(isProgramCodeAssignedToATrial(programCodeIdSelectedForDeletion));
             return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
         } catch (Exception e) {
             return handleExceptionDuringAjax(e);
         }
+    }
+
+    /**
+     * Tells if program code is associated with any trial.
+     * @param programCodeId - the program code id
+     * @return true or false
+     */
+    private boolean isProgramCodeAssignedToATrial(Long programCodeId) {
+        ProgramCodeDTO programCodeDTO = new ProgramCodeDTO();
+        programCodeDTO.setId(programCodeId);
+        return familyProgramCodeService.isProgramCodeAssociatedWithATrial(programCodeDTO);
     }
     
     /**
@@ -346,12 +375,11 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
             JSONObject root = new JSONObject();
             JSONArray arr = new JSONArray();
             root.put(DATA, arr);
-            FamilyDTO familyDTO = familyProgramCodeService.getFamilyDTOByPoId(Long.parseLong(poId));
-            String currentProgramCodeId = request.getParameter("programCodeIdSelectedForDeletion");
+            loadFamily();
             ProgramCodeDTO currentProgramCodeDTO = new ProgramCodeDTO();
-            currentProgramCodeDTO.setId(Long.parseLong(currentProgramCodeId));
+            currentProgramCodeDTO.setId(programCodeIdSelectedForDeletion);
             
-            familyProgramCodeService.deleteProgramCode(familyDTO, currentProgramCodeDTO);
+            familyProgramCodeService.deleteProgramCode(selectedFamilyDTO, currentProgramCodeDTO);
             return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
         } catch (Exception e) {
             return handleExceptionDuringAjax(e);
@@ -366,15 +394,36 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
     
     public StreamResult inactivateProgramCode() throws IOException {
         try {
-            LOG.debug("Inactivating program code for [familyPOId : " + poId + "]");
+
+            LOG.debug("Inactivating program code for [familyPOId : " + poId + ", programCodeId : "
+                    + programCodeIdSelectedForDeletion + "]");
+
+            //check remove program codes from active trials
+            List<StudyProtocolQueryDTO> list = findMatchingStudies();
+            if (CollectionUtils.isNotEmpty(list)) {
+                List<Long> studyIds = new ArrayList<Long>();
+                for (StudyProtocolQueryDTO sp : list) {
+                    studyIds.add(sp.getStudyProtocolId());
+                }
+                studyProtocolService.unassignProgramCodesFromTrials(studyIds,
+                        Arrays.asList(selectedFamilyDTO.findProgramCodeDTO(programCodeIdSelectedForDeletion)));
+            }
+
+
+            ProgramCodeDTO currentProgramCodeDTO = new ProgramCodeDTO();
+            currentProgramCodeDTO.setId(programCodeIdSelectedForDeletion);
+
+            //check if the program code is associated with other trials.
+            if (isProgramCodeAssignedToATrial(programCodeIdSelectedForDeletion)) {
+                familyProgramCodeService.inactivateProgramCode(currentProgramCodeDTO);
+            } else {
+                familyProgramCodeService.deleteProgramCode(selectedFamilyDTO, currentProgramCodeDTO);
+            }
+
+
             JSONObject root = new JSONObject();
             JSONArray arr = new JSONArray();
             root.put(DATA, arr);
-            String currentProgramCodeId = request.getParameter("programCodeIdSelectedForInactivation");
-            ProgramCodeDTO currentProgramCodeDTO = new ProgramCodeDTO();
-            currentProgramCodeDTO.setId(Long.parseLong(currentProgramCodeId));
-            
-            familyProgramCodeService.inactivateProgramCode(currentProgramCodeDTO);
             return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
         } catch (Exception e) {
             return handleExceptionDuringAjax(e);
@@ -399,27 +448,41 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
             return handleExceptionDuringAjax(e);
         }
     }
-    
-    private void populateStudyProtocolDTOs(JSONArray array) {
-        String currentProgramCodeId = request.getParameter("programCodeIdSelectedForDeletion");
-        ProgramCodeDTO currentProgramCodeDTO = new ProgramCodeDTO();
-        currentProgramCodeDTO.setId(Long.parseLong(currentProgramCodeId));
-        
-        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
-        criteria.setExcludeRejectProtocol(true);
-        criteria.setExcludeTerminatedTrials(true);
-        criteria.getProgramCodeIds().add(currentProgramCodeDTO.getId());
-        ProtocolQueryServiceLocal protocolQueryServiceLocal = PaRegistry.getProtocolQueryService();
+
+    /**
+     * Will load study protocols matching the program code and is within reporting period of family
+     * @return   list of protocols
+     */
+    private List<StudyProtocolQueryDTO> findMatchingStudies() {
         List<StudyProtocolQueryDTO> list = new ArrayList<StudyProtocolQueryDTO>();
         try {
-            ProtocolQueryPerformanceHints[] performanceHintsArray = {ProtocolQueryPerformanceHints.
-                    SKIP_ALTERNATE_TITLES, ProtocolQueryPerformanceHints.SKIP_LAST_UPDATER_INFO,
-                    ProtocolQueryPerformanceHints.SKIP_OTHER_IDENTIFIERS};
-            list = protocolQueryServiceLocal.getStudyProtocolByCriteria(criteria, performanceHintsArray);
+            LOG.debug("Finding active trials for  [familyPOId : " + poId + ", programCodeId: "
+                    + programCodeIdSelectedForDeletion +  "]");
+
+            //finds the protocols that were active any time during the reporting period start and end dates
+           loadFamily();
+
+            StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+            criteria.setExcludeRejectProtocol(true);
+            criteria.setExcludeTerminatedTrials(true);
+            criteria.getProgramCodeIds().add(programCodeIdSelectedForDeletion);
+            criteria.populateReportingPeriodStatusCriterion(selectedFamilyDTO.findStartDate(),
+                    selectedFamilyDTO.getReportingPeriodEndDate(), ACTIVE_PROTOCOL_STATUSES);
+
+
+            list =  protocolQueryService.getStudyProtocolByCriteria(criteria,
+                    SKIP_LAST_UPDATER_INFO, SKIP_ALTERNATE_TITLES, SKIP_OTHER_IDENTIFIERS);
         } catch (PAException e) {
-            e.printStackTrace();
+            LOG.error("Unable to find protocols", e);
         }
-        
+        return list;
+    }
+
+    private void populateStudyProtocolDTOs(JSONArray array) {
+
+
+        List<StudyProtocolQueryDTO> list = findMatchingStudies();
+
         for (StudyProtocolQueryDTO dto : list) {
             JSONObject object = new JSONObject();
             object.put("nciIdentifier", dto.getNciIdentifier());
@@ -444,8 +507,10 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
     @Override
     public void prepare() throws Exception {
         familyProgramCodeService = PaRegistry.getProgramCodesFamilyService();
+        protocolQueryService = PaRegistry.getCachingProtocolQueryService();
         registryUserService = PaRegistry.getRegistryUserService();
         lookUpTableServiceRemote = PaRegistry.getLookUpTableService();
+        studyProtocolService = PaRegistry.getStudyProtocolService();
     }
     
     /**
@@ -502,7 +567,7 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
      * Gets PO ID
      * @return poId poId
      */
-    public String getPoId() {
+    public Long getPoId() {
         return poId;
     }
 
@@ -510,7 +575,7 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
      * sets po id
      * @param poId poId
      */
-    public void setPoId(String poId) {
+    public void setPoId(Long poId) {
         this.poId = poId;
     }
     
@@ -577,7 +642,23 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
     public void setSelectedDTOId(Long selectedDTOId) {
         this.selectedDTOId = selectedDTOId;
     }
-    
+
+    /**
+     * The program code being deleted/deactivated
+     * @return - the program code Id
+     */
+    public Long getProgramCodeIdSelectedForDeletion() {
+        return programCodeIdSelectedForDeletion;
+    }
+
+    /**
+     * The program code that is being deleted
+     * @param programCodeIdSelectedForDeletion - the program code id
+     */
+    public void setProgramCodeIdSelectedForDeletion(Long programCodeIdSelectedForDeletion) {
+        this.programCodeIdSelectedForDeletion = programCodeIdSelectedForDeletion;
+    }
+
     /**
      * returns registry user service 
      * @return registryUserService user service
@@ -593,4 +674,36 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
     public void setRegistryUserService(RegistryUserService registryUserService) {
         this.registryUserService = registryUserService;
     }
+    /**
+     * @return ProtocolQueryServiceLocal
+     */
+    public ProtocolQueryServiceLocal getProtocolQueryService() {
+        return protocolQueryService;
+    }
+
+
+    /**
+     * @param protocolQueryService the protocolQueryService to set
+     */
+    public void setProtocolQueryService(ProtocolQueryServiceLocal protocolQueryService) {
+        this.protocolQueryService = protocolQueryService;
+    }
+
+
+    /**
+     * Will return the study protocol service
+     * @return the studyProtocolService
+     */
+    public StudyProtocolServiceLocal getStudyProtocolService() {
+        return studyProtocolService;
+    }
+
+    /**
+     * Will set the study protocol service
+     * @param studyProtocolService the studyProtocolService
+     */
+    public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
+        this.studyProtocolService = studyProtocolService;
+    }
+
 }

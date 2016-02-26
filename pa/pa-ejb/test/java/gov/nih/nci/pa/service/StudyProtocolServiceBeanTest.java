@@ -457,7 +457,9 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         long studyPaId = Long.parseLong(spDTO.getIdentifier().getExtension());
 
         //When I assign program code legacy data
-        remoteEjb.assignProgramCodes(studyPaId, -1L, Arrays.asList("1", "5"));
+        remoteEjb.assignProgramCodes(studyPaId, -1L,
+                Arrays.asList(new ProgramCodeDTO(1L, "1"), new ProgramCodeDTO(5L, "5"))
+        );
 
         //Then it must get associated to study under program codeText field
         StudyProtocolDTO spDTO2 = remoteEjb.getStudyProtocol(ii);
@@ -465,7 +467,10 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         assertEquals("Comments The following program code value was submitted but not recorded: 1;5. Starting in version 4.3.1, CTRP no longer records program codes for trials lead by a non designated cancer center organization.", StConverter.convertToString(spDTO2.getComments()));
 
         //When I reassociate the study with program codes list having duplicates
-        remoteEjb.assignProgramCodes(studyPaId, -1L, Arrays.asList("1", "3", "3", "5"));
+        remoteEjb.assignProgramCodes(studyPaId, -1L,
+                Arrays.asList(new ProgramCodeDTO(1L, "1"), new ProgramCodeDTO(3L, "3"),
+                        new ProgramCodeDTO(3L, "3"), new ProgramCodeDTO(5L, "5"))
+        );
 
         //Then it should associate only unique results
         StudyProtocolDTO spDTO3 = remoteEjb.getStudyProtocol(ii);
@@ -532,7 +537,8 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         //assert can be done on getProgramCodes after Lalit's code merging.
         
         //When I assign program code legacy data
-        remoteEjb.assignProgramCodes(studyPaId, 1L, Arrays.asList("1", "5"));
+        remoteEjb.assignProgramCodes(studyPaId, 1L, 
+                Arrays.asList(new ProgramCodeDTO(1L, "1"), new ProgramCodeDTO(5L, "5")));
         assertTrue(getAuditDetails("STUDY_PROTOCOL") >= 1);
         assertTrue(getAuditLogDetails("programCodes") >= 1);
         //Then it must get associated to study under programCodes field
@@ -542,7 +548,9 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         assertEquals(2, programCodeDTOs.size());
 
         //When I reassociate the study with program codes list having duplicates
-        remoteEjb.assignProgramCodes(studyPaId, 1L, Arrays.asList("1", "3", "3", "5"));
+        remoteEjb.assignProgramCodes(studyPaId, 1L,
+                Arrays.asList(new ProgramCodeDTO(1L, "1"), new ProgramCodeDTO(3L, "3"),
+                        new ProgramCodeDTO(3L, "3"), new ProgramCodeDTO(5L, "5")));
 
         //Then it should associate only unique results
         StudyProtocolDTO spDTO3 = remoteEjb.getStudyProtocol(ii);
@@ -567,14 +575,15 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         long studyPaId = Long.parseLong(spDTO.getIdentifier().getExtension());
 
         //When I assign program code legacy data
-        remoteEjb.assignProgramCodes(studyPaId, -1L, Arrays.asList("1", "5"));
+        remoteEjb.assignProgramCodes(studyPaId, -1L,
+                Arrays.asList(new ProgramCodeDTO(1L, "1"), new ProgramCodeDTO(5L, "5")));
 
         //Then it must get associated to study under program codeText field
         StudyProtocolDTO spDTO2 = remoteEjb.getStudyProtocol(ii);
         assertTrue(ISOUtil.isStNull(spDTO2.getProgramCodeText()));
 
         //When I unassin program codes
-        remoteEjb.unAssignProgramCode(studyPaId, "1");
+        remoteEjb.unAssignProgramCode(studyPaId, new ProgramCodeDTO(1L, "1"));
         assertTrue(getAuditDetails("STUDY_PROTOCOL") >= 1);
         assertTrue(getAuditLogDetails("comments") >= 1);
         //Then it should associate only unique results
@@ -614,7 +623,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         //assert can be done on getProgramCodes after Lalit's code merging.
 
         //When I assign program code legacy data
-        remoteEjb.assignProgramCodes(studyPaId, 1L, Arrays.asList("1", "5"));
+        remoteEjb.assignProgramCodes(studyPaId, 1L, Arrays.asList(new ProgramCodeDTO(1L, "1"), new ProgramCodeDTO(5L, "5")));
 
         //Then it must get associated to study under programCodes field
         StudyProtocolDTO spDTO2 = remoteEjb.getStudyProtocol(ii);
@@ -623,7 +632,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         assertEquals(2, programCodeDTOs.size());
 
         //When I unassin program codes
-        remoteEjb.unAssignProgramCode(studyPaId, "1");
+        remoteEjb.unAssignProgramCode(studyPaId, new ProgramCodeDTO(1L, "1"));
         //Then it should associate only unique results
         StudyProtocolDTO spDTO3 = remoteEjb.getStudyProtocol(ii);
         programCodeDTOs = spDTO3.getProgramCodes();
@@ -662,7 +671,8 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         //assert can be done on getProgramCodes after Lalit's code merging.
        
         //When I assign program code legacy data
-        remoteEjb.assignProgramCodesToTrials(Arrays.asList(studyPaId), 1L, Arrays.asList("1", "5"));
+        remoteEjb.assignProgramCodesToTrials(Arrays.asList(studyPaId), 1L, 
+                Arrays.asList(new ProgramCodeDTO(1L, "1"), new ProgramCodeDTO(5L, "5")));
         //Then it must get associated to study under programCodes field
         StudyProtocolDTO spDTO2 = remoteEjb.getStudyProtocol(ii);
         //assert can be done on getProgramCodes after Lalit's code merging.
@@ -705,7 +715,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         //assert can be done on getProgramCodes after Lalit's code merging.
 
         //When I assign program code legacy data
-        remoteEjb.assignProgramCodesToTrials(Arrays.asList(studyPaId), 1L, Arrays.asList("1", "5"));
+        remoteEjb.assignProgramCodesToTrials(Arrays.asList(studyPaId), 1L, Arrays.asList(new ProgramCodeDTO(1L, "1"), new ProgramCodeDTO(5L, "5")));
 
         //Then it must get associated to study under programCodes field
         StudyProtocolDTO spDTO2 = remoteEjb.getStudyProtocol(ii);
@@ -715,7 +725,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 
 
         //When I unassin program codes
-        remoteEjb.unassignProgramCodesFromTrials(Arrays.asList(studyPaId), Arrays.asList("1"));
+        remoteEjb.unassignProgramCodesFromTrials(Arrays.asList(studyPaId), Arrays.asList(new ProgramCodeDTO(1L, "1")));
         assertTrue(getAuditDetails("STUDY_PROTOCOL") >= 1);
         assertTrue(getAuditLogDetails("programCodes") >= 1);
         //Then it should associate only unique results
@@ -767,7 +777,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         long studyPaId = Long.parseLong(spDTO.getIdentifier().getExtension());
 
         //When I assign program code
-        remoteEjb.assignProgramCodesToTrials(Arrays.asList(studyPaId), 1L, Arrays.asList("1"));
+        remoteEjb.assignProgramCodesToTrials(Arrays.asList(studyPaId), 1L, Arrays.asList(new ProgramCodeDTO(1L, "1")));
 
         //Then it must get associated to study under programCodes field
         StudyProtocolDTO spDTO2 = remoteEjb.getStudyProtocol(ii);
@@ -775,7 +785,8 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         assertEquals(1, programCodeDTOs.size());
 
         //when I replace program code 1 with 3 and 5
-        remoteEjb.replaceProgramCodesOnTrials(Arrays.asList(studyPaId), 1L, "1", Arrays.asList("3","5"));
+        remoteEjb.replaceProgramCodesOnTrials(Arrays.asList(studyPaId), 1L, new ProgramCodeDTO(1L, "1"),
+                Arrays.asList(new ProgramCodeDTO(3L, "3"),new ProgramCodeDTO(5L, "5")));
 
         assertTrue(getAuditDetails("STUDY_PROTOCOL") >= 1);
         assertTrue(getAuditLogDetails("programCodes") >= 1);
@@ -789,7 +800,8 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 
 
         //when I try to replace a non existing program code 1 with 4
-        remoteEjb.replaceProgramCodesOnTrials(Arrays.asList(studyPaId), 1L, "1", Arrays.asList("3","5"));
+        remoteEjb.replaceProgramCodesOnTrials(Arrays.asList(studyPaId), 1L, new ProgramCodeDTO(1L, "1"),
+                Arrays.asList(new ProgramCodeDTO(3L, "3"),new ProgramCodeDTO(5L, "5")));
 
         //Then it should do nothing
         StudyProtocolDTO spDTO4 = remoteEjb.getStudyProtocol(ii);

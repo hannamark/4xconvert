@@ -140,6 +140,7 @@ import gov.nih.nci.pa.iso.convert.StudyProtocolAssociationConverter;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolAssociationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -1585,7 +1586,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      * @throws PAException - exception when there is an error.
      */
     @Override
-    public void unAssignProgramCode(Long studyId, String programCode) throws PAException {
+    public void unAssignProgramCode(Long studyId, ProgramCodeDTO programCode) throws PAException {
          unassignProgramCodesFromTrials(Arrays.asList(studyId), Arrays.asList(programCode));
     }
 
@@ -1597,7 +1598,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      * @param programCodes     - a list of program codes
      * @throws PAException - exception when there is an error.
      */
-    public void assignProgramCodes(Long studyId, Long organizationPoID, List<String> programCodes)
+    public void assignProgramCodes(Long studyId, Long organizationPoID, List<ProgramCodeDTO> programCodes)
             throws PAException {
 
         //fetch the study
@@ -1629,9 +1630,9 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
 
             List<Family> families = loadAllFamilies(familyPoIds);
             Map<Long, ProgramCode> validProgramCodeMap = new HashMap<Long, ProgramCode>();
-            for (String pgCode : programCodes) {
+            for (ProgramCodeDTO pgCode : programCodes) {
                for (Family family : families) {
-                   ProgramCode pg = family.findActiveProgramCodeByCode(pgCode);
+                   ProgramCode pg = family.findActiveProgramCodeByCode(pgCode.getProgramCode());
                    if (pg != null) {
                        validProgramCodeMap.put(pg.getId(), pg);
                    }
@@ -1662,7 +1663,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      * @throws PAException - when there ia an error
      */
     @Override
-    public void assignProgramCodesToTrials(List<Long> studyIds, Long familyPoId, List<String> programCodes)
+    public void assignProgramCodesToTrials(List<Long> studyIds, Long familyPoId, List<ProgramCodeDTO> programCodes)
             throws PAException {
 
         Family family = fetchFamily(familyPoId);
@@ -1682,13 +1683,14 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      * @param programCodes - the program codes to add
      * @throws PAException - when there is an error
      */
-    private void addProgramCodesToStudyProtocol(StudyProtocol studyProtocol, Family family, List<String> programCodes)
+    private void addProgramCodesToStudyProtocol(StudyProtocol studyProtocol,
+                                                Family family, List<ProgramCodeDTO> programCodes)
             throws PAException {
-        for (String code : programCodes) {
-            ProgramCode p = family.findActiveProgramCodeByCode(code);
+        for (ProgramCodeDTO pgc : programCodes) {
+            ProgramCode p = family.findActiveProgramCodeByCode(pgc.getProgramCode());
             if (p == null) {
-                LOG.error("Unable to find an active program code in family " + code);
-                throw new PAException("Unable to find an active program code in family " + code);
+                LOG.error("Unable to find an active program code in family " + pgc.getProgramCode());
+                throw new PAException("Unable to find an active program code in family " + pgc.getProgramCode());
             }
             studyProtocol.getProgramCodes().add(p);
             LOG.info("Added programCode:" + p.getProgramCode() + " to study [studyId:" + studyProtocol.getId() + "]");
@@ -1703,7 +1705,8 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      * @throws PAException - when there is an error
      */
     @Override
-    public void unassignProgramCodesFromTrials(List<Long> studyIds, List<String> programCodes) throws PAException {
+    public void unassignProgramCodesFromTrials(List<Long> studyIds,
+                                               List<ProgramCodeDTO> programCodes) throws PAException {
            for (Long studyId: studyIds) {
                StudyProtocol studyProtocol = fetchStudyProtocol(studyId);
                removeProgramCodesFromStudyProtocol(studyProtocol, programCodes);
@@ -1718,16 +1721,17 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      * @return  List of program codes that actually removed
      * @throws PAException - when there is an error
      */
-    private List<String> removeProgramCodesFromStudyProtocol(StudyProtocol studyProtocol, List<String> programCodes)
+    private List<String> removeProgramCodesFromStudyProtocol(StudyProtocol studyProtocol,
+                                                             List<ProgramCodeDTO> programCodes)
             throws PAException {
         List<String> removed = new ArrayList<String>();
-        for (String programCode: programCodes) {
+        for (ProgramCodeDTO programCode: programCodes) {
 
             String pgcText = studyProtocol.getProgramCodeText();
             if (StringUtils.isNotEmpty(pgcText)) {
                 List<String> validProgramCodes = new ArrayList<String>();
                 for (String pgc : pgcText.trim().split("\\s*;\\s*")) {
-                    if (!StringUtils.equals(pgc, programCode)) {
+                    if (!StringUtils.equals(pgc, programCode.getProgramCode())) {
                         validProgramCodes.add(pgc);
                     }
                 }
@@ -1737,7 +1741,12 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             if (CollectionUtils.isNotEmpty(studyProtocol.getProgramCodes())) {
                 List<ProgramCode> list = new ArrayList<ProgramCode>();
                 for (ProgramCode pg : studyProtocol.getProgramCodes()) {
-                    if (StringUtils.equalsIgnoreCase(pg.getProgramCode(), programCode)) {
+                    if (programCode.getId() != null) {
+                      if (pg.getId().equals(programCode.getId())) {
+                          list.add(pg);
+                          removed.add(pg.getProgramCode());
+                      }
+                    } else if (StringUtils.equalsIgnoreCase(pg.getProgramCode(), programCode.getProgramCode())) {
                         list.add(pg);
                         removed.add(pg.getProgramCode());
                     }
@@ -1757,8 +1766,10 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      * @throws PAException - when there is an error
      */
     @Override
-    public void replaceProgramCodesOnTrials(List<Long> studyIds, Long familyPoId,
-                                            String programCode, List<String> programCodes) throws PAException {
+    public void replaceProgramCodesOnTrials(List<Long> studyIds,
+                                            Long familyPoId,
+                                            ProgramCodeDTO programCode,
+                                            List<ProgramCodeDTO> programCodes) throws PAException {
         Family family = fetchFamily(familyPoId);
         for (Long studyId : studyIds) {
             StudyProtocol studyProtocol = fetchStudyProtocol(studyId);

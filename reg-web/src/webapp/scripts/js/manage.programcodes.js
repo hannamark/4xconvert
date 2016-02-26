@@ -597,7 +597,8 @@ function unAssignProgramCode($, td, sp, pgc) {
     $.post("managePCAssignmentunassignProgramCode.action",
         {
             "studyProtocolId": sp,
-            "pgcParam": pgc
+            "pgcParam": pgc ,
+            "familyPoId": $("#familyPoId").val()
         })
         .done(function (data) {
             $('#' + sp + '_' + idfy(pgc) + '_a').remove();

@@ -457,7 +457,9 @@ public class AddUpdateSiteActionTest extends AbstractRegWebTest {
         //Then PG1, PG2 and PG3 must be assigned to study
 
         verify(studyProtocolServiceLocal, times(1)).assignProgramCodesToTrials(
-                Arrays.asList(1L), 1L, Arrays.asList("PG1", "PG2", "PG3")
+                Arrays.asList(1L), 1L, Arrays.asList(new ProgramCodeDTO(1L, "PG1"),
+                new ProgramCodeDTO(2L, "PG2"),
+                new ProgramCodeDTO(3L, "PG3"))
         );
 
     }
@@ -487,12 +489,12 @@ public class AddUpdateSiteActionTest extends AbstractRegWebTest {
 
         //Then PG2 is unassigned
         verify(studyProtocolServiceLocal, times(1)).unassignProgramCodesFromTrials(
-                Arrays.asList(1L), Arrays.asList("PG2")
+                Arrays.asList(1L), Arrays.asList(new ProgramCodeDTO(2L, "PG2"))
         );
 
         //And PG3 is assigned
         verify(studyProtocolServiceLocal, times(1)).assignProgramCodesToTrials(
-                Arrays.asList(1L), 1L, Arrays.asList("PG3")
+                Arrays.asList(1L), 1L, Arrays.asList(new ProgramCodeDTO(3L, "PG3"))
         );
 
 

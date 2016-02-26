@@ -105,6 +105,7 @@ import gov.nih.nci.pa.iso.convert.ParticipatingSiteConverter;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteContactDTO;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
@@ -804,7 +805,11 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
             HealthCareFacility hcf = savedStudySite.getHealthCareFacility();
             Long orgPoId = Long.parseLong(hcf.getOrganization().getIdentifier());
             List<String> programCodes = Arrays.asList(pgcText.split("\\s*;\\s*"));
-            getStudyProtocolService().assignProgramCodes(studyId, orgPoId, programCodes);
+            List<ProgramCodeDTO> pgcList = new ArrayList<ProgramCodeDTO>();
+            for (String code : programCodes) {
+                pgcList.add(new ProgramCodeDTO(null, code));
+            }
+            getStudyProtocolService().assignProgramCodes(studyId, orgPoId, pgcList);
         }
 
         return savedStudySite;        

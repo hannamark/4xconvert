@@ -87,6 +87,7 @@ import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolAssociationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 
@@ -393,17 +394,17 @@ public interface StudyProtocolService {
      * @param programCodes - a list of program codes
      * @throws PAException - exception when there is an error.
      */
-    void assignProgramCodes(Long studyId, Long organizationPoID, List<String> programCodes)
+    void assignProgramCodes(Long studyId, Long organizationPoID, List<ProgramCodeDTO> programCodes)
             throws PAException;
 
 
     /**
      * Will un-assign the given program codes to the study
      * @param studyId - the study PA identifier
-     * @param programCode - a program codes
+     * @param programCode - a program code
      * @throws PAException - exception when there is an error.
      */
-    void unAssignProgramCode(Long studyId, String programCode) throws PAException;
+    void unAssignProgramCode(Long studyId, ProgramCodeDTO programCode) throws PAException;
 
     /**
      * Will assign the program codes to the trial set
@@ -412,7 +413,8 @@ public interface StudyProtocolService {
      * @param programCodes - program codes
      * @throws PAException - exception when there is an error.
      */
-    void assignProgramCodesToTrials(List<Long> studyIds, Long familyPoId, List<String> programCodes) throws PAException;
+    void assignProgramCodesToTrials(List<Long> studyIds, Long familyPoId,
+                                    List<ProgramCodeDTO> programCodes) throws PAException;
 
     /**
      * Will unassign the program codes from trials set
@@ -420,7 +422,7 @@ public interface StudyProtocolService {
      * @param programCodes  - the program codes
      * @throws PAException - exception when there is an error.
      */
-    void unassignProgramCodesFromTrials(List<Long> studyIds, List<String> programCodes) throws PAException;
+    void unassignProgramCodesFromTrials(List<Long> studyIds, List<ProgramCodeDTO> programCodes) throws PAException;
 
     /**
      * Will replace a program code with another in the specified trials
@@ -430,6 +432,6 @@ public interface StudyProtocolService {
      * @param programCodes - the program codes newly selected
      * @throws PAException  - exception when there is an error
      */
-    void replaceProgramCodesOnTrials(List<Long> studyIds, Long familyPoId, String programCode,
-                                     List<String> programCodes) throws PAException;
+    void replaceProgramCodesOnTrials(List<Long> studyIds, Long familyPoId, ProgramCodeDTO programCode,
+                                     List<ProgramCodeDTO> programCodes) throws PAException;
 }

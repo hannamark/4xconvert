@@ -102,6 +102,7 @@ import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolAssociationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -462,25 +463,25 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
     }
 
     @Override
-    public void assignProgramCodes(Long studyId, Long organizationPoID, List<String> programCodes) throws PAException {
+    public void assignProgramCodes(Long studyId, Long organizationPoID, List<ProgramCodeDTO> programCodes) throws PAException {
 
     }
 
     @Override
-    public void unAssignProgramCode(Long studyId, String programCode) throws PAException {
+    public void unAssignProgramCode(Long studyId, ProgramCodeDTO programCode) throws PAException {
 
     }
 
     @Override
-    public void assignProgramCodesToTrials(List<Long> studyIds, Long familyPoId, List<String> programCodes) {
+    public void assignProgramCodesToTrials(List<Long> studyIds, Long familyPoId, List<ProgramCodeDTO> programCodes) {
     }
 
     @Override
-    public void unassignProgramCodesFromTrials(List<Long> studyIds, List<String> programCodes) {
+    public void unassignProgramCodesFromTrials(List<Long> studyIds, List<ProgramCodeDTO> programCodes) {
     }
 
     @Override
-    public void replaceProgramCodesOnTrials(List<Long> studyIds,Long familyPoId,  String programCode, List<String> programCodes) throws PAException {
+    public void replaceProgramCodesOnTrials(List<Long> studyIds,Long familyPoId,  ProgramCodeDTO programCode, List<ProgramCodeDTO> programCodes) throws PAException {
 
     }
 }

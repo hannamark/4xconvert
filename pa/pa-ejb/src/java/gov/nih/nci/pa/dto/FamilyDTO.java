@@ -220,4 +220,32 @@ public class FamilyDTO implements Serializable {
         return list;
     }
 
+    /**
+     * Will find the program code by code
+     * @param code the code
+     * @return a ProgramCodeDTO
+     */
+    public ProgramCodeDTO findProgramCodeDTOByCode(String code) {
+       for (ProgramCodeDTO pgc : programCodes) {
+           if (pgc.getProgramCode().equals(code)) {
+               return pgc;
+           }
+       }
+        return null;
+    }
+
+    /**
+     * Will find the program code by id
+     * @param pgcId the id
+     * @return a ProgramCodeDTO
+     */
+    public ProgramCodeDTO findProgramCodeDTO(Long pgcId) {
+        for (ProgramCodeDTO pgc : programCodes) {
+            if (pgc.getId().equals(pgcId)) {
+                return pgc;
+            }
+        }
+        return null;
+    }
+
 }

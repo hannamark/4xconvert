@@ -672,9 +672,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
      * @param leadOrganizationDTO The lead organization
      * @param principalInvestigatorDTO The principal investigator
      * @param sponsorOrganizationDTO The sponsor organization
-     * @param studyContactDTO The study contact
-     * @param studySiteContactDTO The study site contact
-     * @param responsiblePartyContactIi The responsible party Ii
+     * @param partyDTO The responsible party
      * @param studyRegAuthDTO The regulatory authority
      * @throws PAException if an error occurs
      */
@@ -1080,8 +1078,13 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         List<String> programCodes = Arrays.asList(StConverter
                 .convertToString(studyDTO.getProgramCodeText()).trim()
                 .split("\\s*;\\s*"));
-        studyProtocolService.assignProgramCodes(studyId, leadOrgPoId,
-                programCodes);
+        List<ProgramCodeDTO> pgcList = new ArrayList<ProgramCodeDTO>();
+        if (CollectionUtils.isNotEmpty(programCodes)) {
+            for (String code : programCodes) {
+                pgcList.add(new ProgramCodeDTO(null, code));
+            }
+        }
+        studyProtocolService.assignProgramCodes(studyId, leadOrgPoId, pgcList);
     }
 
     private void copyStudyResourcing(List<StudyResourcingDTO> studyResourcingDTOs) {
@@ -1787,7 +1790,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
 
     /**This will assign ownership.
      * @param studyProtocolDTO
-     * @param isBatchMode
      * @param studyProtocolIi
      * @throws PAException
      */

@@ -161,16 +161,16 @@ public final class AddUpdateSiteHelper {
 
             //add everything selected to study
             //group program codes by family to reduce the number of service calls
-            Map<Long , List<String>> familyGroupIndex = new HashMap<Long, List<String>>();
+            Map<Long , List<ProgramCodeDTO>> familyGroupIndex = new HashMap<Long, List<ProgramCodeDTO>>();
             for(Long pgcId : finalProgramCodeIds) {
                 ProgramCodeDTO pgc = pgcIndex.get(pgcId);
                 Long familyPoId = programCodeFamilyIndex.get(pgc).getPoId();
                 if (!familyGroupIndex.containsKey(familyPoId)) {
-                    familyGroupIndex.put(familyPoId, new ArrayList<String>());
+                    familyGroupIndex.put(familyPoId, new ArrayList<ProgramCodeDTO>());
                 }
-                familyGroupIndex.get(familyPoId).add(pgc.getProgramCode());
+                familyGroupIndex.get(familyPoId).add(pgc);
             }
-            for (Map.Entry<Long, List<String>> entry : familyGroupIndex.entrySet())  {
+            for (Map.Entry<Long, List<ProgramCodeDTO>> entry : familyGroupIndex.entrySet())  {
                 if (CollectionUtils.isNotEmpty(entry.getValue())) {
                     studyProtocolService.assignProgramCodesToTrials(studyIds, entry.getKey(), entry.getValue());
                 }
@@ -181,10 +181,10 @@ public final class AddUpdateSiteHelper {
         } else {
             List<Long> toRemove = ListUtils.subtract(initialProgramCodeIds, finalProgramCodeIds);
             if (CollectionUtils.isNotEmpty(toRemove)) {
-                List<String> programCodes = new ArrayList<String>();
+                List<ProgramCodeDTO> programCodes = new ArrayList<ProgramCodeDTO>();
                 for (Long pgcId : toRemove) {
                     ProgramCodeDTO pgc = pgcIndex.get(pgcId);
-                    programCodes.add(pgc.getProgramCode());
+                    programCodes.add(pgc);
                 }
                 studyProtocolService.unassignProgramCodesFromTrials(studyIds, programCodes);
             }
@@ -192,16 +192,16 @@ public final class AddUpdateSiteHelper {
             List<Long> toAdd = ListUtils.subtract(finalProgramCodeIds, initialProgramCodeIds);
             if (CollectionUtils.isNotEmpty(toAdd)) {
                 //group program codes by family to reduce the number of service calls
-                Map<Long , List<String>> familyGroupIndex = new HashMap<Long, List<String>>();
+                Map<Long , List<ProgramCodeDTO>> familyGroupIndex = new HashMap<Long, List<ProgramCodeDTO>>();
                 for(Long pgcId : toAdd) {
                     ProgramCodeDTO pgc = pgcIndex.get(pgcId);
                     Long familyPoId = programCodeFamilyIndex.get(pgc).getPoId();
                     if (!familyGroupIndex.containsKey(familyPoId)) {
-                        familyGroupIndex.put(familyPoId, new ArrayList<String>());
+                        familyGroupIndex.put(familyPoId, new ArrayList<ProgramCodeDTO>());
                     }
-                    familyGroupIndex.get(familyPoId).add(pgc.getProgramCode());
+                    familyGroupIndex.get(familyPoId).add(pgc);
                 }
-                for (Map.Entry<Long, List<String>> entry : familyGroupIndex.entrySet())  {
+                for (Map.Entry<Long, List<ProgramCodeDTO>> entry : familyGroupIndex.entrySet())  {
                     if (CollectionUtils.isNotEmpty(entry.getValue())) {
                         studyProtocolService.assignProgramCodesToTrials(studyIds, entry.getKey(), entry.getValue());
                     }

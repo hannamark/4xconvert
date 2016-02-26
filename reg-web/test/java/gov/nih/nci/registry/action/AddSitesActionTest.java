@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyVararg;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -580,7 +579,9 @@ public class AddSitesActionTest extends AbstractRegWebTest {
                         StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR
                                 .getCode());
         verify(studyProtocolServiceLocal, times(1)).assignProgramCodesToTrials(
-                Arrays.asList(1L), 1L, Arrays.asList("PG2", "PG3", "PG4")
+                Arrays.asList(1L), 1L, Arrays.asList(new ProgramCodeDTO(2L, "PG2"),
+                new ProgramCodeDTO(3L, "PG3"),
+                new ProgramCodeDTO(4L, "PG4"))
         );
         assertNull(ssDTO.getValue().getIdentifier().getExtension());
         assertEquals(IiConverter.convertToStudyProtocolIi(1L), ssDTO.getValue()

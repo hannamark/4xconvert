@@ -1006,5 +1006,21 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
        return sb.toString();
 
     }
+
+    /**
+     * Will find the matching program code
+     * @param id - id of the program code
+     * @return  ProgramCodeDTO
+     */
+    public ProgramCodeDTO findProgramCode(Long id) {
+        if (CollectionUtils.isNotEmpty(programCodes)) {
+            for (ProgramCodeDTO pgc : programCodes) {
+                if (pgc.getId().equals(id)) {
+                    return pgc;
+                }
+            }
+        }
+        return null;
+    }
     
 }
