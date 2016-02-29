@@ -176,7 +176,7 @@
                         </div>     
                     </c:when>
                     <c:otherwise>
-                        <label class="control-label" style="width: 15.6667%;" for="selectedFamily"><fmt:message key="programcodes.organization.family.label"/></label> <b>&nbsp;&nbsp;${selectedFamilyDTO.name}</b>
+                        <label class="control-label" style="width: 15.6667%;" for="selectedFamily"><fmt:message key="programcodes.organization.family.label"/></label> &nbsp;&nbsp;${selectedFamilyDTO.name}
                     </c:otherwise>
                 </c:choose>
               </div>              
@@ -218,7 +218,7 @@
                  <table id="newProgramCodesRowTable" class="table table-bordered table-striped">
                     <thead>
                       <tr>
-                         <th nowrap="nowrap" width="25%">Program Code</th>
+                         <th nowrap="nowrap" width="25%">Program Code <span class="required"> * </span></th>
                          <th nowrap="nowrap" width="50%">Program Name</th>
                          <th nowrap="nowrap" width="25%" />
                       </tr>
