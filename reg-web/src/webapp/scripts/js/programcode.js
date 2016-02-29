@@ -164,7 +164,7 @@ function loadProgramCodes($) {
 	        document.forms[0].submit();
         });
     	
-    	 $('#programCodesTable tbody').on( 'click', '#editPGCodeButton', function () {
+    	 $('#programCodesTable tbody').on( 'click', '[id^=editPGCodeButton]', function () {
  	        var data = programCodeTable.row( $(this).parents('tr') ).data();
  	        $(this).parents('tr').addClass( "selected" );
  	        $("#dialog-edit").data('currentProgramCode', data.programCode);
