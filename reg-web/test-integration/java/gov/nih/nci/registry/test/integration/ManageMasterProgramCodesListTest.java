@@ -300,57 +300,7 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         logoutUser();
     }
     
-    /**
-     * Test delete unassigned program code
-     * @throws Exception exception
-     */
-    @Test
-    @SuppressWarnings({"deprecation" })
-    public void testDeleteProgramCode() throws Exception {
-        loginAndHoverLink();
-        recreateFamilies();
-        associateProgramCodesToFamilies();
-        clickAndWait("link=Manage Master List");
-        assertTrue(selenium.isTextPresent("Program Code"));
-        assertTrue(selenium.isTextPresent("Program Name"));
-        assertTrue(selenium.isTextPresent("Search:"));
-        assertTrue(selenium.isTextPresent("Cancer Program12"));
-        assertTrue(selenium.isTextPresent("PG12"));
-        assertEquals("Showing 1 to 10 of 12",driver.findElement(By.id("programCodesTable_info")).getText());
-        // verify that delete programs button is present and enabled
-        WebElement deleteProgramCodebutton = driver.findElement(By.id("deletePGCodeButton-PG12"));
-        assertTrue(deleteProgramCodebutton.isEnabled());
-        hover(deleteProgramCodebutton);
-        String tooltiptext = deleteProgramCodebutton.getAttribute("data-original-title");
-        assertEquals("Delete or <br> Inactivate this <br> Program Code",tooltiptext);
-        
-        // open the delete dialog and verify the contents
-        deleteProgramCodebutton.click();
-        waitForElementToBecomeAvailable(By.id("dialog-confirm-delete"), 15);
-        assertTrue(selenium.isTextPresent("Confirm Delete"));
-        assertTrue(selenium.isTextPresent("PG12 - Cancer Program12"));
-        assertTrue(selenium.isTextPresent("Please confirm."));
-        // verify that program code exists in database
-        assertTrue(queryProgramCodesForDeletedCode("PG12").length > 0);
-        
-        // delete program code
-        WebElement deleteButton = driver.findElement(By.xpath("//button/span[contains(text(),'Delete')]"));
-        deleteButton.click();
-        
-        ((JavascriptExecutor) driver).executeScript("scroll(0, 150);");
-        // deleted program code should be removed from program code datatable
-        assertFalse(selenium.isTextPresent("PG12"));
-        assertFalse(selenium.isTextPresent("Cancer Program12"));
-        
-        // verify confirmation message is shown
-        ((JavascriptExecutor) driver).executeScript("scroll(0, -250);");
-        assertTrue(selenium.isTextPresent("Program code has been successfully deleted"));
-        
-        assertNull(queryProgramCodesForDeletedCode("PG12"));
-        
-        
-        logoutUser();
-    }
+
     
     @Test
     public void testVerifyExport() throws Exception {
@@ -400,60 +350,9 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         pause(5000);
         excel.delete();
     }
-    
-    @Test
-    @SuppressWarnings({ "deprecation" })
-    public void testAssociationsToRejectedAndTerminatedTrialsIgnored()
-            throws Exception {
-        
-        verifyAssociationsToTrialsWithGivenDWSIgnoredWhenDeleting("REJECTED");
-        verifyAssociationsToTrialsWithGivenDWSIgnoredWhenDeleting("SUBMISSION_TERMINATED");
-    }
 
-    /**
-     * @param status
-     * @throws SQLException
-     * @throws Exception
-     */
-    private void verifyAssociationsToTrialsWithGivenDWSIgnoredWhenDeleting(
-            final String status) throws SQLException, Exception {
-        deactivateAllTrials();
-        super.setupFamilies();
 
-        TrialInfo trial = createAcceptedTrial();
-        addParticipatingSite(trial,
-                "National Cancer Institute Division of Cancer Prevention",
-                "ACTIVE");
-        addSiteInvestigator(trial,
-                "National Cancer Institute Division of Cancer Prevention",
-                "451", "James", "H", "Kennedy",
-                StudySiteContactRoleCode.SUB_INVESTIGATOR.name());
-        addSiteInvestigator(trial,
-                "National Cancer Institute Division of Cancer Prevention",
-                "551", "Sony", "K", "Abraham",
-                StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.name());
-        assignProgramCode(trial, 1, "PG1");       
-        addDWS(trial, status);
 
-        accessManageMasterListScreen();
-
-        // verify that delete programs button is present and enabled
-        WebElement deleteProgramCodebutton = driver.findElement(By
-                .id("deletePGCodeButton-PG1"));
-        assertTrue(deleteProgramCodebutton.isEnabled());
-        deleteProgramCodebutton.click();
-        waitForElementToBecomeAvailable(By.id("dialog-confirm-delete"), 15);
-        assertTrue(selenium.isTextPresent("Confirm Delete"));
-        assertTrue(selenium.isTextPresent("PG1 - Cancer Program1"));
-        assertTrue(selenium.isTextPresent("Please confirm."));
-        
-        // delete program code
-        WebElement deleteButton = driver.findElement(By.xpath("//button/span[contains(text(),'Delete')]"));
-        deleteButton.click();
-        pause(SystemUtils.IS_OS_LINUX ? 10000 : 2000);
-        assertEquals(Arrays.asList(new String[] {}), getTrialProgramCodes(trial));
-        logoutUser();
-    }
 
     /**
      * @throws Exception
@@ -479,69 +378,7 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         assertTrue(selenium.isTextPresent("Manage Master List"));
     }
     
-    /**
-     * Test inactivate unassigned program code
-     * @throws Exception exception
-     */
-    @Test
-    @SuppressWarnings({"deprecation" })
-    public void testInactivateProgramCode() throws Exception {
-        recreateFamilies();
-        recreateTrials();
-        accessManageMasterListScreen();
-        assertTrue(selenium.isTextPresent("Cancer Program12"));
-        assertTrue(selenium.isTextPresent("PG12"));
-        assertEquals("Showing 1 to 10 of 12",driver.findElement(By.id("programCodesTable_info")).getText());
-        // verify that delete programs button is present and enabled
-        WebElement deleteProgramCodebutton = driver.findElement(By.id("deletePGCodeButton-PG12"));
-        assertTrue(deleteProgramCodebutton.isEnabled());
-        hover(deleteProgramCodebutton);
-        String tooltiptext = deleteProgramCodebutton.getAttribute("data-original-title");
-        assertEquals("Delete or <br> Inactivate this <br> Program Code",tooltiptext);
-        
-        // open the delete dialog and verify the contents
-        deleteProgramCodebutton.click();
-        waitForElementToBecomeAvailable(By.id("dialog-inactivate-program-code"), 15);
-        assertTrue(selenium.isTextPresent("Inactivate Program Code Confirmation"));
-        assertTrue(selenium.isTextPresent("PG12 - Cancer Program12"));
-        assertTrue(selenium.isTextPresent("Inactivating this program code will:"));
-        ((JavascriptExecutor) driver).executeScript("scroll(0, document.body.scrollHeight);");
-       
 
-      //  assertTrue(selenium.isTextPresent("xpath=//div[normalize-space(text())='Showing 1 to 5 of 11']"));
-        assertTrue(selenium.isTextPresent("Are you sure you would like to proceed with this action?"));
-        // verify that program code exists in database
-        assertTrue(queryProgramCodesForDeletedCode("PG12").length > 0);
-        
-        // clicking on No should close the dialog.
-        findButtonsWithTextAndClick("No");
-        deleteProgramCodebutton.click();
-        
-        // test clicking on yes to inactivate program code
-        findButtonsWithTextAndClick("Yes");
-        
-        // verify that inactivated program code is not deleted
-        assertNotNull(queryProgramCodesForDeletedCode("PG12"));
-        
-        // test inactivated program code should have (INACTIVE) prepended in the program name
-        assertTrue(selenium.isTextPresent("PG12"));
-        assertTrue(selenium.isTextPresent("(INACTIVE) Cancer Program12"));
-        
-        // verify confirmation message is shown
-        ((JavascriptExecutor) driver).executeScript("scroll(0, -250);");
-        assertTrue(selenium.isTextPresent("Program code has been successfully inactivated"));
-        
-        logoutUser();
-    }
-    
-    private void findButtonsWithTextAndClick(String text) {
-        List<WebElement> buttons = driver.findElements(By.tagName("button"));
-        for (WebElement button : buttons) {
-            if (button.getText().equalsIgnoreCase(text)) {
-                button.click();
-            }
-        }
-    }
     
     private Object[] queryProgramCodesForDeletedCode(String programCode) throws Exception {
         QueryRunner qr = new QueryRunner();
