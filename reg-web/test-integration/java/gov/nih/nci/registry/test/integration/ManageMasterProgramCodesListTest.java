@@ -351,8 +351,59 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         excel.delete();
     }
 
+    @Test
+    @SuppressWarnings({ "deprecation" })
+    public void testAssociationsToRejectedAndTerminatedTrialsIgnored()
+            throws Exception {
 
+        verifyAssociationsToTrialsWithGivenDWSIgnoredWhenDeleting("REJECTED");
+        verifyAssociationsToTrialsWithGivenDWSIgnoredWhenDeleting("SUBMISSION_TERMINATED");
+    }
 
+    /**
+     * @param status
+     * @throws SQLException
+     * @throws Exception
+     */
+    private void verifyAssociationsToTrialsWithGivenDWSIgnoredWhenDeleting(
+            final String status) throws SQLException, Exception {
+        deactivateAllTrials();
+        super.setupFamilies();
+
+        TrialInfo trial = createAcceptedTrial();
+        addParticipatingSite(trial,
+                "National Cancer Institute Division of Cancer Prevention",
+                "ACTIVE");
+        addSiteInvestigator(trial,
+                "National Cancer Institute Division of Cancer Prevention",
+                "451", "James", "H", "Kennedy",
+                StudySiteContactRoleCode.SUB_INVESTIGATOR.name());
+        addSiteInvestigator(trial,
+                "National Cancer Institute Division of Cancer Prevention",
+                "551", "Sony", "K", "Abraham",
+                StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.name());
+        assignProgramCode(trial, 1, "PG1");
+        addDWS(trial, status);
+
+        accessManageMasterListScreen();
+
+        // verify that delete programs button is present and enabled
+        WebElement deleteProgramCodebutton = driver.findElement(By
+                .id("deletePGCodeButton-PG1"));
+        assertTrue(deleteProgramCodebutton.isEnabled());
+        deleteProgramCodebutton.click();
+        waitForElementToBecomeAvailable(By.id("dialog-confirm-delete"), 15);
+        assertTrue(selenium.isTextPresent("Confirm Delete"));
+        assertTrue(selenium.isTextPresent("PG1 - Cancer Program1"));
+        assertTrue(selenium.isTextPresent("Please confirm."));
+
+        // delete program code
+        WebElement deleteButton = driver.findElement(By.xpath("//button/span[contains(text(),'Delete')]"));
+        deleteButton.click();
+        pause(SystemUtils.IS_OS_LINUX ? 10000 : 2000);
+        assertEquals(Arrays.asList(new String[] {}), getTrialProgramCodes(trial));
+        logoutUser();
+    }
 
     /**
      * @throws Exception
