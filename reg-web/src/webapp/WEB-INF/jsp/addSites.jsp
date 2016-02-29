@@ -124,7 +124,9 @@ th#th3 {
 		disableSorting();
 		$('plussign_'+spID).hide();
 		$('saveCancelDiv').show();
-        $('s2div_' + spID).show();
+		if ($('s2div_' + spID)!=null) {
+			$('s2div_' + spID).show();	
+		}
 		prepareSiteEntryRow(spID);
 		prepareSiteInformationFormControls(spID);
 		showPopover(spID);
@@ -681,7 +683,9 @@ th#th3 {
 								<th id="th1" nowrap="nowrap"><a>Trial Identifier<i
 										class="fa-sort"></i></a></th>
 								<th id="th2"><a>Trial Title<i class="fa-sort"></i></a></th>
+								<c:if test="${requestScope['CANCER_TRIAL']}">
                                 <th id="th3"><a>Program Code(s)<i class="fa fa-question-circle pgchelp" title='<fmt:message key="add.site.programCode.cancer.tooltip" />'></i></a></th>
+                                </c:if>
 							</tr>
 						</thead>
 						<tbody>
@@ -697,9 +701,11 @@ th#th3 {
 									<td>
                                         <c:out value="${trial.officialTitle}" />
                                     </td>
+                                     <c:if test="${requestScope['CANCER_TRIAL']}">
                                     <td class="pgc">
+                                    
                                         <div id="s2div_${trial.studyProtocolId}" style="display:none; max-width: 160px; ">
-                                            <c:if test="${requestScope['CANCER_TRIAL']}">
+                                           
                                                 <select id="pgc_${trial.studyProtocolId}" name="trial_${trial.studyProtocolId}_programCode" multiple="multiple"
                                                         class="s2pgc" data-placeholder="Select Program Code(s)" >
                                                     <c:forEach var="entry" items="${requestScope['PROGRAM_CODES']}">
@@ -708,10 +714,11 @@ th#th3 {
                                                         </c:if>
                                                     </c:forEach>
                                                 </select>
-                                            </c:if>
+                                           
                                         </div>
-
+                                     
                                     </td>
+                                    </c:if>
 								</tr>
 							</c:forEach>
 						</tbody>

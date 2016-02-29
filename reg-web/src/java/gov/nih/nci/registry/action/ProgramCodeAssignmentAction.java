@@ -612,7 +612,7 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
                  o.put("leadOrganizationName", trial.getLeadOrganizationName());
                  o.put("piFullName", StringUtils.equals("null", trial.getPiFullName()) ? ""
                          : StringUtils.trimToEmpty(trial.getPiFullName()));
-                 o.put("trialStatus", trial.getStudyStatusCode().getDisplayName());
+                 o.put("trialStatus", trial.getStudyStatusCode().getCode());
                  o.put("DT_RowId", "trial_" + trial.getStudyProtocolId());
 
                  JSONArray pgcArr = new JSONArray();
