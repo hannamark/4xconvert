@@ -79,7 +79,8 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
     // to address PMD error : The String literal "data" appears 5 times in this file
     private static final String DATA = "data";   
     
-    private static final String IS_PROGRAM_CODE_ADMIN = "programCodeAdmin";   
+    private static final String IS_PROGRAM_CODE_ADMIN = "programCodeAdmin";
+    private static final String FAMILY_DTO_KEY = "family_dto";
     
     private List<FamilyDTO> familyDTOs = new ArrayList<>();    
     private FamilyDTO selectedFamilyDTO;
@@ -125,22 +126,30 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
         }
         for (OrgFamilyDTO orgFamilyDTO : affiliatedFamilies) {            
             findOrCreateFamilyAndAddToList(orgFamilyDTO);
-        }    
-        
-        if (!familyDTOs.isEmpty()) {            
-            if (selectedDTOId != null) {
-                for (FamilyDTO familyDTO : familyDTOs) {
-                    if (familyDTO.getId().equals(selectedDTOId)) {
-                        setSelectedFamilyDTO(familyDTO);
-                    }
-                }
-            } else {
-                setSelectedFamilyDTO(familyDTOs.get(0));
-            }            
-        }        
+        }
+
+        pickDefaultFamily();
+
         return SUCCESS;
-    }    
-    
+    }
+
+    private void pickDefaultFamily() {
+        if (familyDTOs.isEmpty()) {
+            return;
+        }
+        FamilyDTO family = (FamilyDTO) ServletActionContext.getRequest().getSession().getAttribute(FAMILY_DTO_KEY);
+        Long familyId = selectedDTOId != null ? selectedDTOId : (family != null ? family.getId() : null);
+        if (familyId != null) {
+            for (FamilyDTO familyDTO : familyDTOs) {
+                if (familyDTO.getId().equals(familyId)) {
+                    setSelectedFamilyDTO(familyDTO);
+                }
+            }
+        } else {
+            setSelectedFamilyDTO(familyDTOs.get(0));
+        }
+    }
+
     /**
      * Get all family DTOs
      * @return List<OrgFamilyDTO> List<OrgFamilyDTO>
@@ -543,7 +552,8 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
      */
     public void setSelectedFamilyDTO(FamilyDTO selectedFamilyDTO) {
         this.selectedFamilyDTO = selectedFamilyDTO;
-    }    
+        ServletActionContext.getRequest().getSession().setAttribute(FAMILY_DTO_KEY, selectedFamilyDTO);
+    }
     
     /**
      * @param resp

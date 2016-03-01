@@ -171,7 +171,7 @@
                                 list="familyDTOs" 
                                 listKey="id"
                                 listValue="name"
-                                value= "selectedFamilyDTO.id"  
+                                value="%{#session['family_dto'].id}"
                                 onchange="document.getElementById('programCodesHeaderForm').submit()"/>
                         </div>     
                     </c:when>

@@ -76,6 +76,68 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         logoutUser();
 
     }
+
+    @Test
+    public void testFamilyChangeIsPreservedBetweenListAndManage() throws Exception {
+        //Go to manage screen
+        accessManageCodeAssignmentsScreen();
+
+        //when I change to Family2
+        Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
+        dropdown.selectByIndex(2);
+
+        waitForElementToBecomeAvailable(By.xpath("//table[@id='trialsTbl']/tbody//tr[4]"), 10);
+
+        //then I see program code of Family2 (VA1)
+        assertTrue(selenium.isTextPresent("VA1"));
+
+        //When I go to Manage List screen
+        accessManageMasterListScreen();
+        waitForPageToLoad();
+
+        //I see program code associated to Family2 (VA1)
+        assertTrue(selenium.isTextPresent("VA1"));
+
+        //switch family
+        dropdown = new Select(driver.findElement(By.id("selectedDTOId")));
+        dropdown.selectByIndex(0);
+        waitForElementToBecomeAvailable(By.xpath("//table[@id='programCodesTable']/tbody//tr[4]"), 10);
+
+        //Then I see program code of Family1- PG1
+        assertTrue(selenium.isTextPresent("PG1"));
+
+        //when I go back to Manage assignment screen
+        accessManageAssignmentScreen();
+        waitForPageToLoad();
+
+        //Then I see program code of Family1- PG1
+        assertTrue(selenium.isTextPresent("PG1"));
+
+
+
+    }
+
+    private void accessManageMasterListScreen() {
+        waitForElementToBecomeVisible(By.linkText("Administration"), 5);
+        hoverLink("Administration");
+        waitForElementToBecomeVisible(By.linkText("Program Codes"), 5);
+        hoverLink("Program Codes");
+        clickAndWait("link=Manage Master List");
+
+    }
+
+    private void accessManageAssignmentScreen() {
+        waitForElementToBecomeVisible(By.linkText("Administration"), 2);
+        hoverLink("Administration");
+        waitForElementToBecomeVisible(By.linkText("Program Codes"), 2);
+        hoverLink("Program Codes");
+        clickAndWait("link=Manage Code Assignments");
+
+
+    }
+
+
+
     /**
      * Test changing family
      * @throws Exception    - when error
@@ -804,14 +866,11 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
     private void loginAndGoToManageProgramCodeScreen() throws Exception {
         loginAndAcceptDisclaimer();
-        waitForElementToBecomeVisible(By.linkText("Administration"), 2);
-        hoverLink("Administration");
-        waitForElementToBecomeVisible(By.linkText("Program Codes"), 2);
-        hoverLink("Program Codes");
-        clickAndWait("link=Manage Code Assignments");
+        accessManageAssignmentScreen();
         recreateFamilies();
         recreateTrials();
     }
+
 
     private boolean isFamilySelectBoxRendered() {
         try {

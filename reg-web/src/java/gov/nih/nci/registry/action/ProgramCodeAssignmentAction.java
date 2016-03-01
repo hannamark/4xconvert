@@ -63,6 +63,7 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
     private static final String IS_SITE_ADMIN = "isSiteAdmin";
     private static final String ERROR_MSG_KEY = "msg";
     private static final String AJAX_RETURN_SUCCESS_KEY = "status";
+    private static final String FAMILY_DTO_KEY = "family_dto";
 
     private static final StudyStatusCode[] ACTIVE_PROTOCOL_STATUSES = new StudyStatusCode[]{ACTIVE, APPROVED,
             IN_REVIEW, ENROLLING_BY_INVITATION,
@@ -673,7 +674,11 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
      * Loads the family from database
      */
     private void loadFamily() {
-        if (familyPoId == null) {
+        FamilyDTO sessionFamilyDto = (FamilyDTO)  ServletActionContext.getRequest()
+                .getSession()
+                .getAttribute(FAMILY_DTO_KEY);
+        if (familyPoId == null || (sessionFamilyDto != null && sessionFamilyDto.getPoId().equals(familyPoId))) {
+            familyDto = sessionFamilyDto;
             return;
         }
         familyDto = familyProgramCodeService.getFamilyDTOByPoId(familyPoId);
@@ -685,7 +690,7 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
                 }
             }
         }
-
+        ServletActionContext.getRequest().getSession().setAttribute(FAMILY_DTO_KEY, familyDto);
     }
 
     /**

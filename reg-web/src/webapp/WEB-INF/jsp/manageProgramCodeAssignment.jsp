@@ -159,7 +159,11 @@
 
                         <s:if test="programCodeAdmin">
                             <div class="col-sm-2">
-                                <s:select id="familyPoId" name="familyPoId" list="affiliatedFamilies" cssClass="form-control fn-sb" headerKey="" headerValue="--Select--" listKey="id" listValue="name" />
+                                <s:select id="familyPoId" name="familyPoId" list="affiliatedFamilies"
+                                          cssClass="form-control fn-sb" headerKey=""
+                                          headerValue="--Select--" listKey="id" listValue="name"
+                                          value="%{#session['family_dto'].poId}"
+                                        />
                             </div>
                         </s:if>
                         <s:else>
