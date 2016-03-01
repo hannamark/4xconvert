@@ -673,14 +673,19 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
     /**
      * Loads the family from database
      */
+    /**
+     * Loads the family from database
+     */
     private void loadFamily() {
         FamilyDTO sessionFamilyDto = (FamilyDTO)  ServletActionContext.getRequest()
                 .getSession()
                 .getAttribute(FAMILY_DTO_KEY);
-        if (familyPoId == null || (sessionFamilyDto != null && sessionFamilyDto.getPoId().equals(familyPoId))) {
-            familyDto = sessionFamilyDto;
+
+        Long poId = familyPoId != null ? familyPoId : (sessionFamilyDto != null ? sessionFamilyDto.getPoId() : null);
+        if (poId == null) {
             return;
         }
+
         familyDto = familyProgramCodeService.getFamilyDTOByPoId(familyPoId);
 
         if (CollectionUtils.isNotEmpty(affiliatedFamilies)) {
