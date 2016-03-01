@@ -2036,4 +2036,8 @@
         <comment>update to email text in pa_properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.3.1/PO-9632.sql"/>
     </changeSet>
+            <changeSet id="PO-9632-1" author="Reshma">
+        <comment>update to email text in pa_properties</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.3.1/PO-9632_1.sql"/>
+    </changeSet>
 </databaseChangeLog>
