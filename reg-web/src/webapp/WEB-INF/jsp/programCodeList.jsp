@@ -42,6 +42,10 @@
           <strong>Message.</strong>&nbsp;<fmt:message key="programcode.inactivated"/>
     </div>
     
+    <div class="alert alert-success confirm_msg" style="display: none;" id="programCodeAddedMessageDiv">
+          <strong>Message.</strong>&nbsp;<fmt:message key="programcode.added"/>
+    </div>
+    
     
     <!-- Program Codes Errors Modal -->
     <div class="modal fade" id="programCodeErrorMessageModal">

@@ -97,6 +97,12 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         assertTrue(selenium.isTextPresent("newly-added-program-code"));
         assertTrue(selenium.isTextPresent("newly-added-program-name"));
         
+        // verify confirmation message is shown
+        ((JavascriptExecutor) driver).executeScript("scroll(0, -250);");
+        assertTrue(selenium.isTextPresent("A new program code has been successfully added."));
+        assertEquals("",driver.findElement(By.id("newProgramCode")).getText());
+        assertEquals("",driver.findElement(By.id("newProgramName")).getText());
+        
         logoutUser();
     }
     

@@ -444,6 +444,7 @@ function createNewProgramCode(){
 			},
 		    success: function(result) {
 		    		jQuery('#program_code_progress_indicator_panel').hide();
+		    		showProgramCodeAddedFlashMessageAndClearInputFields();
 					programCodeTable.ajax.reload();
 		   },
 		   timeout : 30000
@@ -573,6 +574,15 @@ function showProgramCodeInactivatedFlashMessage() {
 	jQuery('#programCodeInactivatedMessageDiv').effect("highlight", {}, 3000);
 	  setTimeout(function() {
 		  jQuery("#programCodeInactivatedMessageDiv").hide('blind', {}, 500);
+	    }, 5000);
+}
+
+function showProgramCodeAddedFlashMessageAndClearInputFields() {
+	jQuery('#programCodeAddedMessageDiv').effect("highlight", {}, 3000);
+	  setTimeout(function() {
+		  jQuery("#programCodeAddedMessageDiv").hide('blind', {}, 500);
+		  jQuery('#newProgramCode').val('');
+  		  jQuery('#newProgramName').val('');
 	    }, 5000);
 }
 
