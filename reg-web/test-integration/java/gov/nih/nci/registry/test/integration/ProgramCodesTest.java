@@ -385,6 +385,8 @@ public class ProgramCodesTest extends AbstractRegistrySeleniumTest {
         addParticipatingSite(trial2, "National Cancer Institute Division of Cancer Prevention", "ACTIVE");
         assignProgramCode(trial2, 1, "A2");
 
+
+
         //When I click click on manage button of A1
         selenium.click("managePGCodeButton-A1");
         waitForPageToLoad();

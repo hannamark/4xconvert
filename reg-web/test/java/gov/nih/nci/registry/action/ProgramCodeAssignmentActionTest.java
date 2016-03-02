@@ -74,6 +74,10 @@ public class ProgramCodeAssignmentActionTest  extends AbstractRegWebTest {
 
         FamilyDTO f = new FamilyDTO(1L);
         f.setName("FamilyDTO-1");
+        ProgramCodeDTO pg3 = new ProgramCodeDTO(3L, "PG3", "ProgramCode3");
+        ProgramCodeDTO pg4 = new ProgramCodeDTO(4L, "PG4", "ProgramCode4");
+        f.getProgramCodes().add(pg3);
+        f.getProgramCodes().add(pg4);
         when(familyProgramCodeService.getFamilyDTOByPoId(1L)).thenReturn(f);
 
 
@@ -256,6 +260,54 @@ public class ProgramCodeAssignmentActionTest  extends AbstractRegWebTest {
           fail("should not throw exception");
       }
     }
+
+
+    @Test
+    public void testFindTrialsWhenNoneSelected() {
+        try {
+
+            Field field = StreamResult.class.getDeclaredField("inputStream");
+            ReflectionUtils.makeAccessible(field);
+
+            //when I reset the family
+            StreamResult sr = action.findTrials();
+
+            InputStream is = (InputStream) field.get(sr);
+            String json = IOUtils.toString(is);
+            assertEquals("{\"data\":[]}", json);
+
+            //When I reset to a valid family
+            action.setFamilyPoId(1L);
+            action.setPgcListParam("-1");
+
+            sr = action.findTrials();
+
+            //then I must see no fields
+            is = (InputStream) field.get(sr);
+            json = IOUtils.toString(is);
+            assertEquals("{\"data\":[]}", json);
+
+            //when I invoke with None and PG4
+            action.setPgcListParam("-1,4");
+
+            sr = action.findTrials();
+
+            //then I must see no fields
+            is = (InputStream) field.get(sr);
+            json = IOUtils.toString(is);
+
+            assertEquals("{\"data\":[{\"title\":\"title\",\"identifiers\":\"1, 2\"," +
+                    "\"programCodes\":[{\"id\":3,\"name\":\"3\"},{\"id\":4,\"name\":\"4\"}]," +
+                    "\"DT_RowId\":\"trial_null\",\"trialStatus\":\"Active\"," +
+                    "\"piFullName\":\"Joel Joseph\",\"nciIdentifier\":\"1\"}]}", json);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("should not throw exception");
+        }
+    }
+
 
     @Test
     public void testChangeFamily() {

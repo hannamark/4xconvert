@@ -279,6 +279,7 @@ function pgcinit($) {
                 $("#fpgc-div").hide();
             }
         }
+
     });
 
 

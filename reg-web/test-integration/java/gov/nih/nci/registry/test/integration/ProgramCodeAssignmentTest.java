@@ -792,6 +792,26 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         //then table should be refreshed
         waitForElementToBecomeAvailable(By.xpath("//table[@id='trialsTbl']/tbody/tr[3]"), 5);
         assertTrue(selenium.isTextPresent("Showing 1 to 11 of 11"));
+
+
+        //Now pick None in funnel
+        clickAndWait("fpgc-icon-a");
+        pickMultiSelectOptions("fpgc-div", Arrays.asList("-1"), Arrays.asList("1", "2", "3", "4", "5", "6"));
+        waitForElementToBecomeAvailable(By.xpath("//table[@id='trialsTbl']/tbody//td[text()='No data available in table']"), 5);
+        assertTrue(selenium.isTextPresent("Showing 0 to 0 of 0 entries"));
+
+        //Now via backend disassociate from trial5 and trial6 all program codes
+        TrialInfo trial5 = trials.get(5);
+        TrialInfo trial6 = trials.get(6);
+        removeProgramCodesFromTrial(trial5.id);
+        removeProgramCodesFromTrial(trial6.id);
+
+        //Pick None option
+        clickAndWait("fpgc-icon-a");
+        pickMultiSelectOptions("fpgc-div", Arrays.asList("-1"), Arrays.asList("1", "2", "3", "4", "5", "6"));
+        waitForElementToBecomeAvailable(By.xpath("//table[@id='trialsTbl']/tbody/tr[2]"), 5);
+        assertTrue(selenium.isTextPresent("Showing 1 to 2 of 2"));
+
         logoutUser();
     }
 

@@ -54,11 +54,12 @@ import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_LAS
  * To manage program code assignments.
  * For details refer to PO-9192 (attachment PPT) page 10
  */
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.TooManyMethods" })
 public class ProgramCodeAssignmentAction extends ActionSupport implements Preparable {
 
     private static final long serialVersionUID = 4866645110688822061L;
     private static final String UTF_8 = "UTF-8";
+    private static final Long NONE_PROGRAM_CODE = -1L;
     private static final Logger LOG = Logger.getLogger(ProgramCodeAssignmentAction.class);
     private static final String IS_SITE_ADMIN = "isSiteAdmin";
     private static final String ERROR_MSG_KEY = "msg";
@@ -582,12 +583,63 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
         return orgIds;
     }
 
+    /*
+     * Tells if trial is already associated with a program code in family
+     */
+    private boolean hasMatchingProgramCodes(List<Long> programCodeIds,
+                                            List<Long> familyProgramCodeIds,
+                                            StudyProtocolQueryDTO trial) {
+
+        //Note:- this method is invoked only if NONE is in the options
+
+        if (CollectionUtils.isEmpty(trial.getProgramCodes())) {
+            return true;
+        }
+
+        //check if valid for None option (ie not associated to others)
+        boolean validForNone = true;
+        for (ProgramCodeDTO pgc : trial.getProgramCodes()) {
+            if (familyProgramCodeIds.contains(pgc.getId())) {
+                validForNone = false;
+            }
+        }
+        //If only None is present in options, return that
+        if (programCodeIds.size() == 1) {
+            return validForNone;
+        }
+
+        //check if other options are valid
+        boolean validForOthers = false;
+        for (ProgramCodeDTO pgc : trial.getProgramCodes()) {
+            if (programCodeIds.contains(pgc.getId())) {
+               validForOthers = true;
+            }
+        }
+
+        return validForNone || validForOthers;
+    }
+
     private void populateTrials(JSONArray arr) {
       LOG.debug("populating trials [familyPOId : " + familyPoId + "]");
       try {
 
           if (familyPoId != null) {
+
               loadFamily();
+
+              //process program codes in filter
+              List<Long> programCodeIds = new ArrayList<Long>();
+              if (StringUtils.isNotEmpty(pgcListParam)) {
+                  for (String p :  StringUtils.split(pgcListParam, ",")) {
+                      programCodeIds.add(Long.parseLong(p));
+                  }
+              }
+
+              List<Long> familyProgramCodeIds = new ArrayList<Long>();
+              for (ProgramCodeDTO pgc : familyDto.getProgramCodes()) {
+                  familyProgramCodeIds.add(pgc.getId());
+              }
+
               StudyProtocolQueryCriteria spQueryCriteria = new StudyProtocolQueryCriteria();
               spQueryCriteria.populateReportingPeriodStatusCriterion(familyDto.findStartDate(),
                       familyDto.getReportingPeriodEndDate(), ACTIVE_PROTOCOL_STATUSES);
@@ -596,15 +648,20 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
               List<Long> orgPOIds = FamilyHelper.getRelatedOrgsInFamily(familyPoId);
               List<Long> orgIds = fetchOrganizationIds(orgPOIds);
               spQueryCriteria.getParticipatingSiteIds().addAll(orgIds);
-              if (StringUtils.isNotEmpty(pgcListParam)) {
-                  for (String p :  StringUtils.split(pgcListParam, ",")) {
-                      spQueryCriteria.getProgramCodeIds().add(Long.parseLong(p));
-                  }
+
+              boolean hasNone = programCodeIds.contains(NONE_PROGRAM_CODE);
+              if (!hasNone) {
+                 spQueryCriteria.getProgramCodeIds().addAll(programCodeIds);
               }
+
 
               List<StudyProtocolQueryDTO> trials = protocolQueryService.getStudyProtocolByCriteria(spQueryCriteria,
                       SKIP_ALTERNATE_TITLES, SKIP_LAST_UPDATER_INFO);
               for (StudyProtocolQueryDTO trial : trials) {
+                 if (hasNone && !hasMatchingProgramCodes(programCodeIds, familyProgramCodeIds, trial)) {
+                    continue;
+                 }
+
                  JSONObject o = new JSONObject();
                  o.put("studyProtocolId", trial.getStudyProtocolId());
                  o.put("nciIdentifier", trial.getNciIdentifier());
@@ -686,11 +743,11 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
             return;
         }
 
-        familyDto = familyProgramCodeService.getFamilyDTOByPoId(familyPoId);
+        familyDto = familyProgramCodeService.getFamilyDTOByPoId(poId);
 
         if (CollectionUtils.isNotEmpty(affiliatedFamilies)) {
             for (OrgFamilyDTO of : affiliatedFamilies) {
-                if (of.getId().equals(familyPoId)) {
+                if (of.getId().equals(poId)) {
                     familyDto.setName(of.getName());
                 }
             }

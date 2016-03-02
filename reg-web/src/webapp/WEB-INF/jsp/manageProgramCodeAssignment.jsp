@@ -201,13 +201,14 @@
                                                 <a id="fpgc-icon-a" class="fpgc" href="#fcpg-icon-loc"><span id="fpgc-icon" class="glyphicon glyphicon-filter"></span></a>
                                                 <div id="fpgc-div" style="display:none;">
                                                     <select id="fpgc-sel" multiple="multiple">
+                                                        <option id="fpgc-opt-none" value="-1" title='None' class="fpgc-nopt">None</option>
                                                         <s:iterator var="p" value="familyDto.programCodesAsOrderedList">
                                                             <s:if test="active">
                                                                 <s:if test='programCodeId == id'>
-                                                                    <option id="fpgc-opt-<s:property value="id" />" value="<s:property value="id" />" title='<s:property value="displayName" />' selected ><s:property value="displayName" /></option>
+                                                                    <option id="fpgc-opt-<s:property value="id" />" value="<s:property value="id" />" class="fpgc-oopt" title='<s:property value="displayName" />' selected ><s:property value="displayName" /></option>
                                                                 </s:if>
                                                                 <s:else>
-                                                                    <option id="fpgc-opt-<s:property value="id" />" value="<s:property value="id" />" title='<s:property value="displayName" />'><s:property value="displayName" /></option>
+                                                                    <option id="fpgc-opt-<s:property value="id" />" value="<s:property value="id" />" class="fpgc-oopt" title='<s:property value="displayName" />'><s:property value="displayName" /></option>
                                                                 </s:else>
                                                             </s:if>
                                                         </s:iterator>
