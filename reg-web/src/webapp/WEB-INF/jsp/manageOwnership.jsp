@@ -89,7 +89,7 @@
                 var  url = '${pageContext.request.contextPath}/siteadmin/${actionName}updateEmailPref.action';
                 var params = {
                     selected: selected,
-                    siteName: '${siteName}'
+                    siteName: '${func:escapeJavaScript(siteName)}'
                 };
                 displayWaitPanel();
                 jQuery.ajax({
