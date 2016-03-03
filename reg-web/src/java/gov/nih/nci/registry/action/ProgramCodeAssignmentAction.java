@@ -56,7 +56,7 @@ import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_LAS
  * To manage program code assignments.
  * For details refer to PO-9192 (attachment PPT) page 10
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.TooManyMethods","PMD.TooManyFields" })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.TooManyMethods", "PMD.TooManyFields" })
 public class ProgramCodeAssignmentAction extends ActionSupport implements Preparable {
 
     private static final long serialVersionUID = 4866645110688822061L;
