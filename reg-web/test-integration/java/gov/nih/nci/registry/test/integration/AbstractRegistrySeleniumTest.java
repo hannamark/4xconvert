@@ -878,4 +878,10 @@ public abstract class AbstractRegistrySeleniumTest extends
         return list;
     }
 
+    protected void moveBackTrialStatusDate(TrialInfo trialInfo, int days) throws Exception {
+        QueryRunner qr = new QueryRunner();
+        qr.update(connection, String.format("update study_overall_status  set status_date  = status_date - interval " +
+                "'%s' day where study_protocol_identifier = %s", days, trialInfo.id));
+    }
+
 }

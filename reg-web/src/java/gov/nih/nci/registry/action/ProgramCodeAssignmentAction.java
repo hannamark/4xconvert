@@ -24,6 +24,7 @@ import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.util.Constants;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.StreamResult;
@@ -39,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import static gov.nih.nci.pa.enums.StudyStatusCode.ACTIVE;
@@ -84,6 +86,8 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
     private FamilyDTO familyDto;
     private Long studyProtocolId;
     private Long programCodeId;
+    private Integer reportingPeriodLength;
+    private Date reportingPeriodEndDate;
 
     //the following are used by assign, unassign, replace operations
     private String studyProtocolIdListParam;
@@ -299,6 +303,38 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
      */
     public void setProgramCodeId(Long programCodeId) {
         this.programCodeId = programCodeId;
+    }
+
+    /**
+     * The reporting period length
+     * @return - the period length
+     */
+    public Integer getReportingPeriodLength() {
+        return reportingPeriodLength;
+    }
+
+    /**
+     * The reporting period length
+     * @param reportingPeriodLength   the length
+     */
+    public void setReportingPeriodLength(Integer reportingPeriodLength) {
+        this.reportingPeriodLength = reportingPeriodLength;
+    }
+
+    /**
+     * The end date
+     * @return   the end date
+     */
+    public Date getReportingPeriodEndDate() {
+        return reportingPeriodEndDate;
+    }
+
+    /**
+     * The end date
+     * @param reportingPeriodEndDate the end date
+     */
+    public void setReportingPeriodEndDate(Date reportingPeriodEndDate) {
+        this.reportingPeriodEndDate = reportingPeriodEndDate;
     }
 
     /**
@@ -641,8 +677,14 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
               }
 
               StudyProtocolQueryCriteria spQueryCriteria = new StudyProtocolQueryCriteria();
-              spQueryCriteria.populateReportingPeriodStatusCriterion(familyDto.findStartDate(),
-                      familyDto.getReportingPeriodEndDate(), ACTIVE_PROTOCOL_STATUSES);
+
+              Integer length = reportingPeriodLength != null ?
+                      reportingPeriodLength : familyDto.getReportingPeriodLength();
+              Date endDate = reportingPeriodEndDate != null ?
+                      reportingPeriodEndDate : familyDto.getReportingPeriodEndDate();
+              Date startDate = DateUtils.addMonths(endDate , -1 * length);
+
+              spQueryCriteria.populateReportingPeriodStatusCriterion(startDate, endDate, ACTIVE_PROTOCOL_STATUSES);
               spQueryCriteria.setExcludeRejectProtocol(true);
               spQueryCriteria.setExcludeTerminatedTrials(true);
               List<Long> orgPOIds = FamilyHelper.getRelatedOrgsInFamily(familyPoId);
@@ -707,6 +749,10 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
                 loadAffiliatedFamilies(affiliagedOrgId);
                 selectDefaultFamilyPoId();
                 loadFamily();
+                if (familyDto != null) {
+                    reportingPeriodLength = familyDto.getReportingPeriodLength();
+                    reportingPeriodEndDate = familyDto.getReportingPeriodEndDate();
+                }
                 returnPage = SUCCESS;
             }
 

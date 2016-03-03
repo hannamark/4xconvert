@@ -326,7 +326,7 @@ public class ProgramCodesTest extends AbstractRegistrySeleniumTest {
         TrialInfo trial4 = createAcceptedTrial();
         addParticipatingSite(trial4, "National Cancer Institute Division of Cancer Prevention", "ACTIVE");
         assignProgramCode(trial4, 1, "A1");
-        moveByAnYearTrialStatusDate(trial4);
+        moveBackTrialStatusDate(trial4, 368);
 
          //And I click click on del button
         selenium.click("deletePGCodeButton-A1");
@@ -544,11 +544,6 @@ public class ProgramCodesTest extends AbstractRegistrySeleniumTest {
         QueryRunner qr = new QueryRunner();
         qr.update(connection, "delete from study_program_code");
     }
-    private void moveByAnYearTrialStatusDate(TrialInfo trialInfo) throws Exception {
-        QueryRunner qr = new QueryRunner();
-        qr.update(connection, "update study_overall_status  set status_date  = status_date - interval '368' day where study_protocol_identifier = " + trialInfo.id);
-    }
-
 
     private Long getCountOfFamily()
             throws Exception {

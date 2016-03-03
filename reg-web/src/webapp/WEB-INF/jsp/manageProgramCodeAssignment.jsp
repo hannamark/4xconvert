@@ -176,11 +176,39 @@
                     <hr />
                 </div>
                 <div class="form-group">
+                    <label for="reportingPeriodEndDate" class="col-sm-2 control-label"><fmt:message key="programcodes.reporting.end.date.label"/></label>
+                    <div class="col-sm-2">
+                        <div id="datetimepicker" class="datetimepicker input-append">
+                            <s:date name="reportingPeriodEndDate" var="endDate" format="MM/dd/yyyy"/>
+                            <s:textfield id="reportingPeriodEndDate" name="reportingPeriodEndDate" type="text"
+                                         cssClass="form-control" placeholder="mm/dd/yyyy" style="width:83px"
+                                         value="%{endDate}"
+                                    />
+
+                            <span class="add-on btn-default"><i class="fa-calendar"></i></span>
+                        </div>
+                    </div>
+                    <label for="reportingPeriodLength" class="col-sm-3 control-label"><fmt:message key="programcodes.reporting.period.length.label"/></label>
+                    <div class="col-sm-2">
+                        <s:select
+                                id = "reportingPeriodLength"
+                                name="reportingPeriodLength"
+                                list="#{'1':'1','2':'2','3':'3','4':'4','5':'5','6':'6','7':'7','8':'8','9':'9','10':'10',
+                                '11':'11','12':'12','13':'13','14':'14','15':'15','16':'16','17':'17','18':'18','19':'19',
+                                '20':'20','21':'21','22':'22','23':'23','24':'24'}"
+                                cssClass="form-control" style="width:51px"  value="%{reportingPeriodLength}"
+                                />
+                        <p class="text-success" id="reporting_flash" style="display:none;">Reporting period length saved.</p>
+                    </div>
+                </div>
+                <%--
+                <div class="form-group">
                     <label class="col-sm-2 control-label"><fmt:message key="programcodes.reporting.end.date.label"/></label>
                     <div class="col-sm-2 txt-val"><s:date name="familyDto.reportingPeriodEndDate" format="MM/dd/yyyy"/></div>
                     <label class="col-sm-3 control-label"><fmt:message key="programcodes.reporting.period.length.label"/></label>
                     <div class="col-sm-2 txt-val"><s:property value="familyDto.reportingPeriodLength"/> </div>
                 </div>
+                --%>
                 <div class="col-md-12">
                     <hr />
                     <div id="trials" class="">

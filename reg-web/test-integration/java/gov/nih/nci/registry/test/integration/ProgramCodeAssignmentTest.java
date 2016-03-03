@@ -78,6 +78,76 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
     }
 
     @Test
+    public void testChangeReportingPeriod() throws  Exception {
+        //Given a bunch of trials created and approved today
+        //And family with reporting period ends 6 months from now
+        accessManageCodeAssignmentsScreen();
+
+        //pick family 1
+        Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
+        dropdown.selectByIndex(1);
+
+        changePageLength("25");
+        waitForElementToBecomeAvailable(By.xpath("//table[@id='trialsTbl']/tbody/tr[4]"), 10);
+        assertTrue(selenium.isTextPresent(trials.get(4).title));
+
+        //when I change the reporting period length to 2
+        Select rpLengthBox = new Select(driver.findElement(By.id("reportingPeriodLength")));
+        rpLengthBox.selectByValue("2");
+
+        //then table refreshes with no trials
+        waitForElementToGoAway(By.xpath("//table[@id='trialsTbl']/tbody/tr[4]"), 10);
+        assertTrue(selenium.isTextPresent("Showing 0 to 0 of 0 entries"));
+        assertFalse(selenium.isTextPresent(trials.get(4).title));
+
+        //when I update the reporting period end date to tomorrow and length to 1 month
+        selenium.type("reportingPeriodEndDate", date(1));
+        rpLengthBox = new Select(driver.findElement(By.id("reportingPeriodLength")));
+        rpLengthBox.selectByValue("1");
+
+        //Then I should see all trials
+        waitForElementToBecomeAvailable(By.xpath("//table[@id='trialsTbl']/tbody/tr[4]"), 10);
+        assertTrue(selenium.isTextPresent(trials.get(4).title));
+
+        //when I update the reporting period end date to nex year and length to 6 month
+        selenium.type("reportingPeriodEndDate", date(365));
+        rpLengthBox = new Select(driver.findElement(By.id("reportingPeriodLength")));
+        rpLengthBox.selectByValue("6");
+
+        //Then I should not see any trial
+        waitForElementToGoAway(By.xpath("//table[@id='trialsTbl']/tbody/tr[4]"), 10);
+        assertTrue(selenium.isTextPresent("Showing 0 to 0 of 0 entries"));
+        assertFalse(selenium.isTextPresent(trials.get(4).title));
+
+
+        //Given three trials having status dates moved 2 years back
+        moveBackTrialStatusDate(trials.get(1), 2 * 365);
+        moveBackTrialStatusDate(trials.get(2), 2 * 365);
+        moveBackTrialStatusDate(trials.get(3), 2 * 365);
+
+
+        //when I update the reporting period end date last year and length to 12 month
+        selenium.type("reportingPeriodEndDate", date(-365));
+        rpLengthBox = new Select(driver.findElement(By.id("reportingPeriodLength")));
+        rpLengthBox.selectByValue("12");
+
+
+        //Then I should see 3 trials
+        waitForElementToBecomeAvailable(By.xpath("//table[@id='trialsTbl']/tbody/tr[2]"), 10);
+        assertTrue(selenium.isTextPresent(trials.get(1).title));
+        assertTrue(selenium.isTextPresent(trials.get(2).title));
+        assertTrue(selenium.isTextPresent(trials.get(3).title));
+
+        //and not any other trial
+        assertFalse(selenium.isTextPresent(trials.get(4).title));
+        assertFalse(selenium.isTextPresent(trials.get(6).title));
+
+
+        logoutUser();
+
+    }
+
+    @Test
     public void testFamilyChangeIsPreservedBetweenListAndManage() throws Exception {
         //Go to manage screen
         accessManageCodeAssignmentsScreen();

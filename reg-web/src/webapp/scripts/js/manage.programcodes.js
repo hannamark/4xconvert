@@ -20,6 +20,12 @@ var s2closing = false;
 var curFamilyPoId;
 var ts = 0;
 
+function ellipsis(s, len) {
+    if (s.length <= len) {
+        return s;
+    }
+    return s.substr(0,len-3) + "..."
+}
 function idfy(code) {
    return code.split(' ').join('_');
 }
@@ -165,6 +171,8 @@ function pgcinit($) {
             "type": "POST",
             "data": function ( d ) {
                 d.familyPoId = $("#familyPoId").val();
+                d.reportingPeriodEndDate = $("#reportingPeriodEndDate").val();
+                d.reportingPeriodLength = $("#reportingPeriodLength").val();
                 if ($("#fpgc-sel").val()) {
                     d.pgcListParam = $.grep($("#fpgc-sel").val(), function(v){ return $.isNumeric(v);}).join(',');
                 }
@@ -191,7 +199,7 @@ function pgcinit($) {
                     var snippet = "";
                     $(row.programCodes).each(function(i,pc) {
                         if (isProgramCodeInCurrentFamily(pc.id)) {
-                            snippet = snippet +  '<a id="' + row.studyProtocolId + '_' + idfy(pc.code) +'_a" href="#" rel="' + row.studyProtocolId + '" pc="' +  pc.code + '" class="pg btn-xs pgcrm ">' + pc.code + ' <span class="pg glyphicon glyphicon-remove"></span></a> ';
+                            snippet = snippet +  '<a id="' + row.studyProtocolId + '_' + idfy(pc.code) +'_a" href="#" rel="' + row.studyProtocolId + '" title="' + pgcDisplayName(pc.code, pc.name) + '" pc="' +  pc.code + '" class="pg btn-xs pgcrm ">' + ellipsis(pc.code,10) + ' <span class="pg glyphicon glyphicon-remove"></span></a> ';
                         }
                     });
 
@@ -264,6 +272,18 @@ function pgcinit($) {
         toggleMultiButtons($, $("tr.selected").length <= 0);
     } );
 
+    //initialize the date picker and length select box
+    $('#datetimepicker').datetimepicker()
+        .on('hide',function (evt) {
+            trailsTable.ajax.reload();
+        }).on('change', function (evt) {
+            trailsTable.ajax.reload();
+        });
+    $("#reportingPeriodLength").on('change', function (evt) {
+        trailsTable.ajax.reload();
+    });
+
+
     //initialize funnel select
     fnlMsCtrl = $("#fpgc-sel").multiselect({
         nonSelectedText: 'Select Program Code(s)' ,
@@ -272,6 +292,7 @@ function pgcinit($) {
         selectAllText: 'Select/Deselect All',
         dropUp: true,
         dropRight:false,
+        buttonWidth: '180px',
         filterPlaceholder: 'Search',
         onDropdownHide: function (evt) {
             trailsTable.ajax.reload();
@@ -657,7 +678,7 @@ function assignProgramCode($, s2, td, sp, pgc) {
                 $('#' + sp + '_' + idfy(pgc) + '_img').remove();
                 addProgramCodeToTrialMap($,sp, pgc);
                 //add the program code in the TD
-                $('<a id="' + sp + '_' + idfy(pgc) +'_a" href="#" rel="' + sp + '" pc="' +  pgc + '" class="pg btn-xs pgcrm ">' + pgc + ' <span class="pg glyphicon glyphicon-remove"></span></a> ').insertBefore("#" + sp + "_tra");
+                $('<a id="' + sp + '_' + idfy(pgc) +'_a" href="#" rel="' + sp + '" title="' + pgc + '" pc="' +  pgc + '" class="pg btn-xs pgcrm ">' + ellipsis(pgc, 10) + ' <span class="pg glyphicon glyphicon-remove"></span></a> ').insertBefore("#" + sp + "_tra");
                 //remove the indicator image
                 $('#' + sp + '_' + idfy(pgc) + '_img').remove();
                 //show the down arrow
