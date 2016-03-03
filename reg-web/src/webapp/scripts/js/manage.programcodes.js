@@ -24,7 +24,7 @@ function ellipsis(s, len) {
     if (s.length <= len) {
         return s;
     }
-    return s.substr(0,len-3) + "..."
+    return s.substr(0,len-3) + "..." ;
 }
 function idfy(code) {
    return code.split(' ').join('_');
