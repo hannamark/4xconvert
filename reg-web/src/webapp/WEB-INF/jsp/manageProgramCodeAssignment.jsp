@@ -172,9 +172,7 @@
                         </s:else>
 
                 </div>
-                <div class="col-md-12">
-                    <hr />
-                </div>
+                <hr />
                 <div class="form-group">
                     <label for="reportingPeriodEndDate" class="col-sm-2 control-label"><fmt:message key="programcodes.reporting.end.date.label"/></label>
                     <div class="col-sm-2">
@@ -201,19 +199,13 @@
                         <p class="text-success" id="reporting_flash" style="display:none;">Reporting period length saved.</p>
                     </div>
                 </div>
-                <%--
-                <div class="form-group">
-                    <label class="col-sm-2 control-label"><fmt:message key="programcodes.reporting.end.date.label"/></label>
-                    <div class="col-sm-2 txt-val"><s:date name="familyDto.reportingPeriodEndDate" format="MM/dd/yyyy"/></div>
-                    <label class="col-sm-3 control-label"><fmt:message key="programcodes.reporting.period.length.label"/></label>
-                    <div class="col-sm-2 txt-val"><s:property value="familyDto.reportingPeriodLength"/> </div>
-                </div>
-                --%>
+                <hr />
                 <div class="col-md-12">
-                    <hr />
+
                     <div id="trials" class="">
                         <div class="table-responsive table-wrapper">
                             <div id="row_wrapper" class="dataTables_wrapper no-footer">
+                                The following trials were active during the specified reporting period:
                                 <table id="trialsTbl" class="table table-striped table-bordered">
                                     <thead>
                                     <tr>
