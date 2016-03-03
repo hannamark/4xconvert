@@ -678,10 +678,10 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
 
               StudyProtocolQueryCriteria spQueryCriteria = new StudyProtocolQueryCriteria();
 
-              Integer length = reportingPeriodLength != null ?
-                      reportingPeriodLength : familyDto.getReportingPeriodLength();
-              Date endDate = reportingPeriodEndDate != null ?
-                      reportingPeriodEndDate : familyDto.getReportingPeriodEndDate();
+              Integer length = reportingPeriodLength != null
+                      ? reportingPeriodLength : familyDto.getReportingPeriodLength();
+              Date endDate = reportingPeriodEndDate != null
+                      ? reportingPeriodEndDate : familyDto.getReportingPeriodEndDate();
               Date startDate = DateUtils.addMonths(endDate , -1 * length);
 
               spQueryCriteria.populateReportingPeriodStatusCriterion(startDate, endDate, ACTIVE_PROTOCOL_STATUSES);
