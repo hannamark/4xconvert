@@ -391,8 +391,48 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
     public StreamResult findTrials() throws UnsupportedEncodingException {
         JSONObject root = new JSONObject();
         JSONArray arr = new JSONArray();
+
+        boolean updated = false;
+        boolean lengthChanged = false;
+        boolean endDateChanged = false;
+
+        try {
+
+            if (familyPoId != null) {
+
+                loadFamily();
+
+                Integer length = reportingPeriodLength != null
+                        ? reportingPeriodLength : familyDto.getReportingPeriodLength();
+                Date endDate = reportingPeriodEndDate != null
+                        ? reportingPeriodEndDate : familyDto.getReportingPeriodEndDate();
+                Date startDate = DateUtils.addMonths(endDate , -1 * length);
+
+                if (!length.equals(familyDto.getReportingPeriodLength())) {
+                    familyDto.setReportingPeriodLength(length);
+                    lengthChanged = true;
+                }
+                if (!isSameDay(endDate, familyDto.getReportingPeriodEndDate())) {
+                    familyDto.setReportingPeriodEndDate(endDate);
+                    endDateChanged = true;
+                }
+                if (lengthChanged || endDateChanged) {
+                    familyProgramCodeService.update(familyDto);
+                    updated = true;
+                }
+
+                populateTrials(startDate, endDate, arr);
+            }
+
+        } catch (PAException pae) {
+            LOG.error("Error finding the trials", pae);
+        }
+
+        root.put("updated", updated);
+        root.put("lengthChanged", lengthChanged);
+        root.put("endDateChanged", endDateChanged);
         root.put("data", arr);
-        populateTrials(arr);
+
         return new StreamResult(new ByteArrayInputStream(root.toString().getBytes(UTF_8)));
     }
 
@@ -655,82 +695,67 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
         return validForNone || validForOthers;
     }
 
-    private void populateTrials(JSONArray arr) {
-      LOG.debug("populating trials [familyPOId : " + familyPoId + "]");
-      try {
+    private void populateTrials(Date startDate, Date endDate, JSONArray arr) throws PAException {
+        LOG.debug("populating trials [familyPOId : " + familyPoId + "]");
 
-          if (familyPoId != null) {
+        //process program codes in filter
+        List<Long> programCodeIds = new ArrayList<Long>();
+        if (StringUtils.isNotEmpty(pgcListParam)) {
+            for (String p :  StringUtils.split(pgcListParam, ",")) {
+                programCodeIds.add(Long.parseLong(p));
+            }
+        }
 
-              loadFamily();
+        List<Long> familyProgramCodeIds = new ArrayList<Long>();
+        for (ProgramCodeDTO pgc : familyDto.getProgramCodes()) {
+            familyProgramCodeIds.add(pgc.getId());
+        }
 
-              //process program codes in filter
-              List<Long> programCodeIds = new ArrayList<Long>();
-              if (StringUtils.isNotEmpty(pgcListParam)) {
-                  for (String p :  StringUtils.split(pgcListParam, ",")) {
-                      programCodeIds.add(Long.parseLong(p));
-                  }
-              }
-
-              List<Long> familyProgramCodeIds = new ArrayList<Long>();
-              for (ProgramCodeDTO pgc : familyDto.getProgramCodes()) {
-                  familyProgramCodeIds.add(pgc.getId());
-              }
-
-              StudyProtocolQueryCriteria spQueryCriteria = new StudyProtocolQueryCriteria();
-
-              Integer length = reportingPeriodLength != null
-                      ? reportingPeriodLength : familyDto.getReportingPeriodLength();
-              Date endDate = reportingPeriodEndDate != null
-                      ? reportingPeriodEndDate : familyDto.getReportingPeriodEndDate();
-              Date startDate = DateUtils.addMonths(endDate , -1 * length);
-
-              spQueryCriteria.populateReportingPeriodStatusCriterion(startDate, endDate, ACTIVE_PROTOCOL_STATUSES);
-              spQueryCriteria.setExcludeRejectProtocol(true);
-              spQueryCriteria.setExcludeTerminatedTrials(true);
-              List<Long> orgPOIds = FamilyHelper.getRelatedOrgsInFamily(familyPoId);
-              List<Long> orgIds = fetchOrganizationIds(orgPOIds);
-              spQueryCriteria.getParticipatingSiteIds().addAll(orgIds);
-
-              boolean hasNone = programCodeIds.contains(NONE_PROGRAM_CODE);
-              if (!hasNone) {
-                 spQueryCriteria.getProgramCodeIds().addAll(programCodeIds);
-              }
+        StudyProtocolQueryCriteria spQueryCriteria = new StudyProtocolQueryCriteria();
 
 
-              List<StudyProtocolQueryDTO> trials = protocolQueryService.getStudyProtocolByCriteria(spQueryCriteria,
-                      SKIP_ALTERNATE_TITLES, SKIP_LAST_UPDATER_INFO);
-              for (StudyProtocolQueryDTO trial : trials) {
-                 if (hasNone && !hasMatchingProgramCodes(programCodeIds, familyProgramCodeIds, trial)) {
-                    continue;
-                 }
+        spQueryCriteria.populateReportingPeriodStatusCriterion(startDate, endDate, ACTIVE_PROTOCOL_STATUSES);
+        spQueryCriteria.setExcludeRejectProtocol(true);
+        spQueryCriteria.setExcludeTerminatedTrials(true);
+        List<Long> orgPOIds = FamilyHelper.getRelatedOrgsInFamily(familyPoId);
+        List<Long> orgIds = fetchOrganizationIds(orgPOIds);
+        spQueryCriteria.getParticipatingSiteIds().addAll(orgIds);
 
-                 JSONObject o = new JSONObject();
-                 o.put("studyProtocolId", trial.getStudyProtocolId());
-                 o.put("nciIdentifier", trial.getNciIdentifier());
-                 o.put("title", trial.getOfficialTitle());
-                 o.put("identifiers", trial.getAllIdentifiersAsString());
-                 o.put("leadOrganizationName", trial.getLeadOrganizationName());
-                 o.put("piFullName", StringUtils.equals("null", trial.getPiFullName()) ? ""
-                         : StringUtils.trimToEmpty(trial.getPiFullName()));
-                 o.put("trialStatus", trial.getStudyStatusCode().getCode());
-                 o.put("DT_RowId", "trial_" + trial.getStudyProtocolId());
+        boolean hasNone = programCodeIds.contains(NONE_PROGRAM_CODE);
+        if (!hasNone) {
+            spQueryCriteria.getProgramCodeIds().addAll(programCodeIds);
+        }
 
-                 JSONArray pgcArr = new JSONArray();
-                 for (ProgramCodeDTO pg : trial.getProgramCodes()) {
-                     JSONObject pgcObj = new JSONObject();
-                     pgcObj.put("id", pg.getId());
-                     pgcObj.put("code", pg.getProgramCode());
-                     pgcObj.put("name", pg.getProgramName());
-                     pgcArr.put(pgcObj);
-                 }
-                 o.put("programCodes", pgcArr);
-                 arr.put(o);
-              }
-          }
 
-      } catch (PAException  e) {
-        LOG.error("Error while searching trials", e);
-      }
+        List<StudyProtocolQueryDTO> trials = protocolQueryService.getStudyProtocolByCriteria(spQueryCriteria,
+                SKIP_ALTERNATE_TITLES, SKIP_LAST_UPDATER_INFO);
+        for (StudyProtocolQueryDTO trial : trials) {
+            if (hasNone && !hasMatchingProgramCodes(programCodeIds, familyProgramCodeIds, trial)) {
+                continue;
+            }
+
+            JSONObject o = new JSONObject();
+            o.put("studyProtocolId", trial.getStudyProtocolId());
+            o.put("nciIdentifier", trial.getNciIdentifier());
+            o.put("title", trial.getOfficialTitle());
+            o.put("identifiers", trial.getAllIdentifiersAsString());
+            o.put("leadOrganizationName", trial.getLeadOrganizationName());
+            o.put("piFullName", StringUtils.equals("null", trial.getPiFullName()) ? ""
+                    : StringUtils.trimToEmpty(trial.getPiFullName()));
+            o.put("trialStatus", trial.getStudyStatusCode().getCode());
+            o.put("DT_RowId", "trial_" + trial.getStudyProtocolId());
+
+            JSONArray pgcArr = new JSONArray();
+            for (ProgramCodeDTO pg : trial.getProgramCodes()) {
+                JSONObject pgcObj = new JSONObject();
+                pgcObj.put("id", pg.getId());
+                pgcObj.put("code", pg.getProgramCode());
+                pgcObj.put("name", pg.getProgramName());
+                pgcArr.put(pgcObj);
+            }
+            o.put("programCodes", pgcArr);
+            arr.put(o);
+        }
 
     }
 
@@ -839,6 +864,14 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
             }
         });
         return families;
+    }
+
+
+    private boolean isSameDay(Date d1, Date d2) {
+        if (d1 == null || d2 == null) {
+            return false;
+        }
+        return DateUtils.isSameDay(d1, d2);
     }
 
 }

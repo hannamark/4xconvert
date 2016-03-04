@@ -185,6 +185,7 @@
                                     />
 
                             <span class="add-on btn-default"><i class="fa-calendar"></i></span>
+                            <p class="text-success" id="date_flash" style="display:none;">Reporting period end date saved.</p>
                         </div>
                     </div>
                     <label for="reportingPeriodLength" class="col-sm-3 control-label"><fmt:message key="programcodes.reporting.period.length.label"/></label>
@@ -197,7 +198,7 @@
                                 '20':'20','21':'21','22':'22','23':'23','24':'24'}"
                                 cssClass="form-control" style="width:51px"  value="%{reportingPeriodLength}"
                                 />
-                        <p class="text-success" id="reporting_flash" style="display:none;">Reporting period length saved.</p>
+                        <p class="text-success" id="length_flash" style="display:none;">Reporting period length saved.</p>
                     </div>
                 </div>
                 <hr />

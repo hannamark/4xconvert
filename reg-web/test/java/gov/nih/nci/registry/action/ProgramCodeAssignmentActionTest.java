@@ -239,7 +239,7 @@ public class ProgramCodeAssignmentActionTest  extends AbstractRegWebTest {
 
           InputStream is = (InputStream) field.get(sr);
           String json = IOUtils.toString(is);
-          assertEquals("{\"data\":[]}", json);
+          assertEquals("{\"endDateChanged\":false,\"updated\":false,\"lengthChanged\":false,\"data\":[]}", json);
 
           //When I reset to a valid family
           action.setFamilyPoId(1L);
@@ -249,10 +249,7 @@ public class ProgramCodeAssignmentActionTest  extends AbstractRegWebTest {
           //then I must see no fields
           is = (InputStream) field.get(sr);
           json = IOUtils.toString(is);
-          assertEquals("{\"data\":[{\"title\":\"title\",\"identifiers\":\"1, 2\"," +
-                  "\"programCodes\":[{\"id\":3,\"name\":\"3\"},{\"id\":4,\"name\":\"4\"}]," +
-                  "\"DT_RowId\":\"trial_null\",\"trialStatus\":\"Active\"," +
-                  "\"piFullName\":\"Joel Joseph\",\"nciIdentifier\":\"1\"}]}", json);
+          assertEquals("{\"endDateChanged\":false,\"updated\":false,\"lengthChanged\":false,\"data\":[{\"title\":\"title\",\"identifiers\":\"1, 2\",\"programCodes\":[{\"id\":3,\"name\":\"3\"},{\"id\":4,\"name\":\"4\"}],\"DT_RowId\":\"trial_null\",\"trialStatus\":\"Active\",\"piFullName\":\"Joel Joseph\",\"nciIdentifier\":\"1\"}]}", json);
 
 
       } catch (Exception e) {
@@ -274,7 +271,7 @@ public class ProgramCodeAssignmentActionTest  extends AbstractRegWebTest {
 
             InputStream is = (InputStream) field.get(sr);
             String json = IOUtils.toString(is);
-            assertEquals("{\"data\":[]}", json);
+            assertEquals("{\"endDateChanged\":false,\"updated\":false,\"lengthChanged\":false,\"data\":[]}", json);
 
             //When I reset to a valid family
             action.setFamilyPoId(1L);
@@ -285,7 +282,7 @@ public class ProgramCodeAssignmentActionTest  extends AbstractRegWebTest {
             //then I must see no fields
             is = (InputStream) field.get(sr);
             json = IOUtils.toString(is);
-            assertEquals("{\"data\":[]}", json);
+            assertEquals("{\"endDateChanged\":false,\"updated\":false,\"lengthChanged\":false,\"data\":[]}", json);
 
             //when I invoke with None and PG4
             action.setPgcListParam("-1,4");
@@ -296,10 +293,7 @@ public class ProgramCodeAssignmentActionTest  extends AbstractRegWebTest {
             is = (InputStream) field.get(sr);
             json = IOUtils.toString(is);
 
-            assertEquals("{\"data\":[{\"title\":\"title\",\"identifiers\":\"1, 2\"," +
-                    "\"programCodes\":[{\"id\":3,\"name\":\"3\"},{\"id\":4,\"name\":\"4\"}]," +
-                    "\"DT_RowId\":\"trial_null\",\"trialStatus\":\"Active\"," +
-                    "\"piFullName\":\"Joel Joseph\",\"nciIdentifier\":\"1\"}]}", json);
+            assertEquals("{\"endDateChanged\":false,\"updated\":false,\"lengthChanged\":false,\"data\":[{\"title\":\"title\",\"identifiers\":\"1, 2\",\"programCodes\":[{\"id\":3,\"name\":\"3\"},{\"id\":4,\"name\":\"4\"}],\"DT_RowId\":\"trial_null\",\"trialStatus\":\"Active\",\"piFullName\":\"Joel Joseph\",\"nciIdentifier\":\"1\"}]}", json);
 
 
         } catch (Exception e) {

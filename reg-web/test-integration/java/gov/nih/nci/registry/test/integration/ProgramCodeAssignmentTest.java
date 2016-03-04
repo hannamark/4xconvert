@@ -113,6 +113,8 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         selenium.type("reportingPeriodEndDate", date(365));
         rpLengthBox = new Select(driver.findElement(By.id("reportingPeriodLength")));
         rpLengthBox.selectByValue("6");
+        waitForElementToBecomeVisible(By.id("length_flash"), 10);
+        waitForElementToBecomeInvisible(By.id("length_flash"), 10);
 
         //Then I should not see any trial
         waitForElementToGoAway(By.xpath("//table[@id='trialsTbl']/tbody/tr[4]"), 10);

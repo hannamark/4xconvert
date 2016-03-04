@@ -113,6 +113,25 @@ function showProgramCodeS2InRow($, sp) {
 
 }
 
+//Will refresh the trials table, and show the flash message
+function handleReportingPeriodChange($, evt) {
+    evt.preventDefault();
+    trailsTable.ajax.reload(function(json){
+        if (json && json.updated) {
+            if (json.lengthChanged) {
+                $('#length_flash').delay(100).fadeIn('normal', function() {
+                    $(this).delay(2500).fadeOut();
+                });
+            }
+            if(json.endDateChanged) {
+                $('#date_flash').delay(100).fadeIn('normal', function() {
+                    $(this).delay(2500).fadeOut();
+                });
+            }
+        }
+    });
+}
+
 // Will enable disable the assign/replace/remove buttons
 function toggleMultiButtons($, grayOut) {
 
@@ -217,6 +236,7 @@ function pgcinit($) {
 
         }
 
+
     });
 
     // Apply the search
@@ -275,12 +295,12 @@ function pgcinit($) {
     //initialize the date picker and length select box
     $('#datetimepicker').datetimepicker()
         .on('hide',function (evt) {
-            trailsTable.ajax.reload();
+            handleReportingPeriodChange($, evt);
         }).on('change', function (evt) {
-            trailsTable.ajax.reload();
+            handleReportingPeriodChange($, evt);
         });
     $("#reportingPeriodLength").on('change', function (evt) {
-        trailsTable.ajax.reload();
+        handleReportingPeriodChange($, evt);
     });
 
 
