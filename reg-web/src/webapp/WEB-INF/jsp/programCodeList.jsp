@@ -29,7 +29,7 @@
     </head>
 <body>
 <div class="container">
-
+<c:set var="topic" scope="request" value="manageprogramcodesmasterlist"/>
     <div class="alert alert-success confirm_msg" style="display: none;" id="programCodeUpdatedMessageDiv">
           <strong>Message.</strong>&nbsp;<fmt:message key="programcode.updated"/>
     </div>

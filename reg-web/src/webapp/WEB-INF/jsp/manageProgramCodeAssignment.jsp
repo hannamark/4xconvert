@@ -137,6 +137,7 @@
     </head>
 <body>
 <div class="container">
+<c:set var="topic" scope="request" value="manageprogramcodeassignments"/>
 	<div class="row">
 		<div class="col-md-12 ">
 			<h1 class="heading"><span><fmt:message key="pcassignment.heading"/></span></h1>

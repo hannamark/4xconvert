@@ -1135,7 +1135,7 @@ tr.holiday {
         }
         if ($('countsid')!=null) {
             Event.observe($('countsid'), "click", function() {
-                    updateHelpTopic('workload');
+                    updateHelpTopic('counttab');
             });
         }
 		
@@ -1199,7 +1199,7 @@ tr.holiday {
 	                }
 	              if("${sessionScope.isSuAbstractor}" == "true") {
 	                    document.getElementById('pageHelpid').onclick = function() {
-	                        Help.popHelp('dashboardworkloadsuper');
+	                        Help.popHelp('dashboardsuper');
 	                    }
 	                }
         }		
@@ -1231,6 +1231,14 @@ tr.holiday {
 		                    Help.popHelp('dashboarddetails');
 		                }
 		            }
+		}
+		
+		if(tabType=="counttab") {
+			   if("${sessionScope.isSuAbstractor}" == "true") {
+                   document.getElementById('pageHelpid').onclick = function() {
+                       Help.popHelp('dashboardtrialcount');
+                   }
+               }
 		}
 		return true;
 	}
