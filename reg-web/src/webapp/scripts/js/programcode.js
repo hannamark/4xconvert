@@ -148,6 +148,7 @@ function loadProgramCodes($) {
                        ')" data-trigger="hover"><i class="fa fa-exchange"></i></button>';
                },
                "bSortable": false,
+               "bSearchable": false,
                "targets": [2]
             }],
             "fnDrawCallback": function( oSettings ) {
