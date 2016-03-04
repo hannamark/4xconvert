@@ -5,7 +5,6 @@ import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_LAS
 import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_OTHER_IDENTIFIERS;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -57,22 +56,6 @@ public class ProgramCodesActionTest extends AbstractRegWebTest {
 	}
 	
 	@Test
-    public void testAjaxChangeDate() throws Exception {        
-        ProgramCodesAction action = getAction();
-        action.setPoId(12345L);
-        action.setReportingDate("12/12/2000");        
-        assertTrue(action.ajaxChangeDate() instanceof StreamResult);        
-    }
-	
-	@Test
-	public void testajaxChangeLength() throws Exception {
-		ProgramCodesAction action = getAction();
-		action.setPoId(12345L);
-		action.setReportingLength("10");
-        assertTrue(action.ajaxChangeLength() instanceof StreamResult);
-	}
-	
-	@Test
 	public void testAjaxException() throws Exception {
 		ProgramCodesAction action = new ProgramCodesAction();
         action.setServletRequest(ServletActionContext.getRequest());
@@ -80,8 +63,6 @@ public class ProgramCodesActionTest extends AbstractRegWebTest {
         action.prepare();
         action.setFamilyProgramCodeService(getProgramCodeServiceMock());        
         when(action.getFamilyProgramCodeService().update(any(FamilyDTO.class))).thenThrow(new RuntimeException());        
-        assertFalse(action.ajaxChangeLength() instanceof StreamResult);
-        assertFalse(action.ajaxChangeDate() instanceof StreamResult);
     }
     
     @Test

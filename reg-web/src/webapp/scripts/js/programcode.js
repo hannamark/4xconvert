@@ -43,35 +43,6 @@ jQuery(function() {
  });
 
 
-function changeReportingPeriodLength(element) {
-        	
-    var selectedLength = element.value;
-    var poId = jQuery("#poID").val();    		
-        	
-    jQuery.ajax(
-	{
-		type : "POST",
-		url : 'programCodesajaxChangeLength.action',
-		data : {
-			reportingLength : selectedLength,
-			poId : poId
-		},
-	    success: function(result){
-				jQuery('#reporting_flash').delay(100).fadeIn('normal', function() {
-				jQuery(this).delay(2500).fadeOut();
-			});
-	   },
-	   timeout : 30000
-	})			
-	.fail(
-		function(jqXHR,
-				textStatus,
-				errorThrown) {
-				alert(jqXHR
-						.getResponseHeader('msg'));
-	});        	
-}
-
 function loadProgramCodes($) {
     	programCodeTable = $('#programCodesTable').DataTable({
             "dom": 'lprftip<"row">B',

@@ -1,12 +1,10 @@
 package gov.nih.nci.registry.test.integration;
 
-import java.sql.SQLException;
 import java.util.Date;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -45,20 +43,15 @@ public class ProgramCodesTest extends AbstractRegistrySeleniumTest {
         // access program codes screen        
         accessManageMasterListScreen();        
         
-        // Change reporting length to "5" 
-        switchReportingPeriodLength("5");         
-        
         // switching to next family. DTO changes.
         switchFamily("Family2");
-        Select dropdown = new Select(driver.findElement(By.id("reportingPeriodLength")));
-        WebElement option =  dropdown.getFirstSelectedOption();        
-        assertEquals("12", option.getText());        
+        Select dropdown = new Select(driver.findElement(By.id("selectedDTOId")));
+        assertEquals("Family2", dropdown.getFirstSelectedOption().getText());
         
         // Back to recently changed family
-        switchFamily("Family1");                        
-        Select dropdown2 = new Select(driver.findElement(By.id("reportingPeriodLength")));
-        WebElement option2 =  dropdown2.getFirstSelectedOption();   
-        assertEquals("5", option2.getText());       
+        switchFamily("Family1");   
+        dropdown = new Select(driver.findElement(By.id("selectedDTOId")));
+        assertEquals("Family1", dropdown.getFirstSelectedOption().getText());
        
 	}
 	
@@ -456,29 +449,6 @@ public class ProgramCodesTest extends AbstractRegistrySeleniumTest {
     	loginAndGoToMasterListPage();
         pause(500);
         assertEquals(2, getCountOfFamily().intValue());
-    }    
-    
-    /** 
-     * @throws Exception 
-     */
-    @Test
-    public void testProgramCodesChangeDate() throws Exception {
-    	loginAndGoToMasterListPage();
-    	String poId = getPoId();
-    	Date currentDate = getReportingPeriodDate(poId);        
-        changeReportingDate(); 
-        Date newSavedDate = getReportingPeriodDate(poId);
-        assertTrue(newSavedDate != null);
-        assertFalse(DateUtils.isSameDay(currentDate, newSavedDate));
-    }
-    
-    
-    @Test
-    public void testProgramCodesChangeReportingLength() throws Exception {
-    	loginAndGoToMasterListPage();       
-        switchReportingPeriodLength("24");     
-        String poId = getPoId();
-        assertEquals(24, getReportingPeriodLength(poId).intValue());
     }    
     
     @Test

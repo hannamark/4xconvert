@@ -25,6 +25,9 @@
             #dialog-edit .charcounter,#dialog-confirm .charcounter {
                 font-size: 75%;
             }
+            
+            .table th { font-size:10pt;  }
+    
         </style>
     </head>
 <body>
@@ -183,41 +186,8 @@
                         <label class="control-label" style="width: 15.6667%;" for="selectedFamily"><fmt:message key="programcodes.organization.family.label"/></label> &nbsp;&nbsp;${selectedFamilyDTO.name}
                     </c:otherwise>
                 </c:choose>
-              </div>              
-              <div class="col-md-12">
-                <hr />
-              </div>                
-              <div class="form-group">
-                <label for="programCodeDate" class="col-sm-2 control-label"><fmt:message key="programcodes.reporting.end.date.label"/></label>
-                <div class="col-sm-2">
-                    <div id="datetimepicker" class="datetimepicker input-append">
-                        <s:date name="selectedFamilyDTO.reportingPeriodEndDate" var="reportingPeriodDate" format="MM/dd/yyyy"/>                     
-                        <s:textfield id="reportingPeriodEndDate" name="selectedFamilyDTO.reportingPeriodEndDate" data-format="MM/dd/yyyy" type="text" 
-                            cssClass="form-control" placeholder="mm/dd/yyyy" style="width:83px"
-                            value="%{reportingPeriodDate}" />
-                        <span class="add-on btn-default"><i class="fa-calendar"></i></span>
-                        <p class="text-success" id="date_flash" style="display:none;">Reporting period end date saved.</p>
-                    </div>
-                </div>              
                 <s:hidden id="poID" value="%{selectedFamilyDTO.poId}" />
-                <label for="programCodeLength" class="col-sm-3 control-label"><fmt:message key="programcodes.reporting.period.length.label"/></label>
-                <div class="col-sm-2">
-                    <s:select
-                            id = "reportingPeriodLength"            
-                            name="reportingPeriodLength"
-                            list="#{'1':'1','2':'2','3':'3','4':'4','5':'5','6':'6','7':'7','8':'8','9':'9','10':'10',
-                                '11':'11','12':'12','13':'13','14':'14','15':'15','16':'16','17':'17','18':'18','19':'19',
-                                '20':'20','21':'21','22':'22','23':'23','24':'24'}"
-                            value="selectedFamilyDTO.reportingPeriodLength"
-                            cssClass="form-control" style="width:51px"
-                            onchange="changeReportingPeriodLength(this)"
-                     />                 
-                    <p class="text-success" id="reporting_flash" style="display:none;">Reporting period length saved.</p>
-                </div>
-              </div>
-              <div>
-                <hr />
-              </div>
+              </div>              
               <div>
                  <table id="newProgramCodesRowTable" class="table table-bordered table-striped">
                     <thead>

@@ -97,8 +97,6 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
     private HttpServletResponse response;
     
     private Long poId;
-    private String reportingLength;
-    private String reportingDate;
     private Long selectedDTOId;
     private Long programCodeIdSelectedForDeletion;
 
@@ -170,49 +168,10 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
     }
     
     /**
-     * Changes Ajax date 
-     * @throws ParseException parse exception
-     * @throws IOException IO exception
-     * @return stream result
-     */
-    public StreamResult ajaxChangeDate() throws ParseException, IOException {        
-        try {            
-            loadFamily();
-            selectedFamilyDTO.setReportingPeriodEndDate(new
-                    SimpleDateFormat(PAUtil.DATE_FORMAT, Locale.getDefault()).parse(reportingDate));
-            familyProgramCodeService.update(selectedFamilyDTO);
-        
-            return new StreamResult(new ByteArrayInputStream(new JSONObject()
-                .toString().getBytes(UTF_8)));
-        } catch (Exception e) {
-            return handleExceptionDuringAjax(e);
-        }            
-    }
-
-    /**
      * Will load the family
      */
     private void loadFamily() {
         selectedFamilyDTO = poId == null ? null : familyProgramCodeService.getFamilyDTOByPoId(poId);
-    }
-    
-    /**
-     * Changes period length 
-     * @throws ParseException parse exception
-     * @throws IOException IO exception
-     * @return JSON String
-     */
-    public StreamResult ajaxChangeLength() throws ParseException, IOException {        
-        try {                        
-            loadFamily();
-            selectedFamilyDTO.setReportingPeriodLength(Integer.parseInt(reportingLength));
-            familyProgramCodeService.update(selectedFamilyDTO);
-            
-            return new StreamResult(new ByteArrayInputStream(new JSONObject()
-                    .toString().getBytes(UTF_8)));
-        } catch (Exception e) {
-            return handleExceptionDuringAjax(e);
-        }        
     }
     
     /**
@@ -587,38 +546,6 @@ public class ProgramCodesAction extends ActionSupport implements Preparable, Ser
      */
     public void setPoId(Long poId) {
         this.poId = poId;
-    }
-    
-    /**
-     * reporting length
-     * @return reportingLength reporting length
-     */
-    public String getReportingLength() {
-        return reportingLength;
-    }
-
-    /**
-     * sets reporting length
-     * @param reportingLength reporting length
-     */
-    public void setReportingLength(String reportingLength) {
-        this.reportingLength = reportingLength;
-    }
-    
-    /**
-     * gets reporting period date
-     * @return reporting period date
-     */
-    public String getReportingDate() {
-        return reportingDate;
-    }
-
-    /**
-     * sets reporting date
-     * @param reportingDate reporting date
-     */
-    public void setReportingDate(String reportingDate) {
-        this.reportingDate = reportingDate;
     }
     
     /**
