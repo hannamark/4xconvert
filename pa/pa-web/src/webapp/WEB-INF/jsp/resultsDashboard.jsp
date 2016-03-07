@@ -534,20 +534,21 @@ function searchResults(url, studyNCIid){
                  </display:column>
                  
                  <display:column  title="NCT ID" sortable="true" property="nctIdentifier"/>
-                 <display:column  title="CTEP/DCP ID" sortable="true">
-                    <s:if test="%{#attr.row.ctepId != null && #attr.row.dcpId != null}">
-                      <c:out value ="${row.ctepId}"/>, <c:out value ="${row.dcpId}"/>
-                    </s:if>
-                    <s:elseif test="%{#attr.row.ctepId != null}">
-    					 <c:out value ="${row.ctepId}"/>
-					</s:elseif>
-                    <s:else >
-    					 <c:out value ="${row.dcpId}"/>
-					</s:else>
-                 </display:column>
+                 <display:column  title="CTEP ID" sortable="true">
+                    <c:out value ="${row.ctepId}"/>
+			     </display:column>
+                  <display:column  title="DCP ID" sortable="true">
+                   <c:out value ="${row.dcpId}"/>
+                  </display:column>
                  <display:column  title="Lead Org PO ID" sortable="true" property="leadOrganizationPOId"/>          
                  <display:column  title="Lead Organization" sortable="true" property="leadOrganizationName"/>
                  <display:column  title="Results Designee" sortable="true" property="designeeNamesList" style="width:200px;"/> 
+                    
+                  <display:column title="PCD" sortable="true" media="html excel csv xml">
+                     <fmt:formatDate value="${row.primaryCompletionDate}" pattern="MM/dd/yyyy"/>
+                 </display:column>   
+                    
+               
                                                   
                  <display:column title="PCD Sent to PIO" sortable="true" media="html">
                     <!-- <c:out value="${row.pcdSentToPIODate}"/> -->
@@ -637,21 +638,21 @@ function searchResults(url, studyNCIid){
                  <display:column  title="CTRO Trial Comparison Review" sortable="true" media="excel csv xml">
                      <c:out value="${row.ctroUserName}"/> <fmt:formatDate value="${row.ctroUserCreatedDate}" pattern="MM/dd/yyyy"/>
                  </display:column>
-                                  
-                 <display:column  title="CCCT Trial Comparison Review" sortable="true" media="html">
-                    <c:out value="${row.ccctUserName}"/>
-                    <fmt:formatDate value="${row.ccctUserCreatedDate}" pattern="MM/dd/yyyy"/>
-                 </display:column>
-                 <display:column  title="CCCT Trial Comparison Review" sortable="true" media="excel csv xml">
-                    <c:out value="${row.ccctUserName}"/> <fmt:formatDate value="${row.ccctUserCreatedDate}" pattern="MM/dd/yyyy"/>
-                 </display:column>
-
+                
                  <display:column  title="Trial Comparison Approval" sortable="true" media="html">
                  	  <c:out value="${row.ctroUserName}"/>
                  	  <fmt:formatDate value="${row.ctroUserCreatedDate}" pattern="MM/dd/yyyy"/>
                  </display:column>
                  <display:column  title="Trial Comparison Approval" sortable="true" media="excel csv xml">
                       <c:out value="${row.ctroUserName}"/> <fmt:formatDate value="${row.ctroUserCreatedDate}" pattern="MM/dd/yyyy"/>
+                 </display:column>
+                 
+                  <display:column  title="CCCT Trial Comparison Review" sortable="true" media="html">
+                    <c:out value="${row.ccctUserName}"/>
+                    <fmt:formatDate value="${row.ccctUserCreatedDate}" pattern="MM/dd/yyyy"/>
+                 </display:column>
+                 <display:column  title="CCCT Trial Comparison Review" sortable="true" media="excel csv xml">
+                    <c:out value="${row.ccctUserName}"/> <fmt:formatDate value="${row.ccctUserCreatedDate}" pattern="MM/dd/yyyy"/>
                  </display:column>
                  
                  <display:column  title="PRS Release Date" sortable="true" media="html">

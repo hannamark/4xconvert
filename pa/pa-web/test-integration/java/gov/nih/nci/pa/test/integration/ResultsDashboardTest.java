@@ -495,7 +495,8 @@ public class ResultsDashboardTest extends OtherIdentifiersRelatedTest {
         assertTrue(selenium.isTextPresent("One item found.1"));
         assertTrue(selenium.isTextPresent(trial.nciID));
         assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]"), trial.nciID);
-        assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[3]"), ctep +", "+dcp);
+        assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[3]"), ctep);
+        assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[4]"), dcp);
         
         //  CTEP/DCP ID ColumValue - Empty
         logoutUser(); 
@@ -550,7 +551,7 @@ public class ResultsDashboardTest extends OtherIdentifiersRelatedTest {
         assertTrue(selenium.isTextPresent("One item found.1"));
         assertTrue(selenium.isTextPresent(trial.nciID));
         assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]"), trial.nciID);
-        assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[3]"), dcp);
+        assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[3]"), "");
     }    
 
     
@@ -702,13 +703,13 @@ public class ResultsDashboardTest extends OtherIdentifiersRelatedTest {
 
              List<String> lines = FileUtils.readLines(csv);
              assertEquals(
-                     "NCI Trial Identifier,NCT ID,CTEP/DCP ID,Lead Org PO ID,Lead Organization,Results Designee,PCD Sent to PIO,PCD Confirmed,Designee Notified,Reporting in Process,3 Month Reminder,5 Month Reminder,7 Month Escalation,Results Sent to PIO,Results Approved by PIO,CTRO Trial Comparison Review,CCCT Trial Comparison Review,Trial Comparison Approval,PRS Release Date,QA Comments Returned Date,Trial Results Published Date",
+                     "NCI Trial Identifier,NCT ID,CTEP ID,DCP ID,Lead Org PO ID,Lead Organization,Results Designee,PCD,PCD Sent to PIO,PCD Confirmed,Designee Notified,Reporting in Process,3 Month Reminder,5 Month Reminder,7 Month Escalation,Results Sent to PIO,Results Approved by PIO,CTRO Trial Comparison Review,Trial Comparison Approval,CCCT Trial Comparison Review,PRS Release Date,QA Comments Returned Date,Trial Results Published Date",
                      lines.get(0));
 
              final String normalizedContent = lines.get(1).replaceAll("\\s+", " ");
              final String expected = trial.nciID
-                     + ",NCT00001,,1,ClinicalTrials.gov,,,,,,,,,,,ClinicalTrials.gov Import " + reportDate+","
-                     + "11 "+reportDate+",ClinicalTrials.gov Import "+reportDate+",,,";
+                     + ",NCT00001,,,1,ClinicalTrials.gov,,01/01/2015,,,,,,,,,,ClinicalTrials.gov Import " + reportDate+","
+                     + "ClinicalTrials.gov Import "+reportDate+",11 "+reportDate+",,,";
 
              System.out.println(normalizedContent);
              System.out.println(expected);
