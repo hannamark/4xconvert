@@ -490,6 +490,38 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
     }
 
     @Test
+    public void testUnAssignMultipleNothing() throws Exception {
+        //Given that I am on Manage screen and none of the trials have program codes
+        accessManageCodeAssignmentsScreen();
+        removeFromAllStudiesProgramCodes();
+
+        //When I pick the first family
+        Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
+        dropdown.selectByIndex(1);
+        changePageLength("25");
+
+        waitForElementToBecomeAvailable(By.xpath("//table[@id='trialsTbl']/tbody//tr[2]"), 10);
+
+        //Select 2 rows
+        clickTableRow(1);
+        clickTableRow(2);
+
+        //click the Unassign button
+        clickAndWait("unassignPGCBtn");
+
+        //Then the dialog showup
+        waitForElementToBecomeVisible(By.id("pgc-mrm-dialog-empty"), 5);
+
+        //When I click OK
+        clickAndWait("pgc-mrm-dialog-empty-cancel");
+
+        //Then the dialog showup
+        waitForElementToBecomeInvisible(By.id("pgc-mrm-dialog-empty"), 5);
+
+
+    }
+
+    @Test
     public void testUnAssignMultipeAndAssignMultiple() throws Exception {
         accessManageCodeAssignmentsScreen();
         Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
@@ -646,6 +678,36 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         logoutUser();
     }
 
+
+    @Test
+    public void testReplaceMultipleNothing() throws Exception {
+        //Given that I am on Manage screen and none of the trials have program codes
+        accessManageCodeAssignmentsScreen();
+        removeFromAllStudiesProgramCodes();
+
+        //When I pick the first family
+        Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
+        dropdown.selectByIndex(1);
+        changePageLength("25");
+
+        waitForElementToBecomeAvailable(By.xpath("//table[@id='trialsTbl']/tbody//tr[2]"), 10);
+
+        //Select 2 rows
+        clickTableRow(1);
+        clickTableRow(2);
+
+        //click the Unassign button
+        clickAndWait("replacePGCBtn");
+
+        //Then the dialog showup
+        waitForElementToBecomeVisible(By.id("pgc-mrpl-dialog-empty"), 5);
+
+        //When I click OK
+        clickAndWait("pgc-mrpl-dialog-empty-cancel");
+
+        //Then the dialog showup
+        waitForElementToBecomeInvisible(By.id("pgc-mrpl-dialog-empty"), 5);
+    }
 
 
 

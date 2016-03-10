@@ -475,9 +475,54 @@ function assignMultiple($) {
 
 }
 
+//Will show nothing to unassign box
+function popNothingToRemove($) {
+
+    console.log("In popNothingToRemove");
+
+    //cleanup
+    if ($('#pgc-mrm-dialog-empty').dialog("instance")) {
+        $('#pgc-mrm-dialog-empty').dialog("destroy");
+    }
+    //show dialog
+    $("#pgc-mrm-dialog-empty").dialog({
+        modal : true,
+        autoOpen : true,
+        resizable: false,
+        width : $(window).width() * 0.2,
+        height : $(window).height() * 0.2,
+        buttons : [
+            {
+                id:"pgc-mrm-dialog-empty-cancel",
+                text:"OK",
+                click: function(evt) {
+                    evt.preventDefault();
+                    $("#pgc-mrm-dialog-empty").dialog("close");
+                }
+
+            }
+        ]
+    });
+}
+
 //will unassign program codes from multiple trials
 function removeMultiple($) {
     console.log("In remove multiple");
+    tmparr = [];
+    $("#trialsTbl > tbody > tr.selected > td.pgctd > a.pg").each(function(i, a){
+        if (tmparr.indexOf($(a).attr("pc")) < 0) {
+            tmparr.push($(a).attr("pc"));
+        }
+    });
+    if (tmparr.length > 0) {
+        popRemoveMultiple($, tmparr);
+    } else {
+        popNothingToRemove($);
+    }
+}
+
+function popRemoveMultiple($, tmparr) {
+    console.log("In popRemoveMultiple");
     //cleanup
     if ($('#pgc-mrm-dialog').dialog("instance")) {
         $('#pgc-mrm-dialog').dialog("destroy");
@@ -486,12 +531,7 @@ function removeMultiple($) {
 
     //empty out select box and add only the ones available on the trials
     $("#pgc-mrm-sel").empty();
-    tmparr = [];
-    $("#trialsTbl > tbody > tr.selected > td.pgctd > a.pg").each(function(i, a){
-        if (tmparr.indexOf($(a).attr("pc")) < 0) {
-            tmparr.push($(a).attr("pc"));
-        }
-    });
+
     $(tmparr.sort()).each(function(i, p){
         tmpS2Ds = $.grep(allProgramCodes, function(pgc, j){
            return pgc.code == p;
@@ -544,6 +584,52 @@ function removeMultiple($) {
 
 //will replace program codes from multiple trials
 function replaceMultiple($) {
+    tmparr = [];
+    $("#trialsTbl > tbody > tr.selected > td.pgctd > a.pg").each(function(i, a){
+        if (tmparr.indexOf($(a).attr("pc")) < 0) {
+            tmparr.push($(a).attr("pc"));
+        }
+    });
+    if (tmparr.length > 0) {
+        popReplaceMultiple($, tmparr);
+    } else {
+        popNothingToReplace($);
+    }
+
+}
+
+//Will show nothing to unassign box
+function popNothingToReplace($) {
+
+    console.log("In popNothingToRemove");
+
+    //cleanup
+    if ($('#pgc-mrpl-dialog-empty').dialog("instance")) {
+        $('#pgc-mrpl-dialog-empty').dialog("destroy");
+    }
+    //show dialog
+    $("#pgc-mrpl-dialog-empty").dialog({
+        modal : true,
+        autoOpen : true,
+        resizable: false,
+        width : $(window).width() * 0.25,
+        height : $(window).height() * 0.2,
+        buttons : [
+            {
+                id:"pgc-mrpl-dialog-empty-cancel",
+                text:"OK",
+                click: function(evt) {
+                    evt.preventDefault();
+                    $("#pgc-mrpl-dialog-empty").dialog("close");
+                }
+
+            }
+        ]
+    });
+}
+
+//Will popup replace multiple
+function popReplaceMultiple($, tmparr) {
     //cleanup
     if ($('#pgc-mrpl-dialog').dialog("instance")) {
         $('#pgc-mrpl-dialog').dialog("destroy");
@@ -553,12 +639,7 @@ function replaceMultiple($) {
     //empty out first select box and add only the ones available on the trials
     $("#pgc-mrpl-selone").empty();
     $("#pgc-mrpl-seltwo").empty();
-    tmparr = [];
-    $("#trialsTbl > tbody > tr.selected > td.pgctd > a.pg").each(function(i, a){
-        if (tmparr.indexOf($(a).attr("pc")) < 0) {
-            tmparr.push($(a).attr("pc"));
-        }
-    });
+
     $(allProgramCodes).each(function(i, pgc){
         if (tmparr.indexOf(pgc.code) >= 0) {
             $("#pgc-mrpl-selone").append($("<option />",{value: pgc.code, text: pgcDisplayName(pgc.code, pgc.name), title: pgcDisplayName(pgc.code, pgc.name)}));

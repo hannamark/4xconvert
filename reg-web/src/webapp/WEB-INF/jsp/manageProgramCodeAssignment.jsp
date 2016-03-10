@@ -358,6 +358,17 @@
     </div>
 </div>
 
+<div id="pgc-mrm-dialog-empty"  title="Unassign Program Codes" style="display: none;">
+    <p>
+        Nothing to unassign.
+    </p>
+</div>
+
+<div id="pgc-mrpl-dialog-empty" title="Replace Program Code Assignments" style="display: none;">
+    <p>
+        Nothing to replace.
+    </p>
+</div>
 
 <div id="pgc-mrpl-dialog" title="Replace Program Code Assignments" style="display: none;">
 
