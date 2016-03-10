@@ -2040,4 +2040,8 @@
         <comment>update to email text in pa_properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.3.1/PO-9632_1.sql"/>
     </changeSet>
+        <changeSet id="PO-9666" author="khandalkara">
+        <comment>Changes to Results Reporting Dashboard - Clinicaltrials.gov checkin meeting on 2/25</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.3.1/PO-9666.sql"/>
+    </changeSet>
 </databaseChangeLog>

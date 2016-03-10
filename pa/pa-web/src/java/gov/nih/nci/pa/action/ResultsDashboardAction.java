@@ -18,10 +18,8 @@ import gov.nih.nci.pa.dto.StudyProcessingErrorDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
-import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
-import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -264,7 +262,7 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
                                 public Object execute() throws PAException {
 
                                     List<StudyProtocolQueryDTO> currentResults = 
-                                            applyAdditionalFilters(protocolQueryService
+                                            PAUtil.applyAdditionalFilters(protocolQueryService
                                             .getStudyProtocolByCriteria(
                                                     criteria,
                                                     SKIP_ALTERNATE_TITLES,
@@ -397,15 +395,7 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         return StringUtils.join(designees, ", ");
     }
 
-    private List<String> getResultsDashboadStatusCodeFilter() {
-        List<String> list = new ArrayList<String>();
-        list.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE
-                .getCode());
-        list.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
-                .getCode());
-        list.add(DocumentWorkflowStatusCode.VERIFICATION_PENDING.getCode());
-        return list;
-    }
+   
 
     private StudyProtocolQueryCriteria buildCriteria() throws PAException {
         StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
@@ -468,34 +458,7 @@ public class ResultsDashboardAction extends AbstractCheckInOutAction implements
         }
     }
 
-    /**
-     * apply additional filters on the result
-     * 
-     * @param studyProtocols
-     */
-    private List<StudyProtocolQueryDTO> applyAdditionalFilters(
-            List<StudyProtocolQueryDTO> studyProtocols) {
-        List<String> documentWorkflowStatusCodes = getResultsDashboadStatusCodeFilter();
-        List<StudyProtocolQueryDTO> filteredList = new ArrayList<>();
-        for (StudyProtocolQueryDTO studyProtocolQueryDTO : studyProtocols) {
-            // Filter out all studies with lead org = NCI-CCR  
-            if (PAConstants.CCR_ORG_NAME
-                    .equalsIgnoreCase(studyProtocolQueryDTO
-                            .getLeadOrganizationName())) {
-                continue;
-
-            }
-            if (!(documentWorkflowStatusCodes.contains(studyProtocolQueryDTO.getDocumentWorkflowStatusCode().getCode()) 
-                || ((studyProtocolQueryDTO.getSubmissionTypeCode() == SubmissionTypeCode.A 
-                    && studyProtocolQueryDTO.getDocumentWorkflowStatusCode() 
-                        !=  DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED) 
-                    || (studyProtocolQueryDTO.getSubmissionTypeCode() == SubmissionTypeCode.U)))) {
-                continue;
-            }
-            filteredList.add(studyProtocolQueryDTO);
-        }
-        return filteredList;
-    }
+    
 
     /**
      * @return the protocolQueryService

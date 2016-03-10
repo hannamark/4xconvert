@@ -93,12 +93,15 @@ import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.dto.MilestonesDTO;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.CodedEnum;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.StudySourceCode;
+import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.enums.UnitsCode;
 import gov.nih.nci.pa.iso.convert.StudyMilestoneConverter;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
@@ -1678,6 +1681,45 @@ public class PAUtil {
 
         }
         return n >= start && n <= end;
+    }
+    
+    /**
+     * apply additional filters on the result
+     * 
+     * @param studyProtocols
+     */
+    public static List<StudyProtocolQueryDTO> applyAdditionalFilters(
+            List<StudyProtocolQueryDTO> studyProtocols) {
+        List<String> documentWorkflowStatusCodes = getResultsDashboadStatusCodeFilter();
+        List<StudyProtocolQueryDTO> filteredList = new ArrayList<>();
+        for (StudyProtocolQueryDTO studyProtocolQueryDTO : studyProtocols) {
+            // Filter out all studies with lead org = NCI-CCR  
+            if (PAConstants.CCR_ORG_NAME
+                    .equalsIgnoreCase(studyProtocolQueryDTO
+                            .getLeadOrganizationName())) {
+                continue;
+
+            }
+            if (!(documentWorkflowStatusCodes.contains(studyProtocolQueryDTO.getDocumentWorkflowStatusCode().getCode()) 
+                || ((studyProtocolQueryDTO.getSubmissionTypeCode() == SubmissionTypeCode.A 
+                    && studyProtocolQueryDTO.getDocumentWorkflowStatusCode() 
+                        !=  DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED) 
+                    || (studyProtocolQueryDTO.getSubmissionTypeCode() == SubmissionTypeCode.U)))) {
+                continue;
+            }
+            filteredList.add(studyProtocolQueryDTO);
+        }
+        return filteredList;
+    }
+    
+    private static List<String> getResultsDashboadStatusCodeFilter() {
+        List<String> list = new ArrayList<String>();
+        list.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE
+                .getCode());
+        list.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
+                .getCode());
+        list.add(DocumentWorkflowStatusCode.VERIFICATION_PENDING.getCode());
+        return list;
     }
 
 }

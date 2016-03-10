@@ -549,6 +549,21 @@ public interface MailManagerService {
     void sendJobFailureNotification(String jobName, String errorTrace);
     
     /**
+     * Send email to CTRO indicating no trials update for publish date
+     * @throws PAException PAException
+     */
+    void sendTrialPublishDateNoUpdateEmail() throws PAException;
+    
+    /**
+     * Send email to CTRO indicating publish date updated for trial
+     * @param trialNciIdList trialNciIdList
+     * @throws PAException PAException
+     *  
+     */
+    void sendTrialPublishDateUpdateEmail(List<String> trialNciIdList) throws
+    PAException;
+    
+    /**
      * An email message
      * @author gunnikrishnan
      */

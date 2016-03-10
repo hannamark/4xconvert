@@ -1712,6 +1712,54 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         assert(mailSubject.contains("123"));  
         
     }
+    
+    @Test
+    public void sendNoTrialPublishDateUpdateEmail() throws PAException {
+        
+        PAProperties prop = new PAProperties();
+        prop.setName("ccct.comparision.email.tolist");
+        prop.setValue("ccct.comparision.email.tolist");
+        TestSchema.addUpdObject(prop);
+
+        prop = new PAProperties();
+        prop.setName("resultsUpdater.trials.job.email.subject");
+        prop.setValue("CTRP Nightly Job Update Trial Results Published Date'");
+        TestSchema.addUpdObject(prop);
+        
+        prop = new PAProperties();
+        prop.setName("resultsUpdater.trials.job.notupdated.email.body");
+        prop.setValue("resultsUpdater.trials.job.notupdated.email.body");
+        TestSchema.addUpdObject(prop);
+        
+        bean.sendTrialPublishDateNoUpdateEmail();
+        String mailSubject= bean.commonMailSubjectReplacementsForNCI(prop.getValue(), "123");
+        assert(mailSubject.contains("123"));  
+        
+    }
+    
+    @Test
+    public void sendTrialPublishDateUpdateEmail() throws PAException {
+        
+        PAProperties prop = new PAProperties();
+        prop.setName("ccct.comparision.email.tolist");
+        prop.setValue("ccct.comparision.email.tolist");
+        TestSchema.addUpdObject(prop);
+
+        prop = new PAProperties();
+        prop.setName("resultsUpdater.trials.job.email.subject");
+        prop.setValue("CTRP Nightly Job Update Trial Results Published Date");
+        TestSchema.addUpdObject(prop);
+        
+        prop = new PAProperties();
+        prop.setName("resultsUpdater.trials.job.notupdated.email.body");
+        prop.setValue("resultsUpdater.trials.job.notupdated.email.body");
+        TestSchema.addUpdObject(prop);
+        
+        bean.sendTrialPublishDateNoUpdateEmail();
+        String mailSubject= bean.commonMailSubjectReplacementsForNCI(prop.getValue(), "123");
+        assert(mailSubject.contains("123"));  
+        
+    }
 
 
 }

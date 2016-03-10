@@ -144,6 +144,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -2951,6 +2952,43 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
         
     }
     
+    @Override
+    public void sendTrialPublishDateNoUpdateEmail() throws PAException {
+        String mailTo = lookUpTableService
+                .getPropertyValue("abstraction.script.mailTo");
+           
+        String mailSubject = lookUpTableService.getPropertyValue("resultsUpdater.trials.job.email.subject");
+        String body = lookUpTableService.getPropertyValue("resultsUpdater.trials.job.notupdated.email.body");
+        sendMailWithHtmlBody(mailTo, mailSubject, body);
+        
+    }
+    
+    @Override
+    public void sendTrialPublishDateUpdateEmail(List<String> trialNciIdList)
+            throws PAException {
+       Collections.sort(trialNciIdList);
+       String mailTo = lookUpTableService
+               .getPropertyValue("abstraction.script.mailTo");
+          
+       String mailSubject = lookUpTableService.getPropertyValue("resultsUpdater.trials.job.email.subject");
+       try {
+       
+       Template bodyFtl = cfg
+               .getTemplate("resultsUpdater.trials.job.updated.email.body");
+        Map<String, Object> root = new HashMap<String, Object>();
+        root.put("trialNciIdList", trialNciIdList);
+        StringWriter body = new StringWriter();
+        bodyFtl.process(root, body);
+        sendMailWithHtmlBody(mailTo, mailSubject, body.toString());
+       } catch (Exception e) {
+           throw new PAException(e.getMessage());
+       }
+       
+        
+    }
+
+    
+    
 
     @Override
     public List<MailMessage> getNewEmails(String mailServer, int port, String user, String password, String folder) 
@@ -3053,7 +3091,11 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
         }                
         return getStudyIdentifiers(spDTO);
     }
-    
+
+
+   
+
+   
     
     
    
