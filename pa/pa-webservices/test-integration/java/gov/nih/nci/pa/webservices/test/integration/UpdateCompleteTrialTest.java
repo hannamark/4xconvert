@@ -31,6 +31,8 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 import com.dumbster.smtp.SmtpMessage;
 
@@ -90,19 +92,20 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
         info.uuid = info.leadOrgID;
         logoutPA();
         selectTrialInPA(info);
-        addSiteToTrial(info, "DCP", "In Review" , true);
-        addSiteToTrial(info, "CTEP", "Active" , true);
-        addSiteToTrial(info, "NCI", "Withdrawn" , true);
+        addSiteToTrial(info, "DCP", "In Review", true);
+        addSiteToTrial(info, "CTEP", "Active", true);
+        addSiteToTrial(info, "NCI", "Withdrawn", true);
 
         CompleteTrialUpdate upd = readCompleteTrialUpdateFromFile("/integration_update_complete_closed_trial.xml");
-       
-      //set trial status date to later value than of participating site status date
+
+        // set trial status date to later value than of participating site
+        // status date
         GregorianCalendar c = new GregorianCalendar();
         c.setTime(new Date());
-        XMLGregorianCalendar trialStatusDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+        XMLGregorianCalendar trialStatusDate = DatatypeFactory.newInstance()
+                .newXMLGregorianCalendar(c);
         upd.setTrialStatusDate(trialStatusDate);
-        
-        
+
         restartEmailServer();
         HttpResponse response = updateTrialFromJAXBElement("pa",
                 rConf.getPaTrialID() + "", upd);
@@ -431,6 +434,26 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
         clickAndWait("link=Trial History");
         clickAndWait("id=updatesId");
         assertTrue(selenium.isTextPresent("Nothing found to display"));
+    }
+
+    @Test
+    public void testUpdateIrbOnly() throws Exception {
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
+
+        CompleteTrialUpdate upd = readCompleteTrialUpdateFromFile("/integration_update_complete_irb_only.xml");
+        HttpResponse response = updateTrialFromJAXBElement("pa",
+                rConf.getPaTrialID() + "", upd);
+        TrialRegistrationConfirmation uConf = processTrialRegistrationResponseAndDoBasicVerification(response);
+        assertEquals(rConf.getPaTrialID(), uConf.getPaTrialID());
+        assertEquals(rConf.getNciTrialID(), uConf.getNciTrialID());
+
+        clickAndWait("link=Trial History");
+        clickAndWait("id=updatesId");
+        final WebElement element = driver
+                .findElement(By
+                        .xpath("//div[@id='updates']//table[@id='row']/tbody/tr/td[2]"));
+        assertEquals("IRB Approval Document document was updated.", element
+                .getText().trim());
     }
 
     private void verifyUpdate(CompleteTrialUpdate upd,
