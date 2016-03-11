@@ -62,9 +62,7 @@ function loadProgramCodes($) {
             },
             "serverSide": false,
             "columns": [{
-                "data": function(row,type,val,meta){
-                	return '<a href="#" class="mcapage" rel="' + row.programCodeId + '">' +row.programCode+ '</a>';
-                }
+            	"data": "programCode"
             }, {
                 "data": "programName"
             }, {
@@ -93,6 +91,11 @@ function loadProgramCodes($) {
             }
                   ],
             "columnDefs": [{
+                "render": function(data, type, full) {
+                    return '<a href="#" class="mcapage" rel="' + full.programCodeId + '">' +data+ '</a>';
+                 },
+                 "targets": [0]
+             },{
                 "render": function(data, type, full) {
                     if (full.isActive === false) {
                         return ' <span style="color:red;font-weight:bold"> (INACTIVE) </span>' + data;
@@ -143,6 +146,8 @@ function loadProgramCodes($) {
   	        $("#dialog-edit").data('currentProgramCodeId', data.programCodeId);
  	        $("#updatedProgramCode").val(data.programCode);
  	        $("#updatedProgramName").val(data.programName);
+ 	      	var row =  $('#programCodesTable').dataTable().fnGetPosition( $(this).parent().parent()[0] );
+	        $("#dialog-confirm").data('trClicked', row);
  	        $("#dialog-edit").dialog('open');
  	 } );
     	 
@@ -196,8 +201,9 @@ function loadProgramCodes($) {
                                         })
                                         .done(
                                         function() {
-                                            $('tr.selected').find('td:nth-child(1)').html('<a href="#" class="mcapage" rel="' + $('#updatedProgramCode').val() + '">' +$('#updatedProgramCode').val()+ '</a>');
-                                            $('tr.selected').find('td:nth-child(2)').html($('#updatedProgramName').val());
+                                        	var row =  $("#dialog-confirm").data('trClicked') ;
+                                        	// Case where only program name changed, so update only that
+											$('#programCodesTable').dataTable().fnUpdate($('#updatedProgramName').val() , row, 1 );
 
                                             $('#programCodesTable tbody tr').each(function(){
                                                 $(this).removeClass("selected");
@@ -261,9 +267,11 @@ function loadProgramCodes($) {
                                        })
                                        .done(
                                        function() {
-                                           $('tr.selected').find('td:nth-child(1)').html('<a href="#" class="mcapage" rel="' + $('#updatedProgramCode').val() + '">' + $('#updatedProgramCode').val()+ '</a>');
-                                           $('tr.selected').find('td:nth-child(2)').html($('#updatedProgramName').val());
-                                           $('#programCodesTable tbody tr').each(function(){
+                                    	   var row =  $("#dialog-confirm").data('trClicked') ;
+										   $('#programCodesTable').dataTable().fnUpdate($('#updatedProgramCode').val() , row, 0);
+										   $('#programCodesTable').dataTable().fnUpdate($('#updatedProgramName').val() , row, 1 );
+                                    	   
+                                    	   $('#programCodesTable tbody tr').each(function(){
                                                $(this).removeClass("selected");
                                            });
                                            showProgramCodeUpdatedFlashMessage();

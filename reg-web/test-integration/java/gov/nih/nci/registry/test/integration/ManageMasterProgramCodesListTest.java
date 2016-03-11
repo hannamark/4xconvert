@@ -237,6 +237,19 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         // verify confirmation message is shown
         ((JavascriptExecutor) driver).executeScript("scroll(0, -250);");
         assertTrue(selenium.isTextPresent("Program code has been successfully updated"));
+        
+        // re-open the edit dialog
+        updateProgramCodebutton.click();
+        // verify that latest values show up instead of the old values
+        assertTrue(selenium.isTextPresent("PG1-updated"));
+        assertTrue(selenium.isTextPresent("Cancer Program1-updated"));
+        
+        // Verify that latest values can be searched upon
+        selenium.typeKeys("//div[@id='programCodesTable_filter']/descendant::label/descendant::input", "updated");
+        pause(2000);
+        //should see latest program code values
+        assertEquals("PG1-updated",driver.findElement(By.xpath("//table[@id='programCodesTable']/tbody/tr/td[1]")).getText());
+        
         logoutUser();
     }
     
