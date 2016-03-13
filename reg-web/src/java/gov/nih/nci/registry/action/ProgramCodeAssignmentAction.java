@@ -746,7 +746,7 @@ public class ProgramCodeAssignmentAction extends ActionSupport implements Prepar
             o.put("DT_RowId", "trial_" + trial.getStudyProtocolId());
 
             JSONArray pgcArr = new JSONArray();
-            for (ProgramCodeDTO pg : trial.getProgramCodes()) {
+            for (ProgramCodeDTO pg : trial.getProgramCodesAsOrderedList()) {
                 JSONObject pgcObj = new JSONObject();
                 pgcObj.put("id", pg.getId());
                 pgcObj.put("code", pg.getProgramCode());

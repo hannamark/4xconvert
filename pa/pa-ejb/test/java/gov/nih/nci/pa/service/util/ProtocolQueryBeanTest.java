@@ -293,6 +293,14 @@ public class ProtocolQueryBeanTest extends AbstractEjbTestCase {
             assertTrue(pgIds.contains(TestSchema.theProgramCodes.get(0).getId()));
         }
 
+        for (StudyProtocolQueryDTO sp : list) {
+            List<Long> pgIds = new ArrayList<Long>();
+            for(ProgramCodeDTO pc : sp.getProgramCodesAsOrderedList()) {
+                pgIds.add(pc.getId());
+            }
+            assertTrue(pgIds.contains(TestSchema.theProgramCodes.get(0).getId()));
+        }
+
     }
 
 

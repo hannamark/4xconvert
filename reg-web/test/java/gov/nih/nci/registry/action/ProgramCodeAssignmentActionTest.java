@@ -249,7 +249,7 @@ public class ProgramCodeAssignmentActionTest  extends AbstractRegWebTest {
           //then I must see no fields
           is = (InputStream) field.get(sr);
           json = IOUtils.toString(is);
-          assertEquals("{\"endDateChanged\":false,\"updated\":false,\"lengthChanged\":false,\"data\":[{\"title\":\"title\",\"identifiers\":\"1, 2\",\"programCodes\":[{\"id\":3,\"name\":\"3\"},{\"id\":4,\"name\":\"4\"}],\"DT_RowId\":\"trial_null\",\"trialStatus\":\"Active\",\"piFullName\":\"Joel Joseph\",\"nciIdentifier\":\"1\"}]}", json);
+          assertEquals("{\"endDateChanged\":false,\"updated\":false,\"lengthChanged\":false,\"data\":[{\"title\":\"title\",\"identifiers\":\"1, 2\",\"programCodes\":[{\"id\":3,\"name\":\"3\",\"code\":\"3\"},{\"id\":4,\"name\":\"4\",\"code\":\"4\"}],\"DT_RowId\":\"trial_null\",\"trialStatus\":\"Active\",\"piFullName\":\"Joel Joseph\",\"nciIdentifier\":\"1\"}]}", json);
 
 
       } catch (Exception e) {
@@ -293,7 +293,7 @@ public class ProgramCodeAssignmentActionTest  extends AbstractRegWebTest {
             is = (InputStream) field.get(sr);
             json = IOUtils.toString(is);
 
-            assertEquals("{\"endDateChanged\":false,\"updated\":false,\"lengthChanged\":false,\"data\":[{\"title\":\"title\",\"identifiers\":\"1, 2\",\"programCodes\":[{\"id\":3,\"name\":\"3\"},{\"id\":4,\"name\":\"4\"}],\"DT_RowId\":\"trial_null\",\"trialStatus\":\"Active\",\"piFullName\":\"Joel Joseph\",\"nciIdentifier\":\"1\"}]}", json);
+            assertEquals("{\"endDateChanged\":false,\"updated\":false,\"lengthChanged\":false,\"data\":[{\"title\":\"title\",\"identifiers\":\"1, 2\",\"programCodes\":[{\"id\":3,\"name\":\"3\",\"code\":\"3\"},{\"id\":4,\"name\":\"4\",\"code\":\"4\"}],\"DT_RowId\":\"trial_null\",\"trialStatus\":\"Active\",\"piFullName\":\"Joel Joseph\",\"nciIdentifier\":\"1\"}]}", json);
 
 
         } catch (Exception e) {
@@ -337,9 +337,11 @@ public class ProgramCodeAssignmentActionTest  extends AbstractRegWebTest {
         trial.setOfficialTitle("title");
         trial.setPiFullName("Joel Joseph");
         ProgramCodeDTO pg1 = new ProgramCodeDTO();
+        pg1.setProgramCode("3");
         pg1.setProgramName("3");
         pg1.setId(3L);
         ProgramCodeDTO pg2 = new ProgramCodeDTO();
+        pg2.setProgramCode("4");
         pg2.setProgramName("4");
         pg2.setId(4L);
         trial.setProgramCodes(Arrays.asList(pg1, pg2));

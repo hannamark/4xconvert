@@ -121,6 +121,8 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -338,7 +340,12 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction
             }
         }
         programCode = StringUtils.join(selectedPgcIdList, ",");
-
+        Collections.sort(masterPgcList, new Comparator<ProgramCodeDTO>() {
+            @Override
+            public int compare(ProgramCodeDTO o1, ProgramCodeDTO o2) {
+                return o1.getProgramCode().compareTo(o2.getProgramCode());
+            }
+        });
         getServletRequest()
                 .getSession().setAttribute(SESSION_PGC_MASTER_LIST_ATTRIBUTE, masterPgcList);
         getServletRequest()
