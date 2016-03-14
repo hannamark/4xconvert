@@ -114,7 +114,8 @@ import org.junit.runners.Suite.SuiteClasses;
         ManageUserGroupsTest.class, AbstractionValidationTest.class,
         ResultsAbstractorRoleActionsTest.class,
         ParticipatingSiteCloseTest.class, TrialFundingTest.class,
-        TrialValidationTest.class, GeneralTrialDetailsTest.class
+        TrialValidationTest.class, GeneralTrialDetailsTest.class,
+        ResultsPublishedDateTest.class
 
 })
 public class AllSeleniumTests {
