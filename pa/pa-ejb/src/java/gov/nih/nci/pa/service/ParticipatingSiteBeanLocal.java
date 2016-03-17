@@ -176,6 +176,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
+import org.hibernate.exception.ExceptionUtils;
 
 /**
  * @author mshestopalov
@@ -665,7 +666,9 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
             return new ParticipatingSiteConverter().convertFromDomainToDto(ss);
         } catch (EJBTransactionRolledbackException e) {
             LOG.error(e, e);
-            if (e.getCause() instanceof ConstraintViolationException) {
+            if (e.getCause() instanceof ConstraintViolationException 
+               || ExceptionUtils.getRootCause(e).getMessage().equalsIgnoreCase(
+                "ERROR: Can not add duplicate Participating site")) {
                 throw new DuplicateParticipatingSiteException(
                         // NOPMD
                         studySiteDTO.getStudyProtocolIdentifier(), poHcfIi,

@@ -2044,4 +2044,8 @@
         <comment>Changes to Results Reporting Dashboard - Clinicaltrials.gov checkin meeting on 2/25</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.3.1/PO-9666.sql"/>
     </changeSet>
+	<changeSet author="Reshma" id="PO-9660">
+    <comment>Create triggers on Study_site table</comment>
+    <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/4.3.1/PO-9660.sql"/>
+    </changeSet>
 </databaseChangeLog>

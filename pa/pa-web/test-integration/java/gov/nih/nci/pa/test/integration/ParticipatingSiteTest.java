@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 import gov.nih.nci.pa.test.integration.support.Batch;
 
 import java.sql.SQLException;
@@ -171,4 +173,35 @@ public class ParticipatingSiteTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isTextPresent("single \' quotes\'"));
       
     }
+    
+    @Test
+    public void testduplicatePS() throws PAException, SQLException {
+        TrialInfo info = createAndSelectTrial();
+        addSiteToTrialWithName(info, "single", "In Review");
+        clickAndWait("link=Participating Sites");
+       
+        
+        clickAndWait("link=Participating Sites");
+        clickAndWait("link=Add");
+        clickAndWaitAjax("link=Look Up");
+        waitForElementById("popupFrame", 15);
+        selenium.selectFrame("popupFrame");
+        waitForElementById("orgNameSearch", 15);
+        selenium.type("orgNameSearch", "single");
+        clickAndWaitAjax("link=Search");
+        waitForElementById("row", 15);
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[9]/a");
+        waitForPageToLoad();
+        driver.switchTo().defaultContent();
+        if (s.isElementPresent("siteLocalTrialIdentifier"))
+            selenium.type("siteLocalTrialIdentifier", info.uuid);
+        selenium.select("recStatus", "In Review");
+        selenium.type("id=recStatusDate", today);
+        clickAndWait("link=Save");
+        
+        assertTrue(selenium.isTextPresent("A Participating Site with trial id"));
+        assertTrue(selenium.isTextPresent("already exists."));
+        
+    }
+
 }

@@ -113,6 +113,28 @@ public final class ParticipatingSiteServiceTest extends AbstractRestServiceTest 
         final String xmlFile = "/integration_ps_add_minimum_info.xml";
         addSite(xmlFile);
     }
+    
+    
+    @Test
+    public void testDuplicatePS() throws Exception {
+        final String xmlFile = "/integration_ps_add.xml";
+        
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
+        makeAbbreviated(rConf);
+        ParticipatingSite upd = readParticipatingSiteFromFile(xmlFile);
+        HttpResponse response = addSite("pa", rConf.getPaTrialID() + "", upd);
+        assertEquals(200, getReponseCode(response));
+        assertEquals(TEXT_PLAIN, getResponseContentType(response));
+        assertEquals("", response.getFirstHeader("Set-Cookie").getValue());
+        long siteID = Long.parseLong(EntityUtils.toString(response.getEntity(),
+                "utf-8"));
+        verifySite(rConf, siteID, upd);
+        upd = readParticipatingSiteFromFile(xmlFile);
+        response = addSite("pa", rConf.getPaTrialID() + "", upd);
+        assertEquals(500, getReponseCode(response));
+        assertEquals(TEXT_PLAIN, getResponseContentType(response));
+        
+    }
 
     @Test
     public void testAddSiteWithPrimaryContact() throws Exception {
