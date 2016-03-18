@@ -19,7 +19,7 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-xs-6 intro">
-				<img src="<%=request.getContextPath()%>/images/nci-logo.png"
+				<img src="<%=request.getContextPath()%>/images/nci-logo.png" alt="NCI logo"
 					class="pull-left" />
 				<h4>Welcome to NCI's Clinical Trials Reporting Program</h4>
 				<p>This site allows for the upload of accrual data for trials submitted to CTRP. 

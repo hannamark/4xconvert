@@ -39,7 +39,7 @@
 
 <!-- Begin page content -->
     <div class="row">
-      <div class="col-xs-6 intro"> <img src="/registry/images/nci-logo.png" class="pull-left"/>
+      <div class="col-xs-6 intro"> <img src="/registry/images/nci-logo.png" alt="NCI logo" class="pull-left"/>
         <h4>Welcome to NCI&apos;s Clinical Trials Reporting Program</h4>
         <p>This site enables you to register a trial with NCI&apos;s Clinical Trials Reporting Program. You can:</p>
         <ul>

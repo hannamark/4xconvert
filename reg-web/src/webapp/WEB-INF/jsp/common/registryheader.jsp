@@ -24,7 +24,7 @@
       <c:choose>
         <c:when test="${(pageContext.request.remoteUser != null && sessionScope.disclaimerAccepted)}">
 	        <div class="col-xs-9">
-	          <div class="navbar-brand"><a data-placement="top" rel="tooltip" href="#" data-original-title="Clinical Trials Reporting Program"><img src="${imagePath}/logo.png"></a></div>
+	          <div class="navbar-brand"><a data-placement="top" rel="tooltip" href="#" data-original-title="Clinical Trials Reporting Program"><img src="${imagePath}/logo.png" alt="logo"></a></div>
 	        </div>
 	        <div class="col-xs-3">
 	          <div class="dropdown pull-right">
@@ -41,7 +41,7 @@
         </c:when>
         <c:otherwise>
         	<div class="align-center">
-	          <div class="navbar-brand"><a data-placement="top" rel="tooltip" href="#" data-original-title="Clinical Trials Reporting Program"><img src="${imagePath}/logo.png"></a></div>
+	          <div class="navbar-brand"><a data-placement="top" rel="tooltip" href="#" data-original-title="Clinical Trials Reporting Program"><img src="${imagePath}/logo.png" alt="logo"></a></div>
 	        </div>
         </c:otherwise>
 	  </c:choose>
