@@ -252,41 +252,48 @@ public class TrialCountsAction extends ActionSupport implements Preparable,
             Date submittedOn = dto.getLastCreated().getDateLastCreated();
 
             //filter if from & to dates are provided
-            if (!((from != null && submittedOn.before(from)) || (to != null && submittedOn.after(to)))) {
+          //filter if from & to dates are provided
+            // if (!((from != null && submittedOn.before(from)) || (to != null && submittedOn.after(to)))) {
 
-                //find the lowest and highest dates
-                if (lowest == null || lowest.after(submittedOn)) {
-                    lowest = submittedOn;
-                }
-                if (highest == null || highest.before(submittedOn)) {
-                    highest = submittedOn;
-                }
+                 //find the lowest and highest dates
+                 if (lowest == null || lowest.after(submittedOn)) {
+                     lowest = submittedOn;
+                 }
+                 if (highest == null || highest.before(submittedOn)) {
+                     highest = submittedOn;
+                 }
 
 
-                String strDate = DateFormatUtils.format(submittedOn, PAUtil.DATE_FORMAT);
+                 String strDate = DateFormatUtils.format(submittedOn, PAUtil.DATE_FORMAT);
 
-                //update submitted index
-                Integer nSubmitted = submittedIndex.get(strDate);
-                nSubmitted = nSubmitted != null ? nSubmitted + 1 : 1;
-                submittedIndex.put(strDate, nSubmitted);
+                 //update submitted index
+                 Integer nSubmitted = submittedIndex.get(strDate);
+                 nSubmitted = nSubmitted != null ? nSubmitted + 1 : 1;
+                 submittedIndex.put(strDate, nSubmitted);
+                 
+                 Date tenBusinessDay =dto.getCalculatedSubmissionPlusTenBizDate();
+                 if ((tenBusinessDay.after(from) && tenBusinessDay.before(to))
+                      || (DateUtils.isSameDay(tenBusinessDay, from)|| DateUtils.isSameDay(tenBusinessDay, to))  ) {
+                    String strTenDate = DateFormatUtils.format(tenBusinessDay, PAUtil.DATE_FORMAT);
+                     Integer n10Days = tenDaysIndex.get(strTenDate);
+                     n10Days = n10Days != null ? n10Days + 1 : 1;
+                     tenDaysIndex.put(strTenDate, n10Days);
+                 }
+                 
+                 //update the expected index
+                 Date expectedDate = dto.getExpectedAbstractionCompletionDate();
+                 String strExpectedDate = DateFormatUtils.format(dto.getExpectedAbstractionCompletionDate(), PAUtil.DATE_FORMAT);
+                 if ((expectedDate.after(from) && expectedDate.before(to))
+                         || (DateUtils.isSameDay(expectedDate, from)|| DateUtils.isSameDay(expectedDate, to))  ) {
+                     Integer nExpected = expectedOnIndex.get(strExpectedDate);
+                     nExpected = nExpected != null ? nExpected + 1 : 1;
+                     expectedOnIndex.put(strExpectedDate, nExpected);
+                 }
+                 
 
-                //update 10-day index
-                Integer daysPast = dto.getBizDaysSinceSubmitted();
-                if (daysPast == TEN) {
-                    Integer n10Days = tenDaysIndex.get(strDate);
-                    n10Days = n10Days != null ? n10Days + 1 : 1;
-                    tenDaysIndex.put(strDate, n10Days);
-                }
+             }
 
-                //update the expected index
-                String strExpectedDate = DateFormatUtils.format(dto.getExpectedAbstractionCompletionDate(), PAUtil.DATE_FORMAT);
-                Integer nExpected = expectedOnIndex.get(strDate);
-                nExpected = nExpected != null ? nExpected + 1 : 1;
-                expectedOnIndex.put(strExpectedDate, nExpected);
-
-            }
-
-        }
+        // }
 
 
         //return if highest or lowest is null

@@ -395,22 +395,29 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         // Panel must be collapsible, but initially open.
         verifyPanelWidget("trials_bydate", "Trial Counts by Date");
+        
+        
+     
 
 
         //Verify that no data comes when filtered out of range.
         s.type("countRangeFrom", "08/10/2015");
         s.type("countRangeTo", "08/11/2015");
         s.click("btnDisplayCounts");
-        waitForElementToBecomeAvailable(By.xpath("//table[@id='trials_bydate_table']//td[@class='dataTables_empty']"), 20);
+        waitForTextToAppear(By.xpath("//table[@id='trials_bydate_table']//tr[1]/td[1]"), "08/10/2015", 30);
+        waitForElementToBecomeVisible(By.xpath("//table[@id='trials_bydate_table']//tr[2]"), 20);
+        assertEquals("", s.getText("//tr[@id='TotalByCount']/td[2]"));
 
         // Verify that data is filtered properly
         Date from = new Date();
         from =  PAUtil.isBusinessDay(from) ? from : PAUtil.addBusinessDays(from , -1);
-        s.type("countRangeFrom", DateFormatUtils.format(PAUtil.addBusinessDays(from, -1), PAUtil.DATE_FORMAT));
+        String fromDate = DateFormatUtils.format(PAUtil.addBusinessDays(from, -1), PAUtil.DATE_FORMAT);
+        s.type("countRangeFrom", fromDate);
         s.type("countRangeTo", DateFormatUtils.format(PAUtil.addBusinessDays(new Date(), 1), PAUtil.DATE_FORMAT));
 
         //click on display counts and wait for reload
         s.click("btnDisplayCounts");
+        waitForTextToAppear(By.xpath("//table[@id='trials_bydate_table']//tr[1]/td[1]"), fromDate, 30);
         waitForElementToBecomeVisible(By.xpath("//table[@id='trials_bydate_table']//tr[2]"), 20);
         assertEquals("6", s.getText("//tr[@id='TotalByCount']/td[2]"));
 
@@ -432,13 +439,13 @@ public class DashboardTest extends AbstractTrialStatusTest {
         s.type("countRangeFrom", "08/10/2015");
         s.type("countRangeTo", "08/11/2015");
         s.click("btnDisplayCounts");
-        waitForElementToBecomeAvailable(By.xpath("//table[@id='trials_bydate_table']//td[@class='dataTables_empty']"), 20);
+        waitForTextToAppear(By.xpath("//table[@id='trials_bydate_table']//tr[1]/td[1]"), "08/10/2015", 30);
 
         s.type("countRangeFrom", DateFormatUtils.format(PAUtil.addBusinessDays(from, -1), PAUtil.DATE_FORMAT));
         s.type("countRangeTo", DateFormatUtils.format(PAUtil.addBusinessDays(new Date(), 10), PAUtil.DATE_FORMAT));
         s.click("btnDisplayCounts");
         waitForElementToBecomeVisible(By.xpath("//table[@id='trials_bydate_table']//tr[2]"), 20);
-        assertEquals("1", s.getText("//tr[@id='TotalByCount']/td[4]"));
+        assertEquals("", s.getText("//tr[@id='TotalByCount']/td[4]"));
 
     }
 

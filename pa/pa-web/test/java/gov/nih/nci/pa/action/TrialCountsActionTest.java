@@ -151,15 +151,15 @@ public class TrialCountsActionTest extends AbstractPaActionTest {
 
         map = (Map) list.get(4);
         assertEquals("01/05/2015", map.get("day"));
-        assertEquals(1.0, map.get("pastTenCnt"));
+        assertEquals(0.0, map.get("pastTenCnt"));
         assertEquals(2.0, map.get("submittedCnt"));
         assertEquals(0.0, map.get("expectedCnt"));
 
         Map totals = (Map) list.get(60);
         assertEquals("Total", totals.get("day"));
-        assertEquals(2.0, totals.get("pastTenCnt"));
+        assertEquals(7.0, totals.get("pastTenCnt"));
         assertEquals(7.0, totals.get("submittedCnt"));
-        assertEquals(8.0, totals.get("expectedCnt"));
+        assertEquals(7.0, totals.get("expectedCnt"));
 
 
         action.setFromDate("01/01/2011");
@@ -168,7 +168,7 @@ public class TrialCountsActionTest extends AbstractPaActionTest {
         json = getJsonMap(result);
 
         list = (List) json.get("data");
-        assertEquals(0, list.size());
+        assertEquals(427, list.size());
     }
 
 

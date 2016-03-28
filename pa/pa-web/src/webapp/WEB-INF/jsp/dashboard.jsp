@@ -1020,6 +1020,7 @@ tr.holiday {
                     }
                 },
                 "columnDefs" : [{
+                	"className": "dt-center",
                     "targets" : [0,1,2,3],
                     "orderable" : false
                 },

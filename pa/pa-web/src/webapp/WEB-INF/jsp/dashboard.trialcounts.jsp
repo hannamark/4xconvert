@@ -102,7 +102,7 @@
             <table id="trials_bydate_table">
                 <thead>
                 <tr>
-                    <th><fmt:message key="dashboard.trialCountsByDate.date" /></th>
+                    <th style="height:35px;!important"><fmt:message key="dashboard.trialCountsByDate.date" /></th>
                     <th><fmt:message key="dashboard.trialCountsByDate.submitted" /></th>
                     <th><fmt:message key="dashboard.trialCountsByDate.submittedplus10" /></th>
                     <th><fmt:message key="dashboard.trialCountsByDate.expectedToComplete" /></th>
