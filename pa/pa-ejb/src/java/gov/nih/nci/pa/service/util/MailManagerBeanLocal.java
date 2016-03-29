@@ -2567,7 +2567,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
                 sendCTROWarningEmail(userName, leadOrgName, "CreateWarning", createTrialIDS);
             }
             if (amendCount > 0) {
-                sendCTROWarningEmail(userName, leadOrgName, "AmendWarning", createTrialIDS);
+                sendCTROWarningEmail(userName, leadOrgName, "AmendWarning", amendTrialIDS);
             }
     }
     

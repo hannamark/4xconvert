@@ -80,6 +80,7 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.EnPn;
 import gov.nih.nci.iso21090.EntityNamePartType;
@@ -765,7 +766,18 @@ public class BatchCreateProtocols {
                            .convertYesNoStringToBl(batchDTO.getDelayedPostingIndicator()))) {
                      trialDTO.setDelayedPostingIndicator(BlConverter.convertBlToYesNoString(spDTO
                            .getDelayedpostingIndicator()));
+                     
                      delayedPostingIndWarning = "AmendWarning";
+                     //ignore no and null comparison
+                     Bl batchValue = BlConverter
+                             .convertYesNoStringToBl(batchDTO.getDelayedPostingIndicator());
+                     if (BlConverter.convertToBoolean(spDTO.getDelayedpostingIndicator()) == null
+                            && BlConverter.convertToBoolean(batchValue) != null
+                             && !BlConverter.convertToBoolean(batchValue)) {
+                         delayedPostingIndWarning = "";  
+                     }
+                     
+                     
                  }
             } else if (batchDTO.getSubmissionType().equalsIgnoreCase("O") && StringUtils
                  .isNotEmpty(batchDTO.getDelayedPostingIndicator())) {
