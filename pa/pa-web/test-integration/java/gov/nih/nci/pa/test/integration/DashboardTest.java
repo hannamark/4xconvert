@@ -440,12 +440,15 @@ public class DashboardTest extends AbstractTrialStatusTest {
         s.type("countRangeTo", "08/11/2015");
         s.click("btnDisplayCounts");
         waitForTextToAppear(By.xpath("//table[@id='trials_bydate_table']//tr[1]/td[1]"), "08/10/2015", 30);
+        assertEquals("", s.getText("//tr[@id='TotalByCount']/td[4]"));
 
         s.type("countRangeFrom", DateFormatUtils.format(PAUtil.addBusinessDays(from, -1), PAUtil.DATE_FORMAT));
         s.type("countRangeTo", DateFormatUtils.format(PAUtil.addBusinessDays(new Date(), 10), PAUtil.DATE_FORMAT));
         s.click("btnDisplayCounts");
+        waitForTextToAppear(By.xpath("//table[@id='trials_bydate_table']//tr[1]/td[1]"),
+                DateFormatUtils.format(PAUtil.addBusinessDays(from, -1), PAUtil.DATE_FORMAT), 30);
         waitForElementToBecomeVisible(By.xpath("//table[@id='trials_bydate_table']//tr[2]"), 20);
-        assertEquals("", s.getText("//tr[@id='TotalByCount']/td[4]"));
+        assertEquals("10", s.getText("//tr[@id='TotalByCount']/td[4]"));
 
     }
 
