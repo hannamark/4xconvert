@@ -96,7 +96,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(value = { AmendTrialTest.class,ProgramCodeAssignmentTest.class, LoginTest.class, AddSitesTest.class,
         RegisterAbbreviatedTrialTest.class, RegisterTrialTest.class,
         TrialSearchTest.class, AddUpdateSiteTest.class,
-         UpdateTrialTest.class, ReportViewITest.class, ProgramCodesTest.class,
+        BatchUploadTest.class, UpdateTrialTest.class, ReportViewITest.class, ProgramCodesTest.class,
         ManageMasterProgramCodesListTest.class, MyAccountTest.class, SignUpTest.class, TrialDataVerificationTest.class })
 public class AllSeleniumTests {
 
