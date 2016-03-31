@@ -2048,4 +2048,10 @@
     <comment>Create triggers on Study_site table</comment>
     <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/4.3.1/PO-9660.sql"/>
     </changeSet>
+    <changeSet author="khandalkara" id="PO-9496-trigger">
+    <comment>Possible bug - CTRO receiving note that Delayed Posting Indicator was changed</comment>
+    <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/4.3.1/PO-9496-trigger.sql"/>
+    </changeSet>
+    
+    
 </databaseChangeLog>
