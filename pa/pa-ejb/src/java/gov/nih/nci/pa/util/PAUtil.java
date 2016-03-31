@@ -1447,34 +1447,54 @@ public class PAUtil {
      * @return boolean
      */
     @SuppressWarnings("PMD.CyclomaticComplexity")
-    public static boolean isBusinessDay(Date date) {
-        Calendar cal = Calendar.getInstance();
+    public static boolean isBusinessDay(final Date date) {
+        final Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
                 || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
             return false;
         }
 
-        Set<Holiday> holidays = HOLIDAY_MANAGER.getHolidays(date.getYear()
-                + DATE_YEAR_DIFF, HOLIDAY_STATE);
-        for (Holiday holiday : holidays) {
-            final Date holidayDate = holiday.getDate()
-                    .toDateTimeAtStartOfDay().toDate();
-            if (DateUtils.isSameDay(date, holidayDate)) {
-                return false;
-            }
-            // The library does not properly handle situation when a holiday
-            // falls on Sat/Sun and is therefore
-            // pushed to the following Monday.
-            // CHECKSTYLE:OFF
-            if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY
-                    && (DateUtils.isSameDay(DateUtils.addDays(date, -1),
-                            holidayDate) || DateUtils.isSameDay(
-                            DateUtils.addDays(date, -2), holidayDate))) {
-                return false;
-            }
+        final Date cacheKey = DateUtils.truncate(date, Calendar.DAY_OF_MONTH);
+        try {
+            return Boolean.TRUE.equals(CacheUtils.getFromCacheOrBackend(
+                    CacheUtils.getBizDayCache(), cacheKey.toGMTString(),
+                    new CacheUtils.Closure() {
+                        @SuppressWarnings("deprecation")
+                        @Override
+                        public Object execute() throws PAException {
+                            final Set<Holiday> holidays = HOLIDAY_MANAGER
+                                    .getHolidays(date.getYear()
+                                            + DATE_YEAR_DIFF, HOLIDAY_STATE);
+                            for (Holiday holiday : holidays) {
+                                final Date holidayDate = holiday.getDate()
+                                        .toDateTimeAtStartOfDay().toDate();
+                                if (DateUtils.isSameDay(date, holidayDate)) {
+                                    return Boolean.FALSE;
+                                }
+                                // The library does not properly handle
+                                // situation
+                                // when a holiday
+                                // falls on Sat/Sun and is therefore
+                                // pushed to the following Monday.
+                                // CHECKSTYLE:OFF
+                                if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY
+                                        && (DateUtils.isSameDay(
+                                                DateUtils.addDays(date, -1),
+                                                holidayDate) || DateUtils
+                                                .isSameDay(DateUtils.addDays(
+                                                        date, -2), holidayDate))) {
+                                    return Boolean.FALSE;
+                                }
+                            }
+                            return Boolean.TRUE;
+                        }
+                    }));
+        } catch (PAException e) {
+            LOG.error(e, e);
+            throw new RuntimeException(e);
         }
-        return true;
+
     }
     
     /**

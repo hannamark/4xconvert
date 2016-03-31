@@ -170,5 +170,13 @@
          timeToLiveSeconds="120"
          overflowToDisk="false"
     />    
+    
+     <cache
+         name="BIZ_DAY_CACHE_KEY"
+         maxElementsInMemory="1095"
+         eternal="true"         
+         overflowToDisk="false"
+         memoryStoreEvictionPolicy="LRU"
+    />   
 
 </ehcache>

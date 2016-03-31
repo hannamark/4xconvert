@@ -32,6 +32,14 @@ public final class CacheUtils {
     private static final String TSR_CACHE_KEY = "TSR_CACHE";
     private static final String STUDY_SITE_CONTACTS_CACHE_KEY = "STUDY_SITE_CONTACTS_CACHE";
     private static final String REPORTING_RESULTS_CACHE_KEY = "REPORTING_RESULTS_CACHE_KEY";
+    private static final String BIZ_DAY_CACHE_KEY = "BIZ_DAY_CACHE_KEY";
+    
+    /**
+     * @return BIZ_DAY_CACHE
+     */
+    public static Cache getBizDayCache() {
+        return CACHE_MANAGER.getCache(BIZ_DAY_CACHE_KEY);
+    }
 
     /**
      * @return TSR_CACHE
