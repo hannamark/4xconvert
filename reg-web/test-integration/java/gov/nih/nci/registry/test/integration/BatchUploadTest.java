@@ -323,7 +323,7 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
      */
     @SuppressWarnings("rawtypes")
     private void verifyEmailSentByBatchProcessing() throws SQLException {
-        assertEquals(2, server.getReceivedEmailSize());
+        assertEquals(1, server.getReceivedEmailSize());
         Iterator emailIter = server.getReceivedEmail();
         SmtpMessage email = (SmtpMessage) emailIter.next();
         final String body = email.getBody();
