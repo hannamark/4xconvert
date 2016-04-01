@@ -501,7 +501,7 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
         TrialInfo trial = new TrialInfo();
         trial.id = trialID.longValue();
         assertEquals("APPROVED", getCurrentTrialStatus(trial).statusCode);
-        assertEquals(null, getTrialField(trial, "DELAYED_POSTING_INDICATOR"));
+        assertEquals(false, getTrialField(trial, "DELAYED_POSTING_INDICATOR"));
         verifyLegacyProgramCode("PG0022");
     }
 
