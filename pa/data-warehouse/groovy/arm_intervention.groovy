@@ -53,7 +53,44 @@ def sql = """SELECT
                 left outer join registry_user as int_ru_creator on int_ru_creator.csm_user_id = int_csm_creator.user_id
                 left outer join csm_user as int_csm_updater on int_csm_updater.user_id = pa.user_last_updated_id
                 left outer join registry_user as int_ru_updater on int_ru_updater.csm_user_id = int_csm_updater.user_id
-                """
+                UNION
+                SELECT arm.description_text as arm_desc, 
+                       arm.name as arm_name, 
+                       arm.type_code as arm_code, 
+                       arm.date_last_Created as arm_created_date,
+                       arm.date_last_updated as arm_updated_date, 
+                       null as int_desc, 
+                       null as int_name, 
+                       null as altname, 
+                       null as int_id, 
+                       null as int_code,
+                       null as int_created_date, 
+                       null as int_updated_date, 
+                       so.extension,
+                       CASE WHEN NULLIF(arm_ru_creator.first_name, '') is not null THEN arm_ru_creator.first_name || ' ' || arm_ru_creator.last_name
+                         WHEN NULLIF(split_part(arm_csm_creator.login_name, 'CN=', 2), '') is null THEN arm_csm_creator.login_name
+                         ELSE split_part(arm_csm_creator.login_name, 'CN=', 2)
+                         END as arm_creator, 
+                       CASE WHEN NULLIF(arm_ru_updater.first_name, '') is not null THEN arm_ru_updater.first_name || ' ' || arm_ru_updater.last_name
+                         WHEN NULLIF(split_part(arm_csm_updater.login_name, 'CN=', 2), '') is null THEN arm_csm_updater.login_name
+                         ELSE split_part(arm_csm_updater.login_name, 'CN=', 2)
+                         END as arm_updater,null as int_creator, null as int_updater,
+                       arm_ru_creator.first_name as arm_creator_first,
+                       arm_ru_creator.last_name as arm_creator_last,
+                       arm_ru_updater.first_name as arm_updater_first,
+                       arm_ru_updater.last_name as arm_updater_last, 
+                       null as int_creator_first, 
+                       null as int_creator_last, 
+                       null as int_updater_first, 
+                       null as int_updater_last
+                from study_protocol  sp join study_otheridentifiers so on sp.identifier=so.study_protocol_id 
+                join arm arm on arm.study_protocol_identifier=sp.identifier
+                left join   arm_intervention ai on arm.identifier=ai.arm_identifier
+                left outer join csm_user as arm_csm_creator on arm_csm_creator.user_id = arm.user_last_Created_id
+                left outer join registry_user as arm_ru_creator on arm_ru_creator.csm_user_id = arm_csm_creator.user_id
+                left outer join csm_user as arm_csm_updater on arm_csm_updater.user_id = arm.user_last_updated_id
+                left outer join registry_user as arm_ru_updater on arm_ru_updater.csm_user_id = arm_csm_updater.user_id
+                WHERE sp.proprietary_trial_indicator=true and so.root='2.16.840.1.113883.3.26.4.3' and ai.arm_identifier is null"""
 
 
 def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'],
@@ -92,8 +129,6 @@ sourceConnection.eachRow(sql) { row ->
 			   INTERVENTION_OTHER_NAME: row.altname
     		)
             }
-
-
      
             
 sourceConnection.close()
