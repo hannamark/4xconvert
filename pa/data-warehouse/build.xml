@@ -2,7 +2,7 @@
     <property file="${basedir}/build.properties"/>
     <property name="bda-utils" value="${basedir}/../../target/pa/bda-utils" />
 	
-	<property name="datawarehouse.timeout" value="50400000" />
+	<property name="datawarehouse.timeout" value="57600000" />
 
     <path id="bda-utils.classpath">
         <fileset dir="./lib">
