@@ -3,7 +3,7 @@ import groovy.sql.Sql
 def sql = """
     select contact.email, contact.telephone, p.first_name || ' ' || p.middle_name || ' ' || p.last_name as contact_name, ps.identifier, org.name as org_name,
          org.status_code as org_status, ssas.status_code, ssas.status_date, ps.target_accrual_number, org.assigned_identifier::integer as org_po_id
-         , ps.program_code_text, ps.local_sp_indentifier
+         , ps.local_sp_indentifier
     from study_site ps
         left outer join study_protocol as sp on sp.identifier = ps.study_protocol_identifier
         left outer join study_site_contact as contact on contact.study_site_identifier = ps.identifier and contact.role_code = 'PRIMARY_CONTACT'
@@ -24,7 +24,7 @@ def participating_sites = destinationConnection.dataSet("STG_DW_STUDY_PARTICIPAT
 sourceConnection.eachRow(sql) { row ->
         participating_sites.add(contact_email: row.email, contact_name: row.contact_name, contact_phone: row.telephone, internal_system_id: row.identifier,
             org_name: row.org_name, recruitment_status: row.status_code, recruitment_status_date: row.status_date,
-            target_accrual: row.target_accrual_number, org_po_id: row.org_po_id, program_code: row.program_code_text,
+            target_accrual: row.target_accrual_number, org_po_id: row.org_po_id, 
             local_site_identifier: row.local_sp_indentifier)
     }
 

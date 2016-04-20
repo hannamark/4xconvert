@@ -4,5 +4,8 @@ CREATE TABLE STG_DW_FAMILY_ORGANIZATION (
 	ORGANIZATION_NAME character varying(200) not null,
 	FUNCTIONALTYPE character varying(255) not null,
 	FAMILY_ID bigint not null,
-	ORGANIZATION_ID bigint not null
+	ORGANIZATION_ID bigint not null,
+	reporting_period_end_date date,
+	reporting_period_months integer
+	
 );
