@@ -59,12 +59,11 @@ def sqlOtherIds = """SELECT DISTINCT nci_id, value
                   WHERE nci_id IN (SELECT nci_id FROM stg_dw_data_table_4)
                """
 
-def sqlProgramCodes = """select study_protocol.identifier, string_agg( program_code.program_code,': ') as
+def sqlProgramCodes = """select study_protocol.identifier, string_agg( program_code.program_code,': ' order by program_code.program_code) as
  \"Program_Codes\" from program_code, 
 study_protocol ,study_program_code
 where study_protocol.identifier = study_program_code.study_protocol_id
 and program_code.identifier = study_program_code.program_code_id
-and program_code.status_code='ACTIVE'
 group by study_protocol.identifier
 """
 
