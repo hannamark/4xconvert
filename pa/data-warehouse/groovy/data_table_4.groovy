@@ -59,13 +59,6 @@ def sqlOtherIds = """SELECT DISTINCT nci_id, value
                   WHERE nci_id IN (SELECT nci_id FROM stg_dw_data_table_4)
                """
 
-def sqlProgramCodes = """select study_protocol.identifier, string_agg( program_code.program_code,': ' order by program_code.program_code) as
- \"Program_Codes\" from program_code, 
-study_protocol ,study_program_code
-where study_protocol.identifier = study_program_code.study_protocol_id
-and program_code.identifier = study_program_code.program_code_id
-group by study_protocol.identifier
-"""
 
 def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'],
     properties['datawarehouse.pa.source.db.password'], properties['datawarehouse.pa.source.jdbc.driver'])
@@ -130,14 +123,6 @@ destinationConnection.eachRow(sqlOtherIds) { row ->
                                   """, [row.value, row.nci_id, row.value]);
 }
 
-sourceConnection.eachRow(sqlProgramCodes) { row ->
-
-    destinationConnection.executeUpdate("""UPDATE stg_dw_data_table_4
-                                     SET prog_code = ?
-                                     WHERE sp_id = ?
-                                       
-                                  """, [row.Program_Codes, row.identifier]);
-}
 
 destinationConnection.execute("""UPDATE stg_dw_data_table_4 SET study_source = 'N' WHERE study_source = 'NATIONAL'""");
 destinationConnection.execute("""UPDATE stg_dw_data_table_4 SET study_source = 'E' WHERE study_source = 'EXTERNALLY_PEER_REVIEWED'""");
