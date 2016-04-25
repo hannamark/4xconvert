@@ -22,6 +22,7 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -431,6 +432,8 @@ public class TwitterTest extends AbstractTrialStatusTest {
     private void testTweetIndustrialTrial(String processingStatus,
             String siteStatus) throws Exception {
 
+        setupTweetTemplates();
+
         // Set up eligible trial.
         TrialInfo trial = setupIndustrialTrial(processingStatus, siteStatus);
 
@@ -442,7 +445,7 @@ public class TwitterTest extends AbstractTrialStatusTest {
         // Verify tweet
         verifyTweet(
                 tweet,
-                "^A new NCI-sponsored #anuscancer #coloncancer #analcancer #colorectalcancer study is now accepting patients\\. http://go\\.usa\\.gov/\\w+$");
+                "^A new NCI-sponsored #anuscancer #coloncancer #analcancer #colorectalcancer study is now accepting patients\\. http://go\\.usa\\.gov/\\w+&\\d+$");
 
         // Finally, ensure the tweet actually showed up in Twitter. Use Twitter
         // API for this.
@@ -452,6 +455,8 @@ public class TwitterTest extends AbstractTrialStatusTest {
 
     private void testTweetCompleteTrial(String processingStatus,
             String studyStatus) throws Exception {
+
+        setupTweetTemplates();
 
         // Set up eligible trial.
         TrialInfo trial = setupCompleteTrial(processingStatus, studyStatus);
@@ -464,12 +469,24 @@ public class TwitterTest extends AbstractTrialStatusTest {
         // Verify tweet
         verifyTweet(
                 tweet,
-                "^A new NCI-sponsored #cancer study is now accepting patients\\. http://go\\.usa\\.gov/\\w+$");
+                "^A new NCI-sponsored #cancer study is now accepting patients\\. http://go\\.usa\\.gov/\\w+&\\d+$");
 
         // Finally, ensure the tweet actually showed up in Twitter. Use Twitter
         // API for this.
         verifyTweetInTwitter("^A new NCI-sponsored #cancer study is now accepting patients\\. http(s)?://t\\.co/\\w+$");
 
+    }
+
+    /**
+     * @throws SQLException
+     */
+    protected void setupTweetTemplates() throws SQLException {
+        setPaProperty("twitter.trials.industrial.basetext",
+                "A new NCI-sponsored {hashtags} study is now accepting patients. {url}&"
+                        + RandomUtils.nextInt(999));
+        setPaProperty("twitter.trials.complete.basetext",
+                "A new NCI-sponsored {hashtags} study is now accepting patients. {url}&"
+                        + RandomUtils.nextInt(999));
     }
 
     /**
