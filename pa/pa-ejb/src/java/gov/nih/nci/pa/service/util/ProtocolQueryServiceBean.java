@@ -82,8 +82,10 @@
  */
 package gov.nih.nci.pa.service.util;
 
-import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
-import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
+import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_ALTERNATE_TITLES;
+import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_LAST_UPDATER_INFO;
+import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_OTHER_IDENTIFIERS;
+import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_PROGRAM_CODES;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
@@ -134,19 +136,7 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -157,10 +147,23 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_ALTERNATE_TITLES;
-import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_LAST_UPDATER_INFO;
-import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_OTHER_IDENTIFIERS;
-import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_PROGRAM_CODES;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
 
 /**
  * @author Naveen Amiruddin
@@ -224,9 +227,10 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         if (isCriteriaEmpty(spsc)) {
             throw new PAException("At least one criteria is required");
         }
+        
         long start = System.currentTimeMillis();
         List<StudyProtocolQueryDTO> pdtos = new ArrayList<StudyProtocolQueryDTO>();
-        List<Long> queryList = getStudyProtocolIdQueryResults(spsc);
+        List<Long> queryList = getStudyProtocolIdQueryResults(spsc);        
         pdtos = protocolQueryResultsService.getResults(queryList,
                 BooleanUtils.toBoolean(spsc.isMyTrialsOnly()), spsc.getUserId(), hints);        
         if (CollectionUtils.isNotEmpty(pdtos)) {
@@ -236,7 +240,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         LOG.warn(spsc.toString() + " took "
                 + ((end - start) / MILLIS_PER_SECOND)
                 + " seconds and returned " + (pdtos != null ? pdtos.size() : 0)
-                + " trials.");
+                + " trials.");        
         return pdtos;
     }
 
@@ -646,16 +650,55 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             Query query = crit.getQuery(Arrays.asList(new String[] {"id"}),
                     orderBy, joinClause, false);
             query.setCacheable(false);            
-            LOG.debug(query.getQueryString());           
+            LOG.debug(query.getQueryString());    
+            disableNestedLoops();
             results = query.list();
         } catch (Exception e) {
             throw new PAException(
                     "An error has occurred when searching for trials.", e);
-        } 
+        } finally {
+            enableNestedLoops();
+        }
         return results;
     }
+    
+    /**
+     * Some protocol search queries result in SQL queries, for which PostgreSQL comes up with
+     * an extremely inefficient query plan. Simple queries take minutes to run without evident reason. 
+     * <code>SET enable_nestloop = off;</code> helps to solve this problem. I have found out that
+     * protocol search queries perform better with this option off.
+     * @see https://tracker.nci.nih.gov/browse/PO-5262
+     * @see https://tracker.nci.nih.gov/browse/PO-9779
+     */
+    private void enableNestedLoops() {
+        try {
+            Session session = PaHibernateUtil.getCurrentSession();
+            session.createSQLQuery("SET enable_nestloop = on").executeUpdate();
+            session.flush();
+        } catch (HibernateException e) {
+            LOG.error(e, e);
+        }        
+    }
 
-
+    /**
+     * Some protocol search queries result in SQL queries, for which PostgreSQL comes up with
+     * an extremely inefficient query plan. Simple queries take minutes to run without evident reason. 
+     * <code>SET enable_nestloop = off;</code> helps to solve this problem. I have found out that
+     * protocol search queries perform better with this option off.
+     * @see https://tracker.nci.nih.gov/browse/PO-5262
+     * @see https://tracker.nci.nih.gov/browse/PO-9779
+     */
+    private void disableNestedLoops() {
+        try {
+            Session session = PaHibernateUtil.getCurrentSession();
+            session.flush();
+            session.createSQLQuery("SET enable_nestloop = off").executeUpdate();
+            session.flush();
+        } catch (HibernateException e) {
+            LOG.error(e, e);
+        }        
+    }
+    
     /**
      * {@inheritDoc}
      */
