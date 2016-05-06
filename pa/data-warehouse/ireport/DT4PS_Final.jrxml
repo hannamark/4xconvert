@@ -4,7 +4,7 @@
 	<property name="ireport.x" value="17"/>
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ctrp_local_dev_pa"/>
-	<property name="ireport.jasperserver.reportUnit" value="/public/CTRP_Reports/Data_Table_4_Report_12_Month___Participating_Site"/>
+	<property name="ireport.jasperserver.reportUnit" value="/public/CTRP_Reports/Data_Table_4__Report__Consolidated_"/>
 	<property name="ireport.jasperserver.url" value="https://trials-dev.nci.nih.gov/reports/services/repository"/>
 	<parameter name="Center" class="java.lang.String">
 		<parameterDescription><![CDATA[]]></parameterDescription>
