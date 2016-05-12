@@ -2377,6 +2377,13 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
 
     protected void moveElementIntoView(By by) {
         WebElement element = driver.findElement(by);
+        moveElementIntoView(element);
+    }
+
+    /**
+     * @param element
+     */
+    protected void moveElementIntoView(WebElement element) {
         Point p = element.getLocation();
         ((JavascriptExecutor) driver).executeScript("window.scroll(" + p.getX()
                 + "," + (p.getY() - 150) + ");");
