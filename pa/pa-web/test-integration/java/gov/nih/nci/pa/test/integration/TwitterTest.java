@@ -445,11 +445,11 @@ public class TwitterTest extends AbstractTrialStatusTest {
         // Verify tweet
         verifyTweet(
                 tweet,
-                "^A new NCI-sponsored #anuscancer #coloncancer #analcancer #colorectalcancer study is now accepting patients\\. http://go\\.usa\\.gov/\\w+&\\d+$");
+                "^A new NCI-sponsored #anuscancer #coloncancer study is now accepting patients\\. http://.+$");
 
         // Finally, ensure the tweet actually showed up in Twitter. Use Twitter
         // API for this.
-        verifyTweetInTwitter("^A new NCI-sponsored #anuscancer #coloncancer #analcancer #colorectalcancer study is now accepting patients\\. http(s)?://t\\.co/\\w+$");
+        verifyTweetInTwitter("^A new NCI-sponsored #anuscancer #coloncancer study is now accepting patients\\. http(s)?://t\\.co/\\w+$");
 
     }
 
@@ -469,7 +469,7 @@ public class TwitterTest extends AbstractTrialStatusTest {
         // Verify tweet
         verifyTweet(
                 tweet,
-                "^A new NCI-sponsored #cancer study is now accepting patients\\. http://go\\.usa\\.gov/\\w+&\\d+$");
+                "^A new NCI-sponsored #cancer study is now accepting patients\\. http://.+$");
 
         // Finally, ensure the tweet actually showed up in Twitter. Use Twitter
         // API for this.
@@ -482,10 +482,10 @@ public class TwitterTest extends AbstractTrialStatusTest {
      */
     protected void setupTweetTemplates() throws SQLException {
         setPaProperty("twitter.trials.industrial.basetext",
-                "A new NCI-sponsored {hashtags} study is now accepting patients. {url}&"
+                "A new NCI-sponsored {hashtags} study is now accepting patients. {url}?&"
                         + RandomUtils.nextInt(999));
         setPaProperty("twitter.trials.complete.basetext",
-                "A new NCI-sponsored {hashtags} study is now accepting patients. {url}&"
+                "A new NCI-sponsored {hashtags} study is now accepting patients. {url}?&"
                         + RandomUtils.nextInt(999));
     }
 
