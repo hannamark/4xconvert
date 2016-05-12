@@ -37,6 +37,7 @@ public class ParticipatingSiteCloseTest extends AbstractPaSeleniumTest {
         
         changeStatus("Closed to Accrual", today);
         
+        s.click("//button/span[@class='ui-button-text' and text()='Cancel']");
         clickAndWait("link=Participating Sites");
         
         //check now that participating site status should not changed
@@ -124,6 +125,7 @@ public class ParticipatingSiteCloseTest extends AbstractPaSeleniumTest {
         
         changeStatus("Closed to Accrual", today);
         
+        s.click("//button/span[@class='ui-button-text' and text()='Cancel']");
         clickAndWait("link=Participating Sites");
         
         //check now that participating site status should not changed
