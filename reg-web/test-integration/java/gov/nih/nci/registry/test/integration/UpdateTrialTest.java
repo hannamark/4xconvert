@@ -740,12 +740,12 @@ public void testIfProgramCodesForOtherFamilyNotChanged() throws Exception {
         assert recordFound;
     }
     
-    private void addGrantsWhileReviewAndValidate() {
-        
+    private void addGrantsWhileReviewAndValidate() {        
         selenium.select("id=fundingMechanismCode", "label=P30");
         selenium.select("id=nihInstitutionCode", "label=CA");
         selenium.type("id=serialNumber", "12197");
         selenium.select("id=nciDivisionProgramCode", "label=OD");
+        moveElementIntoView(By.id("grantbtnid"));
         selenium.click("id=grantbtnid");
         assertEquals("P30", selenium.getText("css=tr.odd > td"));
         clickAndWait("xpath=//button[text()='Review Trial']");
@@ -827,6 +827,7 @@ public void testIfProgramCodesForOtherFamilyNotChanged() throws Exception {
         }
         assertFalse(s
                 .isElementPresent("xpath=//input[@type='radio' and @value='N/A']"));
+        hideTopMenu();
     }
 
     private void verifyCalendarPopup() {
