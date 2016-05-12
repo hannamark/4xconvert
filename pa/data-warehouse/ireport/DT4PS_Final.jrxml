@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="dataTable4" language="groovy" pageWidth="2150" pageHeight="842" orientation="Landscape" columnWidth="2110" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Key" uuid="2f988a2f-b072-49c1-b4cc-e5e23a1c9311">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="17"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.x" value="577"/>
+	<property name="ireport.y" value="7"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ctrp_local_dev_pa"/>
 	<property name="ireport.jasperserver.reportUnit" value="/public/CTRP_Reports/Data_Table_4__Report__Consolidated_"/>
 	<property name="ireport.jasperserver.url" value="https://trials-dev.nci.nih.gov/reports/services/repository"/>
@@ -127,7 +127,7 @@ JOIN (
 				and status in ('CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION', 'ADMINISTRATIVELY_COMPLETE','COMPLETE')) as B
 			on A.nci_id=B.nci_id and B.status_date >= A.status_date and B.id > A.id
 			where A.rnk=1 and (B.status_date is null or B.status_date>=$P{Calculated_Start_Date})
-			) as c group by nci_id, ass, asd 
+			) as c group by nci_id, ass, asd
 			union
 			select std.nci_id, null as max_actv_sts, null as max_actv_dt, now() as clsd_dt
 			from dw_study std, "dw_data_table_4" dt4
@@ -440,7 +440,7 @@ ORDER BY clinical_research_cat, nci_id]]>
 				<textFieldExpression><![CDATA["Cancer Center:  " + $P{Center}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd-MMM-yyyy" isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="726" y="0" width="802" height="26" forecolor="#FFFFFF" backcolor="#475B82" uuid="dac7ee3e-5085-447f-9a36-49fde25c8dd8"/>
+				<reportElement mode="Opaque" x="726" y="0" width="796" height="26" forecolor="#FFFFFF" backcolor="#475B82" uuid="dac7ee3e-5085-447f-9a36-49fde25c8dd8"/>
 				<textElement>
 					<font size="14"/>
 				</textElement>
@@ -459,166 +459,157 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="26" splitType="Stretch">
+		<band height="36" splitType="Stretch">
 			<staticText>
-				<reportElement mode="Opaque" x="406" y="0" width="128" height="26" isPrintWhenDetailOverflows="true" backcolor="#D6D6FF" uuid="f4e3a9f4-4e6c-484c-9f27-1683e8b3f48e"/>
+				<reportElement mode="Opaque" x="406" y="0" width="128" height="36" isPrintWhenDetailOverflows="true" backcolor="#D6D6FF" uuid="f4e3a9f4-4e6c-484c-9f27-1683e8b3f48e"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<text><![CDATA[Protocol ID]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="0" y="0" width="64" height="26" backcolor="#D6D6FF" uuid="32a00ab8-523d-4323-8e76-b42fc0a5d2ca"/>
+				<reportElement mode="Opaque" x="0" y="0" width="64" height="36" backcolor="#D6D6FF" uuid="32a00ab8-523d-4323-8e76-b42fc0a5d2ca"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<text><![CDATA[P30 Grant Number]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="64" y="0" width="81" height="26" backcolor="#D6D6FF" uuid="2630117c-7b35-440b-8e73-b40b39901ee6"/>
+				<reportElement mode="Opaque" x="64" y="0" width="81" height="36" backcolor="#D6D6FF" uuid="2630117c-7b35-440b-8e73-b40b39901ee6"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<text><![CDATA[Clinical Research Cat]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="181" y="0" width="124" height="26" backcolor="#D6D6FF" uuid="ee98a638-5404-49ec-b649-2b572a9567d1"/>
+				<reportElement mode="Opaque" x="181" y="0" width="124" height="36" backcolor="#D6D6FF" uuid="ee98a638-5404-49ec-b649-2b572a9567d1"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<text><![CDATA[Specific Funding Source]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="305" y="0" width="101" height="26" backcolor="#D6D6FF" uuid="d2d5bd32-aad8-4b7c-815e-0612a7247dc2"/>
+				<reportElement mode="Opaque" x="305" y="0" width="101" height="36" backcolor="#D6D6FF" uuid="d2d5bd32-aad8-4b7c-815e-0612a7247dc2"/>
 				<textElement>
 					<font size="10" isItalic="false"/>
 				</textElement>
 				<text><![CDATA[Primary Site]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="662" y="0" width="64" height="26" backcolor="#D6D6FF" uuid="c63375e1-ddd9-44a9-a7b8-55a3b86788c5"/>
+				<reportElement mode="Opaque" x="662" y="0" width="64" height="36" backcolor="#D6D6FF" uuid="c63375e1-ddd9-44a9-a7b8-55a3b86788c5"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<text><![CDATA[Is Multi Institutional?]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="726" y="0" width="96" height="26" backcolor="#D6D6FF" uuid="e5ea0879-dfef-4dce-8f67-ba949914f0d0"/>
+				<reportElement mode="Opaque" x="726" y="0" width="96" height="36" backcolor="#D6D6FF" uuid="e5ea0879-dfef-4dce-8f67-ba949914f0d0"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<text><![CDATA[PI - Last Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="920" y="0" width="64" height="26" backcolor="#D6D6FF" uuid="ccef0731-0289-4bf3-a087-5bebc4ff88d4"/>
+				<reportElement mode="Opaque" x="920" y="0" width="64" height="36" backcolor="#D6D6FF" uuid="ccef0731-0289-4bf3-a087-5bebc4ff88d4"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<text><![CDATA[Prog Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="984" y="0" width="64" height="26" backcolor="#D6D6FF" uuid="4db1f386-5722-4ef4-9ccd-9392a7b385c9"/>
+				<reportElement mode="Opaque" x="984" y="0" width="64" height="36" backcolor="#D6D6FF" uuid="4db1f386-5722-4ef4-9ccd-9392a7b385c9"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<text><![CDATA[Open Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1240" y="0" width="288" height="26" backcolor="#D6D6FF" uuid="693ad12d-3f80-433b-ad16-ca8c94d9627d"/>
+				<reportElement mode="Opaque" x="1240" y="0" width="288" height="36" backcolor="#D6D6FF" uuid="693ad12d-3f80-433b-ad16-ca8c94d9627d"/>
 				<textElement>
 					<font isBold="false"/>
 				</textElement>
 				<text><![CDATA[Official Title]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="145" y="0" width="36" height="26" backcolor="#D6D6FF" uuid="867cfc6d-7303-4302-abfd-803e38fb7428"/>
+				<reportElement mode="Opaque" x="145" y="0" width="36" height="36" backcolor="#D6D6FF" uuid="867cfc6d-7303-4302-abfd-803e38fb7428"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<text><![CDATA[Study Source]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1112" y="0" width="64" height="26" backcolor="#D6D6FF" uuid="d2397a6e-6c71-46c0-a134-7964aba556a3"/>
+				<reportElement mode="Opaque" x="1112" y="0" width="64" height="36" backcolor="#D6D6FF" uuid="d2397a6e-6c71-46c0-a134-7964aba556a3"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<text><![CDATA[Phase]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1048" y="0" width="64" height="26" backcolor="#D6D6FF" uuid="09e7e315-ee01-47b2-b1d3-d6ec9ea122d9"/>
+				<reportElement mode="Opaque" x="1048" y="0" width="64" height="36" backcolor="#D6D6FF" uuid="09e7e315-ee01-47b2-b1d3-d6ec9ea122d9"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<text><![CDATA[Close Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="822" y="0" width="74" height="26" backcolor="#D6D6FF" uuid="c2cea4e9-1c5c-4884-92fe-d401849f7d70"/>
+				<reportElement mode="Opaque" x="822" y="0" width="74" height="36" backcolor="#D6D6FF" uuid="c2cea4e9-1c5c-4884-92fe-d401849f7d70"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<text><![CDATA[PI - First Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1176" y="0" width="64" height="26" backcolor="#D6D6FF" uuid="67cbe269-d00b-4b1c-8cb4-80505a633dcf"/>
+				<reportElement mode="Opaque" x="1176" y="0" width="64" height="36" backcolor="#D6D6FF" uuid="67cbe269-d00b-4b1c-8cb4-80505a633dcf"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<text><![CDATA[Primary Purpose]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="896" y="0" width="24" height="26" backcolor="#D6D6FF" uuid="b3a7d9f0-4ef3-485f-8b23-fbb5e3420b37"/>
+				<reportElement mode="Opaque" x="896" y="0" width="24" height="36" backcolor="#D6D6FF" uuid="b3a7d9f0-4ef3-485f-8b23-fbb5e3420b37"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<text><![CDATA[PI - MI]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1528" y="0" width="64" height="26" backcolor="#D6D6FF" uuid="8e611350-a538-4d7a-bd2a-1de684b9b7f5"/>
+				<reportElement mode="Opaque" x="1528" y="0" width="64" height="36" backcolor="#D6D6FF" uuid="8e611350-a538-4d7a-bd2a-1de684b9b7f5"/>
 				<text><![CDATA[Entire Study]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="534" y="0" width="128" height="26" isPrintWhenDetailOverflows="true" backcolor="#D6D6FF" uuid="fd81eddc-7307-47a1-91be-956f584cb63d"/>
+				<reportElement mode="Opaque" x="534" y="0" width="128" height="36" isPrintWhenDetailOverflows="true" backcolor="#D6D6FF" uuid="fd81eddc-7307-47a1-91be-956f584cb63d"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<text><![CDATA[Other Protocol IDs]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1592" y="0" width="76" height="26" backcolor="#D6D6FF" uuid="46c59f96-fec2-460d-bba1-6e4286e53df5"/>
+				<reportElement mode="Opaque" x="1592" y="0" width="76" height="36" backcolor="#D6D6FF" uuid="46c59f96-fec2-460d-bba1-6e4286e53df5"/>
 				<text><![CDATA[Your Center Total]]></text>
 			</staticText>
-			<textField>
-				<reportElement mode="Opaque" x="1668" y="0" width="76" height="26" backcolor="#D6D6FF" uuid="29bc7dee-c181-49b4-9a00-4b77d189e780">
-					<property name="local_mesure_unity" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					<property name="local_mesure_unitx" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-				</reportElement>
-				<textFieldExpression><![CDATA[$P{Use_Start_Date} == true ? "Center" : "Center 12 Months"]]></textFieldExpression>
-			</textField>
 			<staticText>
-				<reportElement mode="Opaque" x="1744" y="0" width="76" height="26" backcolor="#D6D6FF" uuid="e3af9438-cc66-4871-ac76-5dc9fb6360bf">
+				<reportElement mode="Opaque" x="1744" y="0" width="76" height="36" backcolor="#D6D6FF" uuid="e3af9438-cc66-4871-ac76-5dc9fb6360bf">
 					<property name="local_mesure_unity" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<text><![CDATA[Center to Date]]></text>
 			</staticText>
 			<textField>
-				<reportElement mode="Opaque" x="1820" y="0" width="76" height="26" backcolor="#D6D6FF" uuid="0f8f648f-3ad6-4e73-82f5-00bddfb08897">
+				<reportElement mode="Opaque" x="1820" y="0" width="76" height="36" backcolor="#D6D6FF" uuid="0f8f648f-3ad6-4e73-82f5-00bddfb08897">
 					<property name="local_mesure_unity" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
-				<textFieldExpression><![CDATA[$P{Use_Start_Date} == true ? "Affiliates" : "Affiliates 12 Months"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Affiliates Reporting Period"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement mode="Opaque" x="1896" y="0" width="76" height="26" backcolor="#D6D6FF" uuid="cb0170a5-df7c-4850-87a9-fa1fcf692bcf">
+				<reportElement mode="Opaque" x="1896" y="0" width="76" height="36" backcolor="#D6D6FF" uuid="cb0170a5-df7c-4850-87a9-fa1fcf692bcf">
 					<property name="local_mesure_unity" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<text><![CDATA[Affiliates to Date]]></text>
 			</staticText>
 			<textField>
-				<reportElement mode="Opaque" x="1972" y="0" width="76" height="26" backcolor="#D6D6FF" uuid="2e572d41-28ba-4d36-8444-156b456e1d8e">
+				<reportElement mode="Opaque" x="1972" y="0" width="76" height="36" backcolor="#D6D6FF" uuid="2e572d41-28ba-4d36-8444-156b456e1d8e">
 					<property name="local_mesure_unity" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="local_mesure_unitx" value="pixel"/>
@@ -627,13 +618,17 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<textFieldExpression><![CDATA[$P{Use_Start_Date} == true ? "Non-affiliates" : "Non-affiliates 12 Months"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement mode="Opaque" x="2048" y="0" width="76" height="26" backcolor="#D6D6FF" uuid="8eca810b-9449-40aa-ba6a-92e4fe04a6fb">
+				<reportElement mode="Opaque" x="2048" y="0" width="76" height="36" backcolor="#D6D6FF" uuid="8eca810b-9449-40aa-ba6a-92e4fe04a6fb">
 					<property name="local_mesure_unity" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<text><![CDATA[Non-affiliates to Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1668" y="0" width="76" height="36" backcolor="#D6D6FF" uuid="5e1e49d7-f33b-4c1f-85c0-c97a8a26ad16"/>
+				<text><![CDATA[Center Reporting Period]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
