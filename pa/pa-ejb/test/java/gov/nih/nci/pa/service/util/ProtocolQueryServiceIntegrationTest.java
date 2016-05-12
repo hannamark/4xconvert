@@ -1208,6 +1208,10 @@ public class ProtocolQueryServiceIntegrationTest extends
         TestSchema.addUpdObject(otherSp);
 
         StudyProtocol nciSp = createStudyProtocol();
+        
+        nciSp.getOtherIdentifiers().clear();
+        PaHibernateUtil.getCurrentSession().flush();
+        
         nciSp.getOtherIdentifiers().add(
                 IiConverter.convertToAssignedIdentifierIi("NCI_ID"));
         TestSchema.addUpdObject(nciSp);

@@ -2045,13 +2045,15 @@
         <sqlFile path="@db-upgrade.run.dir@/4.3.1/PO-9666.sql"/>
     </changeSet>
 	<changeSet author="Reshma" id="PO-9660">
-    <comment>Create triggers on Study_site table</comment>
-    <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/4.3.1/PO-9660.sql"/>
+        <comment>Create triggers on Study_site table</comment>
+        <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/4.3.1/PO-9660.sql"/>
     </changeSet>
     <changeSet author="khandalkara" id="PO-9496-trigger">
-    <comment>Possible bug - CTRO receiving note that Delayed Posting Indicator was changed</comment>
-    <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/4.3.1/PO-9496-trigger.sql"/>
-    </changeSet>
-    
-    
+        <comment>Possible bug - CTRO receiving note that Delayed Posting Indicator was changed</comment>
+        <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/4.3.1/PO-9496-trigger.sql"/>
+    </changeSet>    
+     <changeSet id="PO-9779" author="krylovd">       
+       <comment>De-normalizing schema to fix search performance issues.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3.1.1/PO-9779.sql" splitStatements="false"/>
+    </changeSet>    
 </databaseChangeLog>

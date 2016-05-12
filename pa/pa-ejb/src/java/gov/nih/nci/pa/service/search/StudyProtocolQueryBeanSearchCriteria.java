@@ -1221,38 +1221,46 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 // Intentionally disable PMD complains here, because I want
                 // multiple appends for readability
                 // and know for sure what the default Locale will be.
-                appendOtherIdentifierSearchClause(whereClause,
-                        anyTypeIdentifierSQL, IiConverter.STUDY_PROTOCOL_ROOT);
+                
+                // NCI ID
+                whereClause.append("upper(obj.nciId) like '%" // NOPMD
+                        + anyTypeIdentifierSQL.toUpperCase() // NOPMD
+                        + "%'");
+                
                 whereClause.append(" or ");
                 appendOtherIdentifierSearchClause(whereClause,
                         anyTypeIdentifierSQL,
                         IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT);
-                whereClause.append(" or ");
+                whereClause.append(" or "); // NOPMD
 
                 // DCP
-                appendIdentifierAssignerSearchClause(whereClause,
-                        anyTypeIdentifierSQL, PAConstants.DCP_ORG_NAME, params);
+                whereClause.append("upper(obj.dcpId) like '%" // NOPMD
+                        + anyTypeIdentifierSQL.toUpperCase() // NOPMD
+                        + "%'");
                 whereClause.append(" or "); // NOPMD
 
                 // CCR
-                appendIdentifierAssignerSearchClause(whereClause,
-                        anyTypeIdentifierSQL, PAConstants.CCR_ORG_NAME, params);
+                whereClause.append("upper(obj.ccrId) like '%" // NOPMD
+                        + anyTypeIdentifierSQL.toUpperCase() // NOPMD
+                        + "%'");
                 whereClause.append(" or "); // NOPMD
 
                 // NCT
-                appendIdentifierAssignerSearchClause(whereClause,
-                        anyTypeIdentifierSQL, PAConstants.CTGOV_ORG_NAME,
-                        params);
+                whereClause.append("upper(obj.nctId) like '%" // NOPMD
+                        + anyTypeIdentifierSQL.toUpperCase() // NOPMD
+                        + "%'");
                 whereClause.append(" or "); // NOPMD
 
                 // CTEP
-                appendIdentifierAssignerSearchClause(whereClause,
-                        anyTypeIdentifierSQL, PAConstants.CTEP_ORG_NAME, params);
+                whereClause.append("upper(obj.ctepId) like '%" // NOPMD
+                        + anyTypeIdentifierSQL.toUpperCase() // NOPMD
+                        + "%'");
                 whereClause.append(" or "); // NOPMD
 
                 // Lead Org.
-                appendLeadOrgSearchClause(whereClause, anyTypeIdentifierSQL,
-                        params);
+                whereClause.append("upper(obj.leadOrgId) like '%" // NOPMD
+                        + anyTypeIdentifierSQL.toUpperCase() // NOPMD
+                        + "%'");
 
                 whereClause.append(" ) ");
             }
@@ -1260,25 +1268,6 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
             handleMyTrialsOnly(whereClause, params);
             handleSubmitterAffiliation(whereClause, params);
             handleExcludeSubmitterAffiliation(whereClause, params);
-        }
-
-        /**
-         * @param whereClause
-         * @param anyTypeIdentifierSQL
-         */
-        private void appendLeadOrgSearchClause(StringBuffer whereClause,
-                final String anyTypeIdentifierSQL, Map<String, Object> params) {
-            whereClause
-                .append("exists (select ssdcp.id from StudySite ssdcp where " // NOPMD
-                    + "ssdcp.studyProtocol.id = "
-                    + SearchableUtils.ROOT_OBJ_ALIAS
-                    + ".id and lower(ssdcp.localStudyProtocolIdentifier) like '%"
-                    + anyTypeIdentifierSQL.toLowerCase() // NOPMD
-                    + "%' and ssdcp.functionalCode = :"
-                    + LEAD_ORG_FUNCTIONAL_CODE_PARAM
-                    + ") ");
-            params.put(LEAD_ORG_FUNCTIONAL_CODE_PARAM,
-                    StudySiteFunctionalCode.LEAD_ORGANIZATION);
         }
 
         private void appendOtherIdentifierSearchClause(
@@ -1291,23 +1280,6 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                             + anyTypeIdentifierSQL.toUpperCase() // NOPMD
                             + "%')");
 
-        }
-
-        private void appendIdentifierAssignerSearchClause(
-                StringBuffer whereClause, String anyTypeIdentifierSQL,
-                String orgName, Map<String, Object> params) {
-            whereClause
-                    .append("exists (select ssdcp.id from StudySite ssdcp where " // NOPMD
-                            + "ssdcp.studyProtocol.id = "
-                            + SearchableUtils.ROOT_OBJ_ALIAS
-                            + ".id and lower(ssdcp.localStudyProtocolIdentifier) like '%"
-                            + anyTypeIdentifierSQL.toLowerCase() // NOPMD
-                            + "%' and ssdcp.functionalCode = :"
-                            + ID_ASSIGNER_FUNCTIONAL_CODE_PARAM
-                            + " and ssdcp.researchOrganization.organization.name='"
-                            + orgName + "') ");
-            params.put(ID_ASSIGNER_FUNCTIONAL_CODE_PARAM,
-                    StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
         }
 
         /**

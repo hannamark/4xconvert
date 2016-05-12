@@ -59,25 +59,7 @@ public class StudyProtocolQueryBeanSearchCriteriaTest extends
         Query query = criteria.getQuery("", false);
         String hql = query.getQueryString();
         Assert.assertTrue(hql
-                .contains("( exists (select oi.extension from obj.otherIdentifiers oi where oi.root = "
-                        + "'2.16.840.1.113883.3.26.4.3' and upper(oi.extension) like '%ANY_ID%') or exists "
-                        + "(select oi.extension from obj.otherIdentifiers oi where oi.root = '2.16.840.1.113883.19' "
-                        + "and upper(oi.extension) like '%ANY_ID%') or exists (select ssdcp.id from StudySite ssdcp "
-                        + "where ssdcp.studyProtocol.id = obj.id and lower(ssdcp.localStudyProtocolIdentifier) like "
-                        + "'%any_id%' and ssdcp.functionalCode = :idAssignerFunctionalCode and "
-                        + "ssdcp.researchOrganization.organization.name='National Cancer Institute Division of Cancer Prevention') "
-                        + " or exists (select ssdcp.id from StudySite ssdcp "
-                        + "where ssdcp.studyProtocol.id = obj.id and lower(ssdcp.localStudyProtocolIdentifier) like "
-                        + "'%any_id%' and ssdcp.functionalCode = :idAssignerFunctionalCode and "
-                        + "ssdcp.researchOrganization.organization.name='NCI - Center for Cancer Research') "
-                        + " or exists (select ssdcp.id from StudySite ssdcp where ssdcp.studyProtocol.id = obj.id and"
-                        + " lower(ssdcp.localStudyProtocolIdentifier) like '%any_id%' and ssdcp.functionalCode = :idAssignerFunctionalCode"
-                        + " and ssdcp.researchOrganization.organization.name='ClinicalTrials.gov')  or exists"
-                        + " (select ssdcp.id from StudySite ssdcp where ssdcp.studyProtocol.id = obj.id and"
-                        + " lower(ssdcp.localStudyProtocolIdentifier) like '%any_id%' and ssdcp.functionalCode = :idAssignerFunctionalCode"
-                        + " and ssdcp.researchOrganization.organization.name='Cancer Therapy Evaluation Program')  or exists"
-                        + " (select ssdcp.id from StudySite ssdcp where ssdcp.studyProtocol.id = obj.id and lower(ssdcp.localStudyProtocolIdentifier) "
-                        + "like '%any_id%' and ssdcp.functionalCode = :leadOrgFunctionalCode)  )"));
+                .contains("( upper(obj.nciId) like '%ANY_ID%' or exists (select oi.extension from obj.otherIdentifiers oi where oi.root = '2.16.840.1.113883.19' and upper(oi.extension) like '%ANY_ID%') or upper(obj.dcpId) like '%ANY_ID%' or upper(obj.ccrId) like '%ANY_ID%' or upper(obj.nctId) like '%ANY_ID%' or upper(obj.ctepId) like '%ANY_ID%' or upper(obj.leadOrgId) like '%ANY_ID%' )"));
     }
     
     @Test

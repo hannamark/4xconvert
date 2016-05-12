@@ -248,6 +248,15 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     
     private List<StudyProcessingError> studyProcessingErrors = new ArrayList<StudyProcessingError>();
     
+    private String nciId;
+    private String dcpId;
+    private String ccrId;
+    private String nctId;
+    private String ctepId;
+    private String leadOrgId;
+    
+    
+    
   
     /**
      * @return accrualReportingMethodCode
@@ -1551,5 +1560,100 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
         }
     }
 
+    /**
+     * @return the nciId
+     */
+    @Column(name = "nci_id", insertable = false, updatable = false)
+    public String getNciId() {
+        return nciId;
+    }
+
+    /**
+     * @param nciId
+     *            the nciId to set
+     */
+    public void setNciId(String nciId) {
+        this.nciId = nciId;
+    }
+
+    /**
+     * @return the dcpId
+     */
+    @Column(name = "dcp_id", insertable = false, updatable = false)
+    public String getDcpId() {
+        return dcpId;
+    }
+
+    /**
+     * @param dcpId
+     *            the dcpId to set
+     */
+    public void setDcpId(String dcpId) {
+        this.dcpId = dcpId;
+    }
+
+    /**
+     * @return the ccrId
+     */
+    @Column(name = "ccr_id", insertable = false, updatable = false)
+    public String getCcrId() {
+        return ccrId;
+    }
+
+    /**
+     * @param ccrId
+     *            the ccrId to set
+     */
+    public void setCcrId(String ccrId) {
+        this.ccrId = ccrId;
+    }
+
+    /**
+     * @return the nctId
+     */
+    @Column(name = "nct_id", insertable = false, updatable = false)
+    public String getNctId() {
+        return nctId;
+    }
+
+    /**
+     * @param nctId
+     *            the nctId to set
+     */
+    public void setNctId(String nctId) {
+        this.nctId = nctId;
+    }
+
+    /**
+     * @return the ctepId
+     */
+    @Column(name = "ctep_id", insertable = false, updatable = false)
+    public String getCtepId() {
+        return ctepId;
+    }
+
+    /**
+     * @param ctepId
+     *            the ctepId to set
+     */
+    public void setCtepId(String ctepId) {
+        this.ctepId = ctepId;
+    }
+
+    /**
+     * @return the leadOrgId
+     */
+    @Column(name = "lead_org_id", insertable = false, updatable = false)
+    public String getLeadOrgId() {
+        return leadOrgId;
+    }
+
+    /**
+     * @param leadOrgId
+     *            the leadOrgId to set
+     */
+    public void setLeadOrgId(String leadOrgId) {
+        this.leadOrgId = leadOrgId;
+    }
     
 }

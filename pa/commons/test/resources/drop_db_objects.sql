@@ -63,3 +63,12 @@ DROP TRIGGER document_workflow_status_set_previous_trigger_insert;
 DROP TRIGGER document_workflow_status_set_previous_trigger_update;
 DROP TRIGGER document_workflow_status_set_previous_trigger_delete;
 
+DROP TRIGGER sync_trial_nci_id_trigger_insert;    
+DROP TRIGGER sync_trial_nci_id_trigger_update;
+DROP TRIGGER sync_trial_nci_id_trigger_delete;
+
+DROP TRIGGER sync_trial_identifier_assigner_ids_trigger_insert;    
+DROP TRIGGER sync_trial_identifier_assigner_ids_triggerr_update;
+DROP TRIGGER sync_trial_identifier_assigner_ids_trigger_delete;
+
+

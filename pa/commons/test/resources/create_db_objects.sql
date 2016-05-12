@@ -492,3 +492,13 @@ CREATE TRIGGER document_workflow_status_set_previous_trigger_insert AFTER INSERT
 CREATE TRIGGER document_workflow_status_set_previous_trigger_update AFTER UPDATE ON document_workflow_status FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_previous_document_workflow_status";
 CREATE TRIGGER document_workflow_status_set_previous_trigger_delete AFTER DELETE ON document_workflow_status FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.set_previous_document_workflow_status";
 
+CREATE TRIGGER sync_trial_nci_id_trigger_insert AFTER INSERT ON STUDY_OTHERIDENTIFIERS FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.sync_trial_nci_id";    
+CREATE TRIGGER sync_trial_nci_id_trigger_update AFTER UPDATE ON STUDY_OTHERIDENTIFIERS FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.sync_trial_nci_id";
+CREATE TRIGGER sync_trial_nci_id_trigger_delete AFTER DELETE ON STUDY_OTHERIDENTIFIERS FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.sync_trial_nci_id";
+
+CREATE TRIGGER sync_trial_identifier_assigner_ids_trigger_insert AFTER INSERT ON STUDY_SITE FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.sync_trial_identifier_assigner_ids";    
+CREATE TRIGGER sync_trial_identifier_assigner_ids_triggerr_update AFTER UPDATE ON STUDY_SITE FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.sync_trial_identifier_assigner_ids";
+CREATE TRIGGER sync_trial_identifier_assigner_ids_trigger_delete AFTER DELETE ON STUDY_SITE FOR EACH ROW QUEUE 0 CALL "gov.nih.nci.pa.util.testsupport.sync_trial_identifier_assigner_ids";
+
+
+
