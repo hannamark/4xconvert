@@ -294,6 +294,9 @@ public class TrialSearchTest extends AbstractRegistrySeleniumTest {
         }
 
         // paging
+        s.click("xpath=//body");
+        pause(5000);
+        moveElementIntoView(By.xpath("//table[@id='row']"));
         selenium.click("xpath=//table[@id='row']");
         pause(1000);
         selenium.select("xpath=//select[@name='row_length']", "10");
