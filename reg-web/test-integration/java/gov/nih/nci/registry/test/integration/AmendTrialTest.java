@@ -617,6 +617,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
      * 
      */
     protected void populateAmendmentNumber() {
+        super.moveElementIntoView(By.id("trialDTO.localAmendmentNumber"));
         s.type("trialDTO.localAmendmentNumber", "1");
         s.click("xpath=//span[@class='add-on btn-default' and preceding-sibling::input[@id='trialDTO.amendmentDate']]");
         clickOnFirstVisible(By.xpath("//td[@class='day active']"));
@@ -714,6 +715,8 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
 
         assertEquals("1",
                 selenium.getValue("trialDTO.leadOrganizationIdentifier"));
+        hideTopMenu();
+        
     }
 
     private void changeAndVerifyLeadOrganization() {

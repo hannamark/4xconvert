@@ -298,6 +298,7 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         okButton.click();
         
      // re-open the edit dialog and update program code to an existing value
+        moveElementIntoView(updateProgramCodebutton);
         updateProgramCodebutton.click();
         // clear program code and submit
         programCodeInputField.clear();

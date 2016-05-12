@@ -1,10 +1,12 @@
 package gov.nih.nci.registry.test.integration;
 
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
+
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
@@ -887,7 +889,10 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
         assertFalse(selenium.isTextPresent("Showing 0 to 0 of 0 entries"));
 
         //click on the program-code dropdown
-        driver.findElement(By.id(trial1.id + "_tra")).click();
+        final WebElement el = driver.findElement(By.id(trial1.id + "_tra"));
+        moveElementIntoView(el);
+        el.click();
+       
 
         //select PG5
         pickSelect2Item(trial1.id + "_trDiv", trial1.id + "_trSel", "PG5 - Cancer Program5");
@@ -900,6 +905,7 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
 
         //Again pick PG5 in funnel
+        moveElementIntoView(By.id("fpgc-icon-a"));
         clickAndWait("fpgc-icon-a");
         pickMultiSelectOptions("fpgc-div", Arrays.asList("5"), Arrays.asList("1", "2", "3", "4", "6"));
 
@@ -911,14 +917,17 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
 
 
         //Now pick PG6 in funnel
+        moveElementIntoView(By.id("fpgc-icon-a"));
         clickAndWait("fpgc-icon-a");
         pickMultiSelectOptions("fpgc-div", Arrays.asList("6"), Arrays.asList("1", "2", "3", "4", "5"));
         waitForElementToBecomeAvailable(By.xpath("//table[@id='trialsTbl']/tbody//td[text()='No data available in table']"), 5);
         assertTrue(selenium.isTextPresent("Showing 0 to 0 of 0 entries"));
 
         //Now deselect every thing in funnel
+        moveElementIntoView(By.id("fpgc-icon-a"));
         clickAndWait("fpgc-icon-a");
         pickMultiSelectOptions("fpgc-div", Arrays.asList("multiselect-all"), new ArrayList<String>()); //select all
+        moveElementIntoView(By.id("fpgc-icon-a"));
         clickAndWait("fpgc-icon-a");
         pickMultiSelectOptions("fpgc-div", Arrays.asList("multiselect-all"), new ArrayList<String>()); //deselect all
         waitForElementToGoAway(By.xpath("//table[@id='trialsTbl']/tbody//td[text()='No data available in table']"), 5);
@@ -956,7 +965,12 @@ public class ProgramCodeAssignmentTest  extends AbstractRegistrySeleniumTest {
      * @param optionLabel - the option to select
      */
     protected void pickSelect2Item(String containerId, String selBoxId, String optionLabel) {
-        waitForElementToBecomeVisible(By.xpath(String.format("//div[@id='%s']", containerId)), 10);
+        ((JavascriptExecutor) driver)
+                .executeScript("jQuery('div').removeClass( 'table-wrapper' );");
+        final By xpath = By.xpath(String.format("//div[@id='%s']", containerId));
+        waitForElementToBecomeAvailable(xpath, 10);
+        moveElementIntoView(xpath);
+        waitForElementToBecomeVisible(xpath, 10);
 
         driver.findElement(By.cssSelector("span.select2-selection__arrow")).click();
         waitForElementToBecomeAvailable(By.xpath(String.format("//ul[@id='select2-%s-results']", selBoxId)), 5);

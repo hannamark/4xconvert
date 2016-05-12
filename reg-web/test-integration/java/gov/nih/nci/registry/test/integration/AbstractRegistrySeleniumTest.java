@@ -503,8 +503,10 @@ public abstract class AbstractRegistrySeleniumTest extends
 
     @SuppressWarnings("deprecation")
     protected void deleteStatus(int row) {
-        selenium.click("xpath=//table[@id='trialStatusHistoryTable']/tbody/tr["
-                + row + "]/td[5]/i[@class='fa fa-trash-o']");
+        final String trashIconPath = "//table[@id='trialStatusHistoryTable']/tbody/tr[" + row
+                        + "]/td[5]/i[@class='fa fa-trash-o']";
+        moveElementIntoView(By.xpath(trashIconPath));
+        selenium.click("xpath=" + trashIconPath);
         waitForElementToBecomeVisible(By.id("dialog-delete"), 5);
         assertEquals("Please provide a comment",
                 selenium.getText("ui-dialog-title-dialog-delete"));
@@ -532,11 +534,14 @@ public abstract class AbstractRegistrySeleniumTest extends
         if (StringUtils.isNotBlank(date)) {
             selenium.type("trialDTO_statusDate", date);
         } else {
-            selenium.click("xpath=//span[@class='add-on btn-default' and preceding-sibling::input[@id='trialDTO_statusDate']]");
+            final String path = "//span[@class='add-on btn-default' and preceding-sibling::input[@id='trialDTO_statusDate']]";
+            moveElementIntoView(By.xpath(path));
+            selenium.click("xpath="+path);
             clickOnFirstVisible(By.xpath("//td[@class='day active']"));
             clickOnFirstVisible(By
                     .xpath("//div[@class='datepicker']/button[@class='close']"));
         }
+        moveElementIntoView(By.id("addStatusBtn"));
         clickAndWaitAjax("id=addStatusBtn");
         waitForElementToBecomeVisible(By.id("trialStatusHistoryTable"), 10);
         waitForElementToBecomeAvailable(
