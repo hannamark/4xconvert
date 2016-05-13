@@ -13,6 +13,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.webservices.converters.OrganizationDTOBuilder;
@@ -103,12 +104,17 @@ public final class ParticipatingSiteService extends BaseRestService {
 
             List<ParticipatingSiteContactDTO> participatingSiteContactDTOList = new ParticipatingSiteContactDTOBuilder(
                     org, getPaServiceUtils()).build(reg);
+            
+            PaHibernateUtil.getHibernateHelper().unbindAndCleanupSession();
 
             Ii studySiteID = PaRegistry
                     .getParticipatingSiteService()
                     .createStudySiteParticipant(studySiteDTO, accrualStatusDTO,
                             poHealthFacilID, participatingSiteContactDTOList)
                     .getIdentifier();
+            
+            PaHibernateUtil.getHibernateHelper().openAndBindSession();
+            
             return response(studySiteID);
         } catch (Exception e) {
             return handleException(e);
@@ -152,17 +158,25 @@ public final class ParticipatingSiteService extends BaseRestService {
     public Response updateSite(@PathParam("idType") String idType,
             @PathParam("trialID") String trialID, @PathParam("id") long poid,
             @Validate ParticipatingSiteUpdate ps) {
+        Response response;
         try {
             StudyProtocolDTO studyProtocolDTO = findTrial(idType, trialID);
+            
+
             StudySiteDTO siteDTO = PaRegistry.getParticipatingSiteService()
                     .getParticipatingSite(studyProtocolDTO.getIdentifier(),
                             poid + "");
+            
+            
             if (siteDTO == null) {
                 throw new EntityNotFoundException(
                         "Participating site with PO ID " + poid + " on trial "
                                 + idType + "/" + trialID + " is not found.");
             }
-            return updateSite(siteDTO.getIdentifier(), ps);
+            PaHibernateUtil.getHibernateHelper().unbindAndCleanupSession();
+            response = updateSite(siteDTO.getIdentifier(), ps);
+            PaHibernateUtil.getHibernateHelper().openAndBindSession();
+            return response;
         } catch (Exception e) {
             return handleException(e);
         }

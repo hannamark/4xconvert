@@ -361,6 +361,7 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
      * {@inheritDoc}
      */
     @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public ParticipatingSiteDTO updateStudySiteParticipant(StudySiteDTO studySiteDTO,
             StudySiteAccrualStatusDTO currentStatusDTO,
             List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {
@@ -378,6 +379,7 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
      * {@inheritDoc}
      */
     @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public ParticipatingSiteDTO createStudySiteParticipant(StudySiteDTO studySiteDTO,
             StudySiteAccrualStatusDTO currentStatusDTO, Ii poHcfIi,
             List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {

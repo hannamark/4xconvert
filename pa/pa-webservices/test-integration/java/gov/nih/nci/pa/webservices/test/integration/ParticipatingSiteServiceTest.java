@@ -374,6 +374,24 @@ public final class ParticipatingSiteServiceTest extends AbstractRestServiceTest 
         verifySiteUpdate(siteID, upd);
 
     }
+    
+    @Test
+    public void testAddSiteWithInvalidDate() throws Exception {
+        final String xmlFile = "/integration_ps_phone_validation_add.xml";
+        
+        
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
+        long beforeCount =getParticipatingSiteCount(rConf.getPaTrialID()); 
+        ParticipatingSite upd = readParticipatingSiteFromFile(xmlFile);
+        HttpResponse response = addSite("nci", rConf.getNciTrialID() + "", upd);
+        assertEquals(500, getReponseCode(response));
+        assertTrue(EntityUtils.toString(response.getEntity(), "utf-8")
+                .contains("Invalid phone number: 70-035556666 format for USA or CANADA is xxx-xxx-xxxxextxxxx"));
+        long afterCount =getParticipatingSiteCount(rConf.getPaTrialID());
+        
+        //check if this site is not added in database
+        assertTrue(beforeCount ==afterCount);
+    }
 
     private HttpResponse updateSiteByPoId(TrialRegistrationConfirmation rConf,
             int poID, ParticipatingSiteUpdate o) throws JAXBException,
@@ -580,6 +598,14 @@ public final class ParticipatingSiteServiceTest extends AbstractRestServiceTest 
         return (Number) runner
                 .query(connection,
                         "select identifier from study_site order by identifier desc limit 1",
+                        new ArrayHandler())[0];
+    }
+    
+    private Long getParticipatingSiteCount(long studyId) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        return (Long) runner
+                .query(connection,
+                        "select count(*) from study_site where study_protocol_identifier="+studyId,
                         new ArrayHandler())[0];
     }
 
