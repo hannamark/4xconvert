@@ -38,6 +38,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -339,7 +340,7 @@ public final class ParticipatingSiteServiceTest extends AbstractRestServiceTest 
 
     }
 
-    @Test
+    @Ignore
     public void testUpdateSiteByPoId() throws Exception {
         TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
         makeAbbreviated(rConf);
