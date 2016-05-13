@@ -853,6 +853,7 @@ public void testIfProgramCodesForOtherFamilyNotChanged() throws Exception {
             for (WebElement cell : columns) {
                 if (cell.getAttribute("class").equals("add-on btn-default")) {
                     hasCalendarElement = true;
+                    moveElementIntoView(cell);
                     cell.click();
                     assertTrue(selenium.isTextPresent(month + " " + year));
                     break;
