@@ -251,6 +251,7 @@ public class TrialStatusHistoryTest extends AbstractTrialStatusTest {
         topWindow();
 
         // Verify check out
+        moveElementIntoView(By.linkText("Check-Out History"));
         clickAndWait("link=Check-Out History");
         assertEquals("Administrative",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[1]")
