@@ -162,7 +162,7 @@ public final class ParticipatingSiteService extends BaseRestService {
         try {
             StudyProtocolDTO studyProtocolDTO = findTrial(idType, trialID);
             
-
+           
             StudySiteDTO siteDTO = PaRegistry.getParticipatingSiteService()
                     .getParticipatingSite(studyProtocolDTO.getIdentifier(),
                             poid + "");
@@ -173,9 +173,9 @@ public final class ParticipatingSiteService extends BaseRestService {
                         "Participating site with PO ID " + poid + " on trial "
                                 + idType + "/" + trialID + " is not found.");
             }
-            PaHibernateUtil.getHibernateHelper().unbindAndCleanupSession();
+            
             response = updateSite(siteDTO.getIdentifier(), ps);
-            PaHibernateUtil.getHibernateHelper().openAndBindSession();
+            
             return response;
         } catch (Exception e) {
             return handleException(e);
@@ -233,11 +233,14 @@ public final class ParticipatingSiteService extends BaseRestService {
 
             List<ParticipatingSiteContactDTO> participatingSiteContactDTOList = new ParticipatingSiteContactDTOBuilder(
                     getOrg(existing), getPaServiceUtils()).build(ps);
-
+            
+            PaHibernateUtil.getHibernateHelper().unbindAndCleanupSession();
             Ii studySiteID = PaRegistry
                     .getParticipatingSiteService()
                     .updateStudySiteParticipant(studySiteDTO, accrualStatusDTO,
                             participatingSiteContactDTOList).getIdentifier();
+            PaHibernateUtil.getHibernateHelper().openAndBindSession();
+            
             return response(studySiteID);
         } catch (Exception e) {
             return handleException(e);
