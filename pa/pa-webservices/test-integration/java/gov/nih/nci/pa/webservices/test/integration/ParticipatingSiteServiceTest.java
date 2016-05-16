@@ -341,6 +341,7 @@ public final class ParticipatingSiteServiceTest extends AbstractRestServiceTest 
     }
 
     @Ignore
+    /*
     public void testUpdateSiteByPoId() throws Exception {
         TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
         makeAbbreviated(rConf);
@@ -356,7 +357,7 @@ public final class ParticipatingSiteServiceTest extends AbstractRestServiceTest 
         verifyUpdateSiteResponse(response, siteID);
         verifySiteUpdate(siteID, upd);
 
-    }
+    } */
 
     @Test
     public void testUpdateSiteByCtepID() throws Exception {
@@ -438,6 +439,8 @@ public final class ParticipatingSiteServiceTest extends AbstractRestServiceTest 
      */
     private void verifyUpdateSiteResponse(HttpResponse response, long siteID)
             throws NumberFormatException, IOException, ParseException {
+        System.out.println("The response here --->"+EntityUtils.toString(
+               response.getEntity(), "utf-8"));
         assertEquals(200, getReponseCode(response));
         assertEquals(TEXT_PLAIN, getResponseContentType(response));
         assertEquals("", response.getFirstHeader("Set-Cookie").getValue());
