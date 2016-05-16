@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 
 /**
  * Tests for trial status transitions.
@@ -251,6 +252,7 @@ public class TrialStatusHistoryTest extends AbstractTrialStatusTest {
         topWindow();
 
         // Verify check out
+        ((JavascriptExecutor) driver).executeScript("jQuery('#popupFrame').hide();");
         moveElementIntoView(By.linkText("Check-Out History"));
         clickAndWait("link=Check-Out History");
         assertEquals("Administrative",

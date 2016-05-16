@@ -154,6 +154,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.lov.ConsortiaTrialCategoryCode" />
         
         <mapping class="gov.nih.nci.pa.domain.StudyProcessingError" />
+        <mapping class="gov.nih.nci.pa.domain.WebServiceAccessLog" />
         
         <mapping resource="queries.xml" />
      </session-factory>

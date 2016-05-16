@@ -2062,11 +2062,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
 
         runner.update(connection, sql);
     }
-    
-   
-   
-    
-    
+
     /**
      * Returns a timestamp string that can be used in the sql for the give date
      * string in the format yyyy-mm-dd

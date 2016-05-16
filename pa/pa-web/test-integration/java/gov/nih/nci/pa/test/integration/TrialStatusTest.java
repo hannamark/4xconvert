@@ -156,8 +156,13 @@ public class TrialStatusTest extends AbstractTrialStatusTest {
             File tsr = waitForTsrDownload();
             assertTrue(tsr.exists());
             tsr.deleteOnExit();
-            assertTrue(FileUtils.readFileToString(tsr).matches(
-                    "(?s)^.*?Primary Completion Date\\\\cell.*?N/A\\\\cell.+$"));
+            final String tsrContent = FileUtils.readFileToString(tsr, "UTF-8");
+
+            System.out.println("TSR Path: " + tsr.getAbsolutePath());
+            System.out.println("TSR Content:\r\n" + tsrContent);
+
+            assertTrue(tsrContent
+                    .matches("(?s)^.*?Primary Completion Date\\\\cell.*?N/A\\\\cell.+$"));
             tsr.delete();
         }
     }
@@ -344,11 +349,11 @@ public class TrialStatusTest extends AbstractTrialStatusTest {
         loginAsSuperAbstractor();
         searchAndSelectTrial(trial.title);
         clickAndWait("link=Trial Status");
-        
+
         // Move to Active: no errors.
         selenium.select("id=currentTrialStatus", "label=Active");
         clickAndWait("link=Save");
-        
+
         assertTrue(selenium.isTextPresent("Record Updated"));
         assertTrue(driver.findElements(By.className("error_msg")).isEmpty());
         assertEquals("ACTIVE", getCurrentTrialStatus(trial).statusCode);
@@ -356,7 +361,7 @@ public class TrialStatusTest extends AbstractTrialStatusTest {
         // Move to Withdrawn produces an error: bad transition.
         selenium.select("id=currentTrialStatus", "label=Approved");
         clickAndWait("link=Save");
-        
+
         assertTrue(selenium.isTextPresent("Record Updated"));
         assertTrue(selenium
                 .isTextPresent("Status Transition Errors were found. Please use the History button to review and make corrections. Trial record cannot be checked-in until all Status Transition Errors have been resolved."));
@@ -370,8 +375,7 @@ public class TrialStatusTest extends AbstractTrialStatusTest {
                 "The system has checked-out this trial under your name because Trial Status Transition errors were found. Trial record cannot be checked-in until all Status Transition Errors have been resolved. Please use the Trial Status History button to review and make corrections, or Cancel to dismiss this message.",
                 selenium.getText("id=displaySuAbstractorAutoCheckoutMessage")
                         .trim());
-        assertEquals(
-                "Trial Status Validation",
+        assertEquals("Trial Status Validation",
                 selenium.getText("class=ui-dialog-title").trim());
         // Verify History button
         selenium.click("xpath=//button/span[normalize-space(text())='Trial Status History']");

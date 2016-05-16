@@ -46,6 +46,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
+import org.apache.commons.dbutils.handlers.ArrayListHandler;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -59,11 +60,11 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.junit.Assert;
-import org.openqa.selenium.By;
 import org.xml.sax.SAXException;
 
 import com.dumbster.smtp.SmtpMessage;
@@ -226,10 +227,12 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
      * @throws UnsupportedEncodingException
      * @throws IOException
      * @throws ClientProtocolException
+     * @throws SQLException
      */
     protected HttpResponse submitRegistrationAndReturnResponse(
             CompleteTrialRegistration o) throws JAXBException,
-            UnsupportedEncodingException, IOException, ClientProtocolException {
+            UnsupportedEncodingException, IOException, ClientProtocolException,
+            SQLException {
         JAXBContext jc = JAXBContext.newInstance(ObjectFactory.class);
         Marshaller m = jc.createMarshaller();
         m.setProperty("jaxb.formatted.output", true);
@@ -247,7 +250,7 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
 
     protected HttpResponse submitRegistrationAndReturnResponse(String file)
             throws UnsupportedEncodingException, IOException,
-            ClientProtocolException {
+            ClientProtocolException, SQLException {
         StringEntity orgEntity = new StringEntity(IOUtils.toString(getClass()
                 .getResourceAsStream(file), "UTF-8"));
         return submitRegistrationAndReturnResponse(orgEntity);
@@ -259,10 +262,11 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
      * @throws UnsupportedEncodingException
      * @throws IOException
      * @throws ClientProtocolException
+     * @throws SQLException
      */
     private HttpResponse submitRegistrationAndReturnResponse(
             StringEntity orgEntity) throws UnsupportedEncodingException,
-            IOException, ClientProtocolException {
+            IOException, ClientProtocolException, SQLException {
         return submitEntityAndReturnResponse(orgEntity, "/trials/complete");
 
     }
@@ -270,7 +274,7 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
     protected HttpResponse submitEntityAndReturnResponse(
             StringEntity orgEntity, String serviceURL)
             throws UnsupportedEncodingException, IOException,
-            ClientProtocolException {
+            ClientProtocolException, SQLException {
         return submitEntityAndReturnResponse(orgEntity, serviceURL,
                 APPLICATION_XML, APPLICATION_XML);
     }
@@ -278,7 +282,7 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
     protected HttpResponse submitEntityAndReturnResponse(
             StringEntity orgEntity, String serviceURL, String acceptType,
             String requestType) throws UnsupportedEncodingException,
-            IOException, ClientProtocolException {
+            IOException, ClientProtocolException, SQLException {
         String url = baseURL + serviceURL;
         LOG.info("Hitting " + url);
         HttpPost req = new HttpPost(url);
@@ -288,12 +292,39 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
 
         HttpResponse response = httpClient.execute(req);
         LOG.info("Response code: " + getReponseCode(response));
+
+        verifyWebServiceAccessLogEntry(url, req, orgEntity, response);
+
         return response;
+    }
+
+    protected void verifyWebServiceAccessLogEntry(String url, HttpRequestBase method,
+            StringEntity entity, HttpResponse response) throws SQLException,
+            IOException {
+
+        QueryRunner runner = new QueryRunner();
+        final List<Object[]> results = runner
+                .query(connection,
+                        "SELECT identifier,datetime,client_ip,client_username,uri,method,headers,"
+                                + "payload,response,response_code,processing_time,processing_errors "
+                                + "FROM webservice_access_log order by datetime desc limit 1",
+                        new ArrayListHandler());
+        Object[] row = results.get(0);
+        String uri = (String) row[4];
+        String methodStr = (String) row[5];
+        String payload = (String) row[7];
+        Integer responseCode = (Integer) row[9];
+
+        assertTrue(url.endsWith(uri));
+        assertEquals(method.getMethod(), methodStr);
+        assertEquals(IOUtils.toString(entity.getContent()), payload);
+        assertEquals(getReponseCode(response), responseCode.intValue());
+
     }
 
     protected HttpResponse putEntityAndReturnResponse(StringEntity orgEntity,
             String serviceURL) throws UnsupportedEncodingException,
-            IOException, ClientProtocolException {
+            IOException, ClientProtocolException, SQLException {
         return putEntityAndReturnResponse(orgEntity, serviceURL,
                 APPLICATION_XML, APPLICATION_XML);
     }
@@ -301,7 +332,7 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
     protected HttpResponse putEntityAndReturnResponse(StringEntity orgEntity,
             String serviceURL, String acceptType, String requestType)
             throws UnsupportedEncodingException, IOException,
-            ClientProtocolException {
+            ClientProtocolException, SQLException {
         String url = baseURL + serviceURL;
         LOG.info("Hitting " + url);
         HttpPut req = new HttpPut(url);
@@ -311,6 +342,10 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
 
         HttpResponse response = httpClient.execute(req);
         LOG.info("Response code: " + getReponseCode(response));
+        
+        verifyWebServiceAccessLogEntry(url, req,
+                orgEntity, response);
+        
         return response;
     }
 

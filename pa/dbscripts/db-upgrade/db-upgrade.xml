@@ -2055,5 +2055,10 @@
      <changeSet id="PO-9779" author="krylovd">       
        <comment>De-normalizing schema to fix search performance issues.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3.1.1/PO-9779.sql" splitStatements="false"/>
-    </changeSet>    
+    </changeSet>
+     <changeSet id="PO-9777" author="krylovd">       
+       <comment>Added a table to maintain a log of calls to RESTful services.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3.1.1/PO-9777.sql"/>
+    </changeSet>   
+        
 </databaseChangeLog>

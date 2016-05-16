@@ -403,7 +403,7 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
 
     private void verifyFailureToRegister(String file, int code,
             String expectedErrMsg) throws JAXBException, SAXException,
-            UnsupportedEncodingException, ClientProtocolException, IOException {
+            UnsupportedEncodingException, ClientProtocolException, IOException, SQLException {
         HttpResponse response = submitRegistrationAndReturnResponse(file);
         verifyResponseHasFailure(code, expectedErrMsg, response);
     }

@@ -41,7 +41,14 @@
 		<filter-name>usernameFilter</filter-name>
 		<filter-class>com.fiveamsolutions.nci.commons.web.filter.UsernameFilter</filter-class>
 	</filter>
-
+    <filter>
+        <filter-name>AccessLoggingFilter</filter-name>
+        <filter-class>gov.nih.nci.pa.filter.AccessLoggingFilter</filter-class>
+        <init-param>
+            <param-name>matchPattern</param-name>
+            <param-value>^/services.*$</param-value>
+        </init-param>
+    </filter>
 	<filter>
 		<filter-name>openSessionFilter</filter-name>
 		<filter-class>gov.nih.nci.pa.filter.PaOpenSessionInViewFilter</filter-class>
@@ -78,6 +85,11 @@
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
+	
+    <filter-mapping>
+        <filter-name>AccessLoggingFilter</filter-name>
+        <url-pattern>/*</url-pattern>       
+    </filter-mapping>	
 
 	<filter-mapping>
 		<filter-name>openSessionFilter</filter-name>

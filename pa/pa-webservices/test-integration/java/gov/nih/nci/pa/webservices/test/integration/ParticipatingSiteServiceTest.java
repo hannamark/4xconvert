@@ -36,6 +36,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 import org.junit.Ignore;
@@ -218,6 +219,9 @@ public final class ParticipatingSiteServiceTest extends AbstractRestServiceTest 
         response = httpClient.execute(req);
         assertEquals(200, getReponseCode(response));
         assertEquals(APPLICATION_XML, getResponseContentType(response));
+        
+        verifyWebServiceAccessLogEntry(url, req,
+                new StringEntity(""), response);
 
         JAXBContext jaxbContext = JAXBContext.newInstance(Sites.class);
         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -396,7 +400,7 @@ public final class ParticipatingSiteServiceTest extends AbstractRestServiceTest 
 
     private HttpResponse updateSiteByPoId(TrialRegistrationConfirmation rConf,
             int poID, ParticipatingSiteUpdate o) throws JAXBException,
-            ClientProtocolException, IOException {
+            ClientProtocolException, IOException, SQLException {
         JAXBContext jc = JAXBContext.newInstance(ObjectFactory.class);
         Marshaller m = jc.createMarshaller();
         StringWriter out = new StringWriter();
@@ -414,7 +418,7 @@ public final class ParticipatingSiteServiceTest extends AbstractRestServiceTest 
     private HttpResponse updateSiteByCtepId(
             TrialRegistrationConfirmation rConf, String ctepID,
             ParticipatingSiteUpdate o) throws JAXBException,
-            ClientProtocolException, IOException {
+            ClientProtocolException, IOException, SQLException {
         JAXBContext jc = JAXBContext.newInstance(ObjectFactory.class);
         Marshaller m = jc.createMarshaller();
         StringWriter out = new StringWriter();
