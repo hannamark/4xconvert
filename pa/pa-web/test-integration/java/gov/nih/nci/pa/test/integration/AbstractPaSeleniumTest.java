@@ -1461,6 +1461,17 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         assertEquals(1, runner.update(connection, sql));
     }
 
+    protected void deleteEntireTrialStatusHistory(TrialInfo info)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        runner.update(connection,
+                "DELETE FROM study_overall_status WHERE study_protocol_identifier="
+                        + info.id);
+        runner.update(connection,
+                "DELETE FROM  study_recruitment_status WHERE study_protocol_identifier="
+                        + info.id);
+    }
+
     protected String today() {
         return String.format("{ts '%s'}",
                 new Timestamp(System.currentTimeMillis()).toString());
@@ -1938,7 +1949,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         runner.update(connection, sql);
     }
 
-    protected void addParticipatingSite(TrialInfo trial, String orgName,
+    protected Number addParticipatingSite(TrialInfo trial, String orgName,
             String status) throws SQLException {
         QueryRunner runner = new QueryRunner();
         String sql = "INSERT INTO study_site (identifier,functional_code,local_sp_indentifier,"
@@ -1964,6 +1975,9 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                         + "'"
                         + status
                         + "', now(), (select max (identifier) from study_site), false)");
+
+        return (Integer) runner.query(connection,
+                "select max (identifier) from study_site", new ArrayHandler())[0];
 
     }
 
