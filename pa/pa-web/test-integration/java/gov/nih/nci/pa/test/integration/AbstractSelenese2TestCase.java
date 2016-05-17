@@ -135,12 +135,23 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
         profile.setPreference("browser.download.dir",
                 downloadDir.getCanonicalPath());
         profile.setPreference("browser.download.folderList", 2);
-        profile.setPreference("browser.helperApps.neverAsk.saveToDisk",
-                "text/csv;" +
-                        "application/rtf;" +
-                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;" +
-                        "application/xlsx;" +
-                        "application/xls");
+        profile.setPreference("browser.download.manager.showWhenStarting",
+                false);
+        profile.setPreference("browser.download.manager.showAlertOnComplete",
+                false);
+        profile.setPreference("browser.download.manager.closeWhenDone", true);
+        profile.setPreference("browser.helperApps.alwaysAsk.force", false);
+        profile.setPreference("browser.download.manager.focusWhenStarting",
+                false);
+        profile.setPreference(
+                "browser.helperApps.neverAsk.saveToDisk",
+                "text/csv;"
+                        + "application/octet-stream;"
+                        + "application/rtf;"
+                        + "application/x-rtf;"
+                        + "text/richtext;"
+                        + "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;"
+                        + "application/xlsx;" + "application/xls");
         final Class<?> clazz = Class.forName(driverClass);
         try {
             driver = (WebDriver) clazz.getConstructor(FirefoxProfile.class)
@@ -209,13 +220,13 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
         WebDriverWait wait = new WebDriverWait(driver, timeoutSeconds);
         wait.until(ExpectedConditions.visibilityOf(driver.findElement(by)));
     }
-    
+
     protected void waitForElementToBecomeClickable(By by, int timeoutSeconds) {
         waitForElementToBecomeVisible(by, timeoutSeconds);
         WebDriverWait wait = new WebDriverWait(driver, timeoutSeconds);
-        wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(by)));
+        wait.until(ExpectedConditions.elementToBeClickable(driver
+                .findElement(by)));
     }
-
 
     protected void waitForElementToBecomeAvailable(By by, int timeoutSeconds) {
         WebDriverWait wait = new WebDriverWait(driver, timeoutSeconds);

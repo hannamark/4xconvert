@@ -173,7 +173,7 @@ public class TrialStatusTest extends AbstractTrialStatusTest {
                 .isEmpty() && System.currentTimeMillis() - stamp < 1000 * 30) {
             Thread.sleep(1000);
         }
-        Thread.sleep(5000);
+        Thread.sleep(10000);
         return (File) FileUtils
                 .listFiles(downloadDir, new String[] { "rtf" }, false)
                 .iterator().next();
