@@ -252,9 +252,7 @@ public class TrialStatusHistoryTest extends AbstractTrialStatusTest {
         topWindow();
 
         // Verify check out
-        ((JavascriptExecutor) driver).executeScript("jQuery('#popupFrame').hide();");
-        moveElementIntoView(By.linkText("Check-Out History"));
-        clickAndWait("link=Check-Out History");
+        openAndWait("/pa/protected/checkOutHistory.action");
         assertEquals("Administrative",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[1]")
                         .trim());
