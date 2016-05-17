@@ -155,10 +155,11 @@ public class TrialStatusTest extends AbstractTrialStatusTest {
             s.click("link=View TSR");
             File tsr = waitForTsrDownload();
             assertTrue(tsr.exists());
-            tsr.deleteOnExit();
             final String tsrContent = FileUtils.readFileToString(tsr, "UTF-8");
+            tsr.deleteOnExit();
 
             System.out.println("TSR Path: " + tsr.getAbsolutePath());
+            System.out.println("TSR Size: " + tsr.length());
             System.out.println("TSR Content:\r\n" + tsrContent);
 
             assertTrue(tsrContent
@@ -174,6 +175,14 @@ public class TrialStatusTest extends AbstractTrialStatusTest {
             Thread.sleep(1000);
         }
         Thread.sleep(10000);
+
+        System.out.println("List of TSR files in the download dir:");
+        for (File file : (List<File>) FileUtils.listFiles(downloadDir,
+                new String[] { "rtf" }, false)) {
+            System.out.println(file.getAbsolutePath() + ", size "
+                    + file.length());
+        }
+
         return (File) FileUtils
                 .listFiles(downloadDir, new String[] { "rtf" }, false)
                 .iterator().next();
