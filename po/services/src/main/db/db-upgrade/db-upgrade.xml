@@ -247,5 +247,9 @@
        <validCheckSum>ANY</validCheckSum>     
        <comment>Remove CTRP's reliance on grid for authentication and authorization.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/1.1/PO-9112.sql"/>       
-    </changeSet>    
+    </changeSet>   
+    <changeSet id="PO-9777" author="krylovd">
+       <comment>Added a table to maintain a log of calls to RESTful services.</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/1.1.1/PO-9777.sql"/>
+    </changeSet>   
 </databaseChangeLog>

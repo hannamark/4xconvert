@@ -54,7 +54,7 @@
         <mapping class="gov.nih.nci.po.data.bo.FamilyOrganizationRelationship"/>
         <mapping class="gov.nih.nci.po.data.bo.FamilyP30"/>
         <mapping class="gov.nih.nci.po.data.bo.OrganizationRelationship"/>
-
+        <mapping class="gov.nih.nci.po.data.bo.WebServiceAccessLog" />
 
         <mapping class="com.fiveamsolutions.nci.commons.audit.AuditLogRecord" />
         <mapping class="com.fiveamsolutions.nci.commons.audit.AuditLogDetail" />

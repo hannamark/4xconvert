@@ -58,9 +58,11 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.po.data.bo.ResearchOrganizationType"/>
         <mapping class="gov.nih.nci.po.data.bo.State" />
         <mapping class="gov.nih.nci.po.data.bo.URL"/>
+        <mapping class="gov.nih.nci.po.data.bo.WebServiceAccessLog" />
 
         <mapping class="com.fiveamsolutions.nci.commons.audit.AuditLogRecord" />
         <mapping class="com.fiveamsolutions.nci.commons.audit.AuditLogDetail" />
+        
         
         <mapping resource="queries.xml" />
 

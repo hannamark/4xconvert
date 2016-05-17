@@ -80,6 +80,28 @@ end-if
 /subsystem=logging/logger=org.hornetq.core.server:write-attribute(name="use-parent-handlers", value="false")
 
 
+# Direct Web Service Access logging into a separate log file.
+if (outcome == success) of /subsystem=logging/logger=WebServiceAccessLog:read-resource
+	/subsystem=logging/logger=WebServiceAccessLog:remove
+end-if
+if (outcome == success) of /subsystem=logging/periodic-rotating-file-handler=WebServiceAccessLog:read-resource
+	/subsystem=logging/periodic-rotating-file-handler=WebServiceAccessLog:remove
+end-if
+
+/subsystem=logging/periodic-rotating-file-handler=WebServiceAccessLog:add(file={"path"=>"WebServiceAccessLog.log", "relative-to"=>"jboss.server.log.dir"},suffix=".yyyy-MM-dd")
+/subsystem=logging/periodic-rotating-file-handler=WebServiceAccessLog:change-log-level(level="INFO")
+/subsystem=logging/periodic-rotating-file-handler=WebServiceAccessLog:write-attribute(name="append", value="true")
+/subsystem=logging/periodic-rotating-file-handler=WebServiceAccessLog:write-attribute(name="autoflush", value="true")
+/subsystem=logging/periodic-rotating-file-handler=WebServiceAccessLog:write-attribute(name="formatter", value="%d{HH:mm:ss,SSS} %s%E%n")
+/subsystem=logging/periodic-rotating-file-handler=WebServiceAccessLog:write-attribute(name="suffix", value=".yyyy-MM-dd")
+/subsystem=logging/logger=WebServiceAccessLog:add
+/subsystem=logging/logger=WebServiceAccessLog:write-attribute(name="level", value="INFO")
+/subsystem=logging/logger=WebServiceAccessLog:assign-handler(name="WebServiceAccessLog")
+/subsystem=logging/logger=WebServiceAccessLog:write-attribute(name="use-parent-handlers", value="false")
+
+
+
+
 if (outcome == success) of /subsystem=logging/logger=gov.nih.nci.coppa.services.ldap:read-resource
 	/subsystem=logging/logger=gov.nih.nci.coppa.services.ldap:remove
 end-if

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<web-app id="PO" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+<web-app id="PO" xmlns="http://java.sun.com/xml/ns/javaee"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://java.sun.com/xml/ns/javaee web-app_3_0.xsd"
+      version="3.0">   
 
 	<display-name>PO-WebServices</display-name>
 
@@ -38,10 +38,24 @@
         <filter-class>com.fiveamsolutions.nci.commons.web.filter.UsernameFilter</filter-class>        
     </filter>
     
+    <filter>
+        <filter-name>AccessLoggingFilter</filter-name>
+        <filter-class>gov.nih.nci.po.webservices.filter.AccessLoggingFilter</filter-class>
+        <init-param>
+            <param-name>matchPattern</param-name>
+            <param-value>^/po-webservices.*$</param-value>
+        </init-param>
+    </filter>    
+    
     <filter-mapping>
         <filter-name>RequestTrackingFilter</filter-name>
         <url-pattern>/*</url-pattern>       
     </filter-mapping>
+    
+    <filter-mapping>
+        <filter-name>AccessLoggingFilter</filter-name>
+        <url-pattern>/*</url-pattern>       
+    </filter-mapping>       
     
 	<filter-mapping>
 		<filter-name>openSessionFilter</filter-name>
