@@ -1,5 +1,7 @@
 package gov.nih.nci.registry.test.integration;
 
+import gov.nih.nci.pa.enums.StudyStatusCode;
+
 import java.util.Date;
 
 import org.apache.commons.dbutils.QueryRunner;
@@ -319,7 +321,8 @@ public class ProgramCodesTest extends AbstractRegistrySeleniumTest {
         TrialInfo trial4 = createAcceptedTrial();
         addParticipatingSite(trial4, "National Cancer Institute Division of Cancer Prevention", "ACTIVE");
         assignProgramCode(trial4, 1, "A1");
-        moveBackTrialStatusDate(trial4, 368);
+        deleteEntireTrialStatusHistory(trial4);
+        addSOS(trial4, StudyStatusCode.ADMINISTRATIVELY_COMPLETE.name());
 
          //And I click click on del button
         selenium.click("deletePGCodeButton-A1");
