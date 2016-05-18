@@ -249,10 +249,12 @@ public class TrialRegistrationService extends BaseRestService {
             new StudyProtocolDTOBuilder().build(spDTO, reg);
             List<DocumentDTO> documentDTOs = new DocumentDTOBuilder().build(
                     spDTO, reg);
+            PaHibernateUtil.getHibernateHelper().unbindAndCleanupSession();
             PaRegistry.getProprietaryTrialService().update(spDTO, null, null,
                     null, nctIdentifier, null, documentDTOs,
                     new ArrayList<StudySiteDTO>(),
                     new ArrayList<StudySiteAccrualStatusDTO>());
+            PaHibernateUtil.getHibernateHelper().openAndBindSession();
             return buildTrialRegConfirmationResponse(paTrialID);
         } catch (Exception e) {
             return handleException(e);
