@@ -172,7 +172,7 @@ public class StudyProtocolQueryBeanSearchCriteriaTest extends
         Query query = criteria.getQuery("", false);
         String hql = query.getQueryString();
         System.out.println(hql);
-        Assert.assertTrue(hql.contains("WHERE  obj.dates.primaryCompletionDate >= :pcdFromDate AND  obj.dates.primaryCompletionDate <= :pcdToDate  AND  sos.statusCode in (:studyOverallStatusParam)  and sos.id in (select id from obj.studyOverallStatuses where statusDate between :reportingPeriodStartParam and :reportingPeriodEndParam)"));
+        Assert.assertTrue(hql.contains("AND  (exists (select id from obj.studyOverallStatuses where statusDate between :reportingPeriodStartParam and :reportingPeriodEndParam and statusCode in (:studyOverallStatusParam)) OR exists (select id from obj.studyOverallStatuses where statusDate < :reportingPeriodStartParam and statusCode in (:studyOverallStatusParam) and currentlyActive=true) OR exists (select sos1 from obj.studyOverallStatuses sos1 where sos1.statusDate < :reportingPeriodStartParam and sos1.statusCode in (:studyOverallStatusParam) and exists (select sos2 from obj.studyOverallStatuses sos2 where sos2.statusDate > :reportingPeriodStartParam AND sos2.position=sos1.position+1)) )"));
     }
 
 

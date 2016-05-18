@@ -440,17 +440,34 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                     && spo.getReportingPeriodStart() != null
                     && spo.getReportingPeriodEnd() != null) {
                 String operator = determineOperator(whereClause);
-                Set<StudyStatusCode> sosCodes = spo.getStudyStatusCodes();
-                whereClause.append(String.format(
-                        " %s sos.statusCode in (:%s) ", operator, SOS_PARAM));
-                whereClause.append(String.format(
-                        " and sos.id in (select id from %s.studyOverallStatuses where "
-                                        + "statusDate between :%s and :%s)",
+                Set<StudyStatusCode> sosCodes = spo.getStudyStatusCodes();                
+                whereClause
+                        .append(String
+                                .format("  %s (exists (select id from %s.studyOverallStatuses where "
+                                        + "statusDate between :%s and :%s and statusCode in (:%s)) OR "
+                                        + "exists (select id from %s.studyOverallStatuses where "
+                                        + "statusDate < :%s and statusCode in (:%s) and currentlyActive=true) OR "
+                                        + "exists (select sos1 from %s.studyOverallStatuses sos1 where "
+                                        + "sos1.statusDate < :%s and sos1.statusCode in (:%s) and "
+                                        + "exists (select sos2 from %s.studyOverallStatuses sos2 where "
+                                        + "sos2.statusDate > :%s AND sos2.position=sos1.position+1)) )",
+                                        operator,
                                         SearchableUtils.ROOT_OBJ_ALIAS,
-                                        REPORTING_PERIOD_START_PARAM, REPORTING_PERIOD_END_PARAM));
+                                        REPORTING_PERIOD_START_PARAM,
+                                        REPORTING_PERIOD_END_PARAM, SOS_PARAM,
+                                        SearchableUtils.ROOT_OBJ_ALIAS,
+                                        REPORTING_PERIOD_START_PARAM,
+                                        SOS_PARAM,
+                                        SearchableUtils.ROOT_OBJ_ALIAS,
+                                        REPORTING_PERIOD_START_PARAM,
+                                        SOS_PARAM,
+                                        SearchableUtils.ROOT_OBJ_ALIAS,
+                                        REPORTING_PERIOD_START_PARAM));
                 params.put(SOS_PARAM, sosCodes);
-                params.put(REPORTING_PERIOD_START_PARAM, spo.getReportingPeriodStart());
-                params.put(REPORTING_PERIOD_END_PARAM, spo.getReportingPeriodEnd());
+                params.put(REPORTING_PERIOD_START_PARAM,
+                        spo.getReportingPeriodStart());
+                params.put(REPORTING_PERIOD_END_PARAM,
+                        spo.getReportingPeriodEnd());
             }
         }
 

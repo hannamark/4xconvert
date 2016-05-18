@@ -1,14 +1,28 @@
 package gov.nih.nci.registry.test.integration;
 
 import static gov.nih.nci.pa.enums.StudyStatusCode.ACTIVE;
+import static gov.nih.nci.pa.enums.StudyStatusCode.ADMINISTRATIVELY_COMPLETE;
 import static gov.nih.nci.pa.enums.StudyStatusCode.APPROVED;
+import static gov.nih.nci.pa.enums.StudyStatusCode.CLOSED_TO_ACCRUAL;
+import static gov.nih.nci.pa.enums.StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION;
+import static gov.nih.nci.pa.enums.StudyStatusCode.COMPLETE;
 import static gov.nih.nci.pa.enums.StudyStatusCode.ENROLLING_BY_INVITATION;
 import static gov.nih.nci.pa.enums.StudyStatusCode.IN_REVIEW;
 import static gov.nih.nci.pa.enums.StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL;
 import static gov.nih.nci.pa.enums.StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION;
+import static gov.nih.nci.pa.enums.StudyStatusCode.WITHDRAWN;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
-import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
+
+import java.io.File;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.List;
+
+import junit.framework.Assert;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.io.FileUtils;
@@ -18,14 +32,6 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
-
-import java.io.File;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import junit.framework.Assert;
 
 /**
  * Integration test for Program Code assignment screen.
@@ -129,46 +135,36 @@ public class ProgramCodeAssignmentTest extends AbstractRegistrySeleniumTest {
                 TEMPORARILY_CLOSED_TO_ACCRUAL,
                 TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION };
 
+        final EnumSet<StudyStatusCode> NON_ACTIVE_STATUSES = EnumSet
+                .allOf(StudyStatusCode.class);
+        NON_ACTIVE_STATUSES.removeAll(Arrays.asList(ACTIVE_PROTOCOL_STATUSES));
+
+        // Non-Active status within period should NOT bring up the trial.
+        for (StudyStatusCode studyStatus : NON_ACTIVE_STATUSES) {
+            deleteEntireTrialStatusHistory(trial);
+            addSOS(trial, studyStatus.name(), "'2015-06-06 00:00:00'");
+            verifyTrialDoesNotShowUp(trial);
+        }
+
         // Active status within period should bring up the trial.
         deleteEntireTrialStatusHistory(trial);
         for (StudyStatusCode studyStatus : ACTIVE_PROTOCOL_STATUSES) {
             for (String statusDate : new String[] { "'2015-01-01 00:00:00'",
                     "'2015-06-06 00:00:00'", "'2015-12-31 00:00:00'" }) {
                 addSOS(trial, studyStatus.name(), statusDate);
-                accessManageAssignmentScreen();
-                Select dropdown = new Select(driver.findElement(By
-                        .id("familyPoId")));
-                dropdown.selectByIndex(1);
-                waitForElementToBecomeVisible(
-                        By.xpath("//div[text()='" + trial.title + "']"), 10);
+                verifyTrialShowsUp(trial);
 
                 deleteCurrentTrialStatus(trial);
-                accessManageAssignmentScreen();
-                dropdown = new Select(driver.findElement(By.id("familyPoId")));
-                dropdown.selectByIndex(1);
-                waitForElementToBecomeVisible(By.className("dataTables_empty"),
-                        10);
+                verifyTrialDoesNotShowUp(trial);
             }
 
         }
 
         // Active status outside period should NOT bring up the trial.
         for (StudyStatusCode studyStatus : ACTIVE_PROTOCOL_STATUSES) {
-            for (String statusDate : new String[] { "'2014-12-30 00:00:00'",
-                    "'2016-01-01 00:00:00'" }) {
+            for (String statusDate : new String[] { "'2016-01-01 00:00:00'" }) {
                 addSOS(trial, studyStatus.name(), statusDate);
-                accessManageAssignmentScreen();
-                Select dropdown = new Select(driver.findElement(By
-                        .id("familyPoId")));
-                dropdown.selectByIndex(1);
-                waitForElementToBecomeVisible(By.className("dataTables_empty"),
-                        10);
-                try {
-                    waitForElementToBecomeVisible(
-                            By.xpath("//div[text()='" + trial.title + "']"), 1);
-                    Assert.fail();
-                } catch (Exception e) {
-                }
+                verifyTrialDoesNotShowUp(trial);
             }
 
         }
@@ -185,27 +181,119 @@ public class ProgramCodeAssignmentTest extends AbstractRegistrySeleniumTest {
                 "'2015-08-08'");
         addSOS(trial, StudyStatusCode.ADMINISTRATIVELY_COMPLETE.name(),
                 "'2015-09-09'");
+        verifyTrialShowsUp(trial);
+
+        // Test buggy scenarios: PO-9792
+        deleteEntireTrialStatusHistory(trial);
+        addSOS(trial, IN_REVIEW.name(), "'2014-10-01'");
+        addSOS(trial, APPROVED.name(), "'2014-11-05'");
+        addSOS(trial, ACTIVE.name(), "'2014-12-06'");
+        verifyTrialShowsUp(trial);
+        addSOS(trial, CLOSED_TO_ACCRUAL.name(), "'2014-12-20'");
+        verifyTrialDoesNotShowUp(trial);
+
+        deleteEntireTrialStatusHistory(trial);
+        addSOS(trial, IN_REVIEW.name(), "'2014-05-01'");
+        addSOS(trial, APPROVED.name(), "'2014-06-05'");
+        addSOS(trial, ACTIVE.name(), "'2014-06-05'");
+        addSOS(trial, CLOSED_TO_ACCRUAL.name(), "'2015-01-02'");
+        addSOS(trial, CLOSED_TO_ACCRUAL_AND_INTERVENTION.name(), "'2015-01-02'");
+        verifyTrialShowsUp(trial);
+
+        deleteEntireTrialStatusHistory(trial);
+        addSOS(trial, IN_REVIEW.name(), "'2014-05-01'");
+        addSOS(trial, APPROVED.name(), "'2014-06-05'");
+        addSOS(trial, ACTIVE.name(), "'2014-06-05'");
+        addSOS(trial, CLOSED_TO_ACCRUAL_AND_INTERVENTION.name(), "'2014-12-31'");
+        verifyTrialDoesNotShowUp(trial);
+        addSOS(trial, IN_REVIEW.name(), "'2015-05-05'");
+        addSOS(trial, WITHDRAWN.name(), "'2015-05-06'");
+        verifyTrialShowsUp(trial);
+
+        deleteEntireTrialStatusHistory(trial);
+        addSOS(trial, IN_REVIEW.name(), "'2014-05-01'");
+        addSOS(trial, APPROVED.name(), "'2014-06-05'");
+        addSOS(trial, ACTIVE.name(), "'2016-02-02'");
+        verifyTrialShowsUp(trial);
+
+        deleteEntireTrialStatusHistory(trial);
+        addSOS(trial, IN_REVIEW.name(), "'2015-02-02'");
+        addSOS(trial, APPROVED.name(), "'2015-03-03'");
+        addSOS(trial, ACTIVE.name(), "'2015-04-04'");
+        addSOS(trial, TEMPORARILY_CLOSED_TO_ACCRUAL.name(), "'2015-05-05'");
+        addSOS(trial, CLOSED_TO_ACCRUAL_AND_INTERVENTION.name(), "'2015-06-06'");
+        addSOS(trial, ADMINISTRATIVELY_COMPLETE.name(), "'2015-07-07'");
+        addSOS(trial, COMPLETE.name(), "'2015-07-07'");
+        verifyTrialShowsUp(trial);
+
+        deleteEntireTrialStatusHistory(trial);
+        addSOS(trial, IN_REVIEW.name(), "'2014-02-02'");
+        addSOS(trial, APPROVED.name(), "'2014-03-03'");
+        addSOS(trial, ACTIVE.name(), "'2014-04-04'");
+        addSOS(trial, TEMPORARILY_CLOSED_TO_ACCRUAL.name(), "'2014-05-05'");
+        addSOS(trial, CLOSED_TO_ACCRUAL_AND_INTERVENTION.name(), "'2014-06-06'");
+        addSOS(trial, ADMINISTRATIVELY_COMPLETE.name(), "'2014-07-07'");
+        addSOS(trial, COMPLETE.name(), "'2014-12-31'");
+        verifyTrialDoesNotShowUp(trial);
+
+        deleteEntireTrialStatusHistory(trial);
+        addSOS(trial, IN_REVIEW.name(), "'2016-01-01'");
+        addSOS(trial, ACTIVE.name(), "'2016-01-15'");
+        verifyTrialDoesNotShowUp(trial);
+
+        deleteEntireTrialStatusHistory(trial);
+        addSOS(trial, IN_REVIEW.name(), "'2014-02-02'");
+        addSOS(trial, APPROVED.name(), "'2014-03-03'");
+        addSOS(trial, ACTIVE.name(), "'2014-04-04'");
+        addSOS(trial, TEMPORARILY_CLOSED_TO_ACCRUAL.name(), "'2014-12-30'");
+        addSOS(trial, CLOSED_TO_ACCRUAL_AND_INTERVENTION.name(), "'2015-01-02'");
+        addSOS(trial, COMPLETE.name(), "'2015-07-07'");
+        verifyTrialShowsUp(trial);
+
+        deleteEntireTrialStatusHistory(trial);
+        addSOS(trial, IN_REVIEW.name(), "'2014-02-02'");
+        addSOS(trial, APPROVED.name(), "'2014-03-03'");
+        addSOS(trial, ACTIVE.name(), "'2014-04-04'");
+        addSOS(trial, TEMPORARILY_CLOSED_TO_ACCRUAL.name(), "'2014-12-30'");
+        addSOS(trial, CLOSED_TO_ACCRUAL_AND_INTERVENTION.name(), "'2016-02-02'");
+        verifyTrialShowsUp(trial);
+
+        // Trial without a site should not bring up.
+        deleteEntireTrialStatusHistory(trial);
+        addSOS(trial, StudyStatusCode.ACTIVE.name(), "'2015-07-07'");
+        verifyTrialShowsUp(trial);
+        qr.update(connection, "delete from study_site where identifier="
+                + siteID);
+        accessManageAssignmentScreen();
+        verifyTrialDoesNotShowUp(trial);
+
+    }
+
+    /**
+     * @param trial
+     */
+    private void verifyTrialDoesNotShowUp(TrialInfo trial) {
+        accessManageAssignmentScreen();
+        Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
+        dropdown.selectByIndex(1);
+        waitForElementToBecomeVisible(By.className("dataTables_empty"), 10);
+        try {
+            waitForElementToBecomeVisible(
+                    By.xpath("//div[text()='" + trial.title + "']"), 1);
+            Assert.fail();
+        } catch (Exception e) {
+        }
+    }
+
+    /**
+     * @param trial
+     */
+    private void verifyTrialShowsUp(TrialInfo trial) {
         accessManageAssignmentScreen();
         Select dropdown = new Select(driver.findElement(By.id("familyPoId")));
         dropdown.selectByIndex(1);
         waitForElementToBecomeVisible(
                 By.xpath("//div[text()='" + trial.title + "']"), 10);
-
-        // Trial without a site should not bring up.
-        deleteEntireTrialStatusHistory(trial);
-        addSOS(trial, StudyStatusCode.ACTIVE.name(), "'2015-07-07'");
-        accessManageAssignmentScreen();
-        dropdown = new Select(driver.findElement(By.id("familyPoId")));
-        dropdown.selectByIndex(1);
-        waitForElementToBecomeVisible(
-                By.xpath("//div[text()='" + trial.title + "']"), 10);
-        qr.update(connection, "delete from study_site where identifier="
-                + siteID);
-        accessManageAssignmentScreen();
-        dropdown = new Select(driver.findElement(By.id("familyPoId")));
-        dropdown.selectByIndex(1);
-        waitForElementToBecomeVisible(By.className("dataTables_empty"), 10);
-
     }
 
     @Test
@@ -228,12 +316,6 @@ public class ProgramCodeAssignmentTest extends AbstractRegistrySeleniumTest {
                 .id("reportingPeriodLength")));
         rpLengthBox.selectByValue("2");
 
-        // then table refreshes with no trials
-        waitForElementToGoAway(
-                By.xpath("//table[@id='trialsTbl']/tbody/tr[4]"), 10);
-        assertTrue(selenium.isTextPresent("Showing 0 to 0 of 0 entries"));
-        assertFalse(selenium.isTextPresent(trials.get(4).title));
-
         // when I update the reporting period end date to tomorrow and length to
         // 1 month
         selenium.type("reportingPeriodEndDate", date(1));
@@ -255,11 +337,7 @@ public class ProgramCodeAssignmentTest extends AbstractRegistrySeleniumTest {
         waitForElementToBecomeVisible(By.id("length_flash"), 10);
         waitForElementToBecomeInvisible(By.id("length_flash"), 10);
 
-        // Then I should not see any trial
-        waitForElementToGoAway(
-                By.xpath("//table[@id='trialsTbl']/tbody/tr[4]"), 10);
-        assertTrue(selenium.isTextPresent("Showing 0 to 0 of 0 entries"));
-        assertFalse(selenium.isTextPresent(trials.get(4).title));
+        
 
         // Given three trials having status dates moved 2 years back
         moveBackTrialStatusDate(trials.get(1), 2 * 365);

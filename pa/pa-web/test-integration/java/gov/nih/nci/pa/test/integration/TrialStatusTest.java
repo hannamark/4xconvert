@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -151,7 +152,7 @@ public class TrialStatusTest extends AbstractTrialStatusTest {
      */
     @SuppressWarnings("deprecation")
     private void checkTsr() throws InterruptedException, IOException {
-        if (!isPhantomJS()) {
+        if (!isPhantomJS() && !SystemUtils.IS_OS_LINUX) {
             s.click("link=View TSR");
             File tsr = waitForTsrDownload();
             assertTrue(tsr.exists());

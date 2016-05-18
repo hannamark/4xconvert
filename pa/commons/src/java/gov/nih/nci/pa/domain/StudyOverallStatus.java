@@ -118,6 +118,8 @@ public class StudyOverallStatus extends AbstractStudyEntity implements Auditable
     private Timestamp statusDate;
     private Boolean systemCreated = Boolean.FALSE;
     private Boolean deleted = Boolean.FALSE;
+    private Boolean currentlyActive;
+    private Integer position;
 
 
     /**
@@ -235,5 +237,36 @@ public class StudyOverallStatus extends AbstractStudyEntity implements Auditable
      */
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
+    }
+    
+    /**
+     * @return the currentlyActive
+     */
+    @Column(name = "current", insertable = false, updatable = false)
+    public Boolean getCurrentlyActive() {
+        return currentlyActive;
+    }
+
+    /**
+     * @param currentlyActive
+     *            the currentlyActive to set
+     */
+    public void setCurrentlyActive(Boolean currentlyActive) {
+        this.currentlyActive = currentlyActive;
+    }
+
+    /**
+     * @return the position
+     */
+    @Column(name = "position_in_history", insertable = false, updatable = false)
+    public Integer getPosition() {
+        return position;
+    }
+
+    /**
+     * @param position the position to set
+     */
+    public void setPosition(Integer position) {
+        this.position = position;
     }
 }

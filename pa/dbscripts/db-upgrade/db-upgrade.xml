@@ -2060,5 +2060,8 @@
        <comment>Added a table to maintain a log of calls to RESTful services.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3.1.1/PO-9777.sql"/>
     </changeSet>   
-        
+    <changeSet id="PO-9792" author="krylovd" runOnChange="true">       
+       <comment>Added a column to study_overall_status to help determine order of statuses within history.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3.1.1/PO-9792.sql" splitStatements="false"/>
+    </changeSet>
 </databaseChangeLog>

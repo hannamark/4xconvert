@@ -353,8 +353,9 @@ public class ProtocolQueryBeanTest extends AbstractEjbTestCase {
         //But, when I search with out of range dates
         studyProtocolQueryDTOs = findProtocolsWithinReportingPeriodHavingStatus(
                 TestSchema.TOMMORROW, TestSchema.DAY_AFTER_TOMMORROW);
-        //then I should not get any results
-        assertEquals(0, studyProtocolQueryDTOs.size());
+        //then I should still see results.
+        assertEquals(1, studyProtocolQueryDTOs.size());
+        assertEquals(sp.getId(), studyProtocolQueryDTOs.get(0).getStudyProtocolId());
 
         //when I delete the status TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION on a known study
         sos.setDeleted(true);
