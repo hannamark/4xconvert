@@ -199,8 +199,8 @@ public class ParticipatingSiteTest extends AbstractPaSeleniumTest {
         selenium.type("id=recStatusDate", today);
         clickAndWait("link=Save");
         
-        assertTrue(selenium.isTextPresent("A Participating Site with trial id"));
-        assertTrue(selenium.isTextPresent("already exists."));
+        assertTrue(selenium.isTextPresent("A Participating Site with PO ID"));
+        assertTrue(selenium.isTextPresent("already exists on Trial with NCI ID"));
         
     }
 

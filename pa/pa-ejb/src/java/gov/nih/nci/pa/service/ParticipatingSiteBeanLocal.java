@@ -97,6 +97,9 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
 import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.dto.PaOrganizationDTO;
+import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
@@ -130,6 +133,7 @@ import gov.nih.nci.pa.service.util.SiteStatusChangeNotificationData;
 import gov.nih.nci.pa.service.util.SiteStatusChangeNotificationData.SiteData;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
@@ -595,11 +599,14 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
         } catch (EJBTransactionRolledbackException e) {
             LOG.error(e, e);
             if (e.getCause() instanceof ConstraintViolationException) {
-                throw new DuplicateParticipatingSiteException(// NOPMD                        
-                        studySiteDTO.getStudyProtocolIdentifier(), poHcfIi,
-                        findDuplicateSiteId(
-                                studySiteDTO.getStudyProtocolIdentifier(),
-                                poHcfIi));
+                DuplicateParticipatingSiteException duplicateParticipatingSiteException =
+                getCorrectException(// NOPMD                        
+                            studySiteDTO.getStudyProtocolIdentifier(), poHcfIi,
+                            findDuplicateSiteId(
+                                    studySiteDTO.getStudyProtocolIdentifier(),
+                                    poHcfIi));
+                throw duplicateParticipatingSiteException;
+                
             } else {
                 throw new PAException(e);
             }
@@ -608,6 +615,43 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
         } catch (Exception e) {
             throw new PAException(e);
         }
+    }
+    
+    private DuplicateParticipatingSiteException getCorrectException(Ii trialIi, Ii hcfIi, Ii duplicateSiteID)
+     {
+        DuplicateParticipatingSiteException duplicateParticipatingSiteException;
+        String [] trialIds = getTrialDetails(trialIi);
+        String siteCtepId = null;
+        StringBuffer errorMessage = new StringBuffer();
+        String orgPoId = null;
+        try {
+            orgPoId = getCorrUtils().getPoOrgIiFromPaHcfIi(hcfIi).getExtension();
+            PaOrganizationDTO paOrganizationDTO =
+                    PADomainUtils.getOrgDetailsPopup(orgPoId); 
+            siteCtepId = paOrganizationDTO.getCtepId();
+        } catch (Exception e) {
+            LOG.error(e.getMessage());
+        }
+        //construct error message depending on what identifiers are available
+        errorMessage.append("A Participating Site with PO ID: ");
+        errorMessage.append(orgPoId);
+        if (!StringUtils.isEmpty(siteCtepId)) {
+            errorMessage.append(" , CTEP ID: ");
+            errorMessage.append(siteCtepId);
+        }
+        errorMessage.append(" already exists on Trial with");
+        errorMessage.append(" NCI ID: ");
+        errorMessage.append(trialIds[1]);
+        if (!StringUtils.isEmpty(trialIds[0])) {
+            errorMessage.append(" , CTEP ID: ");
+            errorMessage.append(trialIds[0]);
+        }
+         duplicateParticipatingSiteException = 
+          new DuplicateParticipatingSiteException(errorMessage.toString());
+         
+         
+        
+        return duplicateParticipatingSiteException;
     }
     
     @Override
@@ -664,6 +708,7 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
             } else {
                 enforceBusinessRules(currentStatusDTO, PAUtil.getCurrentTime());
             }
+            
             StudySite ss = saveOrUpdateStudySiteHelper(true, studySiteDTO, poHcfIi, currentStatusDTO);            
             return new ParticipatingSiteConverter().convertFromDomainToDto(ss);
         } catch (EJBTransactionRolledbackException e) {
@@ -671,12 +716,13 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
             if (e.getCause() instanceof ConstraintViolationException 
                || ExceptionUtils.getRootCause(e).getMessage().equalsIgnoreCase(
                 "ERROR: Can not add duplicate Participating site")) {
-                throw new DuplicateParticipatingSiteException(
-                        // NOPMD
-                        studySiteDTO.getStudyProtocolIdentifier(), poHcfIi,
-                        findDuplicateSiteId(
-                                studySiteDTO.getStudyProtocolIdentifier(),
-                                poHcfIi));
+                DuplicateParticipatingSiteException duplicateParticipatingSiteException =
+                        getCorrectException(// NOPMD                        
+                                    studySiteDTO.getStudyProtocolIdentifier(), poHcfIi,
+                                    findDuplicateSiteId(
+                                            studySiteDTO.getStudyProtocolIdentifier(),
+                                            poHcfIi));
+                        throw duplicateParticipatingSiteException;
             } else {
                 throw new PAException(e);
             }
@@ -685,6 +731,28 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
         } catch (Exception e) {
             throw new PAException(e);
         }
+    }
+    
+    private String [] getTrialDetails(Ii studyProtocolIdentifier) {
+        String [] trialIds = new String[2];
+        
+        try {
+            StudyProtocolQueryCriteria studyProtocolQueryCriteria = new StudyProtocolQueryCriteria();
+            studyProtocolQueryCriteria.setStudyProtocolId(IiConverter.convertToLong(studyProtocolIdentifier));
+            List<StudyProtocolQueryDTO> results = getProtocolQueryService()
+                    .getStudyProtocolByCriteria(studyProtocolQueryCriteria);
+            if (!CollectionUtils.isEmpty(results)) {
+                String ctepId = results.get(0).getCtepId();
+                if (StringUtils.isNotEmpty(ctepId)) {
+                    trialIds[0] = ctepId;
+                }
+                trialIds[1] = results.get(0).getNciIdentifier();
+            }
+            
+        } catch (Exception e) {
+            LOG.error(e.getMessage());
+        }
+        return trialIds;
     }
 
     /**
@@ -771,11 +839,13 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
             // check that we are not creating another part site w/ same trial and hcf ids.
             Ii paHcfIi = IiConverter.convertToIi(paHealthCareFacilityId);
             if (isDuplicate(siteDTO.getStudyProtocolIdentifier(), paHcfIi)) {
-                throw new DuplicateParticipatingSiteException(
-                        siteDTO.getStudyProtocolIdentifier(), poHcfIi,
-                        findDuplicateSiteId(
-                                siteDTO.getStudyProtocolIdentifier(),
-                                poHcfIi));
+                DuplicateParticipatingSiteException duplicateParticipatingSiteException =
+                        getCorrectException(// NOPMD                        
+                                siteDTO.getStudyProtocolIdentifier(), poHcfIi,
+                                    findDuplicateSiteId(
+                                            siteDTO.getStudyProtocolIdentifier(),
+                                            poHcfIi));
+              throw duplicateParticipatingSiteException;
             }
             siteDTO.setHealthcareFacilityIi(paHcfIi);
         }

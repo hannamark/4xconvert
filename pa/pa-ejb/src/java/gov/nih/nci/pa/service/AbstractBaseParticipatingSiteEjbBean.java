@@ -91,6 +91,7 @@ import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.status.StatusTransitionServiceLocal;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -139,6 +140,9 @@ public class AbstractBaseParticipatingSiteEjbBean {
     private StatusTransitionServiceLocal statusTransitionService;
     @EJB
     private MailManagerServiceLocal mailManagerService;
+    @EJB
+    private ProtocolQueryServiceLocal protocolQueryService;
+    
 
     /**
      * generateCrsAndHcpFromCtepIdOrNewPerson.
@@ -497,5 +501,20 @@ public class AbstractBaseParticipatingSiteEjbBean {
      */
     public void setMailManagerService(MailManagerServiceLocal mailManagerService) {
         this.mailManagerService = mailManagerService;
+    }
+
+    /**
+     * @return protocolQueryService
+     */
+    public ProtocolQueryServiceLocal getProtocolQueryService() {
+        return protocolQueryService;
+    }
+
+    /**
+     * @param protocolQueryService protocolQueryService
+     */
+    public void setProtocolQueryService(
+            ProtocolQueryServiceLocal protocolQueryService) {
+        this.protocolQueryService = protocolQueryService;
     }
 }

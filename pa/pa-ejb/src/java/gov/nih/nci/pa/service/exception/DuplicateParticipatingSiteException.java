@@ -95,9 +95,9 @@ import gov.nih.nci.iso21090.Ii;
 public class DuplicateParticipatingSiteException extends PADuplicateException {
 
     private static final long serialVersionUID = 1L;
-    private final Ii trialIi;
-    private final Ii hcfIi;
-    private final Ii duplicateSiteID;
+    private  Ii trialIi = null;
+    private  Ii hcfIi = null;
+    private  Ii duplicateSiteID = null;
     
     /**
      * Const.
@@ -105,7 +105,8 @@ public class DuplicateParticipatingSiteException extends PADuplicateException {
      * @param hcfIi hcf ii.
      * @param duplicateSiteID duplicateSiteID
      */
-    public DuplicateParticipatingSiteException(Ii trialIi, Ii hcfIi, Ii duplicateSiteID) {
+    public DuplicateParticipatingSiteException(Ii trialIi, Ii hcfIi, Ii duplicateSiteID
+            ) {
         super("A Participating Site with trial id " 
                 + (trialIi != null ? trialIi.getExtension() : "")
                 + " and HCF id " + (hcfIi != null ? hcfIi.getExtension() : "")
@@ -113,6 +114,14 @@ public class DuplicateParticipatingSiteException extends PADuplicateException {
         this.trialIi = trialIi;
         this.hcfIi = hcfIi;
         this.duplicateSiteID = duplicateSiteID;
+    }
+    
+  
+    /**
+     * @param msg msg
+     */
+    public DuplicateParticipatingSiteException(String msg) {
+        super(msg);
     }
 
     /**
