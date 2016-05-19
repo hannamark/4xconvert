@@ -341,7 +341,7 @@ public class ProgramCodesTest extends AbstractRegistrySeleniumTest {
         selenium.click("dialog-inactivate-program-code-btn-yes");
 
         //Then dialog must close
-        waitForElementToBecomeInvisible(By.id("dialog-inactivate-program-code"), 5);
+        waitForElementToBecomeInvisible(By.id("dialog-inactivate-program-code"), 10);
 
         waitForElementToBecomeVisible(By.xpath("//table[@id='programCodesTable']/tbody/tr[1]/td[2]/span"), 10);
         // And I will not see A1 in the page

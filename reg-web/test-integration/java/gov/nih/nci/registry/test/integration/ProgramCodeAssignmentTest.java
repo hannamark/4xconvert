@@ -641,7 +641,7 @@ public class ProgramCodeAssignmentTest extends AbstractRegistrySeleniumTest {
                 .isTextPresent("Program Codes were successfully assigned"));
 
         // And I see the confirmation go away after 5 seconds
-        waitForElementToBecomeVisible(By.id("pgcInfo"), 10);
+        waitForElementToBecomeInvisible(By.id("pgcInfo"), 10);
 
         // Now I see PG2 associated with first trial
         verifyTrialProgramCodeAssociation(1, true, "PG2");
@@ -670,7 +670,7 @@ public class ProgramCodeAssignmentTest extends AbstractRegistrySeleniumTest {
                 .isTextPresent("Program Codes were successfully assigned"));
 
         // And I see the confirmation go away after 5 seconds
-        waitForElementToBecomeVisible(By.id("pgcInfo"), 10);
+        waitForElementToBecomeInvisible(By.id("pgcInfo"), 10);
 
         // Now I see PG2 associated with first trial
         verifyTrialProgramCodeAssociation(1, true, "PG2");
