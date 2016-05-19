@@ -203,6 +203,7 @@ public class ProgramCodesTest extends AbstractRegistrySeleniumTest {
         assertTrue(selenium.isTextPresent(trial2.title));
 
         //when I click on yes button
+        moveElementIntoView(By.id("dialog-inactivate-program-code-btn-yes"));
         selenium.click("dialog-inactivate-program-code-btn-yes");
 
         //Then dialog must close
@@ -338,6 +339,7 @@ public class ProgramCodesTest extends AbstractRegistrySeleniumTest {
         assertFalse(selenium.isTextPresent(trial4.title));
 
         //when I click on yes button
+        moveElementIntoView(By.id("dialog-inactivate-program-code-btn-yes"));
         selenium.click("dialog-inactivate-program-code-btn-yes");
 
         //Then dialog must close
