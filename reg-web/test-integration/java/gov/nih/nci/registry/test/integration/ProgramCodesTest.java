@@ -206,7 +206,7 @@ public class ProgramCodesTest extends AbstractRegistrySeleniumTest {
         selenium.click("dialog-inactivate-program-code-btn-yes");
 
         //Then dialog must close
-        waitForElementToBecomeInvisible(By.id("dialog-inactivate-program-code"), 5);
+        waitForElementToBecomeInvisible(By.id("dialog-inactivate-program-code"), 10);
 
         //And the table reloads
         waitForElementToGoAway(By.xpath("//table[@id='programCodesTable']/tbody/tr[2]"),10);
