@@ -12,6 +12,7 @@ CREATE TABLE STG_DW_STUDY_ARM_AND_INTERVENTION (
     INTERVENTION_OTHER_NAME character varying(2000),
     INTERVENTION_ID integer,
     INTERVENTION_TYPE character varying(200),
+    INTERVENTION_EVS_C_CODE character varying(200),
     NCI_ID character varying(255),
 	USER_NAME_CREATED_ARM character(255),
 	USER_NAME_UPDATED_ARM character(255),
