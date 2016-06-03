@@ -83,6 +83,7 @@
 		<sequential>
 			<java classname="org.codehaus.classworlds.Launcher" fork="true" dir="@{maven.dir}" resultproperty="@{resultproperty}">
 				<jvmarg value="-Xmx1024m" />
+				<jvmarg value="-Dhttps.protocols=TLSv1.1,TLSv1.2" />
 				<classpath>
 					<fileset dir="@{maven.home}/boot">
 						<include name="*.jar" />
