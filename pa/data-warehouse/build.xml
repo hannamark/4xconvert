@@ -142,6 +142,7 @@
         	<transaction src="${basedir}/sql/failed_patient_accruals.sql"/>
 			<transaction src="${basedir}/sql/program_code.sql"/>
 			<transaction src="${basedir}/sql/study_family_program_code.sql"/>
+			<transaction src="${basedir}/sql/study_principal_investigator.sql"/>
             <classpath>
                 <path refid="bda-utils.classpath"/>
             </classpath>
@@ -404,6 +405,12 @@
         <echo message = "Running Study family program codes"/>
         <groovy src="groovy/study_family_program_code.groovy"/>
         <stopwatch name="timer1" action="total"/>
+		
+		<stopwatch name="timer1"/>
+        <echo message = "Running Study PI"/>
+        <groovy src="groovy/study_principal_investigator.groovy"/>
+        <stopwatch name="timer1" action="total"/>
+		
    </target>
 
 </project>
