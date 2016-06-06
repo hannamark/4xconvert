@@ -52,7 +52,7 @@
 
     <property name="selenium.delay" value="50"/>
 	<property name="webdriver.class" value="org.openqa.selenium.firefox.FirefoxDriver"/>
-	<property name="phantomjs.binary.path" value="/local/home/hudsonuser/jenkins_data/tools/phantomjs-1.9.7-linux-x86_64/bin/phantomjs"/>
+	<property name="phantomjs.binary.path" value="/local/home/cislave/phantomjs-1.9.7-linux-x86_64/bin/phantomjs"/>
 
     
     <!-- ====================================================================== -->

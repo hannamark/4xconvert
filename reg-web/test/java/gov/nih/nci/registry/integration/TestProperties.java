@@ -105,7 +105,7 @@ public final class TestProperties {
     
     public static final String WEBDRIVER_PHANTOMJS_PATH = "phantomjs.binary.path";
     private static final String WEBDRIVER_PHANTOMJS_PATH_DEFAULT = 
-            "/local/home/hudsonuser/jenkins_data/tools/phantomjs-1.9.7-linux-x86_64/bin/phantomjs";
+            "/local/home/cislave/phantomjs-1.9.7-linux-x86_64/bin/phantomjs";
     
     public static final String TEST_DB_URL = "test.db.connection.url";
     public static final String TEST_DB_DRIVER = "test.db.driver";
