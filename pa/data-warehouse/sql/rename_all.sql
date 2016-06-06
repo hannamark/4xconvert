@@ -163,3 +163,6 @@ ALTER TABLE stg_dw_program_code_master_list RENAME TO dw_program_code_master_lis
 
 DROP TABLE IF EXISTS dw_study_family_program_code;
 ALTER TABLE stg_dw_study_family_program_code RENAME TO dw_study_family_program_code;
+
+DROP TABLE IF EXISTS DW_STUDY_PRINCIPAL_INVESTIGATOR;
+ALTER TABLE STG_DW_STUDY_PRINCIPAL_INVESTIGATOR RENAME TO DW_STUDY_PRINCIPAL_INVESTIGATOR;

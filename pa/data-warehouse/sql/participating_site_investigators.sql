@@ -6,6 +6,7 @@ CREATE TABLE STG_DW_STUDY_PARTICIPATING_SITE_INVESTIGATORS (
     INVESTIGATOR_LAST_NAME character varying(200),
     INVESTIGATOR_ROLE character varying(200),
     PARTICIPATING_SITE_ORG_NAME character varying(200),
-    ORG_PO_ID integer
+    ORG_PO_ID integer,
+    PERSON_PO_ID character varying(200)
 );
 
