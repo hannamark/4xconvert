@@ -34,7 +34,7 @@ public abstract class AbstractTrialStatusTest extends AbstractPaSeleniumTest {
      */
     protected void selectTrial(boolean useDashboard, TrialInfo trial) {
         if (!useDashboard) {
-            clickAndWait("id=trialSearchMenuOption");
+            openAndWait("/pa/protected/studyProtocolexecute.action");
             searchAndSelectTrial(trial.title);
         } else {
             selectTrialInDashboard(trial);
