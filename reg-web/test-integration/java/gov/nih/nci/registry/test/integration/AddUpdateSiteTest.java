@@ -851,7 +851,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         driver.findElement(
                 By.xpath("//li/a[normalize-space(text())='" + action + "']"))
                 .click();
-        selenium.selectFrame("popupFrame");
+        driver.switchTo().frame(driver.findElement(By.id("popupFrame")));        
     }
 
 }
