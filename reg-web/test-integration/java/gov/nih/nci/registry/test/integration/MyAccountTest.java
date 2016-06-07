@@ -151,14 +151,14 @@ public class MyAccountTest extends AbstractRegistrySeleniumTest {
     	loginAndAcceptDisclaimer();    	
         clickAndWait("css=a.nav-user");
         clickAndWait("css=a.account");
-        driver.switchTo().frame(0);
+        driver.switchTo().frame(driver.findElement(By.id("popupFrame")));
     	moveElementIntoView(By.id("registryUserWebDTO.affiliateOrgField"));    
         JavascriptExecutor js = (JavascriptExecutor) driver;                
         js.executeScript("showPopWin('orgPoplookuporgs.action', 850, 550, loadAffliatedOrgDiv, 'Select Affiliated Organization')");
         pause(OP_WAIT_TIME);
         
         // Searching for organization
-        driver.switchTo().frame(0);
+        driver.switchTo().frame(driver.findElement(By.id("popupFrame")));
         selenium.type("id=orgNameSearch", "Cancer Therapy Evaluation Program");             
         WebElement element = driver.findElement(By.id("search_organization_btn"));
         JavascriptExecutor executor = (JavascriptExecutor)driver;
@@ -172,7 +172,7 @@ public class MyAccountTest extends AbstractRegistrySeleniumTest {
         
         // Saving / updating the account
         driver.switchTo().defaultContent();
-        driver.switchTo().frame(0);
+        driver.switchTo().frame(driver.findElement(By.id("popupFrame")));
         waitForElementToBecomeAvailable(By.xpath("//button[normalize-space(text())='Save']"), 20);
         WebElement save = driver.findElement(By.xpath("//button[normalize-space(text())='Save']"));
         JavascriptExecutor saveExecutor = (JavascriptExecutor)driver;
