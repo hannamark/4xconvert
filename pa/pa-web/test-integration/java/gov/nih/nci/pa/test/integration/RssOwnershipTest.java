@@ -58,7 +58,7 @@ public class RssOwnershipTest extends AbstractPaSeleniumTest {
         clickAndWait("link=Trial Validation");
         clickAndWait("link=Look Up Organization");
         waitForElementById("popupFrame", 10);
-        s.selectFrame("popupFrame");
+        driver.switchTo().frame(driver.findElement(By.id("popupFrame")));
         s.type("orgCtepIdSearch", "SWOG");
         s.click("link=Search");
         final By selectBtn = By.xpath("//td/a//span[text()='Select']");
