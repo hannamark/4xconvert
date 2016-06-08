@@ -727,7 +727,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         driver.findElement(
                 By.xpath("//tr/td/a[normalize-space(text())='Search...']"))
                 .click();
-        selenium.selectFrame("popupFrame");
+        driver.switchTo().frame(driver.findElement(By.id("popupFrame")));
 
         final By poIDElement = By.id("orgPOIdSearch");
         moveElementIntoView(poIDElement);
@@ -738,7 +738,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         moveElementIntoView(By.xpath("//table[@id='row']/tbody/tr/td/button"));
         selenium.click("//table[@id='row']/tbody/tr/td/button");
         waitForPageToLoad();
-        driver.switchTo().defaultContent();
+        driver.switchTo().defaultContent();        
         assertEquals("2",
                 selenium.getValue("trialDTO.leadOrganizationIdentifier"));
     }

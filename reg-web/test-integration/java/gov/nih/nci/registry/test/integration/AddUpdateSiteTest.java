@@ -561,7 +561,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
      */
     private void pickInvestigator() {
         s.click("xpath=//button/i[@class='fa-search']");
-        s.selectFrame("popupFrame");
+        driver.switchTo().frame(driver.findElement(By.id("popupFrame")));   
         waitForElementToBecomeAvailable(By.id("search_person_btn"), 10);
         s.type("perCtepIdSearch", "JDOE01");
         s.click("search_person_btn");
@@ -569,7 +569,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 By.xpath("//table[@id='row']/tbody/tr"), 10);
         s.click("xpath=//table[@id='row']/tbody/tr/td[8]/button");
         driver.switchTo().defaultContent();
-        s.selectFrame("popupFrame");
+        driver.switchTo().frame(driver.findElement(By.id("popupFrame")));   
         assertEquals("Doe,John", s.getValue("investigator"));
     }
 

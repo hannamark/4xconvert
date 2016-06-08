@@ -137,6 +137,8 @@ public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumT
         cancelButton.click();
         assertTrue(selenium.isTextPresent("Program Code"));
         
+        pause(3000);
+        
         //test for duplicate program code error
          selenium.typeKeys("//input[@id='newProgramCode']", "PG1");
          addProgramCodebutton.click();

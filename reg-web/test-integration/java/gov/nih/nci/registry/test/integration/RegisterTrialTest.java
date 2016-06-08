@@ -166,7 +166,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         hover(By.id("trialDTO.leadOrganizationNameField"));
         clickAndWaitAjax("link=Search...");
         waitForElementById("popupFrame", 60);
-        selenium.selectFrame("popupFrame");
+        driver.switchTo().frame(driver.findElement(By.id("popupFrame")));
         waitForElementById("orgNameSearch", 30);
         selenium.type("orgNameSearch", "double");
         clickAndWaitAjax("id=search_organization_btn");
@@ -306,7 +306,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
 
         selectAction("Change Status");
         waitForElementToBecomeAvailable(By.id("popupFrame"), 15);
-        s.selectFrame("popupFrame");
+        driver.switchTo().frame(driver.findElement(By.id("popupFrame")));
 
         changeTrialStatusAndDates(params);
 
@@ -812,7 +812,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         // Add My Site
         clickAndWait("xpath=//button[text()='Add My Site']");
         waitForElementById("popupFrame", 20);
-        selenium.selectFrame("popupFrame");
+        driver.switchTo().frame(driver.findElement(By.id("popupFrame")));
         assertEquals("true",selenium.getValue("//input[@name='addSitesMultiple']"));
         assertTrue(selenium
                 .isTextPresent("Because your organization belongs to a family, you can add to this trial any "
@@ -831,7 +831,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
 
         clickAndWaitAjax("xpath=//button/i[@class='fa-search']");
         waitForElementById("popupFrame", 10);
-        selenium.selectFrame("popupFrame");
+        driver.switchTo().frame(driver.findElement(By.id("popupFrame")));
         waitForElementById("search_person_btn", 30);
         selenium.type("firstName", "John");
         selenium.type("lastName", "Doe");
@@ -842,7 +842,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         selenium.click("xpath=//table[@id='row']/tbody/tr[1]/td[8]/button");
         waitForPageToLoad();
         driver.switchTo().defaultContent();
-        selenium.selectFrame("popupFrame");
+        driver.switchTo().frame(driver.findElement(By.id("popupFrame")));
 
         selenium.type("programCode", "PGCODE");
         selenium.select("siteDTO_recruitmentStatus", "label=In Review");
@@ -1035,7 +1035,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         hover(By.id("trialDTO.leadOrganizationNameField"));
         clickAndWaitAjax("link=Search...");
         waitForElementById("popupFrame", 60);
-        selenium.selectFrame("popupFrame");
+        driver.switchTo().frame(driver.findElement(By.id("popupFrame")));
         waitForElementById("orgNameSearch", 30);
         selenium.type("orgNameSearch", "NCI - Center for Cancer Research");
         clickAndWaitAjax("id=search_organization_btn");
@@ -1584,7 +1584,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         driver.switchTo().defaultContent();
         clickAndWaitAjax("xpath=//div[@id='investigatorlookupcell']//button");
         waitForElementById("popupFrame", 60);
-        selenium.selectFrame("popupFrame");
+        driver.switchTo().frame(driver.findElement(By.id("popupFrame")));
         waitForElementById("search_person_btn", 30);
         selenium.click("add_person_btn");
         selenium.type("poOrganizations_firstName", rand);
@@ -1691,7 +1691,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         driver.switchTo().defaultContent();
         clickAndWaitAjax("xpath=//div[@id='affiliationLookupcell']//button");
         waitForElementById("popupFrame", 60);
-        selenium.selectFrame("popupFrame");
+        driver.switchTo().frame(driver.findElement(By.id("popupFrame")));
         waitForElementById("search_organization_btn", 15);
         selenium.type("orgCtepIdSearch", "DCP");
         clickAndWaitAjax("id=search_organization_btn");
