@@ -389,14 +389,19 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         assignTrialOwner("submitter-ci", info.id);
         findInMyTrials();
         invokeAction("Add My Site");
-        assertEquals("true",selenium.getValue("//input[@name='addSitesMultiple']"));
+        final String addSitesMultipleID = "//input[@name='addSitesMultiple']";
+        
+        waitForElementToBecomeAvailable(By.xpath(addSitesMultipleID), 10);
+        waitForElementToBecomeAvailable(By.id("pickedSiteOrgPoId"), 10);
+        
+        assertEquals("true",selenium.getValue(addSitesMultipleID));
         assertWeAreOnPickASiteSelectionScreen();
         String[] options = selenium.getSelectOptions("pickedSiteOrgPoId");
         assertEquals(3, options.length);
         selenium.select("pickedSiteOrgPoId",
                 "label=National Cancer Institute Division of Cancer Prevention");
         clickAndWait("pickSiteBtn");
-        assertEquals("true",selenium.getValue("//input[@name='addSitesMultiple']"));
+        assertEquals("true",selenium.getValue(addSitesMultipleID));
         assertEquals("National Cancer Institute Division of Cancer Prevention",
                 selenium.getValue("organizationName"));
 
@@ -850,8 +855,9 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         driver.findElement(selectActionBtn).click();
         driver.findElement(
                 By.xpath("//li/a[normalize-space(text())='" + action + "']"))
-                .click();
-        driver.switchTo().frame(driver.findElement(By.id("popupFrame")));        
+                .click();       
+        driver.switchTo().frame(driver.findElement(By.id("popupFrame")));
+        
     }
 
 }

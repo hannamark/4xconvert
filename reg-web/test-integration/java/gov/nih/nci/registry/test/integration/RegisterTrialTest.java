@@ -853,8 +853,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         selenium.click("xpath=//button/i[@class='fa-floppy-o']");
         pause(5000);
 
-        driver.switchTo().parentFrame().switchTo().parentFrame();
-        driver.switchTo().defaultContent();
+        driver.switchTo().parentFrame().switchTo().defaultContent();
+        
         
         assertTrue(
                 "No success message found",
