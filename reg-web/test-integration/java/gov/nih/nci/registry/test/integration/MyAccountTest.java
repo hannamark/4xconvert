@@ -182,6 +182,7 @@ public class MyAccountTest extends AbstractRegistrySeleniumTest {
         
         // Checking for logout to occur
         pause(OP_WAIT_TIME);
+        driver.switchTo().defaultContent();
         verifyLoginPage();
         assertNull(queryReportGroupToRegUser("abstractor-ci"));
     }
