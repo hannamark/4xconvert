@@ -46,7 +46,7 @@ public abstract class AbstractTrialStatusTest extends AbstractPaSeleniumTest {
      */
     @SuppressWarnings("deprecation")
     private void selectTrialInDashboard(TrialInfo trial) {
-        clickAndWait("id=dashboardMenuOption");
+        openAndWait("/pa/protected/dashboard.action");
         if (selenium.isElementPresent("id=searchid")) {
             clickAndWait("searchid");
             selenium.type("submittedOnOrAfter", "01/01/2000");
