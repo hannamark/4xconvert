@@ -43,7 +43,7 @@ public class TrialSearchPerformanceTest extends AbstractRegistrySeleniumTest {
                 "Wake Forest University Health Sciences", 10);
         testSearchByParticipatingSitePerformance(
                 "OHSU Knight Cancer Institute", 8);
-        testSearchByParticipatingSitePerformance("Mayo Clinic Cancer Center", 5);
+        testSearchByParticipatingSitePerformance("Mayo Clinic Cancer Center", 7);
         testSearchByParticipatingSitePerformance("Mayo Clinic", 15);
         testSearchByParticipatingSitePerformance("Mayo Clinic in Arizona", 9);
         testSearchByParticipatingSitePerformance(
