@@ -315,7 +315,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 && System.currentTimeMillis() - stamp < 1000 * 60) {
             Thread.sleep(1000);
         }
-        assertEquals(numberOfEmailsToWaitFor, server.getReceivedEmailSize());
+        assertTrue(numberOfEmailsToWaitFor <= server.getReceivedEmailSize());
     }
 
     private void takeScreenShot() {

@@ -72,7 +72,7 @@ public class ResultsPublishedDateTest extends AbstractTrialStatusTest {
          deactivateAllTrials();
         // setupPublishDateTrials();
          log("Setting up for a Results Publish test case");
-
+         restartEmailServer();
          setPaProperty("resultsUpdater.trials.scan.schedule", "0 0/1 * 1/1 * ? *");
          Thread.sleep(SCHEDULING_CHANGES_PICK_UP_TIME);
          setPaProperty("resultsUpdater.trials.scan.schedule", "0 0 0/23 1/1 * ? *");
@@ -111,6 +111,7 @@ public class ResultsPublishedDateTest extends AbstractTrialStatusTest {
          Thread.sleep(ON_OFF_SWITCH_RECHECK_WAIT_TIME);
          deactivateAllTrials();
          setupPublishDateTrials();
+         restartEmailServer();
          log("Setting up for a Results Publish test case");
 
          setPaProperty("resultsUpdater.trials.scan.schedule", "0 0/1 * 1/1 * ? *");
