@@ -505,6 +505,7 @@ public abstract class AbstractRegistrySeleniumTest extends
     protected void deleteStatus(int row) {
         final String trashIconPath = "//table[@id='trialStatusHistoryTable']/tbody/tr[" + row
                         + "]/td[5]/i[@class='fa fa-trash-o']";
+        waitForElementToBecomeAvailable(By.xpath(trashIconPath), 10);
         moveElementIntoView(By.xpath(trashIconPath));
         selenium.click("xpath=" + trashIconPath);
         waitForElementToBecomeVisible(By.id("dialog-delete"), 5);

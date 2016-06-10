@@ -813,7 +813,10 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         clickAndWait("xpath=//button[text()='Add My Site']");
         waitForElementById("popupFrame", 20);
         driver.switchTo().frame(driver.findElement(By.id("popupFrame")));
-        assertEquals("true",selenium.getValue("//input[@name='addSitesMultiple']"));
+        
+        final String addSitesMultipleXPath = "//input[@name='addSitesMultiple']";
+        waitForElementToBecomeAvailable(By.xpath(addSitesMultipleXPath), 15);
+        assertEquals("true",selenium.getValue(addSitesMultipleXPath));
         assertTrue(selenium
                 .isTextPresent("Because your organization belongs to a family, you can add to this trial any "
                         + "site within that family. Please select the site you would like to add below:"));
@@ -823,7 +826,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         selenium.select("pickedSiteOrgPoId",
                 "label=National Cancer Institute");
         clickAndWait("pickSiteBtn");
-        assertEquals("true",selenium.getValue("//input[@name='addSitesMultiple']"));
+        waitForElementToBecomeAvailable(By.xpath(addSitesMultipleXPath), 15);
+        assertEquals("true",selenium.getValue(addSitesMultipleXPath));
         assertEquals("National Cancer Institute",
                 selenium.getValue("organizationName"));
 
