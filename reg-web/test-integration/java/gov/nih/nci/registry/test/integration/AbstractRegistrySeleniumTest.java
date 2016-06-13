@@ -374,8 +374,9 @@ public abstract class AbstractRegistrySeleniumTest extends
         // Regulator Information
         moveElementIntoView(By.id("countries"));
         selenium.select("countries", "label=United States");
-        pause(1000);
+        waitForElementToBecomeVisible(By.id("trialDTO.selectedRegAuth"), 15);
         moveElementIntoView(By.id("trialDTO.selectedRegAuth"));
+        pause(1000);
         selenium.select("trialDTO.selectedRegAuth",
                 "label=Food and Drug Administration");
         assertFalse(driver.findElement(
