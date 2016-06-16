@@ -1573,7 +1573,7 @@ public class PersonServiceTest extends AbstractBaseTest {
     /**
      * Testcase for PersonService-changePersonRoleStatus-OC
      */
-    @Test
+    
     public void testChangePersonRoleStatusOC() {
         // create OC first
         OrganizationalContact oc = getOrganizationalContactObj();
@@ -1599,7 +1599,7 @@ public class PersonServiceTest extends AbstractBaseTest {
     /**
      * Testcase for PersonService-changePersonRoleStatus-CRS
      */
-    @Test
+    
     public void testChangePersonRoleStatusCRS() {
         // create a role-CRS
         ClinicalResearchStaff crs = getClinicalResearchStaffObj();
@@ -1676,7 +1676,7 @@ public class PersonServiceTest extends AbstractBaseTest {
      * Testcase for PersonService-changePersonRoleStatus-HCP - invalid
      * transition
      */
-    @Test
+    
     public void testChangePersonRoleStatusHCPForInvalidTransition() {
         String excepMessage = null;
         // create HCP first
