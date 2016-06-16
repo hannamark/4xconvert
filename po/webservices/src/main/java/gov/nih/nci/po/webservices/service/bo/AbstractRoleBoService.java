@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.jms.JMSException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
@@ -110,8 +111,13 @@ public abstract class AbstractRoleBoService<TYPE extends Correlation, CR_TYPE ex
     public void curate(TYPE updatedInstance) throws JMSException {
 
         TYPE currentInstance = getCorrelationService().getById(updatedInstance.getId());
+        
+        System.out.println("currentInstance before filters: "+ToStringBuilder.reflectionToString(currentInstance));
 
         applyUpdateFilters(currentInstance, updatedInstance);
+        
+        System.out.println("currentInstance after filters: "+ToStringBuilder.reflectionToString(currentInstance));
+        System.out.println("updatedInstance: "+ToStringBuilder.reflectionToString(updatedInstance));
 
         CR_TYPE cr = createCr(currentInstance, updatedInstance);
         applyCrCreateFilters(updatedInstance, cr);
@@ -125,6 +131,7 @@ public abstract class AbstractRoleBoService<TYPE extends Correlation, CR_TYPE ex
             getCorrelationService().curate(updatedInstance);
         } else {
             try {
+                System.out.println("Creating CR");
                 getCrService().create(cr);
             } catch (EntityValidationException e) {
                 throw new RuntimeException(e);
@@ -214,6 +221,8 @@ public abstract class AbstractRoleBoService<TYPE extends Correlation, CR_TYPE ex
             loginName = createdBy.getLoginName();
         }
 
+        System.out.println("UsernameHolder.getUser(), loginName: "+UsernameHolder.getUser()+" "+loginName);
+        
         return StringUtils.equals(UsernameHolder.getUser(), loginName);
     }
 
