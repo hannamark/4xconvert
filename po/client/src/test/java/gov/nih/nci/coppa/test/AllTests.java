@@ -93,13 +93,8 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses(value = { /*
-                         * AllApiTests.class, DataGeneratorUtilTest.class,
-                         * TopicIntegrationTest.class,
-                         */AllSoapTests.class /*
-                                               * , AllRestTests.class,
-                                               * AllBridgTests.class
-                                               */})
+@SuiteClasses(value = { AllApiTests.class, DataGeneratorUtilTest.class, TopicIntegrationTest.class, AllSoapTests.class,
+        AllRestTests.class, AllBridgTests.class })
 public class AllTests {
 
 }
