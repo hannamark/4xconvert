@@ -15,7 +15,7 @@
     <properties>
         <test.webdriver.class>org.openqa.selenium.firefox.FirefoxDriver</test.webdriver.class>        
         <test.selenium.xvfb.skip>true</test.selenium.xvfb.skip>
-        <test.phantomjs.binary.path>/local/home/hudsonuser/jenkins_data/tools/phantomjs-1.9.7-linux-x86_64/bin/phantomjs</test.phantomjs.binary.path>
+        <test.phantomjs.binary.path>/local/home/cislave/phantomjs-1.9.7-linux-x86_64/bin/phantomjs</test.phantomjs.binary.path>
         <webservice.client.username>jdoe01</webservice.client.username>
         <webservice.client.password>pass</webservice.client.password>
         <selenium-maven-plugin.version>1.1</selenium-maven-plugin.version>

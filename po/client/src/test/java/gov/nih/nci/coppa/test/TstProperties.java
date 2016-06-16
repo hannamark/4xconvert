@@ -102,7 +102,7 @@ public final class TstProperties {
     public static final String WEBDRIVER_CLASS_KEY = "webdriver.class";
     public static final String WEBDRIVER_CLASS_DEFAULT = "org.openqa.selenium.firefox.FirefoxDriver";
     public static final String WEBDRIVER_PHANTOMJS_PATH = "phantomjs.binary.path";
-    private static final String WEBDRIVER_PHANTOMJS_PATH_DEFAULT = "/local/home/hudsonuser/jenkins_data/tools/phantomjs-1.9.7-linux-x86_64/bin/phantomjs";
+    private static final String WEBDRIVER_PHANTOMJS_PATH_DEFAULT = "/local/home/cislave/phantomjs-1.9.7-linux-x86_64/bin/phantomjs";
 
     public static final String JMX_USERNAME_KEY = "jboss.jmx.username";
     public static final String JMS_USERNAME_DEFAULT = "admin";
