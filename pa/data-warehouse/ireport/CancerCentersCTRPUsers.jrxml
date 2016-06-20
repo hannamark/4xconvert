@@ -81,7 +81,14 @@ left join dw_user du on du.affiliated_organization_id=dfo.organization_id AND du
 'SKCCC System-Account',
 'Shamim Ahmed',
 'Barry Alkis',
-'Ann Pham'))
+'Ann Pham',
+'Shilpi Singh',
+'CTRP PA',
+'Braulio Cabral',
+'Brittany Jackson',
+'Hemant Undale',
+'Shanthala Basavappa',
+'Sophia Rarhai'))
 order by dfo.family_name,dfo.organization_name,name]]>
 	</queryString>
 	<field name="family_name" class="java.lang.String"/>
