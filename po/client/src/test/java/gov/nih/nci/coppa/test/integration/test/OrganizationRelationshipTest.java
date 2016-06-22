@@ -86,6 +86,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
+import org.openqa.selenium.By;
 
 /**
  * Selenium test for managing organization relationships
@@ -94,7 +95,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public class OrganizationRelationshipTest extends AbstractPoWebTest {
 
-    public void testOrganizationRelationships() {
+    public void testOrganizationRelationships() throws Exception {
         loginAsCurator();
         openOrganizationFamilyCreate();
         selenium.type("familyEntityForm_family_name", "Test Family");
@@ -219,7 +220,7 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
         assertTrue(selenium.isTextPresent("Organization relationship successfully changed."));
     }
 
-    private void updateRelationship(int row, String relationshipName) {
+    private void updateRelationship(int row, String relationshipName) throws Exception {
         clickAndWait("xpath=//table[@id='row']//tr[" + row + "]//td[1]/a");
         selenium.selectFrame("popupFrame");
         waitForElementById("organizationRelationshipForm", 10);
@@ -230,6 +231,7 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
         assertTrue(selenium.isElementPresent("cancel_button"));
 
         selenium.type("orgRelationship.endDate", "");
+        driver.findElement(By.tagName("h2")).click();
         selenium.click("add_relationship_button");
         waitForElementById("organizationRelationshipForm", 10);
         assertTrue(selenium.isTextPresent("End Date is required"));
