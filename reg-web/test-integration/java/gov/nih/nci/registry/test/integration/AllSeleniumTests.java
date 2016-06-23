@@ -82,8 +82,8 @@
  */
 package gov.nih.nci.registry.test.integration;
 
+import gov.nih.nci.pa.test.integration.support.BatchingTestSuite;
 import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 /**
@@ -92,7 +92,7 @@ import org.junit.runners.Suite.SuiteClasses;
  * 
  * @author dkrylov
  */
-@RunWith(Suite.class)
+@RunWith(BatchingTestSuite.class)
 @SuiteClasses(value = { AmendTrialTest.class,ProgramCodeAssignmentTest.class, LoginTest.class, AddSitesTest.class,
         RegisterAbbreviatedTrialTest.class, RegisterTrialTest.class,
         TrialSearchTest.class, AddUpdateSiteTest.class,

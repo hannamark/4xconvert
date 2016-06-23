@@ -91,6 +91,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.lang.RandomStringUtils;
@@ -108,6 +109,7 @@ import com.dumbster.smtp.SmtpMessage;
  * @author gundalar
  */
 @SuppressWarnings("deprecation")
+@Batch(number = 1)
 public class AmendTrialTest extends AbstractRegistrySeleniumTest {
     
     @Override

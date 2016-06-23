@@ -85,6 +85,7 @@ package gov.nih.nci.registry.test.integration;
 import java.sql.SQLException;
 import java.util.List;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayListHandler;
 import org.apache.commons.lang.SystemUtils;
@@ -97,6 +98,7 @@ import org.openqa.selenium.interactions.Actions;
 /**
  * @author Michael Visee
  */
+@Batch(number = 2)
 public class MyAccountTest extends AbstractRegistrySeleniumTest {
 	
 	private static final int OP_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 10000

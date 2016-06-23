@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.io.FileUtils;
@@ -23,6 +24,7 @@ import org.openqa.selenium.WebElement;
 /**
  *Integration test for Manage Program Codes List screen.
  */
+@Batch(number = 2)
 public class ManageMasterProgramCodesListTest  extends AbstractRegistrySeleniumTest {
     
     private List<TrialInfo> trials = new ArrayList<TrialInfo>();

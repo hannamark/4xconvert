@@ -85,6 +85,7 @@ package gov.nih.nci.registry.test.integration;
 import java.sql.SQLException;
 import java.util.Iterator;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -96,6 +97,7 @@ import com.dumbster.smtp.SmtpMessage;
  * @author dkrylov
  */
 @SuppressWarnings("deprecation")
+@Batch(number = 2)
 public class SignUpTest extends AbstractRegistrySeleniumTest {
 
     @SuppressWarnings("deprecation")

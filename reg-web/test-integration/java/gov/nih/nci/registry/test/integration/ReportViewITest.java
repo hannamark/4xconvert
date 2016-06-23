@@ -1,5 +1,6 @@
 package gov.nih.nci.registry.test.integration;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
 import gov.nih.nci.registry.service.MockRestClientNCITServer;
 
 import java.sql.SQLException;
@@ -13,6 +14,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
+@Batch(number = 2)
 public class ReportViewITest extends AbstractRegistrySeleniumTest {
 
     MockRestClientNCITServer mockRestClientNCITServer = new MockRestClientNCITServer();

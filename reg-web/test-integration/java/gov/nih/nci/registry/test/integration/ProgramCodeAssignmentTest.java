@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
 import junit.framework.Assert;
 
 import org.apache.commons.dbutils.QueryRunner;
@@ -36,6 +37,7 @@ import org.openqa.selenium.support.ui.Select;
 /**
  * Integration test for Program Code assignment screen.
  */
+@Batch(number = 1)
 public class ProgramCodeAssignmentTest extends AbstractRegistrySeleniumTest {
 
     private List<TrialInfo> trials = new ArrayList<TrialInfo>();

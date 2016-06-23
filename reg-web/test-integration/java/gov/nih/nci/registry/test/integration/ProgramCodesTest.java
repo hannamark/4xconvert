@@ -4,6 +4,7 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 
 import java.util.Date;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.lang.RandomStringUtils;
@@ -15,6 +16,7 @@ import org.openqa.selenium.support.ui.Select;
 
 
 
+@Batch(number = 2)
 public class ProgramCodesTest extends AbstractRegistrySeleniumTest {
 	
 	@Test

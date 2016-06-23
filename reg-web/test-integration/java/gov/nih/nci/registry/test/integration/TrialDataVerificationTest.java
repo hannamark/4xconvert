@@ -4,6 +4,7 @@ import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.List;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayListHandler;
 import org.apache.commons.lang.SystemUtils;
@@ -18,6 +19,7 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
  * @author purams
  */
 @SuppressWarnings("deprecation")
+@Batch(number = 2)
 public class TrialDataVerificationTest extends AbstractRegistrySeleniumTest {
 
     public void testTrailDataVerification_ManualVerification() throws SQLException, URISyntaxException {

@@ -89,6 +89,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.lang.StringUtils;
@@ -103,6 +104,7 @@ import org.openqa.selenium.By;
  * @author dkrylov
  */
 @SuppressWarnings("deprecation")
+@Batch(number = 1)
 public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
 
 

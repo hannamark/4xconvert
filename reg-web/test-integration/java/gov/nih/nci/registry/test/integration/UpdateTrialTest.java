@@ -92,6 +92,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.lang.SystemUtils;
@@ -109,6 +110,7 @@ import com.thoughtworks.selenium.webdriven.commands.WaitForPageToLoad;
  * @author gundalar
  */
 @SuppressWarnings("deprecation")
+@Batch(number = 2)
 public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
     
     @Test

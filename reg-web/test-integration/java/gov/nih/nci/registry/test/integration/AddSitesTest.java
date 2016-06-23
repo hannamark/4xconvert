@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
@@ -17,6 +18,7 @@ import org.openqa.selenium.By;
  * @author Denis G. Krylov
  */
 @SuppressWarnings("deprecation")
+@Batch(number = 1)
 public class AddSitesTest extends AbstractRegistrySeleniumTest {
 
     private static final int WAIT_FOR_ELEMENT_TIMEOUT = 60;

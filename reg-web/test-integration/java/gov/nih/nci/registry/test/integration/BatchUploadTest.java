@@ -92,6 +92,7 @@ import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.lang.time.DateUtils;
@@ -103,6 +104,7 @@ import com.dumbster.smtp.SmtpMessage;
 /**
  * @author dkrylov
  */
+@Batch(number = 2)
 public class BatchUploadTest extends AbstractRegistrySeleniumTest {
 
     @Override

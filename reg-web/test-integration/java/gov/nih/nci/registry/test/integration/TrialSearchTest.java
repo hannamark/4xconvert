@@ -89,6 +89,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.junit.Test;
@@ -101,6 +102,7 @@ import org.openqa.selenium.WebElement;
  * @author dkrylov
  */
 @SuppressWarnings("deprecation")
+@Batch(number = 1)
 public class TrialSearchTest extends AbstractRegistrySeleniumTest {
 
     @Test

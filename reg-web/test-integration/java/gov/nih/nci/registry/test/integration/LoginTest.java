@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.registry.test.integration;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -95,6 +96,7 @@ import org.junit.Test;
  *
  * @author Abraham J. Evans-EL <aevansle@5amsolutions.com>
  */
+@Batch(number = 1)
 public class LoginTest extends AbstractRegistrySeleniumTest {
 
     /**

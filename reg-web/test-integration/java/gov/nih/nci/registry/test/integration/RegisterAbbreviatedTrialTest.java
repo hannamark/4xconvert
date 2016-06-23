@@ -85,6 +85,7 @@ package gov.nih.nci.registry.test.integration;
 import java.sql.Timestamp;
 import java.util.UUID;
 
+import gov.nih.nci.pa.test.integration.support.Batch;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
@@ -93,6 +94,7 @@ import org.openqa.selenium.By;
  * 
  * @author Denis G. Krylov
  */
+@Batch(number = 1)
 public class RegisterAbbreviatedTrialTest extends AbstractRegistrySeleniumTest {
 
     private final String LEAD_ORG_TRIAL_ID = UUID.randomUUID().toString();
