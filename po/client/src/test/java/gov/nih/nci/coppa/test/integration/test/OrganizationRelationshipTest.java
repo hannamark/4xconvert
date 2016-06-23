@@ -230,17 +230,16 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
         assertTrue(selenium.isElementPresent("add_relationship_button"));
         assertTrue(selenium.isElementPresent("cancel_button"));
 
-        selenium.type("orgRelationship.endDate", "");
-        driver.findElement(By.tagName("h2")).click();
+        enterDate("orgRelationship.endDate", "");
         selenium.click("add_relationship_button");
         waitForElementById("organizationRelationshipForm", 10);
         assertTrue(selenium.isTextPresent("End Date is required"));
         selenium.select("newOrgRelationship.hierarchicalType", relationshipName);
 
         String today = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
-        selenium.type("orgRelationship.endDate", today);
-        selenium.type("newOrgRelationship.startDate", today);
-
+        enterDate("orgRelationship.endDate", today);
+        enterDate("newOrgRelationship.startDate", today);
+        driver.findElement(By.tagName("h2")).click();
         selenium.click("add_relationship_button");
         pause(2000);
         

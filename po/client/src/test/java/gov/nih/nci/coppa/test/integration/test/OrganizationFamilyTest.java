@@ -227,7 +227,7 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
         assertNotNull(famId);
         clickAndWait("edit_family_id_" + famId);
         selenium.select("name=family.statusCode", "NULLIFIED");
-        selenium.type("name=family.endDate", dateFormat.format(new Date()));
+        enterDate("name=family.endDate", dateFormat.format(new Date()));
         selenium.chooseOkOnNextConfirmation();
         clickAndWait("save_button");        
         assertTrue(selenium.isTextPresent("Family " + FAMILY_NAME +" was successfully nullified."));
@@ -278,18 +278,18 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
         assertTrue(selenium.isTextPresent("Organization Family Relationship was successfully created."));
 
         selenium.select("familyOrgRelationship.functionalType", FUNCTIONAL_TYPE);
-        selenium.type("familyOrgRelationship.endDate", "01/01/2050");
+        enterDate("familyOrgRelationship.endDate", "01/01/2050");
 
         selenium.chooseOkOnNextConfirmation();
         clickAndWait("save_button");        
         assertTrue(selenium.isTextPresent("End Date must not be in the future"));
 
-        selenium.type("familyOrgRelationship.endDate", "01/01/2009");
+        enterDate("familyOrgRelationship.endDate", "01/01/2009");
         selenium.chooseOkOnNextConfirmation();
         clickAndWait("save_button");        
         assertTrue(selenium.isTextPresent("must be before"));
 
-        selenium.type("familyOrgRelationship.endDate", "");
+        enterDate("familyOrgRelationship.endDate", "");
 
         clickAndWait("save_button");
         assertTrue(selenium.isTextPresent("Organization Family Relationship was successfully updated."));

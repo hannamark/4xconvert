@@ -124,6 +124,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
 import org.junit.Assert;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 
@@ -1178,5 +1179,11 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
                 + group + "')";
         final Object[] results = runner.query(conn, sql, new ArrayHandler());
         return results != null;
+    }
+
+
+    protected void enterDate(String selector, String value) {
+        selenium.type(selector, value);
+        ((JavascriptExecutor) driver).executeScript("jQuery(\"div.ui-datepicker\").hide()");    //hide popup
     }
 }
