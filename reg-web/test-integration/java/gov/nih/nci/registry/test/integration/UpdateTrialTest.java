@@ -639,6 +639,8 @@ public void testIfProgramCodesForOtherFamilyNotChanged() throws Exception {
         clickAndWait("xpath=//button[text()='Review Trial']");
         waitForPageToLoad();
         
+        waitForElementToBecomeAvailable(By.xpath("//button[text()='Submit']"),
+                15);
         clickAndWait("xpath=//button[text()='Submit']");
         waitForPageToLoad();
         assertTrue(selenium
