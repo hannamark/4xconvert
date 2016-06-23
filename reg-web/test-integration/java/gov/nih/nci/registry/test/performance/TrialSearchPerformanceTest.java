@@ -3,7 +3,6 @@
  */
 package gov.nih.nci.registry.test.performance;
 
-import gov.nih.nci.pa.test.integration.support.Batch;
 import gov.nih.nci.registry.test.integration.AbstractRegistrySeleniumTest;
 
 import java.io.File;
@@ -22,7 +21,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * @author dkrylov
  * 
  */
-@Batch(number = 2)
 public class TrialSearchPerformanceTest extends AbstractRegistrySeleniumTest {
 
     private final File report = new File("trial_search_performance_report.txt");

@@ -3,7 +3,6 @@
  */
 package gov.nih.nci.registry.test.performance;
 
-import gov.nih.nci.pa.test.integration.support.Batch;
 import gov.nih.nci.registry.test.integration.AbstractRegistrySeleniumTest;
 
 import java.io.File;
@@ -19,7 +18,6 @@ import org.openqa.selenium.By;
  * @author dkrylov
  * 
  */
-@Batch(number = 1)
 public class UpdateAndAmendPerformanceTest extends AbstractRegistrySeleniumTest {
 
     /**
