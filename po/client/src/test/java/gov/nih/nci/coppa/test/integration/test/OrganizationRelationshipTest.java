@@ -241,10 +241,10 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
         enterDate("newOrgRelationship.startDate", today);
         driver.findElement(By.tagName("h2")).click();
         selenium.click("add_relationship_button");
-        pause(2000);
+        pause(4000);
         
         driver.switchTo().defaultContent();        
-        waitForElementById("row", 10);
+        waitForElementById("row", 20);
 
         String info = selenium.getText("xpath=//table[@id='row']//tr[" + row + "]//td[1]");
         assertTrue(StringUtils.contains(info, relationshipName));
