@@ -102,7 +102,7 @@ import org.openqa.selenium.WebElement;
  * @author dkrylov
  */
 @SuppressWarnings("deprecation")
-@Batch(number = 1)
+@Batch(number = 2)
 public class TrialSearchTest extends AbstractRegistrySeleniumTest {
 
     @Test

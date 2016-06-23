@@ -104,7 +104,7 @@ import org.openqa.selenium.By;
  * @author dkrylov
  */
 @SuppressWarnings("deprecation")
-@Batch(number = 1)
+@Batch(number = 2)
 public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
 
 
