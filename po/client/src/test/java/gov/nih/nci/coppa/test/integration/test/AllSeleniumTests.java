@@ -87,21 +87,22 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses(value = { LoginTest.class, CreateOrganizationTest.class,
-        CreatePersonTest.class, CreateResearchOrganizationTest.class,
-        GenericOrganizationalContactTest.class, CurateOrganizationTest.class,
-        CuratePersonTest.class, ManageClinicalResearchStaffWithCRTest.class,
-        ManageHealthCareFacilityWithCRTest.class,
-        ManageHealthCareProviderWithCRTest.class,
-        ManageIdentifiedOrganizationWithCRTest.class,
-        ManageIdentifiedPersonWithCRTest.class,
-        ManageOrganizationalContactWithCRTest.class,
-        ManageOversightCommitteeWithCRTest.class,
-        ManageResearchOrganizationWithCRTest.class,
-        OrganizationFamilyTest.class, OrganizationRelationshipTest.class,
-        SearchOrganizationTest.class, SearchPersonTest.class,
-        SelectOrganizationTest.class, UsePersonsAddressButtonTest.class,
-        ManageUserGroupsTest.class })
+//@SuiteClasses(value = { LoginTest.class, CreateOrganizationTest.class,
+//        CreatePersonTest.class, CreateResearchOrganizationTest.class,
+//        GenericOrganizationalContactTest.class, CurateOrganizationTest.class,
+//        CuratePersonTest.class, ManageClinicalResearchStaffWithCRTest.class,
+//        ManageHealthCareFacilityWithCRTest.class,
+//        ManageHealthCareProviderWithCRTest.class,
+//        ManageIdentifiedOrganizationWithCRTest.class,
+//        ManageIdentifiedPersonWithCRTest.class,
+//        ManageOrganizationalContactWithCRTest.class,
+//        ManageOversightCommitteeWithCRTest.class,
+//        ManageResearchOrganizationWithCRTest.class,
+//        OrganizationFamilyTest.class, OrganizationRelationshipTest.class,
+//        SearchOrganizationTest.class, SearchPersonTest.class,
+//        SelectOrganizationTest.class, UsePersonsAddressButtonTest.class,
+//        ManageUserGroupsTest.class })
+@SuiteClasses(value = { OrganizationRelationshipTest.class })
 public class AllSeleniumTests {
 
 }
