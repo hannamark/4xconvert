@@ -222,7 +222,7 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
 
     private void updateRelationship(int row, String relationshipName) throws Exception {
         clickAndWait("xpath=//table[@id='row']//tr[" + row + "]//td[1]/a");
-        selenium.selectFrame("popupFrame");
+        driver.switchTo().frame(driver.findElement(By.id("popupFrame")));
         waitForElementById("organizationRelationshipForm", 10);
         assertTrue(selenium.isTextPresent("Change Hierarchical Relationship"));
         assertTrue(selenium.isTextPresent("New Relationship"));
@@ -241,7 +241,7 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
         enterDate("newOrgRelationship.startDate", today);
         driver.findElement(By.tagName("h2")).click();
         selenium.click("add_relationship_button");
-        pause(4000);
+        pause(10000);
         
         driver.switchTo().defaultContent();        
         waitForElementById("row", 20);
