@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CTEPTrialsPCDConcerns1" language="groovy" pageWidth="1450" pageHeight="800" columnWidth="1410" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ae6bc613-aa8b-4de2-bc57-668901c88560">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="362"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="OS_WINDOWS" class="java.lang.Boolean" isForPrompting="false">
 		<defaultValueExpression><![CDATA[new Boolean(
@@ -98,7 +98,7 @@ order by so.extension]]>
 	</columnHeader>
 	<detail>
 		<band height="21" splitType="Stretch">
-			<textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="319" y="0" width="223" height="21" uuid="c44d1cc9-c411-44e6-9347-964cccee9b51"/>
 				<textElement markup="none">
 					<font size="13"/>

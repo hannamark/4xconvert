@@ -98,7 +98,7 @@ order by so.extension]]>
 	</columnHeader>
 	<detail>
 		<band height="21" splitType="Stretch">
-			<textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="319" y="0" width="223" height="21" uuid="c44d1cc9-c411-44e6-9347-964cccee9b51"/>
 				<textElement markup="none">
 					<font size="13"/>
