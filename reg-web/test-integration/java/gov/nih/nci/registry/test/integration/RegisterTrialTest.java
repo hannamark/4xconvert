@@ -307,8 +307,9 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         TrialInfo info = prepareTrialForUpdateAndSelectIt(params, true);
 
         selectAction("Change Status");
-        waitForElementToBecomeAvailable(By.id("popupFrame"), 15);
-        driver.switchTo().frame(driver.findElement(By.id("popupFrame")));
+        waitForElementToBecomeVisible(By.id("popupFrame"), 15);
+        final WebElement frame = driver.findElement(By.id("popupFrame"));
+        driver.switchTo().frame(frame);        
 
         changeTrialStatusAndDates(params);
 
@@ -860,7 +861,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         pause(5000);
 
         driver.switchTo().parentFrame().switchTo().defaultContent();
-        
+        waitForElementToBecomeVisible(By.cssSelector(".alert-success"), 15);
         
         assertTrue(
                 "No success message found",

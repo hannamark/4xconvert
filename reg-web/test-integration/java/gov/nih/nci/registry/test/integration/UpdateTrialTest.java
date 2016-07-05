@@ -751,7 +751,7 @@ public void testIfProgramCodesForOtherFamilyNotChanged() throws Exception {
         selenium.select("id=nciDivisionProgramCode", "label=OD");
         moveElementIntoView(By.id("grantbtnid"));
         selenium.click("id=grantbtnid");
-        assertEquals("P30", selenium.getText("css=tr.odd > td"));
+        assertEquals("P30", selenium.getText("css=#grantadddiv tr.odd > td"));
         clickAndWait("xpath=//button[text()='Review Trial']");
         assertEquals("Review Trial Details", selenium.getText("css=span"));
         

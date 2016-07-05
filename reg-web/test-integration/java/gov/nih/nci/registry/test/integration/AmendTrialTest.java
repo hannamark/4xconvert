@@ -732,6 +732,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         driver.switchTo().frame(driver.findElement(By.id("popupFrame")));
 
         final By poIDElement = By.id("orgPOIdSearch");
+        waitForElementToBecomeVisible(poIDElement, 15);
         moveElementIntoView(poIDElement);
         selenium.type("orgPOIdSearch", "2");
         clickAndWaitAjax("search_organization_btn");
