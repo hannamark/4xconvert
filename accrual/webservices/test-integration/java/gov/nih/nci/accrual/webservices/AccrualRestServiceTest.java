@@ -27,6 +27,7 @@ import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
@@ -219,6 +220,37 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
     }
 
     @Test
+    public final void testUpdateAccrualCountWithSameValueAndEnsureTimestamp()
+            throws ClientProtocolException, ParseException, JAXBException,
+            SAXException, SQLException, IOException,
+            DatatypeConfigurationException, java.text.ParseException,
+            InterruptedException {
+
+        baseURL = "http://" + TestProperties.getServerHostname() + ":"
+                + TestProperties.getServerPort() + "/services";
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
+        makeAbbreviated(rConf);
+        ParticipatingSite upd = readParticipatingSiteFromFile("/integration_ps_accruing_add.xml");
+        HttpResponse response = addSite("pa", rConf.getPaTrialID() + "", upd);
+        assertEquals(200, getReponseCode(response));
+        long siteID = Long.parseLong(EntityUtils.toString(response.getEntity(),
+                "utf-8"));
+        grantAccrualAccess("submitter-ci", siteID);
+
+        String serviceURL = "/trials/nci/" + rConf.getNciTrialID()
+                + "/sites/po/3/count";
+        String accrualCount = "15234";
+
+        Date ts1 = submitAccrualCountAndVerify(rConf, serviceURL, accrualCount);
+        Thread.sleep(60000);
+        logoutUser();
+        Date ts2 = submitAccrualCountAndVerify(rConf, serviceURL, accrualCount);
+
+        assertTrue(ts2.after(ts1));
+
+    }
+
+    @Test
     public final void testUpdateAccrualCountBySiteCtepId()
             throws ClientProtocolException, ParseException, JAXBException,
             SAXException, SQLException, IOException,
@@ -252,11 +284,13 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
      * @throws IOException
      * @throws ClientProtocolException
      * @throws SQLException
+     * @throws java.text.ParseException
      */
-    private void submitAccrualCountAndVerify(
+    private Date submitAccrualCountAndVerify(
             TrialRegistrationConfirmation rConf, String serviceURL,
             String accrualCount) throws UnsupportedEncodingException,
-            IOException, ClientProtocolException, SQLException {
+            IOException, ClientProtocolException, SQLException,
+            java.text.ParseException {
         HttpResponse response;
         baseURL = "http://" + TestProperties.getServerHostname() + ":"
                 + TestProperties.getServerPort() + "/accrual-services";
@@ -277,11 +311,12 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
         assertEquals("", response.getFirstHeader("Set-Cookie").getValue());
         EntityUtils.consumeQuietly(response.getEntity());
 
-        verifyAccrualCount(rConf, accrualCount);
+        return verifyAccrualCount(rConf, accrualCount);
     }
 
-    private void verifyAccrualCount(TrialRegistrationConfirmation rConf,
-            String accrualCount) throws SQLException {
+    @SuppressWarnings("deprecation")
+    private Date verifyAccrualCount(TrialRegistrationConfirmation rConf,
+            String accrualCount) throws SQLException, java.text.ParseException {
         removeDcpAndCtepIdFromTrial(rConf);
         login();
         clickAndWait("link=Trial Search");
@@ -289,6 +324,10 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
         assertEquals(
                 accrualCount,
                 selenium.getValue("xpath=//table[@id='row']/tbody/tr[1]/td[3]/input"));
+        String tstampStr = s.getText(
+                "xpath=//table[@id='row']/tbody/tr[1]/td[4]").trim();
+        return DateUtils.parseDate(tstampStr,
+                new String[] { "MM/dd/yyyy HH:mm" });
 
     }
 
@@ -581,7 +620,7 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
 
         submitAndVerify(rConf, siteID, subjects, "/sites/" + siteID);
     }
-    
+
     @Test
     public final void testSubmitStudySubjectsWithLegacyCtepDiseaseCode()
             throws ClientProtocolException, ParseException, JAXBException,
@@ -606,12 +645,11 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
         dc.setCodeSystem("Legacy Codes - CTEP");
         dc.setValue("10028566");
         subject.setDisease(dc);
-        
+
         subjects.getStudySubject().add(subject);
 
         submitAndVerify(rConf, siteID, subjects, "/sites/" + siteID);
     }
-
 
     private void changeDiseaseTerm(TrialRegistrationConfirmation rConf,
             String string) throws SQLException {

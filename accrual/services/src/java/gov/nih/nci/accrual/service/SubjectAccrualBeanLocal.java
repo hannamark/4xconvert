@@ -128,7 +128,6 @@ import gov.nih.nci.pa.iso.convert.StudySiteConverter;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -608,18 +607,14 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     private void doUpdateToSubjectAccrual(Ii participatingSiteIi, Int count, AccrualSubmissionTypeCode submissionType)
             throws PAException {
         StudySiteSubjectAccrualCount ssAccCount = getSubjectAccrualCountSvc()
-        .getCountByStudySiteId(participatingSiteIi);
+                .getCountByStudySiteId(participatingSiteIi);
         if (ssAccCount == null) {
             StudySiteDTO ssDto = PaServiceLocator.getInstance().getStudySiteService().get(participatingSiteIi);
             StudySite ss = new StudySiteConverter().convertFromDtoToDomain(ssDto);
             ssAccCount = new StudySiteSubjectAccrualCount();
             ssAccCount.setStudySite(ss);
             ssAccCount.setStudyProtocol(ss.getStudyProtocol());
-        } else {
-            if (ObjectUtils.equals(ssAccCount.getAccrualCount(), IntConverter.convertToInteger(count))) {
-                return;
-            }
-        }
+        } 
         ssAccCount.setAccrualCount(count.getValue());
         ssAccCount.setSubmissionTypeCode(submissionType);
         List<StudySiteSubjectAccrualCount> counts = new ArrayList<StudySiteSubjectAccrualCount>();
