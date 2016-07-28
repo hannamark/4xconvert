@@ -44,8 +44,8 @@
 	<tns:whyStopped></tns:whyStopped>
 	<tns:trialStatusDate>2014-07-15</tns:trialStatusDate>
 	<tns:trialStartDate type="Actual">2014-07-15</tns:trialStartDate>
-	<tns:primaryCompletionDate type="Anticipated">2016-07-15</tns:primaryCompletionDate>
-	<tns:completionDate type="Anticipated">2016-07-15</tns:completionDate>
+	<tns:primaryCompletionDate type="Anticipated">2018-07-15</tns:primaryCompletionDate>
+	<tns:completionDate type="Anticipated">2018-07-15</tns:completionDate>
 	<tns:ind>
 		<tns:number>111111</tns:number>
 		<tns:grantor>CDER</tns:grantor>

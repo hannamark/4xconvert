@@ -37,7 +37,7 @@
 	<tns:trialStatus>In Review</tns:trialStatus>
 	<tns:trialStatusDate>2014-07-15</tns:trialStatusDate>
 	<tns:trialStartDate type="Actual">2014-07-15</tns:trialStartDate>
-	<tns:primaryCompletionDate type="Anticipated">2016-07-15</tns:primaryCompletionDate>
+	<tns:primaryCompletionDate type="Anticipated">2018-07-15</tns:primaryCompletionDate>
 	<tns:protocolDocument filename="protocol.pdf">dGVzdA==</tns:protocolDocument>
 	<tns:irbApprovalDocument filename="irb.pdf">dGVzdA==</tns:irbApprovalDocument>
 	<tns:participatingSitesDocument
