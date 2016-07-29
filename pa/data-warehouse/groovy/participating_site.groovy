@@ -1,7 +1,7 @@
 import groovy.sql.Sql
 
 def sql = """
-    select contact.email, contact.telephone, p.first_name || ' ' || p.middle_name || ' ' || p.last_name as contact_name, ps.identifier, org.name as org_name,
+    select distinct contact.email, contact.telephone, p.first_name || ' ' || p.middle_name || ' ' || p.last_name as contact_name, ps.identifier, org.name as org_name,
          org.status_code as org_status, ssas.status_code, ssas.status_date, ps.target_accrual_number, org.assigned_identifier::integer as org_po_id
          , ps.local_sp_indentifier
     from study_site ps
@@ -14,7 +14,7 @@ def sql = """
         left outer join study_site_accrual_status as ssas on ssas.study_site_identifier = ps.identifier
             and ssas.identifier = (select identifier from study_site_accrual_status where study_site_identifier  = ps.identifier 
             and deleted=false order by status_date desc, identifier desc limit 1)
-    where ps.functional_code = 'TREATING_SITE' and sp.status_code = 'ACTIVE' and ssas.deleted=false"""
+    where ps.functional_code = 'TREATING_SITE' and sp.status_code = 'ACTIVE' and ssas.deleted=false order by ps.identifier"""
 def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'],
     properties['datawarehouse.pa.source.db.password'], properties['datawarehouse.pa.source.jdbc.driver'])
 def destinationConnection = Sql.newInstance(properties['datawarehouse.pa.dest.jdbc.url'], properties['datawarehouse.pa.dest.db.username'],
