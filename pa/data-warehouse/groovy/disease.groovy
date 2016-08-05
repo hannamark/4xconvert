@@ -34,12 +34,6 @@ def sql_parents = """SELECT dp.disease_identifier, dp.parent_disease_identifier,
                        FROM pdq_disease_parent dp
                        JOIN pdq_disease d ON (dp.parent_disease_identifier = d.identifier)"""
 
-def sql_load_parents = """INSERT INTO stg_dw_study_disease
-                                       SELECT sd.ct_gov_xml_indicator, 'TREE', sd.date_last_created, sd.date_last_updated, dp.disease_code,
-                                       dp.preferred_name, dp.menu_display_name, sd.internal_system_id, dp.parent_disease_identifier,
-                                       'NO', sd.nci_id, dp.nt_term_identifier, sd.user_last_created, sd.user_last_updated
-                                       FROM stg_dw_study_disease sd
-                                       JOIN stg_dw_disease_parents dp ON (sd.internal_system_id2 = dp.disease_identifier)"""
 
 def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'],
     properties['datawarehouse.pa.source.db.password'], properties['datawarehouse.pa.source.jdbc.driver'])

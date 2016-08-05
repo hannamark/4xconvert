@@ -24,6 +24,7 @@ CREATE TABLE STG_DW_DISEASE_PARENTS (
     DISEASE_CODE character varying(200),
     NT_TERM_IDENTIFIER character varying(200),
     PREFERRED_NAME character varying(1000),
-    MENU_DISPLAY_NAME character varying(1000)
+    MENU_DISPLAY_NAME character varying(1000),
+    PRIMARY KEY (DISEASE_IDENTIFIER, PARENT_DISEASE_IDENTIFIER)
 );
 
