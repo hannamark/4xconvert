@@ -63,3 +63,18 @@ CREATE TABLE dw_study_types AS SELECT DISTINCT id, "group", type FROM dw_study_t
 
 ALTER TABLE dw_study_types
   ADD CONSTRAINT dw_study_types_pk PRIMARY KEY (id);
+  
+--Create history table
+CREATE TABLE IF NOT EXISTS hist_dw_study_type ( 
+    RUN_ID TIMESTAMP,
+    id integer NOT NULL,
+  "group" character varying,
+  type character varying,
+  nci_id character varying(255) NOT NULL,
+); 
+CREATE TABLE IF NOT EXISTS hist_dw_study_types ( 
+    RUN_ID TIMESTAMP,
+    id integer NOT NULL,
+  "group" character varying,
+  type character varying
+ ); 

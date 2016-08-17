@@ -3,4 +3,10 @@ CREATE TABLE STG_DW_STUDY_ANATOMIC_SITE (
     ANATOMIC_SITE_NAME character varying(1000),
     NCI_ID character varying(255)
 );
+--Create history table
+CREATE TABLE IF NOT EXISTS HIST_DW_STUDY_ANATOMIC_SITE (
+RUN_ID TIMESTAMP,
+    ANATOMIC_SITE_NAME character varying(1000),
+    NCI_ID character varying(255)
+);
 

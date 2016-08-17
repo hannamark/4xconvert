@@ -9,4 +9,15 @@ CREATE TABLE STG_DW_STUDY_AMENDMENT (
     SUBMITTER_NAME character varying(501),
     ASSOCIATED_ORGANIZATION character varying(200)
 );
+--Create history table
+CREATE TABLE IF NOT EXISTS HIST_DW_STUDY_AMENDMENT (
+RUN_ID TIMESTAMP,
+    AMENDMENT_DATE timestamp, 
+    INTERNAL_SYSTEM_ID INTEGER,
+    NCI_ID character varying(255),
+    NUMBER character varying(200),
+    SUBMISSION_NUMBER INTEGER,
+    SUBMITTER_NAME character varying(501),
+    ASSOCIATED_ORGANIZATION character varying(200)
+);
 
