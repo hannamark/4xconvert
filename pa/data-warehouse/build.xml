@@ -1,8 +1,8 @@
 <project name="data-warehouse" default="populate" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
     <property file="${basedir}/build.properties"/>
     <property name="bda-utils" value="${basedir}/../../target/pa/bda-utils" />
-	
-	<property name="datawarehouse.timeout" value="57600000" />
+    
+    <property name="datawarehouse.timeout" value="57600000" />
 
     <path id="bda-utils.classpath">
         <fileset dir="./lib">
@@ -17,10 +17,10 @@
     <taskdef classname="org.codehaus.groovy.ant.Groovy" classpathref="bda-utils.classpath" name="groovy"/>
 
     <target name="populate" description="Rename from staging to final tables, add indexes">   
-    	<echoproperties/>
-    	<parallel threadCount="1" timeout="${datawarehouse.timeout}" failonany="true">    	 
-    	  <sequential>    	
-                <antcall target="gen"/>    	    
+        <echoproperties/>
+        <parallel threadCount="1" timeout="${datawarehouse.timeout}" failonany="true">       
+          <sequential>      
+                <antcall target="gen"/>         
                 <stopwatch name="timer1"/>
                 <echo message = "Running miscellaneous tasks (add tree to study_disease...)"/>
                 <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
@@ -64,22 +64,22 @@
                         <path refid="bda-utils.classpath"/>
                     </classpath>
                 </sql>
-                <stopwatch name="timer1" action="total"/>    	  	
+                <stopwatch name="timer1" action="total"/>           
 
                 <echo message = "Granting SELECT privilege to copparead..."/>
                 <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
                     userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
-		    		onerror="continue"
+                    onerror="continue"
                     expandproperties="true" autocommit="true">
                     <transaction src="${basedir}/sql/grant_privileges.sql"/>
                     <classpath>
                         <path refid="bda-utils.classpath"/>
                     </classpath>
                 </sql>
-    	  	
-    	  </sequential>
-    	</parallel>
-    		
+            
+          </sequential>
+        </parallel>
+            
     </target>
 
     <target name="init-db" description="Initializes the data warehousing tables">
@@ -88,7 +88,7 @@
         <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
             userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
             expandproperties="true" autocommit="true">
-        	<transaction src="${basedir}/sql/prime.sql"/>
+            <transaction src="${basedir}/sql/prime.sql"/>
             <transaction src="${basedir}/sql/study_accrual_count_audit.sql"/>
             <transaction src="${basedir}/sql/organization.sql"/>
             <transaction src="${basedir}/sql/organization_role.sql"/>
@@ -140,10 +140,10 @@
             <transaction src="${basedir}/sql/study_secondary_purpose.sql"/>
            <transaction src="${basedir}/sql/family_trial_data.sql"/>
             <transaction src="${basedir}/sql/study_inbox.sql"/>
-        	<transaction src="${basedir}/sql/failed_patient_accruals.sql"/>
-			<transaction src="${basedir}/sql/program_code.sql"/>
-			<transaction src="${basedir}/sql/study_family_program_code.sql"/>
-			<transaction src="${basedir}/sql/study_principal_investigator.sql"/>
+            <transaction src="${basedir}/sql/failed_patient_accruals.sql"/>
+            <transaction src="${basedir}/sql/program_code.sql"/>
+            <transaction src="${basedir}/sql/study_family_program_code.sql"/>
+            <transaction src="${basedir}/sql/study_principal_investigator.sql"/>
             <classpath>
                 <path refid="bda-utils.classpath"/>
             </classpath>
@@ -156,15 +156,19 @@
         <echo message = "Running disease"/>
         <groovy src="groovy/disease.groovy"/>
         <stopwatch name="timer1" action="total"/>
-    	
+        
         <stopwatch name="timer1"/>
         <echo message = "Running Failed Patient Accruals"/>
         <groovy src="groovy/failed_patient_accruals.groovy"/>
         <stopwatch name="timer1" action="total"/>
-    	
+        
+        <stopwatch name="timer1"/>
+        <echo message = "Running Accrual Count Audit"/>
+        <groovy src="groovy/study_accrual_count_audit.groovy"/>
+        <stopwatch name="timer1" action="total"/>
        
 
-    	<stopwatch name="timer1"/>
+        <stopwatch name="timer1"/>
         <echo message = "Running User"/>
         <groovy src="groovy/user.groovy"/>
         <stopwatch name="timer1" action="total"/>
@@ -299,10 +303,10 @@
         <groovy src="groovy/grants_p30.groovy"/>
         <stopwatch name="timer1" action="total"/>
 
-       <!-- <stopwatch name="timer1"/>
+        <stopwatch name="timer1"/>
         <echo message = "Running i2e grants"/>
         <groovy src="groovy/grants_i2e.groovy"/>
-        <stopwatch name="timer1" action="total"/>  -->
+        <stopwatch name="timer1" action="total"/>
 
         <stopwatch name="timer1"/>
         <echo message = "Running indide"/>
@@ -313,8 +317,8 @@
         <echo message = "Running participating_site"/>
         <groovy src="groovy/participating_site.groovy"/>
         <stopwatch name="timer1" action="total"/>
-    	
-    	<stopwatch name="timer1"/>
+        
+        <stopwatch name="timer1"/>
         <echo message = "Running participating_site_status"/>
         <groovy src="groovy/participating_site_status.groovy"/>
         <stopwatch name="timer1" action="total"/>
@@ -388,32 +392,32 @@
         <echo message = "Running Secondary Purpose"/>
         <groovy src="groovy/secondary_purpose.groovy"/>
         <stopwatch name="timer1" action="total"/>
-    	
-    	 <stopwatch name="timer1"/>
-    	        <echo message = "Family Trial Data"/>
-    	        <groovy src="groovy/family_trial_data.groovy"/>
-    	        <stopwatch name="timer1" action="total"/>
+        
+         <stopwatch name="timer1"/>
+                <echo message = "Family Trial Data"/>
+                <groovy src="groovy/family_trial_data.groovy"/>
+                <stopwatch name="timer1" action="total"/>
  
        <stopwatch name="timer1"/>
         <echo message = "Running Study Inbox"/>
         <groovy src="groovy/study_inbox.groovy"/>
         <stopwatch name="timer1" action="total"/>
-		
-		<stopwatch name="timer1"/>
+        
+        <stopwatch name="timer1"/>
         <echo message = "Running program code"/>
         <groovy src="groovy/program_codes.groovy"/>
         <stopwatch name="timer1" action="total"/>
-		
-		<stopwatch name="timer1"/>
+        
+        <stopwatch name="timer1"/>
         <echo message = "Running Study family program codes"/>
         <groovy src="groovy/study_family_program_code.groovy"/>
         <stopwatch name="timer1" action="total"/>
-		
-		<stopwatch name="timer1"/>
+        
+        <stopwatch name="timer1"/>
         <echo message = "Running Study PI"/>
         <groovy src="groovy/study_principal_investigator.groovy"/>
         <stopwatch name="timer1" action="total"/>
-		
+        
    </target>
 
 </project>
