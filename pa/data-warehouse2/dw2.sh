@@ -48,6 +48,63 @@ pg_dump -h ncidb-p126.nci.nih.gov \
 # echo 'removing interum data set'
 # rm DW2-interm.sql
 
+echo 'create clean DW2 data dump'
+
+# limit data set to only active trils with a processing_status of Abstration Verified*
+psql -U postgres  -h localhost ctrpdw2 <<EOF
+-- DELETE FROM public.dw_study WHERE current_trial_status != 'Active';
+-- DELETE FROM public.dw_study WHERE processing_status NOT LIKE 'Abstraction Verified%';
+DELETE FROM public.dw_study WHERE processing_status = 'Rejected';
+DELETE FROM public.dw_study WHERE nct_id IS NULL;
+DELETE FROM public.dw_study WHERE nct_id NOT LIKE 'NCT%';
+DELETE FROM public.dw_study
+WHERE nci_id NOT IN
+(
+with reporting_start_date as (select to_date('06/15/2015', 'MM/dd/yyyy')),
+
+                reporting_end_date as (select current_date)
+
+                select distinct(nci_id) from
+
+                (select *, CASE WHEN internal_system_id in
+
+                (
+
+                with results as (
+
+                select row_number() over(partition by nci_id order by status_date desc) as row_num,*
+
+                from dw_study_overall_status
+
+                ) select internal_system_id from results where row_num =1
+
+                )
+
+                THEN now()
+
+                ELSE lead(status_date) OVER(ORDER BY nci_id,status_date )   END  as "lead_date"
+
+                from dw_study_overall_status    ) as dw
+
+                where ((status_date >= (select * from reporting_start_date)
+
+                and  status_date<= (select * from reporting_end_date))
+
+                or ( (select * from reporting_start_date) >= status_date
+
+                and (select * from reporting_start_date)<=lead_date
+
+                )) and status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL','TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION')
+
+                and nci_id in (select nci_id from dw_study where processing_status <> 'Rejected')
+
+                order by nci_id
+);
+EOF
+
+
+
+
 echo 'modifying the study table'
 
 # psql -U postgres ctrpdw2 < dwstudy.sql
@@ -219,61 +276,6 @@ DROP INDEX  IF EXISTS dw_study_principal_investigator_idx;
 DROP INDEX  IF EXISTS dw_study_record_verification_date_idx;
 DROP INDEX  IF EXISTS dw_study_start_date_idx;
 DROP INDEX  IF EXISTS dw_study_start_date_type_code_idx;
-EOF
-
-echo 'create clean DW2 data dump'
-
-
-# limit data set to only active trils with a processing_status of Abstration Verified*
-psql -U postgres  -h localhost ctrpdw2 <<EOF
--- DELETE FROM public.dw_study WHERE current_trial_status != 'Active';
--- DELETE FROM public.dw_study WHERE processing_status NOT LIKE 'Abstraction Verified%';
-DELETE FROM public.dw_study WHERE processing_status = 'Rejected';
-DELETE FROM public.dw_study WHERE nct_id IS NULL;
-DELETE FROM public.dw_study WHERE nct_id NOT LIKE 'NCT%';
-DELETE FROM public.dw_study
-WHERE nci_id NOT IN
-(
-with reporting_start_date as (select to_date('06/15/2015', 'MM/dd/yyyy')),
-
-                reporting_end_date as (select current_date)
-
-                select distinct(nci_id) from
-
-                (select *, CASE WHEN internal_system_id in
-
-                (
-
-                with results as (
-
-                select row_number() over(partition by nci_id order by status_date desc) as row_num,*
-
-                from dw_study_overall_status
-
-                ) select internal_system_id from results where row_num =1
-
-                )
-
-                THEN now()
-
-                ELSE lead(status_date) OVER(ORDER BY nci_id,status_date )   END  as "lead_date"
-
-                from dw_study_overall_status    ) as dw
-
-                where ((status_date >= (select * from reporting_start_date)
-
-                and  status_date<= (select * from reporting_end_date))
-
-                or ( (select * from reporting_start_date) >= status_date
-
-                and (select * from reporting_start_date)<=lead_date
-
-                )) and status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL','TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION')
-
-                and nci_id in (select nci_id from dw_study where processing_status <> 'Rejected')
-
-                order by nci_id
-);
 EOF
 
 
