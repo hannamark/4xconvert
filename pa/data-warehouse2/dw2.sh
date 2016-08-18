@@ -53,6 +53,7 @@ echo 'modifying the study table'
 # psql -U postgres ctrpdw2 < dwstudy.sql
 psql -U postgres  -h localhost ctrpdw2 <<EOF
 ALTER TABLE public.dw_organization DROP COLUMN  curator_comment;
+ALTER TABLE public.dw_organization DROP COLUMN change_request_count;
 ALTER TABLE public.dw_study_participating_site DROP COLUMN  target_accrual;
 ALTER TABLE public.dw_study
 DROP COLUMN 	amendment_number_text,
@@ -63,8 +64,8 @@ DROP COLUMN 	created_by,
 DROP COLUMN 	ct_gov_xml_required_indicator,
 DROP COLUMN 	current_milestone,
 DROP COLUMN 	data_monitoring_committee_appointed_indicator,
--- DROP COLUMN 	date_last_created,
--- DROP COLUMN 	date_last_updated,
+DROP COLUMN 	date_last_created,
+DROP COLUMN 	date_last_updated,
 DROP COLUMN 	delayed_posting_indicator,
 DROP COLUMN 	detail_description_primary,
 DROP COLUMN 	detail_description_secondary,
@@ -109,7 +110,9 @@ DROP COLUMN 	processing_priority,
 DROP COLUMN 	ctro_override,
 DROP COLUMN 	consortia_trial_category,
 DROP COLUMN 	nci_grant,
-DROP COLUMN 	study_source;
+DROP COLUMN 	study_source,
+DROP COLUMN     processing_status,
+DROP COLUMN     processing_status_date;
 
 ALTER TABLE public.dw_study
 RENAME COLUMN summary_4_funding_category TO study_source;
@@ -124,6 +127,53 @@ DROP COLUMN  criterion_name,
 DROP COLUMN	 operator,
 DROP COLUMN  unit,
 DROP COLUMN  value;
+
+ALTER TABLE public.dw_study_arm_and_intervention
+DROP COLUMN date_created_arm,
+DROP COLUMN date_updated_arm,
+DROP COLUMN date_created_intervention,
+DROP COLUMN date_updated_intervention,
+DROP COLUMN user_name_created_arm,
+DROP COLUMN user_name_updated_arm,
+DROP COLUMN user_name_created_intervention,
+DROP COLUMN user_name_updated_intervention,
+DROP COLUMN first_name_created_arm,
+DROP COLUMN last_name_created_arm,
+DROP COLUMN first_name_updated_arm,
+DROP COLUMN last_name_updated_arm,
+DROP COLUMN first_name_created_intervention,
+DROP COLUMN last_name_created_intervention,
+DROP COLUMN first_name_updated_intervention,
+DROP COLUMN last_name_updated_intervention;
+
+ALTER TABLE public.dw_study_collaborator DROP COLUMN status;
+
+ALTER TABLE public.dw_study_disease 
+DROP COLUMN date_last_created,
+DROP COLUMN date_last_updated,
+DROP COLUMN user_last_created,
+DROP COLUMN user_last_updated;
+
+ALTER TABLE public.dw_study_grant
+DROP COLUMN deleted_by,
+DROP COLUMN deletion_date,
+DROP COLUMN reason_for_delete,
+DROP COLUMN user_last_updated_id;
+
+ALTER TABLE public.dw_study_outcome_measure
+DROP COLUMN date_created,
+DROP COLUMN date_updated,
+DROP COLUMN username_created,
+DROP COLUMN username_updated,
+DROP COLUMN first_name_created,
+DROP COLUMN last_name_created,
+DROP COLUMN first_name_last_updated,
+DROP COLUMN last_name_last_updated;
+	
+ALTER TABLE public.dw_study_overall_status
+DROP COLUMN user_created,
+DROP COLUMN user_last_updated;
+
 EOF
 
 psql -U postgres  -h localhost ctrpdw2 <<EOF
