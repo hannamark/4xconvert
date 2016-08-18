@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS hist_dw_study_type (
     id integer NOT NULL,
   "group" character varying,
   type character varying,
-  nci_id character varying(255) NOT NULL,
+  nci_id character varying(255) NOT NULL
 ); 
 CREATE TABLE IF NOT EXISTS hist_dw_study_types ( 
     RUN_ID TIMESTAMP,
