@@ -20,7 +20,8 @@ FROM dw_user duser
 LEFT JOIN dw_organization dorg ON (duser.affiliated_organization_id = dorg.internal_id)
 LEFT JOIN (SELECT DISTINCT family_name, family_id FROM dw_family_organization) AS dfam
           ON (dorg.family LIKE dfam.family_name || '%')
-WHERE duser.affiliated_organization_id IS NOT NULL
+WHERE (duser.login_name !~*'[A-Za-z0-9]+_[0-9]+$' AND duser.login_name not like '%OU=caGrid%')
+  AND duser.affiliated_organization_id IS NOT NULL
 ORDER BY last_name, first_name, email]]>
 	</queryString>
 	<field name="first_name" class="java.lang.String"/>
