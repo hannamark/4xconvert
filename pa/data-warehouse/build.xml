@@ -34,6 +34,7 @@
                 <stopwatch name="timer1" action="total"/>
                 <stopwatch name="timer1"/>
                 <echo message = "Renaming stage tables"/>
+          	
                 <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
                     userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
                     expandproperties="true" autocommit="true">
@@ -42,6 +43,7 @@
                         <path refid="bda-utils.classpath"/>
                     </classpath>
                 </sql>
+               
                 <stopwatch name="timer1" action="total"/>
                 <stopwatch name="timer1"/>
                 <echo message = "Adding indexes"/>
@@ -52,7 +54,8 @@
                     <classpath>
                         <path refid="bda-utils.classpath"/>
                     </classpath>
-                </sql>
+                </sql> 
+            
                 <stopwatch name="timer1" action="total"/>
                 <stopwatch name="timer1"/>
                 <echo message = "Creating trial type tables.."/>
@@ -64,7 +67,13 @@
                         <path refid="bda-utils.classpath"/>
                     </classpath>
                 </sql>
-                <stopwatch name="timer1" action="total"/>           
+                <stopwatch name="timer1" action="total"/> 
+          	
+                 <stopwatch name="timer1"/>
+          	        <echo message = "Loading history tables..."/>
+          	        <groovy src="groovy/load_history_tables.groovy"/>
+          	     <stopwatch name="timer1" action="total"/>
+          	
 
                 <echo message = "Granting SELECT privilege to copparead..."/>
                 <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
@@ -152,26 +161,33 @@
     </target>
 
     <target name="gen" depends="init-db" description="Populates the data warehousing tables using the given database">
+    	
+    
+    	
+    	
         <stopwatch name="timer1"/>
         <echo message = "Running disease"/>
         <groovy src="groovy/disease.groovy"/>
         <stopwatch name="timer1" action="total"/>
+    	
+ 
         
-        <stopwatch name="timer1"/>
+     <stopwatch name="timer1"/>
         <echo message = "Running Failed Patient Accruals"/>
         <groovy src="groovy/failed_patient_accruals.groovy"/>
-        <stopwatch name="timer1" action="total"/>
+        <stopwatch name="timer1" action="total"/> 
         
         <stopwatch name="timer1"/>
         <echo message = "Running Accrual Count Audit"/>
         <groovy src="groovy/study_accrual_count_audit.groovy"/>
-        <stopwatch name="timer1" action="total"/>
+        <stopwatch name="timer1" action="total"/> 
        
 
         <stopwatch name="timer1"/>
         <echo message = "Running User"/>
         <groovy src="groovy/user.groovy"/>
         <stopwatch name="timer1" action="total"/>
+      
 
         <stopwatch name="timer1"/>
         <echo message = "Running Organization Roles"/>
@@ -302,11 +318,15 @@
         <echo message = "Running p30 grants"/>
         <groovy src="groovy/grants_p30.groovy"/>
         <stopwatch name="timer1" action="total"/>
+    	
+    	
 
         <stopwatch name="timer1"/>
         <echo message = "Running i2e grants"/>
         <groovy src="groovy/grants_i2e.groovy"/>
         <stopwatch name="timer1" action="total"/>
+        
+        
 
         <stopwatch name="timer1"/>
         <echo message = "Running indide"/>
@@ -416,7 +436,7 @@
         <stopwatch name="timer1"/>
         <echo message = "Running Study PI"/>
         <groovy src="groovy/study_principal_investigator.groovy"/>
-        <stopwatch name="timer1" action="total"/>
+        <stopwatch name="timer1" action="total"/>  
         
    </target>
 
