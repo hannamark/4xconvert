@@ -39,7 +39,7 @@ destinationConnection.eachRow(sql) { row ->
     def tableName = row.table_name.toLowerCase();
     
  
-        if(tableName.contains("dw_")) {
+        if(tableName.startsWith("dw_")) {
         
             //for this table if corsposnding history table exists
             def historyTableName = "hist_"+tableName
