@@ -103,11 +103,12 @@ with reporting_start_date as (select to_date('06/15/2015', 'MM/dd/yyyy')),
 EOF
 
 
+# Generating DW2 JSON
+echo 'Generating DW2 JSON'
+psql -U ctrpdw2 -w -h localhost -p 5472 -f ./trial_query.sql -o ./trials.out ctrpdw2
 
 
 echo 'modifying the study table'
-
-
 psql -U ctrpdw2  -h localhost -p 5472 ctrpdw2 <<EOF
 ALTER TABLE public.dw_organization DROP COLUMN  curator_comment;
 ALTER TABLE public.dw_organization DROP COLUMN change_request_count;
@@ -233,6 +234,9 @@ DROP COLUMN user_last_updated;
 
 EOF
 
+
+
+# Dropping indices.
 psql -U ctrpdw2  -h localhost -p 5472 ctrpdw2 <<EOF
 DROP INDEX  IF EXISTS dw_study_accepts_healthy_volunteers_indicator_idx;
 DROP INDEX  IF EXISTS dw_study_acronym_idx;
@@ -278,9 +282,7 @@ DROP INDEX  IF EXISTS dw_study_start_date_idx;
 DROP INDEX  IF EXISTS dw_study_start_date_type_code_idx;
 EOF
 
-# Generating DW2 JSON
-psql -U ctrpdw2 -w -h localhost -p 5472 -f ./trial_query.sql -o ./trials.out ctrpdw2
-
+# Dumping into a final SQL file.
 pg_dump -h localhost \
 	-U ctrpdw2 \
 	-p 5472 \
