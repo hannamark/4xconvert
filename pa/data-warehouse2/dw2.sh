@@ -2,7 +2,7 @@
 
 
 echo 'cleaning up old DW2 dump'
-psql -U postgres -h localhost ctrpdw2 <<EOF
+psql -U postgres -h localhost -p 5472 ctrpdw2 <<EOF
 DROP TABLE IF EXISTS dw_study;
 DROP TABLE IF EXISTS dw_study_arm_and_intervention;
 DROP TABLE IF EXISTS dw_study_association;
@@ -43,7 +43,7 @@ pg_dump -h ncidb-p126.nci.nih.gov \
 	-t dw_study_outcome_measure \
 	-t dw_study_participating_site \
 	-t dw_study_participating_site_investigators \
-	-t dw_study_secondary_purpose dw_ctrpn | psql -U postgres  -h localhost ctrpdw2
+	-t dw_study_secondary_purpose dw_ctrpn | psql -U ctrpdw2  -h localhost -p 5472 ctrpdw2
 
 # echo 'removing interum data set'
 # rm DW2-interm.sql
@@ -51,7 +51,7 @@ pg_dump -h ncidb-p126.nci.nih.gov \
 echo 'create clean DW2 data dump'
 
 # limit data set to only active trils with a processing_status of Abstration Verified*
-psql -U postgres  -h localhost ctrpdw2 <<EOF
+psql -U ctrpdw2  -h localhost -p 5472 ctrpdw2 <<EOF
 -- DELETE FROM public.dw_study WHERE current_trial_status != 'Active';
 -- DELETE FROM public.dw_study WHERE processing_status NOT LIKE 'Abstraction Verified%';
 DELETE FROM public.dw_study WHERE processing_status = 'Rejected';
@@ -108,7 +108,7 @@ EOF
 echo 'modifying the study table'
 
 # psql -U postgres ctrpdw2 < dwstudy.sql
-psql -U postgres  -h localhost ctrpdw2 <<EOF
+psql -U ctrpdw2  -h localhost -p 5472 ctrpdw2 <<EOF
 ALTER TABLE public.dw_organization DROP COLUMN  curator_comment;
 ALTER TABLE public.dw_organization DROP COLUMN change_request_count;
 ALTER TABLE public.dw_study_participating_site DROP COLUMN  target_accrual;
@@ -233,7 +233,7 @@ DROP COLUMN user_last_updated;
 
 EOF
 
-psql -U postgres  -h localhost ctrpdw2 <<EOF
+psql -U ctrpdw2  -h localhost -p 5472 ctrpdw2 <<EOF
 DROP INDEX  IF EXISTS dw_study_accepts_healthy_volunteers_indicator_idx;
 DROP INDEX  IF EXISTS dw_study_acronym_idx;
 DROP INDEX  IF EXISTS dw_study_amendment_date_idx;
@@ -280,7 +280,8 @@ EOF
 
 
 pg_dump -h localhost \
-	-U postgres \
+	-U ctrpdw2 \
+	-p 5472 \
 	-c \
 	-C \
 	-f DW2.sql \
