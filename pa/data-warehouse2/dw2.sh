@@ -110,6 +110,9 @@ psql -U ctrpdw2 -w -h localhost -p 5472 -f ./trial_query.sql -o ./trials.out ctr
 echo 'Uploading JSON to the S3 bucket'
 aws s3 ls s3://datawarehouse-production/
 aws s3 cp ./trials.out s3://datawarehouse-production/
+aws s3 ls s3://datawarehouse-production/
+zip trials.out.zip trials.out
+rm trials.out
 
 
 echo 'modifying the study table'
