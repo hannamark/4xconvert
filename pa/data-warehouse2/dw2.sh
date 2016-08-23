@@ -18,6 +18,21 @@ DROP TABLE IF EXISTS dw_study_secondary_purpose;
 DROP TABLE IF EXISTS dw_study_anatomic_site;
 DROP TABLE IF EXISTS dw_organization;
 DROP TABLE IF EXISTS dw_study_overall_status;
+DROP TABLE IF EXISTS hist_dw_study;
+DROP TABLE IF EXISTS hist_dw_study_arm_and_intervention;
+DROP TABLE IF EXISTS hist_dw_study_association;
+DROP TABLE IF EXISTS hist_dw_study_collaborator;
+DROP TABLE IF EXISTS hist_dw_study_disease;
+DROP TABLE IF EXISTS hist_dw_study_eligibility_criteria;
+DROP TABLE IF EXISTS hist_dw_study_grant;
+DROP TABLE IF EXISTS hist_dw_study_other_identifier;
+DROP TABLE IF EXISTS hist_dw_study_outcome_measure;
+DROP TABLE IF EXISTS hist_dw_study_participating_site;
+DROP TABLE IF EXISTS hist_dw_study_participating_site_investigators;
+DROP TABLE IF EXISTS hist_dw_study_secondary_purpose;
+DROP TABLE IF EXISTS hist_dw_study_anatomic_site;
+DROP TABLE IF EXISTS hist_dw_organization;
+DROP TABLE IF EXISTS hist_dw_study_overall_status;
 EOF
 
 echo 'Creating DW dump and piping it to DW2 database'
@@ -43,7 +58,22 @@ pg_dump -h ncidb-p126.nci.nih.gov \
 	-t dw_study_outcome_measure \
 	-t dw_study_participating_site \
 	-t dw_study_participating_site_investigators \
-	-t dw_study_secondary_purpose dw_ctrpn | psql -U ctrpdw2  -h localhost -p 5472 ctrpdw2
+	-t dw_study_secondary_purpose \
+	-t hist_dw_study \
+    -t hist_dw_study_overall_status \
+    -t hist_dw_study_anatomic_site \
+    -t hist_dw_organization \
+    -t hist_dw_study_arm_and_intervention \
+    -t hist_dw_study_association \
+    -t hist_dw_study_collaborator \
+    -t hist_dw_study_disease \
+    -t hist_dw_study_eligibility_criteria \
+    -t hist_dw_study_grant \
+    -t hist_dw_study_other_identifier \
+    -t hist_dw_study_outcome_measure \
+    -t hist_dw_study_participating_site \
+    -t hist_dw_study_participating_site_investigators \
+    -t hist_dw_study_secondary_purpose dw_ctrpn | psql -U ctrpdw2  -h localhost -p 5472 ctrpdw2
 
 # echo 'removing interum data set'
 # rm DW2-interm.sql
@@ -101,6 +131,13 @@ with reporting_start_date as (select to_date('06/15/2015', 'MM/dd/yyyy')),
                 order by nci_id
 );
 EOF
+
+
+#Copy pre amend trials
+echo 'Checking for pre amendment copy of a study'
+
+psql -U ctrpdw2 -w -h localhost -p 5472 -f ./copy_preamend.sql  ctrpdw2
+echo 'Pre amendment copy done'
 
 
 # Generating DW2 JSON
@@ -287,6 +324,25 @@ DROP INDEX  IF EXISTS dw_study_principal_investigator_idx;
 DROP INDEX  IF EXISTS dw_study_record_verification_date_idx;
 DROP INDEX  IF EXISTS dw_study_start_date_idx;
 DROP INDEX  IF EXISTS dw_study_start_date_type_code_idx;
+EOF
+
+# Dropping History tables.
+psql -U ctrpdw2  -h localhost -p 5472 ctrpdw2 <<EOF
+DROP TABLE IF EXISTS hist_dw_study;
+DROP TABLE IF EXISTS hist_dw_study_arm_and_intervention;
+DROP TABLE IF EXISTS hist_dw_study_association;
+DROP TABLE IF EXISTS hist_dw_study_collaborator;
+DROP TABLE IF EXISTS hist_dw_study_disease;
+DROP TABLE IF EXISTS hist_dw_study_eligibility_criteria;
+DROP TABLE IF EXISTS hist_dw_study_grant;
+DROP TABLE IF EXISTS hist_dw_study_other_identifier;
+DROP TABLE IF EXISTS hist_dw_study_outcome_measure;
+DROP TABLE IF EXISTS hist_dw_study_participating_site;
+DROP TABLE IF EXISTS hist_dw_study_participating_site_investigators;
+DROP TABLE IF EXISTS hist_dw_study_secondary_purpose;
+DROP TABLE IF EXISTS hist_dw_study_anatomic_site;
+DROP TABLE IF EXISTS hist_dw_organization;
+DROP TABLE IF EXISTS hist_dw_study_overall_status;
 EOF
 
 # Dumping into a final SQL file.
