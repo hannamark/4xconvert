@@ -278,6 +278,8 @@ DROP INDEX  IF EXISTS dw_study_start_date_idx;
 DROP INDEX  IF EXISTS dw_study_start_date_type_code_idx;
 EOF
 
+# Generating DW2 JSON
+psql -U ctrpdw2 -w -h localhost -p 5472 -f ./trial_query.sql -o ./trials.out ctrpdw2
 
 pg_dump -h localhost \
 	-U ctrpdw2 \
