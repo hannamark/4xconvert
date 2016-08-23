@@ -2,7 +2,7 @@
 
 
 echo 'cleaning up old DW2 dump'
-psql -U postgres -h localhost -p 5472 ctrpdw2 <<EOF
+psql -U ctrpdw2 -h localhost -p 5472 ctrpdw2 <<EOF
 DROP TABLE IF EXISTS dw_study;
 DROP TABLE IF EXISTS dw_study_arm_and_intervention;
 DROP TABLE IF EXISTS dw_study_association;
@@ -19,7 +19,7 @@ DROP TABLE IF EXISTS dw_study_anatomic_site;
 DROP TABLE IF EXISTS dw_organization;
 DROP TABLE IF EXISTS dw_study_overall_status;
 EOF
-# psql -U postgres ctrpdw2 < DW2-interm.sql
+
 echo 'Creating DW dump and piping it to DW2 database'
 pg_dump -h ncidb-p126.nci.nih.gov \
 	-p 5472\
@@ -107,7 +107,7 @@ EOF
 
 echo 'modifying the study table'
 
-# psql -U postgres ctrpdw2 < dwstudy.sql
+
 psql -U ctrpdw2  -h localhost -p 5472 ctrpdw2 <<EOF
 ALTER TABLE public.dw_organization DROP COLUMN  curator_comment;
 ALTER TABLE public.dw_organization DROP COLUMN change_request_count;
