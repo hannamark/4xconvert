@@ -130,6 +130,22 @@ with reporting_start_date as (select to_date('06/15/2015', 'MM/dd/yyyy')),
 
                 order by nci_id
 );
+
+
+DELETE FROM public.dw_study_anatomic_site WHERE nci_id NOT IN (select nci_id from public.dw_study);
+DELETE FROM public.dw_study_arm_and_intervention WHERE nci_id NOT IN (select nci_id from public.dw_study);
+DELETE FROM public.dw_study_collaborator WHERE nci_id NOT IN (select nci_id from public.dw_study);
+DELETE FROM public.dw_study_disease WHERE nci_id NOT IN (select nci_id from public.dw_study);
+DELETE FROM public.dw_study_eligibility_criteria WHERE nci_id NOT IN (select nci_id from public.dw_study);
+DELETE FROM public.dw_study_grant WHERE nci_id NOT IN (select nci_id from public.dw_study);
+DELETE FROM public.dw_study_other_identifier WHERE nci_id NOT IN (select nci_id from public.dw_study);
+DELETE FROM public.dw_study_outcome_measure WHERE nci_id NOT IN (select nci_id from public.dw_study);
+DELETE FROM public.dw_study_overall_status WHERE nci_id NOT IN (select nci_id from public.dw_study);
+DELETE FROM public.dw_study_participating_site WHERE nci_id NOT IN (select nci_id from public.dw_study);
+DELETE FROM public.dw_study_participating_site_investigators WHERE nci_id NOT IN (select nci_id from public.dw_study);
+DELETE FROM public.dw_study_secondary_purpose WHERE nci_id NOT IN (select nci_id from public.dw_study);
+DELETE FROM public.dw_study_association WHERE study_a NOT IN (select nci_id from public.dw_study);
+
 EOF
 
 
