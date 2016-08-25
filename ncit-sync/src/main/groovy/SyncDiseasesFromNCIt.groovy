@@ -47,7 +47,7 @@ public class SyncDiseasesFromNCIt{
     def synonyms = []
     def doc = response.data;
     def element = doc.EntityDescription.namedEntity.designation.find{ it.@designationRole == 'PREFERRED' }
-    def prefName ;
+    def prefName;
     if(element!=null) {
         prefName = element.value?.text().replaceAll("'","''")
     }
@@ -61,7 +61,18 @@ public class SyncDiseasesFromNCIt{
         synonyms += synName
       }
     }
-    return [prefName, synonyms]
+    
+    def displayName="";
+    try {
+        def propertyElement = doc.EntityDescription.namedEntity.property.predicate.find{it.name =='Display_Name'};
+        if (propertyElement!=null) {
+             displayName =propertyElement.parent().value.literal.value?.text() 
+        }
+    }//exception should not stop job
+     catch (Exception e) {
+        println "Exception in sync displayName ";
+    }
+    return [prefName, synonyms,displayName]
   }
 
 
@@ -142,16 +153,21 @@ public class SyncDiseasesFromNCIt{
     def termNames = getTermNames(term, url)
     if(termNames!=null) {
         def prefName =   termNames[0]
+        def displayName = termNames[2]
         def sqlInsertUpdate
        
         String selectExistingTerm =" select 1 from pdq_disease where nt_term_identifier = '"+term+"' ";
         
         if (sql.rows("select identifier from pdq_disease where nt_term_identifier = '"+term+"'").size() == 0) { // If term does not exist, insert it, else update
          sqlInsertUpdate = "INSERT INTO pdq_disease(identifier,nt_term_identifier, preferred_name, menu_display_name, status_code, status_date_range_low)"+
-          " select (SELECT NEXTVAL('HIBERNATE_SEQUENCE')) , '"+term+"','"+prefName+"','"+ prefName+"', 'ACTIVE', now()"+
+          " select (SELECT NEXTVAL('HIBERNATE_SEQUENCE')) , '"+term+"','"+prefName+"','"+ displayName+"', 'ACTIVE', now()"+
           " WHERE NOT EXISTS("+selectExistingTerm+");"
         }else {
+        if (displayName!=null && displayName.length() > 0) {
+        sqlInsertUpdate = " UPDATE pdq_disease set preferred_name='"+prefName+"',menu_display_name='"+displayName+"', date_last_updated=now() where nt_term_identifier='"+term+"';"
+        } else {
         sqlInsertUpdate = " UPDATE pdq_disease set preferred_name='"+prefName+"',menu_display_name='"+prefName+"', date_last_updated=now() where nt_term_identifier='"+term+"';"
+        }
        }
         
          fileContents.append(sqlInsertUpdate);
@@ -247,6 +263,7 @@ public class SyncDiseasesFromNCIt{
     ctrpTerms.each (){
       ncitTermsList.add(it.nt_term_identifier);
     }
+   
     //closing connection here becase we don't need to query on study disease table
     sql.close();
     //need to keep connection again becaause we do select query pdq_disease table 
