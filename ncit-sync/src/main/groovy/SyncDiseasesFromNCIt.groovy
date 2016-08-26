@@ -1,5 +1,6 @@
 import groovy.sql.Sql;
 import groovyx.net.http.RESTClient
+import org.apache.commons.lang.StringEscapeUtils
 
 public class SyncDiseasesFromNCIt{
 
@@ -49,14 +50,15 @@ public class SyncDiseasesFromNCIt{
     def element = doc.EntityDescription.namedEntity.designation.find{ it.@designationRole == 'PREFERRED' }
     def prefName;
     if(element!=null) {
-        prefName = element.value?.text().replaceAll("'","''")
+        prefName =StringEscapeUtils.escapeSql(element.value?.text());
     }
   
     element = null;
     def altDesignations = doc.EntityDescription.namedEntity.designation.findAll{ it.@designationRole == 'ALTERNATIVE' }
     def synName
     for (def altDesignation : altDesignations) {
-      synName = altDesignation.value?.text().replaceAll("'","''")
+      synName = StringEscapeUtils.escapeSql(altDesignation.value?.text())
+     
       if(!synonyms.contains(synName)){
         synonyms += synName
       }
@@ -66,7 +68,8 @@ public class SyncDiseasesFromNCIt{
     try {
         def propertyElement = doc.EntityDescription.namedEntity.property.predicate.find{it.name =='Display_Name'};
         if (propertyElement!=null) {
-             displayName =propertyElement.parent().value.literal.value?.text().replaceAll("'","''") 
+             displayName =StringEscapeUtils.escapeSql(propertyElement.parent().value.literal.value?.text());
+            
         }
     }//exception should not stop job
      catch (Exception e) {
