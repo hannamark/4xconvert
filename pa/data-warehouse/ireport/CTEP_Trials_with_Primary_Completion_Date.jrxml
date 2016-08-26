@@ -19,7 +19,7 @@ FROM study_protocol sp
 join study_otheridentifiers so on so.study_protocol_id=sp.identifier
 join rv_ctep_id r on r.study_protocol_identifier=sp.identifier
 join rv_dwf_current rv on rv.study_protocol_identifier=sp.identifier
-where so.root='2.16.840.1.113883.3.26.4.3' and sp.status_code='ACTIVE' and  sp.pri_compl_date>=CURRENT_DATE and sp.pri_compl_date<=(CURRENT_DATE + INTERVAL '14 days')
+where so.root='2.16.840.1.113883.3.26.4.3' and sp.status_code='ACTIVE' and  sp.pri_compl_date>=CURRENT_DATE and sp.pri_compl_date<=(CURRENT_DATE + INTERVAL '60 days')
 and rv.status_code !='REJECTED' and rv.status_code !='SUBMISSION_TERMINATED'
 order by so.extension]]>
 	</queryString>
