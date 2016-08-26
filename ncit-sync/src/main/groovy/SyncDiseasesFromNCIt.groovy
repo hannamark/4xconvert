@@ -66,7 +66,7 @@ public class SyncDiseasesFromNCIt{
     try {
         def propertyElement = doc.EntityDescription.namedEntity.property.predicate.find{it.name =='Display_Name'};
         if (propertyElement!=null) {
-             displayName =propertyElement.parent().value.literal.value?.text() 
+             displayName =propertyElement.parent().value.literal.value?.text().replaceAll("'","''") 
         }
     }//exception should not stop job
      catch (Exception e) {
