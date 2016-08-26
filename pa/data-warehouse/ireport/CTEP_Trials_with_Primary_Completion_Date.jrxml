@@ -46,7 +46,7 @@ order by so.extension]]>
 				<textElement markup="none">
 					<font size="15" isItalic="false"/>
 				</textElement>
-				<text><![CDATA[CTEP Trials with Primary Completion Date Concerns. CTEP trials with a Primary Completion Date that falls within the next 14 calendar days:]]></text>
+				<text><![CDATA[CTEP Trials with Primary Completion Date Concerns. CTEP trials with a Primary Completion Date that falls within the next 60 calendar days:]]></text>
 			</staticText>
 			<textField pattern="dd-MMM-yyyy" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="1019" y="0" width="372" height="22" forecolor="#FFFFFF" backcolor="#475B82" uuid="ecf30522-3d21-41e3-bd1f-5c6ae85a4f42"/>
