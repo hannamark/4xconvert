@@ -17,7 +17,7 @@ language plpgsql as $$
 begin
 	--Locate studies that has been amended and are undergoing an abstraction process
 	for rec in select nci_id  from dw_study where amendment_date is not null and lower(processing_status)
-	in ('amendment submitted','accepted','abstracted','verification pending','on-hold')  loop
+	in ('amendment submitted','accepted','on-hold')  loop
 	study_nci_id := rec.nci_id;
 
 		foreach tableName in array tableNames
@@ -34,7 +34,7 @@ begin
 		--Check if pre amendment copy exists 
 		for amendment_record in select run_id FROM hist_dw_study 
 		where nci_id=rec.nci_id  
-		and lower(processing_status) not in ('amendment submitted','accepted','abstracted','verification pending','on-hold') 
+		and lower(processing_status) not in ('amendment submitted', 'accepted', 'on-hold', 'submitted', 'submission terminated', 'rejected') 
 		order by run_id desc limit 1 loop
 		amend_study_run_id := amendment_record.run_id;
 		foreach tableName in array tableNames

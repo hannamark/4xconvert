@@ -75,15 +75,9 @@ pg_dump -h ncidb-p126.nci.nih.gov \
     -t hist_dw_study_participating_site_investigators \
     -t hist_dw_study_secondary_purpose dw_ctrpn | psql -U ctrpdw2  -h localhost -p 5472 ctrpdw2
 
-# echo 'removing interum data set'
-# rm DW2-interm.sql
 
 echo 'create clean DW2 data dump'
-
-# limit data set to only active trils with a processing_status of Abstration Verified*
 psql -U ctrpdw2  -h localhost -p 5472 ctrpdw2 <<EOF
--- DELETE FROM public.dw_study WHERE current_trial_status != 'Active';
--- DELETE FROM public.dw_study WHERE processing_status NOT LIKE 'Abstraction Verified%';
 DELETE FROM public.dw_study WHERE processing_status = 'Rejected';
 DELETE FROM public.dw_study WHERE nct_id IS NULL;
 DELETE FROM public.dw_study WHERE nct_id NOT LIKE 'NCT%';
@@ -124,7 +118,7 @@ with reporting_start_date as (select to_date('06/15/2015', 'MM/dd/yyyy')),
 
                 and (select * from reporting_start_date)<=lead_date
 
-                )) and status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL','TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION')
+                )) and status in ('IN_REVIEW', 'APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL','TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION')
 
                 and nci_id in (select nci_id from dw_study where processing_status <> 'Rejected')
 
