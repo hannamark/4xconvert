@@ -155,6 +155,12 @@ echo 'Checking for pre amendment copy of a study'
 psql -U ctrpdw2 -w -h localhost -p 5472 -f ./copy_preamend.sql  ctrpdw2
 echo 'Pre amendment copy done'
 
+echo 'Finally, removing trials that do not have appropriate processing_status'
+psql -U ctrpdw2  -h localhost -p 5472 ctrpdw2 <<EOF
+
+DELETE FROM public.dw_study WHERE processing_status NOT IN ('Abstraction Verified No Response', 'Abstraction Verified Response','Verification Pending','Abstracted');
+
+EOF
 
 # Generating DW2 JSON
 echo 'Generating DW2 JSON'
