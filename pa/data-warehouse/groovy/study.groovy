@@ -47,7 +47,7 @@ def sql =
             sp.blinding_role_code_caregiver, sp.min_target_accrual_num, sp.number_of_intervention_groups,sp.number_of_groups,
             sp.official_title, oversight_country.name as oversight_country, oversight.authority_name as oversight_org_name, sp.phase_code,
             sp.phase_additional_qualifier_code, sp.phase_other_text, sp.pri_compl_date, sp.pri_compl_date_type_code,
-            sp.primary_purpose_additional_qualifier_code, sp.primary_purpose_code, sp.primary_purpose_other_text, pi.first_name || ' ' || pi.last_name as principal_investigator,
+            sp.primary_purpose_additional_qualifier_code, sp.primary_purpose_code, sp.primary_purpose_other_text, replace(pi.first_name || ' ' || coalesce(pi.middle_name, '')  || ' ' || pi.last_name,'  ',' ') as principal_investigator,
             processing_status.status_code as processing_status, processing_status.status_date_range_low as processing_status_date,
             sp.public_description, sp.public_tittle, sp.record_verification_date, rejection.comment_text as rejection_reason,
             sp.accr_rept_meth_code,
@@ -188,7 +188,7 @@ sourceConnection.eachRow("""select trunc(ec.min_value) || ' ' || ec.min_unit as 
         destinationConnection.execute("UPDATE STG_DW_STUDY SET eligible_max_age_number=?,eligible_max_age_unit=?,eligible_min_age_number=?,eligible_min_age_unit=?,ELIGIBLE_MIN_AGE = ?, ELIGIBLE_MAX_AGE = ? where internal_system_id = ? ", [eligible_max_age_number,eligible_max_age_unit,eligible_min_age_number,eligible_min_age_unit,min_age, max_age, id])
     }
 
-sourceConnection.eachRow("""select cc.first_name || ' ' || cc.last_name as central_contact, sc.study_protocol_identifier from study_contact sc
+sourceConnection.eachRow("""select replace(cc.first_name || ' ' || coalesce(cc.middle_name, '')  || ' ' || cc.last_name,'  ',' ') as central_contact, sc.study_protocol_identifier from study_contact sc
     inner join clinical_research_staff crs on crs.identifier = sc.clinical_research_staff_identifier
     inner join person cc on cc.identifier = crs.person_identifier
     where  sc.role_code = 'CENTRAL_CONTACT' and sc.organizational_contact_identifier is null""") { row ->

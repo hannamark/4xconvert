@@ -1,7 +1,7 @@
 import groovy.sql.Sql
 
 def sql = """
-    select distinct contact.email, contact.telephone, p.first_name || ' ' || p.middle_name || ' ' || p.last_name as contact_name, ps.identifier, org.name as org_name,
+    select distinct contact.email, contact.telephone,replace(p.first_name || ' ' || coalesce(p.middle_name, '')  || ' ' || p.last_name,'  ',' ') as contact_name, ps.identifier, org.name as org_name,
          org.status_code as org_status, ssas.status_code, ssas.status_date, ps.target_accrual_number, org.assigned_identifier::integer as org_po_id
          , ps.local_sp_indentifier
     from study_site ps

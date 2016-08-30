@@ -3,6 +3,7 @@ CREATE TABLE STG_DW_STUDY_PARTICIPATING_SITE_INVESTIGATORS (
     INTERNAL_SYSTEM_ID INTEGER,
     NCI_ID character varying(255),
     INVESTIGATOR_FIRST_NAME character varying(200),
+    INVESTIGATOR_MIDDLE_NAME character varying(200),
     INVESTIGATOR_LAST_NAME character varying(200),
     INVESTIGATOR_ROLE character varying(200),
     PARTICIPATING_SITE_ORG_NAME character varying(200),
@@ -21,4 +22,6 @@ RUN_ID TIMESTAMP,
     ORG_PO_ID integer,
     PERSON_PO_ID character varying(200)
 );
+
+alter table HIST_DW_STUDY_PARTICIPATING_SITE_INVESTIGATORS add column INVESTIGATOR_MIDDLE_NAME character varying(200);
 
