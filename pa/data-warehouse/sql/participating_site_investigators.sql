@@ -22,7 +22,7 @@ RUN_ID TIMESTAMP,
     ORG_PO_ID integer,
     PERSON_PO_ID character varying(200)
 );
-
+/*
 create or replace function alter_site_inv() returns void
 language plpgsql as $$
 begin
@@ -34,3 +34,4 @@ END IF;
 end $$;
 
 select alter_site_inv();
+*/
