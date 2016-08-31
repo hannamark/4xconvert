@@ -23,5 +23,14 @@ RUN_ID TIMESTAMP,
     PERSON_PO_ID character varying(200)
 );
 
+create or replace function alter_site_inv() returns void
+language plpgsql as $$
+begin
+IF  NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS
+WHERE lower(TABLE_NAME) = lower('HIST_DW_STUDY_PARTICIPATING_SITE_INVESTIGATORS') AND lower(COLUMN_NAME) = lower('INVESTIGATOR_MIDDLE_NAME')) 
+THEN
 alter table HIST_DW_STUDY_PARTICIPATING_SITE_INVESTIGATORS add column INVESTIGATOR_MIDDLE_NAME character varying(200);
+END IF;
+end $$;
 
+select alter_site_inv();

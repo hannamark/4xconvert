@@ -7,7 +7,7 @@ def sql = """
     from study_site ps
         left outer join study_protocol as sp on sp.identifier = ps.study_protocol_identifier
         left outer join study_site_contact as contact on contact.study_site_identifier = ps.identifier and contact.role_code = 'PRIMARY_CONTACT'
-        left join healthcare_provider as hcp on hcp.identifier = contact.healthcare_provider_identifier
+        left join clinical_research_staff as hcp on hcp.identifier = contact.clinical_research_staff_identifier
         left join person as p on p.identifier = hcp.person_identifier
         left outer join healthcare_facility as hcf on hcf.identifier = ps.healthcare_facility_identifier
         left outer join organization as org on org.identifier = hcf.organization_identifier
