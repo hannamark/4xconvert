@@ -157,6 +157,15 @@
                 <path refid="bda-utils.classpath"/>
             </classpath>
         </sql>
+    	  <echo message = "Alter history tables if needed"/>
+    	        <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
+    	            userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
+    	            expandproperties="true" autocommit="true" onerror="continue">
+    	        	<transaction src="${basedir}/sql/alter_history_tables.sql"/>
+    	        	 <classpath>
+    	        	     <path refid="bda-utils.classpath"/>
+    	        	  </classpath>
+      </sql>  	
         <stopwatch name="timer1" action="total"/>
     </target>
 
