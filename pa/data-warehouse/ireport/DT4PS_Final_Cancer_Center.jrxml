@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="dataTable4" language="groovy" pageWidth="2150" pageHeight="842" orientation="Landscape" columnWidth="2110" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Key" uuid="2f988a2f-b072-49c1-b4cc-e5e23a1c9311">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="577"/>
-	<property name="ireport.y" value="7"/>
+	<property name="ireport.x" value="256"/>
+	<property name="ireport.y" value="25"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ctrp_local_dev_pa"/>
 	<property name="ireport.jasperserver.reportUnit" value="/public/CTRP_Reports/Data_Table_4__Report__Consolidated_"/>
 	<property name="ireport.jasperserver.url" value="https://trials-dev.nci.nih.gov/reports/services/repository"/>
@@ -439,21 +439,21 @@ ORDER BY clinical_research_cat, nci_id]]>
 	<pageHeader>
 		<band height="26" splitType="Stretch">
 			<staticText>
-				<reportElement mode="Opaque" x="0" y="0" width="181" height="26" forecolor="#FFFFFF" backcolor="#475B82" uuid="5085a20d-066a-4e2c-bf6a-b0d3dcbb60bc"/>
+				<reportElement mode="Opaque" x="0" y="0" width="396" height="26" forecolor="#FFFFFF" backcolor="#475B82" uuid="5085a20d-066a-4e2c-bf6a-b0d3dcbb60bc"/>
 				<textElement>
 					<font size="14"/>
 				</textElement>
-				<text><![CDATA[Data Table 4 Report]]></text>
+				<text><![CDATA[Draft CTRP Data Table 4 Report (CONFIDENTIAL) ]]></text>
 			</staticText>
 			<textField>
-				<reportElement mode="Opaque" x="181" y="0" width="545" height="26" forecolor="#FFFFFF" backcolor="#475B82" uuid="a5adabcb-76fa-4dd3-84eb-32a0f8198e32"/>
+				<reportElement mode="Opaque" x="396" y="0" width="500" height="26" forecolor="#FFFFFF" backcolor="#475B82" uuid="a5adabcb-76fa-4dd3-84eb-32a0f8198e32"/>
 				<textElement>
 					<font size="14"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Cancer Center:  " + $P{CC_Center}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd-MMM-yyyy" isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="726" y="0" width="796" height="26" forecolor="#FFFFFF" backcolor="#475B82" uuid="dac7ee3e-5085-447f-9a36-49fde25c8dd8"/>
+				<reportElement mode="Opaque" x="896" y="0" width="626" height="26" forecolor="#FFFFFF" backcolor="#475B82" uuid="dac7ee3e-5085-447f-9a36-49fde25c8dd8"/>
 				<textElement>
 					<font size="14"/>
 				</textElement>
