@@ -190,7 +190,7 @@ select acc_dtls_sum.*,
 
 studypg.dt4_program_codes,
 dt4.*
-from (select acc_dtls.nci_id as ad_nci_id, sum(acc_dtls.tgt_acc) as your_center_total, sum(ctrp) as center_total_rp, sum(ct) as center_total, sum(aftrp) as affiliate_total_rp, sum(aft) as affiliate_total, sum(naftrp) as non_affiliate_total_rp, sum(naft) as non_affiliate_total
+from (select acc_dtls.nci_id as ad_nci_id, sum(acc_dtls.tgt_acc) as your_center_total, sum(ctrp-past_ctrp) as center_total_rp, sum(ct) as center_total, sum(aftrp) as affiliate_total_rp, sum(aft) as affiliate_total, sum(naftrp) as non_affiliate_total_rp, sum(naft) as non_affiliate_total
 from (select
 AF.nci_id, AF.tgt_acc,
 (SELECT SUM(saca1.accrual_count)
@@ -209,13 +209,27 @@ AF.nci_id, AF.tgt_acc,
 
 (SELECT SUM(saca1.accrual_count)
    FROM
+     (SELECT study_site_id, createddate, accrual_count
+      FROM dw_study_accrual_count_audit
+      WHERE (study_site_id,createddate) IN
+		( SELECT study_site_id,MAX(createddate)
+           FROM dw_study_accrual_count_audit
+           WHERE date_trunc('day', createddate)  <  $P{Calculated_Start_Date}
+           AND date_trunc('day', createddate) <= AF.clsd_dt
+           GROUP BY study_site_id ) ) AS saca1
+   WHERE saca1.study_site_id=AF.study_site_id
+	AND AF.fam_org_type = 'ORGANIZATIONAL'
+	) AS past_ctrp,
+
+(SELECT SUM(saca1.accrual_count)
+   FROM
      (SELECT study_site_id, accrual_count
       FROM dw_study_accrual_count_audit
       WHERE (study_site_id,createddate) IN
 		( SELECT study_site_id,MAX(createddate)
            FROM dw_study_accrual_count_audit
-           WHERE date_trunc('day', createddate) <= now()
-           AND date_trunc('day', createddate) <= AF.clsd_dt
+           WHERE date_trunc('day', createddate) <= $P{End_Date}
+           --AND date_trunc('day', createddate) <= AF.clsd_dt
            GROUP BY study_site_id ) ) AS saca1
    WHERE saca1.study_site_id=AF.study_site_id
 	AND AF.fam_org_type = 'ORGANIZATIONAL'
@@ -316,8 +330,7 @@ AF.nci_id, AF.tgt_acc,
    FROM dw_study_site_accrual_details ssad
    WHERE ssad.nci_id = AF.nci_id
      AND ssad.status = 'ACTIVE'
-     AND ssad.registration_date <= now()
-     AND ssad.registration_date <= AF.clsd_dt
+     AND ssad.registration_date <= $P{End_Date}
      AND ssad.site_id = AF.study_site_id
      AND AF.fam_org_type = 'ORGANIZATIONAL'
        ) AS ct,
