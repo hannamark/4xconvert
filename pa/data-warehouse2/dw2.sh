@@ -1,6 +1,6 @@
 #!/bin/sh
 
-
+date
 echo 'cleaning up old DW2 dump'
 psql -U ctrpdw2 -h localhost -p 5472 ctrpdw2 <<EOF
 DROP TABLE IF EXISTS dw_study;
@@ -35,6 +35,7 @@ DROP TABLE IF EXISTS hist_dw_organization;
 DROP TABLE IF EXISTS hist_dw_study_overall_status;
 EOF
 
+date
 echo 'Creating DW dump and piping it to DW2 database'
 pg_dump -h ncidb-p126.nci.nih.gov \
 	-p 5472\
@@ -76,6 +77,7 @@ pg_dump -h ncidb-p126.nci.nih.gov \
     -t hist_dw_study_secondary_purpose dw_ctrpn | psql -U ctrpdw2  -h localhost -p 5472 ctrpdw2
 
 
+date
 echo 'create clean DW2 data dump'
 psql -U ctrpdw2  -h localhost -p 5472 ctrpdw2 <<EOF
 DELETE FROM public.dw_study WHERE processing_status = 'Rejected';
@@ -144,11 +146,13 @@ EOF
 
 
 #Copy pre amend trials
+date
 echo 'Checking for pre amendment copy of a study'
 
 psql -U ctrpdw2 -w -h localhost -p 5472 -f ./copy_preamend.sql  ctrpdw2
 echo 'Pre amendment copy done'
 
+date
 echo 'Finally, removing trials that do not have appropriate processing_status'
 psql -U ctrpdw2  -h localhost -p 5472 ctrpdw2 <<EOF
 
@@ -157,9 +161,11 @@ DELETE FROM public.dw_study WHERE processing_status NOT IN ('Abstraction Verifie
 EOF
 
 # Generating DW2 JSON
+date
 echo 'Generating DW2 JSON'
 psql -U ctrpdw2 -w -h localhost -p 5472 -f ./trial_query.sql -o ./trials.out ctrpdw2
 
+date
 echo 'Uploading JSON to the S3 bucket'
 aws s3 ls s3://datawarehouse-production/ --human-readable
 aws s3 cp ./trials.out s3://datawarehouse-production/
@@ -167,3 +173,4 @@ aws s3 ls s3://datawarehouse-production/ --human-readable
 zip trials.out.zip trials.out
 rm trials.out
 echo 'all done'	  
+date
