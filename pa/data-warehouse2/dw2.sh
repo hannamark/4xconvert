@@ -18,6 +18,7 @@ DROP TABLE IF EXISTS dw_study_secondary_purpose;
 DROP TABLE IF EXISTS dw_study_anatomic_site;
 DROP TABLE IF EXISTS dw_organization;
 DROP TABLE IF EXISTS dw_study_overall_status;
+DROP TABLE IF EXISTS dw_study_biomarker;
 DROP TABLE IF EXISTS hist_dw_study;
 DROP TABLE IF EXISTS hist_dw_study_arm_and_intervention;
 DROP TABLE IF EXISTS hist_dw_study_association;
@@ -33,6 +34,7 @@ DROP TABLE IF EXISTS hist_dw_study_secondary_purpose;
 DROP TABLE IF EXISTS hist_dw_study_anatomic_site;
 DROP TABLE IF EXISTS hist_dw_organization;
 DROP TABLE IF EXISTS hist_dw_study_overall_status;
+DROP TABLE IF EXISTS hist_dw_study_biomarker;
 EOF
 
 date
@@ -60,7 +62,9 @@ pg_dump -h ncidb-p126.nci.nih.gov \
 	-t dw_study_participating_site \
 	-t dw_study_participating_site_investigators \
 	-t dw_study_secondary_purpose \
+	-t dw_study_biomarker \
 	-t hist_dw_study \
+	-t hist_dw_study_biomarker \
     -t hist_dw_study_overall_status \
     -t hist_dw_study_anatomic_site \
     -t hist_dw_organization \
@@ -140,6 +144,7 @@ DELETE FROM public.dw_study_overall_status WHERE nci_id NOT IN (select nci_id fr
 DELETE FROM public.dw_study_participating_site WHERE nci_id NOT IN (select nci_id from public.dw_study);
 DELETE FROM public.dw_study_participating_site_investigators WHERE nci_id NOT IN (select nci_id from public.dw_study);
 DELETE FROM public.dw_study_secondary_purpose WHERE nci_id NOT IN (select nci_id from public.dw_study);
+DELETE FROM public.dw_study_biomarker WHERE nci_id NOT IN (select nci_id from public.dw_study);
 DELETE FROM public.dw_study_association WHERE study_a NOT IN (select nci_id from public.dw_study);
 
 EOF

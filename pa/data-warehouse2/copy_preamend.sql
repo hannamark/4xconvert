@@ -11,7 +11,7 @@ language plpgsql as $$
  tableNames varchar[] := ARRAY['dw_study','dw_study_anatomic_site','dw_study_arm_and_intervention',
  'dw_study_collaborator','dw_study_disease','dw_study_eligibility_criteria','dw_study_grant',
  'dw_study_other_identifier','dw_study_outcome_measure','dw_study_overall_status',
- 'dw_study_participating_site','dw_study_participating_site_investigators','dw_study_secondary_purpose','dw_study_association'];
+ 'dw_study_participating_site','dw_study_participating_site_investigators','dw_study_secondary_purpose','dw_study_association','dw_study_biomarker'];
  tableName varchar(1000);
 
 begin
