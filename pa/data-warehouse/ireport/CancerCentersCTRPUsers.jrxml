@@ -88,7 +88,8 @@ left join dw_user du on du.affiliated_organization_id=dfo.organization_id AND du
 'Brittany Jackson',
 'Hemant Undale',
 'Shanthala Basavappa',
-'Sophia Rarhai'))
+'Sophia Rarhai')) and 
+du.login_name not like '%OU=caGrid%' 
 order by dfo.family_name,dfo.organization_name,name]]>
 	</queryString>
 	<field name="family_name" class="java.lang.String"/>
