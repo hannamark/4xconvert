@@ -16,14 +16,14 @@ sourceConnection.eachRow(sql) { row ->
     sac.add(
         accrual_count : row.accrual_count,
         count_type : 'SITE_TOTAL',
-        internal_system_id : row.internal_system_id        
+        study_site_id : row.internal_system_id        
     )};
    
 destinationConnection.execute("""UPDATE stg_dw_study_accrual_count sac
                                  SET nci_id = ps.nci_id, 
                                      org_name = ps.org_name, 
                                      org_org_family = ps.org_org_family
-                                 FROM stg_dw_study_participating_site ps where sac.internal_system_id = ps.internal_system_id""");
+                                 FROM stg_dw_study_participating_site ps where sac.study_site_id = ps.internal_system_id""");
 
 destinationConnection.execute("""INSERT INTO stg_dw_study_accrual_count(accrual_count, count_type, nci_id)
                                  SELECT sum(accrual_count), 'STUDY_TOTAL', nci_id
