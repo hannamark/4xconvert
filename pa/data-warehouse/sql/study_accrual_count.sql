@@ -6,5 +6,5 @@ CREATE TABLE stg_dw_study_accrual_count (
     nci_id character varying(255),
     org_name character varying(200),
     org_org_family character varying(160),
-    internal_system_id integer
+    study_site_id integer
 );
