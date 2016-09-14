@@ -147,6 +147,39 @@ DELETE FROM public.dw_study_secondary_purpose WHERE nci_id NOT IN (select nci_id
 DELETE FROM public.dw_study_biomarker WHERE nci_id NOT IN (select nci_id from public.dw_study);
 DELETE FROM public.dw_study_association WHERE study_a NOT IN (select nci_id from public.dw_study);
 
+CREATE INDEX nci_id_idx1 ON hist_dw_study(nci_id);
+CREATE INDEX nci_id_idx2 ON hist_dw_study_anatomic_site(nci_id);
+CREATE INDEX nci_id_idx3 ON hist_dw_study_arm_and_intervention(nci_id);
+CREATE INDEX nci_id_idx5 ON hist_dw_study_biomarker(nci_id);
+CREATE INDEX nci_id_idx6 ON hist_dw_study_collaborator(nci_id);
+CREATE INDEX nci_id_idx7 ON hist_dw_study_disease(nci_id);
+CREATE INDEX nci_id_idx8 ON hist_dw_study_eligibility_criteria(nci_id);
+CREATE INDEX nci_id_idx9 ON hist_dw_study_grant(nci_id);
+CREATE INDEX nci_id_idx10 ON hist_dw_study_other_identifier(nci_id);
+CREATE INDEX nci_id_idx11 ON hist_dw_study_outcome_measure(nci_id);
+CREATE INDEX nci_id_idx12 ON hist_dw_study_overall_status(nci_id);
+CREATE INDEX nci_id_idx13 ON hist_dw_study_participating_site(nci_id);
+CREATE INDEX nci_id_idx14 ON hist_dw_study_participating_site_investigators(nci_id);
+CREATE INDEX nci_id_idx15 ON hist_dw_study_secondary_purpose(nci_id);
+
+
+CREATE INDEX run_id_idx1 ON hist_dw_study(run_id);
+CREATE INDEX run_id_idx2 ON hist_dw_study_anatomic_site(run_id);
+CREATE INDEX run_id_idx3 ON hist_dw_study_arm_and_intervention(run_id);
+CREATE INDEX run_id_idx4 ON hist_dw_study_association(run_id);
+CREATE INDEX run_id_idx5 ON hist_dw_study_biomarker(run_id);
+CREATE INDEX run_id_idx6 ON hist_dw_study_collaborator(run_id);
+CREATE INDEX run_id_idx7 ON hist_dw_study_disease(run_id);
+CREATE INDEX run_id_idx8 ON hist_dw_study_eligibility_criteria(run_id);
+CREATE INDEX run_id_idx9 ON hist_dw_study_grant(run_id);
+CREATE INDEX run_id_idx10 ON hist_dw_study_other_identifier(run_id);
+CREATE INDEX run_id_idx11 ON hist_dw_study_outcome_measure(run_id);
+CREATE INDEX run_id_idx12 ON hist_dw_study_overall_status(run_id);
+CREATE INDEX run_id_idx13 ON hist_dw_study_participating_site(run_id);
+CREATE INDEX run_id_idx14 ON hist_dw_study_participating_site_investigators(run_id);
+CREATE INDEX run_id_idx15 ON hist_dw_study_secondary_purpose(run_id);
+
+
 EOF
 
 
