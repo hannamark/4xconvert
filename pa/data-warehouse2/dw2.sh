@@ -102,7 +102,7 @@ with reporting_start_date as (select to_date('06/15/2015', 'MM/dd/yyyy')),
 
                 with results as (
 
-                select row_number() over(partition by nci_id order by status_date desc) as row_num,*
+                select row_number() over(partition by nci_id order by status_date desc, internal_system_id desc) as row_num,*
 
                 from dw_study_overall_status
 
