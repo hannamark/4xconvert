@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 date
 echo 'cleaning up old DW2 dump'
 psql -U ctrpdw2 -h localhost -p 5472 ctrpdw2 <<EOF
