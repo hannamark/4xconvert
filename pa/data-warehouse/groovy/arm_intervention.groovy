@@ -41,6 +41,7 @@ def sql = """SELECT
                 FROM ARM
                 inner join study_otheridentifiers as nci_id on nci_id.study_protocol_id = arm.study_protocol_identifier
                     and nci_id.root = '2.16.840.1.113883.3.26.4.3'   
+				inner join study_protocol sp on nci_id.study_protocol_id=sp.identifier and sp.status_code = 'ACTIVE'
                 join arm_intervention a_i on a_i.arm_identifier = arm.identifier   
                 join planned_activity pa on pa.identifier = a_i.planned_activity_identifier   
                 join intervention int on int.identifier = pa.intervention_identifier   
@@ -92,7 +93,7 @@ def sql = """SELECT
                 left outer join registry_user as arm_ru_creator on arm_ru_creator.csm_user_id = arm_csm_creator.user_id
                 left outer join csm_user as arm_csm_updater on arm_csm_updater.user_id = arm.user_last_updated_id
                 left outer join registry_user as arm_ru_updater on arm_ru_updater.csm_user_id = arm_csm_updater.user_id
-                WHERE sp.proprietary_trial_indicator=true and so.root='2.16.840.1.113883.3.26.4.3' and ai.arm_identifier is null"""
+                WHERE sp.status_code = 'ACTIVE' AND sp.proprietary_trial_indicator=true and so.root='2.16.840.1.113883.3.26.4.3' and ai.arm_identifier is null"""
 
 
 def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'],
