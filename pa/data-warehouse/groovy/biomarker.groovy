@@ -3,7 +3,7 @@ import groovy.sql.Sql
 def sql = """select marker.assay_purpose_code, marker.assay_purpose_other_text, marker.assay_type_code, marker.assay_type_other_text,
             marker.assay_use_code, marker.identifier, syncmarker.name, syncmarker.meaning, nci_id.extension, marker.status_code,
             marker.tissue_collection_method_code, marker.tissue_specimen_type_code, marker.hugo_biomarker_code, marker.evaluation_type_code,
-            marker.evaluation_type_other_text, marker.specimen_type_other_text
+            marker.evaluation_type_other_text, marker.specimen_type_other_text, syncmarker.nt_term_identifier
             from planned_activity pa
             inner join study_protocol as sp on sp.identifier = pa.study_protocol_identifier
             inner join planned_marker as marker on marker.identifier = pa.identifier
@@ -22,7 +22,8 @@ sourceConnection.eachRow(sql) { row ->
             long_name:row.meaning, name: row.name, nci_id: row.extension, status_code: row.status_code,
             tissue_collection_method_code: row.tissue_collection_method_code, tissue_specimen_type_code: row.tissue_specimen_type_code,
             hugo_biomarker_code: row.hugo_biomarker_code, evaluation_type_code: row.evaluation_type_code,
-            evaluation_type_other_text: row.evaluation_type_other_text, specimen_type_other_text: row.specimen_type_other_text)
+            evaluation_type_other_text: row.evaluation_type_other_text, specimen_type_other_text: row.specimen_type_other_text,
+			nt_term_identifier: row.nt_term_identifier)
 }
 
 destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET ASSAY_USE='Correlative'    
