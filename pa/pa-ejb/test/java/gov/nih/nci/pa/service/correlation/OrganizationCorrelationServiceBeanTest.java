@@ -33,6 +33,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.CacheUtils;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PAConstants;
@@ -232,6 +233,7 @@ public class OrganizationCorrelationServiceBeanTest extends AbstractHibernateTes
     @Test
     public void testGetPoResearchOrganizationByEntityIdentifier() throws NullifiedEntityException,
             NullifiedRoleException, PAException {
+        CacheUtils.getPoResearchOrganizationByEntityIdentifierCache().removeAll();
         try {
             bean.getPoResearchOrganizationByEntityIdentifier(null);
             fail("Ii Cannot be null");
