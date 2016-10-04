@@ -33,6 +33,14 @@ public final class CacheUtils {
     private static final String STUDY_SITE_CONTACTS_CACHE_KEY = "STUDY_SITE_CONTACTS_CACHE";
     private static final String REPORTING_RESULTS_CACHE_KEY = "REPORTING_RESULTS_CACHE_KEY";
     private static final String BIZ_DAY_CACHE_KEY = "BIZ_DAY_CACHE_KEY";
+    private static final String RO_BY_ORG_ID_CACHE_KEY = "RO_BY_ORG_ID_CACHE_KEY";
+    
+    /**
+     * @return RO_BY_ORG_ID_CACHE_KEY
+     */
+    public static Cache getPoResearchOrganizationByEntityIdentifierCache() {
+        return CACHE_MANAGER.getCache(RO_BY_ORG_ID_CACHE_KEY);
+    }
     
     /**
      * @return BIZ_DAY_CACHE

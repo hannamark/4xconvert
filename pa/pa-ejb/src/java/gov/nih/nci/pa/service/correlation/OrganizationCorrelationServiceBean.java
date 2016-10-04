@@ -95,6 +95,7 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.CacheUtils;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -642,26 +643,44 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
     }
 
     /**
-     *
-     * @param orgPoIdentifier id
+     * 
+     * @param orgPoIdentifier
+     *            id
      * @return ROId of PO
-     * @throws PAException on error
+     * @throws PAException
+     *             on error
      */
     @Override
-    public Ii getPoResearchOrganizationByEntityIdentifier(Ii orgPoIdentifier) throws PAException {
-        Ii poROIi = null;
+    public Ii getPoResearchOrganizationByEntityIdentifier(Ii orgPoIdentifier)
+            throws PAException {
         if (ISOUtil.isIiNull(orgPoIdentifier)) {
             throw new PAException("Ii Cannot be null");
         }
-        // Step 1 : get correlation if there
-        ResearchOrganizationDTO criteriaRODTO = new ResearchOrganizationDTO();
-        List<ResearchOrganizationDTO> roDTOs = null;
-        criteriaRODTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier.getExtension()));
-        roDTOs = PoRegistry.getResearchOrganizationCorrelationService().search(criteriaRODTO);
-        if (CollectionUtils.isNotEmpty(roDTOs)) {
-            poROIi = DSetConverter.convertToIi(roDTOs.get(0).getIdentifier());
-        }
-        return poROIi;
+        
+        final String poOrdIdAsString = orgPoIdentifier.getExtension();
+        return (Ii) CacheUtils.getFromCacheOrBackend(
+                CacheUtils.getPoResearchOrganizationByEntityIdentifierCache(),
+                poOrdIdAsString, new CacheUtils.Closure() {
+                    @SuppressWarnings("deprecation")
+                    @Override
+                    public Object execute() throws PAException {
+                        // Step 1 : get correlation if there
+                        ResearchOrganizationDTO criteriaRODTO = new ResearchOrganizationDTO();
+                        List<ResearchOrganizationDTO> roDTOs = null;
+                        criteriaRODTO.setPlayerIdentifier(IiConverter
+                                .convertToPoOrganizationIi(poOrdIdAsString));
+                        roDTOs = PoRegistry
+                                .getResearchOrganizationCorrelationService()
+                                .search(criteriaRODTO);
+                        Ii poROIi = null;
+                        if (CollectionUtils.isNotEmpty(roDTOs)) {
+                            poROIi = DSetConverter.convertToIi(roDTOs.get(0)
+                                    .getIdentifier());
+                        }
+                        return poROIi;
+                    }
+                });
+
     }
 
     /**
