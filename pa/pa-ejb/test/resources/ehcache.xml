@@ -109,10 +109,10 @@
     
      <cache
          name="RO_BY_ORG_ID_CACHE_KEY"
-         maxElementsInMemory="10000"
+         maxElementsInMemory="1"
          eternal="false"         
-         timeToIdleSeconds="10800"
-         timeToLiveSeconds="10800"
+         timeToIdleSeconds="1"
+         timeToLiveSeconds="1"
          overflowToDisk="false"
     />    
 
