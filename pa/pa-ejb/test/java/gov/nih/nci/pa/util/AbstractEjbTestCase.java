@@ -92,6 +92,7 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
         startNctApiMock();
         startSMTP();
         setUpPaEarProperties();
+        CacheUtils.getPoResearchOrganizationByEntityIdentifierCache().removeAll();
 
     }
 
