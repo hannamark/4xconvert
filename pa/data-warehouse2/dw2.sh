@@ -114,7 +114,7 @@ with reporting_start_date as (select to_date('06/15/2015', 'MM/dd/yyyy')),
 
                 THEN now()
 
-                ELSE lead(status_date) OVER(ORDER BY nci_id,status_date )   END  as "lead_date"
+                ELSE lead(status_date) OVER(ORDER BY nci_id, status_date, internal_system_id)   END  as "lead_date"
 
                 from dw_study_overall_status    ) as dw
 
