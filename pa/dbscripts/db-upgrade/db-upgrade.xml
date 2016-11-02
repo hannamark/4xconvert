@@ -2056,7 +2056,7 @@
        <comment>De-normalizing schema to fix search performance issues.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3.1.1/PO-9779.sql" splitStatements="false"/>
     </changeSet>
-     <changeSet id="PO-9777" author="krylovd">       
+    <changeSet id="PO-9777" author="krylovd">       
        <comment>Added a table to maintain a log of calls to RESTful services.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3.1.1/PO-9777.sql"/>
     </changeSet>   
@@ -2064,4 +2064,8 @@
        <comment>Added a column to study_overall_status to help determine order of statuses within history.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3.1.1/PO-9792.sql" splitStatements="false"/>
     </changeSet>
+    <changeSet id="PO-10078" author="krylovd">       
+       <comment>Update ClinicalTrials.gov URLs to use HTTPS</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3.2/PO-10078.sql"/>
+    </changeSet> 
 </databaseChangeLog>
