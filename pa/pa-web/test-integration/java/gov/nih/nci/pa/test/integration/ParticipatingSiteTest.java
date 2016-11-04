@@ -83,15 +83,19 @@
 package gov.nih.nci.pa.test.integration;
 
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 import gov.nih.nci.pa.test.integration.support.Batch;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Date;
 
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.junit.Test;
 import org.openqa.selenium.By;
+
+
 
 /**
  * Tests creation/editing/deleting of participating sites.
@@ -201,7 +205,16 @@ public class ParticipatingSiteTest extends AbstractPaSeleniumTest {
         
         assertTrue(selenium.isTextPresent("A Participating Site with PO ID"));
         assertTrue(selenium.isTextPresent("already exists on Trial with NCI ID"));
+        assertEquals(checkStatusValue(),PAUtil.dateStringToTimestamp(today));
+        
         
     }
 
+    protected Timestamp checkStatusValue() throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "select status_date from study_site_accrual_status order by identifier desc  limit 1";
+        return (Timestamp) runner.query(connection, sql,new ArrayHandler())[0];
+        
+    }
+    
 }

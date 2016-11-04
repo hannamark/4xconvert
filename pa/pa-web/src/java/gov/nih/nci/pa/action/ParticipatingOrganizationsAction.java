@@ -407,7 +407,7 @@ public class ParticipatingOrganizationsAction
         StudySiteAccrualStatusDTO ssas = new StudySiteAccrualStatusDTO();
         ssas.setIdentifier(IiConverter.convertToIi((Long) null));
         ssas.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.getByCode(recStatus)));
-        ssas.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(recStatusDate)));
+        ssas.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToDate(recStatusDate)));
         ssas.setComments(StConverter.convertToSt(recStatusComments));
         Ii ssIi = null;
         if (tab.getStudyParticipationId() != null) {

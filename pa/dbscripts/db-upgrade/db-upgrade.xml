@@ -2068,4 +2068,8 @@
        <comment>Update ClinicalTrials.gov URLs to use HTTPS</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3.2/PO-10078.sql"/>
     </changeSet> 
+    <changeSet id="PO-9860" author="reshma">       
+       <comment>Run a script that will clear time component for all records</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3.2/PO-9860.sql"/>
+    </changeSet> 
 </databaseChangeLog>
