@@ -103,13 +103,11 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
-import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.convert.ParticipatingSiteConverter;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteContactDTO;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
 import gov.nih.nci.pa.iso.dto.ProgramCodeDTO;
-import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
@@ -123,14 +121,8 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.exception.DuplicateParticipatingSiteException;
 import gov.nih.nci.pa.service.status.StatusDto;
-import gov.nih.nci.pa.service.status.ValidationError;
-import gov.nih.nci.pa.service.status.json.AppName;
-import gov.nih.nci.pa.service.status.json.TransitionFor;
-import gov.nih.nci.pa.service.status.json.TrialType;
 import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
-import gov.nih.nci.pa.service.util.SiteStatusChangeNotificationData;
-import gov.nih.nci.pa.service.util.SiteStatusChangeNotificationData.SiteData;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
@@ -155,7 +147,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -216,7 +207,8 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
             throw new PAException(e.getMessage(), e);
         }
     }
-    
+ // commented as part of PO-9862
+    /*
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Map <String, ParticipatingSiteDTO> closeOpenSites(Ii spID, StudyOverallStatusDTO oldStatus,
@@ -302,7 +294,7 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
         return siteStatusMap;
     }
     
-   
+
 
     private String getStatusHistoryErrors(ParticipatingSiteDTO site)
             throws PAException {
@@ -322,7 +314,7 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
         }
         return StringUtils.EMPTY;
     }
-
+   */
     /**
      * Convert the given list of StudySiteDTO into a list of ParticipatingSiteDTO.
      * @param dtos The list of StudySiteDTO to convert

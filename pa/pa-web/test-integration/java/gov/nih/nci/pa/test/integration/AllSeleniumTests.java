@@ -111,8 +111,7 @@ import org.junit.runners.Suite.SuiteClasses;
         ResultsReportingActionsTakenTest.class, /* TwitterTest.class, */
         DashboardMenuTest.class, RssOwnershipTest.class,
         ManageUserGroupsTest.class, AbstractionValidationTest.class,
-        ResultsAbstractorRoleActionsTest.class,
-        ParticipatingSiteCloseTest.class, TrialFundingTest.class,
+        ResultsAbstractorRoleActionsTest.class, TrialFundingTest.class,
         TrialValidationTest.class, GeneralTrialDetailsTest.class,
         ResultsPublishedDateTest.class
 

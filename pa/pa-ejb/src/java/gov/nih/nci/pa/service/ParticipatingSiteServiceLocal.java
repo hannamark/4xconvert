@@ -89,7 +89,6 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteContactDTO;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
-import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.service.status.StatusDto;
@@ -103,7 +102,6 @@ import gov.nih.nci.services.person.PersonDTO;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Local;
 
@@ -353,10 +351,12 @@ public interface ParticipatingSiteServiceLocal {
      * @throws PAException
      *             PAException
      */
+ // commented as part of PO-9862
+    /*
     Map <String, ParticipatingSiteDTO>  closeOpenSites(Ii spID, StudyOverallStatusDTO oldStatus,
             StudyOverallStatusDTO currentStatus, boolean mustNotifyTrialOwners)
             throws PAException;
-
+*/
     /**
      * Returns a list of participating sites acting on the given trial, which user can Add.
      * @param user RegistryUser

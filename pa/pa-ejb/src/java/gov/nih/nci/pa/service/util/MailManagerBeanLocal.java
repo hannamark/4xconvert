@@ -114,7 +114,6 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
-import gov.nih.nci.pa.service.util.SiteStatusChangeNotificationData.SiteData;
 import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -2467,8 +2466,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
         }
 
     }
-
-    @Override
+ // commented as part of PO-9862
+    /*@Override
     public void sendSiteCloseNotification(SiteStatusChangeNotificationData data) {
         try {
             Template subjectFtl = cfg
@@ -2508,7 +2507,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
         } catch (PAException | IOException | TemplateException e) {
             LOG.error(e, e);
         }
-    }
+    }*/
     
     /**
      * Sends an email to app Support.
@@ -2884,8 +2883,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
         
     }
     
-    
-    @Override
+ // commented as part of PO-9862
+   /* @Override
    public void sendSiteNotCloseNotification(SiteStatusChangeNotificationData dataForEmail)
            throws PAException {
         
@@ -2950,7 +2949,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
         body = body.replace("${unclosedSites}", notClosedSitesData.toString());
         sendMailWithHtmlBody(mailTo, mailSubject, body);
         
-    }
+    }*/
     
     @Override
     public void sendTrialPublishDateNoUpdateEmail() throws PAException {

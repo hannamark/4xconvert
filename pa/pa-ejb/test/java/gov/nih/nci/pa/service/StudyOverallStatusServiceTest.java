@@ -89,9 +89,7 @@ import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
-import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
-import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudyOverallStatusConverter;
@@ -977,8 +975,8 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
         assertTrue(BlConverter.convertToBool(hist.get(0).getDeleted()));
 
     }
-
-    @SuppressWarnings("deprecation")
+ // commented as part of PO-9862
+    /*@SuppressWarnings("deprecation")
     @Test
     public void closeOpenSitesIfNeeded() throws PAException {
         // new protocol with no statuses initially.
@@ -1014,10 +1012,10 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
                 .getStudySiteAccrualStatuses().get(1).getStatusCode());
      
 
-    }
+    }*/
     
     
-    @SuppressWarnings("deprecation")
+    /*@SuppressWarnings("deprecation")
     @Test
     public void checkIfSitesNotClosedForLaterDate() throws PAException {
         // new protocol with no statuses initially.
@@ -1058,9 +1056,9 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
                 .getStudySiteAccrualStatuses().get(0).getStatusCode());
      
 
-    }
+    }*/
     
-    @SuppressWarnings("deprecation")
+    /*@SuppressWarnings("deprecation")
     @Test
     public void checkIfSitesNotClosedIfClosureInHistory() throws PAException {
         // new protocol with no statuses initially.
@@ -1103,8 +1101,8 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
      
 
     }
-
-    @SuppressWarnings("deprecation")
+*/
+    /*@SuppressWarnings("deprecation")
     @Test
     public void closeOpenSitesIfNeededProprietaryProtocol() throws PAException {
         // new protocol with no statuses initially.
@@ -1184,8 +1182,8 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
         assertEquals(RecruitmentStatusCode.ACTIVE, site
                 .getStudySiteAccrualStatuses().get(0).getStatusCode());
 
-    }
-
+    }*/
+ // commented as part of PO-9862
     @SuppressWarnings("deprecation")
     @Test
     public void createStatusHistoryValidations() throws PAException {

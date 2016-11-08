@@ -439,7 +439,8 @@ public interface MailManagerService {
     /**
      * @param dataForEmail SiteStatusChangeNotificationData
      */
-    void sendSiteCloseNotification(SiteStatusChangeNotificationData dataForEmail);
+ // commented as part of PO-9862
+   /* void sendSiteCloseNotification(SiteStatusChangeNotificationData dataForEmail);*/
     
     /**
      * Generic send method. Just sends the given message using Transport.
@@ -539,7 +540,8 @@ public interface MailManagerService {
      * @param dataForEmail SiteStatusChangeNotificationData
      * @throws PAException when there are error 
      */
-    void sendSiteNotCloseNotification(SiteStatusChangeNotificationData dataForEmail) throws PAException;
+ // commented as part of PO-9862
+    /*void sendSiteNotCloseNotification(SiteStatusChangeNotificationData dataForEmail) throws PAException;*/
     
     /**
      * sends email on failure of a job

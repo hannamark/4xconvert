@@ -10,9 +10,7 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
-import com.dumbster.smtp.SmtpMessage;
-
-
+/*
 @Batch(number = 2)
 public class ParticipatingSiteCloseTest extends AbstractPaSeleniumTest {
    
@@ -21,7 +19,7 @@ public class ParticipatingSiteCloseTest extends AbstractPaSeleniumTest {
      * 
      * @throws SQLException
      */
-    @Test
+    /*@Test
     public void testIfSiteNotClosedIfTrialStatusDateIsNotLater() throws Exception {
         TrialInfo info = createAndSelectTrial();
         String today = MONTH_DAY_YEAR_FMT.format(new Date());
@@ -77,11 +75,11 @@ public class ParticipatingSiteCloseTest extends AbstractPaSeleniumTest {
 
     }
     
-    /**
+    *//**
      * Creates participating sites.
      * 
      * @throws SQLException
-     */
+     *//*
     @Test
     public void testIfSiteNotClosedIfSiteHasClosureInHistory() throws Exception {
         TrialInfo info = createAndSelectTrial();
@@ -172,6 +170,6 @@ public class ParticipatingSiteCloseTest extends AbstractPaSeleniumTest {
        clickAndWait("link=Save");
        assertTrue(selenium.isTextPresent("Record Updated"));
   }
-  
+
    
-}
+}*/

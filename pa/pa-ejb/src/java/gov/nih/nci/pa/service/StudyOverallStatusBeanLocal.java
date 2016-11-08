@@ -87,12 +87,10 @@ import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
-import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.convert.AbstractStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.StudyOverallStatusConverter;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
-import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -118,10 +116,8 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.EJB;
@@ -185,7 +181,7 @@ public class StudyOverallStatusBeanLocal extends // NOPMD
     @Override
     public void updateStatusHistory(Ii spIi,
             final List<StudyOverallStatusDTO> statusHistory) throws PAException {
-        StudyOverallStatusDTO current = getCurrentByStudyProtocol(spIi);
+       // StudyOverallStatusDTO current = getCurrentByStudyProtocol(spIi);
         for (StudyOverallStatusDTO dto : statusHistory) {
             dto.setStudyProtocolIdentifier(spIi);
             if (BlConverter.convertToBool(dto.getDeleted())
@@ -202,7 +198,8 @@ public class StudyOverallStatusBeanLocal extends // NOPMD
                 insert(dto, false);
             }
         }
-        closeOpenSitesIfNeeded(spIi, current);
+     // commented as part of PO-9862
+       // closeOpenSitesIfNeeded(spIi, current);
     }
     
     /**
@@ -233,13 +230,14 @@ public class StudyOverallStatusBeanLocal extends // NOPMD
             return oldStatus;
         }       
         StudyOverallStatusDTO createdStatus = runChecksAndCreate(newStatus, oldStatus);
-        Map <String, ParticipatingSiteDTO> sitesClosedMap = 
-                closeOpenSitesIfNeeded(newStatus.getStudyProtocolIdentifier(), oldStatus);
-        newStatus.setSitesClosedMap(sitesClosedMap);
+     // commented as part of PO-9862
+       // Map <String, ParticipatingSiteDTO> sitesClosedMap = 
+               // closeOpenSitesIfNeeded(newStatus.getStudyProtocolIdentifier(), oldStatus);
+      //  newStatus.setSitesClosedMap(sitesClosedMap);
         return createdStatus;
     }
-
-
+ // commented as part of PO-9862
+/*
     private Map <String, ParticipatingSiteDTO> closeOpenSitesIfNeeded(Ii spID, StudyOverallStatusDTO oldStatus)
             throws PAException {
         Map <String, ParticipatingSiteDTO> sitesClosedMap = new HashMap<String, ParticipatingSiteDTO>();
@@ -268,7 +266,7 @@ public class StudyOverallStatusBeanLocal extends // NOPMD
         return sitesClosedMap;
     }
 
-
+*/
     /**
      * @param newStatus
      * @param oldStatus
@@ -369,14 +367,14 @@ public class StudyOverallStatusBeanLocal extends // NOPMD
     @Override
     public StudyOverallStatusDTO update(StudyOverallStatusDTO dto)
             throws PAException {
-        return update(dto, true);
+        return update(dto, false);
     }
     
     private StudyOverallStatusDTO update(StudyOverallStatusDTO dto,
             boolean closeOpenSitesIfNeeded) throws PAException {
         checkBasicConditions(dto);
-        StudyOverallStatusDTO current = getCurrentByStudyProtocol(dto
-                .getStudyProtocolIdentifier());
+       // StudyOverallStatusDTO current = getCurrentByStudyProtocol(dto
+          //      .getStudyProtocolIdentifier());
         final StudyOverallStatusDTO updatedDTO = super.update(dto);
         // If this update has resulted in a change of the trial's current
         // overall status,
@@ -385,10 +383,11 @@ public class StudyOverallStatusBeanLocal extends // NOPMD
             createStudyRecruitmentStatusForCurrentOverallStatus(updatedDTO
                     .getStudyProtocolIdentifier());
         }
-        if (closeOpenSitesIfNeeded) {
-            closeOpenSitesIfNeeded(updatedDTO.getStudyProtocolIdentifier(),
-                    current);
-        }
+     // commented as part of PO-9862
+        //if (closeOpenSitesIfNeeded) {
+          //  closeOpenSitesIfNeeded(updatedDTO.getStudyProtocolIdentifier(),
+           //         current);
+       // }
         return updatedDTO;
     }
 
@@ -417,14 +416,14 @@ public class StudyOverallStatusBeanLocal extends // NOPMD
     
     @Override
     public void insert(StudyOverallStatusDTO dto) throws PAException {
-        insert(dto, true);
+        insert(dto, false);
     }
     
     @SuppressWarnings("deprecation")
     private void insert(StudyOverallStatusDTO dto, boolean closeOpenSitesIfNeeded) throws PAException {
         checkBasicConditions(dto);
-        StudyOverallStatusDTO current = getCurrentByStudyProtocol(dto
-                .getStudyProtocolIdentifier());
+       // StudyOverallStatusDTO current = getCurrentByStudyProtocol(dto
+        //        .getStudyProtocolIdentifier());
         StudyOverallStatus bo = convertFromDtoToDomain(dto);
         bo.setId(null);
         bo.setDateLastCreated(new Date());
@@ -444,10 +443,11 @@ public class StudyOverallStatusBeanLocal extends // NOPMD
             createStudyRecruitmentStatusForCurrentOverallStatus(newlyCreatedStatus
                     .getStudyProtocolIdentifier());
         }
-        if (closeOpenSitesIfNeeded) {
-            closeOpenSitesIfNeeded(
-                    newlyCreatedStatus.getStudyProtocolIdentifier(), current);
-        }
+        // commented as part of PO-9862
+        //if (closeOpenSitesIfNeeded) {
+         //   closeOpenSitesIfNeeded(
+          //          newlyCreatedStatus.getStudyProtocolIdentifier(), current);
+      //  }
     }
 
     /**
