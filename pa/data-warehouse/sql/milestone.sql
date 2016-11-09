@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS STG_DW_STUDY_MILESTONE;
 
 CREATE TABLE STG_DW_STUDY_MILESTONE (
-    COMMENTS character varying(4000),
+    COMMENTS text,
     DATE timestamp,
     DATE_CREATED timestamp,
     DATE_LAST_UPDATED timestamp,
@@ -21,7 +21,7 @@ CREATE TABLE STG_DW_STUDY_MILESTONE (
 --Create history table
 CREATE TABLE IF NOT EXISTS HIST_DW_STUDY_MILESTONE (
 RUN_ID TIMESTAMP,
-    COMMENTS character varying(4000),
+    COMMENTS text,
     DATE timestamp,
     DATE_CREATED timestamp,
     DATE_LAST_UPDATED timestamp,
@@ -39,3 +39,4 @@ RUN_ID TIMESTAMP,
     user_last_updated_id integer
 );
 
+ALTER TABLE HIST_DW_STUDY_MILESTONE ALTER COLUMN COMMENTS SET DATA TYPE text;
