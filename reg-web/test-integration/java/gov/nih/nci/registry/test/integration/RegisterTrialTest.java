@@ -273,7 +273,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 selenium.getText("//td[preceding-sibling::td[normalize-space(text())='Other']]"));
 
     }
-
+  //commented as part of PO-9862
+    /*
     @SuppressWarnings("deprecation")
     @Test
     public void testUpdateCompleteTrialAndCloseSitesPO_8323() throws Exception {
@@ -282,17 +283,15 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
             // moment.
             return;
         }
-        updateCompleteTrialAndCloseSitesPO_8323(new String[] { /**
-         * DCP Site
-         * Status
-         **/
-        "In Review", /** CTEP Site Status **/
-        "Active", /** TrialStatus **/
+        updateCompleteTrialAndCloseSitesPO_8323(new String[] {
+        "In Review",
+        "Active", 
         "Closed to Accrual" });
 
-    }
+    }*/
+  //commented as part of PO-9862
 
-    @SuppressWarnings("deprecation")
+   /* @SuppressWarnings("deprecation")
     @Test
     public void testUpdateCompleteTrialStatusAndCloseSitesPO_8323()
             throws Exception {
@@ -322,14 +321,10 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
 
         doBackEndChecksAndLogOut(params, info);
 
-    }
+    }*/
 
-    /**
-     * @param params
-     * @param info
-     * @throws SQLException
-     */
-    protected void doBackEndChecksAndLogOut(String[] params, TrialInfo info)
+
+ /*   protected void doBackEndChecksAndLogOut(String[] params, TrialInfo info)
             throws SQLException {
         // Do backend checks; ensure sites are closed with the same status.
         verifySiteIsNowClosed(info,
@@ -340,13 +335,10 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
 
         logoutUser();
         logoutPA();
-    }
+    }*/
 
-    /**
-     * @param params
-     * @throws URISyntaxException
-     * @throws SQLException
-     */
+  //commented as part of PO-9862
+    /*
     private void updateCompleteTrialAndCloseSitesPO_8323(String[] params)
             throws URISyntaxException, SQLException {
 
@@ -367,7 +359,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                         + info.nciID + " was successfully submitted"));
 
         doBackEndChecksAndLogOut(params, info);
-    }
+    }*/
 
     /**
      * @param params

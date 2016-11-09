@@ -55,8 +55,8 @@ public class CtGovImportTest extends AbstractTrialStatusTest {
     public void testImportNCT02158936() throws Exception {
         importAndVerify("NCT02158936");
     }
-
-    @SuppressWarnings({ "deprecation", "rawtypes" })
+  //commented as part of PO-9862
+    /*@SuppressWarnings({ "deprecation", "rawtypes" })
     @Test
     public void testClosingSitesEmailToSiteContacts_PO_8780() throws Exception {
         final String nctID = "NCT01326494";
@@ -117,7 +117,7 @@ public class CtGovImportTest extends AbstractTrialStatusTest {
 
     }
 
-   
+   */
 
     @SuppressWarnings("deprecation")
     @Test

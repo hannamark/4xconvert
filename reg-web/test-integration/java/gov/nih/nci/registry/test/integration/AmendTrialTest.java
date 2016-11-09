@@ -118,8 +118,8 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         super.setUp();
         setupFamilies();
     }
-
-    @SuppressWarnings("deprecation")
+  //commented as part of PO-9862
+   /* @SuppressWarnings("deprecation")
     @Test
     public void testAmendCompleteTrialAndCloseSitesPO_8323() throws Exception {
         if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
@@ -186,7 +186,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
                 "Closed to Accrual");
         verifySiteIsNowClosed(info, "Cancer Therapy Evaluation Program",
                 "Closed to Accrual");
-    }
+    }*/
 
     @SuppressWarnings("deprecation")
     @Test

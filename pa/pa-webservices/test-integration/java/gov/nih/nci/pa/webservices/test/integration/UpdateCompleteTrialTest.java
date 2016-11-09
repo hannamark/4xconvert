@@ -73,8 +73,8 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
         verifyUpdate(upd, uConf);
 
     }
-
-    @SuppressWarnings("rawtypes")
+//commented as part of PO-9862
+   /* @SuppressWarnings("rawtypes")
     @Test
     public void testUpdateCompleteTrialStatusAndCloseSitesPO_8323()
             throws Exception {
@@ -132,9 +132,9 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
                 findEmailByRecipient("ctrpsubstractor-ci@example.com"),
                 "ctrpsubstractor-ci@example.com", "ctrpsubstractor CI", info);
 
-    }
+    }*/
 
-    private void verifySiteClosedEmail(SmtpMessage email, String recipient,
+  /*  private void verifySiteClosedEmail(SmtpMessage email, String recipient,
             String recipientName, TrialInfo info) throws SQLException {
         String subject = email.getHeaderValues("Subject")[0];
         String to = email.getHeaderValues("To")[0];
@@ -184,7 +184,7 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
                         + " Trials Reporting Program.</p>".replaceAll("\\s+",
                                 " ").replaceAll(">\\s+", ">"), body);
 
-    }
+    }*/
 
     @Test
     public void testUpdateDoesNotResetCtroOverride() throws Exception {

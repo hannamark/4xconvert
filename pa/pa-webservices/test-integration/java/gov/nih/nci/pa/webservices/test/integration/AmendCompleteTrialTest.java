@@ -183,8 +183,8 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
     public void testValidCredentialsButNoRole() throws Exception {
         super.testValidCredentialsButNoRole();
     }
-
-    @SuppressWarnings("rawtypes")
+  //commented as part of PO-9862
+    /*@SuppressWarnings("rawtypes")
     @Test
     public void testAmendAndCloseSitesPO_8323() throws Exception {
         final String file = "/integration_register_complete_success_no_dcp.xml";
@@ -241,8 +241,8 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
                 "ctrpsubstractor-ci@example.com", "ctrpsubstractor CI", info);
 
     }
-
-    protected void verifySiteClosedEmail(SmtpMessage email, String recipient,
+*/
+   /* protected void verifySiteClosedEmail(SmtpMessage email, String recipient,
             String recipientName, TrialInfo info) throws SQLException {
         String subject = email.getHeaderValues("Subject")[0];
         String to = email.getHeaderValues("To")[0];
@@ -296,7 +296,7 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
                         + " Trials Reporting Program.</p>".replaceAll("\\s+",
                                 " ").replaceAll(">\\s+", ">"), body);
 
-    }
+    }*/
 
     @Test
     public void testAmendCancerCenterTrialWithProgramCodes() throws Exception {
