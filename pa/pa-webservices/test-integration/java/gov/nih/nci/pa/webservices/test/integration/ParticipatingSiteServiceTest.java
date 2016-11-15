@@ -3,7 +3,6 @@
  */
 package gov.nih.nci.pa.webservices.test.integration;
 
-import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 import gov.nih.nci.pa.webservices.types.BaseParticipatingSite;
 import gov.nih.nci.pa.webservices.types.ObjectFactory;
 import gov.nih.nci.pa.webservices.types.ParticipatingSite;
@@ -36,10 +35,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -311,6 +308,31 @@ public final class ParticipatingSiteServiceTest extends AbstractRestServiceTest 
 
     }
 
+    @Test
+    public void testUpdateSiteWithDuplicateSiteStatus() throws Exception {
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
+        makeAbbreviated(rConf);
+        ParticipatingSite newSite = readParticipatingSiteFromFile("/integration_ps_add.xml");
+        HttpResponse response = addSite("pa", rConf.getPaTrialID() + "",
+                newSite);
+        assertEquals(200, getReponseCode(response));
+        long siteID = Long.parseLong(EntityUtils.toString(response.getEntity(),
+                "utf-8"));
+        ParticipatingSiteUpdate upd = readParticipatingSiteUpdateFromFile("/integration_ps_update_duplicateSite.xml");
+        response = updateSite(siteID, upd);
+        verifyUpdateSiteResponse(response, siteID);
+        verifySiteUpdate(siteID, upd);
+        assertTrue(getSiteValue(siteID).contains("Deleted because another  record with the same site status"));
+        
+    }
+    
+    private String getSiteValue(long siteID) throws SQLException {
+            QueryRunner runner = new QueryRunner();
+            String sql = "select comments from study_site_accrual_status where study_site_identifier =" +siteID + 
+              " and deleted=TRUE and status_code='ADMINISTRATIVELY_COMPLETE'";
+            return (String) runner.query(connection, sql,new ArrayHandler())[0];
+    }
+    
     @Test
     public void testUpdateSiteWithMinimalInfo() throws Exception {
         TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");

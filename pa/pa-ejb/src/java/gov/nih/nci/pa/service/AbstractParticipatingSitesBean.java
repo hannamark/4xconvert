@@ -89,6 +89,7 @@ import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.dto.PAOrganizationalContactDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.iso.convert.OrganizationalContactConverter;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -98,14 +99,22 @@ import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.PABaseCorrelation;
+import gov.nih.nci.pa.service.status.StatusDto;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang.time.DateUtils;
+
 
 /**
  * Helper for ParticipatingSiteBeanLocal.
@@ -121,7 +130,7 @@ public abstract class AbstractParticipatingSitesBean
      * @param newStatus status
      * @throws PAException when error
      */
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({ "deprecation", "unused" })
     protected void createStudySiteAccrualStatus(Ii studySiteIi,
             StudySiteAccrualStatusDTO newStatus) throws PAException {
         StudySiteAccrualStatusDTO currentStatus = getStudySiteAccrualStatusService()
@@ -135,14 +144,45 @@ public abstract class AbstractParticipatingSitesBean
                                 .getStatusCode()))
                 || !currentStatus.getStatusDate().equals(
                         newStatus.getStatusDate())) {
-
+                 List<StatusDto> statusList = (ArrayList<StatusDto>) 
+                             getStudySiteAccrualStatusService().getStatusHistory(studySiteIi);
+                 if (!statusList.isEmpty()) {
+                     for (StatusDto sitedto : statusList) {
+                       StudySiteAccrualStatusDTO studySiteAccrualConverterDto = 
+                            convertStatusDtoToAccrualStatusDTO(sitedto);
+                       if (studySiteAccrualConverterDto.getStatusCode().equals(newStatus.getStatusCode())
+                           && DateUtils.isSameDay(TsConverter.convertToTimestamp(studySiteAccrualConverterDto
+                               .getStatusDate()), TsConverter.convertToTimestamp(newStatus.getStatusDate()))) {
+                           String comments = StConverter.convertToString(studySiteAccrualConverterDto.getComments());
+                           try {
+                              studySiteAccrualConverterDto.setComments(StConverter.convertToSt(comments 
+                                + "Deleted because another "
+                                + " record with the same site status and status date was received on" + PAUtil
+                                .getCurrentTime().toString()));
+                            } catch (ParseException e) {
+                                 e.printStackTrace();
+                           }
+                           getStudySiteAccrualStatusService().softDelete(studySiteAccrualConverterDto);
+                       }
+                     }
+                 }
                  newStatus.setIdentifier(IiConverter.convertToIi((Long) null));
                  newStatus.setStudySiteIi(studySiteIi);
                  getStudySiteAccrualStatusService().createStudySiteAccrualStatus(newStatus);
         }
     }
-
-    /**
+    
+    private StudySiteAccrualStatusDTO convertStatusDtoToAccrualStatusDTO(StatusDto sitedto) 
+                throws PAException {
+        StudySiteAccrualStatusDTO dto = new StudySiteAccrualStatusDTO();
+        dto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode
+                 .valueOf(sitedto.getStatusCode())));
+        dto.setIdentifier(IiConverter.convertToIi(sitedto.getId()));
+        dto.setStatusDate(TsConverter.convertToTs(sitedto.getStatusDate()));
+        dto.setComments(StConverter.convertToSt(sitedto.getComments()));
+        return dto;
+    }
+    /**Site
      * createGenericContactRecord.
      * @param participationContactDTO dto
      * @param srMap map
