@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.coppa.services.ldap;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -17,7 +18,9 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 
@@ -84,7 +87,7 @@ abstract class AbstractLDAPAccessor {
         environment.put(Context.SECURITY_PRINCIPAL,
                 ldapProperties.getProperty(LDAP_USER));
         environment.put(Context.SECURITY_CREDENTIALS,
-                ldapProperties.getProperty(LDAP_PASSWORD));
+                loadLdapPasswordFromFile());
         return environment;
     }
 
@@ -92,16 +95,33 @@ abstract class AbstractLDAPAccessor {
      * @return isLdapPasswordProvided
      */
     protected boolean isLdapPasswordProvided() {
-        return StringUtils
-                .isNotBlank(ldapProperties.getProperty(LDAP_PASSWORD));
+        return StringUtils.isNotBlank(loadLdapPasswordFromFile());
+    }
+
+    /**
+     * @return
+     * @throws IOException
+     */
+    private String loadLdapPasswordFromFile() {
+        File file = new File(
+                (ldapProperties.getProperty(LDAP_PASSWORD, new File(
+                        SystemUtils.USER_HOME, ".ctrp_ldap_password")
+                        .getAbsolutePath()))
+                        .replace("~", SystemUtils.USER_HOME));
+        try {
+            return FileUtils.readFileToString(file);
+        } catch (IOException e) {
+            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            return null;
+        }
     }
 
     protected SearchResult searchForUserInLDAP(String loginName)
             throws NamingException {
         Hashtable<String, String> environment = prepareLDAPEnvironmentProperties(); // NOPMD
-        String searchFilter = "("
+        String searchFilter = "(&(objectclass=user)("
                 + ldapProperties.getProperty(LDAP_UID_ATTRNAME) + "="
-                + loginName + ")";
+                + loginName + "))";
 
         DirContext dirContext = null;
 
