@@ -94,7 +94,7 @@
     <target name="init-db" description="Initializes the data warehousing tables">
         <stopwatch name="timer1"/>
         <echo message = "Creating data warehouse stage tables"/>
-        <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}?tcpKeepAlive=true"
+        <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}?tcpKeepAlive=true&amp;loginTimeout=60&amp;connectTimeout=60&amp;socketTimeout=600"
             userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
             expandproperties="true" autocommit="true">
             <transaction src="${basedir}/sql/prime.sql"/>
@@ -158,7 +158,7 @@
             </classpath>
         </sql>
     	  <echo message = "Alter history tables if needed"/>
-    	        <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
+    	        <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}?tcpKeepAlive=true&amp;loginTimeout=60&amp;connectTimeout=60&amp;socketTimeout=600"
     	            userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
     	            expandproperties="true" autocommit="true" onerror="continue">
     	        	<transaction src="${basedir}/sql/alter_history_tables.sql"/>
