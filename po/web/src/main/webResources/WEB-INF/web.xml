@@ -13,10 +13,6 @@
             <http-only>true</http-only>
         </cookie-config>    
     </session-config>
-
-    <listener>
-        <listener-class>gov.nih.nci.coppa.services.ldap.GridToLDAPAccountMigrator</listener-class>
-    </listener>
     
     <listener>
         <listener-class>liquibase.integration.servlet.LiquibaseServletListener</listener-class>

@@ -16,11 +16,7 @@
     <listener>
         <description>For running Liquibase migrations</description>
         <listener-class>liquibase.integration.servlet.LiquibaseServletListener</listener-class>
-    </listener>
-	<listener>
-		<listener-class>gov.nih.nci.coppa.services.ldap.GridToLDAPAccountMigrator
-		</listener-class>
-	</listener>
+    </listener>	
 	<listener>
 		<listener-class>gov.nih.nci.coppa.web.CSMInitializingListener
 		</listener-class>
