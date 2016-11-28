@@ -105,6 +105,7 @@ public class OSDesignDetailsWebDTO implements Serializable {
     private String finalAccrualNumber;
     private String phaseCode;
     private String phaseAdditionalQualifierCode;
+    private boolean expandedIndicator;
     
     /**
      * @return biospecimenDescription
@@ -301,4 +302,18 @@ public class OSDesignDetailsWebDTO implements Serializable {
         this.finalAccrualNumber = finalAccrualNumber;
     }
     
+    /**
+     * @return the expandedIndicator
+     */
+    public boolean isExpandedIndicator() {
+        return expandedIndicator;
+    }
+
+    /**
+     * @param expandedIndicator the expandedIndicator to set
+     */
+    public void setExpandedIndicator(boolean expandedIndicator) {
+        this.expandedIndicator = expandedIndicator;
+    }
+
 }

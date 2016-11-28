@@ -108,6 +108,7 @@ public class ISDesignDetailsWebDTO extends BaseISDesignDetailsWebDTO { //NOPMD
     private String finalAccrualNumber;
     private String studyClassificationCode;
     private String studyType;
+    private boolean expandedIndicator;
 
     private OutcomeMeasureWebDTO outcomeMeasure = new OutcomeMeasureWebDTO();
 
@@ -425,5 +426,20 @@ public class ISDesignDetailsWebDTO extends BaseISDesignDetailsWebDTO { //NOPMD
     public void setFinalAccrualNumber(String finalAccrualNumber) {
         this.finalAccrualNumber = finalAccrualNumber;
     }
+    
+    /**
+     * @return the expandedIndicator
+     */
+    public boolean isExpandedIndicator() {
+        return expandedIndicator;
+    }
+
+    /**
+     * @param expandedIndicator the expandedIndicator to set
+     */
+    public void setExpandedIndicator(boolean expandedIndicator) {
+        this.expandedIndicator = expandedIndicator;
+    }
+
 
 }

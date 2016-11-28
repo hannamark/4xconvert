@@ -183,7 +183,8 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
                 ospFromDatabaseDTO.setPrimaryPurposeOtherText(null);
             }          
             ospFromDatabaseDTO.setStudySubtypeCode(
-                    CdConverter.convertToCd(StudySubtypeCode.getByCode(webDTO.getStudySubtypeCode())));            
+                    CdConverter.convertToCd(StudySubtypeCode.getByCode(webDTO.getStudySubtypeCode())));
+            ospFromDatabaseDTO.setExpandedAccessIndicator(BlConverter.convertToBl(webDTO.isExpandedIndicator()));
             ospFromDatabaseDTO.setStudyModelCode(
                     CdConverter.convertToCd(StudyModelCode.getByCode(webDTO.getStudyModelCode())));
             ospFromDatabaseDTO.setTimePerspectiveCode(
@@ -386,7 +387,10 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
             convertMinTargetAccrual(ospDTO, dto);
             convertStudyModelCode(ospDTO, dto);
             convertBaseFields(ospDTO, dto);
-
+            if (!ISOUtil.isBlNull(ospDTO.getExpandedAccessIndicator())) {
+               dto.setExpandedIndicator(BlConverter.convertToBoolean(ospDTO
+                   .getExpandedAccessIndicator()));
+            }
         }
         return dto;
     }

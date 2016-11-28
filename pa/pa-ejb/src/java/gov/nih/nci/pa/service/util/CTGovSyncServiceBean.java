@@ -1650,8 +1650,13 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         dto.setScientificDescription(getSt(study.getDetailedDescription(),
                 L_32000));
         dto.setTargetAccrualNumber(getIvl(study.getEnrollment()));
-        dto.setExpandedAccessIndicator(getYesNoAsBl(study
-                .getHasExpandedAccess()));
+        //new code
+        String studyType = study.getStudyType();
+        if ("Expanded Access".equalsIgnoreCase(studyType)) {
+             dto.setExpandedAccessIndicator(getYesNoAsBl("Yes"));
+        } else {
+             dto.setExpandedAccessIndicator(getYesNoAsBl("No"));
+        }
         dto.setFdaRegulatedIndicator(getYesNoAsBl(study.getIsFdaRegulated()));
         dto.setSection801Indicator(getYesNoAsBl(study.getIsSection801()));
         dto.setKeywordText(getSt(study.getKeyword(), L_4000));

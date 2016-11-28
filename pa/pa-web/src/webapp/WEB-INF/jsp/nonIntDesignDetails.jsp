@@ -131,6 +131,24 @@ function displayPhaseAdditonalCode(){
             </p>
         </td>
     </tr>
+    
+    <tr>
+        <td  scope="row" class="label"><label for="webDTO.expandedIndicator">
+            <fmt:message key="osdesign.details.expanded.access"/></label></td>        
+        <td>
+        <s:radio name="webDTO.expandedIndicator" id="webDTO.expandedIndicator"  list="#{true:'Yes', false:'No'}" 
+        value="webDTO.expandedIndicator" disabled="#hasOnlyResultsAbstractorRole"/>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding: 0 0 0 0;"></td>
+        <td style="padding: 0 0 0 0;">
+            <p class="info" style="margin-top: 0px;">
+                Expanded Access trials will not be sent to the cancer.gov API.
+            </p>
+        </td>
+    </tr>
+    
 
     <tr>
         <td  scope="row" class="label"><label for="webDTO.studySubtypeCode">

@@ -190,6 +190,7 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
             setPhaseAndPurpose(ispDTO);
             ispDTO.setBlindingSchemaCode(CdConverter.convertToCd(BlindingSchemaCode.getByCode(
                     webDTO.getBlindingSchemaCode())));
+            ispDTO.setExpandedAccessIndicator(BlConverter.convertToBl(webDTO.isExpandedIndicator()));
             ispDTO.setDesignConfigurationCode(CdConverter.convertToCd(DesignConfigurationCode.getByCode(
                     webDTO.getDesignConfigurationCode())));
             ispDTO.setNumberOfInterventionGroups(IntConverter.convertToInt(webDTO.getNumberOfInterventionGroups()));
@@ -369,6 +370,11 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
             convertBlindedRoleCodes(ispDTO);
             convertTargetAccrualNumber(ispDTO, dto);
             convertStudyClassificationCode(ispDTO, dto);
+            if (!ISOUtil.isBlNull(ispDTO.getExpandedAccessIndicator())) {
+                dto.setExpandedIndicator(BlConverter.convertToBoolean(ispDTO
+                        .getExpandedAccessIndicator()));
+            }
+            
         }
         return dto;
     }

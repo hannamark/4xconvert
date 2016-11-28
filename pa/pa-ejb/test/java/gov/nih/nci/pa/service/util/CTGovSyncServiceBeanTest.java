@@ -1200,7 +1200,7 @@ public class CTGovSyncServiceBeanTest extends AbstractEjbTestCase {
                 "Cancer Stem Cells, Novel targeted therapy, CXCR1/2 Inhibitors",
                 sp.getKeywordText());
         assertTrue(sp.getFdaRegulatedIndicator());
-        assertTrue(sp.getExpandedAccessIndicator());
+        assertFalse(sp.getExpandedAccessIndicator());
     }
 
     /**
@@ -1517,7 +1517,28 @@ public class CTGovSyncServiceBeanTest extends AbstractEjbTestCase {
                 sp.getStudyModelCode());
 
     }
+    
+    @Test
+    public final void testImportNCT00338442() throws PAException, ParseException {
+         final String nctID = "NCT00338442";
+         String nciID =serviceBean.importTrial(nctID);
+         assertTrue(StringUtils.isNotEmpty(nciID));
+         final Session session = PaHibernateUtil.getCurrentSession();
+         session.flush();
+         session.clear();
+         final long id = getProtocolIdByNciId(nciID, session);
+       
+         
+         try {
+             InterventionalStudyProtocol spin  = (InterventionalStudyProtocol) session
+                     .get(InterventionalStudyProtocol.class, id);
 
+            assertTrue(spin.getExpandedAccessIndicator());
+
+         } finally {
+             deactivateTrial(session, id);
+         }
+    }
     @Test
     public final void testImportObservationalPatientRegistry()
             throws PAException, ParseException {

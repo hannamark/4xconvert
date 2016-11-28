@@ -5,6 +5,8 @@ import gov.nih.nci.pa.test.integration.support.Batch;
 import java.sql.SQLException;
 import java.util.Iterator;
 
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.junit.Test;
 
 import com.dumbster.smtp.SmtpMessage;
@@ -19,6 +21,30 @@ public class CtGovImportTest extends AbstractTrialStatusTest {
     @Test
     public void testImportNCT01721876() throws Exception {
         importAndVerify("NCT01721876");
+    }
+    
+    @Test
+    public void testImportNCT01033123() throws Exception {
+        importAndVerify("NCT01033123");
+        assertEquals(
+                "false",
+                new QueryRunner()
+                        .query(connection,
+                                "select expd_access_indidicator from study_protocol where nct_id='NCT01033123'",
+                                new ArrayHandler())[0]
+                        + "");
+    }
+    
+    @Test
+    public void testImportNCT00338442() throws Exception {
+        importAndVerify("NCT00338442");
+        assertEquals(
+                "true",
+                new QueryRunner()
+                        .query(connection,
+                                "select expd_access_indidicator from study_protocol where nct_id='NCT00338442'",
+                                new ArrayHandler())[0]
+                        + "");
     }
 
     @Test

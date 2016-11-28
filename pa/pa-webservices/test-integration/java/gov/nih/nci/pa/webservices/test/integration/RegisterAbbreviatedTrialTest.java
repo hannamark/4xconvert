@@ -7,6 +7,8 @@ import java.sql.SQLException;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
@@ -169,6 +171,31 @@ public class RegisterAbbreviatedTrialTest extends AbstractRestServiceTest {
         assertTrue(StringUtils.isNotBlank(conf.getNciTrialID()));
         assertNotNull(conf.getPaTrialID());
         assertEquals(getTrialIdByNct(nctID).longValue(), conf.getPaTrialID());
+
+    }
+    @Test
+    public void testImportTrial() throws Exception {
+        importAndVerify("NCT01033123");
+        assertEquals(
+                "false",
+                new QueryRunner()
+                        .query(connection,
+                                "select expd_access_indidicator from study_protocol where nct_id='NCT01033123'",
+                                new ArrayHandler())[0]
+                        + "");
+        
+    }
+
+    @Test
+    public void testImportTrialExpandedAccessYes() throws Exception {
+        importAndVerify("NCT00338442");
+        assertEquals(
+                "true",
+                new QueryRunner()
+                        .query(connection,
+                                "select expd_access_indidicator from study_protocol where nct_id='NCT00338442'",
+                                new ArrayHandler())[0]
+                        + "");
 
     }
 
