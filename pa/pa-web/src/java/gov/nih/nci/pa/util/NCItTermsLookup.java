@@ -41,6 +41,9 @@ public class NCItTermsLookup {
     private static final String ELEMENT_NAME_FIELD = "field";
     private static final String ATTR_NAME_NAME = "name";
     private static final String ELEMENT_NAME_CLASS = "class";
+    private static final String CORE_VALUE = "core:value";
+    private static final String CORE_NAME = "core:name";
+    private static final String ENTITY = "EntityDescription";
     private static final Logger LOG = Logger.getLogger(NCItTermsLookup.class);
     
     private String lexEVSURL = "http://lexevscts2.nci.nih.gov/lexevscts2/codesystem/NCI_Thesaurus/entity/";
@@ -78,7 +81,7 @@ public class NCItTermsLookup {
         private String preferredName;
           private List<NCItTerm> parentTerms = new ArrayList<NCItTerm>(); //NOPMD
         private List<NCItTermAlterName> alterNames = new ArrayList<NCItTermsLookup.NCItTermAlterName>();
-        
+        private String displayName;
     }
 
     /**
@@ -164,6 +167,7 @@ public class NCItTermsLookup {
             disease = new DiseaseWebDTO();
             disease.setPreferredName(term.preferredName);
             disease.setNtTermIdentifier(term.ncitCode);
+            disease.setMenuDisplayName(term.displayName);
             for (Iterator<NCItTermAlterName> iterator = term.alterNames.iterator(); iterator.hasNext();) {
                 NCItTermAlterName altName = iterator.next();
                 disease.getAlterNameList().add(altName.alterName);
@@ -196,7 +200,7 @@ public class NCItTermsLookup {
      */
     private NCItTerm retrieveNCItDiseaseTermViaLexEVSCTS(String ncitCode, boolean getParent) 
             throws LEXEVSLookupException {
-        Element termEl = invokeWebService(lexEVSURL + ncitCode);
+        Element termEl =  invokeWebService(lexEVSURL + ncitCode);
         
         if (termEl == null) { // Term not found
             return null;
@@ -206,32 +210,64 @@ public class NCItTermsLookup {
         term.ncitCode = ncitCode;
         try {
         // Term not found
-        if (getChildElementsByName(termEl, "EntityDescription").size() == 0) {
+        if (getChildElementsByName(termEl, ENTITY).size() == 0) {
             return null;
         }
 
         List<Element> designations = getChildElementsByName(
-                getChildElementsByName(getChildElementsByName(termEl, "EntityDescription").get(0), "namedEntity")
+                getChildElementsByName(getChildElementsByName(termEl, ENTITY).get(0), "namedEntity")
                         .get(0), "designation");
+        
         // Get preferred Name and synonyms
         for (Iterator<Element> iterator = designations.iterator(); iterator.hasNext();) {
             Element designation = iterator.next();
             if ("PREFERRED".equals(designation.getAttribute("designationRole"))) {
-                term.preferredName = getChildElementsByName(designation, "core:value").get(0).getChildNodes().item(0)
+                term.preferredName = getChildElementsByName(designation, CORE_VALUE).get(0).getChildNodes().item(0)
                         .getNodeValue();
             } else if ("ALTERNATIVE".equals(designation.getAttribute("designationRole"))) {
-                term.alterNames.add(new NCItTermAlterName(getChildElementsByName(designation, "core:value").get(0)
+                term.alterNames.add(new NCItTermAlterName(getChildElementsByName(designation, CORE_VALUE).get(0)
                         .getChildNodes().item(0).getNodeValue(), "Synonym"));
             }
+        }
+        // get displayName
+        List<Element> displayProperty = getChildElementsByName(
+                getChildElementsByName(getChildElementsByName(termEl, ENTITY).get(0), "namedEntity")
+                        .get(0), "property");
+        
+        for (Iterator<Element> iterator = displayProperty.iterator(); iterator.hasNext();) {
+            Element property = iterator.next();
+            List<Element> predicate  = getChildElementsByName(property, "core:predicate");
+            for (Iterator<Element> iterator1 = predicate.iterator(); iterator1.hasNext();) {
+                Element entry = iterator1.next(); 
+                NodeList optionList = entry.getElementsByTagName(CORE_NAME);
+                for (int j = 0; j < optionList.getLength(); ++j) {
+                    Element option = (Element) optionList.item(j);
+                    String optionText = option.getFirstChild().getNodeValue();
+                    if ("Display_Name".equalsIgnoreCase(optionText)) {
+                        List<Element> neededValues = getChildElementsByName(property, CORE_VALUE);
+                        for (Iterator<Element> iterator2 = neededValues.iterator(); iterator2.hasNext();) {
+                            Element entry1 = iterator2.next(); 
+                            List<Element> finalOptionList  = getChildElementsByName(entry1, "core:literal");
+                            for (Iterator<Element> iterator3 = finalOptionList.iterator(); iterator3.hasNext();) {
+                                 term.displayName = getChildElementsByName(iterator3.next(), CORE_VALUE)
+                                        .get(0).getChildNodes().item(0)
+                                        .getNodeValue();
+                            }
+                            
+                        }
+                    }
+                }
+            }
+            
         }
 
         // Get parent terms
         if (getParent) {
             List<Element> parents = getChildElementsByName(
-                    getChildElementsByName(getChildElementsByName(termEl, "EntityDescription").get(0), "namedEntity")
+                    getChildElementsByName(getChildElementsByName(termEl, ENTITY).get(0), "namedEntity")
                             .get(0), "parent");
             for (Iterator<Element> iterator = parents.iterator(); iterator.hasNext();) {
-                String parentCode = getChildElementsByName(iterator.next(), "core:name").get(0).getChildNodes().item(0)
+                String parentCode = getChildElementsByName(iterator.next(), CORE_NAME).get(0).getChildNodes().item(0)
                         .getNodeValue();
                 if (parentCode.charAt(0) == 'C') {
                     NCItTerm parentTerm = retrieveNCItDiseaseTermViaLexEVSCTS(parentCode, false);
@@ -270,7 +306,7 @@ public class NCItTermsLookup {
         // Get preferred Name and synonyms
         for (Iterator<Element> iterator = entries.iterator(); iterator.hasNext();) {
             Element entry = iterator.next();
-            String childCode = getChildElementsByName(getChildElementsByName(entry, "core:name").get(0), "core:name")
+            String childCode = getChildElementsByName(getChildElementsByName(entry, CORE_NAME).get(0), CORE_NAME)
                     .get(0).getChildNodes().item(0).getNodeValue();
             if (childCode.charAt(0) == 'C') {
                 String childName = getChildElementsByName(

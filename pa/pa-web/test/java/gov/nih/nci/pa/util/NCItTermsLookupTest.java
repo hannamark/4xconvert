@@ -62,6 +62,7 @@ public class NCItTermsLookupTest  {
         assertNotNull(disease);
         assertEquals("C4878", disease.getNtTermIdentifier());
         assertEquals("Lung Carcinoma", disease.getPreferredName());
+        assertEquals("Lung Cancer", disease.getMenuDisplayName());
         assertFalse(disease.getAlterNameList().isEmpty());
         assertTrue(disease.getAlterNameList().contains("Cancer of Lung"));
         assertTrue(disease.getAlterNameList().contains("Cancer of the Lung"));

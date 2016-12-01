@@ -69,6 +69,17 @@
                 <core:value>A carcinoma originating in the lung. Lung carcinomas usually arise from the epithelium that lines the bronchial tree (bronchogenic carcinomas), and are classified as small cell or non-small cell carcinomas. Non-small cell lung carcinomas are usually adenocarcinomas, squamous cell carcinomas, or large cell carcinomas. Metastatic carcinomas to the lung are also common, and can be difficult to distinguish from primary tumors.</core:value>
             </definition>
             <property>
+                <core:predicate uri="http://lexgrid.org/presentation-alternate">
+                    <core:namespace>NCI_Thesaurus</core:namespace>
+                    <core:name>Display_Name</core:name>
+                </core:predicate>
+                <core:value>
+                    <core:literal>
+                        <core:value>Lung Cancer</core:value>
+                    </core:literal>
+                </core:value>
+            </property>
+            <property>
                 <core:predicate uri="http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#Contributing_Source">
                     <core:namespace>NCI_Thesaurus</core:namespace>
                     <core:name>Contributing_Source</core:name>
