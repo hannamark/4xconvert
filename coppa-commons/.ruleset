@@ -1,92 +1,86 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ruleset name="pmd-rules">
-<description>PMD Plugin preferences rule set</description>
+<?xml version="1.0"?>
+<ruleset name="CTRP" xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
 
-<exclude-pattern>.*/target/.*</exclude-pattern>
-<exclude-pattern>.*/src/test/.*</exclude-pattern>
+	<description>CTRP PMD Rules</description>
+	<exclude-pattern>.*/pomock/.*</exclude-pattern>
+	<exclude-pattern>.*/external/.*</exclude-pattern>
+	<exclude-pattern>.*/test/.*</exclude-pattern>
+	<exclude-pattern>.*/generated-src/.*</exclude-pattern>
+	<exclude-pattern>.*/pdq/src/.*</exclude-pattern>
 
-    <rule ref="rulesets/basic.xml" />
-    <rule ref="rulesets/basic.xml/EmptyCatchBlock">
-        <properties>
-            <property name="allowCommentedBlocks" value="true" />
-        </properties>
-    </rule>
+	<rule ref="rulesets/java/basic.xml" />
+	<rule ref="rulesets/java/braces.xml" />
+	<rule ref="rulesets/java/clone.xml" />
 
-    <rule ref="rulesets/braces.xml" />
+	<rule ref="rulesets/java/codesize.xml">
+		<exclude name="ExcessivePublicCount" />
+		<exclude name="StdCyclomaticComplexity" />
+		<exclude name="ModifiedCyclomaticComplexity" />
+	</rule>
+	<rule ref="rulesets/java/codesize.xml/ExcessiveParameterList">
+		<properties>
+			<property name="minimum" value="6" />
+		</properties>
+	</rule>
+	<rule ref="rulesets/java/codesize.xml/CyclomaticComplexity">
+		<properties>
+			<property name="reportLevel" value="10" />
+			<property name="showClassesComplexity" value="false" />
+		</properties>
+	</rule>
 
-    <rule ref="rulesets/clone.xml" />
 
-    <rule ref="rulesets/codesize.xml" >
-        <exclude name="ExcessivePublicCount" />
-    </rule>
+	<rule ref="rulesets/java/empty.xml" />
+	<rule ref="rulesets/java/empty.xml/EmptyCatchBlock">
+		<properties>
+			<property name="allowCommentedBlocks" value="true" />
+		</properties>
+	</rule>
 
-    <rule ref="rulesets/codesize.xml/ExcessiveMethodLength">
-        <properties>
-            <property name="minimum" value="50" />
-        </properties>
-    </rule>
-    <rule ref="rulesets/codesize.xml/ExcessiveClassLength">
-        <properties>
-            <property name="minimum" value="500" />
-        </properties>
-    </rule>
-    <rule ref="rulesets/codesize.xml/ExcessiveParameterList">
-        <properties>
-            <property name="minimum" value="6" />
-        </properties>
-    </rule>
-    <rule ref="rulesets/codesize.xml/CyclomaticComplexity">
-        <properties>
-            <property name="reportLevel" value="7" />
-        </properties>
-    </rule>
 
-    <rule ref="rulesets/coupling.xml">
-        <exclude name="ExcessiveImports" />
-    </rule>
 
-    <rule ref="rulesets/design.xml">
-        <exclude name="AbstractClassWithoutAbstractMethod" />
-        <exclude name="AvoidSynchronizedAtMethodLevel" />
-        <exclude name="CloseResource" />
-        <exclude name="ConfusingTernary" />
-        <exclude name="MissingStaticMethodInNonInstantiatableClass" />
-        <exclude name="UseSingleton" />
-    </rule>
+	<rule ref="rulesets/java/design.xml">
+		<exclude name="AbstractClassWithoutAbstractMethod" />
+		<exclude name="AvoidSynchronizedAtMethodLevel" />
+		<exclude name="CloseResource" />
+		<exclude name="ConfusingTernary" />
+		<exclude name="GodClass" />
+		<exclude name="MissingStaticMethodInNonInstantiatableClass" />
 
-    <rule ref="rulesets/finalizers.xml" />
 
-    <rule ref="rulesets/imports.xml" />
+		<!-- This is only excluded because of a bug in PM, see issue NCIC-5 -->
+		<exclude name="EmptyMethodInAbstractClassShouldBeAbstract" />
+	</rule>
 
-    <rule ref="rulesets/javabeans.xml">
-        <exclude name="BeanMembersShouldSerialize" />
-    </rule>
+	<rule ref="rulesets/java/finalizers.xml" />
 
-    <rule ref="rulesets/logging-jakarta-commons.xml" />
+	<rule ref="rulesets/java/imports.xml">
+		<exclude name="TooManyStaticImports" />
+	</rule>
 
-    <rule ref="rulesets/logging-java.xml" />
 
-    <rule ref="rulesets/migrating.xml" />
 
-    <rule ref="rulesets/naming.xml">
-        <exclude name="LongVariable" />
-        <exclude name="ShortVariable" />
-    </rule>
 
-    <rule ref="rulesets/optimizations.xml">
-        <exclude name="AvoidInstantiatingObjectsInLoops" />
-        <exclude name="LocalVariableCouldBeFinal" />
-        <exclude name="MethodArgumentCouldBeFinal" />
-    </rule>
+	<rule ref="rulesets/java/naming.xml">
+		<exclude name="LongVariable" />
+		<exclude name="ShortVariable" />
+	</rule>
 
-    <rule ref="rulesets/strictexception.xml" />
+	<rule ref="rulesets/java/strictexception.xml">
+		<exclude name="SignatureDeclareThrowsException" />
+		<exclude name="AvoidRethrowingException" />
+		<exclude name="AvoidThrowingRawExceptionTypes" />
+		<exclude name="AvoidCatchingGenericException" />
+	</rule>
 
-    <rule ref="rulesets/strings.xml">
-        <exclude name="InsufficientStringBufferDeclaration" />
-    </rule>
+	<rule ref="rulesets/java/strings.xml">
+		<exclude name="InsufficientStringBufferDeclaration" />
+	</rule>
 
-    <rule ref="rulesets/sunsecure.xml" />
+	<rule ref="rulesets/java/sunsecure.xml" />
 
-    <rule ref="rulesets/unusedcode.xml" />
+	<rule ref="rulesets/java/unusedcode.xml" />
 
 </ruleset>
