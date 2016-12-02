@@ -5,7 +5,7 @@
     <artifactId>coppa-commons</artifactId>
     <packaging>jar</packaging>
     <name>coppa-commons</name>
-    <version>1.3.19-SNAPSHOT</version>
+    <version>1.3.19</version>
 
     <properties>
         <nci-commons-ctrp.version>1.4.12</nci-commons-ctrp.version>
@@ -25,9 +25,9 @@
     </properties>
 
     <scm>
-        <connection>scm:svn:https://ncisvn.nci.nih.gov/svn/coppa/trunk/code/coppa-commons</connection>
-        <developerConnection>scm:svn:https://ncisvn.nci.nih.gov/svn/coppa/trunk/code/coppa-commons</developerConnection>
-        <url>https://ncisvn.nci.nih.gov/svn/coppa/trunk/code/coppa-commons</url>
+        <connection>scm:svn:https://ncisvn.nci.nih.gov/svn/coppa/tags/coppa-commons-releases/1.3.15</connection>
+        <developerConnection>scm:svn:https://ncisvn.nci.nih.gov/svn/coppa/tags/coppa-commons-releases/1.3.15</developerConnection>
+        <url>https://ncisvn.nci.nih.gov/svn/coppa/tags/coppa-commons-releases/1.3.15</url>
     </scm>
 
     <distributionManagement>
