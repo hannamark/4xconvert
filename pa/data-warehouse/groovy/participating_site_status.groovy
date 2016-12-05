@@ -21,7 +21,7 @@ def sql = """SELECT
                 left outer join registry_user as ru_creator on ru_creator.csm_user_id = creator.user_id
                 left outer join csm_user as updater on sos.user_last_created_id = updater.user_id
                 left outer join registry_user as ru_updater on ru_updater.csm_user_id = updater.user_id
-				where ss.functional_code = 'TREATING_SITE' and ss.status_code != 'NULLIFIED' and sos.deleted=false
+				where ss.functional_code = 'TREATING_SITE' and sos.deleted=false
                 """
 
 def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'],
