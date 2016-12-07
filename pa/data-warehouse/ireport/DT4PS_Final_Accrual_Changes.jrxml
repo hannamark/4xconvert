@@ -49,7 +49,7 @@ FAM_TRIALS AS (
 
 FAM_FIRST_LEAD_DATE_TRIAL AS (
 	with results as (
-select row_number() over(partition by nci_id order by status_date desc) as row_num,*
+select row_number() over(partition by nci_id order by status_date desc, internal_system_id desc) as row_num,*
 from dw_study_overall_status
 ) select internal_system_id from results where row_num =1
 ),
@@ -60,7 +60,7 @@ and sps.org_org_family = $P{Center}
 ),
 FAM_FIRST_LEAD_DATE_SITE AS (
 	with results as (
-select row_number() over(partition by study_site_id order by status_date desc) as row_num,*
+select row_number() over(partition by study_site_id order by status_date desc, internal_system_id desc) as row_num,*
 from dw_study_participating_site_accrual_status where internal_system_id in ( select * from  FAM_LIMIT_SITE_INTERNAL_ID )
 ) select internal_system_id from results where row_num =1
 ),
@@ -72,7 +72,7 @@ FAM_ADDITIONAL_TRIAL_FILTER AS (
                     (select * from FAM_FIRST_LEAD_DATE_TRIAL)
                     )
                 THEN now()
-                ELSE lead(status_date) OVER(ORDER BY nci_id,status_date )   END  as "lead_date"
+                ELSE lead(status_date) OVER(ORDER BY nci_id,status_date, internal_system_id)   END  as "lead_date"
 				from dw_study_overall_status  ) as "sos"
 				where 1=1
 				and exists (select * from FAM_TRIALS where nci_id=sos.nci_id)
@@ -91,7 +91,7 @@ FAM_ADDITIONAL_SITE_FILTER AS (
                     (select * from FAM_FIRST_LEAD_DATE_SITE)
                     )
                 THEN now()
-                ELSE lead(status_date) OVER(ORDER BY study_site_id,status_date )   END  as "lead_date"
+                ELSE lead(status_date) OVER(ORDER BY study_site_id,status_date, internal_system_id)   END  as "lead_date"
 				from dw_study_participating_site_accrual_status  where internal_system_id in ( select * from  FAM_LIMIT_SITE_INTERNAL_ID ) ) as "sos"
 				where 1=1
 				and ((status_date <= $P{End_Date}
