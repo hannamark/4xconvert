@@ -186,7 +186,7 @@ public class PDQNCItInterventionMapper{
          sql.close();
          println "-- Syncing ${ncitTermsList.size()} CTRP Intervention terms from NCIt..."
         for(String ncitCode :ncitTermsList) {
-            RetryUtil.retry(10, 1000){
+            RetryUtil.retry(20, 10000){
              performSync(ncitCode,preferredNameUrl,interventionUrl);
             }
           }   
