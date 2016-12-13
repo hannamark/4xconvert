@@ -14,8 +14,6 @@
                 <ldap.timeouts.read>@ldap.timeouts.read@</ldap.timeouts.read>
                 <ldap.context>@ldap.context@</ldap.context>
                 <ldap.uid.attrname>@ldap.uid.attrname@</ldap.uid.attrname>
-                <ldap.migration.grouperToIdStringMap>@ldap.migration.grouperToIdStringMap@</ldap.migration.grouperToIdStringMap>
-                <ldap.migration.excludes>@ldap.migration.excludes@</ldap.migration.excludes>
                                 
                 <database.hostname>@database.server@</database.hostname>
                 <database.port>@database.port@</database.port>
