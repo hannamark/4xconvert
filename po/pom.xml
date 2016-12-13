@@ -11,8 +11,8 @@
     <inceptionYear>2008</inceptionYear>
 
     <properties>
-        <ldap.url>ldaps://NIHDCADHUB.nih.gov:636 ldaps://NIHDCADHUB2.nih.gov:636 ldaps://NIHDCADHUB3.nih.gov:636</ldap.url>                
-        <ldap.user>ctrpldap-dev@nih.gov</ldap.user>
+        <ldap.url>ldaps://ldap-dev.nci.nih.gov</ldap.url>                
+        <ldap.user>CN=ctrpldap-dev,OU=ServiceAccounts,OU=OPS,OU=NCI,OU=NIH,OU=AD,DC=nih,DC=gov</ldap.user>
         <ldap.password>~/.ctrp_ldap_password</ldap.password>
         <ldap.security.authentication>simple</ldap.security.authentication>
         <ldap.security.protocol>ssl</ldap.security.protocol>
@@ -28,7 +28,7 @@
         <log.level.nci-commons>DEBUG</log.level.nci-commons>
         <log.level.po>DEBUG</log.level.po>
         <nci-commons.version>1.4.12</nci-commons.version>
-        <coppa-commons.version>1.3.16-SNAPSHOT</coppa-commons.version>
+        <coppa-commons.version>1.3.18-SNAPSHOT</coppa-commons.version>
         <iso-datatypes.version>2.0</iso-datatypes.version>
         <maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
         <maven-checkstyle-plugin.version>2.4</maven-checkstyle-plugin.version>
