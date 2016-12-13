@@ -88,6 +88,7 @@ abstract class AbstractLDAPAccessor {
                 ldapProperties.getProperty(LDAP_USER));
         environment.put(Context.SECURITY_CREDENTIALS,
                 loadLdapPasswordFromFile());
+        environment.put(Context.REFERRAL, "follow");
         return environment;
     }
 
