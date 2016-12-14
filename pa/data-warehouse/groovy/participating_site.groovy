@@ -55,7 +55,7 @@ sourceConnection.eachRow("""select generic_contact.email, ps.identifier, cast(oc
         }
 
 destinationConnection.execute("""UPDATE STG_DW_STUDY_PARTICIPATING_SITE SET ORG_ORG_FAMILY = fam_org.family_name
-    from STG_DW_family_organization fam_org where fam_org.organization_name = org_name""");
+    from STG_DW_family_organization fam_org where fam_org.organization_id = org_po_id""");
 
 sourceConnection.close()
 destinationConnection.close()
